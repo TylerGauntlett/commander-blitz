@@ -95,6 +95,16 @@ describe("describeEvent", () => {
     ).toBe("You plays Sol Ring");
   });
 
+  it("uses second-person verbs for the viewer's own seat", () => {
+    expect(describeEvent(event({ type: "draw", player: 0 }), names, 0)).toBe("You draw a card");
+    expect(describeEvent(event({ type: "draw", player: 1 }), names, 0)).toBe(
+      "AI 1 draws a card",
+    );
+    expect(
+      describeEvent(event({ type: "life_lost", player: 0, data: { amount: 3 } }), names, 0),
+    ).toBe("You lose 3 life");
+  });
+
   it("returns null for noise", () => {
     expect(describeEvent(event({ type: "step_ended" }), names)).toBeNull();
     expect(describeEvent(event({ type: "mana_added" }), names)).toBeNull();
