@@ -45,7 +45,12 @@ test.describe("playtest capture", () => {
     await page.waitForTimeout(400);
     await shoot("mulligan");
 
-    for (let i = 0; i < 900; i += 1) {
+    // The shots that make the review worth doing. Stop as soon as we have
+    // them rather than playing all the way out.
+    const WANTED = ["board-midgame", "combat-attackers", "combat-arrows", "hover-preview"];
+
+    for (let i = 0; i < 260; i += 1) {
+      if (WANTED.every((name) => shots.includes(name))) break;
       if (await isOver(page)) break;
       await waitForOurTurn(page);
       if (await isOver(page)) break;
