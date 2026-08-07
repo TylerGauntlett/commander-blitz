@@ -26,6 +26,7 @@ export const SPEED_MULTIPLIER: Record<Speed, number> = {
  * a modal decision is on screen.
  */
 const SPEED_KEY = "automtg.speed";
+const MUTED_KEY = "automtg.muted";
 
 function storedSpeed(): Speed {
   try {
@@ -42,6 +43,29 @@ function rememberSpeed(speed: Speed): void {
     localStorage.setItem(SPEED_KEY, speed);
   } catch {
     // Not being able to remember a preference is not worth an error.
+  }
+}
+
+/**
+ * Sound starts off.
+ *
+ * A page that makes noise before being asked is a bad guest, browsers block
+ * autoplay before a gesture anyway, and the e2e suite would otherwise be
+ * synthesising audio on every run.
+ */
+function storedMuted(): boolean {
+  try {
+    return localStorage.getItem(MUTED_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
+function rememberMuted(muted: boolean): void {
+  try {
+    localStorage.setItem(MUTED_KEY, muted ? "on" : "off");
+  } catch {
+    // As above.
   }
 }
 
@@ -68,6 +92,7 @@ interface UiState {
   peek: PeekTarget | null;
   error: string | null;
   speed: Speed;
+  muted: boolean;
 
   select: (oid: number | null) => void;
   hover: (oid: number | null) => void;
@@ -85,6 +110,7 @@ interface UiState {
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
   setSpeed: (speed: Speed) => void;
+  toggleMuted: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -98,6 +124,7 @@ export const useUiStore = create<UiState>((set) => ({
   peek: null,
   error: null,
   speed: storedSpeed(),
+  muted: storedMuted(),
 
   select: (oid) => set({ selectedOid: oid }),
   hover: (oid) => set({ hoveredOid: oid }),
@@ -140,4 +167,9 @@ export const useUiStore = create<UiState>((set) => ({
     rememberSpeed(speed);
     set({ speed });
   },
+  toggleMuted: () =>
+    set((s) => {
+      rememberMuted(!s.muted);
+      return { muted: !s.muted };
+    }),
 }));

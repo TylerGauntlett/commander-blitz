@@ -44,6 +44,37 @@ export interface CardView {
   blocking?: boolean;
 }
 
+/** Why a hand card has no play action right now. See engine/legality.py. */
+export type UnplayableReason = "priority" | "timing" | "land_drop" | "mana" | "targets";
+
+/** One untapped permanent that could be tapped for mana. */
+export interface ManaSourceView {
+  oid: number;
+  /**
+   * Every yield the ability could choose, each as the symbols it makes.
+   * "Add {G} or {U}" is `[["G"], ["U"]]`; "Add {G}{U}" is `[["G", "U"]]`.
+   * The union in `symbols` cannot tell those apart — and it is a whole mana.
+   */
+  options: string[][];
+  /** Every symbol this source could make, in WUBRG order. */
+  symbols: string[];
+  /** How much mana it makes. "Add {G}{U}" is 2; "Add {G} or {U}" is 1. */
+  amount: number;
+}
+
+/**
+ * What a player could produce right now.
+ *
+ * `total` is an upper bound, not a promise: two sources that each read "{G} or
+ * {U}" make two mana but never two of the same colour. Affordability comes from
+ * the action list, never from arithmetic on this.
+ */
+export interface ManaView {
+  pool: Record<string, number>;
+  sources: ManaSourceView[];
+  total: number;
+}
+
 export interface PlayerView {
   pid: number;
   name: string;
@@ -52,13 +83,23 @@ export interface PlayerView {
   has_lost: boolean;
   loss_reason: string | null;
   lands_played: number;
+  land_drops_available: number;
   mana_pool: Record<string, number>;
+  mana: ManaView;
+  /** Keyed by commander oid; the number of prior casts, not a mana amount. */
   commander_tax: Record<string, number>;
+  /** Keyed by commander oid; the extra generic mana owed, already doubled. */
+  commander_cost: Record<string, number>;
   commander_damage_taken: Record<string, number>;
   library_count: number;
   hand_count: number;
   /** Null for everyone but the viewing seat. */
   hand: CardView[] | null;
+  /**
+   * Keyed by oid, viewer only. A hand card absent from this map is playable;
+   * null for other seats, whose hands are hidden anyway.
+   */
+  hand_reasons: Record<string, UnplayableReason> | null;
   graveyard: CardView[];
   exile: CardView[];
   command: CardView[];
@@ -93,6 +134,12 @@ export interface StackItemView {
   source_oid: number | null;
   targets: { kind: string; id: number }[];
   description: string;
+  /**
+   * The face to draw for this item. For a spell it is the spell object; for a
+   * triggered ability it is the permanent that produced it. Null only if the
+   * object has already left the game.
+   */
+  card: CardView | null;
 }
 
 export interface CombatView {

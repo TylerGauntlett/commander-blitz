@@ -23,7 +23,7 @@ import {
 } from "../../logic/actionMatch";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
-import { useUiStore } from "../../state/uiStore";
+import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
 import { ActionBar } from "./ActionBar";
 import { CardPreview } from "./CardPreview";
@@ -38,6 +38,13 @@ import { PlayerMat } from "./PlayerMat";
 import { PromptDialog, isModalDecision } from "./PromptDialog";
 import { StackPanel } from "./StackPanel";
 import { ZonePeek } from "./ZonePeek";
+
+/** Keyboard routes into the zone viewer, which previously had none. */
+const PEEK_KEYS: Record<string, PeekTarget["zone"]> = {
+  g: "graveyard",
+  e: "exile",
+  c: "command",
+};
 
 const OWN_CARD_W = 104;
 const OPPONENT_CARD_W = 82;
@@ -72,6 +79,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const stageBlock = useUiStore((s) => s.stageBlock);
   const unstageBlock = useUiStore((s) => s.unstageBlock);
   const setPeek = useUiStore((s) => s.setPeek);
+  const peek = useUiStore((s) => s.peek);
   const error = useUiStore((s) => s.error);
   const setError = useUiStore((s) => s.setError);
 
@@ -84,6 +92,13 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // A decision's buttons must exist exactly once in the document. When the
   // modal owns the decision the bar shows the prompt but no actions.
+  //
+  // Combat is deliberately not in this rule. `CombatPanel` is a *gesture*
+  // surface -- stage a creature, confirm the set -- and its buttons carry no
+  // action id, so standing the bar down during declaration would leave the
+  // decision with no `data-action-id` anywhere and break the guarantee at the
+  // top of this file that the button always exists. The two surfaces overlap
+  // in appearance, not in identity.
   const modalOwnsDecision = isModalDecision(state);
   const barActions = modalOwnsDecision ? [] : actions;
 
@@ -459,6 +474,18 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         narration.skip();
         return;
       }
+      /*
+       * Zone peeking. `Esc` closed it and nothing opened it, so the only route
+       * in was a chip on the orb. Placed before `gateInput` on purpose: looking
+       * at your own graveyard asks the server nothing, so there is no reason to
+       * refuse it while a request is in flight.
+       */
+      const peekZone = PEEK_KEYS[event.key.toLowerCase()];
+      if (peekZone) {
+        setPeek(peek?.zone === peekZone ? null : { pid: state.seat, zone: peekZone });
+        return;
+      }
+
       if (gateInput()) return;
 
       if (event.key === " ") {
@@ -497,6 +524,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     playFromHand,
     viewer.hand,
     undoMutate,
+    peek,
+    state.seat,
   ]);
 
   // ---------------------------------------------------------------- render
@@ -557,8 +586,27 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           </div>
         </main>
 
+        {/*
+          The action bar lives in the right rail rather than beside the hand.
+          It used to take a fixed 420px out of the foot, squeezing the zone the
+          player interacts with most into what was left; the hand now spans the
+          whole width. Stacking it under the preview also puts the buttons next
+          to the card text they act on.
+        */}
         <aside className="rail rail--right">
           <CardPreview state={state} />
+          <ActionBar
+            state={state}
+            actions={barActions}
+            onAct={onBarAct}
+            onUndo={() => undoMutate()}
+            onQuit={onQuit}
+            narrating={narration.busy}
+            onSkip={narration.skip}
+            busy={busy}
+            aiThinking={aiThinking}
+            onToggleFullControl={(value) => fullControlMutate(value)}
+          />
         </aside>
 
         <CombatArrows state={state} boardRef={boardRef} />
@@ -607,22 +655,12 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           <HandFan
             cards={viewer.hand ?? []}
             playableOids={playableOids}
+            reasons={viewer.hand_reasons ?? {}}
+            mana={viewer.mana}
             selectedOid={selectedOid}
             onActivate={playFromHand}
             onDropOn={onDropOnZone}
             disabled={locked}
-          />
-          <ActionBar
-            state={state}
-            actions={barActions}
-            onAct={onBarAct}
-            onUndo={() => undoMutate()}
-            onQuit={onQuit}
-            narrating={narration.busy}
-            onSkip={narration.skip}
-            busy={busy}
-            aiThinking={aiThinking}
-            onToggleFullControl={(value) => fullControlMutate(value)}
           />
         </div>
       </div>

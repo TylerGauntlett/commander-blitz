@@ -9,7 +9,8 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import type { CardView } from "../../api/types";
+import type { CardView, ManaView, UnplayableReason } from "../../api/types";
+import { unplayableHint } from "../../logic/mana";
 import { bouncy, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { Card } from "./Card";
@@ -17,15 +18,36 @@ import { Card } from "./Card";
 /** Cards overlap once the hand is wider than this. */
 const MAX_SPREAD = 118;
 const CARD_W = 146;
+/**
+ * How wide the fan may grow before cards start overlapping harder.
+ *
+ * The action bar used to take 420px out of this row; now that it lives in the
+ * right rail the hand has the whole foot, so the rail that was capped at 760px
+ * can breathe. Still a cap rather than `100%`: a two-card hand spread across
+ * 1400px reads as two unrelated cards, not as a hand.
+ */
+const MAX_FAN_W = 1180;
 /** Degrees between neighbouring cards. */
 const ARC = 2.6;
 /** How far the hovered card lifts, and how far its neighbours slide away. */
 const HOVER_LIFT = -46;
 const NEIGHBOUR_PUSH = 26;
+/**
+ * Ceiling on the arc's droop.
+ *
+ * The outer cards sit lower than the middle ones, by the square of their
+ * distance from centre. Unbounded, a twelve-card hand drops its end cards 42px
+ * and pushes them through the bottom of the viewport -- the same clipping the
+ * `--hand-scale` rule was added to prevent, arriving by a different route.
+ */
+const MAX_DROOP = 12;
 
 interface Props {
   cards: CardView[];
   playableOids: ReadonlySet<number>;
+  /** Keyed by oid. A card absent from this map is playable. */
+  reasons?: Record<string, UnplayableReason>;
+  mana?: ManaView;
   selectedOid: number | null;
   onActivate: (card: CardView) => void;
   onDropOn: (card: CardView, zone: string) => void;
@@ -35,6 +57,8 @@ interface Props {
 export function HandFan({
   cards,
   playableOids,
+  reasons = {},
+  mana,
   selectedOid,
   onActivate,
   onDropOn,
@@ -44,9 +68,14 @@ export function HandFan({
   const hover = useUiStore((s) => s.hover);
 
   const count = cards.length;
-  const step = count > 1 ? Math.min(MAX_SPREAD, (760 - CARD_W) / (count - 1)) : 0;
+  const step = count > 1 ? Math.min(MAX_SPREAD, (MAX_FAN_W - CARD_W) / (count - 1)) : 0;
   const width = count > 0 ? CARD_W + step * (count - 1) : 0;
   const mid = (count - 1) / 2;
+
+  const hoveredCard = hovered === null ? null : cards[hovered];
+  const hint = hoveredCard
+    ? unplayableHint(hoveredCard, reasons[String(hoveredCard.oid)], mana)
+    : null;
 
   return (
     <div className="hand" style={{ ["--card-w" as string]: `${CARD_W}px` }}>
@@ -71,7 +100,9 @@ export function HandFan({
                 animate={{
                   opacity: 1,
                   x: push,
-                  y: isHovered ? HOVER_LIFT : Math.abs(distance) ** 2 * 1.4,
+                  y: isHovered
+                    ? HOVER_LIFT
+                    : Math.min(MAX_DROOP, Math.abs(distance) ** 2 * 1.4),
                   rotate: isHovered ? 0 : distance * ARC,
                   scale: isHovered ? 1.14 : 1,
                 }}
@@ -102,6 +133,22 @@ export function HandFan({
           })}
         </AnimatePresence>
       </div>
+      {/*
+        Why the hovered card is dim. Dimming alone said "no" without ever
+        saying why -- "not enough mana", "sorcery, and it is not your main
+        phase" and "no legal target" all looked identical.
+      */}
+      {hint && (
+        <motion.div
+          className="hand__hint"
+          data-testid="unplayable-hint"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={settle}
+        >
+          {hint}
+        </motion.div>
+      )}
       {count === 0 && <div className="hand__empty">No cards in hand</div>}
     </div>
   );

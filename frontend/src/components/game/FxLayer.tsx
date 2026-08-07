@@ -13,9 +13,10 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { play } from "../../audio/sfx";
 import type { Beat, BeatAnchor, Tone } from "../../logic/events";
 import type { LiveBeat } from "../../state/narration";
-import { SPEED_MULTIPLIER, type Speed } from "../../state/uiStore";
+import { SPEED_MULTIPLIER, type Speed, useUiStore } from "../../state/uiStore";
 
 /** How long a numeral floats, before speed scaling. */
 const FLOAT_MS = 1100;
@@ -48,6 +49,7 @@ interface SpotlightFx {
   uid: number;
   name: string;
   controller: number;
+  kind: "spell" | "trigger";
 }
 
 function anchorPoint(anchor: BeatAnchor, origin: DOMRect): { x: number; y: number } | null {
@@ -82,8 +84,15 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
     };
   }, []);
 
+  // Read through a ref so toggling mute never re-runs the beat effect and
+  // replays whatever was last on screen.
+  const muted = useUiStore((s) => s.muted);
+  const mutedRef = useRef(muted);
+  mutedRef.current = muted;
+
   useEffect(() => {
     if (!beat) return;
+    if (beat.sound && !mutedRef.current) play(beat.sound);
     const board = boardRef.current;
     if (!board) return;
     const origin = board.getBoundingClientRect();
@@ -133,6 +142,7 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
         uid: beat.uid,
         name: beat.spotlight.name,
         controller: beat.spotlight.controller,
+        kind: beat.spotlight.kind ?? "spell",
       };
       setSpotlights((current) => [...current, fx]);
       expire(() => setSpotlights((c) => c.filter((s) => s.uid !== fx.uid)), SPOTLIGHT_MS);
@@ -175,13 +185,17 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
         {spotlights.map((fx) => (
           <motion.div
             key={`spot-${fx.uid}`}
-            className="fx-spotlight"
+            className={`fx-spotlight fx-spotlight--${fx.kind}`}
+            data-testid={`spotlight-${fx.kind}`}
             initial={{ opacity: 0, scale: 0.7, rotate: -6 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 1.25, y: -30 }}
             transition={{ type: "spring", stiffness: 340, damping: 24 }}
           >
-            {fx.name}
+            {/* A trigger is not a card being cast, so it says so. Without the
+                label a triggered ability and a spell look identical here. */}
+            {fx.kind === "trigger" && <span className="fx-spotlight__kind">Triggered</span>}
+            <span className="fx-spotlight__name">{fx.name}</span>
           </motion.div>
         ))}
       </AnimatePresence>

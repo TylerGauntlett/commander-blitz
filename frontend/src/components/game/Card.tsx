@@ -77,6 +77,9 @@ export function Card({
 
   const classes = [
     "card",
+    // Swaps the outer box to a landscape footprint so the lane reflows around
+    // the rotated card instead of letting it lie across its neighbour.
+    tapped ? "card--tapped" : "",
     playable ? "card--playable" : "",
     targetable ? "card--targetable" : "",
     staged ? "card--staged" : "",

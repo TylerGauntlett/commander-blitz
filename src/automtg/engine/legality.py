@@ -224,6 +224,68 @@ def _cast_options(
     return out
 
 
+#: The gates :func:`unplayable_reason` can name, in the order it checks them.
+UNPLAYABLE_REASONS = ("priority", "timing", "land_drop", "mana", "targets")
+
+
+def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
+    """Why this card in ``pid``'s hand cannot be played right now, for the UI.
+
+    The client dims any hand card that no action names, which tells the player
+    "no" without ever telling them why -- "not enough mana", "sorcery, and it
+    is not your main phase" and "no legal target" all look identical.  This
+    walks the same gates :func:`_priority_actions` walks, in the same order,
+    and names the first one that closes.
+
+    Returns ``None`` exactly when a legal action for ``oid`` exists.  That is an
+    invariant worth stating out loud, because this function necessarily
+    restates logic owned by the generators above: it is a diagnostic, never an
+    authority, and :func:`legal_actions` remains the only source of truth.
+    ``tests/unit/test_legality_reasons.py`` pins the two together.
+    """
+    decision = state.pending_decision
+    if (
+        state.game_over
+        or decision is None
+        or decision.kind is not DecisionKind.PRIORITY
+        or decision.player != pid
+    ):
+        return "priority"
+
+    card = state.card(oid)
+    sorcery_speed = _can_act_at_sorcery_speed(state, pid)
+
+    if card.is_land:
+        if not sorcery_speed:
+            return "timing"
+        if land_drops_available(state, pid) <= 0:
+            return "land_drop"
+        return None
+
+    if not _timing_ok(card, sorcery_speed):
+        return "timing"
+
+    # Hand cards never owe commander tax -- that is a command-zone cost only.
+    x = 0
+    if card.mana_cost.x_count:
+        from .costs import mana_sources
+
+        x = max_affordable_x(
+            card.mana_cost, state.players[pid].mana_pool, mana_sources(state, pid)
+        )
+        if x < 0:
+            return "mana"
+    if not can_pay_mana(state, pid, card.mana_cost, x=x):
+        return "mana"
+
+    exclude_sid = state.objects[oid].stack_id
+    if not enumerate_target_tuples(
+        state, pid, card.targets, oid, exclude_sid=exclude_sid
+    ):
+        return "targets"
+    return None
+
+
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
     for oid in state.battlefield:

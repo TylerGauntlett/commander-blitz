@@ -66,19 +66,31 @@ export function CardStack({
   const hoveredOid = useUiStore((s) => s.hoveredOid);
   const open = openStack === group.key && group.count > 1;
 
-  const closedWidth = cardWidth + Math.min(group.count - 1, MAX_PLIES) * PLY_X;
+  /*
+   * A tapped permanent lies on its side, so its footprint is landscape.
+   *
+   * `stackKey` includes `tapped`, so a group is either all tapped or all
+   * untapped and one orientation covers the whole stack. Sizing the container
+   * for it is what lets a lane of tapped lands reflow instead of each one
+   * overlapping its neighbour.
+   */
+  const tapped = group.top.tapped === true;
+  const footprintW = tapped ? cardWidth * 1.4 : cardWidth;
+  const footprintH = tapped ? cardWidth : cardWidth * 1.4;
+
+  const closedWidth = footprintW + Math.min(group.count - 1, MAX_PLIES) * PLY_X;
   // Spread symmetrically about the closed footprint's centre, so opening a stack
   // pushes cards out both ways rather than always to the right.
   const step =
     group.count > 1
-      ? Math.min(cardWidth * FAN_STEP_RATIO, (cardWidth * MAX_FAN_RATIO) / (group.count - 1))
+      ? Math.min(footprintW * FAN_STEP_RATIO, (footprintW * MAX_FAN_RATIO) / (group.count - 1))
       : 0;
-  const centre = closedWidth / 2 - cardWidth / 2;
+  const centre = closedWidth / 2 - footprintW / 2;
 
   return (
     <motion.div
       className={open ? "cardstack cardstack--open" : "cardstack"}
-      style={{ width: closedWidth, height: cardWidth * 1.4 }}
+      style={{ width: closedWidth, height: footprintH }}
       onMouseEnter={() => group.count > 1 && openStackGroup(group.key)}
       onMouseLeave={() => openStackGroup(null)}
       data-stack-key={group.key}

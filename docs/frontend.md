@@ -148,10 +148,11 @@ npm run lint             # biome check .
 npx playwright test      # end-to-end against the real engine
 ```
 
-97 unit and component tests: lane assignment, seat rotation, stat and counter rendering,
+144 unit and component tests: lane assignment, seat rotation, stat and counter rendering,
 mana pip splitting, action matching, target disambiguation, stack keying and splitting,
-event-to-beat mapping, and — via `@testing-library/react` — the card face, the action bar
-and every decision kind the prompt dialog has to cover.
+event-to-beat mapping, card-type tones and glyphs, the mana row and the unplayable-card
+hint, and — via `@testing-library/react` — the card face, the action bar and every
+decision kind the prompt dialog has to cover.
 
 The Playwright suite boots uvicorn and vite itself and plays the real UI:
 
@@ -160,6 +161,12 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
   action, plus a 4-player pod. **If any decision kind has no surface in the UI the loop
   runs out of buttons and the spec fails**, which is the bug most worth catching.
 - `stacking.spec.ts` — duplicate lands collapse to one counted stack and fan out on hover.
+- `clarity.spec.ts` — the information surfaces from
+  [playtest-feedback-02.md](playtest-feedback-02.md): the mana pip row agrees with its own
+  summary, a dimmed hand card explains itself in a sentence, card types render distinct
+  tones and glyphs, no two rendered actions share an id across a whole game, no hand card
+  hangs below the viewport, and `g` opens the graveyard.
+- `playtest.spec.ts` — screenshot capture, skipped unless `PLAYTEST=1`.
 
 `biome.json` turns off `a11y/useSemanticElements`: it pushes `role="dialog"` towards the
 native `<dialog>` element, which needs an imperative `showModal()` and cannot be driven by

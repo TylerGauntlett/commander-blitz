@@ -9,7 +9,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView, LegalAction } from "../../api/types";
-import { decisionPrompt } from "../../logic/labels";
+import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { bouncy, ease } from "../../motion/springs";
 import { type Speed, useUiStore } from "../../state/uiStore";
 
@@ -46,6 +46,8 @@ export function ActionBar({
 }: Props) {
   const speed = useUiStore((s) => s.speed);
   const setSpeed = useUiStore((s) => s.setSpeed);
+  const muted = useUiStore((s) => s.muted);
+  const toggleMuted = useUiStore((s) => s.toggleMuted);
 
   const disabled = busy || narrating;
   const primary = actions.filter((a) => PRIMARY.has(a.kind));
@@ -67,7 +69,7 @@ export function ActionBar({
               transition={ease}
             >
               <span className="bar__dot" />
-              {narrating ? "Playing it out" : "Opponent thinking"}
+              {narrating ? "Playing it out" : thinkingLabel(state)}
             </motion.span>
           )}
         </AnimatePresence>
@@ -137,6 +139,16 @@ export function ActionBar({
             </button>
           ))}
         </fieldset>
+        <button
+          type="button"
+          className={muted ? "btn btn--ghost" : "btn btn--ghost btn--on"}
+          onClick={toggleMuted}
+          aria-pressed={!muted}
+          data-testid="mute"
+          title={muted ? "Sound off" : "Sound on"}
+        >
+          {muted ? "🔇" : "🔊"}
+        </button>
         <button
           type="button"
           className={state.full_control ? "btn btn--ghost btn--on" : "btn btn--ghost"}

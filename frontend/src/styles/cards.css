@@ -28,6 +28,26 @@
   will-change: transform;
 }
 
+/*
+ * A tapped permanent takes a landscape footprint.
+ *
+ * The pivot rotates 90deg, but a transform contributes nothing to layout, so a
+ * tapped land used to keep its portrait box and lie across its neighbour. The
+ * outer box swaps its dimensions and the pivot keeps the card's own, centred
+ * inside it, so the lane reflows around the real shape.
+ */
+.card--tapped {
+  width: calc(var(--card-w) * 1.4);
+  height: var(--card-w);
+}
+
+.card--tapped .card__pivot {
+  width: var(--card-w);
+  height: calc(var(--card-w) * 1.4);
+  margin-left: calc(var(--card-w) * 0.2);
+  margin-top: calc(var(--card-w) * -0.2);
+}
+
 .face {
   position: relative;
   display: flex;
@@ -84,6 +104,55 @@
   border-color: var(--frame-token);
 }
 
+/* Type fills ------------------------------------------------------------
+ *
+ * The body is the largest channel on the card and until now it carried
+ * nothing: every card shared one --stock gradient, and type appeared only in
+ * .face__type, which is 5.6px on an opponent's battlefield. These override the
+ * two stops the .face gradient already reads, so the paper changes colour and
+ * nothing else about the frame moves.
+ *
+ * Picked against the interaction rims (cards.css, below) rather than only
+ * against each other -- a green creature body inside a green --playable rim is
+ * exactly the ambiguity worth avoiding, so nothing here is green, and every
+ * tone is a pale wash where the rims are saturated hairlines.
+ *
+ * Land and Creature sit furthest apart on purpose: they are most of a board,
+ * and telling them apart is most of the scan. */
+
+.face--type-creature {
+  --stock: #f5d9cc;
+  --stock-shade: #e6bfad;
+}
+.face--type-land {
+  --stock: #e3d2ab;
+  --stock-shade: #cdb888;
+}
+.face--type-artifact {
+  --stock: #dee4ea;
+  --stock-shade: #c3ccd6;
+}
+.face--type-enchantment {
+  --stock: #e6dcf3;
+  --stock-shade: #cfc0e5;
+}
+.face--type-instant {
+  --stock: #d3e9f0;
+  --stock-shade: #b4d5e0;
+}
+.face--type-sorcery {
+  --stock: #f1d8e7;
+  --stock-shade: #dfbcd2;
+}
+.face--type-planeswalker {
+  --stock: #f3e5b6;
+  --stock-shade: #e0cd91;
+}
+.face--type-other {
+  --stock: #f3ece0;
+  --stock-shade: #ddd2be;
+}
+
 /* Rows ----------------------------------------------------------------- */
 
 .face__title {
@@ -91,6 +160,16 @@
   align-items: flex-start;
   gap: calc(var(--card-w) * 0.03);
   font-weight: 700;
+}
+
+/* The type mark. Redundant with the body fill on purpose: it survives
+ * red-green deficiency, and it stays legible at 82px inside a stack ply where
+ * the fill is mostly occluded by the card in front. */
+.face__glyph {
+  flex: 0 0 auto;
+  color: var(--stock-ink-dim);
+  font-size: calc(var(--card-w) * 0.088);
+  line-height: 1.15;
 }
 
 .face__name {
@@ -120,8 +199,15 @@
   text-overflow: ellipsis;
 }
 
+/* Short rules text centres in the box it was given rather than pinning to the
+   top of it, so a two-word card does not leave a dead band above the P/T row.
+   `safe` keeps long text starting at the top, where it would otherwise be
+   clipped at both ends. */
 .face__rules {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  justify-content: safe center;
   overflow: hidden;
   font-size: calc(var(--card-w) * 0.066);
   line-height: 1.3;
@@ -277,8 +363,21 @@
   box-shadow: 0 0 0 2px var(--blocking), 0 0 18px rgb(107 168 255 / 0.5);
 }
 
-.card--dimmed .face {
-  filter: saturate(0.55) brightness(0.82);
+/* Dimming is a scrim over the frame, not a filter on the face.
+ *
+ * It used to be `saturate(0.55) brightness(0.82)`, which was fine when every
+ * card shared one cream stock. Now that the body carries card type, a
+ * desaturating filter drags a land's tan toward the neutral of some other
+ * type -- it would corrupt the very channel it sits on top of. A flat scrim
+ * darkens everything equally and leaves hue alone, so a dimmed land still
+ * reads as a land. */
+.card--dimmed .face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: rgb(8 16 12 / 0.22);
 }
 
 .card__pin {

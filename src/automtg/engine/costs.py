@@ -8,7 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Cost
@@ -16,7 +16,15 @@ from .characteristics import chars
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
 from .events import EventType
-from .mana import ManaCost, ManaSource, Requirement, format_symbols, solve_payment
+from .mana import (
+    SYMBOL_INDEX,
+    SYMBOLS,
+    ManaCost,
+    ManaSource,
+    Requirement,
+    format_symbols,
+    solve_payment,
+)
 from .primitives import discard_cards, lose_life, tap_permanent
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -67,6 +75,49 @@ def available_mana(state: GameState, pid: int) -> int:
     """Upper bound on mana this player could produce, for heuristics and encoding."""
     pool = state.players[pid].mana_pool.total()
     return pool + sum(source.max_output() for source in mana_sources(state, pid))
+
+
+def mana_availability(state: GameState, pid: int) -> dict[str, Any]:
+    """What this player could produce right now, for the client's mana row.
+
+    Deliberately *not* a single colour histogram.  A dual land reading "Add {G}
+    or {U}" is one mana that could be either, so a histogram claiming one {G}
+    and one {U} would overstate the board by a mana per dual.  Instead every
+    untapped source keeps its own list of the symbols it might make, and the UI
+    renders an ambiguous source as one split pip rather than two solid ones.
+
+    ``total`` is still an upper bound rather than a promise: two sources that
+    each make "{G} or {U}" can produce two mana, but never two {U} *and* two
+    {G}.  Only :func:`can_pay_mana` answers affordability, and the client uses
+    the action list for that.
+    """
+    pool = state.players[pid].mana_pool
+    sources = mana_sources(state, pid)
+    return {
+        "pool": pool.to_dict(),
+        "sources": [
+            {
+                "oid": source.oid,
+                # Every yield the ability could choose, each as the symbols it
+                # actually makes.  "{T}: Add {G} or {U}" is [["G"], ["U"]];
+                # "{T}: Add {G}{U}" is [["G", "U"]].  The union alone cannot
+                # tell those apart, and the difference is a whole mana.
+                "options": [_option_symbols(option) for option in source.options],
+                # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
+                "symbols": sorted(
+                    (SYMBOLS[i] for i in source.producible()), key=SYMBOL_INDEX.get
+                ),
+                "amount": source.max_output(),
+            }
+            for source in sources
+        ],
+        "total": pool.total() + sum(source.max_output() for source in sources),
+    }
+
+
+def _option_symbols(option: Sequence[int]) -> list[str]:
+    """One mana-ability yield as repeated symbols: (0,1,0,0,1,0) -> ["U", "G"]."""
+    return [SYMBOLS[i] for i, count in enumerate(option) for _ in range(count)]
 
 
 def can_pay_mana(

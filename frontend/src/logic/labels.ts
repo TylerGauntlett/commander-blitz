@@ -138,6 +138,29 @@ export function turnLabel(state: GameView): string {
 }
 
 /**
+ * What the opponent is currently being asked, for the thinking indicator.
+ *
+ * A bare pulsing "Opponent thinking" told the player nothing, and a decision
+ * that produces no events -- passing priority is the common one -- looked
+ * identical to the game having hung. Naming the seat and the step at least
+ * says *where* in the turn the wait is happening.
+ */
+export function thinkingLabel(state: GameView): string {
+  const pending = state.pending;
+  if (!pending || pending.player === state.seat) return "Thinking";
+  const who = state.players[pending.player]?.name ?? `P${pending.player}`;
+  const what =
+    pending.kind === "declare_attackers"
+      ? "declare attackers"
+      : pending.kind === "declare_blockers"
+        ? "declare blockers"
+        : pending.kind === "mulligan"
+          ? "mulligan"
+          : stepLabel(state.step).toLowerCase();
+  return `${who} — ${what}`;
+}
+
+/**
  * One line of play-by-play, or null for events not worth showing.
  *
  * `viewerSeat` exists only for grammar: the viewer's own seat is "you", and
@@ -170,6 +193,22 @@ export function describeEvent(
       return `${card ?? "A permanent"} enters the battlefield`;
     case "dies":
       return `${card ?? "A creature"} dies`;
+    // Triggers are most of what happens in Commander and used to appear in
+    // neither the log nor the effects layer -- this switch and `beatsFor` are
+    // independent, and both were missing a case.
+    case "ability_triggered":
+      return `${card ?? "An ability"} triggers`;
+    case "ability_activated":
+      return `${who} ${v("activate", "activates")} ${card ?? "an ability"}`;
+    case "token_created":
+      return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
+    case "counter_placed":
+      return `${event.data.amount} ${event.data.kind ?? ""} counter on ${card ?? "a permanent"}`.replace(
+        /\s+/g,
+        " ",
+      );
+    case "mill":
+      return `${who} ${v("mill", "mills")} ${event.data.amount ?? 1}`;
     case "draw":
       return `${who} ${v("draw", "draws")} a card`;
     case "discard":
