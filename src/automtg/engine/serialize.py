@@ -93,6 +93,9 @@ def player_view(state: GameState, seat: int) -> dict[str, Any]:
         "stack": [_stack_item(state, item) for item in state.stack],
         "combat": state.combat.to_dict() if state.combat else None,
         "pending": state.pending_decision.to_dict() if state.pending_decision else None,
+        # A viewer preference rather than game state, but the client has to be
+        # able to render the toggle in the position the engine actually holds it.
+        "full_control": state.players[seat].full_control,
     }
 
 

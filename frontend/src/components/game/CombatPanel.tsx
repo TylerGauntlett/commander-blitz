@@ -9,7 +9,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView, LegalAction } from "../../api/types";
-import { availableAttackers, blockableBy, defendersFor } from "../../logic/actionMatch";
+import { availableAttackers, blockableBy } from "../../logic/actionMatch";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -75,8 +75,8 @@ export function CombatPanel({ state, actions, onDeclare, onSkip, disabled }: Pro
                   ? "Click an opponent to send it at them."
                   : "Click your creatures to attack. Click again to call it back."
                 : selectedOid
-                  ? "Now click the attacker to block."
-                  : "Click one of your creatures, then the attacker it blocks."}
+                  ? "Now click the attacker to block. Click your creature again to let it go."
+                  : "Click one of your creatures, then the attacker it blocks. Nothing is committed until you confirm."}
             </p>
           </div>
 
@@ -152,25 +152,6 @@ export function CombatPanel({ state, actions, onDeclare, onSkip, disabled }: Pro
       )}
     </AnimatePresence>
   );
-}
-
-/**
- * Which defenders a staged attacker could be pointed at.
- *
- * Exported so the board can cycle a creature through its legal targets on
- * repeated clicks rather than opening a menu.
- */
-export function nextDefender(
-  actions: LegalAction[],
-  attackerOid: number,
-  current: number | undefined,
-): number | null {
-  const options = defendersFor(actions, attackerOid);
-  if (options.length === 0) return null;
-  if (current === undefined) return options[0];
-  const index = options.indexOf(current);
-  // Past the end means "stop attacking with this one".
-  return index === -1 || index === options.length - 1 ? null : options[index + 1];
 }
 
 /** Attackers this blocker may legally be assigned to. */

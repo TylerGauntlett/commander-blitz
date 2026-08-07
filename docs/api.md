@@ -69,6 +69,7 @@ a card, never enough to decide legality.
 | `POST` | `/api/games/{id}/actions` | Apply one action id |
 | `POST` | `/api/games/{id}/declare` | Submit a whole attack or block at once |
 | `POST` | `/api/games/{id}/advance` | Let the AI seats act (rarely needed) |
+| `POST` | `/api/games/{id}/options` | Change a human seat's play settings (`full_control`) |
 | `POST` | `/api/games/{id}/undo` | Rewind past the last human action |
 | `GET` | `/api/games/{id}/events?since=` | Event slice for the log |
 | `GET` | `/api/games/{id}/debug` | Full state, hidden zones included. **Development only** |
@@ -106,6 +107,20 @@ one. If a later pair turns out to be illegal only once the earlier ones are in p
 the request fails mid-loop and the declaration decision stays open, so the client can
 simply submit a corrected set.
 
+## Priority stops
+
+Eleven of the thirteen steps grant priority to every player, and instants and activated
+abilities are legal in all of them -- so a player holding one instant used to be asked
+about every window, on every player's turn. The engine auto-passes any window with only
+`PASS` in it; on top of that, a seat with `auto_pass` set skips windows where passing is
+not a real choice. It stops when the stack is non-empty, in its own main phases, and at
+declare blockers.
+
+`GameSession.start` sets `auto_pass` on **human seats only**, so the RL environment and
+the golden tests see exactly the behaviour they always did. `POST /options` flips
+`full_control` for a seat, which puts every window back; the flag is echoed in
+`player_view` so the client renders the state the engine is actually holding.
+
 ## Undo
 
 `POST /undo` rewinds to before the last human action by **replaying the tape**: the
@@ -115,6 +130,10 @@ the last human one.
 Replay rather than a snapshot, because the engine never clones state — replay is the
 only representation that cannot silently miss a field. It is O(game length), which is
 irrelevant for a local app.
+
+Each tape entry records the seat's `full_control` setting at the time, because that
+setting decides which priority windows exist: replaying an old Pass under a newer
+setting could find it illegal.
 
 ## Sessions
 

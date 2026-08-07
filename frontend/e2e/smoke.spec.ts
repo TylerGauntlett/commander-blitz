@@ -21,6 +21,37 @@ test.describe("the table renders and plays", () => {
     expect(await lifeOf(page, 1)).toBe(40);
   });
 
+  test("marks the current step, and the mark is actually painted", async ({ page }) => {
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+
+    const marker = page.locator(".track__marker");
+    await expect(marker).toHaveCount(1);
+    await expect(marker).toBeVisible();
+
+    // Every step keeps its label: the current one used to render as a blank gap,
+    // because its near-black text was designed to sit on a marker that was not
+    // being drawn.
+    const labels = await page.locator(".track__step-label").allTextContents();
+    expect(labels.length).toBe(13);
+    expect(labels.every((text) => text.trim().length > 0)).toBe(true);
+
+    // The real regression: `z-index: -1` on the marker, with no stacking context
+    // between it and the root, put the gold pill in the *root's* negative layer
+    // -- behind the track's own background, and so invisible. Assert the layering
+    // rather than the pixels: a negative z-index child needs an ancestor that
+    // contains it.
+    const layering = await marker.evaluate((node) => {
+      const step = node.parentElement as HTMLElement;
+      return {
+        markerZ: getComputedStyle(node).zIndex,
+        isolation: getComputedStyle(step).isolation,
+        stepZ: getComputedStyle(step).zIndex,
+      };
+    });
+    expect(Number(layering.markerZ) >= 0 || layering.markerZ === "auto").toBe(true);
+    expect(layering.isolation === "isolate" || layering.stepZ !== "auto").toBe(true);
+  });
+
   test("opens on the mulligan decision and can keep", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     await waitForOurTurn(page);

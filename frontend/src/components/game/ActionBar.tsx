@@ -29,6 +29,7 @@ interface Props {
   onSkip: () => void;
   busy: boolean;
   aiThinking: boolean;
+  onToggleFullControl: (value: boolean) => void;
 }
 
 export function ActionBar({
@@ -41,6 +42,7 @@ export function ActionBar({
   onSkip,
   busy,
   aiThinking,
+  onToggleFullControl,
 }: Props) {
   const speed = useUiStore((s) => s.speed);
   const setSpeed = useUiStore((s) => s.setSpeed);
@@ -135,6 +137,21 @@ export function ActionBar({
             </button>
           ))}
         </fieldset>
+        <button
+          type="button"
+          className={state.full_control ? "btn btn--ghost btn--on" : "btn btn--ghost"}
+          onClick={() => onToggleFullControl(!state.full_control)}
+          disabled={busy}
+          aria-pressed={state.full_control}
+          data-testid="full-control"
+          title={
+            state.full_control
+              ? "Full control: stopping at every priority window"
+              : "Stopping only where you have something to respond to. Turn on for every window."
+          }
+        >
+          {state.full_control ? "Full control" : "Auto-pass"}
+        </button>
         <button
           type="button"
           className="btn btn--ghost"

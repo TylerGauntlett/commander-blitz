@@ -83,12 +83,30 @@ test("a stack fans out on hover so each copy stays reachable", async ({ page }) 
       // quote; a quoted attribute selector is enough.
       const stack = page.locator(`[data-stack-key="${key}"]`).first();
       await expect(stack.locator(".cardstack__count")).toBeVisible();
-      const before = await stack.boundingBox();
+
+      /** How far apart the member cards sit, horizontally. */
+      const spread = async (): Promise<number> => {
+        const cards = stack.locator(".card");
+        const boxes = await cards.evaluateAll((nodes) =>
+          nodes.map((node) => node.getBoundingClientRect().x),
+        );
+        return Math.max(...boxes) - Math.min(...boxes);
+      };
+
+      const boxBefore = await stack.boundingBox();
+      const spreadBefore = await spread();
       await stack.hover();
       await page.waitForTimeout(500);
-      const after = await stack.boundingBox();
-      // Fanning open widens the group so every copy is individually reachable.
-      expect(after?.width ?? 0).toBeGreaterThan(before?.width ?? 0);
+      const boxAfter = await stack.boundingBox();
+      const spreadAfter = await spread();
+
+      // The members fan apart so every copy is individually reachable...
+      expect(spreadAfter).toBeGreaterThan(spreadBefore);
+      // ...while the container keeps its footprint. Animating the width here
+      // wrapped the lane onto new rows and slid the whole board under the
+      // cursor, which made picking a card out of a stack impossible.
+      expect(boxAfter?.width ?? 0).toBeCloseTo(boxBefore?.width ?? 0, 0);
+      expect(boxAfter?.x ?? 0).toBeCloseTo(boxBefore?.x ?? 0, 0);
       return;
     }
 

@@ -139,13 +139,18 @@ def _can_act_at_sorcery_speed(state: GameState, pid: int) -> bool:
 
 
 def _land_actions(state: GameState, pid: int) -> list[Action]:
+    """One action per land *object* in hand, not per land name.
+
+    Two Forests are the same play in rules terms, but the UI keys everything by
+    object id: it dims any hand card no action names.  Deduplicating by
+    ``card.id`` here made the second and third Forest unclickable and
+    undraggable, which is a much worse trade than a slightly wider action list.
+    """
     out: list[Action] = []
-    seen: set[str] = set()
     for oid in state.players[pid].hand:
         card = state.card(oid)
-        if not card.is_land or card.id in seen:
+        if not card.is_land:
             continue
-        seen.add(card.id)  # playing either copy of a duplicate land is the same action
         out.append(
             Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}")
         )
@@ -154,15 +159,14 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
 
 def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
-    seen: set[str] = set()
 
+    # Per object, not per card name -- see the note on _land_actions.
     for oid in state.players[pid].hand:
         card = state.card(oid)
-        if card.is_land or card.id in seen:
+        if card.is_land:
             continue
         if not _timing_ok(card, sorcery_speed):
             continue
-        seen.add(card.id)
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
     for oid in state.players[pid].command:

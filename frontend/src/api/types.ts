@@ -119,6 +119,8 @@ export interface GameView {
   stack: StackItemView[];
   combat: CombatView | null;
   pending: PendingDecision | null;
+  /** This seat stops at every priority window rather than only meaningful ones. */
+  full_control: boolean;
 }
 
 export interface LegalAction {

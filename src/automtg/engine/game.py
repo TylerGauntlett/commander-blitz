@@ -171,8 +171,11 @@ class Game:
         state = self.state
         oid = action.source
         card = state.card(oid)
-        move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
+        # Count the drop *before* the land moves: move_object fires the ETB, and
+        # a landfall trigger with an intervening-if that counts land drops this
+        # turn has to see the post-increment value.
         state.players[pid].lands_played += 1
+        move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
             EventType.LAND_PLAYED,
@@ -331,9 +334,7 @@ class Game:
                 prompt="You have priority",
             )
             options = legality.legal_actions(state)
-            if len(options) == 1 and options[0].kind is ActionKind.PASS:
-                # Auto-pass: offering a decision with only "Pass" would waste a
-                # step for the agent and a click for the human.
+            if _should_auto_pass(state, options):
                 state.pending_decision = None
                 self._pass_priority()
                 continue
@@ -353,6 +354,49 @@ class Game:
         state.started = True
         self._run(_opening_sequence(state))
         self._advance()
+
+
+# ----------------------------------------------------------------------
+# priority stops
+# ----------------------------------------------------------------------
+
+#: Steps whose priority window is always worth stopping at when auto-pass is on.
+#: Declare-blockers is the combat-trick window -- blocks are in and damage is
+#: next, which is the one non-main step players reliably want.
+ALWAYS_STOP_STEPS = frozenset({Step.DECLARE_BLOCKERS})
+
+
+def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
+    """Whether to pass this priority window without asking.
+
+    Eleven of the thirteen steps grant priority to every player, and instants
+    and activated abilities are legal in all of them.  A player holding one
+    instant therefore faced ~11 forced Pass clicks per turn, on every player's
+    turn.  The stops below are the windows where passing is actually a choice:
+    something is on the stack to respond to, it is your own sorcery-speed
+    window, or blockers are declared and damage is next.
+    """
+    if len(options) == 1 and options[0].kind is ActionKind.PASS:
+        # Nothing else is legal: offering this would waste a step for the agent
+        # and a click for the human, regardless of policy.
+        return True
+
+    pid = state.priority_player
+    if pid is None:
+        return False
+    player = state.players[pid]
+    if not player.auto_pass or player.full_control:
+        return False
+    if state.stack:
+        return False
+    if state.step in ALWAYS_STOP_STEPS:
+        return False
+    if state.active_player == pid and state.step in (
+        Step.PRECOMBAT_MAIN,
+        Step.POSTCOMBAT_MAIN,
+    ):
+        return False
+    return True
 
 
 # ----------------------------------------------------------------------

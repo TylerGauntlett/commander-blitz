@@ -82,6 +82,18 @@ export const api = {
       body: JSON.stringify({ seat }),
     }),
 
+  /**
+   * Stop at every priority window, or only the meaningful ones.
+   *
+   * The engine auto-passes windows with nothing to respond to; a player who
+   * wants an opponent's end step back asks for full control here.
+   */
+  setFullControl: (gameId: string, seat: number, fullControl: boolean) =>
+    request<StateResponse>(`/games/${gameId}/options`, {
+      method: "POST",
+      body: JSON.stringify({ seat, full_control: fullControl }),
+    }),
+
   undo: (gameId: string, seat: number) =>
     request<StateResponse>(`/games/${gameId}/undo`, {
       method: "POST",

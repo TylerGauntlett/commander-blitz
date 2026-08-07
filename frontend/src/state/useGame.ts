@@ -104,7 +104,15 @@ export function useGame(session: GameSession | null) {
       queryClient.setQueryData(key, response);
       setLog((previous) => [...previous, ...response.events]);
       narration.push(beatsFor(response.events, playerNames(response.state), lookup));
-      clearStaging();
+      // Keep a half-built declaration alive across responses that are not the
+      // declaration itself -- the AI pump lands here too, and wiping the staged
+      // set mid-choice loses work the player has not committed yet.
+      const pending = response.state.pending;
+      const stillDeclaring =
+        pending !== null &&
+        pending.player === session.seat &&
+        (pending.kind === "declare_attackers" || pending.kind === "declare_blockers");
+      if (!stillDeclaring) clearStaging();
       setError(null);
     },
     [session, key, queryClient, clearStaging, setError, narration.push, lookup],
@@ -157,6 +165,27 @@ export function useGame(session: GameSession | null) {
       stalls.current = 0;
       setStalled(false);
       clearStaging();
+      setError(null);
+    },
+    onError: (error: Error) => setError(error.message),
+  });
+
+  /**
+   * Ask the engine to stop at every priority window, or only meaningful ones.
+   *
+   * Not narrated: it changes nothing about the game, only which windows the
+   * engine offers, and turning it on can immediately reveal a window that was
+   * about to be auto-passed.
+   */
+  const setFullControl = useMutation({
+    mutationFn: async (value: boolean) => {
+      if (!session) throw new Error("no game");
+      return api.setFullControl(session.gameId, session.seat, value);
+    },
+    onSuccess: (response) => {
+      if (!session) return;
+      harvestNames(response.state, names.current);
+      queryClient.setQueryData(key, response);
       setError(null);
     },
     onError: (error: Error) => setError(error.message),
@@ -228,6 +257,7 @@ export function useGame(session: GameSession | null) {
     act,
     declare,
     undo,
+    setFullControl,
   };
 }
 

@@ -77,6 +77,7 @@ describe("ActionBar", () => {
     narrating: false,
     busy: false,
     aiThinking: false,
+    onToggleFullControl: noop,
   };
 
   it("renders one button per legal action", () => {
@@ -117,6 +118,39 @@ describe("ActionBar", () => {
     );
     expect(screen.getByText("Pass").hasAttribute("disabled")).toBe(true);
     expect(screen.getByText(/Skip/)).toBeTruthy();
+  });
+
+  it("shows the stops setting the engine is actually holding", () => {
+    const { unmount } = render(
+      <ActionBar state={gameView()} actions={[]} onAct={noop} {...base} />,
+    );
+    expect(screen.getByTestId("full-control").textContent).toBe("Auto-pass");
+    unmount();
+
+    render(
+      <ActionBar
+        state={gameView({ full_control: true })}
+        actions={[]}
+        onAct={noop}
+        {...base}
+      />,
+    );
+    expect(screen.getByTestId("full-control").textContent).toBe("Full control");
+  });
+
+  it("asks for the opposite of the current stops setting", () => {
+    const onToggleFullControl = vi.fn();
+    render(
+      <ActionBar
+        state={gameView()}
+        actions={[]}
+        onAct={noop}
+        {...base}
+        onToggleFullControl={onToggleFullControl}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("full-control"));
+    expect(onToggleFullControl).toHaveBeenCalledWith(true);
   });
 
   it("says who it is waiting for", () => {

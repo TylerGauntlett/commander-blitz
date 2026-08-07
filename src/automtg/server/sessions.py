@@ -26,11 +26,18 @@ MAX_AI_STEPS = 20_000
 
 @dataclass(frozen=True)
 class TapeEntry:
-    """One applied action, tagged with who took it."""
+    """One applied action, tagged with who took it.
+
+    ``full_control`` is the seat's stops setting at the moment the action was
+    taken.  Undo replays the tape, and that setting decides which priority
+    windows exist, so replaying under today's value could make a recorded Pass
+    illegal.  Recording it per entry keeps replay deterministic.
+    """
 
     action: Action
     seat: int
     human: bool
+    full_control: bool = False
 
 
 @dataclass
@@ -48,6 +55,8 @@ class GameSession:
     tape: list[TapeEntry] = field(default_factory=list)
     #: Action id -> Action, rebuilt whenever the legal action list changes.
     _action_ids: dict[str, Action] = field(default_factory=dict)
+    #: seat -> "stop at every priority window".  Survives the rebuild in undo().
+    full_control: dict[int, bool] = field(default_factory=dict)
 
     # ------------------------------------------------------------------
 
@@ -73,7 +82,18 @@ class GameSession:
             for i, seat in enumerate(self.seats)
             if seat.kind == "ai"
         }
+        # Human seats skip priority windows with nothing to respond to. AI seats
+        # keep every window so training and the golden tests are unaffected.
+        for pid in self.human_seats:
+            player = self.game.state.players[pid]
+            player.auto_pass = True
+            player.full_control = self.full_control.get(pid, False)
         self.drive_ai()
+
+    def set_full_control(self, seat: int, value: bool) -> None:
+        """Stop at every priority window for this seat, or go back to smart stops."""
+        self.full_control[seat] = value
+        self.game.state.players[seat].full_control = value
 
     # ------------------------------------------------------------------
 
@@ -100,9 +120,12 @@ class GameSession:
                 break
             chosen = self.agents[decision.player].act(self.game, decision.player, actions)
             self.game.apply(chosen)
-            self.tape.append(TapeEntry(chosen, decision.player, human=False))
+            self.tape.append(self._entry(chosen, decision.player, human=False))
         self._refresh_actions()
         return self.game.state.events[mark:]
+
+    def _entry(self, action: Action, seat: int, *, human: bool) -> TapeEntry:
+        return TapeEntry(action, seat, human, self.full_control.get(seat, False))
 
     def _refresh_actions(self) -> None:
         self._action_ids = {}
@@ -146,7 +169,7 @@ class GameSession:
 
         mark = len(self.game.state.events)
         self.game.apply(action)
-        self.tape.append(TapeEntry(action, seat, human=True))
+        self.tape.append(self._entry(action, seat, human=True))
         self.drive_ai(ai_steps)
         return self.game.state.events[mark:]
 
@@ -196,7 +219,7 @@ class GameSession:
             if match is None:
                 raise IllegalActionError(f"{source} cannot be declared against {target}")
             self.game.apply(match)
-            self.tape.append(TapeEntry(match, seat, human=True))
+            self.tape.append(self._entry(match, seat, human=True))
 
         finish = next(
             (
@@ -209,7 +232,7 @@ class GameSession:
         if finish is None:
             raise IllegalActionError("that declaration is not legal (menace, for example)")
         self.game.apply(finish)
-        self.tape.append(TapeEntry(finish, seat, human=True))
+        self.tape.append(self._entry(finish, seat, human=True))
         self.drive_ai(ai_steps)
         return self.game.state.events[mark:]
 
@@ -235,6 +258,10 @@ class GameSession:
         for entry in history:
             if self.game.over or self.game.pending() is None:
                 break
+            # The stops setting decides which priority windows exist, so replay
+            # each action under the setting it was originally taken with.
+            if entry.seat in self.full_control:
+                self.game.state.players[entry.seat].full_control = entry.full_control
             match = next(
                 (a for a in legal_actions(self.game.state) if a == entry.action), None
             )
@@ -242,7 +269,9 @@ class GameSession:
                 # The replay diverged (it should not); stop rather than guess.
                 break
             self.game.apply(match)
-            self.tape.append(TapeEntry(match, entry.seat, entry.human))
+            self.tape.append(TapeEntry(match, entry.seat, entry.human, entry.full_control))
+        for pid, value in self.full_control.items():
+            self.game.state.players[pid].full_control = value
         self.drive_ai()
         return True
 

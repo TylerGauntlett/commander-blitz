@@ -65,6 +65,7 @@ export function gameView(overrides: Partial<GameView> = {}): GameView {
     battlefield: [],
     stack: [],
     combat: null,
+    full_control: false,
     pending: {
       kind: "priority",
       player: 0,

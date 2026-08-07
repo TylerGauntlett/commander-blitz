@@ -23,16 +23,20 @@ test.describe("a whole game can be played through the UI", () => {
       if (await isOver(page)) break;
 
       // Record which decision kinds we actually exercised.
-      const dialog = page.getByTestId("prompt-dialog");
-      if (await dialog.isVisible().catch(() => false)) {
-        const kind = await dialog.getAttribute("data-decision-kind");
+      //
+      // Bounded, and tolerant of the element going away: `isVisible` and
+      // `getAttribute` are two round trips, and the AI pump can close a dialog
+      // between them. Unbounded, that race spends the whole test budget waiting
+      // for an element that is never coming back, and reports as a timeout with
+      // nothing to do with the thing under test.
+      const noteKind = async (testId: string, attribute: string) => {
+        const node = page.getByTestId(testId);
+        if (!(await node.isVisible().catch(() => false))) return;
+        const kind = await node.getAttribute(attribute, { timeout: 2_000 }).catch(() => null);
         if (kind) kindsSeen.add(kind);
-      }
-      const panel = page.getByTestId("combat-panel");
-      if (await panel.isVisible().catch(() => false)) {
-        const kind = await panel.getAttribute("data-combat-kind");
-        if (kind) kindsSeen.add(kind);
-      }
+      };
+      await noteKind("prompt-dialog", "data-decision-kind");
+      await noteKind("combat-panel", "data-combat-kind");
 
       expect(
         await actionButtons(page).count(),

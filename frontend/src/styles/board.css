@@ -457,6 +457,11 @@
 
 .track__step {
   position: relative;
+  /* The marker is painted behind the label but in front of the track's own
+     background. Without a stacking context here it lands in the *root* negative
+     layer, which is drawn before .track's background paints -- so the gold pill
+     vanished and the current step, coloured near-black to sit on it, went with it. */
+  isolation: isolate;
   flex: 1 1 0;
   min-width: 0;
   padding: 4px 2px;
@@ -484,13 +489,14 @@
 .track__marker {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   border-radius: 5px;
   background: var(--gold);
 }
 
 .track__step-label {
   position: relative;
+  z-index: 1;
 }
 
 /* Hand ----------------------------------------------------------------- */
