@@ -82,6 +82,13 @@ def op_search_library(ctx: EffectContext, spec: Mapping[str, Any]):
         take = min(count, len(pool))
         picked = yield from ask_objects(ctx, "Search your library", pool, 0, take, pid, "search")
         for oid in picked:
+            if destination is Zone.BATTLEFIELD:
+                # to_player only picks the destination zone list; the battlefield
+                # is global, so controller has to be set explicitly or the
+                # `controller: "you"` clause on landfall reads the owner.
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    obj.controller = pid
             move_object(
                 ctx.state,
                 oid,
@@ -126,6 +133,10 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
+        if destination is Zone.BATTLEFIELD:
+            # Same reason as op_search_library: the battlefield is one global
+            # list, so nothing else sets controller. Mirrors put_onto_battlefield.
+            obj.controller = ctx.controller if spec.get("controller") == "you" else obj.owner
         move_object(
             ctx.state,
             oid,

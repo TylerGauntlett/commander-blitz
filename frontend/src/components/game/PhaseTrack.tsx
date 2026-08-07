@@ -17,7 +17,13 @@ interface Props {
 }
 
 export function PhaseTrack({ state }: Props) {
-  const currentIndex = STEP_ORDER.indexOf(state.step as (typeof STEP_ORDER)[number]);
+  const found = STEP_ORDER.indexOf(state.step as (typeof STEP_ORDER)[number]);
+  if (found === -1 && import.meta.env.DEV) {
+    // Silently marking every step "future" looks exactly like a track that
+    // never advances, so say so rather than degrade into the old bug.
+    console.warn(`PhaseTrack: unknown step ${state.step}`);
+  }
+  const currentIndex = found;
   const active = state.players[state.active_player];
   const yourTurn = state.active_player === state.seat;
 

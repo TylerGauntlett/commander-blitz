@@ -23,6 +23,7 @@ interface Props {
   isPlayable?: (card: CardView) => boolean;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
+  isSelected?: (card: CardView) => boolean;
   onActivate?: (card: CardView) => void;
   onDropOn?: (card: CardView, zone: string) => void;
   /** This player can be pointed at right now. */
@@ -42,6 +43,7 @@ export function PlayerMat({
   isPlayable,
   isTargetable,
   isStaged,
+  isSelected,
   onActivate,
   onDropOn,
   playerTargetable = false,
@@ -78,6 +80,7 @@ export function PlayerMat({
             isPlayable={isPlayable}
             isTargetable={isTargetable}
             isStaged={isStaged}
+            isSelected={isSelected}
             onActivate={onActivate}
             onDropOn={onDropOn}
           />

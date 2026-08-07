@@ -184,6 +184,62 @@ class TestPlayingThroughHttp:
         assert client.post(f"/api/games/{game_id}/undo", json={"seat": 0}).status_code == 400
 
 
+class TestPriorityStops:
+    """The human seat skips priority windows with nothing to respond to.
+
+    The AI seats keep every window, so nothing about training or the golden
+    tests changes; only the human's click count does.
+    """
+
+    def test_a_human_seat_starts_on_smart_stops(self, client):
+        body = new_game(client)
+        game_id = body["game_id"]
+        assert body["state"]["full_control"] is False
+        registry = client.app.state.sessions
+        session = registry.get(game_id)
+        assert session.game.state.players[0].auto_pass is True
+        assert all(
+            session.game.state.players[pid].auto_pass is False
+            for pid in range(1, len(session.seats))
+        )
+
+    def test_full_control_round_trips(self, client):
+        game_id = new_game(client)["game_id"]
+        on = client.post(
+            f"/api/games/{game_id}/options", json={"seat": 0, "full_control": True}
+        )
+        assert on.status_code == 200
+        assert on.json()["state"]["full_control"] is True
+
+        off = client.post(
+            f"/api/games/{game_id}/options", json={"seat": 0, "full_control": False}
+        )
+        assert off.json()["state"]["full_control"] is False
+
+    def test_the_setting_survives_undo(self, client):
+        """Undo rebuilds the game by replaying the tape, which resets the state
+        the flag lives on -- the session has to put it back."""
+        body = new_game(client, seed=11)
+        game_id = body["game_id"]
+        client.post(
+            f"/api/games/{game_id}/options", json={"seat": 0, "full_control": True}
+        )
+        actions = client.get(f"/api/games/{game_id}/actions?seat=0").json()
+        client.post(
+            f"/api/games/{game_id}/actions",
+            json={"seat": 0, "action_id": actions[0]["id"]},
+        )
+        undone = client.post(f"/api/games/{game_id}/undo", json={"seat": 0}).json()
+        assert undone["state"]["full_control"] is True
+
+    def test_an_unseated_player_cannot_change_options(self, client):
+        game_id = new_game(client)["game_id"]
+        response = client.post(
+            f"/api/games/{game_id}/options", json={"seat": 1, "full_control": True}
+        )
+        assert response.status_code == 400
+
+
 class TestAiStepping:
     """``?ai_steps=N`` lets a client watch the opponents instead of being handed
     their finished turns.  The default must keep behaving as it always has."""

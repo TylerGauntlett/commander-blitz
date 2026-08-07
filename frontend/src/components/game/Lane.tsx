@@ -26,6 +26,7 @@ interface Props {
   isPlayable?: (card: CardView) => boolean;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
+  isSelected?: (card: CardView) => boolean;
   onActivate?: (card: CardView) => void;
   onDropOn?: (card: CardView, zone: string) => void;
 }
@@ -41,6 +42,7 @@ export function Lane({
   isPlayable,
   isTargetable,
   isStaged,
+  isSelected,
   onActivate,
   onDropOn,
 }: Props) {
@@ -69,6 +71,7 @@ export function Lane({
             isPlayable={isPlayable}
             isTargetable={isTargetable}
             isStaged={isStaged}
+            isSelected={isSelected}
             onActivate={onActivate}
             onDropOn={onDropOn}
           />

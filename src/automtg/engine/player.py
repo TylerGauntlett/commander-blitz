@@ -56,6 +56,14 @@ class PlayerState:
     mulligans_taken: int = 0
     has_kept_hand: bool = False
 
+    #: Skip priority windows where this player has nothing worth responding to.
+    #: Off by default so the RL environment and the golden tests still see every
+    #: window; the HTTP session turns it on for human seats only.
+    auto_pass: bool = False
+    #: Overrides ``auto_pass``: stop at every window, the way MTGO's full control
+    #: does.  A human who wants an opponent's end step back asks for this.
+    full_control: bool = False
+
     def zone_list(self, zone: Zone) -> list[int]:
         """The ordered oid list for one of this player's zones."""
         if zone is Zone.LIBRARY:

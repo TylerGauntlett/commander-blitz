@@ -9,6 +9,12 @@
  * deliberate: mounting and unmounting on hover would destroy each card's
  * `layoutId` identity, and a Forest tapped for mana would pop instead of
  * turning. Closed and open are the same nodes at different offsets.
+ *
+ * The container's size never changes. Fanning used to animate `width` on an
+ * in-flow flex item, which wrapped the lane onto new rows, grew the mat, and
+ * flickered the scrollbar -- the whole board slid out from under the cursor for
+ * the length of a spring, which made picking a blocker out of a stack
+ * impossible. Only transforms move here, so neighbours never notice.
  */
 
 import { motion } from "motion/react";
@@ -23,6 +29,14 @@ const PLY_X = 7;
 const PLY_Y = -4;
 /** Beyond this many, plies sit on top of each other: the badge carries the count. */
 const MAX_PLIES = 2;
+/** Fanned members overlap by this much of a card, so each stays clickable. */
+const FAN_STEP_RATIO = 0.58;
+/**
+ * Widest a fan may spread, in card widths. The mat scrolls on overflow, so an
+ * unbounded fan of twelve basics would be clipped rather than reachable; past
+ * this the step compresses and the cards overlap more instead.
+ */
+const MAX_FAN_RATIO = 3.2;
 
 interface Props {
   group: CardStackGroup;
@@ -31,6 +45,7 @@ interface Props {
   isPlayable?: (card: CardView) => boolean;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
+  isSelected?: (card: CardView) => boolean;
   onActivate?: (card: CardView) => void;
   onDropOn?: (card: CardView, zone: string) => void;
 }
@@ -42,27 +57,33 @@ export function CardStack({
   isPlayable,
   isTargetable,
   isStaged,
+  isSelected,
   onActivate,
   onDropOn,
 }: Props) {
   const openStack = useUiStore((s) => s.openStack);
   const openStackGroup = useUiStore((s) => s.openStackGroup);
+  const hoveredOid = useUiStore((s) => s.hoveredOid);
   const open = openStack === group.key && group.count > 1;
 
-  const gap = 10;
   const closedWidth = cardWidth + Math.min(group.count - 1, MAX_PLIES) * PLY_X;
-  const openWidth = group.count * cardWidth + (group.count - 1) * gap;
+  // Spread symmetrically about the closed footprint's centre, so opening a stack
+  // pushes cards out both ways rather than always to the right.
+  const step =
+    group.count > 1
+      ? Math.min(cardWidth * FAN_STEP_RATIO, (cardWidth * MAX_FAN_RATIO) / (group.count - 1))
+      : 0;
+  const centre = closedWidth / 2 - cardWidth / 2;
 
   return (
     <motion.div
       className={open ? "cardstack cardstack--open" : "cardstack"}
-      animate={{ width: open ? openWidth : closedWidth }}
-      transition={settle}
-      style={{ height: cardWidth * 1.4 }}
+      style={{ width: closedWidth, height: cardWidth * 1.4 }}
       onMouseEnter={() => group.count > 1 && openStackGroup(group.key)}
       onMouseLeave={() => openStackGroup(null)}
       data-stack-key={group.key}
       data-stack-count={group.count}
+      data-stack-open={open || undefined}
     >
       {group.cards.map((card, index) => {
         const offset = Math.min(index, MAX_PLIES);
@@ -71,11 +92,17 @@ export function CardStack({
             className="cardstack__slot"
             key={card.oid}
             animate={{
-              x: open ? index * (cardWidth + gap) : offset * PLY_X,
+              x: open ? centre + (index - (group.count - 1) / 2) * step : offset * PLY_X,
               y: open ? 0 : offset * PLY_Y,
             }}
             transition={settle}
-            style={{ zIndex: index + 1 }}
+            // group.top is cards[0], so it has to be the one drawn on top and
+            // the one a click on a closed stack lands on. The hovered member
+            // beats all of them, so a fanned card is never half-behind the one
+            // to its right when you go to click it.
+            style={{
+              zIndex: card.oid === hoveredOid ? group.count + 1 : group.count - index,
+            }}
           >
             <Card
               card={card}
@@ -83,6 +110,7 @@ export function CardStack({
               playable={isPlayable?.(card) ?? false}
               targetable={isTargetable?.(card) ?? false}
               staged={isStaged?.(card) ?? false}
+              selected={isSelected?.(card) ?? false}
               lift={open || group.count === 1}
               onActivate={onActivate}
               onDropOn={onDropOn}

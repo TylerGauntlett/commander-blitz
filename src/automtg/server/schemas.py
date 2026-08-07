@@ -57,6 +57,14 @@ class DeclareRequest(BaseModel):
     pairs: list[list[int]] = Field(default_factory=list)
 
 
+class OptionsRequest(BaseModel):
+    """Per-seat play settings that are preferences, not rules."""
+
+    seat: int
+    #: Stop at every priority window instead of only the meaningful ones.
+    full_control: bool
+
+
 class GameCreatedResponse(BaseModel):
     game_id: str
     your_seat: int

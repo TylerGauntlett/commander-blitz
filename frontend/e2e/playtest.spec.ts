@@ -56,7 +56,8 @@ test.describe("playtest capture", () => {
       if (await isOver(page)) break;
 
       const dialog = page.getByTestId("prompt-dialog");
-      if (await dialog.isVisible().catch(() => false)) {
+      const modal = await dialog.isVisible().catch(() => false);
+      if (modal) {
         const kind = await dialog.getAttribute("data-decision-kind");
         await shoot(`prompt-${kind}`);
       }
@@ -82,9 +83,12 @@ test.describe("playtest capture", () => {
       if (permanents >= 5) await shoot("board-midgame");
       if (await page.locator(".cardstack__count").count()) await shoot("stacking");
 
-      // Hover something to capture the preview panel.
+      // Hover something to capture the preview panel. Not while a decision modal
+      // is up: its backdrop covers the hand, so the hover retries until the test
+      // times out and the capture stops at the mulligan -- which is exactly how
+      // far the committed shots got.
       const hand = page.locator(".hand .card");
-      if (await hand.count()) {
+      if (!modal && (await hand.count())) {
         await hand.first().hover();
         await shoot("hover-preview");
       }

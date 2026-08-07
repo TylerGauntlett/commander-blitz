@@ -8,7 +8,13 @@ from automtg.engine.actions import Action
 from automtg.engine.costs import land_drops_available
 from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
 from automtg.engine.errors import IllegalActionError
-from tests.conftest import action_for_card, find_action, only_oid, pass_until
+from tests.conftest import (
+    _default_answer,
+    action_for_card,
+    find_action,
+    only_oid,
+    pass_until,
+)
 
 
 class TestLandDrops:
@@ -34,6 +40,24 @@ class TestLandDrops:
         )
         game.apply(action_for_card(game, ActionKind.PLAY_LAND, "forest"))
         assert [a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND]
+
+    def test_every_copy_of_a_land_in_hand_is_playable(self, builder):
+        """One action per land *object*, not per land name.
+
+        Deduplicating by card id offered a single "Play Forest" no matter how
+        many you held, and the client keys playability by object id -- so the
+        second and third Forest rendered dimmed and undraggable.
+        """
+        game = builder().hand(0, ["forest", "forest", "forest"]).build()
+        lands = [a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND]
+        assert len(lands) == 3
+        assert sorted(a.source for a in lands) == sorted(game.state.players[0].hand)
+
+    def test_a_mixed_hand_offers_every_land(self, builder):
+        """The reported symptom: a hand of basics offered exactly two actions."""
+        game = builder().hand(0, ["forest", "island", "forest", "island", "forest"]).build()
+        lands = [a for a in game.legal_actions() if a.kind is ActionKind.PLAY_LAND]
+        assert len(lands) == 5
 
     def test_lands_do_not_use_the_stack(self, builder):
         game = builder().hand(0, ["forest"]).build()
@@ -89,6 +113,23 @@ class TestCasting:
         game.apply(action_for_card(game, ActionKind.CAST, "t_bear"))
         tapped = [o for o in game.state.battlefield_objects(0) if o.tapped]
         assert len(tapped) == 2
+
+    def test_both_copies_of_a_spell_are_castable(self, builder):
+        """Same dedupe defect as the land drop, same consequence in the UI."""
+        game = (
+            builder()
+            .hand(0, ["t_bear", "t_bear"])
+            .battlefield(0, ["forest", "forest"])
+            .build()
+        )
+        casts = [
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST
+            and game.state.objects[a.source].def_id == "t_bear"
+        ]
+        assert len(casts) == 2
+        assert len({a.source for a in casts}) == 2
 
     def test_cannot_cast_without_mana(self, builder):
         game = builder().hand(0, ["t_bear"]).battlefield(0, ["forest"]).build()
@@ -203,6 +244,87 @@ class TestStackAndPriority:
         pass_until(game, lambda g: not g.state.stack)
         events = [e.type for e in game.state.events]
         assert "spell_fizzled" in events
+
+
+class TestPriorityStops:
+    """Which priority windows a player is actually asked about.
+
+    Eleven of the thirteen steps grant priority, and instants are legal in all
+    of them, so one instant in hand used to mean eleven forced Pass clicks per
+    turn -- on every player's turn. `auto_pass` keeps the windows where passing
+    is a real choice and skips the rest.
+    """
+
+    @staticmethod
+    def _windows(builder, *, auto_pass: bool, full_control: bool = False):
+        """Every step player 0 is offered priority in, over one full turn."""
+        game = (
+            builder()
+            .hand(0, ["t_pump_spell"])
+            .battlefield(0, ["forest", "forest", "forest", "t_bear"])
+            .build(advance=False)
+        )
+        game.state.players[0].auto_pass = auto_pass
+        game.state.players[0].full_control = full_control
+        game._advance()
+
+        seen = []
+        for _ in range(800):
+            if game.over or game.state.turn >= 2:
+                break
+            decision = game.pending()
+            if decision is None:
+                break
+            if decision.kind is DecisionKind.PRIORITY and decision.player == 0:
+                seen.append(game.state.step)
+            game.apply(_default_answer(game, decision))
+        return seen
+
+    def test_without_auto_pass_every_step_asks(self, builder):
+        steps = self._windows(builder, auto_pass=False)
+        # The regression: an instant in hand defeats the "only Pass is legal"
+        # guard, so steps with nothing to respond to stop anyway. (The builder
+        # opens in turn 1's precombat main, so upkeep is already behind us.)
+        assert Step.BEGIN_COMBAT in steps
+        assert Step.END_OF_COMBAT in steps
+        assert Step.END_STEP in steps
+
+    def test_auto_pass_keeps_only_the_meaningful_windows(self, builder):
+        steps = set(self._windows(builder, auto_pass=True))
+        assert steps <= {
+            Step.PRECOMBAT_MAIN,
+            Step.POSTCOMBAT_MAIN,
+            Step.DECLARE_BLOCKERS,
+        }
+        # Your own main phase is a stop: it is the sorcery-speed window.
+        assert Step.PRECOMBAT_MAIN in steps
+
+    def test_full_control_puts_every_window_back(self, builder):
+        smart = self._windows(builder, auto_pass=True)
+        everything = self._windows(builder, auto_pass=True, full_control=True)
+        assert len(everything) > len(smart)
+        assert Step.BEGIN_COMBAT in everything
+        assert Step.END_STEP in everything
+
+    def test_a_response_on_the_stack_always_stops(self, builder):
+        """Auto-pass must never skip past something you could respond to."""
+        game = (
+            builder()
+            .hand(0, ["t_pump_spell"])
+            .battlefield(0, ["forest", "forest", "forest", "t_bear"])
+            .hand(1, ["t_bear"])
+            .battlefield(1, ["forest", "forest"])
+            .build(advance=False)
+        )
+        game.state.players[0].auto_pass = True
+        game._advance()
+        pass_until(game, lambda g: g.pending() and g.pending().player == 1)
+        game.apply(action_for_card(game, ActionKind.CAST, "t_bear"))
+        decision = game.pending()
+        assert decision is not None
+        assert decision.kind is DecisionKind.PRIORITY
+        assert decision.player == 0
+        assert game.state.stack
 
 
 class TestTurnStructure:

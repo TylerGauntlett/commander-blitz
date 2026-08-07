@@ -38,6 +38,13 @@
   font-weight: 500;
 }
 
+/* A ghost button that is a toggle, currently on. */
+.btn--on {
+  border-color: var(--gold);
+  color: var(--gold);
+  font-weight: 700;
+}
+
 .btn--big {
   padding: 14px 44px;
   border-color: var(--gold);

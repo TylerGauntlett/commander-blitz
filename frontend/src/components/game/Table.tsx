@@ -15,7 +15,12 @@
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CardView, GameView } from "../../api/types";
-import { actionsForCard, availableAttackers, canDropOnLane } from "../../logic/actionMatch";
+import {
+  actionsForCard,
+  availableAttackers,
+  canDropOnLane,
+  defendersFor,
+} from "../../logic/actionMatch";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { useUiStore } from "../../state/uiStore";
@@ -23,7 +28,7 @@ import type { GameSession, useGame } from "../../state/useGame";
 import { ActionBar } from "./ActionBar";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
-import { CombatPanel, legalBlockTargets, nextDefender } from "./CombatPanel";
+import { CombatPanel, legalBlockTargets } from "./CombatPanel";
 import { EventTicker } from "./EventTicker";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
@@ -88,14 +93,32 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const actMutate = game.act.mutate;
   const declareMutate = game.declare.mutate;
   const undoMutate = game.undo.mutate;
+  const fullControlMutate = game.setFullControl.mutate;
+
+  /**
+   * Whether this gesture should be dropped, and the side effect of not dropping it.
+   *
+   * A click while narration is playing means "get on with it", exactly as a
+   * keypress already does. Swallowing those clicks is what made the board feel
+   * like it needed spamming: the input landed on nothing and said nothing.
+   */
+  const narrationBusy = narration.busy;
+  const skipNarration = narration.skip;
+  const gateInput = useCallback(() => {
+    if (narrationBusy) {
+      skipNarration();
+      return true;
+    }
+    return busy;
+  }, [busy, narrationBusy, skipNarration]);
 
   const act = useCallback(
     (actionId: string) => {
-      if (locked) return;
+      if (gateInput()) return;
       endTargeting();
       actMutate(actionId);
     },
-    [locked, endTargeting, actMutate],
+    [gateInput, endTargeting, actMutate],
   );
 
   // ---------------------------------------------------------------- derived
@@ -174,6 +197,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     );
   }, [inCombatDecision, decisionKind, actions]);
 
+  /** Opponents' attackers that something of ours is staged to block. */
+  const blockedAttackers = useMemo(() => new Set(Object.values(stagedBlocks)), [stagedBlocks]);
+
   /** Lanes that would accept a drop of the selected hand card. */
   const activeLanes = useMemo(() => {
     const set = new Set<string>();
@@ -191,7 +217,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   /** Play a card from hand: straight through if unambiguous, else start targeting. */
   const playFromHand = useCallback(
     (card: CardView) => {
-      if (locked) return;
+      if (gateInput()) return;
       const candidates = actionsForCard(actions, card.oid);
       if (candidates.length === 0) return;
       if (candidates.length === 1 && candidates[0].targets.length === 0) {
@@ -203,24 +229,24 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         candidates.map((a) => a.id),
       );
     },
-    [locked, actions, act, beginTargeting],
+    [gateInput, actions, act, beginTargeting],
   );
 
   const onDropOnZone = useCallback(
     (card: CardView, zone: string) => {
-      if (locked) return;
+      if (gateInput()) return;
       const [kind, , lane] = zone.split(":");
       if (kind !== "lane") return;
       if (!canDropOnLane(state, actions, card.oid, lane as LaneName)) return;
       playFromHand(card);
     },
-    [locked, state, actions, playFromHand],
+    [gateInput, state, actions, playFromHand],
   );
 
   /** Clicking a permanent: resolve a target, or stage it for combat. */
   const onBoardCard = useCallback(
     (card: CardView) => {
-      if (locked) return;
+      if (gateInput()) return;
 
       // 1. Finishing a targeted spell.
       if (targeting.length > 0 && targetableOids.has(card.oid)) {
@@ -233,20 +259,26 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         }
       }
 
-      // 2. Attacking: each click sends it at the next legal defender, then home.
+      // 2. Attacking: a plain toggle. Clicking an opponent re-points a staged
+      //    attacker, so cycling defenders here would just make cancelling cost
+      //    one click per opponent in a pod.
       if (decisionKind === "declare_attackers" && combatCandidates.has(card.oid)) {
-        const next = nextDefender(actions, card.oid, stagedAttacks[card.oid]);
-        if (next === null) {
+        if (stagedAttacks[card.oid] !== undefined) {
           unstageAttack(card.oid);
           select(null);
-        } else {
-          stageAttack(card.oid, next);
+          return;
+        }
+        const [first] = defendersFor(actions, card.oid);
+        if (first !== undefined) {
+          stageAttack(card.oid, first);
           select(card.oid);
         }
         return;
       }
 
-      // 3. Blocking: pick your creature, then the attacker it stops.
+      // 3. Blocking: pick your creature, then the attacker it stops. Every step
+      //    of that is reversible -- click your blocker again to release it, or
+      //    click the attacker to clear everything aimed at it.
       if (decisionKind === "declare_blockers") {
         if (stagedBlocks[card.oid] !== undefined) {
           unstageBlock(card.oid);
@@ -262,6 +294,13 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         ) {
           stageBlock(selectedOid, card.oid);
           select(null);
+          return;
+        }
+        const aimedHere = Object.entries(stagedBlocks)
+          .filter(([, attacker]) => attacker === card.oid)
+          .map(([blocker]) => Number(blocker));
+        if (aimedHere.length > 0) {
+          for (const blocker of aimedHere) unstageBlock(blocker);
           return;
         }
       }
@@ -280,7 +319,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       }
     },
     [
-      locked,
+      gateInput,
       targeting,
       targetableOids,
       act,
@@ -301,7 +340,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   const onSelectPlayer = useCallback(
     (pid: number) => {
-      if (locked) return;
+      if (gateInput()) return;
       // Re-point a staged attacker at whoever was clicked.
       if (decisionKind === "declare_attackers" && selectedOid !== null) {
         const legal = actions.some(
@@ -321,15 +360,87 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       );
       if (match) act(match.id);
     },
-    [locked, decisionKind, selectedOid, actions, stageAttack, targeting, act],
+    [gateInput, decisionKind, selectedOid, actions, stageAttack, targeting, act],
   );
 
   const onDeclare = useCallback(
     (kind: "attackers" | "blockers", pairs: [number, number][]) => {
-      if (locked) return;
+      if (gateInput()) return;
       declareMutate({ kind, pairs });
     },
-    [locked, declareMutate],
+    [gateInput, declareMutate],
+  );
+
+  /**
+   * The action bar during a combat declaration.
+   *
+   * The bar lists every legal action, which for combat is one `add_attacker` or
+   * `add_blocker` per legal pair. Posting those straight to the server commits
+   * them one at a time and there is no inverse action -- only Undo -- and a
+   * single blocker committed onto a menace attacker can strand the declaration
+   * with no legal `finish_declaration` at all. So the buttons stage instead,
+   * exactly like clicking the card does, and the whole set goes up at once.
+   */
+  const onBarAct = useCallback(
+    (actionId: string) => {
+      if (gateInput()) return;
+      const action = actions.find((a) => a.id === actionId);
+      if (!action || !inCombatDecision) {
+        act(actionId);
+        return;
+      }
+
+      if (action.kind === "add_attacker" && action.source_oid !== null) {
+        const defender = action.targets.find((ref) => ref.kind === "player")?.id;
+        if (defender === undefined) return;
+        if (stagedAttacks[action.source_oid] === defender) {
+          unstageAttack(action.source_oid);
+        } else {
+          stageAttack(action.source_oid, defender);
+        }
+        return;
+      }
+
+      if (action.kind === "add_blocker" && action.source_oid !== null) {
+        const attacker = action.targets.find((ref) => ref.kind === "object")?.id;
+        if (attacker === undefined) return;
+        if (stagedBlocks[action.source_oid] === attacker) {
+          unstageBlock(action.source_oid);
+        } else {
+          stageBlock(action.source_oid, attacker);
+        }
+        return;
+      }
+
+      if (action.kind === "finish_declaration") {
+        const kind = decisionKind === "declare_attackers" ? "attackers" : "blockers";
+        const staged = kind === "attackers" ? stagedAttacks : stagedBlocks;
+        const pairs = Object.entries(staged).map(
+          ([source, target]) => [Number(source), target] as [number, number],
+        );
+        // Nothing staged still means what it always meant: decline entirely.
+        if (pairs.length > 0) {
+          onDeclare(kind, pairs);
+          return;
+        }
+      }
+
+      act(actionId);
+    },
+    [
+      gateInput,
+      actions,
+      inCombatDecision,
+      decisionKind,
+      stagedAttacks,
+      stagedBlocks,
+      stageAttack,
+      unstageAttack,
+      stageBlock,
+      unstageBlock,
+      onDeclare,
+      act,
+    ],
   );
 
   // ------------------------------------------------------------- keyboard
@@ -348,7 +459,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         narration.skip();
         return;
       }
-      if (locked) return;
+      if (gateInput()) return;
 
       if (event.key === " ") {
         const pass = actions.find((a) => a.kind === "pass");
@@ -379,7 +490,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   }, [
     actions,
     act,
-    locked,
+    gateInput,
     narration,
     endTargeting,
     setPeek,
@@ -414,7 +525,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 cardWidth={OPPONENT_CARD_W}
                 actionableOids={actionableOids}
                 isTargetable={(card) => targetableOids.has(card.oid)}
-                isStaged={(card) => stagedBlocks[card.oid] !== undefined}
+                // stagedBlocks is keyed by blocker; an opponent's attacker is a
+                // value in that map, never a key.
+                isStaged={(card) => blockedAttackers.has(card.oid)}
+                isSelected={(card) => card.oid === selectedOid}
                 onActivate={onBoardCard}
                 playerTargetable={targetablePids.has(pid)}
                 onSelectPlayer={onSelectPlayer}
@@ -435,6 +549,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               isStaged={(card) =>
                 stagedAttacks[card.oid] !== undefined || stagedBlocks[card.oid] !== undefined
               }
+              isSelected={(card) => card.oid === selectedOid}
               onActivate={onBoardCard}
               playerTargetable={targetablePids.has(state.seat)}
               onSelectPlayer={onSelectPlayer}
@@ -500,13 +615,14 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           <ActionBar
             state={state}
             actions={barActions}
-            onAct={act}
+            onAct={onBarAct}
             onUndo={() => undoMutate()}
             onQuit={onQuit}
             narrating={narration.busy}
             onSkip={narration.skip}
             busy={busy}
             aiThinking={aiThinking}
+            onToggleFullControl={(value) => fullControlMutate(value)}
           />
         </div>
       </div>

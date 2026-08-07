@@ -72,6 +72,110 @@ class TestTriggers:
         game.apply(action_for_card(game, ActionKind.PLAY_LAND, "forest"))
         assert len(game.state.players[0].hand) == 1
 
+    def test_the_land_drop_is_counted_before_landfall_sees_it(self, builder):
+        """Ordering, not a count: `lands_played` has to be up to date when the
+        ETB fires, or an intervening-if that counts drops this turn reads stale."""
+        game = builder().battlefield(0, ["t_landfall"]).hand(0, ["forest"]).build()
+        played_at_fire: list[int] = []
+        original = game.state.emit
+
+        def spy(event_type, **kwargs):
+            if event_type == "enters_battlefield":
+                played_at_fire.append(game.state.players[0].lands_played)
+            return original(event_type, **kwargs)
+
+        game.state.emit = spy  # type: ignore[method-assign]
+        game.apply(action_for_card(game, ActionKind.PLAY_LAND, "forest"))
+        assert played_at_fire == [1]
+
+
+class TestLandfallAcrossZones:
+    """Landfall is "a land you control enters", for any reason.
+
+    Every route to the battlefield goes through the same `move_object`, so this
+    is really a test that the ramp ops do not bypass it -- and that they leave
+    the entering land under the right controller, which the `controller: "you"`
+    clause on every landfall trigger is compared against.
+    """
+
+    @staticmethod
+    def _resolve(game, picks: int) -> None:
+        """Answer the search decisions by taking the first `picks` options."""
+        for _ in range(picks):
+            decision = game.pending()
+            assert decision is not None and decision.kind is DecisionKind.CHOOSE_OBJECTS
+            choose = next(
+                a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE
+            )
+            game.apply(choose)
+
+    def test_cultivate_gives_exactly_one_landfall_trigger(self, builder):
+        game = (
+            builder()
+            .battlefield(0, ["t_landfall", "forest", "forest", "forest"])
+            .hand(0, ["cultivate"])
+            .library(0, ["forest", "island", "island", "island"])
+            .build()
+        )
+        landfaller = only_oid(game, "t_landfall", 0)
+        game.apply(action_for_card(game, ActionKind.CAST, "cultivate"))
+        self._resolve(game, 2)  # one to the battlefield, one to hand
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[landfaller].counter(PLUS_ONE) == 1
+
+    def test_explosive_vegetation_gives_two(self, builder):
+        game = (
+            builder()
+            .battlefield(0, ["t_landfall", "forest", "forest", "forest", "forest"])
+            .hand(0, ["explosive_vegetation"])
+            .library(0, ["forest", "island", "island", "island"])
+            .build()
+        )
+        landfaller = only_oid(game, "t_landfall", 0)
+        game.apply(action_for_card(game, ActionKind.CAST, "explosive_vegetation"))
+        self._resolve(game, 2)
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[landfaller].counter(PLUS_ONE) == 2
+
+    def test_a_fetched_land_enters_under_your_control(self, builder):
+        game = (
+            builder()
+            .battlefield(0, ["t_landfall", "forest", "forest"])
+            .hand(0, ["rampant_growth"])
+            .library(0, ["forest", "island", "island"])
+            .build()
+        )
+        game.apply(action_for_card(game, ActionKind.CAST, "rampant_growth"))
+        self._resolve(game, 1)
+        pass_until(game, lambda g: not g.state.stack)
+        fetched = [
+            obj
+            for obj in game.state.battlefield_objects()
+            if obj.def_id == "forest" and obj.tapped
+        ]
+        assert fetched and all(obj.controller == 0 for obj in fetched)
+
+    def test_putting_a_land_onto_the_battlefield_is_not_playing_one(self, builder):
+        """Aesi and Horn of Greed read "whenever you *play* a land".
+
+        Cultivate puts a land onto the battlefield; it does not play one, so a
+        land-drop trigger stays silent. Landfall (above) fires either way. This
+        is the rules distinction, pinned so the two spellings stay distinct.
+        """
+        game = (
+            builder()
+            .battlefield(0, ["t_land_draw", "forest", "forest", "forest"])
+            .hand(0, ["cultivate"])
+            .library(0, ["forest", "island", "island", "island"])
+            .build()
+        )
+        game.apply(action_for_card(game, ActionKind.CAST, "cultivate"))
+        self._resolve(game, 2)
+        pass_until(game, lambda g: not g.state.stack)
+        # The only card in hand is the one Cultivate put there, not a draw.
+        drawn = [e for e in game.state.events if e.type == "draw"]
+        assert drawn == []
+
     def test_eminence_style_trigger_works_from_the_command_zone(self, builder):
         game = (
             builder()

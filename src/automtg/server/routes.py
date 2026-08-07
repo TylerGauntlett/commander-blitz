@@ -20,6 +20,7 @@ from .schemas import (
     DeclareRequest,
     GameCreatedResponse,
     NewGameRequest,
+    OptionsRequest,
     StateResponse,
 )
 from .sessions import GameSession, SessionRegistry
@@ -194,6 +195,25 @@ def advance(
     since = len(session.game.state.events)
     session.drive_ai(ai_steps)
     return _state_response(session, seat, since)
+
+
+@router.post("/games/{game_id}/options", response_model=StateResponse)
+def set_options(request: Request, game_id: str, body: OptionsRequest) -> StateResponse:
+    """Change this seat's play settings.
+
+    Turning full control on can open a priority window the engine was about to
+    auto-pass, so the response carries the fresh state and action list rather
+    than expecting the client to guess.
+    """
+    session = _session(request, game_id)
+    _check_seat(session, body.seat)
+    if body.seat not in session.human_seats:
+        # An AI seat has no stops to configure -- it is offered every window
+        # already, and pretending otherwise would silently do nothing.
+        raise HTTPException(status_code=400, detail=f"seat {body.seat} is not human")
+    since = len(session.game.state.events)
+    session.set_full_control(body.seat, body.full_control)
+    return _state_response(session, body.seat, since)
 
 
 @router.post("/games/{game_id}/undo", response_model=StateResponse)
