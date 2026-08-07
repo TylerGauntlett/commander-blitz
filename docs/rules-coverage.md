@@ -1,0 +1,90 @@
+# Rules coverage
+
+This is the honest artifact. It says what the engine does, where it takes a shortcut,
+and what it refuses to model at all. If you want to know whether this engine can
+handle your card, read this page.
+
+The short version: **everything the two shipped decks need is implemented and tested.**
+The simplifications below were chosen so that removing them later is additive work,
+not a rewrite.
+
+## Implemented
+
+| Area | Detail |
+|---|---|
+| **Turn structure** | All 13 steps, turn-based actions, correct priority windows, cleanup repeating per rule 514.3a |
+| **Priority** | APNAP order, retaining priority after acting, auto-pass when passing is the only option |
+| **The stack** | LIFO resolution, responses, countering, fizzling when every target became illegal |
+| **Casting** | Timing restrictions (sorcery speed vs instant vs flash), targets chosen at cast time and re-checked on resolution |
+| **Mana** | Cost parsing, mana pools emptying per step, automatic payment with a backtracking solver, `X` costs |
+| **Combat** | Attacker/blocker declaration, evasion, damage assignment order, simultaneous damage, first and double strike as separate sub-steps |
+| **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, indestructible, flash |
+| **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution |
+| **Command zone** | Abilities that work from the command zone (Edgar Markov's eminence), commander tax, commander damage, the zone-change replacement |
+| **Static abilities** | Anthems, keyword grants, P/T setting, subtype grants, extra land drops |
+| **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
+| **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
+| **Mulligans** | London mulligan with the bottoming step |
+| **Costs** | Mana, tap, untap, sacrifice, discard, pay life, remove counters, exile from graveyard |
+
+## Simplified
+
+Each of these is a deliberate trade. The rationale matters more than the rule.
+
+| Simplification | What it means | Why |
+|---|---|---|
+| **No layers system** | Continuous effects apply in a fixed order; static filters read printed characteristics only, enforced at load time | The full layer system with timestamps and dependency analysis is a large subsystem that would change no outcome for any card in these decks |
+| **Automatic mana payment** | You cannot choose which land to tap. The solver picks, preferring to spend abundant colours so scarce ones stay open | Removes an enormous branching factor for the RL agent and the worst tedium from the UI. `Action` reserves a `payment` field for a manual mode later |
+| **Automatic damage assignment order** | Blockers are ordered by effective toughness ascending; the attacker is never asked | One more decision point per combat for a choice that is nearly always forced |
+| **Automatic trigger ordering** | Simultaneous triggers you control resolve in a fixed order rather than one you choose | Matters only for a handful of interactions, none of them in these decks |
+| **Modes chosen on resolution** | A modal spell picks its mode as it resolves, not as it is cast | Keeps the action space flat. Only observable when an opponent would respond differently per mode |
+| **Object identity survives zone changes** | The `oid` is preserved where the rules would create a new object; permanent state is reset instead | Simpler and equivalent for everything except effects that track "the new object" |
+| **Last-known information is explicit** | A card that needs a value after its target has left declares a `snapshot` op (see Swords to Plowshares) | A global LKI system for two cards is not worth it; the explicit form is also easier to read |
+| **Commander replacement is automatic** | A commander always returns to the command zone rather than being asked | It is what players choose in practice, and it keeps zone changes out of the decision system |
+| **Legend rule keeps the newest** | Duplicated legends are resolved without asking the controller | The choice is nearly always irrelevant |
+| **Target options capped at 12** | A spell offers at most 12 target combinations | Only bites on very wide boards; without it a single "target creature" can flood the action space |
+| **Turn cap** | 30 turns per player (60 in a duel, 120 in a pod), then a draw | Self-play must terminate. Draws are counted and reported |
+| **Trigger loop guard** | More than 200 triggers in one step raises `RulesLoopError`, scored as a draw | One pathological board must not abort a 10,000-game run |
+
+## Not implemented
+
+These are absent, and the curated decks avoid them. Adding any one is additive.
+
+**Card types and mechanics**
+Planeswalkers · battles · sagas · modal double-faced cards · split and adventure cards ·
+transforming cards · companions · partners · vehicles
+
+**Costs and casting**
+Alternative costs · cost reduction · hybrid, phyrexian and snow mana · convoke and
+similar · flashback and other graveyard casting · suspend · overload · kicker
+
+**Effects**
+Copy effects (including token copies) · gaining control of a permanent · protection ·
+damage prevention or redirection · regeneration · shroud and ward · "unless that player
+pays" · reading or playing from the top of the library · general replacement effects
+(only four are whitelisted: enters tapped, enters with counters, the commander zone
+change, and tokens ceasing to exist)
+
+**Combat**
+Attacking planeswalkers or battles · banding · "must be blocked" · manual damage
+division · attacking with creatures you do not control
+
+**Structural**
+Multiplayer politics (voting, goad) · sideboards and companions · the monarch,
+initiative, day/night, and other designated-player mechanics
+
+## How this is enforced
+
+None of the above is a promise in prose — it is checked:
+
+- The card loader validates every op name, selector key, value form, keyword, type and
+  trigger event against the registries. An unknown one raises `DslError` at load time,
+  which fails `pytest`, not a game.
+- The "statics may not read statics" constraint is a load-time check on every static
+  ability's filter.
+- `tests/cards/test_every_card_works.py` plays every one of the 128 shipped cards in a
+  rigged sandbox and asserts it resolves into the right zone, with per-card outcome
+  expectations for the interesting ones.
+- Deck legality, colour identity and singleton rules are tested per deck.
+
+If a card in this repo does not work, one of those tests fails.

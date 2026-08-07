@@ -1,0 +1,175 @@
+{
+  "_comment": "Colourless staples and utility cards shared by both decks.",
+  "cards": [
+    {
+      "id": "sol_ring",
+      "name": "Sol Ring",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            { "op": "add_mana", "mana": "{C}" },
+            { "op": "add_mana", "mana": "{C}" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arcane_signet",
+      "name": "Arcane Signet",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command_tower",
+      "name": "Command Tower",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "types": ["Land"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wayfarers_bauble",
+      "name": "Wayfarer's Bauble",
+      "oracle_text": "{2}, {T}, Sacrifice Wayfarer's Bauble: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice: Search for a basic land tapped.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
+          },
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 1,
+              "destination": "battlefield",
+              "tapped": true,
+              "selector": { "types": ["Land"], "supertypes": ["Basic"] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mind_stone",
+      "name": "Mind Stone",
+      "oracle_text": "{T}: Add {C}. {1}, {T}, Sacrifice Mind Stone: Draw a card.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{C}" }]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice: Draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
+          },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "commanders_sphere",
+      "name": "Commander's Sphere",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity. Sacrifice Commander's Sphere: Draw a card.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Sacrifice: Draw a card.",
+          "cost": {
+            "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
+          },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    }
+  ]
+}

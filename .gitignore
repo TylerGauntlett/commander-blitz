@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Training artifacts
+runs/
+*.pt
+*.ckpt
+
+# Node / bun
+node_modules/
+frontend/dist/
+bun.lockb
+.vite/
+
+# Playwright artifacts
+frontend/e2e-report/
+frontend/e2e-shots/
+frontend/playwright-report/
+frontend/test-results/
+.playwright/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,712 @@
+/* The table: layout, mats, lanes, hand, arrows, effects. */
+
+.screen {
+  height: 100%;
+}
+
+.screen--center {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.table {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  background: radial-gradient(120% 80% at 50% 0%, var(--felt-1) 0%, var(--felt-0) 70%),
+    var(--felt-0);
+}
+
+.table__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr) 268px;
+  gap: 10px;
+  min-height: 0;
+  padding: 10px;
+}
+
+.play {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.play__opponents {
+  display: flex;
+  gap: 10px;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+}
+
+.play__mine {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Mats ----------------------------------------------------------------- */
+
+.mat {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--rail-line);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgb(22 48 37 / 0.35), rgb(10 20 16 / 0.35));
+}
+
+.mat--compact {
+  flex: 1 0 auto;
+  min-width: 420px;
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.mat__lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mat__empty {
+  align-self: center;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* Orb ------------------------------------------------------------------ */
+
+.orb {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--rail-line);
+  border-radius: 10px;
+  background: rgb(6 16 12 / 0.7);
+}
+
+.orb--active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgb(255 212 121 / 0.35), 0 0 22px rgb(255 212 121 / 0.14);
+}
+
+.orb--targetable {
+  cursor: pointer;
+  border-color: var(--targetable);
+  box-shadow: 0 0 0 2px var(--targetable), 0 0 22px rgb(88 182 255 / 0.35);
+}
+
+.orb--out {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+
+.orb__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.orb__name {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.orb__priority {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.orb__life-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.orb__life {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.orb--compact .orb__life {
+  font-size: 26px;
+}
+
+.orb__loss {
+  color: var(--danger);
+  font-size: 11px;
+}
+
+.orb__cmd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.cmd-pip {
+  padding: 0 5px;
+  border: 1px solid var(--rail-line);
+  border-radius: 4px;
+  background: #12241c;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cmd-pip--warn {
+  border-color: var(--danger);
+  background: #331616;
+  color: #ffb3b3;
+}
+
+.orb__zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.zone-chip {
+  padding: 2px 6px;
+  border: 1px solid var(--rail-line);
+  border-radius: 5px;
+  background: #0e1c16;
+  color: var(--text-dim);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.zone-chip:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+
+.zone-chip--static {
+  cursor: default;
+}
+
+.zone-chip--cmd {
+  border-color: rgb(216 166 60 / 0.5);
+  color: var(--gold);
+}
+
+/* Lanes ---------------------------------------------------------------- */
+
+.lane {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: calc(var(--card-w) * 1.4 + 12px);
+  padding: 4px 6px;
+  border: 1px dashed transparent;
+  border-radius: 8px;
+  transition: background var(--t-base) ease, border-color var(--t-base) ease;
+}
+
+.lane--active {
+  border-color: var(--playable);
+  background: rgb(92 224 138 / 0.09);
+}
+
+.lane__label {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lane__count {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lane__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: flex-start;
+  min-height: calc(var(--card-w) * 1.4);
+}
+
+.lane__empty {
+  align-self: center;
+  color: var(--text-faint);
+}
+
+.mat--compact .lane__label {
+  display: none;
+}
+
+.mat--compact .lane {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Rails ---------------------------------------------------------------- */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.rail__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rail__title--button {
+  cursor: pointer;
+  width: 100%;
+}
+
+.rail__chevron {
+  margin-left: auto;
+}
+
+.rail__badge {
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #2a1e05;
+  font-size: 10px;
+}
+
+.rail__empty {
+  color: var(--text-faint);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.stackpanel,
+.ticker,
+.preview {
+  padding: 8px;
+  border: 1px solid var(--rail-line);
+  border-radius: 10px;
+  background: rgb(13 26 21 / 0.6);
+}
+
+.stackpanel__items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.sitem {
+  padding: 5px 7px;
+  border-left: 3px solid var(--rail-line);
+  border-radius: 4px;
+  background: #0b1712;
+  font-size: 12px;
+}
+
+.sitem--next {
+  border-left-color: var(--gold);
+  background: #13221a;
+}
+
+.sitem__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sitem__name {
+  font-weight: 700;
+}
+
+.sitem__next {
+  margin-left: auto;
+  color: var(--gold);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.sitem__meta,
+.sitem__targets {
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.ticker__lines {
+  overflow-y: auto;
+  max-height: 34vh;
+  margin-top: 6px;
+}
+
+.ticker__line {
+  margin: 0 0 2px;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.preview {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.preview__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.preview__idle {
+  color: var(--text-faint);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+}
+
+.preview__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  width: 100%;
+  margin: 0;
+  font-size: 11.5px;
+}
+
+.preview__facts dt {
+  color: var(--text-faint);
+}
+
+.preview__facts dd {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.preview__hurt {
+  color: var(--danger);
+}
+
+/* Phase track ---------------------------------------------------------- */
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--rail-line);
+  background: rgb(8 18 14 / 0.85);
+}
+
+.track__turn {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.track__turn-n {
+  color: var(--gold);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.track__who {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.track__who--you {
+  color: var(--playable);
+  font-weight: 700;
+}
+
+.track__steps {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.track__step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 4px 2px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+/* The track is the only thing telling you where you are in a 13-step turn, so
+   even the steps you are not on have to be legible against the felt. */
+.track__step--past {
+  color: var(--text-dim);
+}
+
+.track__step--future {
+  color: var(--text-faint);
+}
+
+.track__step--now {
+  color: #04120b;
+  font-weight: 800;
+}
+
+.track__marker {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 5px;
+  background: var(--gold);
+}
+
+.track__step-label {
+  position: relative;
+}
+
+/* Hand ----------------------------------------------------------------- */
+
+.table__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 10px 10px;
+  border-top: 1px solid var(--rail-line);
+  background: rgb(6 14 11 / 0.9);
+}
+
+.table__hand-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+/*
+ * The hand scales with the window height.
+ *
+ * At a laptop's 720px the fixed 146px card ran off the bottom edge and the
+ * rules text went with it. `--hand-scale` shrinks the whole fan instead of
+ * clipping it.
+ */
+.hand {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: calc(var(--card-w) * 1.4 + 24px);
+  padding-top: 16px;
+  transform: scale(var(--hand-scale, 1));
+  transform-origin: 50% 100%;
+}
+
+@media (max-height: 900px) {
+  .hand {
+    --hand-scale: 0.86;
+  }
+}
+
+@media (max-height: 780px) {
+  .hand {
+    --hand-scale: 0.72;
+  }
+}
+
+.hand__rail {
+  position: relative;
+  height: calc(var(--card-w) * 1.4);
+}
+
+.hand__slot {
+  position: absolute;
+  top: 0;
+  transform-origin: 50% 120%;
+}
+
+.hand__empty {
+  align-self: center;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* Arrows and effects --------------------------------------------------- */
+
+.arrows {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-arrows);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.arrow {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.arrow--attack {
+  color: var(--attacking);
+  stroke: var(--attacking);
+  filter: drop-shadow(0 0 4px rgb(255 107 94 / 0.6));
+}
+
+.arrow--block {
+  color: var(--blocking);
+  stroke: var(--blocking);
+  filter: drop-shadow(0 0 4px rgb(107 168 255 / 0.6));
+}
+
+.arrow--staged {
+  color: var(--staged);
+  stroke: var(--staged);
+  stroke-dasharray: 6 5;
+}
+
+.fx {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-fx);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fx-float {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  font-weight: 900;
+  text-shadow: 0 2px 6px rgb(0 0 0 / 0.85);
+  font-variant-numeric: tabular-nums;
+}
+
+.fx-float--damage,
+.fx-float--loss {
+  color: var(--danger);
+}
+
+.fx-float--gain,
+.fx-float--good {
+  color: var(--gain);
+}
+
+.fx-float--neutral {
+  color: var(--text);
+}
+
+.fx-flash {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  margin: -45px 0 0 -45px;
+  border-radius: 50%;
+}
+
+.fx-flash--good {
+  background: radial-gradient(circle, rgb(110 231 160 / 0.55), transparent 65%);
+}
+.fx-flash--danger {
+  background: radial-gradient(circle, rgb(255 92 92 / 0.55), transparent 65%);
+}
+.fx-flash--neutral {
+  background: radial-gradient(circle, rgb(255 255 255 / 0.35), transparent 65%);
+}
+.fx-flash--damage {
+  background: radial-gradient(circle, rgb(255 107 94 / 0.5), transparent 65%);
+}
+.fx-flash--gain {
+  background: radial-gradient(circle, rgb(110 231 160 / 0.5), transparent 65%);
+}
+.fx-flash--loss {
+  background: radial-gradient(circle, rgb(255 92 92 / 0.45), transparent 65%);
+}
+
+.fx-spotlight {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 28px;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  background: rgb(8 18 14 / 0.94);
+  color: var(--gold);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.7);
+}
+
+.fx-banner {
+  position: absolute;
+  top: 22%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(8 18 14 / 0.92) 18%,
+    rgb(8 18 14 / 0.92) 82%,
+    transparent
+  );
+}
+
+.fx-banner__text {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow: 0 4px 18px rgb(0 0 0 / 0.9);
+}
+
+.fx-banner--damage .fx-banner__text {
+  color: var(--attacking);
+}
+.fx-banner--danger .fx-banner__text {
+  color: var(--danger);
+}
+.fx-banner--neutral .fx-banner__text {
+  color: var(--text);
+}
+.fx-banner--good .fx-banner__text {
+  color: var(--gain);
+}
+.fx-banner--gain .fx-banner__text {
+  color: var(--gain);
+}
+.fx-banner--loss .fx-banner__text {
+  color: var(--danger);
+}

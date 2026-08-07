@@ -1,0 +1,329 @@
+/*
+ * The card.
+ *
+ * Every dimension is a ratio of --card-w, so one component renders at 82px on
+ * an opponent's board and 236px in the preview panel with no separate styles.
+ */
+
+.card {
+  position: relative;
+  width: var(--card-w);
+  height: calc(var(--card-w) * 1.4);
+  flex: 0 0 auto;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+.card--static {
+  cursor: default;
+}
+
+/* The rotation layer. Only this node ever writes `rotate`. */
+.card__pivot {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.face {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: calc(var(--card-w) * 0.045);
+  gap: calc(var(--card-w) * 0.028);
+  overflow: hidden;
+  border: 2px solid var(--frame-default);
+  border-radius: var(--card-r);
+  background: linear-gradient(160deg, var(--stock) 0%, var(--stock-shade) 100%);
+  color: var(--stock-ink);
+  font-size: calc(var(--card-w) * 0.082);
+  line-height: 1.25;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.35);
+}
+
+/* Frame tints ---------------------------------------------------------- */
+
+.face--W {
+  border-color: #d8cfa8;
+}
+.face--U {
+  border-color: #4a86b8;
+}
+.face--B {
+  border-color: #4c4550;
+}
+.face--R {
+  border-color: #b8624a;
+}
+.face--G {
+  border-color: #4e8a5c;
+}
+.face--C {
+  border-color: #8a8f96;
+}
+.face--gold {
+  border-color: #b99a45;
+}
+.face--land {
+  border-color: var(--frame-land);
+}
+
+.face--commander {
+  border-color: var(--frame-commander);
+  box-shadow: 0 0 0 1px rgb(216 166 60 / 0.55), 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 18px
+    rgb(0 0 0 / 0.4);
+}
+
+.face--token {
+  border-style: dashed;
+  border-color: var(--frame-token);
+}
+
+/* Rows ----------------------------------------------------------------- */
+
+.face__title {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--card-w) * 0.03);
+  font-weight: 700;
+}
+
+.face__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: calc(var(--card-w) * 0.088);
+}
+
+.face__cost {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1px;
+}
+
+.face__type {
+  padding-bottom: calc(var(--card-w) * 0.02);
+  border-bottom: 1px solid var(--stock-rule);
+  color: var(--stock-ink-dim);
+  font-size: calc(var(--card-w) * 0.068);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.face__rules {
+  flex: 1;
+  overflow: hidden;
+  font-size: calc(var(--card-w) * 0.066);
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+.face__keywords {
+  flex: 1;
+  overflow: hidden;
+  color: #4a6b52;
+  font-size: calc(var(--card-w) * 0.068);
+  font-weight: 600;
+}
+
+.face__footer {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.face__stats {
+  padding: 0 calc(var(--card-w) * 0.04);
+  border: 1px solid var(--stock-rule);
+  border-radius: calc(var(--card-w) * 0.03);
+  background: rgb(255 255 255 / 0.55);
+  font-size: calc(var(--card-w) * 0.095);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.face__stats--hurt {
+  border-color: #b34b3f;
+  background: #ffe3df;
+  color: #8f2f24;
+}
+
+.face__counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.counter-badge {
+  padding: 0 3px;
+  border-radius: 3px;
+  background: #2f6d43;
+  color: #eafff0;
+  font-size: calc(var(--card-w) * 0.058);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.face__tag {
+  position: absolute;
+  top: calc(var(--card-w) * 0.03);
+  right: calc(var(--card-w) * 0.03);
+  padding: 0 3px;
+  border-radius: 3px;
+  font-size: calc(var(--card-w) * 0.055);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.face__tag--cmd {
+  top: auto;
+  bottom: calc(var(--card-w) * 0.03);
+  right: calc(var(--card-w) * 0.03);
+  background: var(--frame-commander);
+  color: #2a1e05;
+}
+
+.face__tag--sick {
+  background: rgb(0 0 0 / 0.35);
+  color: #fff;
+}
+
+/* Mana pips ------------------------------------------------------------ */
+
+.pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(var(--card-w, 104px) * 0.115);
+  height: calc(var(--card-w, 104px) * 0.115);
+  padding: 0 2px;
+  border-radius: 999px;
+  background: var(--mana-generic);
+  color: var(--mana-ink);
+  font-size: calc(var(--card-w, 104px) * 0.072);
+  font-weight: 800;
+  box-shadow: inset 0 -1px 1px rgb(0 0 0 / 0.25);
+}
+
+.pip--W {
+  background: var(--mana-W);
+}
+.pip--U {
+  background: var(--mana-U);
+}
+.pip--B {
+  background: var(--mana-B);
+}
+.pip--R {
+  background: var(--mana-R);
+}
+.pip--G {
+  background: var(--mana-G);
+}
+.pip--C {
+  background: var(--mana-C);
+}
+
+/* Interaction rims ----------------------------------------------------- */
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: calc(var(--card-r) + 3px);
+  pointer-events: none;
+  transition: box-shadow var(--t-fast) ease, opacity var(--t-fast) ease;
+  opacity: 0;
+}
+
+.card--playable::after {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--playable), 0 0 16px rgb(92 224 138 / 0.45);
+}
+
+.card--targetable::after {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--targetable), 0 0 18px rgb(88 182 255 / 0.5);
+}
+
+.card--staged::after {
+  opacity: 1;
+  box-shadow: 0 0 0 3px var(--staged), 0 0 20px rgb(255 193 77 / 0.5);
+}
+
+.card--selected::after {
+  opacity: 1;
+  box-shadow: 0 0 0 3px #fff, 0 0 22px rgb(255 255 255 / 0.4);
+}
+
+.card--attacking::after {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--attacking), 0 0 18px rgb(255 107 94 / 0.5);
+}
+
+.card--blocking::after {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--blocking), 0 0 18px rgb(107 168 255 / 0.5);
+}
+
+.card--dimmed .face {
+  filter: saturate(0.55) brightness(0.82);
+}
+
+.card__pin {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: var(--staged);
+  box-shadow: 0 0 8px var(--staged);
+}
+
+/* Stacks --------------------------------------------------------------- */
+
+.cardstack {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.cardstack__slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cardstack__count {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  z-index: 40;
+  min-width: 22px;
+  padding: 1px 5px;
+  border: 1px solid var(--rail-line);
+  border-radius: 999px;
+  background: #0f1b16;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.cardstack--open {
+  z-index: 25;
+}

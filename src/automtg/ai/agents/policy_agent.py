@@ -1,0 +1,68 @@
+"""An agent driven by a trained policy.
+
+Falls back to the heuristic agent when no checkpoint is supplied, so
+``agent_by_name("policy")`` always produces something that can hold a seat --
+useful before the first training run has finished.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+import numpy as np
+
+from automtg.engine.actions import Action
+
+from .. import action_space, encoding
+from .heuristic_agent import HeuristicAgent
+
+if TYPE_CHECKING:  # pragma: no cover
+    from automtg.engine.game import Game
+
+
+class PolicyAgent:
+    name = "policy"
+
+    def __init__(
+        self,
+        checkpoint: str | None = None,
+        *,
+        seed: int = 0,
+        greedy: bool = True,
+        vocab: encoding.CardVocabulary | None = None,
+    ) -> None:
+        self.greedy = greedy
+        self.fallback = HeuristicAgent(seed)
+        self.model = None
+        self.vocab = vocab
+        if checkpoint:
+            from ..model import load
+
+            self.model, _ = load(checkpoint)
+            if self.vocab is None:
+                from automtg.cards.registry import default_registry
+
+                self.vocab = encoding.CardVocabulary(default_registry().registry)
+
+    def act(self, game: Game, seat: int, actions: Sequence[Action]) -> Action:
+        if self.model is None or self.vocab is None:
+            return self.fallback.act(game, seat, actions)
+
+        import torch
+
+        table = action_space.build(game.state)
+        if not table.by_index:
+            return actions[0]
+
+        observation = encoding.encode(game.state, seat, self.vocab)
+        mask = table.mask.astype(np.float32)
+        scalar = torch.as_tensor(observation["scalar"]).unsqueeze(0)
+        card_ids = torch.as_tensor(observation["card_ids"]).long().unsqueeze(0)
+        mask_tensor = torch.as_tensor(mask).unsqueeze(0)
+
+        index, _, _ = self.model.act(scalar, card_ids, mask_tensor, greedy=self.greedy)
+        try:
+            return table.decode(int(index.item()))
+        except KeyError:  # pragma: no cover - the mask should prevent this
+            return actions[0]
