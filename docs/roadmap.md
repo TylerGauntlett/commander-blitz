@@ -1,5 +1,5 @@
 ## Feature Enhancements
-- Add support for card art uses responses from a MTG API (likely installed via SDK)
+- Add support for card art (see card-hydration.md)
 - Improve the abilities of the CPUs and offer difficulty levels (easy, medium, hard)
 - Controller support for Windows with XBox controller
 - Make command more visible by being on screen in the commander zone at all times (simlar to the actual game)
