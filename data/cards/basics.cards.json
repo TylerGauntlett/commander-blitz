@@ -1,0 +1,90 @@
+{
+  "_comment": "Basic lands. The only cards allowed in a Commander deck more than once.",
+  "cards": [
+    {
+      "id": "plains",
+      "name": "Plains",
+      "oracle_text": "({T}: Add {W}.)",
+      "supertypes": ["Basic"],
+      "types": ["Land"],
+      "subtypes": ["Plains"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{W}" }]
+        }
+      ]
+    },
+    {
+      "id": "island",
+      "name": "Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "supertypes": ["Basic"],
+      "types": ["Land"],
+      "subtypes": ["Island"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{U}" }]
+        }
+      ]
+    },
+    {
+      "id": "swamp",
+      "name": "Swamp",
+      "oracle_text": "({T}: Add {B}.)",
+      "supertypes": ["Basic"],
+      "types": ["Land"],
+      "subtypes": ["Swamp"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {B}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{B}" }]
+        }
+      ]
+    },
+    {
+      "id": "mountain",
+      "name": "Mountain",
+      "oracle_text": "({T}: Add {R}.)",
+      "supertypes": ["Basic"],
+      "types": ["Land"],
+      "subtypes": ["Mountain"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{R}" }]
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "name": "Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "supertypes": ["Basic"],
+      "types": ["Land"],
+      "subtypes": ["Forest"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{G}" }]
+        }
+      ]
+    }
+  ]
+}

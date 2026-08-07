@@ -1,0 +1,144 @@
+/*
+ * Design tokens.
+ *
+ * Everything visual reads from here. Card geometry is driven by a single
+ * `--card-w`, which each zone overrides -- that is why one Card component can
+ * serve the hand, the battlefield and a graveyard row without three sizes
+ * hard-coded in three places.
+ */
+
+:root {
+  /* Table */
+  --felt-0: #0a1410;
+  --felt-1: #10201a;
+  --felt-2: #16302505;
+  --felt-edge: #06100c;
+  --rail: #0d1a15;
+  --rail-line: #1d3a2e;
+
+  /* Card stock */
+  --stock: #f3ece0;
+  --stock-shade: #ddd2be;
+  --stock-ink: #17130d;
+  --stock-ink-dim: #5d5346;
+  --stock-rule: #b9ad96;
+  --stock-back: #2a1f38;
+
+  /* Frames */
+  --frame-default: #2b2f36;
+  --frame-commander: #d8a63c;
+  --frame-token: #7a8b99;
+  --frame-land: #6f5a3e;
+
+  /* Mana */
+  --mana-W: #fffbd5;
+  --mana-U: #aae0fa;
+  --mana-B: #cbc2bf;
+  --mana-R: #f9aa8f;
+  --mana-G: #9bd3ab;
+  --mana-C: #d5d5d5;
+  --mana-generic: #cfc9bd;
+  --mana-ink: #1a1a1a;
+
+  /* Signals */
+  --playable: #5ce08a;
+  --targetable: #58b6ff;
+  --staged: #ffc14d;
+  --attacking: #ff6b5e;
+  --blocking: #6ba8ff;
+  --danger: #ff5c5c;
+  --gain: #6ee7a0;
+  --gold: #ffd479;
+
+  /* Text */
+  --text: #e8f0ea;
+  --text-dim: #93a89c;
+  --text-faint: #5f7268;
+
+  /* Geometry */
+  --card-w: 104px;
+  --card-r: calc(var(--card-w) * 0.055);
+  --card-h: calc(var(--card-w) * 1.4);
+
+  /* Motion */
+  --t-fast: 120ms;
+  --t-base: 220ms;
+
+  /* Layering */
+  --z-board: 1;
+  --z-arrows: 40;
+  --z-hand: 60;
+  --z-drag: 200;
+  --z-preview: 300;
+  --z-fx: 400;
+  --z-modal: 500;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--felt-0);
+  color: var(--text);
+  font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Utility ------------------------------------------------------------- */
+
+.stack-v {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rail-line);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}

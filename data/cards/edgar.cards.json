@@ -1,0 +1,1417 @@
+{
+  "_comment": "Cards for the Edgar Markov deck (Mardu vampire aggro). Every card here is expressible in the effect DSL - see docs/decks.md for the substitutions this required.",
+  "cards": [
+    {
+      "id": "edgar_markov",
+      "name": "Edgar Markov",
+      "oracle_text": "First strike. Eminence - Whenever you cast another Vampire spell, if Edgar Markov is in the command zone or on the battlefield, create a 1/1 black Vampire creature token. Whenever Edgar Markov attacks, put a +1/+1 counter on each Vampire you control.",
+      "mana_cost": "{3}{R}{W}{B}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Knight"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["first_strike"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Eminence - whenever you cast another Vampire spell, create a 1/1 Vampire.",
+          "active_zones": ["battlefield", "command"],
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": { "subtypes": ["Vampire"], "exclude_self": true }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "vampire_1_1_b",
+              "amount": { "const": 1 },
+              "controller": "you"
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever Edgar Markov attacks, put a +1/+1 counter on each Vampire you control.",
+          "trigger": { "event": "attacks", "source": "self" },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": ["Vampire"],
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "nomad_outpost",
+      "name": "Nomad Outpost",
+      "oracle_text": "Nomad Outpost enters tapped. {T}: Add {R}, {W}, or {B}.",
+      "types": ["Land"],
+      "color_identity": ["W", "B", "R"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}, {W}, or {B}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "savai_triome",
+      "name": "Savai Triome",
+      "oracle_text": "Savai Triome enters tapped. {T}: Add {R}, {W}, or {B}.",
+      "types": ["Land"],
+      "subtypes": ["Plains", "Swamp", "Mountain"],
+      "color_identity": ["W", "B", "R"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}, {W}, or {B}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scoured_barrens",
+      "name": "Scoured Barrens",
+      "oracle_text": "Scoured Barrens enters tapped. When it enters, you gain 1 life. {T}: Add {W} or {B}.",
+      "types": ["Land"],
+      "color_identity": ["W", "B"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, you gain 1 life.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bloodfell_caves",
+      "name": "Bloodfell Caves",
+      "oracle_text": "Bloodfell Caves enters tapped. When it enters, you gain 1 life. {T}: Add {B} or {R}.",
+      "types": ["Land"],
+      "color_identity": ["B", "R"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, you gain 1 life.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wind_scarred_crag",
+      "name": "Wind-Scarred Crag",
+      "oracle_text": "Wind-Scarred Crag enters tapped. When it enters, you gain 1 life. {T}: Add {R} or {W}.",
+      "types": ["Land"],
+      "color_identity": ["W", "R"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, you gain 1 life.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "vampire_of_the_dire_moon",
+      "name": "Vampire of the Dire Moon",
+      "oracle_text": "Deathtouch, lifelink",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["deathtouch", "lifelink"]
+    },
+    {
+      "id": "vampire_cutthroat",
+      "name": "Vampire Cutthroat",
+      "oracle_text": "Deathtouch, lifelink",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Rogue"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["deathtouch", "lifelink"]
+    },
+    {
+      "id": "vicious_conquistador",
+      "name": "Vicious Conquistador",
+      "oracle_text": "A stubborn scout.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 2
+    },
+    {
+      "id": "guul_draz_vampire",
+      "name": "Guul Draz Vampire",
+      "oracle_text": "A hungry young vampire.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Rogue"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "vampire_lacerator",
+      "name": "Vampire Lacerator",
+      "oracle_text": "A reckless attacker.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "duskborne_skymarcher",
+      "name": "Duskborne Skymarcher",
+      "oracle_text": "Flying",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "skymarcher_aspirant",
+      "name": "Skymarcher Aspirant",
+      "oracle_text": "An eager recruit.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 2,
+      "toughness": 1
+    },
+    {
+      "id": "pulse_tracker",
+      "name": "Pulse Tracker",
+      "oracle_text": "Whenever Pulse Tracker attacks, each opponent loses 1 life.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Rogue"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this attacks, each opponent loses 1 life.",
+          "trigger": { "event": "attacks", "source": "self" },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stromkirk_noble",
+      "name": "Stromkirk Noble",
+      "oracle_text": "Whenever Stromkirk Noble deals combat damage to a player, put a +1/+1 counter on it.",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this deals combat damage to a player, put a +1/+1 counter on it.",
+          "trigger": { "event": "deals_combat_damage_to_player", "source": "self" },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": { "zone": "battlefield", "self_only": true }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "martyr_of_dusk",
+      "name": "Martyr of Dusk",
+      "oracle_text": "When Martyr of Dusk dies, create a 1/1 white Vampire creature token with lifelink.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this dies, create a 1/1 Vampire with lifelink.",
+          "trigger": { "event": "dies", "source": "self" },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "vampire_1_1_b_lifelink",
+              "amount": { "const": 1 },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "child_of_night",
+      "name": "Child of Night",
+      "oracle_text": "Lifelink",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 1,
+      "keywords": ["lifelink"]
+    },
+    {
+      "id": "gifted_aetherborn",
+      "name": "Gifted Aetherborn",
+      "oracle_text": "Deathtouch, lifelink",
+      "mana_cost": "{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Cleric"],
+      "power": 2,
+      "toughness": 1,
+      "keywords": ["deathtouch", "lifelink"]
+    },
+    {
+      "id": "legion_lieutenant",
+      "name": "Legion Lieutenant",
+      "oracle_text": "Other Vampires you control get +1/+1.",
+      "mana_cost": "{W}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Knight"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Vampires you control get +1/+1.",
+          "effect": "buff",
+          "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        }
+      ]
+    },
+    {
+      "id": "stromkirk_captain",
+      "name": "Stromkirk Captain",
+      "oracle_text": "First strike. Other Vampires you control get +1/+1 and have first strike.",
+      "mana_cost": "{R}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["first_strike"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Vampires you control get +1/+1.",
+          "effect": "buff",
+          "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        },
+        {
+          "kind": "static",
+          "text": "Other Vampires you control have first strike.",
+          "effect": "grant_keyword",
+          "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
+          "keywords": ["first_strike"]
+        }
+      ]
+    },
+    {
+      "id": "indulgent_aristocrat",
+      "name": "Indulgent Aristocrat",
+      "oracle_text": "Lifelink. {2}, Sacrifice a creature: Put a +1/+1 counter on each Vampire you control.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["lifelink"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, Sacrifice a creature: Put a +1/+1 counter on each Vampire you control.",
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": ["Vampire"],
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bloodthrone_vampire",
+      "name": "Bloodthrone Vampire",
+      "oracle_text": "Sacrifice a creature: Bloodthrone Vampire gets +2/+2 until end of turn.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: This gets +2/+2 until end of turn.",
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": { "zone": "battlefield", "self_only": true },
+              "power": { "const": 2 },
+              "toughness": { "const": 2 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampire_aristocrat",
+      "name": "Vampire Aristocrat",
+      "oracle_text": "Sacrifice a creature: Vampire Aristocrat gets +2/+2 until end of turn.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: This gets +2/+2 until end of turn.",
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": { "zone": "battlefield", "self_only": true },
+              "power": { "const": 2 },
+              "toughness": { "const": 2 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blood_artist",
+      "name": "Blood Artist",
+      "oracle_text": "Whenever Blood Artist or another creature dies, target player loses 1 life and you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 0,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature dies, target opponent loses 1 life and you gain 1 life.",
+          "trigger": { "event": "dies", "controller": "any", "filter": { "types": ["Creature"] } },
+          "targets": [
+            { "id": "t1", "kind": "player", "selector": { "controller": "opponent" }, "count": 1 }
+          ],
+          "effects": [
+            { "op": "lose_life", "player": { "target": "t1" }, "amount": { "const": 1 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kalastria_highborn",
+      "name": "Kalastria Highborn",
+      "oracle_text": "Whenever another Vampire you control dies, each opponent loses 2 life and you gain 2 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Shaman"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another Vampire you control dies, each opponent loses 2 life and you gain 2 life.",
+          "trigger": {
+            "event": "dies",
+            "controller": "you",
+            "filter": { "subtypes": ["Vampire"], "exclude_self": true }
+          },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 2 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 2 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dusk_legion_zealot",
+      "name": "Dusk Legion Zealot",
+      "oracle_text": "When Dusk Legion Zealot enters, you draw a card and you lose 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, draw a card and lose 1 life.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            { "op": "draw", "player": "you", "amount": { "const": 1 } },
+            { "op": "lose_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruel_celebrant",
+      "name": "Cruel Celebrant",
+      "oracle_text": "Whenever Cruel Celebrant or another creature you control dies, each opponent loses 1 life and you gain 1 life.",
+      "mana_cost": "{W}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "event": "dies",
+            "controller": "you",
+            "filter": { "types": ["Creature"] }
+          },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "adanto_vanguard",
+      "name": "Adanto Vanguard",
+      "oracle_text": "Pay 4 life: Adanto Vanguard gains indestructible until end of turn.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Pay 4 life: This gains indestructible until end of turn.",
+          "cost": { "pay_life": 4 },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "objects": { "zone": "battlefield", "self_only": true },
+              "keywords": ["indestructible"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "markov_patrician",
+      "name": "Markov Patrician",
+      "oracle_text": "Lifelink",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["lifelink"]
+    },
+    {
+      "id": "bloodrite_invoker",
+      "name": "Bloodrite Invoker",
+      "oracle_text": "A devoted acolyte.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Cleric"],
+      "power": 3,
+      "toughness": 2
+    },
+    {
+      "id": "rakish_heir",
+      "name": "Rakish Heir",
+      "oracle_text": "Whenever a Vampire you control deals combat damage to a player, put a +1/+1 counter on that creature.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Vampire you control deals combat damage to a player, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you",
+            "filter": { "subtypes": ["Vampire"] }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": { "binding": "subject" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampire_nighthawk",
+      "name": "Vampire Nighthawk",
+      "oracle_text": "Flying, deathtouch, lifelink",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Shaman"],
+      "power": 2,
+      "toughness": 3,
+      "keywords": ["flying", "deathtouch", "lifelink"]
+    },
+    {
+      "id": "drana_liberator_of_malakir",
+      "name": "Drana, Liberator of Malakir",
+      "oracle_text": "Flying, first strike. Whenever Drana deals combat damage to a player, put a +1/+1 counter on each other attacking creature you control.",
+      "mana_cost": "{1}{B}{B}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Warrior"],
+      "power": 2,
+      "toughness": 3,
+      "keywords": ["flying", "first_strike"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this deals combat damage to a player, put a +1/+1 counter on each other attacking creature you control.",
+          "trigger": { "event": "deals_combat_damage_to_player", "source": "self" },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "attacking": true,
+                "exclude_self": true,
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mavren_fein_dusk_apostle",
+      "name": "Mavren Fein, Dusk Apostle",
+      "oracle_text": "Whenever Mavren Fein attacks, create a 1/1 white Vampire creature token with lifelink.",
+      "mana_cost": "{2}{W}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Cleric"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this attacks, create a 1/1 Vampire with lifelink.",
+          "trigger": { "event": "attacks", "source": "self" },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "vampire_1_1_b_lifelink",
+              "amount": { "const": 1 },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "falkenrath_noble",
+      "name": "Falkenrath Noble",
+      "oracle_text": "Flying. Whenever another creature dies, target player loses 1 life and you gain 1 life.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Noble"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature dies, target opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "event": "dies",
+            "controller": "any",
+            "filter": { "types": ["Creature"], "exclude_self": true }
+          },
+          "targets": [
+            { "id": "t1", "kind": "player", "selector": { "controller": "opponent" }, "count": 1 }
+          ],
+          "effects": [
+            { "op": "lose_life", "player": { "target": "t1" }, "amount": { "const": 1 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sangromancer",
+      "name": "Sangromancer",
+      "oracle_text": "Flying. Whenever a creature an opponent controls dies, you may gain 3 life.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Shaman"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, gain 3 life.",
+          "trigger": {
+            "event": "dies",
+            "controller": "opponent",
+            "filter": { "types": ["Creature"] }
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
+        }
+      ]
+    },
+    {
+      "id": "sengir_vampire",
+      "name": "Sengir Vampire",
+      "oracle_text": "Flying",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "champion_of_dusk",
+      "name": "Champion of Dusk",
+      "oracle_text": "When Champion of Dusk enters, you draw X cards and you lose X life, where X is the number of Vampires you control.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Knight"],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, draw X cards and lose X life, where X is the number of Vampires you control.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": ["Vampire"]
+                }
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": "you",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": ["Vampire"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sanctum_seeker",
+      "name": "Sanctum Seeker",
+      "oracle_text": "Whenever a Vampire you control attacks, each opponent loses 1 life and you gain 1 life.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Noble"],
+      "power": 3,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Vampire you control attacks, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "you",
+            "filter": { "subtypes": ["Vampire"] }
+          },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bishop_of_rebirth",
+      "name": "Bishop of Rebirth",
+      "oracle_text": "Vigilance. Whenever Bishop of Rebirth attacks, you may return target creature card with mana value 3 or less from your graveyard to the battlefield.",
+      "mana_cost": "{3}{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Cleric"],
+      "power": 3,
+      "toughness": 4,
+      "keywords": ["vigilance"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this attacks, return a small creature from your graveyard to the battlefield.",
+          "trigger": { "event": "attacks", "source": "self" },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "zone": "graveyard",
+                "controller": "you",
+                "types": ["Creature"],
+                "mana_value": { "op": "<=", "value": { "const": 3 } }
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            { "op": "put_onto_battlefield", "objects": { "target": "t1" }, "controller": "you" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bishop_of_the_bloodstained",
+      "name": "Bishop of the Bloodstained",
+      "oracle_text": "When Bishop of the Bloodstained enters, each opponent loses X life, where X is the number of Vampires you control.",
+      "mana_cost": "{4}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Cleric"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, each opponent loses X life, where X is the number of Vampires you control.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": ["Vampire"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bloodline_necromancer",
+      "name": "Bloodline Necromancer",
+      "oracle_text": "Flying. When Bloodline Necromancer enters, return target creature card from your graveyard to the battlefield.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Wizard"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return a creature from your graveyard to the battlefield.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "zone": "graveyard",
+                "controller": "you",
+                "types": ["Creature"]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            { "op": "put_onto_battlefield", "objects": { "target": "t1" }, "controller": "you" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "epicure_of_blood",
+      "name": "Epicure of Blood",
+      "oracle_text": "Whenever you gain life, each opponent loses 1 life.",
+      "mana_cost": "{4}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 4,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life, each opponent loses 1 life.",
+          "trigger": { "event": "you_gain_life", "controller": "you" },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "necropolis_regent",
+      "name": "Necropolis Regent",
+      "oracle_text": "Flying. Whenever a creature you control deals combat damage to a player, put that many +1/+1 counters on it.",
+      "mana_cost": "{4}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 5,
+      "toughness": 5,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, put that many +1/+1 counters on it.",
+          "trigger": { "event": "deals_combat_damage_to_player", "controller": "you" },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "binding": "amount" },
+              "objects": { "binding": "subject" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampire_sovereign",
+      "name": "Vampire Sovereign",
+      "oracle_text": "Flying. When Vampire Sovereign enters, each opponent loses 2 life and you gain 2 life for each opponent who lost life this way.",
+      "mana_cost": "{4}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 3,
+      "toughness": 4,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, each opponent loses 2 life and you gain 2 life.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 2 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 2 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampire_neonate",
+      "name": "Vampire Neonate",
+      "oracle_text": "A fledgling vampire.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 0,
+      "toughness": 3
+    },
+    {
+      "id": "angel_of_despair",
+      "name": "Angel of Despair",
+      "oracle_text": "Flying. When Angel of Despair enters, destroy target permanent.",
+      "mana_cost": "{5}{W}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 5,
+      "toughness": 5,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, destroy target permanent.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": { "zone": "battlefield", "controller": "opponent" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+        }
+      ]
+    },
+
+    {
+      "id": "vanquishers_banner",
+      "name": "Vanquisher's Banner",
+      "oracle_text": "Vampires you control get +1/+1. Whenever you cast a Vampire spell, draw a card.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Vampires you control get +1/+1.",
+          "effect": "buff",
+          "affects": { "controller": "you", "subtypes": ["Vampire"] },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a Vampire spell, draw a card.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": { "subtypes": ["Vampire"] }
+          },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "sanguine_bond",
+      "name": "Sanguine Bond",
+      "oracle_text": "Whenever you gain life, target opponent loses that much life.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life, target opponent loses that much life.",
+          "trigger": { "event": "you_gain_life", "controller": "you" },
+          "targets": [
+            { "id": "t1", "kind": "player", "selector": { "controller": "opponent" }, "count": 1 }
+          ],
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": { "target": "t1" },
+              "amount": { "binding": "amount" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampiric_rites",
+      "name": "Vampiric Rites",
+      "oracle_text": "{1}{B}, Sacrifice a creature: Draw a card and you lose 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}{B}, Sacrifice a creature: Draw a card and lose 1 life.",
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": 1
+            }
+          },
+          "effects": [
+            { "op": "draw", "player": "you", "amount": { "const": 1 } },
+            { "op": "lose_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phyrexian_arena",
+      "name": "Phyrexian Arena",
+      "oracle_text": "At the beginning of your upkeep, you draw a card and you lose 1 life.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, draw a card and lose 1 life.",
+          "trigger": { "event": "upkeep", "controller": "you" },
+          "effects": [
+            { "op": "draw", "player": "you", "amount": { "const": 1 } },
+            { "op": "lose_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "read_the_bones",
+      "name": "Read the Bones",
+      "oracle_text": "Scry 2, then draw two cards. You lose 2 life.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        { "op": "scry", "player": "you", "amount": { "const": 2 } },
+        { "op": "draw", "player": "you", "amount": { "const": 2 } },
+        { "op": "lose_life", "player": "you", "amount": { "const": 2 } }
+      ]
+    },
+    {
+      "id": "nights_whisper",
+      "name": "Night's Whisper",
+      "oracle_text": "You draw two cards and you lose 2 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        { "op": "draw", "player": "you", "amount": { "const": 2 } },
+        { "op": "lose_life", "player": "you", "amount": { "const": 2 } }
+      ]
+    },
+    {
+      "id": "swords_to_plowshares",
+      "name": "Swords to Plowshares",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        { "op": "snapshot", "target": "t1", "as": "victim" },
+        { "op": "exile", "objects": { "target": "t1" } },
+        {
+          "op": "gain_life",
+          "player": { "controller_of": "victim" },
+          "amount": { "power_of": { "var": "victim" } }
+        }
+      ]
+    },
+    {
+      "id": "path_to_exile",
+      "name": "Path to Exile",
+      "oracle_text": "Exile target creature. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        { "op": "snapshot", "target": "t1", "as": "victim" },
+        { "op": "exile", "objects": { "target": "t1" } },
+        {
+          "op": "search_library",
+          "player": { "controller_of": "victim" },
+          "count": 1,
+          "destination": "battlefield",
+          "tapped": true,
+          "selector": { "types": ["Land"], "supertypes": ["Basic"] }
+        }
+      ]
+    },
+    {
+      "id": "terminate",
+      "name": "Terminate",
+      "oracle_text": "Destroy target creature. It can't be regenerated.",
+      "mana_cost": "{B}{R}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+    },
+    {
+      "id": "go_for_the_throat",
+      "name": "Go for the Throat",
+      "oracle_text": "Destroy target nonartifact creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": ["Creature"],
+            "not_types": ["Artifact"]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+    },
+    {
+      "id": "heros_downfall",
+      "name": "Hero's Downfall",
+      "oracle_text": "Destroy target creature or planeswalker.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+    },
+    {
+      "id": "dreadbore",
+      "name": "Dreadbore",
+      "oracle_text": "Destroy target creature or planeswalker.",
+      "mana_cost": "{B}{R}",
+      "types": ["Sorcery"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+    },
+    {
+      "id": "vindicate",
+      "name": "Vindicate",
+      "oracle_text": "Destroy target permanent.",
+      "mana_cost": "{1}{W}{B}",
+      "types": ["Sorcery"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield" },
+          "count": 1
+        }
+      ],
+      "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }]
+    },
+    {
+      "id": "disfigure",
+      "name": "Disfigure",
+      "oracle_text": "Target creature gets -2/-2 until end of turn.",
+      "mana_cost": "{B}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": { "target": "t1" },
+          "power": { "const": -2 },
+          "toughness": { "const": -2 }
+        }
+      ]
+    },
+    {
+      "id": "zealous_persecution",
+      "name": "Zealous Persecution",
+      "oracle_text": "Until end of turn, creatures you control get +1/+1 and creatures your opponents control get -1/-1.",
+      "mana_cost": "{W}{B}",
+      "types": ["Instant"],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": ["Creature"],
+            "count": "all"
+          },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        },
+        {
+          "op": "pump",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": ["Creature"],
+            "count": "all"
+          },
+          "power": { "const": -1 },
+          "toughness": { "const": -1 }
+        }
+      ]
+    },
+    {
+      "id": "lightning_strike",
+      "name": "Lightning Strike",
+      "oracle_text": "Lightning Strike deals 3 damage to any target.",
+      "mana_cost": "{1}{R}",
+      "types": ["Instant"],
+      "targets": [
+        { "id": "t1", "kind": "any", "selector": { "types": ["Creature"] }, "count": 1 }
+      ],
+      "spell_effects": [{ "op": "damage", "target": "t1", "amount": { "const": 3 } }]
+    }
+  ]
+}

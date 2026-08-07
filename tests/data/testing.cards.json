@@ -1,0 +1,579 @@
+{
+  "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
+  "cards": [
+    {
+      "id": "t_bear",
+      "name": "Test Bear",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_flyer",
+      "name": "Test Flyer",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Bird"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "t_reacher",
+      "name": "Test Reacher",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Spider"],
+      "power": 1,
+      "toughness": 3,
+      "keywords": ["reach"]
+    },
+    {
+      "id": "t_deathtoucher",
+      "name": "Test Deathtoucher",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rat"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["deathtouch"]
+    },
+    {
+      "id": "t_trampler",
+      "name": "Test Trampler",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 5,
+      "toughness": 5,
+      "keywords": ["trample"]
+    },
+    {
+      "id": "t_first_striker",
+      "name": "Test First Striker",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Knight"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["first_strike"]
+    },
+    {
+      "id": "t_double_striker",
+      "name": "Test Double Striker",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Knight"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["double_strike"]
+    },
+    {
+      "id": "t_menacer",
+      "name": "Test Menacer",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["menace"]
+    },
+    {
+      "id": "t_lifelinker",
+      "name": "Test Lifelinker",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Cleric"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["lifelink"]
+    },
+    {
+      "id": "t_vigilant",
+      "name": "Test Vigilant",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["vigilance"]
+    },
+    {
+      "id": "t_hasty",
+      "name": "Test Hasty",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Goblin"],
+      "power": 2,
+      "toughness": 1,
+      "keywords": ["haste"]
+    },
+    {
+      "id": "t_indestructible",
+      "name": "Test Indestructible",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Golem"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["indestructible"]
+    },
+    {
+      "id": "t_hexproof",
+      "name": "Test Hexproof",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["hexproof"]
+    },
+    {
+      "id": "t_wall",
+      "name": "Test Wall",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "power": 0,
+      "toughness": 4,
+      "keywords": ["defender"]
+    },
+    {
+      "id": "t_big",
+      "name": "Test Giant",
+      "mana_cost": "{5}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Giant"],
+      "power": 6,
+      "toughness": 6
+    },
+    {
+      "id": "t_dork",
+      "name": "Test Dork",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf", "Druid"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [{ "op": "add_mana", "mana": "{G}" }]
+        }
+      ]
+    },
+    {
+      "id": "t_dual_land",
+      "name": "Test Dual",
+      "types": ["Land"],
+      "color_identity": ["G", "U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] },
+                { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bounce_land",
+      "name": "Test Bounce Land",
+      "oracle_text": "Test Bounce Land enters tapped. When it enters, return a land you control to its owner's hand. {T}: Add {G}{U}.",
+      "types": ["Land"],
+      "color_identity": ["G", "U"],
+      "replacements": [{ "event": "self_enters_tapped" }],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return a land you control to its owner's hand.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Land"],
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}{U}.",
+          "is_mana_ability": true,
+          "cost": { "tap": true },
+          "effects": [
+            { "op": "add_mana", "mana": "{G}" },
+            { "op": "add_mana", "mana": "{U}" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_counterspell",
+      "name": "Test Counterspell",
+      "oracle_text": "Counter target spell.",
+      "mana_cost": "{U}{U}",
+      "types": ["Instant"],
+      "targets": [
+        { "id": "t1", "kind": "spell", "selector": {}, "count": 1 }
+      ],
+      "spell_effects": [{ "op": "counter", "target": "t1" }]
+    },
+    {
+      "id": "t_removal",
+      "name": "Test Removal",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        { "op": "snapshot", "target": "t1", "as": "victim" },
+        { "op": "exile", "objects": { "target": "t1" } },
+        {
+          "op": "gain_life",
+          "player": { "controller_of": "victim" },
+          "amount": { "power_of": { "var": "victim" } }
+        }
+      ]
+    },
+    {
+      "id": "t_bolt",
+      "name": "Test Bolt",
+      "oracle_text": "Test Bolt deals 3 damage to any target.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "targets": [
+        { "id": "t1", "kind": "any", "selector": { "types": ["Creature"] }, "count": 1 }
+      ],
+      "spell_effects": [{ "op": "damage", "target": "t1", "amount": { "const": 3 } }]
+    },
+    {
+      "id": "t_pump_spell",
+      "name": "Test Pump",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": { "target": "t1" },
+          "power": { "const": 3 },
+          "toughness": { "const": 3 }
+        }
+      ]
+    },
+    {
+      "id": "t_draw_spell",
+      "name": "Test Divination",
+      "oracle_text": "Draw two cards.",
+      "mana_cost": "{2}{U}",
+      "types": ["Sorcery"],
+      "spell_effects": [{ "op": "draw", "player": "you", "amount": { "const": 2 } }]
+    },
+    {
+      "id": "t_anthem",
+      "name": "Test Anthem",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1.",
+          "effect": "buff",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        }
+      ]
+    },
+    {
+      "id": "t_lord",
+      "name": "Test Lord",
+      "oracle_text": "Other Bears you control get +1/+1.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Bears you control get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "subtypes": ["Bear"],
+            "exclude_self": true
+          },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        }
+      ]
+    },
+    {
+      "id": "t_flying_granter",
+      "name": "Test Flying Granter",
+      "oracle_text": "Creatures you control have flying.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have flying.",
+          "effect": "grant_keyword",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "keywords": ["flying"]
+        }
+      ]
+    },
+    {
+      "id": "t_etb_draw",
+      "name": "Test ETB Draw",
+      "oracle_text": "When Test ETB Draw enters, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Scout"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, draw a card.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_dies_gain",
+      "name": "Test Dies Gain",
+      "oracle_text": "When Test Dies Gain dies, you gain 2 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 2,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this dies, you gain 2 life.",
+          "trigger": { "event": "dies", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_upkeep_draw",
+      "name": "Test Upkeep Draw",
+      "oracle_text": "At the beginning of your upkeep, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, draw a card.",
+          "trigger": { "event": "upkeep", "controller": "you" },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_landfall",
+      "name": "Test Landfall",
+      "oracle_text": "Whenever a land you control enters, put a +1/+1 counter on Test Landfall.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Landfall - put a +1/+1 counter on this.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": { "types": ["Land"] }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "const": 1 },
+              "objects": { "zone": "battlefield", "self_only": true }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_land_draw",
+      "name": "Test Land Draw",
+      "oracle_text": "Whenever you play a land, draw a card.",
+      "mana_cost": "{3}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Serpent"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you play a land, draw a card.",
+          "trigger": { "event": "land_played", "controller": "you" },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_extra_land",
+      "name": "Test Explorer",
+      "oracle_text": "You may play an additional land on each of your turns.",
+      "mana_cost": "{2}{G}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns.",
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": { "const": 1 }
+        }
+      ]
+    },
+    {
+      "id": "t_cast_trigger",
+      "name": "Test Eminence",
+      "oracle_text": "Whenever you cast a Bear spell, create a 1/1 Vampire token. (Works from the command zone.)",
+      "mana_cost": "{2}{B}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a Bear spell, create a 1/1 Vampire.",
+          "active_zones": ["battlefield", "command"],
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": { "subtypes": ["Bear"] }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "vampire_1_1_bw",
+              "amount": { "const": 1 },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_legend",
+      "name": "Test Legend",
+      "mana_cost": "{1}{W}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_sac_outlet",
+      "name": "Test Sac Outlet",
+      "oracle_text": "Sacrifice a creature: You gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: You gain 1 life.",
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": 1
+            }
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_commander",
+      "name": "Test Commander",
+      "mana_cost": "{2}{G}{U}",
+      "supertypes": ["Legendary"],
+      "types": ["Creature"],
+      "subtypes": ["Serpent"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["trample"]
+    },
+    {
+      "id": "t_x_spell",
+      "name": "Test Hydra",
+      "oracle_text": "Test Hydra enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Hydra"],
+      "power": 0,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Enters with X +1/+1 counters.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": { "x": true },
+              "objects": { "zone": "battlefield", "self_only": true }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

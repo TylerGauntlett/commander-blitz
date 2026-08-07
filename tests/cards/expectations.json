@@ -1,0 +1,38 @@
+{
+  "_comment": "Per-card outcome assertions for tests/cards/test_every_card_works.py. The sandbox is described in that file: player 0 starts at 40 life with 30 lands and 2 other permanents, an empty hand once the card under test is played, and player 1 at 40 life. Cards listed here must produce exactly this result; cards not listed only have to play and resolve without error.",
+
+  "thragtusk": { "life": { "0": 45 } },
+  "vampire_sovereign": { "life": { "0": 42, "1": 38 } },
+  "bishop_of_the_bloodstained": { "life": { "1": 39 } },
+  "champion_of_dusk": { "life": { "0": 39 }, "hand_size": { "0": 1 } },
+  "dusk_legion_zealot": { "life": { "0": 39 }, "hand_size": { "0": 1 } },
+
+  "divination": { "hand_size": { "0": 2 } },
+  "harmonize": { "hand_size": { "0": 3 } },
+  "deep_analysis": { "hand_size": { "0": 2 } },
+  "mulldrifter": { "hand_size": { "0": 2 } },
+  "elvish_visionary": { "hand_size": { "0": 1 } },
+  "preordain": { "hand_size": { "0": 1 } },
+  "nights_whisper": { "life": { "0": 38 }, "hand_size": { "0": 2 } },
+  "read_the_bones": { "life": { "0": 38 }, "hand_size": { "0": 2 } },
+
+  "scoured_barrens": { "life": { "0": 41 } },
+  "bloodfell_caves": { "life": { "0": 41 } },
+  "wind_scarred_crag": { "life": { "0": 41 } },
+  "thornwood_falls": { "life": { "0": 41 } },
+
+  "rampant_growth": { "battlefield_count": 33 },
+  "nissas_pilgrimage": { "battlefield_count": 34 },
+  "explosive_vegetation": { "battlefield_count": 34 },
+  "skyshroud_claim": { "battlefield_count": 34 },
+  "cultivate": { "battlefield_count": 33, "hand_size": { "0": 1 } },
+  "kodamas_reach": { "battlefield_count": 33, "hand_size": { "0": 1 } },
+  "solemn_simulacrum": { "battlefield_count": 34 },
+  "wood_elves": { "battlefield_count": 34 },
+  "farhaven_elf": { "battlefield_count": 34 },
+  "sylvan_ranger": { "hand_size": { "0": 1 } },
+
+  "avenger_of_zendikar": { "tokens": { "id": "plant_0_1_g", "count": 30 } },
+  "hydra_broodmaster": { "tokens": { "id": "kraken_8_8_u", "count": 1 } },
+  "martyr_of_dusk": { "tokens": { "id": "vampire_1_1_b_lifelink", "count": 0 } }
+}
