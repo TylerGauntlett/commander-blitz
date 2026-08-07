@@ -17,7 +17,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import chars
+from .costs import commander_cost, land_drops_available, mana_availability
 from .enums import Zone
+from .legality import unplayable_reason
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -110,8 +112,18 @@ def _player(state: GameState, pid: int, seat: int) -> dict[str, Any]:
         "has_lost": player.has_lost,
         "loss_reason": player.loss_reason.value if player.loss_reason else None,
         "lands_played": player.lands_played,
+        "land_drops_available": land_drops_available(state, pid),
         "mana_pool": player.mana_pool.to_dict(),
+        # Untapped sources as well as floating mana: the client cannot work this
+        # out from the battlefield alone, because whether a permanent taps for
+        # mana lives in its abilities, not in its view.
+        "mana": mana_availability(state, pid),
+        # The stored value is the number of prior casts; the tax is twice that.
+        # Send both so the client never has to know the multiplier.
         "commander_tax": {str(k): v for k, v in player.commander_tax.items()},
+        "commander_cost": {
+            str(oid): commander_cost(state, oid) for oid in player.commanders
+        },
         "commander_damage_taken": {
             str(k): v for k, v in player.commander_damage_taken.items()
         },
@@ -119,6 +131,17 @@ def _player(state: GameState, pid: int, seat: int) -> dict[str, Any]:
         "library_count": len(player.library),
         "hand_count": len(player.hand),
         "hand": [card_view(state, oid) for oid in player.hand] if own else None,
+        # Only the gates that are actually closed, keyed by oid.  A card absent
+        # from this map is playable; see legality.unplayable_reason.
+        "hand_reasons": (
+            {
+                str(oid): reason
+                for oid in player.hand
+                if (reason := unplayable_reason(state, pid, oid)) is not None
+            }
+            if own
+            else None
+        ),
         "graveyard": [card_view(state, oid) for oid in player.graveyard],
         "exile": [card_view(state, oid) for oid in player.exile],
         "command": [card_view(state, oid) for oid in player.command],
@@ -130,6 +153,13 @@ def _stack_item(state: GameState, item) -> dict[str, Any]:
     card = state.registry.get(item.def_id)
     data["name"] = card.name
     data["type_line"] = card.type_line
+    # The client draws the stack as real cards rather than a list of names, so
+    # it needs the same payload a battlefield card gets.  A triggered ability
+    # has no object of its own; show the permanent that produced it.
+    face_oid = item.oid if item.oid is not None else item.source_oid
+    data["card"] = (
+        card_view(state, face_oid) if face_oid is not None and face_oid in state.objects else None
+    )
     return data
 
 

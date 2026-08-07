@@ -50,7 +50,16 @@ export function Lane({
 
   return (
     <motion.div
-      className={active ? "lane lane--active" : "lane"}
+      // An empty lane collapses to a thin strip. It still has to exist -- it is
+      // a drop target, and the viewer's four lanes must not reorder mid-drag --
+      // but reserving a full card height for each of them was most of the dead
+      // space in the middle of the table.
+      className={[
+        active ? "lane lane--active" : "lane",
+        cards.length === 0 ? "lane--vacant" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       data-dropzone={`lane:${pid}:${lane}`}
       data-testid={`lane-${pid}-${lane.replace(/\W+/g, "-")}`}
       layout

@@ -1,13 +1,26 @@
 /**
- * The stack, top first.
+ * The stack, drawn as a stack.
  *
- * Reversed on purpose: what resolves next should be what you read first.
+ * Top first, and reversed on purpose: what resolves next should be what you
+ * read first. It used to be name + controller + targets as text rows, which is
+ * a strange thing to show in a format where responding to the stack is the
+ * skill -- so items are now real card faces piled with an offset, and the
+ * targeting relationship is drawn by `CombatArrows` rather than spelled out.
+ *
+ * `data-stack-sid` on each wrapper is the arrow anchor. Deliberately not
+ * `data-oid`: a triggered ability borrows its source permanent's face, and that
+ * permanent is on the battlefield carrying the same oid already.
  */
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView } from "../../api/types";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy } from "../../motion/springs";
+import { StaticCard } from "./Card";
+
+/** How far each ply below the top peeks out. */
+const PLY_Y = 26;
+const CARD_W = 116;
 
 interface Props {
   state: GameView;
@@ -22,42 +35,66 @@ export function StackPanel({ state }: Props) {
         Stack
         {items.length > 0 && <span className="rail__badge tabular">{items.length}</span>}
       </h3>
-      <div className="stackpanel__items">
-        <AnimatePresence initial={false}>
-          {items.map((item, index) => {
-            const targets = item.targets
-              .map((ref) =>
-                ref.kind === "player"
-                  ? (state.players[ref.id]?.name ?? `P${ref.id}`)
-                  : (findCard(state, ref.id)?.name ?? `#${ref.id}`),
-              )
-              .join(", ");
 
-            return (
-              <motion.div
-                className={index === 0 ? "sitem sitem--next" : "sitem"}
-                key={item.sid}
-                initial={{ opacity: 0, x: -18, scale: 0.94 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 18, scale: 0.94 }}
-                transition={bouncy}
-                layout
-              >
-                <div className="sitem__row">
-                  <span className="sitem__name">{item.name}</span>
-                  {index === 0 && <span className="sitem__next">next</span>}
-                </div>
-                <div className="sitem__meta">
-                  {state.players[item.controller]?.name ?? `P${item.controller}`}
-                  {item.kind === "ability" ? " · ability" : ""}
-                </div>
-                {targets && <div className="sitem__targets">&rarr; {targets}</div>}
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-        {items.length === 0 && <div className="rail__empty">empty</div>}
-      </div>
+      {items.length === 0 && <div className="rail__empty">empty</div>}
+
+      {items.length > 0 && (
+        <div
+          className="stackpile"
+          style={{
+            ["--card-w" as string]: `${CARD_W}px`,
+            // The pile is absolutely positioned, so the container has to be
+            // told how tall the whole thing came out.
+            height: `${CARD_W * 1.4 + PLY_Y * (items.length - 1)}px`,
+          }}
+        >
+          <AnimatePresence initial={false}>
+            {items.map((item, index) => {
+              const targets = item.targets
+                .map((ref) =>
+                  ref.kind === "player"
+                    ? (state.players[ref.id]?.name ?? `P${ref.id}`)
+                    : (findCard(state, ref.id)?.name ?? `#${ref.id}`),
+                )
+                .join(", ");
+
+              return (
+                <motion.div
+                  className={
+                    index === 0 ? "stackpile__ply stackpile__ply--next" : "stackpile__ply"
+                  }
+                  key={item.sid}
+                  data-stack-sid={item.sid}
+                  data-testid={`stack-item-${item.sid}`}
+                  style={{ top: index * PLY_Y, zIndex: items.length - index }}
+                  initial={{ opacity: 0, x: -20, scale: 0.92 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 24, scale: 0.92 }}
+                  transition={bouncy}
+                  layout
+                  title={targets ? `${item.name} → ${targets}` : item.name}
+                >
+                  {item.card ? (
+                    <StaticCard card={item.card} detail />
+                  ) : (
+                    <div className="stackpile__ghost">{item.name}</div>
+                  )}
+
+                  <div className="stackpile__tag">
+                    {index === 0 && <span className="stackpile__next">next</span>}
+                    {item.kind === "ability" && (
+                      <span className="stackpile__kind">ability</span>
+                    )}
+                    <span className="stackpile__who">
+                      {state.players[item.controller]?.name ?? `P${item.controller}`}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
     </section>
   );
 }

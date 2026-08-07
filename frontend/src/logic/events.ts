@@ -11,6 +11,7 @@
  */
 
 import type { GameEvent } from "../api/types";
+import type { SoundName } from "../audio/sfx";
 import { prettyCardName } from "./labels";
 
 export type BeatAnchor = { kind: "player"; pid: number } | { kind: "object"; oid: number };
@@ -25,14 +26,32 @@ export interface Beat {
   text: string | null;
   /** A number that floats up off a player or a permanent. */
   float?: { anchor: BeatAnchor; value: string; tone: Tone };
-  /** A card thrown up in the middle of the screen while it is being cast. */
-  spotlight?: { cardId: string; name: string; controller: number };
+  /**
+   * A card thrown up in the middle of the screen while it is being cast, or an
+   * ability announced as it goes on the stack. `kind` lets the two read
+   * differently: a trigger is something happening *to* you and is not a card
+   * leaving anyone's hand.
+   */
+  spotlight?: {
+    cardId: string;
+    name: string;
+    controller: number;
+    kind?: "spell" | "trigger";
+  };
   /** A brief highlight ring on a permanent. */
   flash?: { anchor: BeatAnchor; tone: Tone };
   /** A full-width sweep: turn changes, eliminations. */
   banner?: { text: string; tone: Tone };
   /** 0..1 screen shake intensity. */
   shake?: number;
+  /**
+   * A sound to play with this beat.
+   *
+   * Named here rather than chosen by the effects layer so the mapping stays in
+   * the pure module with the rest of the beat's meaning -- and so it is
+   * testable without a Web Audio context. Only `FxLayer` ever plays it.
+   */
+  sound?: SoundName;
 }
 
 export type NameLookup = (cardId: string) => string | undefined;
@@ -58,8 +77,9 @@ const SILENT = new Set([
   "combat_damage_to_player",
   "step_ended",
   "step_began",
+  // `mana_added` fires per source during auto-payment and `tapped` already
+  // flashes the same permanent -- narrating both would double every land.
   "mana_added",
-  "mana_spent",
   "mana_emptied",
   "zone_change",
   "leaves_battlefield",
@@ -98,6 +118,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 700,
           text: `${who} casts ${card ?? "a spell"}`,
+          sound: "chime",
           spotlight: {
             cardId: typeof event.data.card === "string" ? event.data.card : "",
             name: card ?? "a spell",
@@ -130,6 +151,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 260,
           text: `${who} plays ${card ?? "a land"}`,
+          sound: "thump",
           flash:
             event.source === null
               ? undefined
@@ -141,6 +163,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 220,
           text: `${card ?? "A permanent"} enters the battlefield`,
+          sound: "thump",
           flash:
             event.source === null
               ? undefined
@@ -163,6 +186,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 380,
           text: `${card ?? "A creature"} dies`,
+          sound: "toll",
           flash:
             event.source === null
               ? undefined
@@ -182,6 +206,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
           text: toPlayer
             ? `${who} takes ${amount} damage`
             : `${amount} damage to ${card ?? "a permanent"}`,
+          sound: "hit",
           float: { anchor, value: `-${amount}`, tone: "damage" },
           shake: toPlayer ? Math.min(1, amount / 12) : undefined,
         });
@@ -235,6 +260,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 520,
           text: `${who} attacks`,
+          sound: "hit",
           banner: { text: "Attack!", tone: "damage" },
         });
         return;
@@ -244,7 +270,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         return;
 
       case "draw":
-        push({ hold: 110, text: `${who} draws a card` });
+        push({ hold: 110, text: `${who} draws a card`, sound: "shuffle" });
         return;
 
       case "discard":
@@ -255,12 +281,65 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({ hold: 200, text: `${who} mills ${event.data.count ?? "some"} cards` });
         return;
 
+      /*
+       * Triggers get the same spotlight a cast gets.
+       *
+       * In Commander triggers are most of what happens, and a trigger going on
+       * the stack is the moment the player most needs to notice -- it used to
+       * be a 300ms pause with nothing on screen at all, since the text this
+       * beat carried was never rendered and the ticker had no case for it.
+       */
       case "ability_triggered":
-        push({ hold: 300, text: `${card ?? "An ability"} triggers` });
+        push({
+          hold: 620,
+          text: `${card ?? "An ability"} triggers`,
+          sound: "chime",
+          spotlight: {
+            cardId: typeof event.data.card === "string" ? event.data.card : "",
+            name: card ?? "An ability",
+            controller: event.player ?? 0,
+            kind: "trigger",
+          },
+          flash:
+            event.source === null
+              ? undefined
+              : { anchor: { kind: "object", oid: event.source }, tone: "good" },
+        });
         return;
 
       case "ability_activated":
-        push({ hold: 260, text: `${who} activates ${card ?? "an ability"}` });
+        push({
+          hold: 320,
+          text: `${who} activates ${card ?? "an ability"}`,
+          flash:
+            event.source === null
+              ? undefined
+              : { anchor: { kind: "object", oid: event.source }, tone: "neutral" },
+        });
+        return;
+
+      /*
+       * Mana payment, which used to be entirely invisible: lands tapped during
+       * auto-payment with no indication of what was spent. `tapped` flashes the
+       * specific permanent that paid; `mana_spent` names the total.
+       */
+      case "tapped":
+        push({
+          hold: 90,
+          text: null,
+          sound: "tap",
+          flash:
+            event.source === null
+              ? undefined
+              : { anchor: { kind: "object", oid: event.source }, tone: "neutral" },
+        });
+        return;
+
+      case "mana_spent":
+        push({
+          hold: 120,
+          text: typeof event.data.mana === "string" ? `${who} pays ${event.data.mana}` : null,
+        });
         return;
 
       case "mulligan_taken":
@@ -275,6 +354,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         push({
           hold: 1100,
           text: `${who} is eliminated (${event.data.reason})`,
+          sound: "toll",
           banner: { text: `${who} is eliminated`, tone: "danger" },
           shake: 0.6,
         });

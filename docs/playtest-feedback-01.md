@@ -14,6 +14,13 @@ kind, and keyboard shortcuts.
 and fixed before shipping, because they blocked ordinary play. Everything else is input
 for cycle 2, ranked by how much it costs the player.
 
+> **Resolved.** Every cycle-2 item below has since been addressed, except the
+> `NewGameScreen` deck-picker note in item 9, which this doc already deferred until
+> more than two decks exist. See [playtest-feedback-02.md](playtest-feedback-02.md)
+> for what each one turned into and where the design deviated from the suggestion
+> here — notably item 8's arrow anchoring, and the combat-panel half of item 1,
+> which turned out to be load-bearing rather than redundant.
+
 ---
 
 ## Fixed during cycle 1

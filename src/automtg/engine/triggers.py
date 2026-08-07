@@ -317,6 +317,10 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         EventType.ABILITY_TRIGGERED,
         player=obj.controller,
         source=obj.oid,
+        # The client names the source from this; without it every trigger in
+        # the log and the effects layer read "An ability triggers", which is
+        # the least useful sentence available in a format made of triggers.
+        card=card.id,
         ability=ability.index,
         trigger=spec.event,
     )

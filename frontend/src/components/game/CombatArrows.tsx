@@ -1,20 +1,41 @@
 /**
- * Who is hitting whom.
+ * Who is hitting whom, and what is aimed at what.
  *
  * The server has always sent a full `combat` view -- attackers, blockers, and
  * the damage order -- and the old client threw it away, leaving a coloured
  * outline as the only clue. Drawn as curves, a five-creature crack-back is
- * legible at a glance.
+ * legible at a glance. Spells on the stack get the same treatment: a targeted
+ * removal spell draws a line to what it is pointed at.
  *
- * Anchors are found by `data-oid` / `data-player` in the DOM rather than
- * threaded through props, because the cards move: they are inside spring
- * animations, fanned stacks and layout flights. Measuring on a frame loop while
- * combat is live is both simpler and always correct.
+ * Anchors are found by `data-oid` / `data-player` / `data-stack-sid` in the DOM
+ * rather than threaded through props, because the cards move: they are inside
+ * spring animations, fanned stacks and layout flights.
+ *
+ * ## Why not a frame loop
+ *
+ * This used to re-measure every anchor on `requestAnimationFrame` for as long
+ * as combat was live -- a full `querySelector` plus `getBoundingClientRect` per
+ * arrow per frame, forever, including the long stretches where nothing moved.
+ * On a wide pod board that was the first thing to drop frames.
+ *
+ * It now measures on the events that can actually change a position: a resize,
+ * a scroll, and the settling of a layout animation. Springs are the awkward
+ * case -- framer drives them off its own clock and emits nothing per frame --
+ * so a short rAF burst covers each disturbance and then stops. Idle combat now
+ * costs nothing.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { GameView } from "../../api/types";
 import { useUiStore } from "../../state/uiStore";
+
+/**
+ * How long to keep re-measuring after something disturbs the board.
+ *
+ * Long enough to outlast the springs in `motion/springs` (the bouncy one
+ * settles well inside 600ms), short enough that a quiet board is quiet.
+ */
+const SETTLE_MS = 700;
 
 interface Arrow {
   key: string;
@@ -22,7 +43,7 @@ interface Arrow {
   y1: number;
   x2: number;
   y2: number;
-  kind: "attack" | "block" | "staged";
+  kind: "attack" | "block" | "staged" | "target";
 }
 
 interface Point {
@@ -65,69 +86,113 @@ export function CombatArrows({ state, boardRef }: Props) {
   const combat = state.combat;
   const hasStaging =
     Object.keys(stagedAttacks).length > 0 || Object.keys(stagedBlocks).length > 0;
+  const targeted = state.stack.filter((item) => item.targets.length > 0);
   const live =
     hasStaging ||
+    targeted.length > 0 ||
     (combat !== null &&
       (Object.keys(combat.attackers).length > 0 || Object.keys(combat.blockers).length > 0));
 
-  // Keep a ref of the latest inputs so the frame loop does not need to restart
-  // every render.
-  const inputs = useRef({ combat, stagedAttacks, stagedBlocks });
-  inputs.current = { combat, stagedAttacks, stagedBlocks };
+  const measure = useCallback(() => {
+    const board = boardRef.current;
+    if (!board) return;
+    const origin = board.getBoundingClientRect();
+    const next: Arrow[] = [];
+
+    const link = (fromSel: string, toSel: string, key: string, kind: Arrow["kind"]) => {
+      const from = centreOf(fromSel, origin);
+      const to = centreOf(toSel, origin);
+      if (from && to) {
+        next.push({ key, x1: from.x, y1: from.y, x2: to.x, y2: to.y, kind });
+      }
+    };
+
+    for (const [attacker, defender] of Object.entries(combat?.attackers ?? {})) {
+      link(`[data-oid="${attacker}"]`, `[data-player="${defender}"]`, `a${attacker}`, "attack");
+    }
+    for (const [blocker, attacker] of Object.entries(combat?.blockers ?? {})) {
+      link(`[data-oid="${blocker}"]`, `[data-oid="${attacker}"]`, `b${blocker}`, "block");
+    }
+    // Staged arrows show intent before it is submitted.
+    for (const [attacker, defender] of Object.entries(stagedAttacks)) {
+      link(
+        `[data-oid="${attacker}"]`,
+        `[data-player="${defender}"]`,
+        `sa${attacker}`,
+        "staged",
+      );
+    }
+    for (const [blocker, attacker] of Object.entries(stagedBlocks)) {
+      link(`[data-oid="${blocker}"]`, `[data-oid="${attacker}"]`, `sb${blocker}`, "staged");
+    }
+    // What is on the stack, and what it is pointed at. Responding to the stack
+    // is the skill in this format, and the relationship was text-only before.
+    for (const item of targeted) {
+      for (const ref of item.targets) {
+        const to =
+          ref.kind === "player" ? `[data-player="${ref.id}"]` : `[data-oid="${ref.id}"]`;
+        link(
+          `[data-stack-sid="${item.sid}"]`,
+          to,
+          `t${item.sid}-${ref.kind}${ref.id}`,
+          "target",
+        );
+      }
+    }
+
+    setArrows(next);
+    // Rebuilt whenever the inputs change, which is also the signal that cards
+    // are mid-flight and need re-measuring -- the effect below re-bursts on it.
+  }, [boardRef, combat, stagedAttacks, stagedBlocks, targeted]);
 
   useEffect(() => {
     if (!live) {
       setArrows([]);
       return;
     }
+
     let frame = 0;
+    let until = 0;
 
-    const measure = () => {
-      const board = boardRef.current;
-      if (board) {
-        const origin = board.getBoundingClientRect();
-        const next: Arrow[] = [];
-        const { combat: c, stagedAttacks: sa, stagedBlocks: sb } = inputs.current;
-
-        const link = (fromSel: string, toSel: string, key: string, kind: Arrow["kind"]) => {
-          const from = centreOf(fromSel, origin);
-          const to = centreOf(toSel, origin);
-          if (from && to) {
-            next.push({ key, x1: from.x, y1: from.y, x2: to.x, y2: to.y, kind });
-          }
-        };
-
-        for (const [attacker, defender] of Object.entries(c?.attackers ?? {})) {
-          link(
-            `[data-oid="${attacker}"]`,
-            `[data-player="${defender}"]`,
-            `a${attacker}`,
-            "attack",
-          );
+    /** Re-measure every frame for a moment, then stop. */
+    const burst = () => {
+      until = performance.now() + SETTLE_MS;
+      if (frame !== 0) return;
+      const tick = () => {
+        measure();
+        if (performance.now() < until) {
+          frame = requestAnimationFrame(tick);
+        } else {
+          frame = 0;
         }
-        for (const [blocker, attacker] of Object.entries(c?.blockers ?? {})) {
-          link(`[data-oid="${blocker}"]`, `[data-oid="${attacker}"]`, `b${blocker}`, "block");
-        }
-        // Staged arrows show intent before it is submitted.
-        for (const [attacker, defender] of Object.entries(sa)) {
-          link(
-            `[data-oid="${attacker}"]`,
-            `[data-player="${defender}"]`,
-            `sa${attacker}`,
-            "staged",
-          );
-        }
-        for (const [blocker, attacker] of Object.entries(sb)) {
-          link(`[data-oid="${blocker}"]`, `[data-oid="${attacker}"]`, `sb${blocker}`, "staged");
-        }
-        setArrows(next);
-      }
-      frame = requestAnimationFrame(measure);
+      };
+      frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(measure);
-    return () => cancelAnimationFrame(frame);
-  }, [live, boardRef]);
+    // Re-runs whenever `measure` changes identity -- that is, whenever the
+    // arrows themselves change -- which is exactly when the cards are flying
+    // into their new positions and most need following.
+
+    // The board itself changing size moves every anchor on it.
+    const observer = new ResizeObserver(burst);
+    const board = boardRef.current;
+    if (board) {
+      observer.observe(board);
+      // Cards live in scrollable lanes and mats; scrolling one moves its cards
+      // without resizing anything. `capture` catches those inner scrolls too.
+      board.addEventListener("scroll", burst, { capture: true, passive: true });
+    }
+    window.addEventListener("resize", burst);
+
+    burst();
+
+    return () => {
+      if (frame !== 0) cancelAnimationFrame(frame);
+      observer.disconnect();
+      board?.removeEventListener("scroll", burst, { capture: true });
+      window.removeEventListener("resize", burst);
+    };
+  }, [live, boardRef, measure]);
 
   if (arrows.length === 0) return null;
 

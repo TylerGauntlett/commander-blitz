@@ -12,6 +12,8 @@
 | [frontend.md](frontend.md) | The playtest client |
 | [testing.md](testing.md) | Every gate, and the current measured results |
 | [spec.md](spec.md) | The original brief |
+| [playtest-feedback-01.md](playtest-feedback-01.md) | Cycle 1 playtest: findings, all now addressed |
+| [playtest-feedback-02.md](playtest-feedback-02.md) | **Cycle 2 playtest: what shipped, and the cycle-3 backlog** |
 
 Decisions with consequences big enough to be worth arguing with are recorded
 separately:

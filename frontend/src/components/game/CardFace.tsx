@@ -18,6 +18,9 @@ import {
   keywordLabel,
   manaPips,
   statLine,
+  typeGlyph,
+  typeLabel,
+  typeTone,
 } from "../../logic/cardStyle";
 
 interface Props {
@@ -34,7 +37,10 @@ export function CardFace({ card, detail = false }: Props) {
 
   const classes = [
     "face",
+    // Border carries colour identity, body fill carries card type. Two axes
+    // that both matter at a glance, on two channels that do not collide.
     `face--${frameTone(card)}`,
+    `face--type-${typeTone(card)}`,
     card.is_commander ? "face--commander" : "",
     card.is_token ? "face--token" : "",
   ]
@@ -42,8 +48,11 @@ export function CardFace({ card, detail = false }: Props) {
     .join(" ");
 
   return (
-    <div className={classes} data-card-name={card.name}>
+    <div className={classes} data-card-name={card.name} data-type-tone={typeTone(card)}>
       <div className="face__title">
+        <span className="face__glyph" title={typeLabel(card)} aria-hidden="true">
+          {typeGlyph(card)}
+        </span>
         <span className="face__name">{card.name}</span>
         {pips.length > 0 && (
           <span className="face__cost">

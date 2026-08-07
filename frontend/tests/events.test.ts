@@ -97,13 +97,66 @@ describe("beatsFor", () => {
   });
 
   it("drops bookkeeping events entirely", () => {
-    const noise = ["mana_added", "mana_spent", "mana_emptied", "zone_change", "step_ended"];
+    // `mana_added` is not here even though payment is now narrated: it fires
+    // once per source, and `tapped` already flashes the same permanent.
+    const noise = ["mana_added", "mana_emptied", "zone_change", "step_ended", "untapped"];
     expect(
       beatsFor(
         noise.map((type) => event(type)),
         NAMES,
       ),
     ).toEqual([]);
+  });
+
+  describe("mana payment is visible", () => {
+    it("flashes the permanent that taps to pay", () => {
+      const [beat] = beatsFor([event("tapped", {}, { source: 12 })], NAMES);
+      expect(beat.flash).toEqual({ anchor: { kind: "object", oid: 12 }, tone: "neutral" });
+    });
+
+    it("holds only briefly, because a big spell taps many sources at once", () => {
+      const beats = beatsFor(
+        [1, 2, 3, 4, 5].map((oid) => event("tapped", {}, { source: oid })),
+        NAMES,
+      );
+      expect(beats).toHaveLength(5);
+      expect(beats.reduce((sum, b) => sum + b.hold, 0)).toBeLessThan(600);
+    });
+
+    it("names what was spent", () => {
+      const [beat] = beatsFor([event("mana_spent", { mana: "{2}{G}" })], NAMES);
+      expect(beat.text).toBe("You pays {2}{G}");
+    });
+  });
+
+  describe("triggered abilities", () => {
+    it("gets a spotlight, like a cast does", () => {
+      const [beat] = beatsFor(
+        [event("ability_triggered", { card: "aesi" }, { source: 4 })],
+        NAMES,
+      );
+      expect(beat.spotlight).toEqual({
+        cardId: "aesi",
+        name: "Aesi",
+        controller: 0,
+        kind: "trigger",
+      });
+    });
+
+    it("flashes the source permanent so you can see where it came from", () => {
+      const [beat] = beatsFor(
+        [event("ability_triggered", { card: "aesi" }, { source: 4 })],
+        NAMES,
+      );
+      expect(beat.flash).toEqual({ anchor: { kind: "object", oid: 4 }, tone: "good" });
+    });
+
+    it("is marked as a trigger, not a spell", () => {
+      const [trigger] = beatsFor([event("ability_triggered", { card: "aesi" })], NAMES);
+      const [cast] = beatsFor([event("spell_cast", { card: "aesi" })], NAMES);
+      expect(trigger.spotlight?.kind).toBe("trigger");
+      expect(cast.spotlight?.kind).toBeUndefined();
+    });
   });
 
   it("gives every beat a distinct id within a batch", () => {

@@ -134,8 +134,11 @@
   font-style: italic;
 }
 
+/* The tool row wraps. It used to sit in a 420px column at the foot and now
+   lives in a 304px rail, where Undo and Quit were being clipped off the edge. */
 .bar__tools {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
 }

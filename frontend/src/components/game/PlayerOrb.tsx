@@ -10,6 +10,7 @@ import { motion, useAnimationControls } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { PlayerView } from "../../api/types";
 import { lossReason } from "../../logic/labels";
+import { formatManaRow, manaRow } from "../../logic/mana";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 
@@ -59,6 +60,13 @@ export function PlayerOrb({
     ([, amount]) => amount > 0,
   );
 
+  const pips = manaRow(player.mana);
+  // Only surface tax that is actually owed. A commander cast for the first time
+  // costs nothing extra, and a zero chip is noise on every orb all game.
+  const commanderTax = Object.entries(player.commander_cost ?? {}).filter(
+    ([, extra]) => extra > 0,
+  );
+
   const classes = [
     "orb",
     compact ? "orb--compact" : "",
@@ -105,6 +113,53 @@ export function PlayerOrb({
               title={`${amount} from ${names[Number(source)] ?? `P${source}`}`}
             >
               {amount}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/*
+        Available mana. The server sends it, nothing rendered it, and lands
+        tapped during auto-payment with no indication of what was spent -- so
+        the player had no running sense of what they could afford.
+
+        An ambiguous source ("Add {G} or {U}") is one split pip, not two solid
+        ones: two solid pips would claim a mana that does not exist.
+      */}
+      {pips.length > 0 && (
+        <div
+          className="orb__mana"
+          data-testid={`mana-${player.pid}`}
+          data-mana={formatManaRow(pips)}
+          title={`${pips.length} available: ${formatManaRow(pips)}`}
+        >
+          {pips.map((pip) => (
+            <span
+              key={pip.key}
+              className={`mana-pip mana-pip--${pip.tone}${
+                pip.floating ? " mana-pip--floating" : ""
+              }`}
+              title={
+                pip.symbols.length > 1
+                  ? `Either ${pip.symbols.join(" or ")}`
+                  : pip.floating
+                    ? `${pip.symbols[0]} in pool`
+                    : pip.symbols[0]
+              }
+            />
+          ))}
+        </div>
+      )}
+
+      {commanderTax.length > 0 && (
+        <div className="orb__tax" data-testid={`tax-${player.pid}`}>
+          {commanderTax.map(([oid, extra]) => (
+            <span
+              key={oid}
+              className="tax-chip"
+              title={`Commander tax: +${extra} generic to cast from the command zone`}
+            >
+              CMD +{extra}
             </span>
           ))}
         </div>
