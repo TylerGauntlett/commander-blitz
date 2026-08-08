@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import Cost
+from .carddef import CardDef, Cost
 from .characteristics import chars
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
@@ -44,30 +44,7 @@ def mana_sources(state: GameState, pid: int) -> list[ManaSource]:
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid or obj.tapped:
             continue
-        card = state.card_of(obj)
-        c = chars(state, oid)
-        is_creature = "Creature" in c.types
-        if (
-            is_creature
-            and obj.summoning_sick(state.turn)
-            and Keyword.HASTE.value not in c.keywords
-        ):
-            continue
-        is_land = "Land" in c.types
-        for ability in card.abilities:
-            if not ability.is_mana_ability or not ability.mana_options:
-                continue
-            if ability.cost is None or not ability.cost.is_tap_only():
-                continue
-            out.append(
-                ManaSource(
-                    oid=oid,
-                    ability_index=ability.index,
-                    options=ability.mana_options,
-                    is_land=is_land,
-                    sort_key=(0 if is_land else 1, card.id, oid),
-                )
-            )
+        out.extend(_sources_of(state, oid, obj))
     return out
 
 
@@ -77,7 +54,70 @@ def available_mana(state: GameState, pid: int) -> int:
     return pool + sum(source.max_output() for source in mana_sources(state, pid))
 
 
-def mana_availability(state: GameState, pid: int) -> dict[str, Any]:
+def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
+    """Every player's mana sources, from a single walk of the battlefield.
+
+    :func:`mana_sources` filters the whole battlefield per player, so serializing
+    a four-player pod walked it four times over.  The per-object work is
+    identical either way; this just partitions instead of re-scanning.  Pass the
+    result to :func:`mana_availability` as ``sources``.
+    """
+    out: dict[int, list[ManaSource]] = {p.pid: [] for p in state.players}
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.tapped:
+            continue
+        bucket = out.get(obj.controller)
+        if bucket is None:
+            continue
+        bucket.extend(_sources_of(state, oid, obj))
+    return out
+
+
+def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
+    """The tap-only mana abilities of one untapped permanent."""
+    card = state.card_of(obj)
+    c = chars(state, oid)
+    is_creature = "Creature" in c.types
+    if is_creature and obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
+        return []
+    is_land = "Land" in c.types
+    out: list[ManaSource] = []
+    for ability in card.abilities:
+        if not ability.is_mana_ability or not ability.mana_options:
+            continue
+        if ability.cost is None or not ability.cost.is_tap_only():
+            continue
+        out.append(
+            ManaSource(
+                oid=oid,
+                ability_index=ability.index,
+                options=ability.mana_options,
+                is_land=is_land,
+                sort_key=(0 if is_land else 1, card.id, oid),
+            )
+        )
+    return out
+
+
+def produced_symbols(card: CardDef) -> list[str]:
+    """Every mana symbol this card's mana abilities could make, deduplicated.
+
+    The client colours lands by what they tap for, and this is the only honest
+    source for that: "Island" is inferable from a subtype, but a nonbasic dual is
+    not, and re-deriving it by parsing ``oracle_text`` in the browser is exactly
+    the guess :mod:`frontend/src/logic/mana.ts` refuses to make.
+    """
+    found: set[str] = set()
+    for ability in card.mana_abilities():
+        for option in ability.mana_options:
+            found.update(_option_symbols(option))
+    return sorted(found, key=SYMBOL_INDEX.get)
+
+
+def mana_availability(
+    state: GameState, pid: int, sources: Sequence[ManaSource] | None = None
+) -> dict[str, Any]:
     """What this player could produce right now, for the client's mana row.
 
     Deliberately *not* a single colour histogram.  A dual land reading "Add {G}
@@ -90,9 +130,13 @@ def mana_availability(state: GameState, pid: int) -> dict[str, Any]:
     each make "{G} or {U}" can produce two mana, but never two {U} *and* two
     {G}.  Only :func:`can_pay_mana` answers affordability, and the client uses
     the action list for that.
+
+    ``sources`` lets a caller serializing every seat share one battlefield walk;
+    see :func:`sources_by_controller`.  Omitted, it is computed here as before.
     """
     pool = state.players[pid].mana_pool
-    sources = mana_sources(state, pid)
+    if sources is None:
+        sources = mana_sources(state, pid)
     return {
         "pool": pool.to_dict(),
         "sources": [

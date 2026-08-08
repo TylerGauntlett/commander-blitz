@@ -134,7 +134,8 @@ export function decisionPrompt(state: GameView): string {
 
 export function turnLabel(state: GameView): string {
   const active = state.players[state.active_player];
-  return `Turn ${state.turn} - ${active.name} - ${stepLabel(state.step)}`;
+  // The round, matching PhaseTrack: "turn" to a player means a lap of the table.
+  return `Turn ${state.round} - ${active.name} - ${stepLabel(state.step)}`;
 }
 
 /**
@@ -160,27 +161,46 @@ export function thinkingLabel(state: GameView): string {
   return `${who} — ${what}`;
 }
 
+/** Resolves a card id such as "sol_ring" to its printed name. */
+export type NameLookup = (cardId: string) => string | undefined;
+
 /**
  * One line of play-by-play, or null for events not worth showing.
+ *
+ * THE ONLY PLACE THAT TURNS AN EVENT INTO PROSE. `beatsFor` used to carry its
+ * own parallel switch over the same event types for `Beat.text`, which is how
+ * triggers came to be missing from both of them at once, and why mana payment
+ * narrated "You pays {2}{G}" while the log next to it said "You pay". Both
+ * consumers now come through here; `logic/events.ts` owns timing, sound and
+ * effects, and nothing else owns words.
  *
  * `viewerSeat` exists only for grammar: the viewer's own seat is "you", and
  * "you" takes a different verb form. Without it the log reads "You draws a
  * card" on every single draw, which is most of the log.
+ *
+ * `lookup` turns a card id into its printed name; without it the id is
+ * prettified, which is close but not the same ("Kodamas Reach").
  */
 export function describeEvent(
   event: GameEvent,
   names: string[],
   viewerSeat?: number,
+  lookup?: NameLookup,
 ): string | null {
   const who = event.player === null ? "" : (names[event.player] ?? `P${event.player}`);
   const isViewer = event.player !== null && event.player === viewerSeat;
   /** Pick the verb form that agrees with `who`. */
   const v = (second: string, third: string) => (isViewer ? second : third);
   const raw = typeof event.data.card === "string" ? event.data.card : null;
-  const card = raw ? prettyCardName(raw) : null;
+  const card = raw ? (lookup?.(raw) ?? prettyCardName(raw)) : null;
+  const amount = typeof event.data.amount === "number" ? event.data.amount : null;
+  /** Possessive that agrees with `who`: "your", not "You's". */
+  const whose = isViewer ? "Your" : `${who}'s`;
   switch (event.type) {
     case "turn_began":
-      return `-- ${who}'s turn ${event.data.turn} --`;
+      // The round, matching the phase track. `data.turn` is still on the event
+      // for anything that needs the rules counter.
+      return `-- ${whose} turn ${event.data.round ?? event.data.turn} --`;
     case "spell_cast":
       return `${who} ${v("cast", "casts")} ${card ?? "a spell"}`;
     case "spell_countered":
@@ -203,26 +223,38 @@ export function describeEvent(
     case "token_created":
       return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
     case "counter_placed":
-      return `${event.data.amount} ${event.data.kind ?? ""} counter on ${card ?? "a permanent"}`.replace(
-        /\s+/g,
-        " ",
-      );
+      return `${card ?? "A permanent"} gets ${amount ?? 1} ${
+        typeof event.data.counter === "string" ? event.data.counter : "counter"
+      }`;
     case "mill":
-      return `${who} ${v("mill", "mills")} ${event.data.amount ?? 1}`;
+      return `${who} ${v("mill", "mills")} ${event.data.count ?? amount ?? 1} cards`;
     case "draw":
       return `${who} ${v("draw", "draws")} a card`;
     case "discard":
-      return `${who} ${v("discard", "discards")} a card`;
+      return `${who} ${v("discard", "discards")} ${card ?? "a card"}`;
     case "damage_dealt":
-      return `${event.data.amount} damage to ${event.data.to === "player" ? who : "a permanent"}`;
+      if (amount === null || amount <= 0) return null;
+      return event.data.to === "player"
+        ? `${who} ${v("take", "takes")} ${amount} damage`
+        : `${amount} damage to ${card ?? "a permanent"}`;
     case "life_gained":
-      return `${who} ${v("gain", "gains")} ${event.data.amount} life`;
+      return amount === null ? null : `${who} ${v("gain", "gains")} ${amount} life`;
     case "life_lost":
-      return `${who} ${v("lose", "loses")} ${event.data.amount} life`;
+      return amount === null ? null : `${who} ${v("lose", "loses")} ${amount} life`;
     case "attackers_declared":
       return `${who} ${v("attack", "attacks")}`;
     case "blockers_declared":
       return "Blockers declared";
+    // Payment used to be entirely silent, then was narrated by a second switch
+    // with no verb agreement at all -- "You pays {2}{G}".
+    case "mana_spent":
+      return typeof event.data.mana === "string"
+        ? `${who} ${v("pay", "pays")} ${event.data.mana}`
+        : null;
+    case "mulligan_taken":
+      return `${who} ${v("mulligan", "mulligans")}`;
+    case "hand_kept":
+      return `${who} ${v("keep", "keeps")} ${event.data.cards ?? 7} cards`;
     case "player_lost":
       return `${who} is eliminated (${lossReason(String(event.data.reason))})`;
     case "game_over":

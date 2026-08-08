@@ -107,6 +107,67 @@ test.describe("playtest capture", () => {
     }
 
     await shoot("game-over");
+
+    /*
+     * The greyscale check, as a picture.
+     *
+     * `tests/palette.test.ts` now proves the *numbers* separate -- every type
+     * tone is a distinct relative luminance and the whole dimmed band sits
+     * below the whole live one. What it cannot judge is whether the result
+     * reads, so the board still has to be looked at with the colour taken away.
+     * Applied as a filter on the root rather than captured through a headless
+     * flag, so the shot lines up pixel-for-pixel with the colour one above.
+     */
+    await page.evaluate(() => {
+      document.documentElement.style.filter = "grayscale(1)";
+    });
+    await shoot("greyscale");
+    await page.evaluate(() => {
+      document.documentElement.style.filter = "";
+    });
+
     console.log(`captured ${shots.length} shots: ${shots.join(", ")}`);
+  });
+
+  /**
+   * The pod, separately.
+   *
+   * Three opponents is the layout every sizing decision in cycle 3 was made
+   * against, and the one a two-player capture says nothing about.
+   */
+  test("photograph a four-player pod", async ({ page }) => {
+    test.setTimeout(600_000);
+    await page.addInitScript(() => {
+      window.localStorage.setItem("automtg.speed", "instant");
+    });
+    await page.goto("/");
+    await page.getByTestId("new-game").waitFor();
+    await page.getByTestId("deck-aesi").click();
+    await page.getByTestId("opponents-3").click();
+    await page.getByPlaceholder("random").fill("5");
+    await page.getByTestId("start-game").click();
+    await page.getByTestId("table").waitFor({ timeout: 30_000 });
+
+    for (let i = 0; i < 90; i += 1) {
+      await waitForOurTurn(page);
+      if (await isOver(page)) break;
+      let clicked = false;
+      for (const kind of ["keep", "play_land", "cast", "pass"]) {
+        const candidate = actionsOfKind(page, kind).first();
+        if (await candidate.count()) {
+          await candidate.click();
+          clicked = true;
+          break;
+        }
+      }
+      if (!clicked) await enabledActionButtons(page).first().click();
+    }
+
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: "e2e-shots/pod-1-board.png" });
+    await page.evaluate(() => {
+      document.documentElement.style.filter = "grayscale(1)";
+    });
+    await page.screenshot({ path: "e2e-shots/pod-2-greyscale.png" });
   });
 });

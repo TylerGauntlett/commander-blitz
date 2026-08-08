@@ -203,8 +203,43 @@
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
+}
+
+/* Every legal pair, one button each, carrying the server's action id.
+   This is what lets the action bar stand down for combat -- see CombatPanel. */
+.combat__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: 76px;
+  overflow-y: auto;
+  padding-left: 10px;
+  border-left: 1px solid rgb(255 193 77 / 0.25);
+}
+
+/* Unstaged options read as offers, staged ones as commitments. The staged
+   summary chips above use the solid fill, so these start hollow. */
+.combat__options .chip {
+  background: none;
+  color: var(--text-dim);
+  border-color: var(--rail-line);
+  cursor: pointer;
+}
+
+.combat__options .chip:hover:not(:disabled) {
+  border-color: var(--staged);
+  color: var(--staged);
+  background: rgb(255 193 77 / 0.12);
+}
+
+.combat__options .chip--on {
+  border-color: var(--staged);
+  background: rgb(255 193 77 / 0.22);
+  color: var(--staged);
 }
 
 .combat__none {
@@ -349,13 +384,16 @@
   border-color: var(--playable);
 }
 
+/* Now that hidden-zone prompts render faces too, a card option is the common
+   case rather than the lucky one -- so it gets the room to be read at a glance
+   instead of squinted at. */
 .opt--card {
-  --card-w: 150px;
+  --card-w: 172px;
   padding: 8px;
 }
 
 .opt__caption {
-  max-width: 150px;
+  max-width: 172px;
   color: var(--text-dim);
   font-size: 11px;
   text-align: center;

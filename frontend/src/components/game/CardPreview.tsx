@@ -11,7 +11,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView } from "../../api/types";
-import { keywordLabel } from "../../logic/cardStyle";
+import { isWounded, keywordLabel } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -48,7 +48,7 @@ export function CardPreview({ state }: Props) {
                   <dd>{card.keywords.map(keywordLabel).join(", ")}</dd>
                 </>
               )}
-              {card.zone === "battlefield" && (card.damage ?? 0) > 0 && (
+              {isWounded(card) && (
                 <>
                   <dt>Damage</dt>
                   <dd className="preview__hurt">{card.damage} marked</dd>

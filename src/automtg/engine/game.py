@@ -451,6 +451,7 @@ def _opening_sequence(state: GameState) -> Generator[Any, list[int], None]:
         state.emit(EventType.HAND_KEPT, player=pid, cards=len(player.hand))
 
     state.turn = 1
+    state.round = 1
     state.active_idx = state.starting_player
     state.step = Step.UNTAP
     state.step_started = False

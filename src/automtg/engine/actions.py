@@ -31,6 +31,13 @@ class Action:
     choice: int | None = None
     x: int = 0
     label: str = field(default="", compare=False)
+    #: Permanents the mana solver would tap to pay for this, for the UI's
+    #: "what will this leave me with" preview.  Display-only, like ``label``:
+    #: excluded from equality and from :meth:`key`, so an action reconstructed
+    #: by the RL decoder still compares equal to the one legality produced.
+    #: Payment is never taken from an action -- :func:`costs.pay_mana` re-solves
+    #: at resolution time, and this is only ever a forecast.
+    pays: tuple[int, ...] = field(default=(), compare=False)
 
     def with_label(self, label: str) -> Action:
         return Action(
@@ -41,6 +48,7 @@ class Action:
             choice=self.choice,
             x=self.x,
             label=label,
+            pays=self.pays,
         )
 
     def key(self) -> tuple:
@@ -63,6 +71,7 @@ class Action:
             "choice": self.choice,
             "x": self.x,
             "label": self.label,
+            "pays": list(self.pays),
         }
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper

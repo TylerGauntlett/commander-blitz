@@ -131,3 +131,53 @@ class TestSerialized:
         game = builder().battlefield(1, ["island"]).build(advance=False)
         view = player_view(game.state, 0)
         assert view["players"][1]["mana"]["total"] == 1
+
+
+class TestSharedSourceIndex:
+    """Serializing a pod walks the battlefield once, not once per seat.
+
+    ``mana_availability`` filtered the whole battlefield by controller, so a
+    four-player response scanned it four times over.  ``sources_by_controller``
+    partitions in one pass instead.  These tests exist to pin that the shortcut
+    is a shortcut and not a behaviour change.
+    """
+
+    def test_it_matches_the_per_player_walk(self, builder):
+        from automtg.engine.costs import sources_by_controller
+
+        game = (
+            builder(players=4)
+            .battlefield(0, ["forest", "t_dual_land"])
+            .battlefield(1, ["island", "island", "llanowar_elves"])
+            .battlefield(2, ["nomad_outpost"])
+            .build(advance=False)
+        )
+        shared = sources_by_controller(game.state)
+        for pid in range(4):
+            assert mana_availability(game.state, pid, shared[pid]) == mana_availability(
+                game.state, pid
+            )
+
+    def test_every_seat_gets_a_bucket_even_with_an_empty_board(self, builder):
+        from automtg.engine.costs import sources_by_controller
+
+        game = builder(players=4).build(advance=False)
+        assert sources_by_controller(game.state) == {0: [], 1: [], 2: [], 3: []}
+
+    def test_a_tapped_permanent_is_excluded_from_the_shared_walk_too(self, builder):
+        from automtg.engine.costs import sources_by_controller
+
+        game = (
+            builder()
+            .battlefield(0, ["forest"], tapped=True)
+            .battlefield(0, ["island"])
+            .build(advance=False)
+        )
+        (source,) = sources_by_controller(game.state)[0]
+        assert source.oid == game.state.battlefield[1]
+
+    def test_a_summoning_sick_creature_is_excluded_from_the_shared_walk_too(self, builder):
+        from automtg.engine.costs import sources_by_controller
+
+        game = builder().battlefield(0, ["llanowar_elves"], sick=True).build(advance=False)
+        assert sources_by_controller(game.state)[0] == []

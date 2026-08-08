@@ -47,6 +47,25 @@ function context(): Ctx | null {
   }
 }
 
+/**
+ * A small random pitch offset, as a frequency multiplier.
+ *
+ * One voice per event class meant a five-land turn played the identical click
+ * five times, which reads as a stuck loop rather than as five lands. Real
+ * repeated sounds never match exactly; a few dozen cents of scatter is enough
+ * for the ear to hear five events instead of one repeated sample.
+ *
+ * Applied to frequency rather than to `playbackRate` because every voice here is
+ * generated, so there is no sample to resample -- and detuning the filter along
+ * with the oscillator keeps the timbre intact instead of just shifting a pitch.
+ */
+const DETUNE_CENTS = 45;
+
+function detuned(frequency: number): number {
+  const cents = (Math.random() * 2 - 1) * DETUNE_CENTS;
+  return frequency * 2 ** (cents / 1200);
+}
+
 /** A short burst of filtered white noise: card on felt, impact, shuffle. */
 function noise(
   c: Ctx,
@@ -74,7 +93,7 @@ function noise(
 
   const filter = c.createBiquadFilter();
   filter.type = type;
-  filter.frequency.value = frequency;
+  filter.frequency.value = detuned(frequency);
   filter.Q.value = q;
 
   const envelope = c.createGain();
@@ -112,9 +131,16 @@ function tone(
   const envelope = c.createGain();
   const now = c.currentTime;
 
+  // One offset for the whole glide, so a slide keeps its shape and only its
+  // pitch moves. Detuning the endpoints independently would vary the interval.
+  const cents = (Math.random() * 2 - 1) * DETUNE_CENTS;
+  const shift = 2 ** (cents / 1200);
+
   osc.type = type;
-  osc.frequency.setValueAtTime(from, now);
-  if (to !== undefined) osc.frequency.exponentialRampToValueAtTime(to, now + duration);
+  osc.frequency.setValueAtTime(from * shift, now);
+  if (to !== undefined) {
+    osc.frequency.exponentialRampToValueAtTime(to * shift, now + duration);
+  }
 
   envelope.gain.setValueAtTime(0, now);
   envelope.gain.linearRampToValueAtTime(gain, now + 0.006);

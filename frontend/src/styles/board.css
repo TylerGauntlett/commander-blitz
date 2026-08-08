@@ -37,6 +37,12 @@
  * full-height lanes whether or not anything was in them; with `.lane--vacant`
  * it sizes to what is actually on the board, and the space is better spent on
  * the opponents -- there can be three of them.
+ *
+ * Deliberately not larger still. Taking another 0.2fr from the viewer's own row
+ * bought about five pixels of pod headroom and cost the row that owns every
+ * drop target: the remaining pressure in a pod is a wrapped row of cards, not a
+ * handful of pixels. The fixes for that are card size (`opponentCardWidth`) and
+ * the scroll affordance further down.
  */
 .play {
   display: grid;
@@ -91,11 +97,26 @@
  * one board layout where seeing everybody at once matters most. They now shrink
  * to fit, and a single opponent stretches to fill the width instead of leaving
  * the blank strip beside it that started this whole item.
+ *
+ * The side column gives up width first. At three opponents the whole row has
+ * about 1024px for three mats, and every pixel the orb does not need is a pixel
+ * that decides whether a lane fits three cards across or two -- which is the
+ * difference between a board you can read and a board you have to scroll.
  */
 .mat--compact {
   flex: 1 1 0;
   min-width: 288px;
-  grid-template-columns: 132px minmax(0, 1fr);
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 6px;
+  padding: 6px;
+}
+
+/* The mat's first column: who this player is, rather than what they control. */
+.mat__side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
 .mat__lanes {
@@ -105,12 +126,138 @@
   min-width: 0;
 }
 
-/* A narrow pod mat wraps its lands onto several rows and can outgrow the row
-   it sits in. Scroll inside the mat rather than letting `.play__opponents`
-   clip a card in half at the boundary. */
+/* Command zone ---------------------------------------------------------
+ *
+ * Permanently docked under the orb. In Commander this card is the deck's whole
+ * plan; it used to be a count on a chip, and casting it meant finding a ghost
+ * button in the action bar's overflow. See docs/playtest-feedback-02.md. */
+
+.cmdzone {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid rgb(216 166 60 / 0.35);
+  border-radius: 10px;
+  background: rgb(30 24 8 / 0.4);
+}
+
+.cmdzone__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cmdzone__label {
+  color: var(--gold);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cmdzone__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.cmdslot {
+  --card-w: 92px;
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: var(--card-r);
+  background: none;
+  cursor: default;
+}
+
+/* A commander that is not in the command zone is shown for reference, not for
+   play -- it is somewhere else, and there is nothing to click. */
+.cmdslot[data-castable="false"] .face {
+  opacity: 0.62;
+}
+
+.cmdslot--castable {
+  cursor: pointer;
+}
+
+.cmdslot--castable::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: calc(var(--card-r) + 3px);
+  pointer-events: none;
+  box-shadow: 0 0 0 2px var(--playable), 0 0 16px rgb(92 224 138 / 0.45);
+}
+
+.cmdslot--castable:disabled {
+  cursor: default;
+}
+
+/* The tax rides on the card, beside the cost it modifies. */
+.cmdslot__tax {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  padding: 1px 6px;
+  border: 1px solid rgb(216 166 60 / 0.6);
+  border-radius: 999px;
+  background: #2a2008;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.cmdslot__where {
+  display: block;
+  padding-top: 2px;
+  color: var(--text-faint);
+  font-size: 9.5px;
+  text-align: center;
+}
+
+/* Opponent docks are for reference only -- you never cast from one -- so they
+   give up size first. The header goes too: a gold-bordered card under an
+   opponent's life total is not ambiguous, and the row it saves is a row the
+   lanes need. */
+.mat--compact .cmdslot {
+  --card-w: 56px;
+}
+
+.mat--compact .cmdzone {
+  padding: 3px;
+}
+
+.mat--compact .cmdzone__head {
+  display: none;
+}
+
+.mat--compact .cmdslot__where {
+  font-size: 8.5px;
+}
+
+/* A narrow pod mat can still outgrow the row it sits in once a board gets big.
+   Scroll inside the mat rather than letting `.play__opponents` clip a card in
+   half at the boundary.
+
+   The gradients are the affordance cycle 2 said was missing: with
+   `background-attachment: local` the two white-to-transparent covers scroll
+   with the content while the shadows stay fixed, so a shadow is visible exactly
+   when there is more content past that edge. Pure CSS, no scroll listener, and
+   nothing to keep in sync with the DOM. */
 .mat--compact .mat__lanes {
   min-height: 0;
   overflow-y: auto;
+  background:
+    linear-gradient(rgb(10 20 16 / 0) 30%, rgb(10 20 16 / 0)) top / 100% 24px no-repeat local,
+    linear-gradient(rgb(10 20 16 / 0), rgb(10 20 16 / 0) 70%) bottom / 100% 24px no-repeat
+    local,
+    radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0)) top / 100% 12px
+    no-repeat scroll,
+    radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0)) bottom / 100%
+    12px no-repeat scroll;
 }
 
 .mat__empty {
@@ -266,19 +413,13 @@
   box-shadow: 0 0 0 1px var(--gold), 0 0 6px rgb(255 212 121 / 0.5);
 }
 
-.orb__tax {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-}
-
-.tax-chip {
-  padding: 0 5px;
-  border-radius: 999px;
-  background: rgb(216 166 60 / 0.18);
-  color: var(--gold);
-  font-size: 10px;
-  font-weight: 700;
+/* Hollowed out: the hovered spell would tap this source. Drawn as an outline
+   rather than a dimmed fill so it reads as "about to leave" rather than as
+   "unavailable" -- the mana is still there until the spell is actually cast. */
+.mana-pip--spent {
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--text-faint);
+  opacity: 0.75;
 }
 
 .orb__zones {
@@ -386,6 +527,13 @@
 
 .mat--compact .lane {
   grid-template-columns: minmax(0, 1fr);
+  padding: 2px 3px;
+}
+
+/* Tighter than the viewer's own board: nothing here is a drop target, so the
+   gaps only have to separate cards, not accept a drag between them. */
+.mat--compact .lane__cards {
+  gap: 6px;
 }
 
 /* Rails ---------------------------------------------------------------- */
@@ -405,9 +553,14 @@
   overflow-y: hidden;
 }
 
+/* `flex: 1 1 auto` let the preview grow to whatever a 236px card needed --
+   around 460px with rules text -- and squeeze the action bar into the
+   remainder. It takes the slack it is given and no more: the bar is where the
+   turn actually happens, and the card scrolls. */
 .rail--right .preview {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
+  max-height: 52vh;
 }
 
 .rail--right .bar {
@@ -689,10 +842,23 @@
 
 /* The hand owns the whole foot now that the action bar has moved to the right
    rail. It was sharing this row with a fixed 420px column. */
+/* Your commander sits to the left of the fan. `auto` rather than a fixed
+   column so a deck with no commander in a visible zone costs nothing at all,
+   and the fan stays centred on the remaining width either way. */
 .table__hand-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: flex-end;
+  gap: 10px;
+}
+
+.table__hand-row .cmdzone {
+  align-self: flex-end;
+  margin-bottom: 14px;
+}
+
+.table__hand-row .cmdslot {
+  --card-w: 108px;
 }
 
 /*
@@ -902,6 +1068,16 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+/* A spotlit card is the card, not its name. The frame around it tightens up,
+   since the card brings its own border and its own colour. */
+.fx-spotlight:has(.fx-spotlight__card) {
+  padding: 10px;
+}
+
+.fx-spotlight__card {
+  filter: drop-shadow(0 6px 18px rgb(0 0 0 / 0.55));
 }
 
 .fx-banner {

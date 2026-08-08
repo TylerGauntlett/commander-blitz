@@ -38,6 +38,9 @@ class LegalActionDTO(BaseModel):
     targets: list[dict[str, Any]] = Field(default_factory=list)
     choice: int | None = None
     x: int = 0
+    #: Permanents the solver would tap to pay for this. A forecast for the UI,
+    #: not a commitment -- payment is re-solved when the action is applied.
+    pays: list[int] = Field(default_factory=list)
 
 
 class ApplyActionRequest(BaseModel):

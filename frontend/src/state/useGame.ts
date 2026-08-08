@@ -103,7 +103,9 @@ export function useGame(session: GameSession | null) {
       harvestNames(response.state, names.current);
       queryClient.setQueryData(key, response);
       setLog((previous) => [...previous, ...response.events]);
-      narration.push(beatsFor(response.events, playerNames(response.state), lookup));
+      narration.push(
+        beatsFor(response.events, playerNames(response.state), lookup, session.seat),
+      );
       // Keep a half-built declaration alive across responses that are not the
       // declaration itself -- the AI pump lands here too, and wiping the staged
       // set mid-choice loses work the player has not committed yet.

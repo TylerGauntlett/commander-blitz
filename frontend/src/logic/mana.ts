@@ -11,7 +11,7 @@
  * engine runs the payment solver. Everything here is descriptive.
  */
 
-import type { CardView, ManaView, UnplayableReason } from "../api/types";
+import type { CardView, LegalAction, ManaView, UnplayableReason } from "../api/types";
 
 /** One renderable unit of mana. */
 export interface ManaPipView {
@@ -22,6 +22,10 @@ export interface ManaPipView {
   symbols: string[];
   /** Already in the pool rather than still in the ground. */
   floating: boolean;
+  /** The permanent this pip comes out of; null for mana already in the pool. */
+  sourceOid: number | null;
+  /** A hovered spell would tap this pip's source. Set by `markSpent`. */
+  spent?: boolean;
 }
 
 const SYMBOL_ORDER = ["W", "U", "B", "R", "G", "C"];
@@ -46,6 +50,7 @@ export function manaRow(mana: ManaView | undefined): ManaPipView[] {
         tone: symbol,
         symbols: [symbol],
         floating: true,
+        sourceOid: null,
       });
     }
   }
@@ -62,11 +67,49 @@ export function manaRow(mana: ManaView | undefined): ManaPipView[] {
         tone: symbols.length === 1 ? symbols[0] : "any",
         symbols,
         floating: false,
+        sourceOid: source.oid,
       });
     }
   }
 
   return pips;
+}
+
+/**
+ * The permanents casting `card` would tap, or an empty set if it cannot be cast.
+ *
+ * The engine solves payment exactly and now ships the answer on every cast
+ * action (`LegalAction.pays`), so this is a lookup, not a calculation. Guessing
+ * client-side is precisely the mistake the `options` payload exists to avoid:
+ * two "Add {G} or {U}" duals can pay {G}{U} or {G}{G} but not both, and only the
+ * solver knows which lands it picked.
+ *
+ * Several cast actions can name one card when it has a choice of targets; they
+ * all cost the same, so the first is enough.
+ */
+export function sourcesSpentBy(actions: LegalAction[], oid: number): Set<number> {
+  const match = actions.find(
+    (action) => action.source_oid === oid && action.kind === "cast" && action.pays.length > 0,
+  );
+  return new Set(match?.pays ?? []);
+}
+
+/**
+ * Mark the pips a pending cast would consume.
+ *
+ * Every pip of a tapped source is marked, not one per mana owed: tapping is what
+ * costs, and a land that makes two mana is unavailable for the rest of the step
+ * whether the spell needed one of them or both. Marking half of it would claim a
+ * mana the player cannot actually reach.
+ *
+ * Sources only. `Payment` does not itemise which floating mana it spent, so a
+ * pool pip is never marked — see engine/legality.py.
+ */
+export function markSpent(pips: ManaPipView[], spent: ReadonlySet<number>): ManaPipView[] {
+  if (spent.size === 0) return pips;
+  return pips.map((pip) =>
+    pip.sourceOid !== null && spent.has(pip.sourceOid) ? { ...pip, spent: true } : pip,
+  );
 }
 
 /** "{G}{G}{U}", with an ambiguous pip written as "{?}". */

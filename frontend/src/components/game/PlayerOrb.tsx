@@ -10,12 +10,14 @@ import { motion, useAnimationControls } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { PlayerView } from "../../api/types";
 import { lossReason } from "../../logic/labels";
-import { formatManaRow, manaRow } from "../../logic/mana";
+import { formatManaRow, manaRow, markSpent } from "../../logic/mana";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 
 /** Commander damage becomes lethal here; warn well before it does. */
 const COMMANDER_LETHAL = 21;
+
+const EMPTY: ReadonlySet<number> = new Set();
 
 interface Props {
   player: PlayerView;
@@ -28,6 +30,11 @@ interface Props {
   /** A legal action could point at this player: attack target, spell target. */
   targetable?: boolean;
   onSelect?: (pid: number) => void;
+  /**
+   * Sources a currently-hovered spell would tap, from the engine's own solved
+   * payment. Empty when nothing is hovered, or for any seat but the viewer.
+   */
+  spending?: ReadonlySet<number>;
 }
 
 export function PlayerOrb({
@@ -39,6 +46,7 @@ export function PlayerOrb({
   compact = false,
   targetable = false,
   onSelect,
+  spending,
 }: Props) {
   const setPeek = useUiStore((s) => s.setPeek);
   const controls = useAnimationControls();
@@ -60,12 +68,8 @@ export function PlayerOrb({
     ([, amount]) => amount > 0,
   );
 
-  const pips = manaRow(player.mana);
-  // Only surface tax that is actually owed. A commander cast for the first time
-  // costs nothing extra, and a zero chip is noise on every orb all game.
-  const commanderTax = Object.entries(player.commander_cost ?? {}).filter(
-    ([, extra]) => extra > 0,
-  );
+  const pips = markSpent(manaRow(player.mana), spending ?? EMPTY);
+  const spentCount = pips.filter((pip) => pip.spent).length;
 
   const classes = [
     "orb",
@@ -125,46 +129,54 @@ export function PlayerOrb({
 
         An ambiguous source ("Add {G} or {U}") is one split pip, not two solid
         ones: two solid pips would claim a mana that does not exist.
+
+        Hovering a castable card hollows out the pips it would spend, so the row
+        answers "and what will that leave me with" as well as "what do I have".
+        Which lands those are comes from the engine's solved payment, never from
+        arithmetic here -- see logic/mana.ts.
       */}
       {pips.length > 0 && (
         <div
           className="orb__mana"
           data-testid={`mana-${player.pid}`}
           data-mana={formatManaRow(pips)}
-          title={`${pips.length} available: ${formatManaRow(pips)}`}
+          data-spending={spentCount}
+          title={
+            spentCount > 0
+              ? `${pips.length} available; this spell taps ${spentCount}`
+              : `${pips.length} available: ${formatManaRow(pips)}`
+          }
         >
           {pips.map((pip) => (
             <span
               key={pip.key}
-              className={`mana-pip mana-pip--${pip.tone}${
-                pip.floating ? " mana-pip--floating" : ""
-              }`}
+              className={[
+                "mana-pip",
+                `mana-pip--${pip.tone}`,
+                pip.floating ? "mana-pip--floating" : "",
+                pip.spent ? "mana-pip--spent" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               title={
-                pip.symbols.length > 1
-                  ? `Either ${pip.symbols.join(" or ")}`
-                  : pip.floating
-                    ? `${pip.symbols[0]} in pool`
-                    : pip.symbols[0]
+                pip.spent
+                  ? `${pip.symbols.join(" or ")} — this spell would tap it`
+                  : pip.symbols.length > 1
+                    ? `Either ${pip.symbols.join(" or ")}`
+                    : pip.floating
+                      ? `${pip.symbols[0]} in pool`
+                      : pip.symbols[0]
               }
             />
           ))}
         </div>
       )}
 
-      {commanderTax.length > 0 && (
-        <div className="orb__tax" data-testid={`tax-${player.pid}`}>
-          {commanderTax.map(([oid, extra]) => (
-            <span
-              key={oid}
-              className="tax-chip"
-              title={`Commander tax: +${extra} generic to cast from the command zone`}
-            >
-              CMD +{extra}
-            </span>
-          ))}
-        </div>
-      )}
-
+      {/*
+        Commander tax used to live here as a `CMD +N` chip. It now rides on the
+        commander's own card in `CommandZone`, next to the mana cost it modifies
+        -- which is the only place a surcharge means anything.
+      */}
       <div className="orb__zones">
         <span className="zone-chip zone-chip--static" title="Cards in library">
           Lib {player.library_count}

@@ -34,6 +34,17 @@ export interface CardView {
   types: string[];
   subtypes: string[];
   keywords: string[];
+  /** "Basic", "Legendary". Printed, so it is the same in every zone. */
+  supertypes: string[];
+  /**
+   * Every mana symbol this card's mana abilities could make, in WUBRG order.
+   *
+   * The board colours lands by this rather than by subtype: "Island" is
+   * inferable, a nonbasic dual is not, and parsing `oracle_text` here would be
+   * the guess `logic/mana.ts` exists to avoid. It says nothing about *amount* —
+   * "Add {G} or {U}" and "Add {G}{U}" both report `["U", "G"]`. See `ManaView`.
+   */
+  produces: string[];
   /** Battlefield only. */
   damage?: number;
   tapped?: boolean;
@@ -109,6 +120,14 @@ export interface DecisionOption {
   label: string;
   ref: { kind: string; id: number } | null;
   value: unknown;
+  /**
+   * The face to draw for this option, sent only to the seat being asked.
+   *
+   * Without it a prompt about hidden cards is a row of names: `findCard` can
+   * only search the zones `player_view` sends, and libraries are a count. Absent
+   * on options that name no object, and on every option for any other seat.
+   */
+  card?: CardView | null;
 }
 
 export interface PendingDecision {
@@ -153,7 +172,13 @@ export interface CombatView {
 
 export interface GameView {
   seat: number;
+  /**
+   * Player-turns taken. This is the rules counter — summoning sickness and the
+   * turn cap read it — and in a pod it runs at the seat count per round.
+   */
   turn: number;
+  /** Full cycles of the table, which is what a player means by "turn". */
+  round: number;
   step: string;
   phase: string;
   active_player: number;
@@ -179,6 +204,12 @@ export interface LegalAction {
   targets: { kind: string; id: number }[];
   choice: number | null;
   x: number;
+  /**
+   * Permanents the solver would tap to pay for this — a forecast, so the mana
+   * row can show what a hovered spell would eat. Sources only: `Payment` does
+   * not itemise floating mana, so the pool is never claimed here.
+   */
+  pays: number[];
 }
 
 export interface GameEvent {

@@ -7,6 +7,7 @@
 
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { LANES, groupBattlefield } from "../../logic/zoneGrouping";
+import { CommandZone } from "./CommandZone";
 import { Lane } from "./Lane";
 import { PlayerOrb } from "./PlayerOrb";
 
@@ -29,6 +30,19 @@ interface Props {
   /** This player can be pointed at right now. */
   playerTargetable?: boolean;
   onSelectPlayer?: (pid: number) => void;
+  /** Oids a legal play action names, for the commander dock's castable rim. */
+  playableOids?: ReadonlySet<number>;
+  /**
+   * Casting a commander out of the command zone. Deliberately not `onActivate`:
+   * that one routes a click on a *permanent* (target, block, activate), and a
+   * card in the command zone is being played, not used.
+   */
+  onCastCommander?: (card: CardView) => void;
+  onHoverCard?: (oid: number | null) => void;
+  /** Sources a hovered spell would tap, for the orb's mana row. */
+  spending?: ReadonlySet<number>;
+  /** Input is gated (narration playing, request in flight). */
+  locked?: boolean;
 }
 
 export function PlayerMat({
@@ -48,6 +62,11 @@ export function PlayerMat({
   onDropOn,
   playerTargetable = false,
   onSelectPlayer,
+  playableOids,
+  onCastCommander,
+  onHoverCard,
+  spending,
+  locked = false,
 }: Props) {
   const lanes = groupBattlefield(state, player.pid);
   // An empty lane is noise on an opponent's board; keep all four for the
@@ -56,16 +75,33 @@ export function PlayerMat({
 
   return (
     <section className={compact ? "mat mat--compact" : "mat"} data-testid={`mat-${player.pid}`}>
-      <PlayerOrb
-        player={player}
-        isViewer={player.pid === state.seat}
-        isActive={player.pid === state.active_player}
-        hasPriority={state.priority_player === player.pid}
-        names={names}
-        compact={compact}
-        targetable={playerTargetable}
-        onSelect={onSelectPlayer}
-      />
+      {/* Orb and command zone share the mat's first column: they are both
+          "facts about this player" rather than permanents on their board. */}
+      <div className="mat__side">
+        <PlayerOrb
+          player={player}
+          isViewer={player.pid === state.seat}
+          isActive={player.pid === state.active_player}
+          hasPriority={state.priority_player === player.pid}
+          names={names}
+          compact={compact}
+          targetable={playerTargetable}
+          onSelect={onSelectPlayer}
+          spending={spending}
+        />
+        {/* Opponents only. The viewer's own commander lives beside their hand,
+            which is the zone it is actually played from -- see Table.tsx. */}
+        {compact && (
+          <CommandZone
+            state={state}
+            pid={player.pid}
+            playableOids={playableOids ?? new Set()}
+            onActivate={onCastCommander}
+            onHover={onHoverCard}
+            disabled={locked}
+          />
+        )}
+      </div>
       <div className="mat__lanes">
         {shown.map((lane) => (
           <Lane

@@ -13,10 +13,13 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import type { CardView, GameView } from "../../api/types";
 import { play } from "../../audio/sfx";
 import type { Beat, BeatAnchor, Tone } from "../../logic/events";
+import { findCardByDefId } from "../../logic/zoneGrouping";
 import type { LiveBeat } from "../../state/narration";
 import { SPEED_MULTIPLIER, type Speed, useUiStore } from "../../state/uiStore";
+import { StaticCard } from "./Card";
 
 /** How long a numeral floats, before speed scaling. */
 const FLOAT_MS = 1100;
@@ -50,7 +53,12 @@ interface SpotlightFx {
   name: string;
   controller: number;
   kind: "spell" | "trigger";
+  /** The real card, when one can be found. Null falls back to a name plate. */
+  card: CardView | null;
 }
+
+/** How wide a spotlit card is drawn. Big enough to read the rules text. */
+const SPOTLIGHT_CARD_W = 190;
 
 function anchorPoint(anchor: BeatAnchor, origin: DOMRect): { x: number; y: number } | null {
   const selector =
@@ -68,9 +76,11 @@ interface Props {
   beat: LiveBeat | null;
   speed: Speed;
   boardRef: React.RefObject<HTMLElement>;
+  /** For resolving a spotlit card's face; see `findCardByDefId`. */
+  state: GameView;
 }
 
-export function FxLayer({ beat, speed, boardRef }: Props) {
+export function FxLayer({ beat, speed, boardRef, state }: Props) {
   const [floats, setFloats] = useState<FloatFx[]>([]);
   const [flashes, setFlashes] = useState<FlashFx[]>([]);
   const [banners, setBanners] = useState<BannerFx[]>([]);
@@ -89,6 +99,12 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
   const muted = useUiStore((s) => s.muted);
   const mutedRef = useRef(muted);
   mutedRef.current = muted;
+
+  // Same trick for the state: the spotlight reads it once, when the beat plays.
+  // Listing it as a dependency would replay every effect on every server
+  // response, which arrives constantly while the AI pump runs.
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   useEffect(() => {
     if (!beat) return;
@@ -143,6 +159,11 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
         name: beat.spotlight.name,
         controller: beat.spotlight.controller,
         kind: beat.spotlight.kind ?? "spell",
+        // Resolved once, here, rather than on every render: by the time this
+        // expires the card may well have moved zones again.
+        card: beat.spotlight.cardId
+          ? findCardByDefId(stateRef.current, beat.spotlight.cardId, beat.spotlight.controller)
+          : null,
       };
       setSpotlights((current) => [...current, fx]);
       expire(() => setSpotlights((c) => c.filter((s) => s.uid !== fx.uid)), SPOTLIGHT_MS);
@@ -195,7 +216,23 @@ export function FxLayer({ beat, speed, boardRef }: Props) {
             {/* A trigger is not a card being cast, so it says so. Without the
                 label a triggered ability and a spell look identical here. */}
             {fx.kind === "trigger" && <span className="fx-spotlight__kind">Triggered</span>}
-            <span className="fx-spotlight__name">{fx.name}</span>
+            {/*
+              The real card, not a name plate. `Beat.spotlight` has carried a
+              card id since cycle 1 and nothing had ever drawn it; the stack
+              panel proved `StaticCard` works away from the battlefield. The
+              plate stays as the fallback -- a countered spell has already left
+              every zone the viewer can see, and a name is better than a gap.
+            */}
+            {fx.card ? (
+              <div
+                className="fx-spotlight__card"
+                style={{ ["--card-w" as string]: `${SPOTLIGHT_CARD_W}px` }}
+              >
+                <StaticCard card={fx.card} detail />
+              </div>
+            ) : (
+              <span className="fx-spotlight__name">{fx.name}</span>
+            )}
           </motion.div>
         ))}
       </AnimatePresence>

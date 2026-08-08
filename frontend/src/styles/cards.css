@@ -118,39 +118,156 @@
  * tone is a pale wash where the rims are saturated hairlines.
  *
  * Land and Creature sit furthest apart on purpose: they are most of a board,
- * and telling them apart is most of the scan. */
+ * and telling them apart is most of the scan.
+ *
+ * LIGHTNESS IS PART OF THE ENCODING. Cycle 2 put all seven tones at L~88%, so a
+ * greyscale board -- a monochrome display, a strongly colour-deficient viewer,
+ * a card half-occluded in a stack ply -- collapsed to one small glyph. They now
+ * climb in even steps of relative luminance from land (0.58) to other (0.92),
+ * so hue and lightness carry the same fact twice.
+ *
+ * The range is bounded below by `.card--dimmed`, which is a flat 22% scrim:
+ * dimming multiplies luminance by ~0.556, so the whole dimmed band has to stay
+ * under the darkest undimmed tone or a dark land would read as disabled. That
+ * puts a hard floor at min/max > 0.556; the spread below runs 0.58/0.92 = 0.63.
+ * `tests/palette.test.ts` computes both properties from this file and fails if
+ * a future tweak breaks either -- it is the automated form of the greyscale
+ * check docs/playtest-feedback-01.md and -02.md both asked for and could not
+ * find. Re-run it rather than eyeballing a hex. */
 
-.face--type-creature {
-  --stock: #f5d9cc;
-  --stock-shade: #e6bfad;
-}
 .face--type-land {
-  --stock: #e3d2ab;
-  --stock-shade: #cdb888;
+  --stock: #d6c7a8;
+  --stock-shade: #c6b186;
 }
-.face--type-artifact {
-  --stock: #dee4ea;
-  --stock-shade: #c3ccd6;
-}
-.face--type-enchantment {
-  --stock: #e6dcf3;
-  --stock-shade: #cfc0e5;
-}
-.face--type-instant {
-  --stock: #d3e9f0;
-  --stock-shade: #b4d5e0;
+.face--type-creature {
+  --stock: #ebc9bc;
+  --stock-shade: #e0a894;
 }
 .face--type-sorcery {
-  --stock: #f1d8e7;
-  --stock-shade: #dfbcd2;
+  --stock: #eecfdf;
+  --stock-shade: #e1a9c7;
+}
+.face--type-enchantment {
+  --stock: #e4d9f1;
+  --stock-shade: #cab5e3;
 }
 .face--type-planeswalker {
-  --stock: #f3e5b6;
-  --stock-shade: #e0cd91;
+  --stock: #efe3bc;
+  --stock-shade: #e6d293;
+}
+.face--type-artifact {
+  --stock: #e5eaf0;
+  --stock-shade: #c5d1dd;
+}
+.face--type-instant {
+  --stock: #e4f2f7;
+  --stock-shade: #bce0ec;
 }
 .face--type-other {
-  --stock: #f3ece0;
-  --stock-shade: #ddd2be;
+  --stock: #f8f6f1;
+  --stock-shade: #e7decf;
+}
+
+/* Land colours ----------------------------------------------------------
+ *
+ * Every land was the same tan rectangle, so a lane of twelve of them could only
+ * be read by reading names -- docs/playtest-feedback-02.md item 8. These narrow
+ * the land tone to the colour the land actually taps for, taken from the
+ * server's `produces` (see costs.produced_symbols) rather than guessed from a
+ * subtype, so a nonbasic dual is as honest as an Island.
+ *
+ * All seven sit at the *same* luminance as each other and as `--type-land`
+ * (~0.585). That is deliberate: lightness is already spoken for by card type,
+ * so borrowing it here would say "this Island is a different type of card from
+ * that Mountain". Colour separates them for anyone who can see colour, and the
+ * `.face__watermark` letter separates them for anyone who cannot.
+ *
+ * Forest is the one green thing on a card. The note above about avoiding green
+ * is about the `--playable` rim, which is a hairline plus glow *outside* the
+ * frame (`.card::after { inset: -3px }`) reading against the dark table -- not
+ * against the stock. A pale sage body does not compete with it. */
+
+.face--land-W {
+  --stock: #daca89;
+  --stock-shade: #cdb862;
+}
+.face--land-U {
+  --stock: #afcde3;
+  --stock-shade: #8ab6d6;
+}
+.face--land-B {
+  --stock: #d1c5da;
+  --stock-shade: #b9a5c6;
+}
+.face--land-R {
+  --stock: #ebbfb5;
+  --stock-shade: #e19d8c;
+}
+.face--land-G {
+  --stock: #a6d69e;
+  --stock-shade: #85c67a;
+}
+.face--land-C {
+  --stock: #c5c9ce;
+  --stock-shade: #aab0b6;
+}
+.face--land-multi {
+  --stock: #e2c77d;
+  --stock-shade: #d9b653;
+}
+
+/* The mana a land makes, drawn where the art would be.
+ *
+ * Sized off --card-w like everything else, so the same markup serves the 236px
+ * preview and a 66px opponent permanent. It replaces a basic's rules text
+ * entirely (see CardFace): "{T}: Add {G}." twelve times down a lane is a line
+ * nobody reads, and the symbol says it faster. */
+.face__watermark {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--card-w) * 0.04);
+  min-height: 0;
+}
+
+.watermark-pip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--card-w) * 0.3);
+  height: calc(var(--card-w) * 0.3);
+  border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / 0.18);
+  color: rgb(255 255 255 / 0.92);
+  font-size: calc(var(--card-w) * 0.15);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  box-shadow: inset 0 -2px 3px rgb(0 0 0 / 0.2), 0 1px 2px rgb(0 0 0 / 0.15);
+}
+
+.watermark-pip--W {
+  background: var(--mana-W);
+  color: rgb(40 34 20 / 0.85);
+  text-shadow: none;
+}
+.watermark-pip--U {
+  background: var(--mana-U);
+}
+.watermark-pip--B {
+  background: var(--mana-B);
+}
+.watermark-pip--R {
+  background: var(--mana-R);
+}
+.watermark-pip--G {
+  background: var(--mana-G);
+}
+.watermark-pip--C {
+  background: var(--mana-C);
+  color: rgb(40 40 44 / 0.85);
+  text-shadow: none;
 }
 
 /* Rows ----------------------------------------------------------------- */
@@ -319,6 +436,34 @@
 }
 .pip--C {
   background: var(--mana-C);
+}
+
+/* The tap symbol. Grey rather than a mana colour, because it is a cost you pay
+   with the permanent rather than with mana -- the distinction matters most
+   exactly where these appear, in an activation cost like "{2}, {T}". */
+.pip--tap {
+  background: #4a4f52;
+  color: #f2f5f4;
+}
+
+/* Symbols inside a sentence rather than in a cost row.
+ *
+ * Sized in `em` so one component serves a 236px preview card's rules box and an
+ * 11px action-bar label without either being told what size it is. `baseline`
+ * alignment keeps a line of text from growing around them, which is what turns
+ * a rules box into a ransom note. */
+.pip--inline {
+  /* `min-width` and `height` both have to be restated: `.pip` sizes itself off
+     --card-w, which inside a rules box is the whole card and turns a pip into a
+     lozenge as wide as the line. */
+  min-width: 1.2em;
+  height: 1.2em;
+  margin: 0 0.08em;
+  padding: 0;
+  font-size: 0.9em;
+  line-height: 1;
+  vertical-align: -0.2em;
+  box-shadow: inset 0 -1px 1px rgb(0 0 0 / 0.2);
 }
 
 /* Interaction rims ----------------------------------------------------- */

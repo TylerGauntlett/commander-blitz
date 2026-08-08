@@ -20,6 +20,8 @@ export function card(overrides: Partial<CardView> = {}): CardView {
     types: ["Creature"],
     subtypes: ["Bear"],
     keywords: [],
+    supertypes: [],
+    produces: [],
     damage: 0,
     tapped: false,
     summoning_sick: false,
@@ -58,6 +60,7 @@ export function gameView(overrides: Partial<GameView> = {}): GameView {
   return {
     seat: 0,
     turn: 1,
+    round: 1,
     step: "PRECOMBAT_MAIN",
     phase: "precombat_main",
     active_player: 0,
@@ -95,6 +98,7 @@ export function action(overrides: Partial<LegalAction> = {}): LegalAction {
     targets: [],
     choice: null,
     x: 0,
+    pays: [],
     ...overrides,
   };
 }

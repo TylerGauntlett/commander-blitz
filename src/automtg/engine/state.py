@@ -44,6 +44,16 @@ class GameState:
     stack: list[StackItem] = field(default_factory=list)
 
     turn: int = 0
+    #: Full cycles of the table, incremented when the active seat wraps.
+    #:
+    #: Deliberately *parallel* to ``turn`` rather than replacing it.  ``turn``
+    #: counts player-turns and is load-bearing for summoning sickness
+    #: (:meth:`GameObject.summoning_sick`), the first-draw skip, the ``max_turns``
+    #: cap and the RL encoding.  But a player counting their own turns says "this
+    #: is my second turn" while ``turn`` reads 3 in a two-player game, so the UI
+    #: needs the round and cannot derive it: eliminations make
+    #: ``turn // num_players`` drift.  See docs/playtest-feedback-02.md.
+    round: int = 0
     active_idx: int = 0
     step: Step = Step.UNTAP
     starting_player: int = 0
