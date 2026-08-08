@@ -1,9 +1,18 @@
 /**
- * A player: life, commander damage, and the zones you can look into.
+ * A player: life, mana, and the zones you can look into.
  *
- * The life total is the thing the eye goes to, so it is a real counter that
- * reacts -- it pops and flashes on every change, in the direction of the
- * change. `data-player` marks it as an anchor for floating damage numerals.
+ * Two things here are physical rather than textual, and both are borrowed from
+ * the candlelit mockup because they read better than what they replace:
+ *
+ * **Life is a dial.** It is the one number people actually hunt for, so it is
+ * the largest object in the column rather than a slightly bigger numeral. It
+ * still pops and flashes on every change, in the direction of the change, and
+ * `data-player` still marks it as the anchor for floating damage numerals.
+ *
+ * **Zones are piles.** `Lib 72 / GY 3 / Exile 1` gave three numbers to compare
+ * by reading; a pile shows the shape of the game as well as the count. The
+ * piles are still buttons -- they are the only route into `ZonePeek`, and a
+ * decorative pile would make the graveyard unreachable.
  */
 
 import { motion, useAnimationControls } from "motion/react";
@@ -11,13 +20,79 @@ import { useEffect, useRef } from "react";
 import type { PlayerView } from "../../api/types";
 import { lossReason } from "../../logic/labels";
 import { formatManaRow, manaRow, markSpent } from "../../logic/mana";
+import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
-import { useUiStore } from "../../state/uiStore";
+import { type PeekTarget, useUiStore } from "../../state/uiStore";
 
 /** Commander damage becomes lethal here; warn well before it does. */
 const COMMANDER_LETHAL = 21;
 
 const EMPTY: ReadonlySet<number> = new Set();
+
+interface PileProps {
+  pid: number;
+  /** Which zone this opens. `null` for the library, which cannot be looked at. */
+  zone: PeekTarget["zone"] | null;
+  name: string;
+  kind: PileKind;
+  label: string;
+  count: number;
+  title?: string;
+}
+
+/**
+ * One zone, drawn as a stack of leaves whose height is the count.
+ *
+ * A button wherever the zone can be opened: these replaced the zone chips, and
+ * the chips were how you reached `ZonePeek`. A decorative pile would make the
+ * graveyard unreachable for anyone not using the keyboard shortcut.
+ *
+ * The library is the exception and stays a plain element -- it is hidden
+ * information, and a control that does nothing when clicked is worse than no
+ * control.
+ */
+function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
+  const setPeek = useUiStore((s) => s.setPeek);
+  const leaves = pileLeaves(count);
+
+  const body = (
+    <>
+      <span className="pile__stack">
+        {Array.from({ length: leaves }, (_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: leaves are identical and positional
+          <span className={`pile__leaf pile__leaf--${kind}`} key={i} />
+        ))}
+        {/* The top leaf carries the exact number, so capping the leaf count
+            costs resolution but never information. */}
+        <span className={`pile__leaf pile__leaf--top pile__leaf--${kind} tabular`}>
+          {count}
+        </span>
+      </span>
+      <span className="pile__label">{label}</span>
+    </>
+  );
+
+  const className = [
+    "pile",
+    count > 0 ? "" : "pile--empty",
+    zone === null ? "pile--static" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const shared = {
+    className,
+    "data-testid": `pile-${pid}-${name}`,
+    "data-count": count,
+    title: title ?? `${label}: ${count}`,
+  };
+
+  if (zone === null) return <div {...shared}>{body}</div>;
+  return (
+    <button type="button" {...shared} onClick={() => setPeek({ pid, zone })}>
+      {body}
+    </button>
+  );
+}
 
 interface Props {
   player: PlayerView;
@@ -48,7 +123,6 @@ export function PlayerOrb({
   onSelect,
   spending,
 }: Props) {
-  const setPeek = useUiStore((s) => s.setPeek);
   const controls = useAnimationControls();
   const previous = useRef(player.life);
 
@@ -59,7 +133,11 @@ export function PlayerOrb({
     const grew = player.life > before;
     controls.start({
       scale: [1, grew ? 1.28 : 1.34, 1],
-      color: ["var(--text)", grew ? "var(--gain)" : "var(--danger)", "var(--text)"],
+      // Rests on the dial's ink, not `--text`. The numeral sits on brass now,
+      // so returning it to the old off-white would leave it white-on-gold from
+      // the first life change onwards -- a bug that only appears after the
+      // first hit, which is exactly when nobody is looking at the CSS.
+      color: ["var(--dial-ink)", grew ? "var(--gain)" : "var(--danger)", "var(--dial-ink)"],
       transition: { duration: 0.5, times: [0, 0.25, 1] },
     });
   }, [player.life, controls]);
@@ -98,13 +176,29 @@ export function PlayerOrb({
       </div>
 
       <div className="orb__life-row">
-        <motion.span
-          className="orb__life tabular"
-          animate={controls}
-          data-testid={`life-${player.pid}`}
+        <div
+          className={[
+            "dial",
+            isViewer ? "dial--mine" : "dial--foe",
+            isActive ? "dial--active" : "",
+            player.has_lost ? "dial--out" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
         >
-          {player.has_lost ? "OUT" : player.life}
-        </motion.span>
+          {/*
+            The testid sits on the numeral, not the disc: `lifeOf()` in
+            e2e/helpers.ts does `Number(textContent)` on this node, so it has
+            to hold the bare number and nothing else.
+          */}
+          <motion.span
+            className="dial__n tabular"
+            animate={controls}
+            data-testid={`life-${player.pid}`}
+          >
+            {player.has_lost ? "OUT" : player.life}
+          </motion.span>
+        </div>
         {player.has_lost && <span className="orb__loss">{lossReason(player.loss_reason)}</span>}
       </div>
 
@@ -177,42 +271,58 @@ export function PlayerOrb({
         commander's own card in `CommandZone`, next to the mana cost it modifies
         -- which is the only place a surcharge means anything.
       */}
-      <div className="orb__zones">
-        <span className="zone-chip zone-chip--static" title="Cards in library">
-          Lib {player.library_count}
-        </span>
-        <button
-          type="button"
-          className="zone-chip"
-          onClick={() => setPeek({ pid: player.pid, zone: "hand" })}
+      {/*
+        Bottom-aligned, so the piles' heights read comparatively: a library
+        that has been drawn down to nothing is visibly a short stack next to a
+        graveyard that has grown, which is a thing you want to notice rather
+        than work out.
+      */}
+      <div className="piles">
+        <ZonePile
+          pid={player.pid}
+          zone={null}
+          name="library"
+          kind="lib"
+          label="Lib"
+          count={player.library_count}
+          title="Cards in library"
+        />
+        <ZonePile
+          pid={player.pid}
+          zone="hand"
+          name="hand"
+          kind="lib"
+          label="Hand"
+          count={player.hand_count}
           title={isViewer ? "Your hand" : "Hidden"}
-        >
-          Hand {player.hand_count}
-        </button>
-        <button
-          type="button"
-          className="zone-chip"
-          onClick={() => setPeek({ pid: player.pid, zone: "graveyard" })}
-        >
-          GY {player.graveyard.length}
-        </button>
+        />
+        <ZonePile
+          pid={player.pid}
+          zone="graveyard"
+          name="graveyard"
+          kind="gy"
+          label="GY"
+          count={player.graveyard.length}
+        />
         {player.exile.length > 0 && (
-          <button
-            type="button"
-            className="zone-chip"
-            onClick={() => setPeek({ pid: player.pid, zone: "exile" })}
-          >
-            Exile {player.exile.length}
-          </button>
+          <ZonePile
+            pid={player.pid}
+            zone="exile"
+            name="exile"
+            kind="ex"
+            label="Exile"
+            count={player.exile.length}
+          />
         )}
-        <button
-          type="button"
-          className="zone-chip zone-chip--cmd"
-          onClick={() => setPeek({ pid: player.pid, zone: "command" })}
+        <ZonePile
+          pid={player.pid}
+          zone="command"
+          name="command"
+          kind="cmd"
+          label="CMD"
+          count={player.command.length}
           title="Command zone"
-        >
-          CMD {player.command.length}
-        </button>
+        />
       </div>
     </motion.div>
   );

@@ -30,6 +30,10 @@ export interface CardProps {
   draggable?: boolean;
   /** A legal action would play this card: green rim. */
   playable?: boolean;
+  /** This permanent has an activated ability available right now. */
+  hasAbility?: boolean;
+  /** The ability's label, shown in a popover while the card is hovered. */
+  abilityLabel?: string | null;
   /** A legal action could target this card: blue rim. */
   targetable?: boolean;
   /** Staged as an attacker or blocker, not yet submitted: amber rim. */
@@ -61,6 +65,8 @@ export function Card({
   detail = false,
   draggable = false,
   playable = false,
+  hasAbility = false,
+  abilityLabel = null,
   targetable = false,
   staged = false,
   selected = false,
@@ -81,6 +87,7 @@ export function Card({
     // the rotated card instead of letting it lie across its neighbour.
     tapped ? "card--tapped" : "",
     playable ? "card--playable" : "",
+    hasAbility ? "card--ability" : "",
     targetable ? "card--targetable" : "",
     staged ? "card--staged" : "",
     selected ? "card--selected" : "",
@@ -137,6 +144,33 @@ export function Card({
         <CardFace card={card} detail={detail} />
       </motion.div>
       {staged && <span className="card__pin" />}
+      {/*
+        An activated ability had no presence on the card at all: the only
+        surface was a sentence-shaped button in the action bar's overflow, so
+        the affordance existed but nothing pointed at it.
+
+        Deliberately carries no `data-action-id`. `ActionBar` already renders
+        every `activate` action, and `clarity.spec.ts` fails the run if two
+        rendered nodes share an id -- so this is a *sign*, and clicking the
+        card is what routes into `Table.onBoardCard`.
+      */}
+      {hasAbility && (
+        <span className="rune" aria-hidden="true" title="Has an activated ability">
+          &#8631;
+        </span>
+      )}
+      {/*
+        What the ability actually *is*, on hover. The rune says "there is
+        something here"; without this you still had to go and read the action
+        bar to find out what. Carries no `data-action-id` -- clicking the card
+        routes through `Table.onBoardCard` exactly as it always has.
+      */}
+      {hasAbility && abilityLabel && (
+        <span className="ability-pop" role="note">
+          <span className="ability-pop__label">Ability available</span>
+          <span className="ability-pop__text">{abilityLabel}</span>
+        </span>
+      )}
     </motion.div>
   );
 }

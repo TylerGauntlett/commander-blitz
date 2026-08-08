@@ -8,6 +8,7 @@ import { NewGameScreen } from "./components/menu/NewGameScreen";
 import { ease } from "./motion/springs";
 import { useUiStore } from "./state/uiStore";
 import { type GameSession, useDecks, useGame, useNewGame } from "./state/useGame";
+import { useImages } from "./state/useImages";
 
 export function App() {
   const [session, setSession] = useState<GameSession | null>(null);
@@ -18,6 +19,8 @@ export function App() {
 
   const decks = useDecks();
   const newGame = useNewGame();
+  // One fetch for the whole session; the map never changes while the server runs.
+  useImages();
   const game = useGame(session);
   const clearStaging = useUiStore((s) => s.clearStaging);
   const setError = useUiStore((s) => s.setError);

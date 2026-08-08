@@ -54,16 +54,61 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  /* This padding is the surround of type-tinted paper the art window never
+     covers. It is not decoration -- tests/palette.test.ts asserts it is
+     non-zero, because an art band bled to the edge would take the type
+     encoding with it. */
   padding: calc(var(--card-w) * 0.045);
   gap: calc(var(--card-w) * 0.028);
   overflow: hidden;
-  border: 2px solid var(--frame-default);
+  /* Scales with the card so colour identity holds its weight on a big display,
+     with a hard 2px floor: the smallest card in a four-player pod is ~51px, and
+     3.2% of that rounds down to a single device pixel -- at which point the
+     border stops reading as a colour at all. */
+  border: max(2px, calc(var(--card-w) * 0.032)) solid var(--frame-default);
   border-radius: var(--card-r);
   background: linear-gradient(160deg, var(--stock) 0%, var(--stock-shade) 100%);
   color: var(--stock-ink);
   font-size: calc(var(--card-w) * 0.082);
   line-height: 1.25;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.35);
+}
+
+/*
+ * The type ring.
+ *
+ * The frame's outer border carries *colour identity*, so card type needed a
+ * channel of its own once art started covering the paper that used to carry it.
+ * This is that channel: a hairline at the frame's inner edge, drawn on top of
+ * everything including the art, keyed on the same `.face--type-*` rules that
+ * set `--stock`.
+ *
+ * The ladder spans L 0.05 to 0.58 in even steps, and `tests/palette.test.ts`
+ * asserts the separation. A first attempt kept every tone dark, on the theory
+ * that a light ring would be lost against a light art crop -- but that squeezed
+ * all eight into the bottom of the range and two dark browns are not tellable
+ * apart at three pixels. The dark hairline drawn just inside the ring solves
+ * the same problem better: the ring always has a defined edge, whatever the
+ * illustration behind it is doing, so its own lightness is free to carry the
+ * encoding.
+ */
+.face {
+  /* Floored like the border above, and for the same reason: below ~2px the
+     ring stops being a colour and becomes an artefact. */
+  --type-ring-w: max(2px, calc(var(--card-w) * 0.034));
+}
+
+.face::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  /* Two insets, painted first-on-top: the type ring, and a dark edge just
+     inside it that separates the ring from whatever the art happens to be. */
+  box-shadow: inset 0 0 0 var(--type-ring-w) var(--type-ring, transparent), inset 0 0 0
+    calc(var(--type-ring-w) + 1.5px) rgb(0 0 0 / 0.5);
 }
 
 /* Frame tints ---------------------------------------------------------- */
@@ -138,34 +183,42 @@
 .face--type-land {
   --stock: #d6c7a8;
   --stock-shade: #c6b186;
+  --type-ring: #4f3c15;
 }
 .face--type-creature {
   --stock: #ebc9bc;
   --stock-shade: #e0a894;
+  --type-ring: #b23b0d;
 }
 .face--type-sorcery {
   --stock: #eecfdf;
   --stock-shade: #e1a9c7;
+  --type-ring: #e32e8b;
 }
 .face--type-enchantment {
   --stock: #e4d9f1;
   --stock-shade: #cab5e3;
+  --type-ring: #ac76ea;
 }
 .face--type-planeswalker {
   --stock: #efe3bc;
   --stock-shade: #e6d293;
+  --type-ring: #c79a05;
 }
 .face--type-artifact {
   --stock: #e5eaf0;
   --stock-shade: #c5d1dd;
+  --type-ring: #95b2d5;
 }
 .face--type-instant {
   --stock: #e4f2f7;
   --stock-shade: #bce0ec;
+  --type-ring: #55caf3;
 }
 .face--type-other {
   --stock: #f8f6f1;
   --stock-shade: #e7decf;
+  --type-ring: #ddc78f;
 }
 
 /* Land colours ----------------------------------------------------------
@@ -216,12 +269,100 @@
   --stock-shade: #d9b653;
 }
 
+/* The art window -------------------------------------------------------
+ *
+ * A window cut in the paper, not a replacement for it: `.face`'s padding keeps
+ * a band of the type tint all the way round, and the type ring is drawn on top.
+ * Together those are what let the board carry art without giving up the type
+ * encoding that mockups/README.md warned it would cost.
+ *
+ * `flex: 1` so the window takes whatever the title, type line and footer leave.
+ * On a card that also shows rules text the band is capped instead -- see
+ * `.face--detail` below -- or the text would be squeezed to nothing. */
+.face__art {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: calc(var(--card-w) * 0.03);
+  background: #241f33;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.35);
+}
+
+.face__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Not every card has a printing: five in `data/cards/` are original designs,
+   and a lazily-fetched crop can fail. Both land here. An honest plate reads as
+   a deliberate state; the browser's broken-image glyph reads as a bug. */
+.face__art--none {
+  display: grid;
+  place-items: center;
+  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px),
+    #6b6152;
+}
+
+.face__art--none span {
+  padding: 0 4px;
+  color: rgb(255 255 255 / 0.6);
+  font-size: calc(var(--card-w) * 0.085);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* On a land the mana symbols ride *over* the art rather than replacing it.
+   That symbol is the channel that reads at 60px in a pod and survives
+   greyscale; the art is the channel that does not. */
+.face__art .watermark-row {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--card-w) * 0.03);
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--card-w) * 0.035);
+}
+
+.face__art .watermark-pip {
+  width: calc(var(--card-w) * 0.26);
+  height: calc(var(--card-w) * 0.26);
+  font-size: calc(var(--card-w) * 0.13);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.55);
+}
+
+/* A face that also renders rules text caps its art rather than taking the
+   remaining height, so the text keeps its room. 1.4 is roughly the aspect of
+   Scryfall's art_crop, so nothing is distorted. */
+.face--detail .face__art {
+  flex: 0 0 auto;
+  aspect-ratio: 1.4;
+}
+
+/* Keywords moved into the footer when the art took their row. */
+.face__kwline {
+  flex: 1;
+  overflow: hidden;
+  color: var(--stock-ink-dim);
+  font-size: calc(var(--card-w) * 0.066);
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 /* The mana a land makes, drawn where the art would be.
  *
- * Sized off --card-w like everything else, so the same markup serves the 236px
- * preview and a 66px opponent permanent. It replaces a basic's rules text
+ * Sized off --card-w like everything else, so the same markup serves the
+ * preview and a 60px opponent permanent. It replaces a basic's rules text
  * entirely (see CardFace): "{T}: Add {G}." twelve times down a lane is a line
- * nobody reads, and the symbol says it faster. */
+ * nobody reads, and the symbol says it faster.
+ *
+ * Still used when the art map has not loaded, or the server has no images at
+ * all -- the client must render a complete board either way. */
 .face__watermark {
   display: flex;
   flex: 1;
@@ -486,6 +627,116 @@
 .card--targetable::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--targetable), 0 0 18px rgb(88 182 255 / 0.5);
+}
+
+/*
+ * An activated ability, said on the card that has one.
+ *
+ * `Table.onBoardCard` has always routed a click on a permanent to its
+ * `activate` actions, but nothing drew it -- the only surface was a
+ * sentence-shaped button in the action bar's overflow, so the affordance
+ * existed and no player could find it.
+ *
+ * Violet rather than the castable green: playing a card from hand and tapping
+ * something already on the board are different moves, and one rim colour for
+ * both would say they are the same.
+ */
+.card--ability::after {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--ability), 0 0 18px rgb(195 155 255 / 0.5);
+}
+
+/*
+ * What the ability actually is, on hover.
+ *
+ * The rune says "there is something here"; this says what. Without it you still
+ * had to go and read the action bar to find out, which is the trip the rune was
+ * supposed to save.
+ *
+ * Hover-only and `pointer-events: none`: it is a label, not a control. Clicking
+ * the card is what routes into `Table.onBoardCard`, exactly as before, so this
+ * introduces no second surface for the same action.
+ */
+.ability-pop {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: calc(100% + 12px);
+  display: none;
+  flex-direction: column;
+  width: max(220px, calc(var(--card-w) * 2.2));
+  padding: 10px 12px;
+  border: 1px solid rgb(195 155 255 / 0.5);
+  border-radius: 11px;
+  background: linear-gradient(180deg, #251b40, #161029);
+  box-shadow: 0 18px 44px rgb(0 0 0 / 0.75);
+  pointer-events: none;
+}
+
+.card--ability:hover .ability-pop {
+  display: flex;
+}
+
+/* A tail, so the popover reads as belonging to the card rather than floating
+   beside it. */
+.ability-pop::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 100%;
+  border: 7px solid transparent;
+  border-right-color: #251b40;
+}
+
+.ability-pop__label {
+  color: var(--ability);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ability-pop__text {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* The last card in a lane would push its popover off the right edge, so it
+   flips to the other side. */
+.lane__cards > .cardstack:last-child .ability-pop,
+.rail--right .ability-pop {
+  right: calc(100% + 12px);
+  left: auto;
+}
+
+.lane__cards > .cardstack:last-child .ability-pop::after,
+.rail--right .ability-pop::after {
+  right: auto;
+  left: 100%;
+  border-right-color: transparent;
+  border-left-color: #251b40;
+}
+
+.rune {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--card-w) * -0.07);
+  right: calc(var(--card-w) * -0.07);
+  display: grid;
+  place-items: center;
+  width: calc(var(--card-w) * 0.3);
+  height: calc(var(--card-w) * 0.3);
+  border-radius: 50%;
+  border: 1px solid #efe6ff;
+  background: radial-gradient(circle at 34% 28%, #ddd0ff, #7d55c9);
+  color: #1c1230;
+  font-size: calc(var(--card-w) * 0.16);
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 0 15px rgb(195 155 255 / 0.75);
+  pointer-events: none;
 }
 
 .card--staged::after {

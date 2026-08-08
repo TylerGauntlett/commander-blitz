@@ -16,7 +16,7 @@
 
 ### Overview
 - The main page is visually unappealing and does not feel like a game (more like a standard website)
-- The theme/layout can be completley reworked
+- The theme/layout can be completley reworked but should be visually consistant with the main app
 - It should visually support the idea of custom decks (importable via Moxfield) and precons (pre constructed decks offically supplied by MTG)
 - The AI vs random selctor doesn't make sense and should be instead show as a cleaver difficultly selector
 - Preconds should be clickable to open a details modal where you can read more details like the card art, card details, playstyle, etc
@@ -32,9 +32,12 @@
 - Defenders panel is more complicated in that it you have to both pick a defender and pick someone to defend against
 - Improve this panel by offering a quick way for blockers to decide of who can be blocked, who should they
 - Ensure the menu shows defenders the power/toughness of the potential attacker so they can make informed decisions
+- Additionally, this same panel can be used to play cards instead of clicking them from your hand
+    - Playable cards can use the same selected highlight color
 
 ### Task
 - Make selecting attackers to block via the right panel as seemeless as possible
+- Card playing experience by showing them in the panel as well
 
 ---
 
@@ -51,6 +54,16 @@
 - Add support for all cards, 2 additional precons (first flight and zurgo stormrender), and custom decks via Moxfield deck import
 
 ---
+
+## Progressive Zoom
+
+### Overview
+- The game typically starts with very few cards and ends with very many
+- This leads to poor use of screen real estate early in the game as the benifit of being able to show the game state end game
+- Instead, the board zooms (both user and CPU) + cards in hand could use a more intelligent zoom system that tries to maximize readability at all stages of the game
+
+### Task
+- Impelement a system that automatically scales cards/board areas up and down depending on the number of cards present
 
 
 ## CPU Improvements

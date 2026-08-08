@@ -22,8 +22,10 @@ comparison. Nothing builds or imports it.
 ```
 frontend/src/
 ├── api/         client.ts, types.ts        - fetch wrapper and DTO mirrors
-├── state/       uiStore.ts (zustand), useGame.ts (react-query), narration.ts
-├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events
+├── state/       uiStore.ts (zustand), useGame.ts (react-query), narration.ts,
+│                useImages.ts, useCardBase.ts
+├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events,
+│                cardArt, cardSize, zones
 ├── motion/      springs.ts                 - every transition in the app
 ├── styles/      cards.css, board.css, ui.css  (+ src/theme.css for tokens)
 └── components/
@@ -36,6 +38,24 @@ frontend/src/
 
 `logic/` holds every decision the client makes, as pure functions over the server's
 view. That is what the unit tests cover; components stay presentational.
+
+## Where things sit on screen
+
+A ribbon across the top, three columns, and the hand along the foot.
+
+- **Top** — the phase ribbon: five phases as pills, and only the live one expands
+  into its steps. All thirteen step labels stay in the DOM regardless, which is
+  both what `e2e/smoke.spec.ts` counts and what keeps the marker's `layoutId`
+  animation continuous across a phase boundary.
+- **Left rail** — the stack, and the event log.
+- **Middle** — opponents on a row that sizes to its content, then your own mat.
+- **Right rail** — the card preview, then **combat**, then the tool strip. Combat
+  moved here from a full-width banner under the board: the decision now sits
+  directly under the card you are reading rather than as far from it as the
+  layout allows, and the foot belongs to the hand alone. Whichever surface owns a
+  decision renders its action ids and the bar stands down (`standDown`), so a
+  prompt is never printed twice.
+- **Foot** — your commander dock and the hand.
 
 ## Dragging is a shortcut, not a rule
 
@@ -59,12 +79,24 @@ and what makes the Playwright specs writable.
 Keyboard: `Space` pass, `Enter` confirm, `Esc` cancel targeting, `1-9` play the nth card
 in hand, `U` undo. Any key skips the narration while it is playing.
 
-## Cards are still text, but they are cards now
+## Cards look like cards
 
-No images anywhere — the engine's card data is JSON in the repo with no network
-dependency, and rendering text keeps the client the same. What changed is the frame:
-a title bar with mana pips, a type line, a rules box that actually shows `oracle_text`,
-and a P/T corner, all proportioned 5:7.
+A title bar with mana pips, a type line, an art window, a rules box that shows
+`oracle_text`, and a P/T corner, all proportioned 5:7.
+
+The art is served by this application, never by a third party -- the build script
+downloads each crop once and the API serves the bytes, so the board renders with
+the network unplugged. Five cards in `data/cards/` are original designs with no
+printing anywhere, and those get a deliberate "no art" plate rather than a broken
+image. See [card-catalog.md](card-catalog.md).
+
+**Card type is encoded twice, on purpose.** The paper's fill carries it as a
+luminance ladder, but art covers most of the paper -- which is exactly the
+objection `mockups/README.md` raises against board art. So the type also gets a
+ring drawn *over* the art at the frame's inner edge, and the glyph in the title
+bar stays whatever else happens. `tests/palette.test.ts` asserts the ring's
+ladder stays separable in greyscale, and `e2e/greyscale.spec.ts` checks the same
+thing against the *rendered* board, where a `theme.css` override would show up.
 
 Every dimension is a ratio of `--card-w`, which the containing zone sets. One component
 therefore renders at 82px on an opponent's board, 146px in hand and 236px in the preview
@@ -174,5 +206,5 @@ native `<dialog>` element, which needs an imperative `showModal()` and cannot be
 
 ## Not built
 
-WebSockets (the AI pump is enough for one local player), card images, deck building,
+WebSockets (the AI pump is enough for one local player), deck building,
 multiplayer over a network, and mobile layout.

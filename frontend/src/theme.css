@@ -7,14 +7,104 @@
  * hard-coded in three places.
  */
 
+/*
+ * Card geometry is *registered*, and that is load-bearing.
+ *
+ * An unregistered custom property is just a token stream: the browser stores
+ * the `clamp(...)` verbatim and only resolves it where it is actually
+ * substituted. So `getComputedStyle(el).getPropertyValue("--card-w")` hands
+ * back the literal text `calc(var(--card-w-base) * 0.58)`, and every consumer
+ * that expected a number gets `NaN`.
+ *
+ * That is not only a test problem. `useCardBase` reads this value to lay out
+ * the hand fan, so without registration the fan would silently fall back to the
+ * old fixed 104px while the CSS scaled to something else -- the two would
+ * disagree, and the slots would sit at the wrong pitch.
+ *
+ * Declaring the syntax makes both resolve to real pixels at computed-value
+ * time, which is what both the layout code and e2e/cycle3.spec.ts read.
+ */
+@property --card-w-base {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 104px;
+}
+
+@property --card-w {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 104px;
+}
+
+/*
+ * The type ring, registered for the same reason.
+ *
+ * Unregistered, `getPropertyValue("--type-ring")` hands back the literal text
+ * `#4f3c15` and `--type-ring-w` hands back `calc(var(--card-w) * 0.034)`.
+ * e2e/greyscale.spec.ts has to read both as numbers to check the ladder
+ * survives on the *rendered* board -- which is the only place an override from
+ * theme.css or a media query would show up. Declaring the syntax is what makes
+ * the encoding introspectable rather than a claim.
+ */
+@property --type-ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --type-ring-w {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
-  /* Table */
-  --felt-0: #0a1410;
-  --felt-1: #10201a;
-  --felt-2: #16302505;
-  --felt-edge: #06100c;
-  --rail: #0d1a15;
-  --rail-line: #1d3a2e;
+  /*
+   * Table -- the indigo void.
+   *
+   * The old ground was green (`--felt-0: #0a1410`), and green was already
+   * spoken for twice over: `--playable` is the "you can do this" rim, and
+   * `.face--land-G` is the Forest tone. The single most important signal on
+   * the board shared a hue with the board itself, while cards.css went to real
+   * trouble encoding type in the paper and colour identity in the border --
+   * an encoding spent against a ground competing with it.
+   *
+   * Neutral-but-not-grey: violet is the one hue nothing else on the board
+   * claims, so the ground can have a character without taking a channel.
+   */
+  --void-0: #0b0a16;
+  --void-1: #141328;
+  --void-2: #1d1b38;
+  --edge: rgb(150 140 255 / 0.16);
+  --edge-hi: rgb(170 160 255 / 0.3);
+  --astral: #8f7fe8;
+  --astral-hi: #c3b6ff;
+
+  /*
+   * The old names, aliased.
+   *
+   * board.css and ui.css reference `--felt-*` and `--rail-*` in ~40 places.
+   * Aliasing rather than renaming means the ground changes in this file alone,
+   * so the re-theme lands as one reviewable diff instead of a rename sprayed
+   * across three stylesheets.
+   */
+  --felt-0: var(--void-0);
+  --felt-1: var(--void-1);
+  --felt-2: var(--void-2);
+  --felt-edge: #050410;
+  --rail: var(--void-1);
+  --rail-line: var(--edge);
+
+  /*
+   * Panels are recessed wells rather than 1px boxes.
+   *
+   * A hairline border reads as a diagram; an inset highlight along the top edge
+   * with a drop shadow underneath reads as a surface with something sitting on
+   * it. Same information, and the board stops looking like a wireframe.
+   */
+  --pane-bg: rgb(20 19 40 / 0.6);
+  --pane-well: rgb(13 12 28 / 0.78);
+  --pane-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 8px 26px rgb(0 0 0 / 0.45);
 
   /* Card stock */
   --stock: #f3ece0;
@@ -49,14 +139,35 @@
   --danger: #ff5c5c;
   --gain: #6ee7a0;
   --gold: #ffd479;
+  /* An activated ability is a fourth kind of "you can act", so it gets its own
+     hue rather than borrowing the castable green. */
+  --ability: #c39bff;
 
-  /* Text */
-  --text: #e8f0ea;
-  --text-dim: #93a89c;
-  --text-faint: #5f7268;
+  /* Text -- re-tinted off the violet ground rather than the green one. */
+  --text: #e6e3f5;
+  --text-dim: #a09bc4;
+  --text-faint: #6b6690;
 
-  /* Geometry */
-  --card-w: 104px;
+  /* The brass of the life dial. Its ink is a token because the life-change
+     animation has to return the numeral to it, and hard-coding `--text` there
+     would leave the number white on brass after the first change. */
+  --dial-ink: #2a1c04;
+
+  /*
+   * Geometry.
+   *
+   * `--card-w-base` is the one fluid size; every zone sets its own `--card-w`
+   * as a ratio of it (see logic/cardSize.ts). The base was a hard-coded 104px,
+   * so a 2560px display showed exactly the same small cards a 1366px one did.
+   *
+   * Keyed off viewport *height*, not width. The binding constraint here is
+   * vertical: three lanes of cards plus a hand plus a phase ribbon is a height
+   * problem, and a wide-but-short laptop is the case that actually breaks. The
+   * old `--hand-scale` media queries were a partial version of this -- they
+   * shrank only the hand, so the board was what spilled instead.
+   */
+  --card-w-base: clamp(68px, 9.2vh, 96px);
+  --card-w: var(--card-w-base);
   --card-r: calc(var(--card-w) * 0.055);
   --card-h: calc(var(--card-w) * 1.4);
 
@@ -74,6 +185,17 @@
   --z-modal: 500;
 }
 
+/*
+ * On a tall display the constraint stops being height and starts being how
+ * much screen the board is wasting, so the base switches to a width clamp and
+ * cards get genuinely bigger -- which is the thing a 2560px monitor never got.
+ */
+@media (min-height: 1051px) {
+  :root {
+    --card-w-base: clamp(80px, 4.3vw, 110px);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -86,7 +208,13 @@ body,
 }
 
 body {
-  background: var(--felt-0);
+  /* Two soft washes rather than a flat fill: a violet one overhead and a cold
+     teal one at the foot, so the table reads as lit rather than painted. Both
+     are far below the luminance of any card, which is what keeps cards the
+     brightest objects on screen. */
+  background: radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
   color: var(--text);
   font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
   font-size: 14px;

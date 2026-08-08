@@ -132,7 +132,8 @@ recognising and enjoying the card you are reading.
 
 ## Card art: what actually works
 
-[docs/card-hydration.md](../docs/card-hydration.md) proposes Moxfield search → card
+[docs/card-catalog.md](../docs/card-catalog.md) is what was eventually built.
+The superseded proposal was Moxfield search → card
 id → asset CDN, fetched once and stored in the repo. Each leg, tested:
 
 | Step | Result |
@@ -160,6 +161,33 @@ for ~4% of cards, and mockup 05 shows that fallback on the board rather than
 pretending it away.
 
 21 crops for this board state come to 1.4 MB.
+
+---
+
+## What was actually built
+
+Mockup 05 was taken, art and all -- against the recommendation below, and
+deliberately. The greyscale objection above is real, so rather than accept the
+regression the type encoding was **moved** instead of dropped:
+
+- The paper's `--stock` fill still carries card type, and still governs the title
+  bar, type line, footer and the whole of an artless card.
+- A **type ring** is drawn *over* the art at the frame's inner edge, on the same
+  eight tones, spanning L 0.05-0.58 in even steps. This is the channel doing the
+  work once art is in place.
+- The type glyph in the title bar stays visible whatever else happens.
+
+Both are guarded, because a failure here is invisible in colour:
+`frontend/tests/palette.test.ts` asserts the ring ladder from the stylesheet, and
+`frontend/e2e/greyscale.spec.ts` asserts it again from the *rendered* board,
+where a `theme.css` override would show up and a CSS parse would not.
+
+Also taken: the neutral (indigo) ground, fluid height-keyed `--card-w`, the
+opponent row sizing to content, the three button tiers, the ability rune, the
+five-phase ribbon, and -- from mockup 02 -- the life dial and the zone piles.
+
+Art comes from a Scryfall bulk dump, downloaded once at build time and served by
+the app itself; see [docs/card-catalog.md](../docs/card-catalog.md).
 
 ---
 

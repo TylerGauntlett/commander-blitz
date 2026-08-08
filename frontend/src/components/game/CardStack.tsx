@@ -43,6 +43,8 @@ interface Props {
   cardWidth: number;
   draggable?: boolean;
   isPlayable?: (card: CardView) => boolean;
+  hasAbility?: (card: CardView) => boolean;
+  abilityLabel?: (card: CardView) => string | null;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
   isSelected?: (card: CardView) => boolean;
@@ -55,6 +57,8 @@ export function CardStack({
   cardWidth,
   draggable = false,
   isPlayable,
+  hasAbility,
+  abilityLabel,
   isTargetable,
   isStaged,
   isSelected,
@@ -120,6 +124,8 @@ export function CardStack({
               card={card}
               draggable={draggable}
               playable={isPlayable?.(card) ?? false}
+              hasAbility={hasAbility?.(card) ?? false}
+              abilityLabel={abilityLabel?.(card) ?? null}
               targetable={isTargetable?.(card) ?? false}
               staged={isStaged?.(card) ?? false}
               selected={isSelected?.(card) ?? false}

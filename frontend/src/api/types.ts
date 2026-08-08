@@ -265,4 +265,20 @@ export interface CardResponse {
   keywords: string[];
   colors: string[];
   color_identity: string[];
+  /** Same-origin path, or null when the card has no printing. */
+  art_url: string | null;
+  artist: string | null;
+}
+
+/**
+ * `GET /api/images` -- where every engine card's art lives.
+ *
+ * Deliberately carries no `cards.scryfall.io` URL. The server owns the bytes
+ * and serves them itself, so the board renders with no third-party dependency
+ * at all. A `null` value means that card has no printing anywhere and the
+ * client should draw its "no art" plate rather than request a 404.
+ */
+export interface ImagesResponse {
+  art_base: string;
+  images: Record<string, { card_id: string; art: string | null; artist: string | null } | null>;
 }

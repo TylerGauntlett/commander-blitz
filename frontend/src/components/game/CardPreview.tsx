@@ -10,31 +10,49 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import type { GameView } from "../../api/types";
+import type { CardView, GameView } from "../../api/types";
+import { artistOf } from "../../logic/cardArt";
+import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
 import { isWounded, keywordLabel } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { StaticCard } from "./Card";
 
-const PREVIEW_W = 236;
+/** Ratio of `--card-w-base`; see logic/cardSize.ts. */
 
 interface Props {
   state: GameView;
 }
 
+/** A one-line summary of what a card is currently doing. */
+function cardStatus(card: CardView): string {
+  if (card.attacking) return "Attacking";
+  if (card.blocking) return "Blocking";
+  if (card.zone !== "battlefield") return `In ${card.zone}`;
+  const notes: string[] = [];
+  if (card.tapped) notes.push("tapped");
+  if (card.summoning_sick && card.types.includes("Creature")) notes.push("summoning sick");
+  return notes.length > 0 ? `On the battlefield, ${notes.join(", ")}` : "On the battlefield";
+}
+
 export function CardPreview({ state }: Props) {
   const hoveredOid = useUiStore((s) => s.hoveredOid);
+  const images = useUiStore((s) => s.images);
   const card = hoveredOid === null ? null : findCard(state, hoveredOid);
+  const artist = card ? artistOf(images, card.card_id) : null;
 
   return (
-    <section className="preview" data-testid="card-preview">
+    <section className="preview pane" data-testid="card-preview">
+      {/* The rail says what it is for. Without it the panel reads as an empty
+          slot rather than as the place a card goes when you point at one. */}
+      <div className="preview__note">Reading a card — art and rules together</div>
       <AnimatePresence mode="wait">
         {card ? (
           <motion.div
             key={card.oid}
             className="preview__body"
-            style={{ ["--card-w" as string]: `${PREVIEW_W}px` }}
+            style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.preview) }}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -54,10 +72,20 @@ export function CardPreview({ state }: Props) {
                   <dd className="preview__hurt">{card.damage} marked</dd>
                 </>
               )}
-              <dt>Zone</dt>
-              <dd>{card.zone}</dd>
+              {/* What this permanent is *doing* right now, which the frame
+                  cannot show and is the first thing you look for mid-combat. */}
+              <dt>Status</dt>
+              <dd>{cardStatus(card)}</dd>
               <dt>Controller</dt>
               <dd>{state.players[card.controller]?.name ?? card.controller}</dd>
+              {/* Crediting the illustrator is the one thing the rail was
+                  missing once it started showing their work. */}
+              {artist && (
+                <>
+                  <dt>Art</dt>
+                  <dd>{artist}</dd>
+                </>
+              )}
             </dl>
           </motion.div>
         ) : (

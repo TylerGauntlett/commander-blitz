@@ -63,6 +63,10 @@ a card, never enough to decide legality.
 | `GET` | `/health` | Version, card count, deck list, live game count |
 | `GET` | `/api/decks` | Deck summaries for the new-game dialog |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
+| `GET` | `/api/images` | Every engine card's art path. Static, so fetched once at boot |
+| `GET` | `/art/{card_id}.jpg` | The art itself, from disk. Lazily fetched for cards outside the shipped pool |
+| `GET` | `/api/catalog?q=&colors=&types=&limit=` | Search the ~32,700-card Scryfall-derived catalog |
+| `GET` | `/api/catalog/{scryfall_id}` | One catalog card |
 | `POST` | `/api/games` | Create a game. Body: `{seats: [{deck_id, kind, agent, name}], seed?}` |
 | `GET` | `/api/games/{id}/state?seat=&since=` | The player view, legal actions, and new events |
 | `GET` | `/api/games/{id}/actions?seat=` | Just the legal actions |

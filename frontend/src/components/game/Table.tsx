@@ -21,6 +21,7 @@ import {
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
+import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
 import { sourcesSpentBy } from "../../logic/mana";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
@@ -47,23 +48,6 @@ const PEEK_KEYS: Record<string, PeekTarget["zone"]> = {
   e: "exile",
   c: "command",
 };
-
-const OWN_CARD_W = 104;
-
-/**
- * Opponent card width, by how many of them there are.
- *
- * Three mats at 82px wrap their lands onto several rows and outgrow the row they
- * sit in, so `.mat--compact .mat__lanes` starts scrolling and a permanent ends
- * up one scroll away in the zone you most need to survey. Shrinking the cards
- * is the cheaper trade now that type fill, land colour and the type glyph all
- * survive small sizes far better than the 5.6px type line they replaced.
- */
-function opponentCardWidth(count: number): number {
-  if (count >= 3) return 60;
-  if (count === 2) return 72;
-  return 82;
-}
 
 /** Decisions where clicking your own creatures means "commit it to combat". */
 const COMBAT_DECISIONS = new Set(["declare_attackers", "declare_blockers"]);
@@ -170,6 +154,35 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       }
     }
     return set;
+  }, [actions]);
+
+  /**
+   * Permanents offering an activated ability right now.
+   *
+   * The same predicate `onBoardCard` already uses to route a click; this only
+   * draws the affordance for it. The action itself stays in the action bar, so
+   * the rune adds no `data-action-id` and cannot duplicate one.
+   *
+   * Note this is only the *available* state. The server can express an ability
+   * it is offering but not one you cannot afford -- `unplayable_reason` covers
+   * hand cards alone -- so there is deliberately no greyed-out variant.
+   */
+  const abilityOids = useMemo(() => {
+    const set = new Set<number>();
+    for (const action of actions) {
+      if (action.kind === "activate" && action.source_oid !== null) set.add(action.source_oid);
+    }
+    return set;
+  }, [actions]);
+
+  /** The first available ability's label, by source oid, for the popover. */
+  const abilityLabels = useMemo(() => {
+    const byOid = new Map<number, string>();
+    for (const action of actions) {
+      if (action.kind !== "activate" || action.source_oid === null) continue;
+      if (!byOid.has(action.source_oid)) byOid.set(action.source_oid, action.label);
+    }
+    return byOid;
   }, [actions]);
 
   /** Every oid named by any legal action: never hide these inside a stack. */
@@ -564,7 +577,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // ---------------------------------------------------------------- render
 
   const opponents = seatOrder(state).filter((pid) => pid !== state.seat);
-  const opponentCardW = opponentCardWidth(opponents.length);
+  const opponentScale = opponentCardScale(opponents.length);
 
   return (
     <div className="table" data-testid="table">
@@ -585,8 +598,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 player={state.players[pid]}
                 names={names}
                 compact
-                cardWidth={opponentCardW}
+                cardScale={opponentScale}
                 actionableOids={actionableOids}
+                hasAbility={(card) => abilityOids.has(card.oid)}
+                abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
                 isTargetable={(card) => targetableOids.has(card.oid)}
                 // stagedBlocks is keyed by blocker; an opponent's attacker is a
                 // value in that map, never a key.
@@ -609,8 +624,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               state={state}
               player={viewer}
               names={names}
-              cardWidth={OWN_CARD_W}
+              cardScale={CARD_SCALE.own}
               actionableOids={actionableOids}
+              hasAbility={(card) => abilityOids.has(card.oid)}
+              abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
               activeLanes={activeLanes}
               isPlayable={(card) => combatCandidates.has(card.oid)}
               isTargetable={(card) => targetableOids.has(card.oid)}
@@ -638,6 +655,28 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         */}
         <aside className="rail rail--right">
           <CardPreview state={state} />
+          {/*
+            Combat lives in the rail, not across the foot.
+
+            It used to be a full-width banner under the board, which put the
+            decision as far as possible from the cards it is about and took the
+            row the hand wanted. Here it sits directly under the card preview --
+            so the creature you are reading and the list you are staging it into
+            are the same glance -- and the foot is the hand's alone.
+
+            Every legal pair still carries its own `data-action-id`; that is
+            what lets the action bar stand down without the decision becoming
+            unreachable, and `clarity.spec.ts` fails the run if any id appears
+            twice.
+          */}
+          <CombatPanel
+            state={state}
+            actions={actions}
+            onDeclare={onDeclare}
+            onStage={onBarAct}
+            onSkip={act}
+            disabled={locked}
+          />
           <ActionBar
             state={state}
             actions={barActions}
@@ -649,6 +688,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             busy={busy}
             aiThinking={aiThinking}
             onToggleFullControl={(value) => fullControlMutate(value)}
+            standDown={modalOwnsDecision || inCombatDecision}
           />
         </aside>
 
@@ -657,15 +697,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       </motion.div>
 
       <div className="table__foot">
-        <CombatPanel
-          state={state}
-          actions={actions}
-          onDeclare={onDeclare}
-          onStage={onBarAct}
-          onSkip={act}
-          disabled={locked}
-        />
-
         {targeting.length > 0 && targetableOids.size === 0 && targetablePids.size === 0 && (
           <div className="choices" data-testid="choice-list">
             <span className="choices__label">Choose:</span>

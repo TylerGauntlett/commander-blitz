@@ -1,19 +1,35 @@
 /* Buttons, bars, dialogs, menus, toasts. */
 
+/*
+ * Three button tiers.
+ *
+ * Every control used to be the same 7x14px rectangle: "Attack with 0", "Quit",
+ * "Undo", "Auto-pass" and the speed toggle all looked alike, so the most-pressed
+ * control in the game was indistinguishable from the least-pressed one.
+ *
+ * The three tiers already existed structurally -- `ActionBar` splits its primary
+ * action from the rest and puts the utilities in their own row -- so this is
+ * styling only, and no component changed to get it.
+ *
+ *   1. `.btn--primary`  the commit slab: the one thing the turn is waiting on.
+ *   2. `.btn`           contextual choices.
+ *   3. `.btn--ghost`    utilities, demoted to the quietest thing on screen.
+ */
 .btn {
   padding: 7px 14px;
-  border: 1px solid var(--rail-line);
+  border: 1px solid var(--edge);
   border-radius: 7px;
-  background: #12241c;
+  background: rgb(38 34 68 / 0.85);
   color: var(--text);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  transition: border-color var(--t-fast), background var(--t-fast);
 }
 
 .btn:hover:not(:disabled) {
-  border-color: var(--text-dim);
-  background: #173024;
+  border-color: var(--astral);
+  background: rgb(52 46 92 / 0.95);
 }
 
 .btn:disabled {
@@ -21,21 +37,48 @@
   cursor: not-allowed;
 }
 
+/* Tier 1. Deliberately not a rectangle like the others: bigger type, a lifted
+   edge and a warm glow, so the eye finds it without reading it. */
 .btn--primary {
-  border-color: var(--playable);
-  background: linear-gradient(180deg, #2f7a4d, #1d5334);
-  color: #eafff0;
-  box-shadow: 0 2px 0 #123722;
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #ffd98c, #e0a63f 55%, #b87c1c);
+  color: #1b0f05;
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 0 #7d5310, 0 0 26px rgb(224 166 63 / 0.28);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #37905b, #24623e);
+  background: linear-gradient(180deg, #ffe4a6, #eeb44e 55%, #c98a22);
 }
 
+.btn--primary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #7d5310, 0 0 26px rgb(224 166 63 / 0.28);
+}
+
+.btn--primary:disabled {
+  background: linear-gradient(180deg, #6b5c3f, #4a3f2b);
+  color: rgb(255 255 255 / 0.5);
+  box-shadow: 0 4px 0 #2e2717;
+}
+
+/* Tier 3. No fill at all -- these are always available and almost never the
+   thing you came here to press. */
 .btn--ghost {
+  border-color: transparent;
   background: transparent;
-  color: var(--text-dim);
+  color: var(--text-faint);
   font-weight: 500;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--edge);
+  background: rgb(38 34 68 / 0.6);
+  color: var(--text);
 }
 
 /* A ghost button that is a toggle, currently on. */
@@ -65,8 +108,17 @@
   padding: 8px 10px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
-  background: rgb(13 26 21 / 0.8);
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
   min-height: 150px;
+}
+
+/* Standing down: the bar is nothing but its tool strip, so it takes no room it
+   is not using. Without this it kept its 150px min-height as an empty box under
+   whichever panel had taken the decision. */
+.bar--quiet {
+  grid-template-rows: auto;
+  min-height: 0;
 }
 
 .bar__prompt {
@@ -112,6 +164,11 @@
   gap: 6px;
   align-content: flex-start;
   overflow-y: auto;
+  /* A floor as well as a ceiling. On a short viewport this list is the first
+     thing a flex parent squeezes, and it flattens to 0 without any content
+     changing -- so the decision surface disappears while every assertion about
+     the buttons still passes. e2e/layout.spec.ts measures this. */
+  min-height: 74px;
   max-height: 132px;
 }
 
@@ -159,7 +216,7 @@
 .speed__btn {
   padding: 3px 9px;
   border: 0;
-  background: #0e1c16;
+  background: var(--pane-well);
   color: var(--text-faint);
   font-size: 11px;
   font-weight: 700;
@@ -172,7 +229,24 @@
 
 /* Combat panel and inline choices -------------------------------------- */
 
-.combat,
+/* Combat, as a rail panel ------------------------------------------------
+ *
+ * This was a full-width banner under the board: the decision sat as far as
+ * possible from the cards it was about, and it took the row the hand wanted.
+ * In the rail it stacks under the card preview, so the creature you are reading
+ * and the list you are staging it into are one glance apart. */
+.combat {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 11px 13px;
+  border: 1px solid var(--staged);
+  border-radius: 10px;
+  background: rgb(46 34 8 / 0.4);
+  box-shadow: var(--pane-shadow);
+  min-height: 0;
+}
+
 .choices {
   display: flex;
   align-items: center;
@@ -199,12 +273,67 @@
   font-size: 11.5px;
 }
 
+/* The staged list. A column of numbered rows rather than a wrapping paragraph
+   of chips: at four attackers the chips had to be read, where a list can be
+   counted. */
 .combat__staged {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 5px;
   flex: 0 1 auto;
   min-width: 0;
+  max-height: 156px;
+  overflow-y: auto;
+}
+
+/* Named `stage`, not `opt`: the prompt dialog has owned `.opt` since cycle 2,
+   and a second definition of it here silently restyled both surfaces -- the
+   later rule won wherever they overlapped, which is how the mulligan buttons
+   ended up wearing combat's border. */
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--edge);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.035);
+  color: var(--text);
+  font-size: 12.5px;
+  text-align: left;
+}
+
+.stage--on {
+  border-color: var(--staged);
+  background: rgb(255 193 77 / 0.13);
+  color: var(--staged);
+}
+
+.stage__key {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 5px;
+  background: rgb(255 255 255 / 0.07);
+  color: var(--text-faint);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.stage__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stage__pt {
+  margin-left: auto;
+  font-weight: 800;
+  opacity: 0.85;
 }
 
 /* Every legal pair, one button each, carrying the server's action id.
@@ -215,10 +344,11 @@
   gap: 5px;
   flex: 1 1 auto;
   min-width: 0;
-  max-height: 76px;
+  min-height: 34px;
+  max-height: 132px;
   overflow-y: auto;
-  padding-left: 10px;
-  border-left: 1px solid rgb(255 193 77 / 0.25);
+  padding-top: 8px;
+  border-top: 1px solid rgb(255 193 77 / 0.25);
 }
 
 /* Unstaged options read as offers, staged ones as commitments. The staged
@@ -248,10 +378,39 @@
   font-style: italic;
 }
 
-.combat__buttons {
+/* The commit dock: one large control for the thing the turn is waiting on, and
+   the alternatives demoted to a row beneath it. */
+.commit-dock {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
   flex: 0 0 auto;
+}
+
+.commit {
+  justify-content: center;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+}
+
+.commit__main {
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.commit-alt {
+  display: flex;
+  gap: 8px;
+}
+
+.commit-alt .btn {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-align: center;
+  justify-content: center;
 }
 
 .chip {
@@ -289,7 +448,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgb(2 8 6 / 0.72);
+  background: rgb(6 5 16 / 0.72);
   backdrop-filter: blur(3px);
 }
 
@@ -304,10 +463,10 @@
   align-items: center;
   background: linear-gradient(
     to bottom,
-    rgb(2 8 6 / 0.8) 0%,
-    rgb(2 8 6 / 0.74) 48%,
-    rgb(2 8 6 / 0.34) 74%,
-    rgb(2 8 6 / 0.06) 100%
+    rgb(6 5 16 / 0.82) 0%,
+    rgb(6 5 16 / 0.76) 48%,
+    rgb(6 5 16 / 0.36) 74%,
+    rgb(6 5 16 / 0.06) 100%
   );
   backdrop-filter: none;
 }
@@ -329,7 +488,7 @@
   padding: 20px 24px;
   border: 1px solid var(--rail-line);
   border-radius: 14px;
-  background: linear-gradient(180deg, #12241c, #0a1712);
+  background: linear-gradient(180deg, #1b1936, #0d0c1c);
   box-shadow: 0 24px 70px rgb(0 0 0 / 0.7);
 }
 
@@ -374,7 +533,7 @@
   padding: 10px 16px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
-  background: #14261d;
+  background: var(--pane-well);
   color: var(--text);
   font-size: 14px;
   font-weight: 600;
@@ -629,7 +788,7 @@ fieldset.speed {
   padding: 6px 9px;
   border: 1px solid var(--rail-line);
   border-radius: 6px;
-  background: #0e1c16;
+  background: var(--pane-well);
   color: var(--text);
   font: inherit;
 }
@@ -644,7 +803,7 @@ fieldset.speed {
 .segmented__btn {
   padding: 6px 14px;
   border: 0;
-  background: #0e1c16;
+  background: var(--pane-well);
   color: var(--text-dim);
   font-size: 13px;
   font-weight: 600;

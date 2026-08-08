@@ -153,6 +153,11 @@ def python_stages(quick: bool) -> list[Stage]:
     stages = [
         Stage("lint", [PY, "-m", "ruff", "check", "src", "scripts", "tests"]),
         Stage("card files and deck legality", [PY, "scripts/validate_decks.py"]),
+        # Exits 0 with a printed SKIP on any machine without a Scryfall bulk
+        # dump, which is every machine but the one that last refreshed it. It
+        # only fails when a dump *is* present and the committed index no longer
+        # matches it -- which is the case worth catching before a commit.
+        Stage("card index is current", [PY, "scripts/build_card_index.py", "--check"]),
         Stage("unit tests", [PY, "-m", "pytest", "tests/unit", "-q"]),
         Stage("every card works", [PY, "-m", "pytest", "tests/cards", "-q"]),
         Stage("HTTP API", [PY, "-m", "pytest", "tests/server", "-q"]),

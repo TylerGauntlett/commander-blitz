@@ -1,8 +1,12 @@
 """Pull card art crops for the board-state mockups.
 
-Follows the architecture docs/card-hydration.md asks for -- fetch once, store in
-the repo, skip on subsequent runs, no service running anywhere -- but not its
-endpoint. `api2.moxfield.com/v2/cards/search/user` answers a scripted client with
+SUPERSEDED. This only ever covered the twenty cards on the mockup board state.
+The real pipeline is scripts/build_card_index.py + scripts/fetch_card_art.py,
+which resolves the whole registry from a Scryfall bulk dump -- see
+docs/card-catalog.md. Kept so the mockups still open standalone.
+
+Follows the fetch-once, store-in-the-repo, skip-on-rerun architecture the
+superseded docs/card-hydration.md asked for -- but not its endpoint. `api2.moxfield.com/v2/cards/search/user` answers a scripted client with
 a Cloudflare 403 interstitial, so the id it returns is unreachable and the
 `assets.moxfield.net/cards/card-{id}-normal.webp` leg (which does work) has
 nothing to key on.

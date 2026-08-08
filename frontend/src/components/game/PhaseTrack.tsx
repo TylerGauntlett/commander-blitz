@@ -9,7 +9,7 @@
 
 import { motion } from "motion/react";
 import type { GameView } from "../../api/types";
-import { STEP_ORDER, stepShort } from "../../logic/labels";
+import { PHASES, STEP_ORDER, stepShort } from "../../logic/labels";
 import { settle } from "../../motion/springs";
 
 interface Props {
@@ -46,28 +46,59 @@ export function PhaseTrack({ state }: Props) {
         title={`Round ${state.round} — player-turn ${state.turn}`}
       >
         <span className="track__turn-n tabular">T{state.round}</span>
-        <span className={yourTurn ? "track__who track__who--you" : "track__who"}>
-          {yourTurn ? "Your turn" : `${active.name}'s turn`}
-        </span>
+        <span className="track__turn-round">round {state.round}</span>
       </div>
+      {/*
+        Five phases, and only the live one opens into its steps.
+
+        Thirteen equal ticks was thirteen things to read, twelve of which are
+        never the answer to "where are we". Every step label stays in the DOM
+        even while its phase is collapsed -- the closed phases are hidden with
+        `display: none`, not unmounted, so the thirteen labels
+        `e2e/smoke.spec.ts` counts are all still present and non-empty.
+      */}
       <ol className="track__steps">
-        {STEP_ORDER.map((step, index) => {
-          const state_ =
-            index === currentIndex ? "now" : index < currentIndex ? "past" : "future";
+        {PHASES.map((phase) => {
+          const indices = phase.steps.map((step) =>
+            STEP_ORDER.indexOf(step as (typeof STEP_ORDER)[number]),
+          );
+          const isNow = indices.includes(currentIndex);
+          const isPast = Math.max(...indices) < currentIndex;
+          const tone = isNow ? "now" : isPast ? "past" : "future";
+
           return (
-            <li key={step} className={`track__step track__step--${state_}`}>
-              {index === currentIndex && (
-                <motion.span
-                  className="track__marker"
-                  layoutId="track-marker"
-                  transition={settle}
-                />
-              )}
-              <span className="track__step-label">{stepShort(step)}</span>
+            <li key={phase.name} className={`ph ph--${tone}`} data-phase={phase.name}>
+              <span className="ph__name">{phase.name}</span>
+              <ol className="ph__steps">
+                {phase.steps.map((step) => {
+                  const index = STEP_ORDER.indexOf(step as (typeof STEP_ORDER)[number]);
+                  const stepTone =
+                    index === currentIndex ? "now" : index < currentIndex ? "past" : "future";
+                  return (
+                    <li key={step} className={`track__step track__step--${stepTone}`}>
+                      {index === currentIndex && (
+                        <motion.span
+                          className="track__marker"
+                          layoutId="track-marker"
+                          transition={settle}
+                        />
+                      )}
+                      <span className="track__step-label">{stepShort(step)}</span>
+                    </li>
+                  );
+                })}
+              </ol>
             </li>
           );
         })}
       </ol>
+
+      {/* Whose turn it is, at the far end of the ribbon. It is the one piece of
+          state you re-check between every action, so it gets a chip of its own
+          rather than sitting as a word beside the round counter. */}
+      <span className={yourTurn ? "track__who track__who--you" : "track__who"}>
+        {yourTurn ? "Your turn" : `${active.name}'s turn`}
+      </span>
     </div>
   );
 }

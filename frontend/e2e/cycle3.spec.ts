@@ -267,7 +267,9 @@ test.describe("combat has one surface", () => {
     await all.click();
 
     // Staging is local, so this is immediate and nothing was posted.
-    await expect(panel.locator(".chip--staged")).not.toHaveCount(0);
+    // Staged entries are numbered `.opt` rows now, not chips -- combat moved
+    // into the right rail and a wrapping row of chips became a countable list.
+    await expect(panel.locator(".combat__staged .stage")).not.toHaveCount(0);
     await expect(page.getByTestId("combat-confirm")).toBeEnabled();
     // Every candidate is staged, so no option button is left unpressed.
     await expect(panel.locator(".combat__options .chip--on")).toHaveCount(candidates);
@@ -306,12 +308,17 @@ test.describe("combat has one surface", () => {
     if (!(await all.isEnabled())) return;
 
     await all.click();
-    const staged = await panel.locator(".chip--staged").count();
+    const staged = await panel.locator(".combat__staged .stage").count();
     expect(staged).toBeGreaterThan(0);
     // One blocker to one attacker: no creature staged twice, no attacker
     // ganged up on by default.
+    //
+    // Read `.opt__name` rather than the whole row: the row also carries an
+    // index badge and a P/T, and the index is unique by construction -- so
+    // splitting the row text would make the "no creature staged twice" check
+    // pass for the wrong reason.
     const pairs = await panel
-      .locator(".chip--staged")
+      .locator(".combat__staged .stage__name")
       .allTextContents()
       .then((texts) => texts.map((t) => t.split(" blocks ")));
     expect(new Set(pairs.map((p) => p[0])).size).toBe(staged);

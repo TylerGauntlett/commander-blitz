@@ -4,6 +4,7 @@ import type {
   CardResponse,
   DeckSummary,
   GameCreated,
+  ImagesResponse,
   SeatConfig,
   StateResponse,
 } from "./types";
@@ -42,6 +43,16 @@ export const api = {
   decks: () => request<DeckSummary[]>("/decks"),
 
   card: (cardId: string) => request<CardResponse>(`/cards/${cardId}`),
+
+  /**
+   * Every engine card's art location, in one response.
+   *
+   * Static for the life of the server process, so this is fetched once and
+   * cached forever rather than riding along on each state poll -- the AI pump
+   * polls several times a second, and the image is a function of the immutable
+   * `card_id`.
+   */
+  images: () => request<ImagesResponse>("/images"),
 
   newGame: (seats: SeatConfig[], seed?: number) =>
     request<GameCreated>("/games", {

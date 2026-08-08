@@ -16,12 +16,14 @@ interface Props {
   player: PlayerView;
   names: string[];
   compact?: boolean;
-  cardWidth: number;
+  cardScale: number;
   actionableOids: ReadonlySet<number>;
   /** Lanes that would accept the card currently being dragged. */
   activeLanes?: ReadonlySet<string>;
   draggable?: boolean;
   isPlayable?: (card: CardView) => boolean;
+  hasAbility?: (card: CardView) => boolean;
+  abilityLabel?: (card: CardView) => string | null;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
   isSelected?: (card: CardView) => boolean;
@@ -50,11 +52,13 @@ export function PlayerMat({
   player,
   names,
   compact = false,
-  cardWidth,
+  cardScale,
   actionableOids,
   activeLanes,
   draggable = false,
   isPlayable,
+  hasAbility,
+  abilityLabel,
   isTargetable,
   isStaged,
   isSelected,
@@ -109,11 +113,13 @@ export function PlayerMat({
             lane={lane}
             pid={player.pid}
             cards={lanes[lane]}
-            cardWidth={cardWidth}
+            cardScale={cardScale}
             active={activeLanes?.has(`${player.pid}:${lane}`) ?? false}
             draggable={draggable}
             actionableOids={actionableOids}
             isPlayable={isPlayable}
+            hasAbility={hasAbility}
+            abilityLabel={abilityLabel}
             isTargetable={isTargetable}
             isStaged={isStaged}
             isSelected={isSelected}

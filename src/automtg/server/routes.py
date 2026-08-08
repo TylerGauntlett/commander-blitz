@@ -9,16 +9,23 @@ the whole rules vocabulary can grow without touching the frontend.
 from __future__ import annotations
 
 from fastapi import APIRouter, Body, HTTPException, Query, Request
+from fastapi.responses import FileResponse
 
+from automtg.cards.images import CardIndex, IndexEntry
 from automtg.engine.errors import IllegalActionError
 from automtg.engine.serialize import event_log, full_view, player_view
 
+from .art import ArtStore
 from .schemas import (
     ApplyActionRequest,
     CardResponse,
+    CatalogCardDTO,
+    CatalogResponse,
     DeckSummary,
     DeclareRequest,
     GameCreatedResponse,
+    ImageRefDTO,
+    ImagesResponse,
     NewGameRequest,
     OptionsRequest,
     StateResponse,
@@ -27,9 +34,27 @@ from .sessions import GameSession, SessionRegistry
 
 router = APIRouter(prefix="/api")
 
+#: Art is served from the app root rather than under ``/api`` so it reads as a
+#: static asset to the browser, the dev proxy and any future cache in front.
+art_router = APIRouter()
+
 
 def _registry(request: Request) -> SessionRegistry:
     return request.app.state.sessions
+
+
+def _art(request: Request) -> ArtStore:
+    return request.app.state.art
+
+
+def _index(request: Request) -> CardIndex:
+    index = getattr(request.app.state, "card_index", None)
+    if index is None:
+        raise HTTPException(
+            status_code=503,
+            detail="no card catalog; run scripts/build_card_index.py",
+        )
+    return index
 
 
 def _session(request: Request, game_id: str) -> GameSession:
@@ -79,6 +104,7 @@ def get_card(request: Request, card_id: str) -> CardResponse:
     if card_id not in registry:
         raise HTTPException(status_code=404, detail=f"no card {card_id}")
     card = registry.get(card_id)
+    art = _art(request)
     return CardResponse(
         id=card.id,
         name=card.name,
@@ -91,7 +117,110 @@ def get_card(request: Request, card_id: str) -> CardResponse:
         keywords=sorted(card.keywords),
         colors=sorted(card.colors),
         color_identity=sorted(card.color_identity),
+        art_url=art.url_for(card.id),
+        artist=art.artist_for(card.id),
     )
+
+
+@router.get("/images", response_model=ImagesResponse)
+def list_images(request: Request) -> ImagesResponse:
+    """Every engine card's art location, in one cacheable response.
+
+    Static for the life of the process, so the client fetches it once at boot
+    rather than receiving it inside every state poll.  A ``null`` value is
+    meaningful: that card has no printing anywhere and the client should draw
+    its "no art" plate rather than request an image that will 404.
+    """
+    art = _art(request)
+    registry = _registry(request).data.registry
+    images: dict[str, ImageRefDTO | None] = {}
+    for card_id in registry.ids():
+        url = art.url_for(card_id)
+        images[card_id] = (
+            None
+            if url is None
+            else ImageRefDTO(card_id=card_id, art=url, artist=art.artist_for(card_id))
+        )
+    return ImagesResponse(images=images)
+
+
+# ----------------------------------------------------------------------
+# catalog
+# ----------------------------------------------------------------------
+
+
+def _catalog_dto(entry: IndexEntry) -> CatalogCardDTO:
+    return CatalogCardDTO(
+        name=entry.name,
+        scryfall_id=entry.scryfall_id,
+        oracle_id=entry.oracle_id,
+        type_line=entry.type_line,
+        mana_cost=entry.mana_cost,
+        cmc=entry.cmc,
+        power=entry.power,
+        toughness=entry.toughness,
+        colors=list(entry.colors),
+        color_identity=list(entry.color_identity),
+        rarity=entry.rarity,
+        set_code=entry.set_code,
+        layout=entry.layout,
+        is_token=entry.is_token,
+        artist=entry.artist,
+        # Keyed on the Scryfall uuid, not a slug of the name: slugs are not
+        # reversible, and `/art` has to be able to work out what to fetch. The
+        # lazy fill is what makes this path work on first hover.
+        art_url=f"/art/{entry.scryfall_id}.jpg",
+    )
+
+
+@router.get("/catalog", response_model=CatalogResponse)
+def search_catalog(
+    request: Request,
+    q: str = Query("", max_length=80),
+    colors: str | None = Query(None, pattern=r"^[WUBRGCwubrgc]{1,6}$"),
+    types: str | None = Query(None, max_length=40),
+    limit: int = Query(50, ge=1, le=200),
+) -> CatalogResponse:
+    """Search the Scryfall-derived catalog.
+
+    This is a *reference* surface, not a playable one -- the engine can only
+    play the cards in ``data/cards/``.  ``limit`` is capped server-side so a
+    client cannot ask for all 33k rows in one response.
+    """
+    index = _index(request)
+    total, results = index.search(q, colors=colors, types=types, limit=limit)
+    return CatalogResponse(total=total, results=[_catalog_dto(e) for e in results])
+
+
+@router.get("/catalog/{scryfall_id}", response_model=CatalogCardDTO)
+def get_catalog_card(request: Request, scryfall_id: str) -> CatalogCardDTO:
+    index = _index(request)
+    entry = next((e for e in index.iter_all() if e.scryfall_id == scryfall_id), None)
+    if entry is None:
+        raise HTTPException(status_code=404, detail=f"no catalog card {scryfall_id}")
+    return _catalog_dto(entry)
+
+
+# ----------------------------------------------------------------------
+# art
+# ----------------------------------------------------------------------
+
+
+@art_router.get("/art/{filename}")
+def get_art(request: Request, filename: str) -> FileResponse:
+    """One card's art, from disk.
+
+    ``FileResponse`` gives ETag, Last-Modified and range handling for free,
+    which is why this is a route rather than a ``StaticFiles`` mount -- the
+    mount could not also do the lazy fill below.
+    """
+    if not filename.endswith(".jpg"):
+        raise HTTPException(status_code=404, detail="not an image")
+    card_id = filename[: -len(".jpg")]
+    path = _art(request).resolve(card_id)
+    if path is None:
+        raise HTTPException(status_code=404, detail=f"no art for {card_id}")
+    return FileResponse(path, media_type="image/jpeg")
 
 
 # ----------------------------------------------------------------------

@@ -43,6 +43,14 @@ interface Props {
   busy: boolean;
   aiThinking: boolean;
   onToggleFullControl: (value: boolean) => void;
+  /**
+   * Another surface owns the current decision, so the bar shows only its tools.
+   *
+   * It already renders no *buttons* in that case -- `Table` passes an empty
+   * action list -- but it kept printing the prompt, so "Declare blockers"
+   * appeared twice in the same rail once combat moved up here.
+   */
+  standDown?: boolean;
 }
 
 export function ActionBar({
@@ -56,6 +64,7 @@ export function ActionBar({
   busy,
   aiThinking,
   onToggleFullControl,
+  standDown = false,
 }: Props) {
   const speed = useUiStore((s) => s.speed);
   const setSpeed = useUiStore((s) => s.setSpeed);
@@ -67,72 +76,76 @@ export function ActionBar({
   const rest = actions.filter((a) => !PRIMARY.has(a.kind));
 
   return (
-    <div className="bar" data-testid="action-bar">
-      <div className="bar__prompt">
-        <span className="bar__prompt-text" data-testid="prompt">
-          {decisionPrompt(state)}
-        </span>
-        <AnimatePresence>
-          {(narrating || aiThinking) && (
-            <motion.span
-              className="bar__thinking"
-              initial={{ opacity: 0, x: -6 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={ease}
-            >
-              <span className="bar__dot" />
-              {narrating ? "Playing it out" : thinkingLabel(state)}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="bar__actions" data-testid="action-list">
-        {primary.map((action) => (
-          <motion.button
-            type="button"
-            key={action.id}
-            className="btn btn--primary"
-            data-action-id={action.id}
-            data-action-kind={action.kind}
-            disabled={disabled}
-            onClick={() => onAct(action.id)}
-            whileHover={disabled ? undefined : { y: -2, scale: 1.03 }}
-            whileTap={{ scale: 0.96 }}
-            transition={bouncy}
-          >
-            {action.label}
-          </motion.button>
-        ))}
-
-        {rest.length > 0 && (
-          <div className="bar__overflow" data-testid="action-overflow">
-            {rest.map((action) => (
-              <motion.button
-                type="button"
-                key={action.id}
-                className="btn btn--ghost"
-                data-action-id={action.id}
-                data-action-kind={action.kind}
-                disabled={disabled}
-                onClick={() => onAct(action.id)}
-                whileHover={disabled ? undefined : { y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                transition={bouncy}
+    <div className={standDown ? "bar bar--quiet" : "bar"} data-testid="action-bar">
+      {!standDown && (
+        <div className="bar__prompt">
+          <span className="bar__prompt-text" data-testid="prompt">
+            {decisionPrompt(state)}
+          </span>
+          <AnimatePresence>
+            {(narrating || aiThinking) && (
+              <motion.span
+                className="bar__thinking"
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={ease}
               >
-                {/* Activation costs live in these labels ("{2}, {T}, Sacrifice:
-                    ..."), and they were the last place mana stayed raw text. */}
-                <SymbolText text={action.label} />
-              </motion.button>
-            ))}
-          </div>
-        )}
+                <span className="bar__dot" />
+                {narrating ? "Playing it out" : thinkingLabel(state)}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
-        {actions.length === 0 && !state.game_over && (
-          <span className="bar__idle">Waiting&hellip;</span>
-        )}
-      </div>
+      {!standDown && (
+        <div className="bar__actions" data-testid="action-list">
+          {primary.map((action) => (
+            <motion.button
+              type="button"
+              key={action.id}
+              className="btn btn--primary"
+              data-action-id={action.id}
+              data-action-kind={action.kind}
+              disabled={disabled}
+              onClick={() => onAct(action.id)}
+              whileHover={disabled ? undefined : { y: -2, scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              transition={bouncy}
+            >
+              {action.label}
+            </motion.button>
+          ))}
+
+          {rest.length > 0 && (
+            <div className="bar__overflow" data-testid="action-overflow">
+              {rest.map((action) => (
+                <motion.button
+                  type="button"
+                  key={action.id}
+                  className="btn btn--ghost"
+                  data-action-id={action.id}
+                  data-action-kind={action.kind}
+                  disabled={disabled}
+                  onClick={() => onAct(action.id)}
+                  whileHover={disabled ? undefined : { y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={bouncy}
+                >
+                  {/* Activation costs live in these labels ("{2}, {T}, Sacrifice:
+                    ..."), and they were the last place mana stayed raw text. */}
+                  <SymbolText text={action.label} />
+                </motion.button>
+              ))}
+            </div>
+          )}
+
+          {actions.length === 0 && !state.game_over && (
+            <span className="bar__idle">Waiting&hellip;</span>
+          )}
+        </div>
+      )}
 
       <div className="bar__tools">
         {narrating && (
