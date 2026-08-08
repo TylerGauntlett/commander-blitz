@@ -52,14 +52,18 @@ A ribbon across the top, three columns, and the hand along the foot.
   both what `e2e/smoke.spec.ts` counts and what keeps the marker's `layoutId`
   animation continuous across a phase boundary.
 - **Left rail** — the stack, and the event log.
-- **Middle** — opponents on a row that sizes to its content, then your own mat.
+- **Middle** — opponents on a row that sizes to its content, then your own mat. Each
+  mat's first column is that player's info panel (`PlayerOrb`): their commander,
+  their life dial, their mana, their zone piles.
 - **Right rail** — the card preview, then **combat**, then the tool strip. Combat
   moved here from a full-width banner under the board: the decision now sits
   directly under the card you are reading rather than as far from it as the
   layout allows, and the foot belongs to the hand alone. Whichever surface owns a
   decision renders its action ids and the bar stands down (`standDown`), so a
   prompt is never printed twice.
-- **Foot** — your commander dock and the hand.
+- **Foot** — the hand, and nothing else. Your commander used to sit to its left; it
+  is the hero of your info panel now, drawn as a plinth rather than a card. See
+  `CommandZone` and `docs/mockup-fidelity.md` defect #5.
 
 ## Dragging is a shortcut, not a rule
 

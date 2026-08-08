@@ -31,7 +31,6 @@ import type { GameSession, useGame } from "../../state/useGame";
 import { ActionPanel } from "./ActionPanel";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
-import { CommandZone } from "./CommandZone";
 import { EventTicker } from "./EventTicker";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
@@ -631,6 +630,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               playerTargetable={targetablePids.has(state.seat)}
               onSelectPlayer={onSelectPlayer}
               playableOids={playableOids}
+              // Casting your commander out of the plinth in the info panel.
+              // The same route a hand card takes, so targeting and the real
+              // action post identically.
+              onCastCommander={playFromHand}
               onHoverCard={hover}
               spending={spending}
               locked={locked}
@@ -703,35 +706,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         )}
 
         {/*
-          Your own commander sits beside your hand, not inside your mat.
+          The hand owns the foot outright.
 
-          It is a zone you *play from*, which is what the hand is; docking it in
-          the mat's side column put it under the orb, where orb + card together
-          overflowed the row and the card was clipped in half. Here it has the
-          full height of the foot, it sits next to the cards it competes with
-          for the turn, and clicking it takes the same route a hand card takes.
-          Opponents keep their (reference-only) dock on the mat.
+          The commander used to sit to its left, on the theory that a zone you
+          play from belongs beside the other zone you play from. In practice it
+          put the format's defining card in the corner where nothing important
+          goes, at a size where its own name did not fit. It is the hero of the
+          player's info panel now -- see `CommandZone` and `PlayerOrb` -- and it
+          still casts by the same click on the same `playFromHand` path.
         */}
-        <div className="table__hand-row">
-          <CommandZone
-            state={state}
-            pid={state.seat}
-            playableOids={playableOids}
-            onActivate={playFromHand}
-            onHover={hover}
-            disabled={locked}
-          />
-          <HandFan
-            cards={viewer.hand ?? []}
-            playableOids={playableOids}
-            reasons={viewer.hand_reasons ?? {}}
-            mana={viewer.mana}
-            selectedOid={selectedOid}
-            onActivate={playFromHand}
-            onDropOn={onDropOnZone}
-            disabled={locked}
-          />
-        </div>
+        <HandFan
+          cards={viewer.hand ?? []}
+          playableOids={playableOids}
+          reasons={viewer.hand_reasons ?? {}}
+          mana={viewer.mana}
+          selectedOid={selectedOid}
+          onActivate={playFromHand}
+          onDropOn={onDropOnZone}
+          disabled={locked}
+        />
       </div>
 
       {error && (

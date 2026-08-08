@@ -112,6 +112,43 @@ test("the type glyph stays visible in greyscale", async ({ page }) => {
   }
 });
 
+test("the commander's state survives without colour", async ({ page }) => {
+  // The playable rim says "you can cast this" in green and in nothing else,
+  // which is the top-ranked open defect in docs/mockup-fidelity.md. The plinth
+  // that replaced the command-zone card is not allowed to add to that pile, so
+  // it carries a word and a glyph as well as the frame colour.
+  test.setTimeout(180_000);
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await waitForOurTurn(page);
+  await expect(page.getByTestId("command-zone-0")).toBeVisible();
+
+  await page.addStyleTag({ content: "html { filter: grayscale(1) !important; }" });
+
+  const plinths = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>(".cmdslot")].map((slot) => {
+      const box = (node: Element | null) => (node?.getBoundingClientRect().width ?? 0) > 0;
+      return {
+        state: slot.dataset.cmdState ?? "",
+        word: slot.querySelector(".cmdplinth__word")?.textContent ?? "",
+        wordVisible: box(slot.querySelector(".cmdplinth__word")),
+        glyph: slot.querySelector(".cmdplinth__glyph")?.textContent ?? "",
+        glyphVisible: box(slot.querySelector(".cmdplinth__glyph")),
+      };
+    }),
+  );
+
+  expect(plinths.length, "no commander plinth on screen").toBeGreaterThan(0);
+  for (const plinth of plinths) {
+    expect(plinth.state, "a plinth rendered with no state at all").not.toBe("");
+    // Two non-colour channels, both actually laid out rather than merely in the
+    // DOM: a `display: none` label is not a channel.
+    expect(plinth.word.length, `${plinth.state} says nothing in words`).toBeGreaterThan(0);
+    expect(plinth.wordVisible, `${plinth.state}'s word is not rendered`).toBe(true);
+    expect(plinth.glyph.length, `${plinth.state} has no glyph`).toBeGreaterThan(0);
+    expect(plinth.glyphVisible, `${plinth.state}'s glyph is not rendered`).toBe(true);
+  }
+});
+
 test("the frame is thick enough to read at pod sizes", async ({ page }) => {
   test.setTimeout(180_000);
   await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });

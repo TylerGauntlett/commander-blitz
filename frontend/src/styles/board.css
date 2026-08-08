@@ -142,116 +142,276 @@
   min-width: 0;
 }
 
-/* Command zone ---------------------------------------------------------
+/* The commander plinth --------------------------------------------------
  *
- * Permanently docked under the orb. In Commander this card is the deck's whole
- * plan; it used to be a count on a chip, and casting it meant finding a ghost
- * button in the action bar's overflow. See docs/playtest-feedback-02.md. */
+ * The hero of the info panel, and no longer a card.
+ *
+ * It was a count on a chip, then a ghost button in the action bar's overflow
+ * (docs/playtest-feedback-02.md), then a shrunken card face in the bottom-left
+ * corner where `--card-w` resolved to ~74px and the name clipped to
+ * "Aesi, Tyra…" -- docs/mockup-fidelity.md defect #5. A card face has six
+ * things to fit and this column has room for three, so it stopped being a card
+ * face: a portrait, a name, and a state strip, sized for the column instead of
+ * shrunk into it. The full card is one hover away in the preview rail.
+ *
+ * `--cmd-art-w` is the single knob. The whole plinth derives from it, so the
+ * 190px viewer column and the 112px opponent column differ by one declaration.
+ *
+ * **Every state is said three ways, and none of them is hue.** A word, the
+ * portrait's luminance, and a glyph. The playable rim's meaning lives entirely
+ * in its green, which is docs/mockup-fidelity.md's top-ranked open defect; this
+ * element is not allowed to add to it. Check that in greyscale, not in theory --
+ * `e2e/greyscale.spec.ts` does. */
 
 .cmdzone {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 6px;
-  border: 1px solid rgb(216 166 60 / 0.35);
-  border-radius: 10px;
-  background: rgb(30 24 8 / 0.4);
-}
-
-.cmdzone__head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cmdzone__label {
-  color: var(--gold);
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  width: 100%;
 }
 
 .cmdzone__cards {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
-  justify-content: center;
 }
 
+/* One commander. Still `.cmdslot`, because a pile of e2e selectors say so. */
 .cmdslot {
-  --card-w: calc(var(--card-w-base) * 0.885);
+  /* Pips size themselves off `--card-w`, which nothing sets in this column;
+     without a value here `.pip` falls back to a 104px card and the cost row
+     comes out wider than the portrait above it. */
+  --card-w: 96px;
   position: relative;
-  padding: 0;
-  border: 0;
-  border-radius: var(--card-r);
-  background: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 5px;
+  border: 1px solid rgb(216 166 60 / 0.3);
+  border-radius: 8px;
+  background: rgb(30 24 8 / 0.35);
+  color: inherit;
+  text-align: left;
   cursor: default;
 }
 
-/* A commander that is not in the command zone is shown for reference, not for
-   play -- it is somewhere else, and there is nothing to click. */
-.cmdslot[data-castable="false"] .face {
-  opacity: 0.62;
+/*
+ * A banner rather than a card's 1.4 portrait, and the aspect is doing two jobs.
+ *
+ * The mat's first column is a hard 190px, so the portrait cannot grow sideways
+ * whatever the viewport does -- which means the only way to make it *taller* is
+ * to make it narrower, and a narrower plinth left "In command" truncating to
+ * "IN COMM…" beside the cost pips. Full width at 2:1 gives the name and the
+ * state strip the whole column and still costs about eighty pixels of height,
+ * which is what this column has to spare: at 1600x950 the orb has 341px of row
+ * to fit a portrait, a life dial, a mana row and five piles into, and the piles
+ * are the first thing to fall below the fold.
+ *
+ * `object-fit: cover` on a 1.4 source crops the top and bottom rather than
+ * squashing it, which on creature art keeps the creature.
+ */
+.cmdplinth__art {
+  position: relative;
+  display: block;
+  aspect-ratio: 2;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #241f33;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.45);
 }
 
-.cmdslot--castable {
-  cursor: pointer;
+.cmdplinth__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.cmdslot--castable::after {
-  content: "";
+/* Not every card has a printing, and a lazily-fetched crop can fail. An honest
+   plate reads as a deliberate state; a broken-image glyph reads as a bug. */
+.cmdplinth__art--none {
+  display: grid;
+  place-items: center;
+  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px),
+    #6b6152;
+}
+
+.cmdplinth__art--none span {
+  color: rgb(255 255 255 / 0.6);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* What this portrait is. Pinned over the art's corner rather than given a row
+   of its own -- the same badge language `.face__tag--cmd` uses on a card, and
+   the same brass, so the two read as one idea. Costs no height at all, which
+   in this column is the whole point. */
+.cmdplinth__tag {
   position: absolute;
-  inset: -3px;
-  border-radius: calc(var(--card-r) + 3px);
-  pointer-events: none;
-  box-shadow: 0 0 0 2px var(--playable), 0 0 16px rgb(92 224 138 / 0.45);
+  top: 9px;
+  left: 9px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--frame-commander);
+  color: #2a1e05;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
 }
 
-.cmdslot--castable:disabled {
-  cursor: default;
+/* Two lines and then an ellipsis. The name is the thing the old card face could
+   not fit, so it gets the room here rather than the type line and the P/T --
+   both of which the preview rail already carries. */
+.cmdplinth__name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: var(--text);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-/* The tax rides on the card, beside the cost it modifies. */
+.cmdplinth__strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* The shape channel. Small, but it is a different *outline* per state, which is
+   what a colour-blind player and a greyscale screenshot both still get. */
+.cmdplinth__glyph {
+  flex: 0 0 auto;
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* And the word channel. Truncates rather than wrapping: it is a label, and a
+   two-line label would push the dial down every time the commander died. */
+.cmdplinth__word {
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* What you owe, pushed to the strip's right edge and so landing directly above
+   the mana row that pays it. That adjacency is the reason the commander moved
+   into this panel. */
+.cmdplinth__cost {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* The tax, beside the cost it modifies. */
 .cmdslot__tax {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  padding: 1px 6px;
+  padding: 0 5px;
   border: 1px solid rgb(216 166 60 / 0.6);
   border-radius: 999px;
   background: #2a2008;
   color: var(--gold);
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.cmdslot__where {
-  display: block;
-  padding-top: 2px;
-  color: var(--text-faint);
   font-size: 9.5px;
-  text-align: center;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
-/* Opponent docks are for reference only -- you never cast from one -- so they
-   give up size first. The header goes too: a gold-bordered card under an
-   opponent's life total is not ambiguous, and the row it saves is a row the
-   lanes need. */
+/* Ready ------------------------------------------------------------------
+ *
+ * Lit frame, lit portrait, `▶ READY`. The glow matches `.card--playable`'s
+ * recipe in cards.css so the board says "you can play this" one way. */
+.cmdslot--ready {
+  border-color: var(--playable);
+  background: rgb(20 40 28 / 0.5);
+  box-shadow: 0 0 0 1px var(--playable), 0 0 16px rgb(92 224 138 / 0.35);
+  cursor: pointer;
+}
+
+.cmdslot--ready .cmdplinth__word {
+  color: var(--playable);
+}
+
+.cmdslot--ready .cmdplinth__glyph {
+  color: var(--playable);
+}
+
+.cmdslot--ready:disabled {
+  cursor: default;
+}
+
+/* Waiting: in the command zone, nothing to do about it yet. The portrait dims,
+   which is the luminance channel doing the work the green rim cannot. */
+.cmdslot--waiting .cmdplinth__art {
+  opacity: 0.62;
+}
+
+/* Deployed: it is out there rather than in here. An empty socket -- inset
+   rather than raised -- with the portrait still lit, because the card is very
+   much alive and you want to find it on the board. */
+.cmdslot--deployed {
+  border-color: rgb(216 166 60 / 0.22);
+  background: rgb(12 10 22 / 0.55);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.5);
+}
+
+/* Fallen: dead or exiled. Desaturated and dashed -- a broken frame reads as
+   "not here" in greyscale, where a colour change would not. */
+.cmdslot--fallen {
+  border-style: dashed;
+  border-color: rgb(216 166 60 / 0.25);
+}
+
+.cmdslot--fallen .cmdplinth__art {
+  filter: grayscale(0.85);
+  opacity: 0.7;
+}
+
+.cmdslot--fallen .cmdplinth__name {
+  color: var(--text-dim);
+}
+
+/* Opponents ---------------------------------------------------------------
+ *
+ * Reference only -- you never cast from one -- so the plinth gives up
+ * everything that is not identity and state. The eyebrow goes (a gold-framed
+ * portrait under a life total is not ambiguous), the cost goes (you are not
+ * paying it), and the portrait shrinks well below the column width.
+ *
+ * This is load-bearing, not tidiness: `.play` caps the opponent row with
+ * `fit-content(58%)`, which never shrinks below the row's min-content, so every
+ * pixel of height in this column is a pixel taken off the viewer's own board.
+ * `cycle3.spec.ts`'s `rowClipped` guard is what catches it going wrong. */
 .mat--compact .cmdslot {
-  --card-w: calc(var(--card-w-base) * 0.538);
-}
-
-.mat--compact .cmdzone {
+  gap: 1px;
   padding: 3px;
 }
 
-.mat--compact .cmdzone__head {
-  display: none;
+.mat--compact .cmdplinth__name {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  font-size: 8.5px;
+  text-align: center;
 }
 
-.mat--compact .cmdslot__where {
-  font-size: 8.5px;
+.mat--compact .cmdplinth__strip {
+  justify-content: center;
+}
+
+.mat--compact .cmdplinth__word {
+  font-size: 7.5px;
+  letter-spacing: 0.02em;
 }
 
 /* A narrow pod mat can still outgrow the row it sits in once a board gets big.
@@ -1151,25 +1311,8 @@
 }
 
 /* The hand owns the whole foot now that the action bar has moved to the right
-   rail. It was sharing this row with a fixed 420px column. */
-/* Your commander sits to the left of the fan. `auto` rather than a fixed
-   column so a deck with no commander in a visible zone costs nothing at all,
-   and the fan stays centred on the remaining width either way. */
-.table__hand-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: flex-end;
-  gap: 10px;
-}
-
-.table__hand-row .cmdzone {
-  align-self: flex-end;
-  margin-bottom: 14px;
-}
-
-.table__hand-row .cmdslot {
-  --card-w: calc(var(--card-w-base) * 1.04);
-}
+   rail and the commander has moved into the info panel. It was sharing this
+   row with a fixed 420px column, and then with the commander dock. */
 
 /*
  * The hand.
