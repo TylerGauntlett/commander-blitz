@@ -1,22 +1,25 @@
 /**
- * Does card type survive without colour?
+ * Is the board readable without colour?
  *
  * `tests/palette.test.ts` reads `cards.css` off disk, which is the right place
- * to guard the ladder but cannot see an override landing from `theme.css`, a
- * media query, or an inline style. These read the *resolved* values off real
- * elements in a real browser, which is the only way to know what actually
- * shipped.
+ * to guard a number but cannot see an override landing from `theme.css`, a media
+ * query, or an inline style. These read the *resolved* values off real elements
+ * in a real browser, which is the only way to know what actually shipped.
  *
  * This is the check mockups/README.md says board art costs you. It is here
- * because the art was taken anyway, and a claim nobody can falsify is not worth
+ * because the art was taken anyway -- and taken to the edge, now that the card
+ * is a full-bleed illustration -- and a claim nobody can falsify is not worth
  * making.
+ *
+ * The first test used to walk an eight-step `--type-ring` luminance ladder,
+ * because card type was encoded as the colour of the card stock. That encoding
+ * was removed with the art-bleed redesign (docs/mockup-fidelity.md), so what is
+ * checked here now is the thing the ladder was a proxy for: text on a card has
+ * to be readable over an illustration nobody chose.
  */
 
 import { expect, test } from "@playwright/test";
 import { startGame, takeAction, waitForOurTurn } from "./helpers";
-
-/** The floor `palette.test.ts` uses; the same number, for the same reason. */
-const MIN_GAP = 0.03;
 
 async function buildABoard(page: import("@playwright/test").Page, steps = 14) {
   await waitForOurTurn(page);
@@ -32,55 +35,79 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 14) {
   }
 }
 
-test("every card type on the board is separable without colour", async ({ page }) => {
+/**
+ * How dark a scrim has to be at the end the text sits on.
+ *
+ * The same floor `tests/palette.test.ts` parses out of the stylesheet, checked
+ * here against what the browser actually resolved. White type at 0.7 is
+ * readable over the brightest crop in `data/art`; below that it depends on
+ * which card you happen to be looking at, which is not a property.
+ */
+const MIN_SCRIM = 0.7;
+
+test("every card's text is scrimmed against its own art", async ({ page }) => {
   test.setTimeout(180_000);
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 
-  const rings = await page.evaluate(() => {
-    const channel = (v: number) => {
-      const c = v / 255;
-      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const bad = await page.evaluate((floor) => {
+    /** The most opaque black stop in a resolved `linear-gradient(...)`. */
+    const peak = (background: string) => {
+      const stops = [...background.matchAll(/rgba?\(([^)]*)\)/g)].map((m) =>
+        m[1].split(/[,/]/).map((n) => Number.parseFloat(n.trim())),
+      );
+      const alphas = stops
+        // Only the dark stops count: a scrim is black fading to nothing, and
+        // the transparent end is the look rather than the legibility.
+        .filter((c) => c.length >= 3 && c[0] < 60 && c[1] < 60 && c[2] < 60)
+        .map((c) => (c.length >= 4 ? c[3] : 1));
+      return alphas.length > 0 ? Math.max(...alphas) : 0;
     };
-    const luminance = (colour: string) => {
-      // Registered custom properties resolve to `rgb(...)`, but be tolerant of
-      // a hex: parsing digits out of "#4f3c15" with a number regex yields
-      // nonsense that still looks like a valid reading, which is the worst
-      // kind of test bug.
-      let rgb: number[] | null = null;
-      const hex = colour.match(/^#([0-9a-f]{6})$/i);
-      if (hex) {
-        const n = Number.parseInt(hex[1], 16);
-        rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-      } else {
-        const m = colour.match(/-?\d+(?:\.\d+)?/g);
-        if (m && m.length >= 3) rgb = m.slice(0, 3).map(Number);
-      }
-      if (!rgb) return null;
-      const [r, g, b] = rgb;
-      return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
-    };
-    const byTone: Record<string, number> = {};
+
+    const failures: string[] = [];
     for (const face of document.querySelectorAll<HTMLElement>(".face")) {
-      const tone = face.dataset.typeTone;
-      if (!tone) continue;
-      const value = getComputedStyle(face).getPropertyValue("--type-ring").trim();
-      const lum = luminance(value);
-      if (lum !== null) byTone[tone] = lum;
+      const name = face.dataset.cardName ?? "?";
+      for (const part of ["face__head", "face__foot"]) {
+        const band = face.querySelector<HTMLElement>(`.${part}`);
+        if (!band) {
+          failures.push(`${name}: no .${part}`);
+          continue;
+        }
+        const alpha = peak(getComputedStyle(band).backgroundImage);
+        if (alpha < floor) failures.push(`${name}: .${part} peaks at ${alpha}`);
+      }
     }
-    return byTone;
-  });
+    return failures;
+  }, MIN_SCRIM);
 
-  const tones = Object.entries(rings).sort((a, b) => a[1] - b[1]);
-  expect(tones.length, "no card faces carried a resolved --type-ring").toBeGreaterThan(1);
+  expect(bad, "card text is sitting on an illustration with too little scrim").toEqual([]);
+});
 
-  for (let i = 1; i < tones.length; i += 1) {
-    const [lower, low] = tones[i - 1];
-    const [upper, high] = tones[i];
-    expect(
-      high - low,
-      `${lower} and ${upper} are on screen together and indistinguishable in greyscale`,
-    ).toBeGreaterThan(MIN_GAP);
+test("the type line survives greyscale on every face", async ({ page }) => {
+  // Card type used to be the colour of the card stock. With that ladder gone,
+  // this line and the glyph below are what is left, so they have to be *there*
+  // -- laid out and non-empty -- rather than merely styled.
+  test.setTimeout(180_000);
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await buildABoard(page);
+
+  await page.addStyleTag({ content: "html { filter: grayscale(1) !important; }" });
+
+  const types = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>(".face")].map((face) => {
+      const line = face.querySelector<HTMLElement>(".face__type");
+      return {
+        name: face.dataset.cardName ?? "?",
+        text: (line?.textContent ?? "").trim(),
+        visible: line ? line.getBoundingClientRect().width > 0 : false,
+      };
+    }),
+  );
+
+  expect(types.length).toBeGreaterThan(0);
+  for (const line of types) {
+    expect(line.text.length, `${line.name} has no type line`).toBeGreaterThan(0);
+    expect(line.visible, `${line.name}'s type line is not rendered`).toBe(true);
   }
 });
 

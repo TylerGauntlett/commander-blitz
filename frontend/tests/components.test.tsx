@@ -26,12 +26,30 @@ function pending(overrides: Partial<PendingDecision> = {}): PendingDecision {
 }
 
 describe("CardFace", () => {
-  it("renders the name, type line and mana pips", () => {
-    render(<CardFace card={card({ name: "Grizzly Bears", mana_cost: "{1}{G}" })} />);
+  it("renders the name, type line and mana symbols", () => {
+    const { container } = render(
+      <CardFace card={card({ name: "Grizzly Bears", mana_cost: "{1}{G}" })} />,
+    );
     expect(screen.getByText("Grizzly Bears")).toBeTruthy();
     expect(screen.getByText("Creature - Bear")).toBeTruthy();
-    expect(screen.getByText("1")).toBeTruthy();
-    expect(screen.getByText("G")).toBeTruthy();
+    // The cost is Scryfall's real symbols now, not a letter on a disc, so it has
+    // no text to query -- `data-symbol` is what carries the code. Order matters:
+    // "{1}{G}" is not the same cost as "{G}{1}" to read, even though it is to pay.
+    expect(
+      [...container.querySelectorAll(".face__cost .pip")].map((n) =>
+        n.getAttribute("data-symbol"),
+      ),
+    ).toEqual(["1", "G"]);
+  });
+
+  it("draws each mana symbol as its published artwork", () => {
+    // The point of the swap: a `G` in a green circle is a mark nobody who plays
+    // the game recognises.
+    const { container } = render(<CardFace card={card({ mana_cost: "{2}{U}" })} />);
+    const sources = [...container.querySelectorAll<HTMLImageElement>(".face__cost img")].map(
+      (img) => img.getAttribute("src"),
+    );
+    expect(sources).toEqual(["/symbols/2.svg", "/symbols/U.svg"]);
   });
 
   it("subtracts marked damage from toughness on the battlefield", () => {
@@ -58,9 +76,17 @@ describe("CardFace", () => {
     expect(screen.getByText("Flying · First strike")).toBeTruthy();
   });
 
-  it("tags a commander", () => {
-    render(<CardFace card={card({ is_commander: true })} />);
-    expect(screen.getByText("CMD")).toBeTruthy();
+  it("crowns a commander, inside the name", () => {
+    // It was a `CMD` badge pinned to a corner, which at pod size rendered at
+    // under 3px. The crown scales with the name because it is part of it.
+    const { container } = render(<CardFace card={card({ is_commander: true })} />);
+    expect(container.querySelector(".face__name .crown")).not.toBeNull();
+    expect(container.querySelector(".crown")?.getAttribute("title")).toBe("Commander");
+  });
+
+  it("crowns nothing else", () => {
+    const { container } = render(<CardFace card={card({ is_commander: false })} />);
+    expect(container.querySelector(".crown")).toBeNull();
   });
 
   it("renders counters as badges", () => {

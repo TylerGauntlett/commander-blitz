@@ -14,6 +14,7 @@ import {
   isWounded,
   landSymbols,
   landTone,
+  shortType,
   symbolTokens,
   typeGlyph,
   typeLabel,
@@ -317,5 +318,39 @@ describe("symbolTokens", () => {
       .map((t) => (t.kind === "text" ? t.value : `{${t.value}}`))
       .join("");
     expect(rebuilt).toBe(text);
+  });
+});
+
+describe("shortType", () => {
+  it("drops a supertype the card already says another way", () => {
+    // `Legendary` is said by the crown in the name, so on a board card the line
+    // spends itself on the subtype instead.
+    expect(shortType("Legendary Creature - Human Merfolk")).toBe("Creature - Human Merfolk");
+    expect(shortType("Basic Land - Forest")).toBe("Land - Forest");
+    expect(shortType("Token Creature - Elemental")).toBe("Creature - Elemental");
+  });
+
+  it("drops two, because a card can have two", () => {
+    expect(shortType("Legendary Snow Creature - Yeti")).toBe("Creature - Yeti");
+  });
+
+  it("leaves a line with no supertype alone", () => {
+    expect(shortType("Creature - Ooze")).toBe("Creature - Ooze");
+    expect(shortType("Instant")).toBe("Instant");
+    expect(shortType("Land")).toBe("Land");
+  });
+
+  it("never empties the line", () => {
+    // `e2e/greyscale.spec.ts` asserts every face carries a type line, because
+    // with the type-colour ladder gone this and the glyph are what is left.
+    for (const line of ["Legendary Creature - Serpent", "Basic Land - Island", "Artifact"]) {
+      expect(shortType(line).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("does not eat a subtype that happens to be a supertype word", () => {
+    // Only a *leading* run comes off. "Creature - Legendary" is not a real card,
+    // but the anchoring is the property worth pinning.
+    expect(shortType("Enchantment - Snow")).toBe("Enchantment - Snow");
   });
 });

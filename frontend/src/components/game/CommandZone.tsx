@@ -38,6 +38,7 @@ import { manaPips } from "../../logic/cardStyle";
 import { commandersOf } from "../../logic/zoneGrouping";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { ManaSymbol } from "./ManaSymbol";
 
 /**
  * What the plinth says about where the commander is and whether you can do
@@ -176,9 +177,7 @@ function Plinth({ card, castable, tax, compact, disabled, onActivate, onHover }:
         {showCost && (pips.length > 0 || tax > 0) && (
           <span className="cmdplinth__cost">
             {pips.map((pip) => (
-              <span className={`pip pip--${pip.tone}`} key={pip.key}>
-                {pip.symbol}
-              </span>
+              <ManaSymbol code={pip.symbol} className={`pip--${pip.tone}`} key={pip.key} />
             ))}
             {tax > 0 && (
               <span

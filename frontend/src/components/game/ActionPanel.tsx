@@ -44,6 +44,7 @@ import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
 import { type Speed, useUiStore } from "../../state/uiStore";
+import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
 
 /**
@@ -495,9 +496,11 @@ export function ActionPanel({
                       {manaPips(source.mana_cost).length > 0 && (
                         <span className="act__cost">
                           {manaPips(source.mana_cost).map((pip) => (
-                            <span className={`pip pip--${pip.tone}`} key={pip.key}>
-                              {pip.symbol}
-                            </span>
+                            <ManaSymbol
+                              code={pip.symbol}
+                              className={`pip--${pip.tone}`}
+                              key={pip.key}
+                            />
                           ))}
                         </span>
                       )}

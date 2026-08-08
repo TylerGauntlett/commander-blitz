@@ -37,26 +37,13 @@
 }
 
 /*
- * The type ring, registered for the same reason.
- *
- * Unregistered, `getPropertyValue("--type-ring")` hands back the literal text
- * `#4f3c15` and `--type-ring-w` hands back `calc(var(--card-w) * 0.034)`.
- * e2e/greyscale.spec.ts has to read both as numbers to check the ladder
- * survives on the *rendered* board -- which is the only place an override from
- * theme.css or a media query would show up. Declaring the syntax is what makes
- * the encoding introspectable rather than a claim.
+ * `--type-ring` and `--type-ring-w` were registered here for the same reason,
+ * so `e2e/greyscale.spec.ts` could read the card-type luminance ladder back as
+ * numbers off the rendered board. The ladder went with the art-bleed redesign --
+ * card type is no longer a colour at all -- so both registrations are gone.
+ * `tests/palette.test.ts` fails if a `--type-ring` declaration reappears.
+ * See docs/mockup-fidelity.md.
  */
-@property --type-ring {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --type-ring-w {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
 
 :root {
   /*

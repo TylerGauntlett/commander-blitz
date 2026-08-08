@@ -3,27 +3,6 @@
 
 # Features
 
-## Improve Commander Placement
-- The commander is currently placed randomly in the left corner
-- Given that this is the staple of the whole gamemode, it should instead be promoted to almost game like element when not on the board
-- The box containing info like health, decks, etc could be a natrual home for something like that
-- Consider intersting ways to incorperate the commander here and visualize when they are ready/ not ready
-
-### Task
-- Add the commander to the info panel containing existing core information like health and decks
-
-## Redesign main page
-
-### Overview
-- The main page is visually unappealing and does not feel like a game (more like a standard website)
-- The theme/layout can be completley reworked but should be visually consistant with the main app
-- It should visually support the idea of custom decks (importable via Moxfield) and precons (pre constructed decks offically supplied by MTG)
-- The AI vs random selctor doesn't make sense and should be instead show as a cleaver difficultly selector
-- Preconds should be clickable to open a details modal where you can read more details like the card art, card details, playstyle, etc
-- Only include 2 additional precons (first flight and zurgo stormrender)
-
-### Task
-- Create 5 different mockups of this new menu as interactable html
 
 ---
 
@@ -64,6 +43,7 @@
 
 ### Task
 - Impelement a system that automatically scales cards/board areas up and down depending on the number of cards present
+- 
 
 
 ## CPU Improvements

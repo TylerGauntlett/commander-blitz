@@ -89,8 +89,11 @@ in hand, `U` undo. Any key skips the narration while it is playing.
 
 ## Cards look like cards
 
-A title bar with mana pips, a type line, an art window, a rules box that shows
-`oracle_text`, and a P/T corner, all proportioned 5:7.
+**The illustration is the card.** It fills the frame, and the text sits on graded
+scrims at the top and bottom: head (type glyph, name, then the mana cost on a row
+of its own) and foot (type line, `oracle_text` where there is room, then keywords,
+counters and P/T). This is direction D, "Art Bleed", of `mockups/cards/index.html`.
+Everything is still proportioned 5:7 except the enlarged preview card.
 
 The art is served by this application, never by a third party -- the build script
 downloads each crop once and the API serves the bytes, so the board renders with
@@ -98,13 +101,26 @@ the network unplugged. Five cards in `data/cards/` are original designs with no
 printing anywhere, and those get a deliberate "no art" plate rather than a broken
 image. See [card-catalog.md](card-catalog.md).
 
-**Card type is encoded twice, on purpose.** The paper's fill carries it as a
-luminance ladder, but art covers most of the paper -- which is exactly the
-objection `mockups/README.md` raises against board art. So the type also gets a
-ring drawn *over* the art at the frame's inner edge, and the glyph in the title
-bar stays whatever else happens. `tests/palette.test.ts` asserts the ring's
-ladder stays separable in greyscale, and `e2e/greyscale.spec.ts` checks the same
-thing against the *rendered* board, where a `theme.css` override would show up.
+**Card type is no longer a colour, and that was deliberate.** It used to be: an
+eight-step luminance ladder on the card stock plus a matching ring, because a type
+line renders at 5.6px on a pod board. A full-bleed illustration does that job
+better and does it *per card* rather than per category -- twelve Forests are one
+recognisable picture rather than twelve of "the tan ones". What carries type
+without colour now is the glyph and the type line, and `e2e/greyscale.spec.ts`
+fails the run if either is missing or unrendered on any face. The full reasoning
+and the list of tests that changed is in
+[mockup-fidelity.md](mockup-fidelity.md) -- read it before re-adding a type tint.
+
+**Colour identity is a different fact and it keeps the frame**: the border, and the
+gradient the art sits on, which on the ~4% of cards with no printing is the whole
+card. A land's frame narrows to the colour it taps for and its produced-mana
+symbols go large and centre-frame, so a lane of lands reads without reading a name.
+
+Text over an unknown illustration is the one thing here that can fail silently, so
+it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients
+whose opaque ends clear a darkness floor, and `e2e/greyscale.spec.ts` asserts the
+same against the *rendered* board, where a `theme.css` override would show up and a
+CSS parse would not.
 
 Every dimension is a ratio of `--card-w`, which the containing zone sets. One component
 therefore renders at 82px on an opponent's board, 146px in hand and 236px in the preview

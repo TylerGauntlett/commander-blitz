@@ -29,10 +29,14 @@ Three of them, because the failure modes are all silent:
 - **The token naming rule.** `tests/cards/test_image_resolution.py` freezes the set
   of cards with no printing at exactly five. A *sixth* means a real card stopped
   resolving and quietly started rendering a blank plate, which nothing else notices.
-- **The greyscale ladder.** `frontend/tests/palette.test.ts` checks the type-ring
-  tones stay separable by luminance; `frontend/e2e/greyscale.spec.ts` checks the same
-  thing against the *rendered* board, where an override from `theme.css` or a media
-  query would show up and a stylesheet parse would not.
+- **Text over an unknown illustration.** The card is a full-bleed picture with its
+  text on graded scrims, so white type over somebody's bright crop is the thing that
+  can fail on one card and look fine on every other.
+  `frontend/tests/palette.test.ts` checks both scrims are gradients whose opaque ends
+  clear a darkness floor; `frontend/e2e/greyscale.spec.ts` checks the same against the
+  *rendered* board, where an override from `theme.css` or a media query would show up
+  and a stylesheet parse would not. (This replaces a type-ring luminance ladder, which
+  encoded card type as colour — see `docs/mockup-fidelity.md` for why it went.)
 - **Self-ownership.** `e2e/art.spec.ts` fails if the page fetches from any host but
   this server. That is the property the whole build-time download exists to buy, and
   it would be easy to give away by accident.

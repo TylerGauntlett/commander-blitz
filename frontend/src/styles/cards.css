@@ -3,6 +3,24 @@
  *
  * Every dimension is a ratio of --card-w, so one component renders at 82px on
  * an opponent's board and 236px in the preview panel with no separate styles.
+ *
+ * ART BLEED. The illustration fills the frame and the text sits on graded
+ * scrims at the top and bottom -- direction D of `mockups/cards/index.html`.
+ * There is no card stock any more: no padding surround, no art window, no band
+ * of tinted paper between the rows.
+ *
+ * That removes an encoding, deliberately. Card type used to be the *colour of
+ * the paper*, an eight-step luminance ladder plus a matching ring, because a
+ * type line renders at 5.6px on a pod board and something had to carry the fact
+ * from across the table. A full-bleed illustration carries it better and
+ * carries it per card rather than per category -- twelve Forests are one
+ * picture, and a Sol Ring is not "one of the pale blue ones". What still works
+ * without colour is the type glyph and the type line, and `e2e/greyscale.spec.ts`
+ * asserts the glyph renders on every face for exactly that reason.
+ *
+ * Colour identity is a different fact and it keeps the frame: the border, and
+ * the gradient the art sits on -- which on the ~4% of cards with no printing is
+ * the whole card.
  */
 
 .card {
@@ -54,87 +72,96 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  /* This padding is the surround of type-tinted paper the art window never
-     covers. It is not decoration -- tests/palette.test.ts asserts it is
-     non-zero, because an art band bled to the edge would take the type
-     encoding with it. */
-  padding: calc(var(--card-w) * 0.045);
-  gap: calc(var(--card-w) * 0.028);
+  /* No padding. The art goes edge to edge; this is the declaration
+     tests/palette.test.ts used to assert *was* non-zero, back when a band of
+     tinted paper round the art was the type encoding. */
+  padding: 0;
   overflow: hidden;
-  /* Scales with the card so colour identity holds its weight on a big display,
-     with a hard 2px floor: the smallest card in a four-player pod is ~51px, and
-     3.2% of that rounds down to a single device pixel -- at which point the
-     border stops reading as a colour at all. */
-  border: max(2px, calc(var(--card-w) * 0.032)) solid var(--frame-default);
+  /* 1.4% is the mockup's ratio. It was 3.2% here, which drew a frame thick
+     enough to be a fourth band on a card that is meant to be an illustration.
+     The 2px floor stays and is doing the real work: the smallest card in a
+     four-player pod is ~51px, where the ratio alone gives 0.7px and the border
+     stops reading as a colour at all. `e2e/greyscale.spec.ts` measures it. */
+  border: max(2px, calc(var(--card-w) * 0.014)) solid var(--frame-default);
   border-radius: var(--card-r);
-  background: linear-gradient(160deg, var(--stock) 0%, var(--stock-shade) 100%);
-  color: var(--stock-ink);
-  font-size: calc(var(--card-w) * 0.082);
+  /* The ground the art sits on, and the entire card when there is no art.
+     Colour identity, not card type -- see the header note. */
+  background: linear-gradient(160deg, var(--f-hi, #6f6a7d), var(--f-lo, #2f2c3a));
+  color: #f4f2ec;
   line-height: 1.25;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.35);
+
+  /*
+   * Type sizes, clamped at *both* ends.
+   *
+   * `mockups/cards/index.html` calls this file out by name for getting it wrong:
+   * "A floor alone (`max(8.5px, ...)`) is what the client does, and it is why the
+   * preview card looks like a zoomed board card rather than a designed one."
+   * A floor stops the small end rendering type nobody can read; the ceiling is
+   * what stops the large end being the same card photographed closer.
+   *
+   * The ratios and the bounds are the mockup's. Nothing on the board is wide
+   * enough for a ceiling to bind today -- the widest portrait card is the
+   * spotlight at ~160px -- so these are here to hold the line when something is,
+   * which is exactly when nobody would think to add them.
+   */
+  --fs-nm: clamp(9px, calc(var(--card-w) * 0.085), 19px);
+  --fs-tp: clamp(8.5px, calc(var(--card-w) * 0.062), 12.5px);
+  --fs-tx: clamp(8.5px, calc(var(--card-w) * 0.053), 12.5px);
+  --fs-pt: clamp(10px, calc(var(--card-w) * 0.092), 21px);
+  --fs-chip: clamp(8.5px, calc(var(--card-w) * 0.062), 11px);
+
+  font-size: var(--fs-tx);
 }
 
-/*
- * The type ring.
+/* Frame tints ------------------------------------------------------------
  *
- * The frame's outer border carries *colour identity*, so card type needed a
- * channel of its own once art started covering the paper that used to carry it.
- * This is that channel: a hairline at the frame's inner edge, drawn on top of
- * everything including the art, keyed on the same `.face--type-*` rules that
- * set `--stock`.
+ * Two stops each, the lit edge and the shadowed one, which is what makes a
+ * frame read as moulded rather than as a coloured outline. Lifted from
+ * `mockups/cards/index.html`'s `:root`.
  *
- * The ladder spans L 0.05 to 0.58 in even steps, and `tests/palette.test.ts`
- * asserts the separation. A first attempt kept every tone dark, on the theory
- * that a light ring would be lost against a light art crop -- but that squeezed
- * all eight into the bottom of the range and two dark browns are not tellable
- * apart at three pixels. The dark hairline drawn just inside the ring solves
- * the same problem better: the ring always has a defined edge, whatever the
- * illustration behind it is doing, so its own lightness is free to carry the
- * encoding.
- */
-.face {
-  /* Floored like the border above, and for the same reason: below ~2px the
-     ring stops being a colour and becomes an artefact. */
-  --type-ring-w: max(2px, calc(var(--card-w) * 0.034));
-}
-
-.face::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  border-radius: inherit;
-  /* Two insets, painted first-on-top: the type ring, and a dark edge just
-     inside it that separates the ring from whatever the art happens to be. */
-  box-shadow: inset 0 0 0 var(--type-ring-w) var(--type-ring, transparent), inset 0 0 0
-    calc(var(--type-ring-w) + 1.5px) rgb(0 0 0 / 0.5);
-}
-
-/* Frame tints ---------------------------------------------------------- */
+ * These do double duty now: the border, and the gradient behind the art. On a
+ * card with no printing that gradient is all there is, so it has to be worth
+ * looking at rather than a placeholder grey. */
 
 .face--W {
+  --f-hi: #f6eed4;
+  --f-lo: #b9ad86;
   border-color: #d8cfa8;
 }
 .face--U {
+  --f-hi: #a9d2ec;
+  --f-lo: #2f6a95;
   border-color: #4a86b8;
 }
 .face--B {
+  --f-hi: #b6aeac;
+  --f-lo: #2e282b;
   border-color: #4c4550;
 }
 .face--R {
+  --f-hi: #f0a48b;
+  --f-lo: #a4432f;
   border-color: #b8624a;
 }
 .face--G {
+  --f-hi: #a9cfa2;
+  --f-lo: #2f6b41;
   border-color: #4e8a5c;
 }
 .face--C {
+  --f-hi: #d3d6da;
+  --f-lo: #787e86;
   border-color: #8a8f96;
 }
 .face--gold {
+  --f-hi: #eed99c;
+  --f-lo: #9c7a24;
   border-color: #b99a45;
 }
 .face--land {
+  --f-hi: #cdb99e;
+  --f-lo: #5f4d3a;
   border-color: var(--frame-land);
 }
 
@@ -149,154 +176,95 @@
   border-color: var(--frame-token);
 }
 
-/* Type fills ------------------------------------------------------------
+/* Type fills, removed ----------------------------------------------------
  *
- * The body is the largest channel on the card and until now it carried
- * nothing: every card shared one --stock gradient, and type appeared only in
- * .face__type, which is 5.6px on an opponent's battlefield. These override the
- * two stops the .face gradient already reads, so the paper changes colour and
- * nothing else about the frame moves.
+ * `.face--type-*` is still on every face -- `CardFace` emits it and
+ * `e2e/clarity.spec.ts` reads the matching `data-type-tone` -- but it sets no
+ * colour any more, so there are no rules for it here.
  *
- * Picked against the interaction rims (cards.css, below) rather than only
- * against each other -- a green creature body inside a green --playable rim is
- * exactly the ambiguity worth avoiding, so nothing here is green, and every
- * tone is a pale wash where the rims are saturated hairlines.
+ * It used to set an eight-step `--stock` luminance ladder plus a matching
+ * `--type-ring`, because the type line renders at 5.6px on a pod board and
+ * something had to say "creature" from across the table
+ * (docs/playtest-feedback-01.md item 4). Art bleed does that job better: the
+ * card is now a picture, and a picture is per-card rather than per-category.
+ * Twelve Forests are one recognisable image; under the ladder they were twelve
+ * copies of "one of the tan ones", which is the same problem the ladder was
+ * meant to solve, one level up.
  *
- * Land and Creature sit furthest apart on purpose: they are most of a board,
- * and telling them apart is most of the scan.
- *
- * LIGHTNESS IS PART OF THE ENCODING. Cycle 2 put all seven tones at L~88%, so a
- * greyscale board -- a monochrome display, a strongly colour-deficient viewer,
- * a card half-occluded in a stack ply -- collapsed to one small glyph. They now
- * climb in even steps of relative luminance from land (0.58) to other (0.92),
- * so hue and lightness carry the same fact twice.
- *
- * The range is bounded below by `.card--dimmed`, which is a flat 22% scrim:
- * dimming multiplies luminance by ~0.556, so the whole dimmed band has to stay
- * under the darkest undimmed tone or a dark land would read as disabled. That
- * puts a hard floor at min/max > 0.556; the spread below runs 0.58/0.92 = 0.63.
- * `tests/palette.test.ts` computes both properties from this file and fails if
- * a future tweak breaks either -- it is the automated form of the greyscale
- * check docs/playtest-feedback-01.md and -02.md both asked for and could not
- * find. Re-run it rather than eyeballing a hex. */
-
-.face--type-land {
-  --stock: #d6c7a8;
-  --stock-shade: #c6b186;
-  --type-ring: #4f3c15;
-}
-.face--type-creature {
-  --stock: #ebc9bc;
-  --stock-shade: #e0a894;
-  --type-ring: #b23b0d;
-}
-.face--type-sorcery {
-  --stock: #eecfdf;
-  --stock-shade: #e1a9c7;
-  --type-ring: #e32e8b;
-}
-.face--type-enchantment {
-  --stock: #e4d9f1;
-  --stock-shade: #cab5e3;
-  --type-ring: #ac76ea;
-}
-.face--type-planeswalker {
-  --stock: #efe3bc;
-  --stock-shade: #e6d293;
-  --type-ring: #c79a05;
-}
-.face--type-artifact {
-  --stock: #e5eaf0;
-  --stock-shade: #c5d1dd;
-  --type-ring: #95b2d5;
-}
-.face--type-instant {
-  --stock: #e4f2f7;
-  --stock-shade: #bce0ec;
-  --type-ring: #55caf3;
-}
-.face--type-other {
-  --stock: #f8f6f1;
-  --stock-shade: #e7decf;
-  --type-ring: #ddc78f;
-}
+ * The non-colour channels that remain are `.face__glyph` and `.face__type`,
+ * both of which `e2e/greyscale.spec.ts` and `e2e/art.spec.ts` assert are
+ * rendered with content on every face. If you are re-adding a colour encoding
+ * here, read `docs/mockup-fidelity.md` first -- this was a decision, not an
+ * oversight. */
 
 /* Land colours ----------------------------------------------------------
  *
  * Every land was the same tan rectangle, so a lane of twelve of them could only
  * be read by reading names -- docs/playtest-feedback-02.md item 8. These narrow
- * the land tone to the colour the land actually taps for, taken from the
- * server's `produces` (see costs.produced_symbols) rather than guessed from a
- * subtype, so a nonbasic dual is as honest as an Island.
+ * the *frame* to the colour the land actually taps for, taken from the server's
+ * `produces` (see costs.produced_symbols) rather than guessed from a subtype, so
+ * a nonbasic dual is as honest as an Island.
  *
- * All seven sit at the *same* luminance as each other and as `--type-land`
- * (~0.585). That is deliberate: lightness is already spoken for by card type,
- * so borrowing it here would say "this Island is a different type of card from
- * that Mountain". Colour separates them for anyone who can see colour, and the
- * `.face__watermark` letter separates them for anyone who cannot.
- *
- * Forest is the one green thing on a card. The note above about avoiding green
- * is about the `--playable` rim, which is a hairline plus glow *outside* the
- * frame (`.card::after { inset: -3px }`) reading against the dark table -- not
- * against the stock. A pale sage body does not compete with it. */
+ * They set the same two stops the colour-identity tints above set, so a row of
+ * lands reads as a row of coloured spines -- direction C's idea, which
+ * direction D inherits for free because the frame is already the only chrome
+ * left. The large centred `.watermark-pip` letters say the same thing for
+ * anyone who cannot use hue. */
 
 .face--land-W {
-  --stock: #daca89;
-  --stock-shade: #cdb862;
+  --f-hi: #efe3b4;
+  --f-lo: #8a7c46;
 }
 .face--land-U {
-  --stock: #afcde3;
-  --stock-shade: #8ab6d6;
+  --f-hi: #a9d2ec;
+  --f-lo: #2f6a95;
 }
 .face--land-B {
-  --stock: #d1c5da;
-  --stock-shade: #b9a5c6;
+  --f-hi: #c2b4cc;
+  --f-lo: #4a3f57;
 }
 .face--land-R {
-  --stock: #ebbfb5;
-  --stock-shade: #e19d8c;
+  --f-hi: #f0a48b;
+  --f-lo: #97432f;
 }
 .face--land-G {
-  --stock: #a6d69e;
-  --stock-shade: #85c67a;
+  --f-hi: #a9cfa2;
+  --f-lo: #2f6b41;
 }
 .face--land-C {
-  --stock: #c5c9ce;
-  --stock-shade: #aab0b6;
+  --f-hi: #cfd3d8;
+  --f-lo: #6a7078;
 }
 .face--land-multi {
-  --stock: #e2c77d;
-  --stock-shade: #d9b653;
+  --f-hi: #eed99c;
+  --f-lo: #9c7a24;
 }
 
-/* The art window -------------------------------------------------------
+/* The art ---------------------------------------------------------------
  *
- * A window cut in the paper, not a replacement for it: `.face`'s padding keeps
- * a band of the type tint all the way round, and the type ring is drawn on top.
- * Together those are what let the board carry art without giving up the type
- * encoding that mockups/README.md warned it would cost.
+ * Not a window in the paper any more: the whole face, under everything else.
+ * `inset: 0` rather than a flex row with an aspect ratio, so no card is ever
+ * "the illustration plus three bands" -- it is an illustration with writing on
+ * it.
  *
- * The band sits at the *top* of the card, above the title, and is capped at a
- * fixed aspect rather than taking the remaining height. It used to be `flex: 1`
- * between the type line and the footer, which meant the text got whatever the
- * art did not want -- on a hand card that was about six pixels of rules. A fixed
- * cap gives the text a contiguous block of known height underneath, which is the
- * arrangement mockups/05-planar-art.html's enlarged card uses and the reason
- * that card is the readable one.
+ * This is what `tests/palette.test.ts` used to forbid, in a suite called "the
+ * art window must never cover the whole face". That suite guarded an encoding
+ * that no longer exists; the assertion is now the other way round, and it lives
+ * in the same file so the reversal is on the record rather than a deletion.
  *
- * 1.4 is roughly the aspect of Scryfall's `art_crop`, so nothing is distorted.
- * `flex: 0 1 auto` rather than `0 0 auto`: on the smallest card in a four-player
- * pod the floored text below needs more of the height than the art does, and the
- * art is the channel that can afford to give it up. */
+ * `object-fit: cover` on a 1.4 crop inside a 1.4 frame is a near-identity at
+ * every size except the preview, which is width-driven -- there it crops rather
+ * than squashes, which on creature art keeps the creature. */
 .face__art {
-  position: relative;
-  flex: 0 1 auto;
-  aspect-ratio: 1.4;
-  min-height: 0;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
-  border-radius: calc(var(--card-w) * 0.03);
-  background: #241f33;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.35);
+  border-radius: inherit;
+  /* Transparent, not a placeholder grey: while an image is decoding, what shows
+     through is the frame's own colour-identity gradient, which is a card. A flat
+     slab was a loading state pretending to be a design. */
+  background: transparent;
 }
 
 .face__art img {
@@ -307,52 +275,87 @@
 }
 
 /* Not every card has a printing: five in `data/cards/` are original designs,
-   and a lazily-fetched crop can fail. Both land here. An honest plate reads as
-   a deliberate state; the browser's broken-image glyph reads as a bug. */
+   and a lazily-fetched crop can fail. Both land here.
+
+   The plate used to be a hatched khaki slab, which was the honest answer when
+   the card around it was cream paper. On a bleed face it is the one card on the
+   board that is not an illustration *and* not the frame either -- it read as a
+   broken tile. Direction D's answer is to let the colour-identity gradient be
+   the card and mark it with a very quiet label: still unmistakably "no art
+   here", but a Sol Ring with no printing is now a grey card rather than a
+   damaged one.
+
+   The label centres in the strip both scrims leave alone, which is the middle
+   of the card -- the same place a land's symbols go, and for the same reason. */
 .face__art--none {
   display: grid;
   place-items: center;
-  background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.16) 0 6px, transparent 6px 12px),
-    #6b6152;
+  background: none;
 }
 
 .face__art--none span {
   padding: 0 4px;
-  color: rgb(255 255 255 / 0.6);
-  font-size: calc(var(--card-w) * 0.085);
+  color: rgb(255 255 255 / 0.28);
+  font-size: var(--fs-tp);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-align: center;
 }
 
-/* On a land the mana symbols ride *over* the art rather than replacing it.
-   That symbol is the channel that reads at 60px in a pod and survives
-   greyscale; the art is the channel that does not. */
-.face__art .watermark-row {
+/* Lands -----------------------------------------------------------------
+ *
+ * A land is its art and its symbol; nothing else earns the space. The symbols
+ * go large and centre-frame rather than in a row along the bottom edge, which
+ * is direction D's answer and the one thing on the card that still reads at
+ * 60px in a four-player pod.
+ *
+ * Two selectors, one treatment. `.watermark-row` rides over a real
+ * illustration; `.face__watermark` is what a land draws before the image map
+ * arrives, or forever on a server with no images. Neither reserves layout any
+ * more, so they can finally be the same thing. */
+.face__art .watermark-row,
+.face__watermark {
   position: absolute;
-  right: 0;
-  bottom: calc(var(--card-w) * 0.03);
-  left: 0;
+  inset: 0;
+  z-index: 1;
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: calc(var(--card-w) * 0.035);
+  gap: calc(var(--card-w) * 0.05);
+  pointer-events: none;
 }
 
-.face__art .watermark-pip {
-  width: calc(var(--card-w) * 0.26);
-  height: calc(var(--card-w) * 0.26);
-  font-size: calc(var(--card-w) * 0.13);
-  box-shadow: 0 2px 5px rgb(0 0 0 / 0.55);
+.face__art .watermark-pip,
+.face__watermark .watermark-pip,
+.watermark-none {
+  width: clamp(26px, calc(var(--card-w) * 0.42), 108px);
+  height: clamp(26px, calc(var(--card-w) * 0.42), 108px);
+  font-size: clamp(15px, calc(var(--card-w) * 0.24), 60px);
+  filter: drop-shadow(0 3px 8px rgb(0 0 0 / 0.7));
 }
 
-/* A face that also renders rules text holds the cap rigidly rather than letting
-   the art shrink: here the text is the point, and a band that gave up height to
-   it would be trading the wrong way round. `.face__art` above already sets the
-   aspect for every variant; this is the stricter version of the same rule, and
-   tests/palette.test.ts asserts it stays. */
-.face--detail .face__art {
+/* A land that taps for no colour at all -- Terramorphic Expanse. Every design
+   that leans on the produced symbol needs something here, or the one land that
+   is actually interesting is the one with no mark. Deliberately *not*
+   `.watermark-pip`: it is not a mana symbol, and the specs that read the
+   produced colours off that class would have to special-case it. */
+.watermark-none {
+  display: grid;
+  place-items: center;
   flex: 0 0 auto;
-  aspect-ratio: 1.4;
+  border-radius: 50%;
+  background: #8d8172;
+  color: #efeade;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: inset 0 -2px 4px rgb(0 0 0 / 0.27), 0 1px 0 rgb(255 255 255 / 0.19);
+}
+
+/* A land's head scrim lifts: there is no cost row under the name, and the
+   symbol behind it is the thing worth seeing. */
+.face--type-land .face__head {
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.72), rgb(0 0 0 / 0));
 }
 
 /* The enlarged card ------------------------------------------------------
@@ -387,57 +390,59 @@
   height: 100%;
 }
 
+/*
+ * Absolute sizes, and this is the one face allowed them.
+ *
+ * `--card-w: 150px` is a fiction here: the box is as wide as the rail, and the
+ * number exists only so the symbols have something to scale against. A ratio of
+ * a width that is now the rail's width means nothing, so the whole `--fs-*`
+ * scale is restated in pixels rather than overridden element by element -- one
+ * system, two ways of feeding it.
+ */
 .face--big {
   --card-w: 150px;
+  --fs-nm: 13.5px;
+  --fs-tp: 11px;
+  --fs-tx: 12px;
+  --fs-pt: 13px;
+  --fs-chip: 10px;
 
   height: 100%;
-  /* No padding surround: each row carries its own, and the art is flush to the
-     frame. The type ring in `.face::before` still draws over the whole face, so
-     the type encoding survives the change. */
-  padding: 0;
-  gap: 0;
   border-radius: 12px;
-  font-size: 12px;
 }
 
-/*
- * A share of the frame, not an aspect ratio.
- *
- * Everywhere else the art keeps 1.4 and the card grows around it. Here the card
- * is a fixed box, so an aspect-driven band takes its height off the top and the
- * rules text gets whatever is left -- which on a 950px-tall display was about
- * forty pixels, i.e. nothing. Splitting the frame instead keeps the text usable
- * at every viewport, and `object-fit: cover` on the image means a slightly
- * wider crop rather than a squashed one.
- */
-.face--big .face__art,
-.face--big .face__watermark {
-  flex: 0 0 46%;
-  aspect-ratio: auto;
-  border-radius: 0;
-}
-
-.face--big .face__title,
-.face--big .face__type {
-  flex: 0 0 auto;
+/* The head keeps a floor so the top scrim is a band rather than a hairline over
+   a two-word name -- on the enlarged card the head and the foot are what the
+   illustration is framed by. */
+.face--big .face__head {
+  gap: 4px;
+  min-height: 26%;
+  padding: 9px 11px 22px;
 }
 
 .face--big .face__title {
-  align-items: center;
   gap: 7px;
-  padding: 8px 10px 3px;
-  font-size: 13.5px;
   font-weight: 800;
 }
 
-.face--big .face__glyph,
-.face--big .face__name {
-  font-size: 13.5px;
-}
-
-.face--big .face__type {
-  padding: 0 10px 5px;
-  font-size: 11px;
+/*
+ * The one scrim that is not a gradient all the way down.
+ *
+ * Everywhere else the foot fades into the illustration, which is the look. Here
+ * the foot holds a full rules box, and the whole job of this surface is that the
+ * rules box is readable -- `Explosive Vegetation` over a bright crop is the case
+ * that decides it. So the gradient is a lead-in at the top and goes effectively
+ * solid behind the text.
+ */
+.face--big .face__foot {
+  gap: 2px;
+  padding: 30px 11px 9px;
+  background: linear-gradient(
+    0deg,
+    rgb(11 11 15 / 0.96) 62%,
+    rgb(11 11 15 / 0.86) 78%,
+    rgb(0 0 0 / 0)
+  );
 }
 
 /* The part that gives. Everything else in the frame is a fixed height, so this
@@ -450,8 +455,7 @@
   justify-content: flex-start;
   overflow-y: auto;
   min-height: 0;
-  padding: 6px 10px 8px;
-  font-size: 12px;
+  padding: 5px 0 6px;
   line-height: 1.4;
 }
 
@@ -460,115 +464,121 @@
    shorter than every creature. */
 .face--big .face__footer {
   flex: 0 0 auto;
-  min-height: 30px;
-  padding: 0 10px 9px;
+  min-height: 26px;
 }
 
 .face--big .face__stats {
   padding: 1px 8px;
   border-radius: 5px;
-  font-size: 13px;
 }
 
-/* Keywords moved into the footer when the art took their row. */
+/* Keywords share the footer with the counters and the P/T, as a chip rather
+   than a bare run of text. A loose line of type over an illustration is the one
+   thing on a bleed card with nothing behind it -- the mockup draws `Trample` as
+   a chip for the same reason it scrims everything else. */
 .face__kwline {
-  flex: 1;
+  min-width: 0;
   overflow: hidden;
-  color: var(--stock-ink-dim);
-  font-size: max(8.5px, calc(var(--card-w) * 0.066));
+  padding: 0.24em 0.36em;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.11);
+  color: #e6e2d4;
+  font-size: var(--fs-chip);
   font-weight: 700;
+  line-height: 1;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-/* The mana a land makes, drawn where the art would be.
+/* The mana a land makes.
  *
- * Sized off --card-w like everything else, so the same markup serves the
- * preview and a 60px opponent permanent. It replaces a basic's rules text
- * entirely (see CardFace): "{T}: Add {G}." twelve times down a lane is a line
- * nobody reads, and the symbol says it faster.
+ * Positioned with `.watermark-row` above, since the two are the same element in
+ * two states. It replaces a basic's rules text entirely (see CardFace):
+ * "{T}: Add {G}." twelve times down a lane is a line nobody reads, and the
+ * symbol says it faster. Still used when the art map has not loaded, or the
+ * server has no images at all -- the client must render a complete board either
+ * way.
  *
- * Still used when the art map has not loaded, or the server has no images at
- * all -- the client must render a complete board either way. */
-.face__watermark {
+ * It is the same `<img>` a cost row draws, at four times the size -- so the
+ * `.watermark-pip--{colour}` discs this used to paint are gone with the cost
+ * discs, and the sizing under "Lands" above is the whole rule. The classes stay
+ * on the element because specs read the produced colours off them. */
+
+/* The scrims -------------------------------------------------------------
+ *
+ * The two bands of text, and the gradients that make them readable over an
+ * illustration nobody chose. Both are `z-index: 2`, above the art at 0 and a
+ * land's symbols at 1.
+ *
+ * The gradients fade to fully transparent rather than stopping at a flat
+ * rectangle. A hard-edged scrim reads as a caption bar pasted on top of a
+ * photograph; a graded one reads as part of the card, which is the whole
+ * difference between direction D and putting text in a black box.
+ *
+ * `tests/palette.test.ts` asserts both exist and that their opaque ends clear a
+ * darkness floor -- white text on an unknown crop is the one thing on this card
+ * that can fail silently, and it is the property the removed type ladder used to
+ * be judged by. */
+
+.face__head {
+  position: relative;
+  z-index: 2;
   display: flex;
-  /* The art's slot and the art's aspect, so the text below does not jump when
-     the image map finally arrives. */
-  flex: 0 1 auto;
-  aspect-ratio: 1.4;
-  align-items: center;
-  justify-content: center;
-  gap: calc(var(--card-w) * 0.04);
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: calc(var(--card-w) * 0.016);
+  padding: calc(var(--card-w) * 0.05) calc(var(--card-w) * 0.055) calc(var(--card-w) * 0.085);
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.565) 55%, rgb(0 0 0 / 0));
+}
+
+.face__foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-w) * 0.024);
+  /* Pushed to the foot whatever the head above it weighs, so a two-line name
+     never squeezes the illustration between them. */
+  margin-top: auto;
   min-height: 0;
-}
-
-.watermark-pip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(var(--card-w) * 0.3);
-  height: calc(var(--card-w) * 0.3);
-  border-radius: 50%;
-  border: 1px solid rgb(0 0 0 / 0.18);
-  color: rgb(255 255 255 / 0.92);
-  font-size: calc(var(--card-w) * 0.15);
-  font-weight: 800;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
-  box-shadow: inset 0 -2px 3px rgb(0 0 0 / 0.2), 0 1px 2px rgb(0 0 0 / 0.15);
-}
-
-.watermark-pip--W {
-  background: var(--mana-W);
-  color: rgb(40 34 20 / 0.85);
-  text-shadow: none;
-}
-.watermark-pip--U {
-  background: var(--mana-U);
-}
-.watermark-pip--B {
-  background: var(--mana-B);
-}
-.watermark-pip--R {
-  background: var(--mana-R);
-}
-.watermark-pip--G {
-  background: var(--mana-G);
-}
-.watermark-pip--C {
-  background: var(--mana-C);
-  color: rgb(40 40 44 / 0.85);
-  text-shadow: none;
+  padding: calc(var(--card-w) * 0.1) calc(var(--card-w) * 0.055) calc(var(--card-w) * 0.05);
+  background: linear-gradient(0deg, rgb(0 0 0 / 0.9), rgb(0 0 0 / 0.706) 58%, rgb(0 0 0 / 0));
 }
 
 /* Rows -------------------------------------------------------------------
  *
- * Every size below is a ratio of `--card-w` under a pixel floor. The ratio is
- * what makes one component serve a 40px card in a four-player pod and a 240px
- * one in the rail; the floor is what stops the small end rendering type nobody
- * can read. Where the two disagree the floor wins and the art band gives up the
- * height -- see `.face__art`'s `flex: 0 1 auto`.
+ * Sizes come from the `--fs-*` scale on `.face`, which is clamped at both ends
+ * -- see the note there.
  *
- * The rules box has no floor because it has no small case: `board` faces do not
- * render one at all, which is what removed the 6px text this replaced. */
+ * Text over an illustration needs a second defence behind the scrim, so every
+ * run down here carries a shadow. It costs nothing at 60px and it is what keeps
+ * a name legible where the crop happens to be bright right under it.
+ *
+ * The rules box has no small case: `board` faces do not render one at all, which
+ * is what removed the 6px text this replaced. */
 
 .face__title {
   display: flex;
   align-items: flex-start;
   gap: calc(var(--card-w) * 0.03);
   font-weight: 700;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.85);
 }
 
-/* The type mark. Redundant with the body fill on purpose: it survives
- * red-green deficiency, and it stays legible at 82px inside a stack ply where
- * the fill is mostly occluded by the card in front. */
+/* The type mark, and now the primary non-colour channel rather than a backup
+ * for the body fill: the fill is gone. It survives red-green deficiency, it
+ * stays legible at 82px inside a stack ply, and `e2e/greyscale.spec.ts` fails
+ * the run if any face renders without it. */
 .face__glyph {
   flex: 0 0 auto;
-  color: var(--stock-ink-dim);
-  font-size: max(10px, calc(var(--card-w) * 0.088));
+  color: #e9e4d2;
+  font-size: var(--fs-nm);
   line-height: 1.15;
 }
 
+/* A name wraps rather than truncating wherever there is room for a second
+   line -- which is everywhere except the pod mat, below. */
 .face__name {
   flex: 1;
   min-width: 0;
@@ -577,23 +587,69 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: max(10px, calc(var(--card-w) * 0.088));
+  font-size: var(--fs-nm);
+  line-height: 1.14;
 }
 
+/*
+ * One line on an opponent's mat, and this is measured rather than a taste call.
+ *
+ * A three-opponent pod draws cards at ~51px, where the name is held at its 10px
+ * floor -- so a second line is a fixed ~12px off a card 71px tall, and both
+ * scrims are already ratio-sized around it. "Indulgent Aristocrat" wrapped there
+ * left **4px** of illustration between the head and the foot: the card became
+ * two bands of text with a seam, which is the arrangement art bleed exists to
+ * get rid of.
+ *
+ * `mockups/cards/index.html` makes the same call for the same reason -- "on the
+ * 60px mat a second line costs a quarter of the card and there is nothing to
+ * spend it on". A truncated name on an opponent's permanent is cheap: hovering
+ * puts the whole card in the preview rail.
+ */
+.mat--compact .face__name {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/*
+ * And no mana cost at all on an opponent's mat.
+ *
+ * `mockups/cards/index.html` applies this to all five directions, and the
+ * argument is the strongest one on that page: a permanent on an opponent's board
+ * has already been paid for, so its cost is the one line on the card that cannot
+ * change a decision you are about to make -- and at ~51px it is competing for a
+ * row against the name and the type.
+ *
+ * Scoped to `.mat--compact` rather than to a zone, because the rule is about
+ * size: the same permanent on *your* battlefield at ~87px keeps its cost, and so
+ * does every card in hand. Hovering restores it in the preview rail either way.
+ */
+.mat--compact .face__cost {
+  display: none;
+}
+
+/* A row of its own under the name, which is the point of the direction: a name
+   can be as long as it likes and never meets its own mana cost. */
 .face__cost {
   display: flex;
   flex: 0 0 auto;
-  gap: 1px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--card-w) * 0.02);
+  min-height: var(--pip);
 }
 
 .face__type {
-  padding-bottom: calc(var(--card-w) * 0.02);
-  border-bottom: 1px solid var(--stock-rule);
-  color: var(--stock-ink-dim);
-  font-size: max(8.5px, calc(var(--card-w) * 0.068));
+  color: #e2ddcd;
+  font-size: var(--fs-tp);
+  font-weight: 600;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.85);
 }
 
 /* Short rules text centres in the box it was given rather than pinning to the
@@ -602,44 +658,51 @@
    clipped at both ends. */
 .face__rules {
   display: flex;
-  flex: 1;
+  flex: 0 1 auto;
   flex-direction: column;
   justify-content: safe center;
   overflow: hidden;
-  font-size: calc(var(--card-w) * 0.066);
-  line-height: 1.3;
+  min-height: 0;
+  color: #eae7dc;
+  font-size: var(--fs-tx);
+  line-height: 1.34;
   white-space: pre-wrap;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.69);
 }
 
 .face__keywords {
   flex: 1;
   overflow: hidden;
-  color: #4a6b52;
+  color: #a8d3b3;
   font-size: calc(var(--card-w) * 0.068);
   font-weight: 600;
 }
 
 .face__footer {
   display: flex;
-  align-items: flex-end;
-  gap: 4px;
+  align-items: center;
+  gap: 5px;
   margin-top: auto;
 }
 
+/* P/T as a dark lozenge rather than a pale one. Everything on this card is now
+   light-on-dark, and a white chip in the corner of an illustration was the one
+   element still pretending there was paper underneath. */
 .face__stats {
-  padding: 0 calc(var(--card-w) * 0.04);
-  border: 1px solid var(--stock-rule);
-  border-radius: calc(var(--card-w) * 0.03);
-  background: rgb(255 255 255 / 0.55);
-  font-size: max(11px, calc(var(--card-w) * 0.095));
+  padding: 0.2em 0.44em;
+  border-radius: calc(var(--card-w) * 0.026);
+  background: rgb(12 12 16 / 0.82);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  color: #f7f4ea;
+  font-size: var(--fs-pt);
+  line-height: 1;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
 .face__stats--hurt {
-  border-color: #b34b3f;
-  background: #ffe3df;
-  color: #8f2f24;
+  box-shadow: inset 0 0 0 1px rgb(255 143 127 / 0.6);
+  color: #ff8f7f;
 }
 
 .face__counters {
@@ -651,99 +714,121 @@
 .counter-badge {
   padding: 0 3px;
   border-radius: 3px;
-  background: #2f6d43;
-  color: #eafff0;
-  font-size: calc(var(--card-w) * 0.058);
+  background: #2e6b3a;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+  color: #e6f6e6;
+  font-size: var(--fs-chip);
   font-weight: 700;
   white-space: nowrap;
 }
 
+/*
+ * The commander mark, inside the name.
+ *
+ * It was a `CMD` badge pinned to a corner. `mockups/cards/index.html` argues the
+ * crown and it is right: a corner tag is a second thing competing for a corner
+ * the P/T and the sickness mark have already claimed, and at pod size
+ * `--card-w * 0.055` is under 3px, which is not a word. A real legendary wears a
+ * crown on its frame. This scales with the name, because it *is* the name, and it
+ * costs no space that was not already the name's.
+ */
+.crown {
+  margin-right: 0.28em;
+  color: var(--frame-commander);
+  font-size: 0.92em;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.63);
+}
+
+/* One tag left -- summoning sickness. It keeps the top-right corner, which on a
+   bleed face is the only one nothing else wants: the cost row is below the name
+   on the left, and the P/T is diagonally opposite. */
 .face__tag {
   position: absolute;
+  z-index: 3;
   top: calc(var(--card-w) * 0.03);
   right: calc(var(--card-w) * 0.03);
   padding: 0 3px;
   border-radius: 3px;
-  font-size: calc(var(--card-w) * 0.055);
+  font-size: var(--fs-chip);
   font-weight: 800;
   letter-spacing: 0.04em;
 }
 
-.face__tag--cmd {
-  top: auto;
-  bottom: calc(var(--card-w) * 0.03);
-  right: calc(var(--card-w) * 0.03);
-  background: var(--frame-commander);
-  color: #2a1e05;
-}
-
 .face__tag--sick {
-  background: rgb(0 0 0 / 0.35);
+  background: rgb(11 10 16 / 0.78);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
   color: #fff;
 }
 
-/* Mana pips ------------------------------------------------------------ */
-
+/* Mana symbols ----------------------------------------------------------
+ *
+ * The real ones -- Scryfall's published SVGs, vendored into `public/symbols/`
+ * and drawn by `ManaSymbol` as `<img>`. These used to be a letter on a CSS disc:
+ * a `G` in a green circle, which is a mark nobody who plays the game
+ * recognises. `mockups/cards/index.html` draws the real symbols throughout and
+ * that is most of why its cards read as cards.
+ *
+ * So there is no fill, no border-radius and no type here: the artwork already
+ * carries all three, including the shape that survives greyscale. The
+ * `.pip--{tone}` classes stay on the element because `e2e/cycle3.spec.ts`
+ * reads them and because the tone is still a true fact about the symbol -- they
+ * simply no longer have to paint it.
+ *
+ * `--pip` is the tuned size, capped as well as floored: past ~180px a cost row
+ * scaled purely off `--card-w` stops looking like a cost and starts looking like
+ * a row of buttons. Same clamp `mockups/cards/index.html` uses. */
 .pip {
+  display: inline-block;
+  width: var(--pip);
+  height: var(--pip);
+  flex: 0 0 auto;
+  vertical-align: middle;
+  /* A hairline of separation from whatever the illustration is doing behind it.
+     The symbols are light-ringed, so a dark edge is what defines them. */
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.55));
+}
+
+.face,
+.cmdslot,
+.acts__list,
+.deck__colors {
+  --pip: min(calc(var(--card-w, 104px) * 0.115), 21px);
+}
+
+/* Kept as a *fallback* for a symbol with no SVG. The engine rejects hybrid and
+   phyrexian at load time and generic never reaches 17, so nothing hits this
+   today -- but a broken <img> would be a worse answer than the disc was. */
+.pip--text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: calc(var(--card-w, 104px) * 0.115);
-  height: calc(var(--card-w, 104px) * 0.115);
+  width: auto;
+  min-width: var(--pip);
   padding: 0 2px;
   border-radius: 999px;
   background: var(--mana-generic);
   color: var(--mana-ink);
-  font-size: calc(var(--card-w, 104px) * 0.072);
+  font-size: calc(var(--pip) * 0.62);
   font-weight: 800;
+  filter: none;
   box-shadow: inset 0 -1px 1px rgb(0 0 0 / 0.25);
-}
-
-.pip--W {
-  background: var(--mana-W);
-}
-.pip--U {
-  background: var(--mana-U);
-}
-.pip--B {
-  background: var(--mana-B);
-}
-.pip--R {
-  background: var(--mana-R);
-}
-.pip--G {
-  background: var(--mana-G);
-}
-.pip--C {
-  background: var(--mana-C);
-}
-
-/* The tap symbol. Grey rather than a mana colour, because it is a cost you pay
-   with the permanent rather than with mana -- the distinction matters most
-   exactly where these appear, in an activation cost like "{2}, {T}". */
-.pip--tap {
-  background: #4a4f52;
-  color: #f2f5f4;
 }
 
 /* Symbols inside a sentence rather than in a cost row.
  *
- * Sized in `em` so one component serves a 236px preview card's rules box and an
- * 11px action-bar label without either being told what size it is. `baseline`
- * alignment keeps a line of text from growing around them, which is what turns
- * a rules box into a ransom note. */
+ * Sized in `em` so one component serves the preview card's rules box and an 11px
+ * action-panel label without either being told what size it is. `.pip` sizes
+ * itself off `--pip`, which inside a rules box is the whole card's pip size and
+ * would set a symbol as tall as three lines of text. */
 .pip--inline {
-  /* `min-width` and `height` both have to be restated: `.pip` sizes itself off
-     --card-w, which inside a rules box is the whole card and turns a pip into a
-     lozenge as wide as the line. */
-  min-width: 1.2em;
-  height: 1.2em;
-  margin: 0 0.08em;
+  width: 1.05em;
+  height: 1.05em;
+  min-width: 0;
+  margin: 0 0.06em;
   padding: 0;
-  font-size: 0.9em;
+  font-size: 0.95em;
   line-height: 1;
-  vertical-align: -0.2em;
-  box-shadow: inset 0 -1px 1px rgb(0 0 0 / 0.2);
+  vertical-align: -0.17em;
 }
 
 /* Interaction rims ----------------------------------------------------- */

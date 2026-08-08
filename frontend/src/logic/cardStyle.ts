@@ -95,6 +95,25 @@ export function typeLabel(card: CardView): string {
   return tone === "other" ? "Card" : tone.charAt(0).toUpperCase() + tone.slice(1);
 }
 
+/**
+ * The type line with its supertypes off, for the sizes where the line is one
+ * ellipsis away from gone.
+ *
+ * "Legendary Creature — Human Merfolk" does not fit a 104px card and never did;
+ * what shipped was "Legendary Creature — Hu…", which spends the whole line on
+ * the least useful word on it. `Legendary` is already said by the crown in the
+ * name, `Basic` by the fact that the card is a Forest, and `Token` by the dashed
+ * frame -- so at board size all three come off and the subtype survives instead.
+ *
+ * Twice, because a card can be `Legendary Snow Creature`. The full line is still
+ * what the preview rail and every dialog show.
+ */
+export function shortType(typeLine: string): string {
+  return typeLine
+    .replace(/^(Legendary|Basic|Snow|Token)\s+/, "")
+    .replace(/^(Legendary|Basic|Snow|Token)\s+/, "");
+}
+
 export type LandTone = "W" | "U" | "B" | "R" | "G" | "C" | "multi";
 
 const COLOR_SYMBOLS = ["W", "U", "B", "R", "G", "C"];
