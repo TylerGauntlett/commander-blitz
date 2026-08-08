@@ -31,22 +31,35 @@
 }
 
 /*
- * Opponents get the larger share now that empty lanes collapse.
+ * The opponent row sizes to its content; the viewer gets the rest.
  *
- * The viewer's mat used to need the extra room because it always rendered four
- * full-height lanes whether or not anything was in them; with `.lane--vacant`
- * it sizes to what is actually on the board, and the space is better spent on
- * the opponents -- there can be three of them.
+ * It used to be a fixed `1.25fr` against the viewer's `1fr`, which meant a
+ * one-opponent game spent its largest row on empty table while the viewer's own
+ * creature lane -- the row that owns every drop target, and the thing the
+ * current decision is nearly always about -- fell below the fold and had to be
+ * scrolled to. That is playtest-feedback-03 Cycle 4 item 1.
  *
- * Deliberately not larger still. Taking another 0.2fr from the viewer's own row
- * bought about five pixels of pod headroom and cost the row that owns every
- * drop target: the remaining pressure in a pod is a wrapped row of cards, not a
- * handful of pixels. The fixes for that are card size (`opponentCardWidth`) and
- * the scroll affordance further down.
+ * `auto` gives a lone opponent exactly the height their board needs and hands
+ * everything left over to the viewer. A four-player pod still grows the top row
+ * as far as it must, because `auto` tracks content in both directions; what it
+ * no longer does is reserve the space when there is nothing to put in it.
  */
 .play {
   display: grid;
-  grid-template-rows: minmax(0, 1.25fr) minmax(0, 1fr);
+  /*
+   * `fit-content(58%)` rather than a bare `auto` or a `max-height`.
+   *
+   * A bare `auto` lets three mats eat the whole table; a `max-height` on the
+   * row clips them, because a mat cannot shrink below the intrinsic height of
+   * its own orb column and the row starts scrolling -- which is precisely the
+   * failure cycle3.spec.ts's `rowClipped` guard exists to catch.
+   *
+   * `fit-content()` is the one that does both: it caps the row at 58% of the
+   * table, but never below the row's own min-content, so an oversized pod
+   * scrolls *inside* each mat where the fade affordance shows it, rather than
+   * being cut in half at the row boundary.
+   */
+  grid-template-rows: fit-content(58%) minmax(0, 1fr);
   gap: 10px;
   min-width: 0;
   min-height: 0;
@@ -86,7 +99,8 @@
   padding: 8px;
   border: 1px solid var(--rail-line);
   border-radius: 12px;
-  background: linear-gradient(180deg, rgb(22 48 37 / 0.35), rgb(10 20 16 / 0.35));
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
 }
 
 /*
@@ -106,7 +120,9 @@
 .mat--compact {
   flex: 1 1 0;
   min-width: 288px;
-  grid-template-columns: 96px minmax(0, 1fr);
+  /* 96px was sized for a column of text chips. The piles are graphics with
+     labels under them and wrap to two rows below about 112px. */
+  grid-template-columns: 112px minmax(0, 1fr);
   gap: 6px;
   padding: 6px;
 }
@@ -164,7 +180,7 @@
 }
 
 .cmdslot {
-  --card-w: 92px;
+  --card-w: calc(var(--card-w-base) * 0.885);
   position: relative;
   padding: 0;
   border: 0;
@@ -223,7 +239,7 @@
    opponent's life total is not ambiguous, and the row it saves is a row the
    lanes need. */
 .mat--compact .cmdslot {
-  --card-w: 56px;
+  --card-w: calc(var(--card-w-base) * 0.538);
 }
 
 .mat--compact .cmdzone {
@@ -251,8 +267,8 @@
   min-height: 0;
   overflow-y: auto;
   background:
-    linear-gradient(rgb(10 20 16 / 0) 30%, rgb(10 20 16 / 0)) top / 100% 24px no-repeat local,
-    linear-gradient(rgb(10 20 16 / 0), rgb(10 20 16 / 0) 70%) bottom / 100% 24px no-repeat
+    linear-gradient(rgb(13 12 28 / 0) 30%, rgb(13 12 28 / 0)) top / 100% 24px no-repeat local,
+    linear-gradient(rgb(13 12 28 / 0), rgb(13 12 28 / 0) 70%) bottom / 100% 24px no-repeat
     local,
     radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0)) top / 100% 12px
     no-repeat scroll,
@@ -275,7 +291,7 @@
   padding: 8px 10px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
-  background: rgb(6 16 12 / 0.7);
+  background: var(--pane-well);
 }
 
 .orb--active {
@@ -317,18 +333,82 @@
 
 .orb__life-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
-.orb__life {
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1;
+/* The life dial ---------------------------------------------------------
+ *
+ * Life as a physical object rather than a number in a box. It is the one figure
+ * a player hunts for every few seconds, so making it the largest thing in the
+ * column is worth the room it costs.
+ *
+ * The brass is a radial gradient with its highlight at 34%/26% -- one light
+ * source, consistently placed, which is what makes it read as a disc rather
+ * than a circle with a gradient in it. `::after` is the engraved inner ring. */
+.dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(58px, 7.6vh, 92px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 34% 26%,
+    #fbeec2 0%,
+    #d8b055 38%,
+    #8a6a22 72%,
+    #4d3a12 100%
+  );
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.6), inset 0 0 0 3px rgb(0 0 0 / 0.22), inset 0 -6px 14px
+    rgb(0 0 0 / 0.35);
 }
 
-.orb--compact .orb__life {
-  font-size: 26px;
+.dial::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  border: 1px solid rgb(60 38 8 / 0.5);
+}
+
+/* An opponent's dial is desaturated copper: still legible, but plainly
+   reference material rather than the number you are managing. */
+.dial--foe {
+  background: radial-gradient(
+    circle at 34% 26%,
+    #f0d6bd 0%,
+    #b98b6a 38%,
+    #6f4c33 72%,
+    #3a2418 100%
+  );
+}
+
+/* Whose turn it is, said on the object the eye is already on. */
+.dial--active {
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.6), inset 0 0 0 3px rgb(0 0 0 / 0.22), inset 0 -6px 14px
+    rgb(0 0 0 / 0.35), 0 0 34px rgb(255 206 120 / 0.42);
+}
+
+.dial--out {
+  filter: grayscale(0.8);
+}
+
+.dial__n {
+  color: var(--dial-ink);
+  font-size: clamp(22px, 3vh, 34px);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+.orb--compact .dial {
+  width: clamp(42px, 5.4vh, 62px);
+}
+
+.orb--compact .dial__n {
+  font-size: clamp(16px, 2.1vh, 23px);
 }
 
 .orb__loss {
@@ -346,7 +426,7 @@
   padding: 0 5px;
   border: 1px solid var(--rail-line);
   border-radius: 4px;
-  background: #12241c;
+  background: var(--pane-well);
   color: var(--text-dim);
   font-size: 11px;
   font-weight: 700;
@@ -422,37 +502,117 @@
   opacity: 0.75;
 }
 
-.orb__zones {
+/* Zone piles ------------------------------------------------------------
+ *
+ * `Lib 72 / GY 3 / Exile 1` gave three numbers to compare by reading. A pile
+ * shows the *shape* of the game as well as the count -- a library drawn down to
+ * nothing is visibly a short stack beside a graveyard that has grown.
+ *
+ * Bottom-aligned so those heights read against each other, and still buttons:
+ * these replaced the zone chips, and the chips were the only way into ZonePeek.
+ */
+.piles {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  /* Five piles have to fit the 190px side column in one row, or the command
+     zone wraps below the fold: 5 x 28 + 4 x 5 = 160px. */
+  gap: 6px 5px;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: 2px;
 }
 
-/* After a long game the graveyard matters, and it used to be a 6px-tall click
-   target. Still compact, but now an actual button. */
-.zone-chip {
-  padding: 4px 9px;
-  min-height: 22px;
-  border: 1px solid var(--rail-line);
-  border-radius: 5px;
-  background: #0e1c16;
-  color: var(--text-dim);
-  font-size: 11.5px;
-  white-space: nowrap;
+.pile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
 }
 
-.zone-chip:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+.pile__stack {
+  position: relative;
+  display: block;
+  width: 28px;
 }
 
-.zone-chip--static {
-  cursor: default;
+.pile__leaf {
+  display: block;
+  height: 3px;
+  margin-bottom: 1px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2b1d3a, #4a3560 40%, #2b1d3a);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.55);
 }
 
-.zone-chip--cmd {
-  border-color: rgb(216 166 60 / 0.5);
+/* The top leaf is a card back carrying the exact count, so capping the leaves
+   below costs resolution and never information. */
+.pile__leaf--top {
+  display: grid;
+  place-items: center;
+  height: 21px;
+  border-radius: 3px;
+  border: 1px solid var(--edge-hi);
+  background: linear-gradient(150deg, #43305c, #241834);
+  color: var(--astral-hi);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.pile__leaf--gy {
+  background: linear-gradient(150deg, #4a3323, #241a12);
+}
+
+.pile__leaf--ex {
+  background: linear-gradient(150deg, #3a3a48, #1d1d26);
+}
+
+.pile__leaf--cmd {
+  background: linear-gradient(150deg, #5a4a1e, #2c2410);
+}
+
+.pile__leaf--top.pile__leaf--cmd {
+  border-color: rgb(216 166 60 / 0.6);
   color: var(--gold);
+}
+
+.pile__label {
+  color: var(--text-faint);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pile--empty .pile__leaf--top {
+  opacity: 0.4;
+}
+
+.pile:hover .pile__leaf--top {
+  border-color: var(--astral-hi);
+  color: #fff;
+}
+
+/* An opponent's column is 96px wide and has five piles to fit in it. They wrap
+   to two rows rather than clipping their labels, which is the one part of a
+   pile that says *which* zone it is. */
+.orb--compact .piles {
+  gap: 5px 4px;
+}
+
+.orb--compact .pile__stack {
+  width: 20px;
+}
+
+.orb--compact .pile__leaf--top {
+  height: 16px;
+  font-size: 9px;
+}
+
+.orb--compact .pile__label {
+  font-size: 8px;
+  letter-spacing: 0.04em;
 }
 
 /* Lanes ---------------------------------------------------------------- */
@@ -616,7 +776,8 @@
   padding: 8px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
-  background: rgb(13 26 21 / 0.6);
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
 }
 
 .stackpanel__items {
@@ -712,6 +873,15 @@
   align-items: center;
 }
 
+.preview__note {
+  width: 100%;
+  color: var(--astral);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .preview__idle {
   color: var(--text-faint);
   font-size: 12px;
@@ -747,9 +917,11 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--rail-line);
-  background: rgb(8 18 14 / 0.85);
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--edge);
+  /* Lit from above rather than a flat bar, so the ribbon sits *on* the table
+     instead of floating over it. */
+  background: linear-gradient(180deg, rgb(143 127 232 / 0.12), transparent);
 }
 
 .track__turn {
@@ -759,46 +931,121 @@
   flex: 0 0 auto;
 }
 
+.track__turn-round {
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
 .track__turn-n {
   color: var(--gold);
   font-size: 18px;
   font-weight: 800;
 }
 
+/* Whose turn it is, as a chip at the far end of the ribbon rather than a word
+   tucked beside the round counter. It is the one piece of state you check
+   between every action. */
 .track__who {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 5px 14px;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .track__who--you {
+  border-color: rgb(92 224 138 / 0.5);
+  background: rgb(92 224 138 / 0.12);
   color: var(--playable);
-  font-weight: 700;
 }
 
 .track__steps {
   display: flex;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
+  align-items: stretch;
   margin: 0;
   padding: 0;
   list-style: none;
   overflow-x: auto;
 }
 
+/* Phases -----------------------------------------------------------------
+ *
+ * Five groups, and only the live one opens into its steps. Thirteen equal ticks
+ * was thirteen things to read and twelve of them were never the answer.
+ *
+ * The closed phases are hidden rather than unmounted: every step keeps a label
+ * in the DOM, which is both what `e2e/smoke.spec.ts` counts and what makes the
+ * marker's `layoutId` animation continuous across a phase boundary. */
+.ph {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 5px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ph--past {
+  color: var(--text-dim);
+}
+
+.ph--now {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-color: var(--edge-hi);
+  background: linear-gradient(180deg, rgb(143 127 232 / 0.26), rgb(143 127 232 / 0.08));
+  color: var(--astral-hi);
+}
+
+.ph__name {
+  text-transform: uppercase;
+}
+
+.ph__steps {
+  display: none;
+  gap: 2px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Only the live phase shows its steps. `display: none` rather than unmounting:
+   the labels stay in the document, so nothing that reads them has to know
+   which phase happens to be open. */
+.ph--now .ph__steps {
+  display: flex;
+}
+
 .track__step {
   position: relative;
   /* The marker is painted behind the label but in front of the track's own
      background. Without a stacking context here it lands in the *root* negative
-     layer, which is drawn before .track's background paints -- so the gold pill
+     layer, which is drawn before .track's background paints -- so the pill
      vanished and the current step, coloured near-black to sit on it, went with it. */
   isolation: isolate;
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
-  padding: 4px 2px;
-  border-radius: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
   text-align: center;
   font-size: 10.5px;
+  opacity: 0.55;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* The track is the only thing telling you where you are in a 13-step turn, so
@@ -812,16 +1059,19 @@
 }
 
 .track__step--now {
-  color: #04120b;
+  color: #1b1533;
   font-weight: 800;
+  opacity: 1;
 }
 
+/* The live step is the only filled thing in the ribbon, and it is a pill --
+   the same shape language as the phase it sits inside. */
 .track__marker {
   position: absolute;
   inset: 0;
   z-index: 0;
-  border-radius: 5px;
-  background: var(--gold);
+  border-radius: 999px;
+  background: var(--astral-hi);
 }
 
 .track__step-label {
@@ -858,15 +1108,18 @@
 }
 
 .table__hand-row .cmdslot {
-  --card-w: 108px;
+  --card-w: calc(var(--card-w-base) * 1.04);
 }
 
 /*
- * The hand scales with the window height.
+ * The hand.
  *
- * At a laptop's 720px the fixed 146px card ran off the bottom edge and the
- * rules text went with it. `--hand-scale` shrinks the whole fan instead of
- * clipping it.
+ * It used to carry its own `--hand-scale` media queries, because a fixed 146px
+ * card ran off a 720px-tall screen. That only ever shrank the *hand*, so on a
+ * short viewport the board was what spilled instead. `--card-w-base` is keyed
+ * off viewport height now and the whole table scales together, which makes the
+ * separate hand scale both redundant and actively wrong -- it would shrink
+ * twice.
  */
 .hand {
   position: relative;
@@ -878,20 +1131,6 @@
   min-height: calc(var(--card-w) * 1.4 + 44px);
   padding-top: 14px;
   padding-bottom: 14px;
-  transform: scale(var(--hand-scale, 1));
-  transform-origin: 50% 100%;
-}
-
-@media (max-height: 900px) {
-  .hand {
-    --hand-scale: 0.86;
-  }
-}
-
-@media (max-height: 780px) {
-  .hand {
-    --hand-scale: 0.72;
-  }
 }
 
 .hand__rail {
@@ -1045,7 +1284,7 @@
   padding: 12px 28px;
   border: 2px solid var(--gold);
   border-radius: 10px;
-  background: rgb(8 18 14 / 0.94);
+  background: rgb(13 12 28 / 0.94);
   color: var(--gold);
   font-size: 24px;
   font-weight: 800;
@@ -1091,8 +1330,8 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(8 18 14 / 0.92) 18%,
-    rgb(8 18 14 / 0.92) 82%,
+    rgb(13 12 28 / 0.92) 18%,
+    rgb(13 12 28 / 0.92) 82%,
     transparent
   );
 }

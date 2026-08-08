@@ -14,13 +14,14 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView } from "../../api/types";
+import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy } from "../../motion/springs";
+import { useCardBase } from "../../state/useCardBase";
 import { StaticCard } from "./Card";
 
 /** How far each ply below the top peeks out. */
 const PLY_Y = 26;
-const CARD_W = 116;
 
 interface Props {
   state: GameView;
@@ -28,6 +29,9 @@ interface Props {
 
 export function StackPanel({ state }: Props) {
   const items = [...state.stack].reverse();
+  // The pile is absolutely positioned, so its container height has to be
+  // computed rather than declared -- which means a number, not a `calc()`.
+  const cardW = cardWidthPx(useCardBase(), CARD_SCALE.stack);
 
   return (
     <section className="stackpanel" data-testid="stack-panel">
@@ -42,10 +46,10 @@ export function StackPanel({ state }: Props) {
         <div
           className="stackpile"
           style={{
-            ["--card-w" as string]: `${CARD_W}px`,
+            ["--card-w" as string]: cardWidthVar(CARD_SCALE.stack),
             // The pile is absolutely positioned, so the container has to be
             // told how tall the whole thing came out.
-            height: `${CARD_W * 1.4 + PLY_Y * (items.length - 1)}px`,
+            height: `${cardW * 1.4 + PLY_Y * (items.length - 1)}px`,
           }}
         >
           <AnimatePresence initial={false}>

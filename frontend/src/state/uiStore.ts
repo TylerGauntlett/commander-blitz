@@ -7,6 +7,7 @@
  */
 
 import { create } from "zustand";
+import type { ImageMap } from "../logic/cardArt";
 
 /** How fast the narration queue plays back. */
 export type Speed = "instant" | "fast" | "cinematic";
@@ -102,6 +103,16 @@ interface UiState {
   /** Stack group currently fanned open, keyed by `stackKey`. */
   openStack: string | null;
 
+  /**
+   * Card art, fetched once and kept forever.
+   *
+   * Lives here rather than in react-query context because `CardFace` is
+   * rendered bare in unit tests with no providers around it. `null` is the
+   * "not loaded" state and makes the face draw no art band at all -- which is
+   * exactly the layout that shipped before art existed.
+   */
+  images: ImageMap;
+
   logOpen: boolean;
   peek: PeekTarget | null;
   error: string | null;
@@ -119,6 +130,7 @@ interface UiState {
   unstageBlock: (blocker: number) => void;
   clearStaging: () => void;
 
+  setImages: (images: ImageMap) => void;
   openStackGroup: (key: string | null) => void;
   toggleLog: () => void;
   setPeek: (peek: PeekTarget | null) => void;
@@ -134,6 +146,7 @@ export const useUiStore = create<UiState>((set) => ({
   stagedAttacks: {},
   stagedBlocks: {},
   openStack: null,
+  images: null,
   logOpen: true,
   peek: null,
   error: null,
@@ -175,6 +188,7 @@ export const useUiStore = create<UiState>((set) => ({
 
   openStackGroup: (key) => set({ openStack: key }),
   toggleLog: () => set((s) => ({ logOpen: !s.logOpen })),
+  setImages: (images) => set({ images }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),
   setSpeed: (speed) => {

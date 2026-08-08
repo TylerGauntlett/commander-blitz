@@ -25,7 +25,7 @@
  * costs nothing.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { GameView } from "../../api/types";
 import { useUiStore } from "../../state/uiStore";
 
@@ -62,6 +62,22 @@ function centreOf(selector: string, origin: DOMRect): Point | null {
   };
 }
 
+/** Have any arrows moved? Sub-pixel jitter is not movement. */
+function sameArrows(a: Arrow[], b: Arrow[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((arrow, i) => {
+    const other = b[i];
+    return (
+      arrow.key === other.key &&
+      arrow.kind === other.kind &&
+      Math.abs(arrow.x1 - other.x1) < 0.5 &&
+      Math.abs(arrow.y1 - other.y1) < 0.5 &&
+      Math.abs(arrow.x2 - other.x2) < 0.5 &&
+      Math.abs(arrow.y2 - other.y2) < 0.5
+    );
+  });
+}
+
 /** A curve that bows sideways, so two arrows between the same rows stay apart. */
 function path(arrow: Arrow): string {
   const dx = arrow.x2 - arrow.x1;
@@ -86,7 +102,17 @@ export function CombatArrows({ state, boardRef }: Props) {
   const combat = state.combat;
   const hasStaging =
     Object.keys(stagedAttacks).length > 0 || Object.keys(stagedBlocks).length > 0;
-  const targeted = state.stack.filter((item) => item.targets.length > 0);
+  // Memoised, and that is load-bearing rather than an optimisation. `filter`
+  // returns a new array every render, so an inline version made `measure` a new
+  // callback every render, which re-ran the effect below, which called
+  // `setArrows` with a fresh array, which rendered again -- an unbounded loop
+  // for as long as combat was live. React reported it as "Maximum update depth
+  // exceeded" ~18,000 times in one turn, and nothing in the test suite noticed
+  // because the board still rendered correctly the whole time.
+  const targeted = useMemo(
+    () => state.stack.filter((item) => item.targets.length > 0),
+    [state.stack],
+  );
   const live =
     hasStaging ||
     targeted.length > 0 ||
@@ -140,7 +166,12 @@ export function CombatArrows({ state, boardRef }: Props) {
       }
     }
 
-    setArrows(next);
+    // Only re-render when a position actually moved. `measure` runs every frame
+    // for the length of a settle burst by design, so handing React a fresh
+    // array each time would re-render ~40 times per disturbance for nothing --
+    // and, combined with the memo above, this is the second thing that keeps
+    // the burst from becoming a permanent loop.
+    setArrows((previous) => (sameArrows(previous, next) ? previous : next));
     // Rebuilt whenever the inputs change, which is also the signal that cards
     // are mid-flight and need re-measuring -- the effect below re-bursts on it.
   }, [boardRef, combat, stagedAttacks, stagedBlocks, targeted]);

@@ -8,12 +8,13 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
+import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
 import { splitActionable, stackCards } from "../../logic/stacking";
 import { bouncy, ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { StaticCard } from "./Card";
 
-const PEEK_CARD_W = 150;
+/** Ratio of `--card-w-base`; see logic/cardSize.ts. */
 const NO_ACTIONS: ReadonlySet<number> = new Set();
 
 const TITLES: Record<string, string> = {
@@ -74,7 +75,10 @@ export function ZonePeek({ state }: Props) {
               </button>
             </header>
 
-            <div className="peek__cards" style={{ ["--card-w" as string]: `${PEEK_CARD_W}px` }}>
+            <div
+              className="peek__cards"
+              style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.peek) }}
+            >
               {hidden && (
                 <p className="peek__hidden">
                   Hidden &mdash; {player.hand_count} card

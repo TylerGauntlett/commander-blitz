@@ -8,22 +8,26 @@
 
 import { motion } from "motion/react";
 import type { CardView } from "../../api/types";
+import { cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { splitActionable, stackCards } from "../../logic/stacking";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { settle } from "../../motion/springs";
+import { useCardBase } from "../../state/useCardBase";
 import { CardStack } from "./CardStack";
 
 interface Props {
   lane: LaneName;
   pid: number;
   cards: CardView[];
-  cardWidth: number;
+  cardScale: number;
   /** Highlight as a legal destination for whatever is being dragged. */
   active?: boolean;
   draggable?: boolean;
   /** Oids named by some legal action -- these are never hidden inside a stack. */
   actionableOids: ReadonlySet<number>;
   isPlayable?: (card: CardView) => boolean;
+  hasAbility?: (card: CardView) => boolean;
+  abilityLabel?: (card: CardView) => string | null;
   isTargetable?: (card: CardView) => boolean;
   isStaged?: (card: CardView) => boolean;
   isSelected?: (card: CardView) => boolean;
@@ -35,11 +39,13 @@ export function Lane({
   lane,
   pid,
   cards,
-  cardWidth,
+  cardScale,
   active = false,
   draggable = false,
   actionableOids,
   isPlayable,
+  hasAbility,
+  abilityLabel,
   isTargetable,
   isStaged,
   isSelected,
@@ -47,6 +53,12 @@ export function Lane({
   onDropOn,
 }: Props) {
   const groups = stackCards(cards).flatMap((group) => splitActionable(group, actionableOids));
+
+  // The lane hands CSS a `calc()` so the cards themselves resize smoothly, and
+  // hands `CardStack` a real number, because a stack's container has to be
+  // measured in JavaScript -- a tapped permanent's footprint is landscape, and
+  // that width cannot be expressed as a static rule.
+  const cardWidth = cardWidthPx(useCardBase(), cardScale);
 
   return (
     <motion.div
@@ -64,7 +76,7 @@ export function Lane({
       data-testid={`lane-${pid}-${lane.replace(/\W+/g, "-")}`}
       layout
       transition={settle}
-      style={{ ["--card-w" as string]: `${cardWidth}px` }}
+      style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
     >
       <div className="lane__label">
         <span>{lane}</span>
@@ -78,6 +90,8 @@ export function Lane({
             cardWidth={cardWidth}
             draggable={draggable}
             isPlayable={isPlayable}
+            hasAbility={hasAbility}
+            abilityLabel={abilityLabel}
             isTargetable={isTargetable}
             isStaged={isStaged}
             isSelected={isSelected}

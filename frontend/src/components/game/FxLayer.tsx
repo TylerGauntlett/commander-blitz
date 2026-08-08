@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
 import { play } from "../../audio/sfx";
+import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
 import type { Beat, BeatAnchor, Tone } from "../../logic/events";
 import { findCardByDefId } from "../../logic/zoneGrouping";
 import type { LiveBeat } from "../../state/narration";
@@ -58,7 +59,7 @@ interface SpotlightFx {
 }
 
 /** How wide a spotlit card is drawn. Big enough to read the rules text. */
-const SPOTLIGHT_CARD_W = 190;
+/** Ratio of `--card-w-base`; see logic/cardSize.ts. */
 
 function anchorPoint(anchor: BeatAnchor, origin: DOMRect): { x: number; y: number } | null {
   const selector =
@@ -226,7 +227,7 @@ export function FxLayer({ beat, speed, boardRef, state }: Props) {
             {fx.card ? (
               <div
                 className="fx-spotlight__card"
-                style={{ ["--card-w" as string]: `${SPOTLIGHT_CARD_W}px` }}
+                style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.spotlight) }}
               >
                 <StaticCard card={fx.card} detail />
               </div>

@@ -182,4 +182,6 @@ returning an index.
 - No state cloning, so no lookahead search in agents.
 - No WebSockets. A local single-user app polls on mutation; that removes a whole
   class of reconnection state.
-- No card images or network calls. Card data is JSON in the repo.
+- No runtime network calls. Card rules are JSON in the repo; card art is
+  downloaded once at build time and served from `data/art/` by this app, so a
+  game renders with the network unplugged. See [card-catalog.md](card-catalog.md).

@@ -10,14 +10,15 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
+import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
 import { bouncy, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { useCardBase } from "../../state/useCardBase";
 import { Card } from "./Card";
 
 /** Cards overlap once the hand is wider than this. */
 const MAX_SPREAD = 118;
-const CARD_W = 146;
 /**
  * How wide the fan may grow before cards start overlapping harder.
  *
@@ -67,9 +68,15 @@ export function HandFan({
   const [hovered, setHovered] = useState<number | null>(null);
   const hover = useUiStore((s) => s.hover);
 
+  // The one zone that cannot express its size as a CSS `calc()`: every slot is
+  // positioned absolutely at `left: index * step`, and `step` derives from the
+  // card width -- so the fan needs the resolved number, not a variable the
+  // browser will substitute later.
+  const cardW = cardWidthPx(useCardBase(), CARD_SCALE.hand);
+
   const count = cards.length;
-  const step = count > 1 ? Math.min(MAX_SPREAD, (MAX_FAN_W - CARD_W) / (count - 1)) : 0;
-  const width = count > 0 ? CARD_W + step * (count - 1) : 0;
+  const step = count > 1 ? Math.min(MAX_SPREAD, (MAX_FAN_W - cardW) / (count - 1)) : 0;
+  const width = count > 0 ? cardW + step * (count - 1) : 0;
   const mid = (count - 1) / 2;
 
   const hoveredCard = hovered === null ? null : cards[hovered];
@@ -78,7 +85,7 @@ export function HandFan({
     : null;
 
   return (
-    <div className="hand" style={{ ["--card-w" as string]: `${CARD_W}px` }}>
+    <div className="hand" style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.hand) }}>
       <div className="hand__rail" style={{ width }}>
         <AnimatePresence initial={false}>
           {cards.map((card, index) => {

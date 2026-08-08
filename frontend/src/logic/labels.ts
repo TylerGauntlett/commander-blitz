@@ -25,6 +25,36 @@ export const STEP_ORDER = [
   "CLEANUP",
 ] as const;
 
+/**
+ * The thirteen steps, grouped into the five phases players actually name.
+ *
+ * Thirteen equal ticks is thirteen things to read, and twelve of them are
+ * never the answer to "where are we". Grouping lets the live phase expand into
+ * its steps while the rest collapse to a word -- so the track says "Combat,
+ * declaring blockers" instead of making you count pills.
+ *
+ * Every step keeps a label in the DOM regardless of which phase is open;
+ * `e2e/smoke.spec.ts` asserts all thirteen are still there, because a step that
+ * renders as a blank gap is the bug this display replaced.
+ */
+export const PHASES = [
+  { name: "Beginning", steps: ["UNTAP", "UPKEEP", "DRAW"] },
+  { name: "Main 1", steps: ["PRECOMBAT_MAIN"] },
+  {
+    name: "Combat",
+    steps: [
+      "BEGIN_COMBAT",
+      "DECLARE_ATTACKERS",
+      "DECLARE_BLOCKERS",
+      "FIRST_STRIKE_DAMAGE",
+      "COMBAT_DAMAGE",
+      "END_OF_COMBAT",
+    ],
+  },
+  { name: "Main 2", steps: ["POSTCOMBAT_MAIN"] },
+  { name: "End", steps: ["END_STEP", "CLEANUP"] },
+] as const;
+
 const STEP_NAMES: Record<string, string> = {
   UNTAP: "Untap",
   UPKEEP: "Upkeep",

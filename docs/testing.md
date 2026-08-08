@@ -9,14 +9,33 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | Suite | Count | What it holds |
 |---|---|---|
 | `tests/unit/` | 122 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 458 | Schema and vocabulary validation, deck legality, and the every-card gate |
+| `tests/cards/` | 514 | Schema and vocabulary validation, deck legality, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 71 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 21 | The HTTP API end to end, including hidden information |
-| `frontend/tests/` | 40 | The client's pure logic modules |
+| `tests/server/` | 53 | The HTTP API end to end, including hidden information, image serving and the catalog |
+| `frontend/tests/` | 330 | The client's pure logic modules, the palette ladders, and the card face |
+| `frontend/e2e/` | 44 | Playwright: full games, combat, stacking, card art, greyscale, layout |
 
-`scripts/verify.py` runs 11 stages in dependency order and stops at the first failure:
-lint, deck validation, each Python suite, a 160-game arena, **a real uvicorn process
-playing full games at 2 and 4 players**, then the frontend build, lint and tests.
+`scripts/verify.py` runs 12 stages in dependency order and stops at the first failure:
+lint, deck validation, **is the committed card index current**, each Python suite, a
+160-game arena, **a real uvicorn process playing full games at 2 and 4 players**, then
+the frontend build, lint and tests.
+
+Playwright is still invoked separately (`cd frontend && npx playwright test`).
+
+## Card art has its own gates
+
+Three of them, because the failure modes are all silent:
+
+- **The token naming rule.** `tests/cards/test_image_resolution.py` freezes the set
+  of cards with no printing at exactly five. A *sixth* means a real card stopped
+  resolving and quietly started rendering a blank plate, which nothing else notices.
+- **The greyscale ladder.** `frontend/tests/palette.test.ts` checks the type-ring
+  tones stay separable by luminance; `frontend/e2e/greyscale.spec.ts` checks the same
+  thing against the *rendered* board, where an override from `theme.css` or a media
+  query would show up and a stylesheet parse would not.
+- **Self-ownership.** `e2e/art.spec.ts` fails if the page fetches from any host but
+  this server. That is the property the whole build-time download exists to buy, and
+  it would be easy to give away by accident.
 
 ## The gates that actually matter
 

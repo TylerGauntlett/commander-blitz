@@ -52,6 +52,12 @@ export function CombatPanel({ state, actions, onDeclare, onStage, onSkip, disabl
   const open = mine && (isAttack || isBlock) && !state.game_over;
 
   const name = (oid: number) => findCard(state, oid)?.name ?? `#${oid}`;
+  /** P/T for a staged creature, so the list reads as a board rather than names. */
+  const stats = (oid: number) => {
+    const card = findCard(state, oid);
+    if (!card || card.power === null || card.toughness === null) return null;
+    return `${card.power}/${card.toughness}`;
+  };
 
   const attackPairs = Object.entries(stagedAttacks).map(
     ([attacker, defender]) => [Number(attacker), defender] as [number, number],
@@ -144,11 +150,18 @@ export function CombatPanel({ state, actions, onDeclare, onStage, onSkip, disabl
                   : "Nothing staged yet."}
               </span>
             ) : (
-              staged.map(([source, target]) => (
-                <span key={source} className="chip chip--staged">
-                  {isAttack
-                    ? `${name(source)} → ${state.players[target]?.name ?? target}`
-                    : `${name(source)} blocks ${name(target)}`}
+              staged.map(([source, target], index) => (
+                // A numbered row rather than a chip: at four attackers the
+                // chips wrapped into a paragraph you had to read, where a list
+                // can be counted.
+                <span key={source} className="stage stage--on" data-staged-oid={source}>
+                  <span className="stage__key">{index + 1}</span>
+                  <span className="stage__name">
+                    {isAttack
+                      ? `${name(source)} → ${state.players[target]?.name ?? target}`
+                      : `${name(source)} blocks ${name(target)}`}
+                  </span>
+                  {stats(source) && <span className="stage__pt tabular">{stats(source)}</span>}
                 </span>
               ))
             )}
@@ -183,61 +196,71 @@ export function CombatPanel({ state, actions, onDeclare, onStage, onSkip, disabl
             </div>
           )}
 
-          <div className="combat__buttons">
-            {isAttack ? (
-              <button
-                type="button"
-                className="btn btn--ghost"
-                data-testid="combat-all"
-                disabled={disabled || unstagedAttackers.length === 0}
-                onClick={attackWithAll}
-                title="Send every creature that can attack"
-              >
-                All attack{unstagedAttackers.length > 0 && ` (${unstagedAttackers.length})`}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn--ghost"
-                data-testid="combat-all"
-                disabled={disabled || newBlocks.length === 0}
-                onClick={blockWithAll}
-                title={
-                  newBlocks.length === 0
-                    ? "No block here is worth making on its own"
-                    : "Block where it is worth it: survive and kill first, then walls, then trades"
-                }
-              >
-                All defend{newBlocks.length > 0 && ` (${newBlocks.length})`}
-              </button>
-            )}
+          {/*
+            The commit dock. One large control for the thing the turn is waiting
+            on, and the alternatives demoted to a row beneath it -- rather than
+            three same-sized buttons where the most-pressed and least-pressed
+            look identical.
+          */}
+          <div className="commit-dock">
             <motion.button
               type="button"
-              className="btn btn--primary"
+              className="btn btn--primary commit"
               disabled={disabled || staged.length === 0}
               onClick={() => onDeclare(isAttack ? "attackers" : "blockers", staged)}
-              whileHover={{ y: -2, scale: 1.03 }}
-              whileTap={{ scale: 0.96 }}
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               transition={bouncy}
               data-testid="combat-confirm"
             >
-              {isAttack
-                ? `Attack with ${attackPairs.length}`
-                : `Confirm ${blockPairs.length} block${blockPairs.length === 1 ? "" : "s"}`}
+              <span className="commit__main">
+                {isAttack
+                  ? `Attack with ${attackPairs.length}`
+                  : `Confirm ${blockPairs.length} block${blockPairs.length === 1 ? "" : "s"}`}
+              </span>
             </motion.button>
-            {finish && (
-              <button
-                type="button"
-                className="btn btn--ghost"
-                data-action-id={finish.id}
-                data-action-kind={finish.kind}
-                disabled={disabled}
-                onClick={() => onSkip(finish.id)}
-                data-testid="combat-skip"
-              >
-                {isAttack ? "No attacks" : "No blocks"}
-              </button>
-            )}
+            <div className="commit-alt">
+              {isAttack ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  data-testid="combat-all"
+                  disabled={disabled || unstagedAttackers.length === 0}
+                  onClick={attackWithAll}
+                  title="Send every creature that can attack"
+                >
+                  All attack{unstagedAttackers.length > 0 && ` (${unstagedAttackers.length})`}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  data-testid="combat-all"
+                  disabled={disabled || newBlocks.length === 0}
+                  onClick={blockWithAll}
+                  title={
+                    newBlocks.length === 0
+                      ? "No block here is worth making on its own"
+                      : "Block where it is worth it: survive and kill first, then walls, then trades"
+                  }
+                >
+                  All defend{newBlocks.length > 0 && ` (${newBlocks.length})`}
+                </button>
+              )}
+              {finish && (
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  data-action-id={finish.id}
+                  data-action-kind={finish.kind}
+                  disabled={disabled}
+                  onClick={() => onSkip(finish.id)}
+                  data-testid="combat-skip"
+                >
+                  {isAttack ? "No attacks" : "No blocks"}
+                </button>
+              )}
+            </div>
           </div>
         </motion.div>
       )}

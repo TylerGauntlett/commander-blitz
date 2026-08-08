@@ -44,7 +44,7 @@ Then open <http://localhost:5173>. The Vite dev server proxies `/api` to the eng
 |---|---|
 | **Decks** | Two Commander-legal 100-card decks: *Aesi, Tyrant of Gyre Strait* (Simic ramp/landfall) and *Edgar Markov* (Mardu vampire aggro). Every card in both decks is implemented and tested. |
 | **Rules** | Full turn structure, the stack, priority, triggered and static abilities, combat with ten keyword abilities, state-based actions, commander tax and commander damage, and N-player pods. |
-| **Card data** | Plain JSON in `data/cards/`. No network calls, no card images. |
+| **Card data** | Plain JSON in `data/cards/`. Card art is downloaded once at build time and served by this app -- no runtime network calls. See [docs/card-catalog.md](docs/card-catalog.md). |
 | **AI** | A random agent, a reflexive heuristic agent that beats it ~85% of the time, and a masked-PPO self-play trainer. |
 | **Verification** | `python scripts/verify.py` runs every gate end to end. |
 

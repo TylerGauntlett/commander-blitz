@@ -1,0 +1,11 @@
+# Scryfall bulk dumps: ~74 MB gzipped, ~600 MB expanded. They are an *input* to
+# scripts/build_card_index.py and a download cache, never an artifact worth
+# keeping -- the committed ../cards.sqlite is what a fresh clone needs.
+#
+# This file is the only thing standing between a routine catalog refresh and a
+# very large commit. Do not remove it.
+*.jsonl
+*.jsonl.gz
+*.json
+*.gz
+*.part

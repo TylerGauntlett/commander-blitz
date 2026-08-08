@@ -104,3 +104,63 @@ class CardResponse(BaseModel):
     keywords: list[str] = Field(default_factory=list)
     colors: list[str] = Field(default_factory=list)
     color_identity: list[str] = Field(default_factory=list)
+    #: Same-origin path, never a third-party URL.  ``None`` means this card has
+    #: no printing and the client should draw its "no art" plate.
+    art_url: str | None = None
+    artist: str | None = None
+
+
+class ImageRefDTO(BaseModel):
+    """Where one card's art lives.
+
+    Deliberately carries no ``cards.scryfall.io`` URL: the browser only ever
+    talks to this server, so the board keeps working when Scryfall is rate
+    limiting, down, or simply unreachable.
+    """
+
+    card_id: str
+    art: str | None = None
+    artist: str | None = None
+
+
+class ImagesResponse(BaseModel):
+    """Every card the engine ships, in one response.
+
+    Fetched once at boot and cached forever, rather than riding along on
+    ``card_view``.  The image is a function of the immutable ``card_id``, and
+    ``player_view`` re-serialises ~90 cards on every poll of the AI pump -- so
+    putting it there would re-send a constant thousands of times a game.
+    """
+
+    art_base: str = "/art"
+    images: dict[str, ImageRefDTO | None] = Field(default_factory=dict)
+
+
+class CatalogCardDTO(BaseModel):
+    """One card from the Scryfall-derived catalog, which is far larger than the
+    engine's own registry and is not playable -- it backs search and deck
+    building, not the board."""
+
+    name: str
+    scryfall_id: str
+    oracle_id: str | None = None
+    type_line: str = ""
+    mana_cost: str = ""
+    cmc: float = 0.0
+    power: str | None = None
+    toughness: str | None = None
+    colors: list[str] = Field(default_factory=list)
+    color_identity: list[str] = Field(default_factory=list)
+    rarity: str = ""
+    set_code: str = ""
+    layout: str = "normal"
+    is_token: bool = False
+    artist: str | None = None
+    art_url: str | None = None
+
+
+class CatalogResponse(BaseModel):
+    #: Unclamped match count, so a UI can say "showing 50 of 312" rather than
+    #: silently truncating.
+    total: int = 0
+    results: list[CatalogCardDTO] = Field(default_factory=list)
