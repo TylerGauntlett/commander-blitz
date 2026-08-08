@@ -73,9 +73,11 @@ test.describe("a turn means a lap of the table", () => {
 });
 
 test.describe("the commander is on screen", () => {
-  test("the dock shows the commander and can cast it", async ({ page }) => {
+  test("the plinth shows the commander and can cast it", async ({ page }) => {
     // Cycle 2 left the command zone as a `CMD 1` chip opening a read-only modal,
     // and the only route to casting was a ghost button in the bar's overflow.
+    // Then it was a ~74px card face in the bottom-left corner, whose own name
+    // did not fit -- docs/mockup-fidelity.md defect #5.
     test.setTimeout(240_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
@@ -84,14 +86,31 @@ test.describe("the commander is on screen", () => {
 
     const dock = page.getByTestId("command-zone-0");
     await expect(dock).toBeVisible();
-    // A real card face, not a count.
-    await expect(dock.locator(".face").first()).toBeVisible();
-    await expect(dock.locator(".face__name").first()).not.toHaveText("");
+    // In the info panel, beside the life total -- not in a corner.
+    await expect(page.getByTestId("player-0").locator(".cmdzone")).toBeVisible();
+    // Named, not counted. And the name is whole: this is the assertion the old
+    // card face could not have passed.
+    const name = dock.locator(".cmdplinth__name").first();
+    await expect(name).toBeVisible();
+    await expect(name).not.toHaveText("");
+    expect(
+      await name.evaluate((n) => n.scrollWidth <= n.clientWidth + 1),
+      "the commander's name is clipped again",
+    ).toBe(true);
 
     const slot = dock.locator(".cmdslot").first();
     await expect(slot).toHaveAttribute("data-zone", "command");
+    // State is said in words too, not only in the colour of the frame -- and the
+    // word has to survive sharing its row with the cost pips. A narrower plinth
+    // truncated this to "IN COMM…", which is not a channel.
+    const word = slot.locator(".cmdplinth__word");
+    await expect(word).toHaveText(/in command/i);
+    expect(
+      await word.evaluate((n) => n.scrollWidth <= n.clientWidth + 1),
+      "the state word is clipped",
+    ).toBe(true);
 
-    // Ramp until the commander is affordable, then cast it from the dock.
+    // Ramp until the commander is affordable, then cast it from the plinth.
     const castable = await playUntil(
       page,
       async () => (await slot.getAttribute("data-castable")) === "true",
@@ -99,14 +118,23 @@ test.describe("the commander is on screen", () => {
     );
     test.skip(!castable, "never drew enough lands to cast the commander");
 
+    await expect(slot).toHaveAttribute("data-cmd-state", "ready");
+    await expect(slot.locator(".cmdplinth__word")).toHaveText(/ready/i);
+
     await slot.click();
     await waitForOurTurn(page);
     // It left the command zone: either on the battlefield, or on the stack and
-    // about to be. Either way the dock followed it rather than going blank.
+    // about to be. Either way the plinth followed it rather than going blank.
     await expect(dock.locator(".cmdslot").first()).not.toHaveAttribute("data-zone", "command");
+    await expect(dock.locator(".cmdslot").first()).toHaveAttribute(
+      "data-cmd-state",
+      "deployed",
+    );
   });
 
-  test("the dock carries no action id, so the bar keeps sole ownership", async ({ page }) => {
+  test("the plinth carries no action id, so the panel keeps sole ownership", async ({
+    page,
+  }) => {
     // It is a gesture surface like the hand. Giving it an id would put two
     // buttons on one action and break the invariant clarity.spec.ts guards.
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });

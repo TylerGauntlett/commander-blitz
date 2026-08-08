@@ -12,7 +12,15 @@ component is touched. Open any `.html` directly — no build, no server, no netw
 shots/                    PNG + greyscale twin of each, 2560×1278
 fetch_art.py              pulls art/ (mockup 5 only)
 _state.js                 the shared board state, kept readable; inlined per file
+cards/                    a later, narrower exploration: the card face itself
 ```
+
+These five are about the **board**. [`cards/`](cards/README.md) is a separate,
+later exploration of the **card face** — five directions for the frame, drawn at
+each of the four widths the client uses, with the real Scryfall mana symbols
+instead of the letter-on-a-disc pips. It picks up three problems these mockups
+did not look at: the name colliding with its own mana cost, the invented mana
+symbols, and lands all being one tan rectangle.
 
 All five render **turn 8 of the reference screenshot, at declare-attackers**, with
 the same 30 permanents, the same hand, the same life totals — so differences on

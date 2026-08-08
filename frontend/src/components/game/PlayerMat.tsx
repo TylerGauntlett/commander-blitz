@@ -7,7 +7,6 @@
 
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { LANES, groupBattlefield } from "../../logic/zoneGrouping";
-import { CommandZone } from "./CommandZone";
 import { Lane } from "./Lane";
 import { PlayerOrb } from "./PlayerOrb";
 
@@ -32,7 +31,7 @@ interface Props {
   /** This player can be pointed at right now. */
   playerTargetable?: boolean;
   onSelectPlayer?: (pid: number) => void;
-  /** Oids a legal play action names, for the commander dock's castable rim. */
+  /** Oids a legal play action names, for the commander plinth's ready state. */
   playableOids?: ReadonlySet<number>;
   /**
    * Casting a commander out of the command zone. Deliberately not `onActivate`:
@@ -79,10 +78,12 @@ export function PlayerMat({
 
   return (
     <section className={compact ? "mat mat--compact" : "mat"} data-testid={`mat-${player.pid}`}>
-      {/* Orb and command zone share the mat's first column: they are both
-          "facts about this player" rather than permanents on their board. */}
+      {/* The mat's first column is everything that is a fact about this player
+          rather than a permanent on their board -- commander, life, mana,
+          zones. All of it lives inside the orb; see PlayerOrb. */}
       <div className="mat__side">
         <PlayerOrb
+          state={state}
           player={player}
           isViewer={player.pid === state.seat}
           isActive={player.pid === state.active_player}
@@ -92,19 +93,11 @@ export function PlayerMat({
           targetable={playerTargetable}
           onSelect={onSelectPlayer}
           spending={spending}
+          playableOids={playableOids}
+          onCastCommander={onCastCommander}
+          onHoverCard={onHoverCard}
+          locked={locked}
         />
-        {/* Opponents only. The viewer's own commander lives beside their hand,
-            which is the zone it is actually played from -- see Table.tsx. */}
-        {compact && (
-          <CommandZone
-            state={state}
-            pid={player.pid}
-            playableOids={playableOids ?? new Set()}
-            onActivate={onCastCommander}
-            onHover={onHoverCard}
-            disabled={locked}
-          />
-        )}
       </div>
       <div className="mat__lanes">
         {shown.map((lane) => (

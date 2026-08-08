@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Card face — five prototypes</title>
+<!--
+  Five card-face directions, small and enlarged, side by side.
+
+  Opens standalone from file://. No build, no server, no network: the only
+  requests are ../art/*.jpg and symbols/*.svg, both on disk. `_cards.js` is the
+  readable master for the card set below and is inlined here rather than linked,
+  because a linked module would not load from a file:// origin.
+
+  Mana symbols are the real ones -- Scryfall's published SVGs, pulled once by
+  fetch_symbols.py. They are drawn with <img>, not inlined, because fetch() is
+  blocked on file:// and an <img> is not.
+
+  Unlike the board mockups in the parent directory, this page is a gallery and
+  is *allowed to scroll vertically*. The no-overflow rule in mockups/README.md
+  exists because a board that scrolls is a board that does not fit; that does
+  not apply here. Horizontal overflow is still a failure.
+-->
+<style>
+/* ---------------------------------------------------------------- ground */
+:root{
+  --bg:#0e0f1a; --line:#2a2d44;
+  --fg:#e8e6f2; --fg-dim:#9a97b4; --fg-faint:#6b6885;
+  --accent:#c8a84a;
+
+  /* Frame tones. Two stops each: the lit edge and the shadowed edge, which is
+     what makes a frame read as moulded rather than as a coloured outline. */
+  --W-hi:#f6eed4; --W-lo:#b9ad86; --U-hi:#a9d2ec; --U-lo:#2f6a95;
+  --B-hi:#b6aeac; --B-lo:#2e282b; --R-hi:#f0a48b; --R-lo:#a4432f;
+  --G-hi:#a9cfa2; --G-lo:#2f6b41; --C-hi:#d3d6da; --C-lo:#787e86;
+  --gold-hi:#eed99c; --gold-lo:#9c7a24; --land-hi:#cdb99e; --land-lo:#5f4d3a;
+
+  /* Card paper. Warm, because every real card is. */
+  --paper:#f3eee1; --paper-lo:#ddd5c2; --ink:#14120e; --ink-dim:#4a463c;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0; padding:22px 26px 60px; color:var(--fg);
+  font:14px/1.5 "Segoe UI",system-ui,sans-serif;
+  background:radial-gradient(1400px 800px at 50% -10%,#1b1d33,var(--bg));
+  overflow-x:hidden;
+}
+h1{font-size:20px;margin:0 0 4px;letter-spacing:.2px}
+.sub{color:var(--fg-dim);margin:0 0 16px;max-width:100ch;font-size:13px}
+.sub code{color:var(--fg);background:#00000040;padding:1px 5px;border-radius:4px}
+
+/* --------------------------------------------------------------- controls */
+.controls{
+  position:sticky; top:0; z-index:20; margin:0 -26px 4px; padding:12px 26px;
+  background:#0e0f1af2; border-bottom:1px solid var(--line);
+  backdrop-filter:blur(6px);
+}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.row+.row{margin-top:8px}
+.lbl{color:var(--fg-faint);font-size:11px;text-transform:uppercase;letter-spacing:.09em;margin-right:6px}
+button{
+  font:inherit;font-size:12px;color:var(--fg-dim);cursor:pointer;
+  background:#ffffff0a;border:1px solid var(--line);border-radius:7px;padding:5px 10px;
+}
+button:hover{color:var(--fg);border-color:#4a4e70}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#1a1508;font-weight:650}
+.why{
+  margin:10px 0 0;color:var(--fg-dim);font-size:12.5px;font-style:italic;
+  border-left:2px solid var(--accent);padding-left:10px;max-width:110ch;min-height:19px;
+}
+
+/* ------------------------------------------------------------- directions */
+/* Three columns at 2560, two at 1600. A strip is 668px of cards plus gaps, so
+   680px is the narrowest a column can be without wrapping the strip. */
+#gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(700px,1fr));gap:0 26px}
+.dir{border-top:1px solid var(--line);padding:20px 0 10px;min-width:0}
+.dir__head{margin-bottom:14px}
+.dir__id{
+  font:700 12px/1 "Segoe UI",sans-serif;color:#1a1508;background:var(--accent);
+  border-radius:5px;padding:5px 7px;letter-spacing:.06em;vertical-align:2px;
+}
+.dir__name{font-size:16px;font-weight:650;margin-left:8px}
+.dir__thesis{display:block;color:var(--fg-dim);font-size:12.5px;margin-top:7px;max-width:84ch}
+.strip{display:flex;gap:22px;align-items:flex-start;flex-wrap:nowrap}
+.cell{display:flex;flex-direction:column;gap:7px;align-items:center;flex:0 0 auto}
+.cell__cap{color:var(--fg-faint);font-size:10.5px;letter-spacing:.04em;text-align:center;white-space:nowrap}
+
+/* A card sits in a slot of fixed footprint so a tapped card cannot shove its
+   neighbour. The slot is the box; the card rotates inside it. */
+.slot{position:relative;display:grid;place-items:center}
+.slot>.card{position:absolute}
+.cell--big .slot{display:block;height:auto}
+.cell--big .slot>.card{position:static}
+
+/* ------------------------------------------------------------------- card */
+.card{
+  width:var(--card-w); height:calc(var(--card-w)*1.4);
+  filter:drop-shadow(0 3px 7px #00000070);
+
+  /* Type sizes are clamped at *both* ends, not just floored.
+     A floor alone (`max(8.5px, ...)`) is what the client does, and it is why the
+     preview card looks like a zoomed board card rather than a designed one: at
+     286px a 0.085 ratio is a 24px name. The ceiling is what makes the enlarged
+     card a different design rather than a bigger one. */
+  --fs-nm:clamp(9px, calc(var(--card-w)*.085), 19px);
+  --fs-tp:clamp(8.5px, calc(var(--card-w)*.062), 12.5px);
+  --fs-tx:clamp(8.5px, calc(var(--card-w)*.053), 12.5px);
+  --fs-pt:clamp(10px, calc(var(--card-w)*.092), 21px);
+  --fs-chip:clamp(8.5px, calc(var(--card-w)*.062), 11px);
+}
+.card--tapped{transform:rotate(90deg)}
+.card--big{width:var(--card-w);height:auto;min-height:calc(var(--card-w)*1.3)}
+/* The card is a flex column and the face is its only, growing item.
+   `.face { height: 100% }` was the obvious way to write this and it is wrong on
+   the enlarged card: the card's height is `auto` with a `min-height`, so a
+   percentage height had nothing definite to resolve against, the face collapsed
+   to its content, and the enlarged card wore a band of empty stock under the
+   textbox. Stretching it as a flex item works against `auto` heights too. */
+.card{display:flex;flex-direction:column}
+.face{
+  flex:1 1 auto;width:100%;display:flex;flex-direction:column;overflow:hidden;
+  position:relative;color:var(--ink);
+}
+
+/* A name is never truncated where there is room to wrap it. Two lines, then
+   ellipsis -- except on the 60px mat, where a second line costs a quarter of
+   the card and there is nothing to spend it on. */
+.nm{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;overflow-wrap:break-word;
+}
+.card--micro .nm{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
+
+/* Mana symbols. `--pip` scales with the card and is capped with it; inline ones
+   scale with their text run instead, or a pip inside a rules box would be as
+   wide as the line. */
+.ms{
+  display:inline-block;width:var(--pip);height:var(--pip);vertical-align:middle;
+  filter:drop-shadow(0 1px 0 #00000055);flex:0 0 auto;
+}
+.ms--in{width:1em;height:1em;vertical-align:-.14em;margin:0 .04em}
+.cost{display:flex;gap:calc(var(--card-w)*.02);align-items:center;flex-wrap:wrap}
+
+/* Art, and the plate for the ~4% of cards with no printing anywhere. */
+.art{position:relative;overflow:hidden;background:#1d1a26;flex:0 0 auto}
+.art>img{width:100%;height:100%;object-fit:cover;display:block}
+.art__none{
+  width:100%;height:100%;display:grid;place-items:center;color:#00000055;
+  font-size:clamp(7px,calc(var(--card-w)*.07),13px);letter-spacing:.08em;text-transform:uppercase;
+  background:repeating-linear-gradient(135deg,#6b6152,#6b6152 5px,#5e5648 5px,#5e5648 10px);
+}
+.tx{font-size:var(--fs-tx);line-height:1.34}
+.tx p{margin:0 0 .45em}
+.tx p:last-child{margin:0}
+.mark{display:flex;gap:.16em;align-items:center;justify-content:center}
+.mark .ms{filter:drop-shadow(0 2px 3px #00000060)}
+/* A land that taps for no colour at all -- Terramorphic Expanse. Every design
+   that leans on the produced symbol needs something here, or the one land that
+   is actually interesting is the one with no mark. */
+.mark--none{
+  border-radius:999px;background:#8d8172;color:#efeade;display:grid;place-items:center;
+  box-shadow:inset 0 -2px 4px #00000045, 0 1px 0 #ffffff30;flex:0 0 auto;
+}
+
+/* Wearables, shared: counters, summoning sickness, the commander tag. */
+.chips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;min-width:0;overflow:hidden}
+.chip{
+  font-size:var(--fs-chip);font-weight:700;line-height:1;
+  padding:.24em .36em;border-radius:4px;background:#00000018;color:var(--ink-dim);
+  border:1px solid #00000022;white-space:nowrap;
+}
+.chip--ctr{background:#e8f2e0;color:#1e5a2c;border-color:#1e5a2c40}
+.chip--sick{background:#2b2540;color:#dcd2f5;border-color:#00000040}
+/* The commander mark goes *inside* the name, not in a corner.
+   A corner tag is a second thing competing for the top-right of a card that has
+   already given that corner to the mana cost in three of the five directions --
+   and at 60px it landed on top of the name. A real legendary wears a crown on
+   its frame; this is the cheap version of the same idea, and it costs no space
+   that was not already the name's. */
+.crown{color:var(--gold-lo);text-shadow:0 1px 0 #ffffff70;margin-right:.28em;font-size:.92em}
+.dir-D .crown,.dir-E .crown{color:var(--gold-hi);text-shadow:0 1px 2px #000000a0}
+.pt{font-weight:800;font-size:var(--fs-pt);line-height:1;white-space:nowrap}
+.pt--hurt{color:#a4291d}
+
+/* ============================================================== A — Modern */
+.dir-A .face{
+  padding:calc(var(--card-w)*.042);gap:calc(var(--card-w)*.026);
+  border-radius:calc(var(--card-w)*.045);
+  background:linear-gradient(160deg,var(--f-hi),var(--f-lo) 62%,var(--f-hi));
+  box-shadow:inset 0 0 0 1px #00000055, inset 0 1px 0 #ffffff55;
+}
+/* `flex: 0 0 auto`, not the default. As a shrinkable flex item the name band was
+   being compressed below its own two lines by the art beneath it, so the second
+   line of "Aesi, Tyrant of Gyre Strait" was clipped at 104px and 146px -- the
+   exact failure this whole page exists to remove, reintroduced by a default. */
+.dir-A .nm{
+  flex:0 0 auto;
+  font-weight:700;font-size:var(--fs-nm);line-height:1.14;
+  padding:calc(var(--card-w)*.028) calc(var(--card-w)*.042);
+  border-radius:calc(var(--card-w)*.028);
+  background:linear-gradient(180deg,#ffffffcc,#ffffff70);
+  box-shadow:inset 0 0 0 1px #00000030;
+}
+/* The cost gets a row of its own. This is the whole point of the direction: a
+   name can be as long as it likes and never meets its own mana cost. */
+.dir-A .cost{flex:0 0 auto;justify-content:flex-end;min-height:var(--pip);padding-right:calc(var(--card-w)*.012)}
+/* A floor, not `min-height: 0`. Three raised bands plus a footer is a lot of
+   chrome, and at 60px they were eating the art down to a two-pixel sliver --
+   the one element that makes the card recognisable before it is read. */
+.dir-A .art{
+  flex:1 1 auto;min-height:calc(var(--card-w)*.42);border-radius:calc(var(--card-w)*.022);
+  box-shadow:inset 0 0 0 1px #00000060, 0 1px 0 #ffffff40;
+}
+.dir-A .tp{
+  display:flex;align-items:center;gap:6px;flex:0 0 auto;
+  font-size:var(--fs-tp);font-weight:600;
+  padding:calc(var(--card-w)*.022) calc(var(--card-w)*.042);
+  border-radius:calc(var(--card-w)*.024);
+  background:linear-gradient(180deg,#ffffffb8,#ffffff60);
+  box-shadow:inset 0 0 0 1px #00000028;
+}
+.dir-A .tp span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto}
+/* A rarity gem is a real slot on a real card and there is nothing to put in it:
+   `CardView` carries no rarity. Drawn hollow so the cost of adding it is visible. */
+.dir-A .gem{
+  width:clamp(4px,calc(var(--card-w)*.05),11px);height:clamp(4px,calc(var(--card-w)*.05),11px);
+  flex:0 0 auto;border-radius:2px;transform:rotate(45deg);
+  border:1px solid #00000038;background:#ffffff50;
+}
+.dir-A .tx{
+  flex:0 1 auto;position:relative;overflow:hidden;
+  padding:calc(var(--card-w)*.032) calc(var(--card-w)*.042);
+  border-radius:calc(var(--card-w)*.024);
+  background:linear-gradient(180deg,var(--paper),var(--paper-lo));
+  box-shadow:inset 0 0 0 1px #00000030;
+}
+/* The watermark is clipped by its own box, not by the textbox. On a one-line
+   rules box the symbol is taller than the box, and letting it overflow made the
+   textbox report content it does not have -- which is indistinguishable, to any
+   check, from rules text that is actually being cut off. */
+.dir-A .tx .mark{position:absolute;inset:0;opacity:.16;pointer-events:none;overflow:hidden}
+.dir-A .tx .mark .ms,.dir-A .tx .mark--none{
+  width:calc(var(--card-w)*.3);height:calc(var(--card-w)*.3);font-size:calc(var(--card-w)*.17);
+}
+.dir-A .art .mark{position:absolute;right:5%;bottom:6%}
+.dir-A .art .mark .ms,.dir-A .art .mark--none{
+  width:calc(var(--card-w)*.28);height:calc(var(--card-w)*.28);font-size:calc(var(--card-w)*.16);
+}
+.dir-A .ft{display:flex;align-items:center;gap:5px;min-height:calc(var(--fs-pt)*1.5);flex:0 0 auto}
+.dir-A .pt{
+  margin-left:auto;
+  padding:.24em .48em;border-radius:calc(var(--card-w)*.028);
+  background:linear-gradient(180deg,#ffffffd8,#ffffff80);
+  box-shadow:inset 0 0 0 1px #00000038, 0 1px 2px #00000030;
+}
+
+/* ============================================================== B — Banded */
+.dir-B .face{
+  border-radius:calc(var(--card-w)*.035);
+  background:var(--paper);
+  box-shadow:inset 0 0 0 max(2px,calc(var(--card-w)*.02)) var(--f-lo),
+             inset 0 0 0 calc(max(2px,calc(var(--card-w)*.02)) + 1px) #00000045;
+  padding:max(2px,calc(var(--card-w)*.02));
+}
+.dir-B .nm{
+  font-weight:700;font-size:var(--fs-nm);line-height:1.14;flex:0 0 auto;
+  padding:calc(var(--card-w)*.04) calc(var(--card-w)*.048) calc(var(--card-w)*.022);
+  background:var(--f-hi);
+}
+.dir-B .cost{
+  justify-content:flex-end;background:var(--f-hi);flex:0 0 auto;
+  padding:0 calc(var(--card-w)*.048) calc(var(--card-w)*.036);
+  border-bottom:1px solid #00000038;
+}
+.dir-B .nm+.art{border-top:1px solid #00000038}
+.dir-B .art{flex:1 1 auto;min-height:0;border-bottom:1px solid #00000038}
+.dir-B .tp{
+  font-size:var(--fs-tp);font-weight:650;flex:0 0 auto;
+  padding:calc(var(--card-w)*.028) calc(var(--card-w)*.048);
+  background:#00000010;border-bottom:1px solid #00000024;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dir-B .tx{
+  flex:0 1 auto;overflow:hidden;
+  padding:calc(var(--card-w)*.038) calc(var(--card-w)*.048);
+}
+.dir-B .ft{
+  display:flex;align-items:center;gap:5px;margin-top:auto;flex:0 0 auto;
+  padding:calc(var(--card-w)*.026) calc(var(--card-w)*.048);
+  background:var(--f-hi);border-top:1px solid #00000038;min-height:calc(var(--fs-pt)*1.55);
+}
+.dir-B .pt{margin-left:auto}
+/* A land's band stack collapses to two: what it is called, and what it makes. */
+.dir-B .manastrip{
+  display:flex;align-items:center;justify-content:center;gap:calc(var(--card-w)*.05);
+  padding:calc(var(--card-w)*.05) 0;background:linear-gradient(180deg,#ffffff34,#00000018);
+  border-bottom:1px solid #00000038;flex:0 0 auto;
+}
+.dir-B .manastrip .ms,.dir-B .manastrip .mark--none{
+  width:clamp(16px,calc(var(--card-w)*.28),58px);height:clamp(16px,calc(var(--card-w)*.28),58px);
+  font-size:clamp(9px,calc(var(--card-w)*.16),32px);
+}
+
+/* ============================================================ C — Cost rail */
+.dir-C .face{
+  flex-direction:row;border-radius:calc(var(--card-w)*.038);
+  background:var(--paper);
+  box-shadow:inset 0 0 0 1px #00000060, 0 0 0 1px #00000030;
+}
+.dir-C .rail{
+  flex:0 0 clamp(15px,calc(var(--card-w)*.185),46px);
+  display:flex;flex-direction:column;align-items:center;
+  gap:calc(var(--card-w)*.026);padding:calc(var(--card-w)*.038) 0;
+  background:linear-gradient(180deg,var(--f-hi),var(--f-lo));
+  box-shadow:inset -1px 0 0 #00000045;
+}
+.dir-C .rail .ms{width:clamp(11px,calc(var(--card-w)*.13),32px);height:clamp(11px,calc(var(--card-w)*.13),32px)}
+.dir-C .body{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
+/* The name owns the entire body column. There is no cost to collide with,
+   because the cost is on the other axis. */
+.dir-C .nm{
+  font-weight:700;font-size:var(--fs-nm);line-height:1.14;flex:0 0 auto;
+  padding:calc(var(--card-w)*.042) calc(var(--card-w)*.042) calc(var(--card-w)*.026);
+}
+.dir-C .art{flex:1 1 auto;min-height:0;box-shadow:inset 0 0 0 1px #00000038}
+.dir-C .tp{
+  font-size:var(--fs-tp);font-weight:600;color:var(--ink-dim);flex:0 0 auto;
+  padding:calc(var(--card-w)*.03) calc(var(--card-w)*.042);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dir-C .tx{
+  flex:0 1 auto;overflow:hidden;
+  padding:calc(var(--card-w)*.034) calc(var(--card-w)*.042) calc(var(--card-w)*.042);
+  border-top:1px solid #00000020;
+}
+.dir-C .ft{display:flex;gap:4px;align-items:center;padding:0 calc(var(--card-w)*.042) calc(var(--card-w)*.038);margin-top:auto}
+/* P/T lives at the foot of the rail, where the eye already is for the cost --
+   except on the 60px mat, where the rail is 15px wide and "5/5" is not. */
+.dir-C .rail .pt{
+  margin-top:auto;text-align:center;color:#14120e;
+  background:#ffffffd8;border-radius:calc(var(--card-w)*.02);
+  padding:.26em .12em;width:88%;box-shadow:inset 0 0 0 1px #00000038;
+  font-size:clamp(9px,calc(var(--card-w)*.082),19px);
+}
+/* A land's rail is the design: a coloured spine with its symbol at the head, so
+   a row of lands reads as a row of spines without reading a single name. */
+.dir-C .face--land .rail{flex-basis:clamp(22px,calc(var(--card-w)*.32),78px)}
+.dir-C .face--land .rail .ms,.dir-C .face--land .mark--none{
+  width:clamp(16px,calc(var(--card-w)*.23),56px);height:clamp(16px,calc(var(--card-w)*.23),56px);
+  font-size:clamp(9px,calc(var(--card-w)*.13),30px);
+}
+.dir-C .face--land .mark{flex-direction:column}
+
+/* =========================================================== D — Art bleed */
+.dir-D .face{
+  border-radius:calc(var(--card-w)*.048);color:#f4f2ec;
+  background:linear-gradient(160deg,var(--f-hi),var(--f-lo));
+  box-shadow:inset 0 0 0 max(1.5px,calc(var(--card-w)*.014)) var(--f-lo),
+             inset 0 0 0 1px #00000060;
+}
+.dir-D .art{position:absolute;inset:0;z-index:0;background:transparent}
+.dir-D .art__none{background:none;color:#ffffff26}
+.dir-D .head{
+  position:relative;z-index:2;display:flex;flex-direction:column;
+  gap:calc(var(--card-w)*.016);
+  padding:calc(var(--card-w)*.05) calc(var(--card-w)*.055) calc(var(--card-w)*.085);
+  background:linear-gradient(180deg,#000000cc,#00000090 55%,#00000000);
+}
+.dir-D .nm{font-weight:700;font-size:var(--fs-nm);line-height:1.14;text-shadow:0 1px 3px #000000cc}
+.dir-D .cost{justify-content:flex-start;min-height:var(--pip)}
+.dir-D .foot{
+  position:relative;z-index:2;margin-top:auto;display:flex;flex-direction:column;
+  gap:calc(var(--card-w)*.024);
+  padding:calc(var(--card-w)*.1) calc(var(--card-w)*.055) calc(var(--card-w)*.05);
+  background:linear-gradient(0deg,#000000e6,#000000b4 58%,#00000000);
+}
+.dir-D .tp{
+  font-size:var(--fs-tp);font-weight:600;color:#e2ddcd;letter-spacing:.02em;
+  text-shadow:0 1px 2px #000000cc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dir-D .tx{color:#eae7dc;text-shadow:0 1px 2px #000000b0;overflow:hidden}
+.dir-D .ft{display:flex;align-items:center;gap:5px}
+.dir-D .chip{background:#ffffff1c;color:#e6e2d4;border-color:#ffffff26}
+.dir-D .chip--ctr{background:#2e6b3a;color:#e6f6e6;border-color:#ffffff2e}
+.dir-D .pt{
+  margin-left:auto;padding:.2em .44em;border-radius:calc(var(--card-w)*.026);
+  background:#0c0c10d0;box-shadow:inset 0 0 0 1px #ffffff40;color:#f7f4ea;
+}
+.dir-D .pt--hurt{color:#ff8f7f}
+/* A land is its art and its symbol. Nothing else earns the space. */
+.dir-D .face--land .mark{position:absolute;inset:0;z-index:1;align-items:center}
+.dir-D .face--land .mark .ms,.dir-D .face--land .mark--none{
+  width:clamp(26px,calc(var(--card-w)*.42),108px);height:clamp(26px,calc(var(--card-w)*.42),108px);
+  font-size:clamp(15px,calc(var(--card-w)*.24),60px);
+  filter:drop-shadow(0 3px 8px #000000b0);
+}
+.dir-D .face--land .head{background:linear-gradient(180deg,#000000b8,#00000000)}
+
+/* ============================================================ E — Tactical */
+.dir-E .face{
+  border-radius:calc(var(--card-w)*.03);color:#f2f0ea;
+  background:#191720;
+  box-shadow:inset 0 0 0 max(2px,calc(var(--card-w)*.024)) var(--f-lo),
+             inset 0 0 0 calc(max(2px,calc(var(--card-w)*.024)) + 1px) #00000080;
+  padding:max(2px,calc(var(--card-w)*.024));
+}
+.dir-E .nm{
+  font-weight:750;font-size:calc(var(--fs-nm)*1.04);line-height:1.12;letter-spacing:-.005em;
+  flex:0 0 auto;padding:calc(var(--card-w)*.034) calc(var(--card-w)*.04);
+  background:var(--f-lo);color:#fbfaf6;text-shadow:0 1px 2px #00000090;
+}
+.dir-E .art{flex:1 1 auto;min-height:0;position:relative}
+.dir-E .art>img{filter:saturate(.9) brightness(.86)}
+/* The cost rides on the art, out of the text flow entirely -- the same trick as
+   direction C, spent on the other axis so the name still gets a full row. */
+.dir-E .cost{
+  position:absolute;top:calc(var(--card-w)*.032);right:calc(var(--card-w)*.032);z-index:3;
+  padding:calc(var(--card-w)*.02);border-radius:calc(var(--card-w)*.038);
+  background:#0b0a10c8;box-shadow:inset 0 0 0 1px #ffffff2a;max-width:76%;justify-content:flex-end;
+}
+.dir-E .tp{
+  /* Re-clamped, not just scaled: `calc(var(--fs-tp) * .94)` slipped this line to
+     7.99px at 60px, under the 8.5px floor everything else on the page holds. */
+  font-size:clamp(8.5px,calc(var(--fs-tp)*.94),12px);font-weight:650;color:#b9b4c8;flex:0 0 auto;
+  letter-spacing:.05em;text-transform:uppercase;
+  padding:calc(var(--card-w)*.03) calc(var(--card-w)*.04) calc(var(--card-w)*.02);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dir-E .tx{
+  flex:0 1 auto;overflow:hidden;color:#ddd9e6;
+  padding:0 calc(var(--card-w)*.04) calc(var(--card-w)*.028);
+}
+.dir-E .ft{
+  display:flex;align-items:center;gap:4px;margin-top:auto;flex:0 0 auto;
+  padding:calc(var(--card-w)*.028) calc(var(--card-w)*.04);
+  background:#0d0c13;border-top:1px solid #ffffff14;min-height:calc(var(--fs-pt)*1.5);
+}
+.dir-E .chip{background:#ffffff14;color:#c6c1d4;border-color:#ffffff1e}
+.dir-E .chip--ctr{background:#1f5c30;color:#dcf3de;border-color:#ffffff24}
+.dir-E .pt{margin-left:auto;font-size:calc(var(--fs-pt)*1.06);color:#fdfbf4}
+.dir-E .pt--hurt{color:#ff8272}
+/* At 60px a land is one symbol and a name. That is the entire card. */
+.dir-E .face--land .mark{position:absolute;inset:0;z-index:2;align-items:center}
+.dir-E .face--land .mark .ms,.dir-E .face--land .mark--none{
+  width:clamp(22px,calc(var(--card-w)*.36),92px);height:clamp(22px,calc(var(--card-w)*.36),92px);
+  font-size:clamp(13px,calc(var(--card-w)*.21),52px);
+}
+.dir-E .face--land .art>img{filter:saturate(.55) brightness(.42)}
+
+/* ---------------------------------------------------- enlarged, all five */
+/* The enlarged card is the one surface that must never clip rules text -- it is
+   the whole reason the small cards are allowed to drop the textbox. So there it
+   takes its natural height and the card grows, rather than being a flex item
+   that can be squeezed. `docs/mockup-fidelity.md` records the client learning
+   this the expensive way: the old rail preview scaled the portrait card up and
+   the rules box stayed squeezed by the 1.4 aspect. */
+.card--big .tx{flex:0 0 auto;overflow:visible}
+
+/* ------------------------------------------------------------- greyscale */
+body.grey .strip{filter:grayscale(1)}
+</style>
+</head>
+<body>
+
+<h1>Card face — five prototypes</h1>
+<p class="sub">
+  Five directions for the card face, each at the four widths the client actually uses.
+  Mana costs are the real symbols. Every direction puts the name and the cost on
+  separate axes, which is what stops <code>Aesi, Tyrant of Gyre Strait</code> from
+  fighting its own <code>{4}{G}{U}</code>; lands are redesigned per direction rather
+  than tinted. Two rules apply to all five: <b>a name wraps rather than truncating</b>
+  wherever there is room for a second line, and <b>the 60px mat card drops the mana
+  cost entirely</b> — a permanent on an opponent's board has already been paid for, so
+  the cost there is the one line on the card that cannot change a decision.
+</p>
+
+<div class="controls">
+  <div class="row" id="picker"><span class="lbl">Card</span></div>
+  <div class="row">
+    <span class="lbl">View</span>
+    <button id="t-grey" aria-pressed="false">Greyscale</button>
+    <button id="t-noart" aria-pressed="false">No art</button>
+    <button id="t-tap" aria-pressed="false">Tapped</button>
+  </div>
+  <p class="why" id="why"></p>
+</div>
+
+<div id="gallery"></div>
+
+<script>
+/* ============================================================================
+ * The card set. Inlined from _cards.js -- edit that file, then re-inline. See
+ * mockups/_state.js for the same arrangement and the reason for it.
+ * ========================================================================== */
+const CARDS = [
+  {
+    key: "aesi",
+    why: "Longest name in the pool, against a 3-symbol cost. This is the collision the redesign exists for.",
+    n: "Aesi, Tyrant of Gyre Strait", cost: "4GU",
+    tl: "Legendary Creature — Serpent", t: "creature", f: "gold",
+    pt: "5/5", kw: "Trample", cmd: true, art: "aesi-tyrant-of-gyre-strait",
+    rules: "Trample\nWhenever you play a land, draw a card.\nYou may play an additional land on each of your turns.",
+  },
+  {
+    key: "leviathan",
+    why: "No printing anywhere — the text-frame fallback. Also the widest cost in the pool at 7 pips.",
+    n: "Gyre Strait Leviathan", cost: "5UU",
+    tl: "Creature — Leviathan", t: "creature", f: "U",
+    pt: "7/7", kw: "Trample", art: null,
+    rules: "Trample",
+  },
+  {
+    key: "slime",
+    why: "Everything a battlefield creature can be wearing at once: keyword, counters, damage marked, summoning sick.",
+    n: "Acidic Slime", cost: "3GG",
+    tl: "Creature — Ooze", t: "creature", f: "G",
+    pt: "2/2", kw: "Deathtouch", sick: true, art: "acidic-slime",
+    dmg: 1, counters: "+1/+1 ×2",
+    rules: "Deathtouch\nWhen Acidic Slime enters, destroy target artifact, enchantment, or land.",
+  },
+  {
+    key: "forest",
+    why: "The basic land. Forty percent of a board is these, and today they are the least designed card on screen.",
+    n: "Forest", cost: "",
+    tl: "Basic Land — Forest", t: "land", f: "land",
+    land: "G", produces: "G", art: "forest",
+    rules: "({T}: Add {G}.)",
+  },
+  {
+    key: "thornwood",
+    why: "A dual: two produced colours, and it enters tapped, so it is usually seen sideways.",
+    n: "Thornwood Falls", cost: "",
+    tl: "Land", t: "land", f: "land",
+    land: "multi", produces: "GU", tapped: true, art: "thornwood-falls",
+    rules: "Thornwood Falls enters tapped.\nWhen it enters, you gain 1 life.\n{T}: Add {G} or {U}.",
+  },
+  {
+    key: "terramorphic",
+    why: "A land that produces no colour at all and has a real activated ability. Every colour-watermark land design has to answer this one.",
+    n: "Terramorphic Expanse", cost: "",
+    tl: "Land", t: "land", f: "land",
+    land: null, produces: "", art: null,
+    rules: "{T}, Sacrifice Terramorphic Expanse: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+  },
+  {
+    key: "vegetation",
+    why: "Longest rules text, no P/T. Whatever height the textbox has, this is what has to fit in it.",
+    n: "Explosive Vegetation", cost: "3G",
+    tl: "Sorcery", t: "sorcery", f: "G", art: "explosive-vegetation",
+    rules: "Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+  },
+  {
+    key: "beast",
+    why: "An instant — the one type tone whose whole point is that it is played at a moment, not kept on the board.",
+    n: "Beast Within", cost: "2G",
+    tl: "Instant", t: "instant", f: "G", art: "beast-within",
+    rules: "Destroy target permanent. Its controller creates a 3/3 green Beast creature token.",
+  },
+  {
+    key: "roil",
+    why: "An enchantment with a keyword-ability line. Sits on the board for turns and is never re-read, so it has to say what it is at a glance.",
+    n: "Zendikar's Roil", cost: "4G",
+    tl: "Enchantment", t: "enchantment", f: "G", art: "zendikar-s-roil",
+    rules: "Landfall — Whenever a land you control enters, create a 2/2 green Elemental creature token.",
+  },
+  {
+    key: "solring",
+    why: "Colourless artifact with a mana ability — no frame colour to lean on, and the cost is a single generic pip.",
+    n: "Sol Ring", cost: "1",
+    tl: "Artifact", t: "artifact", f: "C", art: "sol-ring",
+    rules: "{T}: Add {C}{C}.",
+  },
+  {
+    key: "token",
+    why: "A token: no cost, no rules, and it exists in stacks of identical copies.",
+    n: "Elemental", cost: "",
+    tl: "Token Creature — Elemental", t: "creature", f: "G",
+    pt: "2/2", token: true, art: "token-elemental",
+    rules: "",
+  },
+];
+
+/* ============================================================================
+ * The five directions. Each answers one question two ways: where the mana cost
+ * goes, and what a land looks like.
+ * ========================================================================== */
+const DIRS = [
+  { id: "A", name: "Modern Frame",
+    thesis: "The literal reading of the brief, and the closest to a real post-8th-Edition card. Name band, then a cost row of its own, bevelled art window, type band with a rarity-gem slot, parchment textbox, P/T lozenge. Land: the produced symbol embossed behind the textbox, the way a set watermark sits." },
+  { id: "B", name: "Banded",
+    thesis: "Chrome reduced to a flat rect; everything is a full-width band on a fixed rhythm, so the eye lands in the same place on every card. Nothing reflows between sizes — the small card is the large card with the text band removed. Land: the stack collapses to two bands, a name and a full-width mana strip." },
+  { id: "C", name: "Cost Rail",
+    thesis: "The cost leaves the horizontal flow entirely — a vertical rail down the left edge, with P/T at its foot. The name can never collide with the cost, because they are on different axes. Land: the rail widens into a coloured spine, so a row of lands reads without reading a single name." },
+  { id: "D", name: "Art Bleed",
+    thesis: "Art fills the frame; text sits on graded scrims top and bottom. The most attractive and the least dense — this is the direction that finds out how much chrome a card actually needs. Land: full-bleed art with one very large symbol centre-frame." },
+  { id: "E", name: "Tactical",
+    thesis: "Designed at 60px first and scaled up unchanged, so a card's shape does not move between the mat and the preview. Dark stock, maximum type size, hard contrast; the cost rides on the art rather than in the text flow. Land: at small sizes the symbol is the card." },
+];
+
+/* The four widths are the client's real ones, not round numbers:
+ *   60  — a 3-opponent mat. opponentCardScale(3)=0.58 against a ~104px base. The
+ *         8.5px floor is already binding here (docs/mockup-fidelity.md #5), so
+ *         this is the width that decides whether a direction is viable at all.
+ *  104  — your own battlefield, CARD_SCALE.own = 1.
+ *  146  — the hand, CARD_SCALE.hand = 1.4.
+ *  286  — the preview rail; the measured size of today's `.face--big`.
+ */
+const SIZES = [
+  { w: 60,  cap: "60px\n3-opponent mat", small: true },
+  { w: 104, cap: "104px\nown battlefield", small: true },
+  { w: 146, cap: "146px\nhand", small: true },
+  { w: 286, cap: "286px\npreview rail — enlarged", small: false },
+];
+
+/* ------------------------------------------------------------------ helpers */
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+/** `<img>`, not inline SVG: fetch() is blocked on file://, an image is not. */
+function pip(code, cls) {
+  return `<img class="ms ${cls || ""}" src="symbols/${code}.svg" alt="{${code}}" title="{${code}}">`;
+}
+
+/** "4GU" -> {4}{G}{U}. Numbers are a run, colours are single characters. */
+function costPips(cost) {
+  if (!cost) return "";
+  return (cost.match(/\d+|[A-Z]/g) || []).map((c) => pip(c)).join("");
+}
+
+/** Braced notation inside prose: "{T}: Add {G}." draws the same symbols. */
+function symbolise(text) {
+  return esc(text).replace(/\{([^}]+)\}/g, (m, c) => pip(c.toUpperCase(), "ms--in"));
+}
+
+function rulesHtml(card) {
+  if (!card.rules) return "";
+  return card.rules.split("\n").map((line) => `<p>${symbolise(line)}</p>`).join("");
+}
+
+/** Supertypes off, for the sizes where the line is one ellipsis away from gone. */
+function shortType(tl) {
+  return tl.replace(/^(Legendary|Basic|Snow|Token)\s+/, "").replace(/^(Legendary|Basic|Snow|Token)\s+/, "");
+}
+
+/** The subtype alone, which is the part that says what the card *is*. */
+function microType(tl) {
+  const dash = tl.indexOf("—");
+  return dash === -1 ? shortType(tl) : tl.slice(dash + 1).trim();
+}
+
+/**
+ * The type line at this size, or "" where it would only repeat the name.
+ *
+ * A basic land's subtype *is* its name -- at 60px a Forest was drawing the word
+ * "Forest" twice, once in the title and once in a type band, on a card 84px tall
+ * whose art was being squeezed to pay for it.
+ */
+function typeText(card, size) {
+  if (!size.small) return card.tl;
+  const line = size.micro ? microType(card.tl) : shortType(card.tl);
+  return line === card.n ? "" : line;
+}
+
+function artHtml(card, opts) {
+  if (opts.noArt || !card.art) return `<div class="art__none">no art</div>`;
+  return `<img src="../art/${card.art}.jpg" alt="" loading="lazy">`;
+}
+
+/** What a land makes, as symbols -- or the neutral mark when it makes nothing. */
+function landMark(card, extraClass) {
+  const body = card.produces
+    ? card.produces.split("").map((s) => pip(s)).join("")
+    : `<span class="mark--none" title="Produces no colour">&#9650;</span>`;
+  return `<div class="mark ${extraClass || ""}">${body}</div>`;
+}
+
+/** Damage comes off toughness, the way the client's `statLine` does it. */
+function ptText(card) {
+  if (!card.pt) return "";
+  if (!card.dmg) return card.pt;
+  const [p, t] = card.pt.split("/").map(Number);
+  return `${p}/${t - card.dmg}`;
+}
+
+function ptHtml(card) {
+  if (!card.pt) return "";
+  const cls = card.dmg ? "pt pt--hurt" : "pt";
+  const title = card.dmg ? `${card.dmg} damage marked` : "";
+  return `<span class="${cls}" title="${title}">${ptText(card)}</span>`;
+}
+
+/** Counters, summoning sickness, token-ness -- what a permanent is wearing. */
+function chips(card, size) {
+  const out = [];
+  if (card.counters) out.push(`<span class="chip chip--ctr">${esc(card.counters)}</span>`);
+  if (card.sick) out.push(`<span class="chip chip--sick" title="Summoning sick">&#9203;</span>`);
+  if (!size.micro) {
+    if (card.token) out.push(`<span class="chip">Token</span>`);
+    if (size.small && card.kw) out.push(`<span class="chip">${esc(card.kw)}</span>`);
+  }
+  return out.length ? `<span class="chips">${out.join("")}</span>` : "";
+}
+
+/** The name, with a legend crown on a commander. See `.crown`. */
+function nameHtml(card) {
+  const crown = card.cmd ? `<span class="crown" title="Commander">&#9819;</span>` : "";
+  return `<div class="nm">${crown}${esc(card.n)}</div>`;
+}
+
+/**
+ * The mana cost, or nothing at all on the 60px mat.
+ *
+ * A permanent on an opponent's board has already been paid for. Its cost is the
+ * one line on the card that cannot change any decision you are about to make,
+ * and at 60px it is competing for a row against the name and the type. All five
+ * directions drop it there, so the comparison stays about the design rather than
+ * about which one blinked first.
+ */
+function costRow(card, size) {
+  return size.micro ? "" : costPips(card.cost);
+}
+
+/* ---------------------------------------------------------------- templates */
+
+function tplA(card, size, opts) {
+  const isLand = card.t === "land";
+  const cost = costRow(card, size);
+  const tp = typeText(card, size);
+  return `
+    <div class="face ${isLand ? "face--land" : ""}">
+      ${nameHtml(card)}
+      ${cost ? `<div class="cost">${cost}</div>` : ""}
+      <div class="art">${artHtml(card, opts)}${isLand && size.small ? landMark(card) : ""}</div>
+      ${tp ? `<div class="tp"><span>${esc(tp)}</span><i class="gem"></i></div>` : ""}
+      ${size.small ? "" : `<div class="tx">${isLand ? landMark(card) : ""}${rulesHtml(card)}</div>`}
+      <div class="ft">${chips(card, size)}${ptHtml(card)}</div>
+    </div>`;
+}
+
+function tplB(card, size, opts) {
+  const isLand = card.t === "land";
+  const cost = costRow(card, size);
+  const tp = typeText(card, size);
+  return `
+    <div class="face ${isLand ? "face--land" : ""}">
+      ${nameHtml(card)}
+      ${isLand ? landMark(card, "manastrip") : cost ? `<div class="cost">${cost}</div>` : ""}
+      <div class="art">${artHtml(card, opts)}</div>
+      ${tp ? `<div class="tp">${esc(tp)}</div>` : ""}
+      ${size.small ? "" : `<div class="tx">${rulesHtml(card)}</div>`}
+      <div class="ft">${chips(card, size)}${ptHtml(card)}</div>
+    </div>`;
+}
+
+function tplC(card, size, opts) {
+  const isLand = card.t === "land";
+  const cost = costRow(card, size);
+  const tp = typeText(card, size);
+  // At 60px the rail is 15px across and "5/5" is not, so P/T moves into the body.
+  const railPt = size.micro ? "" : ptHtml(card);
+  const bodyPt = size.micro ? ptHtml(card) : "";
+  const foot = chips(card, size) + bodyPt;
+  return `
+    <div class="face ${isLand ? "face--land" : ""}">
+      <div class="rail">${isLand ? landMark(card) : cost}${railPt}</div>
+      <div class="body">
+        ${nameHtml(card)}
+        <div class="art">${artHtml(card, opts)}</div>
+        ${tp ? `<div class="tp">${esc(tp)}</div>` : ""}
+        ${size.small ? "" : `<div class="tx">${rulesHtml(card)}</div>`}
+        ${foot ? `<div class="ft">${foot}</div>` : ""}
+      </div>
+    </div>`;
+}
+
+function tplD(card, size, opts) {
+  const isLand = card.t === "land";
+  const cost = costRow(card, size);
+  const tp = typeText(card, size);
+  return `
+    <div class="face ${isLand ? "face--land" : ""}">
+      <div class="art">${artHtml(card, opts)}</div>
+      ${isLand ? landMark(card) : ""}
+      <div class="head">
+        ${nameHtml(card)}
+        ${cost ? `<div class="cost">${cost}</div>` : ""}
+      </div>
+      <div class="foot">
+        ${tp ? `<div class="tp">${esc(tp)}</div>` : ""}
+        ${size.small ? "" : `<div class="tx">${rulesHtml(card)}</div>`}
+        <div class="ft">${chips(card, size)}${ptHtml(card)}</div>
+      </div>
+    </div>`;
+}
+
+function tplE(card, size, opts) {
+  const isLand = card.t === "land";
+  const cost = costRow(card, size);
+  const tp = typeText(card, size);
+  return `
+    <div class="face ${isLand ? "face--land" : ""}">
+      ${nameHtml(card)}
+      <div class="art">
+        ${artHtml(card, opts)}
+        ${cost ? `<div class="cost">${cost}</div>` : ""}
+        ${isLand ? landMark(card) : ""}
+      </div>
+      ${tp ? `<div class="tp">${esc(tp)}</div>` : ""}
+      ${size.small ? "" : `<div class="tx">${rulesHtml(card)}</div>`}
+      <div class="ft">${chips(card, size)}${ptHtml(card)}</div>
+    </div>`;
+}
+
+const TEMPLATES = { A: tplA, B: tplB, C: tplC, D: tplD, E: tplE };
+
+/* ------------------------------------------------------------------- render */
+
+const state = { card: CARDS[0], grey: false, noArt: false, tap: false };
+
+function cardHtml(dir, card, size, opts) {
+  const tapped = opts.tap && size.small;
+  const cls = [
+    "card",
+    size.small ? "" : "card--big",
+    size.micro ? "card--micro" : "",
+    tapped ? "card--tapped" : "",
+  ].filter(Boolean).join(" ");
+  const style = `--card-w:${size.w}px; --pip:${Math.min(size.w * 0.115, 21).toFixed(1)}px;`
+    + ` --f-hi:var(--${card.f}-hi); --f-lo:var(--${card.f}-lo);`;
+  return `<div class="${cls}" style="${style}">${TEMPLATES[dir.id](card, size, opts)}</div>`;
+}
+
+function slotHtml(dir, card, size, opts) {
+  const tapped = opts.tap && size.small;
+  const h = Math.round(size.w * 1.4);
+  const box = size.small
+    ? `style="width:${tapped ? h : size.w}px;height:${tapped ? size.w : h}px"`
+    : "";
+  return `
+    <div class="cell ${size.small ? "" : "cell--big"}">
+      <div class="slot" ${box}>${cardHtml(dir, card, size, opts)}</div>
+      <div class="cell__cap">${esc(size.cap).replace("\n", "<br>")}</div>
+    </div>`;
+}
+
+function render() {
+  const opts = { noArt: state.noArt, tap: state.tap };
+  document.getElementById("gallery").innerHTML = DIRS.map((dir) => `
+    <section class="dir dir-${dir.id}">
+      <div class="dir__head">
+        <span class="dir__id">${dir.id}</span><span class="dir__name">${esc(dir.name)}</span>
+        <span class="dir__thesis">${esc(dir.thesis)}</span>
+      </div>
+      <div class="strip">${SIZES.map((s) => slotHtml(dir, state.card, s, opts)).join("")}</div>
+    </section>`).join("");
+
+  document.getElementById("why").textContent = state.card.why;
+  document.body.classList.toggle("grey", state.grey);
+  for (const btn of document.querySelectorAll("#picker button")) {
+    btn.setAttribute("aria-pressed", String(btn.dataset.key === state.card.key));
+  }
+}
+
+/* ---------------------------------------------------------------- controls */
+
+for (const size of SIZES) size.micro = size.w <= 60;
+
+const picker = document.getElementById("picker");
+for (const card of CARDS) {
+  const btn = document.createElement("button");
+  btn.textContent = card.n;
+  btn.dataset.key = card.key;
+  btn.setAttribute("aria-pressed", "false");
+  btn.addEventListener("click", () => { state.card = card; render(); });
+  picker.appendChild(btn);
+}
+
+function toggle(id, key) {
+  const btn = document.getElementById(id);
+  btn.addEventListener("click", () => {
+    state[key] = !state[key];
+    btn.setAttribute("aria-pressed", String(state[key]));
+    render();
+  });
+}
+toggle("t-grey", "grey");
+toggle("t-noart", "noArt");
+toggle("t-tap", "tap");
+
+render();
+</script>
+</body>
+</html>

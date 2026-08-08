@@ -3,32 +3,6 @@
 
 # Features
 
-## Card Designs
-
-## Overview
-- Enlarged and small (board cards, hand cards, etc) contain most of the requried information but the layout is sometimes messy (specifically on the board or hand sized smaller variant)
-- These could be improved to more closely resemble actual MTG card layouts  while still prioritizing readability/clarity (it should not be a 1:1 mapping of the basic MTG layout)
-- Additionally mana costs use custom symboles that are not reconized by the MTG community and could instead be swapped for standard svgs (ie actual icons from the game) 
-- A possible example of this layout for enlarged is:
-
-----------------
-<title>
-<mana costs>
-<art work>
-<type / subtype>
-<description>
-<power/toughness>
-----------------
-
-- this prevents long names from bleeding wrapping so often while still keeping mana values clear
-- Additionally lands are just generally bad looking and should be fully redesigned
-- Small variant should show the most critical information while the enlarged version should show essentially all information you'd find on a normal card (format optimized for this fast style gameplace)
-
-### Task
-- With this, create 5 prototypes of the small and large card types using a combination of the outline proposed above (that specifically relates to the large versions as not all the information is required at a glance for the small)
-
----
-
 ## Improve Commander Placement
 - The commander is currently placed randomly in the left corner
 - Given that this is the staple of the whole gamemode, it should instead be promoted to almost game like element when not on the board

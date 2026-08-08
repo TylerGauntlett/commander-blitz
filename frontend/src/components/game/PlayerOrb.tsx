@@ -1,8 +1,14 @@
 /**
- * A player: life, mana, and the zones you can look into.
+ * A player: their commander, life, mana, and the zones you can look into.
  *
- * Two things here are physical rather than textual, and both are borrowed from
- * the candlelit mockup because they read better than what they replace:
+ * Three things here are physical rather than textual, and they read better than
+ * what they replace:
+ *
+ * **The commander is the panel's hero.** It used to be a shrunken card face in
+ * the bottom-left corner, which is where you put a thing nobody needs to look
+ * at -- in Commander it is the thing the whole deck is about. It sits directly
+ * under the player's name now, and its cost lands one glance above the mana row
+ * that has to pay it. See `CommandZone`.
  *
  * **Life is a dial.** It is the one number people actually hunt for, so it is
  * the largest object in the column rather than a slightly bigger numeral. It
@@ -17,12 +23,13 @@
 
 import { motion, useAnimationControls } from "motion/react";
 import { useEffect, useRef } from "react";
-import type { PlayerView } from "../../api/types";
+import type { CardView, GameView, PlayerView } from "../../api/types";
 import { lossReason } from "../../logic/labels";
 import { formatManaRow, manaRow, markSpent } from "../../logic/mana";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
+import { CommandZone } from "./CommandZone";
 
 /** Commander damage becomes lethal here; warn well before it does. */
 const COMMANDER_LETHAL = 21;
@@ -95,6 +102,8 @@ function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
 }
 
 interface Props {
+  /** The whole view, because the commander plinth searches every visible zone. */
+  state: GameView;
   player: PlayerView;
   isViewer: boolean;
   isActive: boolean;
@@ -110,9 +119,17 @@ interface Props {
    * payment. Empty when nothing is hovered, or for any seat but the viewer.
    */
   spending?: ReadonlySet<number>;
+  /** Oids a legal play action names, for the plinth's ready state. */
+  playableOids?: ReadonlySet<number>;
+  /** Casting a commander out of the command zone. */
+  onCastCommander?: (card: CardView) => void;
+  onHoverCard?: (oid: number | null) => void;
+  /** Input is gated (narration playing, request in flight). */
+  locked?: boolean;
 }
 
 export function PlayerOrb({
+  state,
   player,
   isViewer,
   isActive,
@@ -122,6 +139,10 @@ export function PlayerOrb({
   targetable = false,
   onSelect,
   spending,
+  playableOids,
+  onCastCommander,
+  onHoverCard,
+  locked = false,
 }: Props) {
   const controls = useAnimationControls();
   const previous = useRef(player.life);
@@ -174,6 +195,23 @@ export function PlayerOrb({
         <span className="orb__name">{player.name}</span>
         {hasPriority && <span className="orb__priority" title="Has priority" />}
       </div>
+
+      {/*
+        The commander, above the life total rather than below the fold.
+
+        Clicking it is a gesture, not an action id -- `onCastCommander` routes
+        through the same path a hand card takes. Nothing in this subtree may
+        carry `data-action-id`; see the note at the top of `CommandZone`.
+      */}
+      <CommandZone
+        state={state}
+        pid={player.pid}
+        playableOids={playableOids ?? EMPTY}
+        compact={compact}
+        onActivate={onCastCommander}
+        onHover={onHoverCard}
+        disabled={locked}
+      />
 
       <div className="orb__life-row">
         <div
@@ -267,9 +305,10 @@ export function PlayerOrb({
       )}
 
       {/*
-        Commander tax used to live here as a `CMD +N` chip. It now rides on the
-        commander's own card in `CommandZone`, next to the mana cost it modifies
-        -- which is the only place a surcharge means anything.
+        Commander tax used to live here as a `CMD +N` chip. It rides on the
+        plinth above now, beside the mana cost it modifies and directly over the
+        mana row -- which is the only arrangement in which a surcharge means
+        anything.
       */}
       {/*
         Bottom-aligned, so the piles' heights read comparatively: a library

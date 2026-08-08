@@ -68,6 +68,13 @@ saving in space.
 `.face__watermark` renders in the art band's slot, at the art band's aspect, until
 the image map arrives. The mockup inlines its state and never loads anything.
 
+### The commander is a plinth in the info panel, not a card beside the hand
+
+The mockup draws the command zone as a small card face in its own box. The client
+draws a banner-cropped portrait with a name and a state strip, inside the player's
+info panel, for every seat. This is the fix for defect #5 below, which is where the
+reasoning lives — read that before restoring anything card-shaped here.
+
 ---
 
 ## Open defects
@@ -134,16 +141,29 @@ Ranked by severity. None of these block anything; they are the queue.
   structurally for the blocker list rather than behaviourally, with a comment
   pointing here. The play-mode hover is asserted end to end and passes.
 
-### 5. The command-zone card is cramped — medium
+### 5. The command-zone card is cramped — **resolved**, by not drawing a card
 
-- **Mockup**: `.cmdslot { --card-w: clamp(74px, 4.2vw, 100px) }`, matched by the app.
-- **App**: at 1600×950 that resolves to ~74px, and with the art band taking `1/1.4`
-  of the width the name clips to "Aesi, Tyra…" and the type line to "Legendary
-  Creatur…".
-- **Why it matters**: the commander is the one card you will cast most often in the
-  format, and it is the least legible card on screen.
-- **Fix direction**: the command zone has horizontal room the hand does not — give
-  it its own larger scale rather than inheriting a hand-sized clamp.
+- **Was**: `.cmdslot { --card-w: clamp(74px, 4.2vw, 100px) }`, matched by the app. At
+  1600×950 that resolved to ~74px, and with the art band taking `1/1.4` of the width
+  the name clipped to "Aesi, Tyra…" and the type line to "Legendary Creatur…". The
+  commander is the card you cast most often in the format and it was the least
+  legible thing on screen.
+- **Fix**: the mockup's own direction — "give it a larger scale" — could not work.
+  A card face has six things to fit and the column that holds it is a hard 190px, so
+  every pixel of extra width is a pixel of extra height in a column that also has to
+  carry a life dial, a mana row and five zone piles.
+  So it stopped being a card. `CommandZone` now renders a **plinth** inside the
+  player's info panel (`docs/roadmap.md`, "Improve Commander Placement"): a 2:1
+  banner crop of the art, the name on its own line at the full column width, and a
+  state strip. Rules text and the type line were never legible at this size anyway
+  and are one hover away in the preview rail, which is the surface rebuilt to hold
+  them.
+- **Bonus**: the plinth's state is carried on a word, the art's luminance, and a
+  glyph — three channels, none of them hue. That makes it the first interaction
+  affordance on the board that does *not* fail defect #1 below.
+- **Guards**: `e2e/cycle3.spec.ts` asserts the name is not clipped
+  (`scrollWidth <= clientWidth`); `e2e/greyscale.spec.ts` asserts the word and glyph
+  are laid out, not merely present; `tests/playerOrb.test.tsx` covers the state table.
 
 ### 6. Card type and keyword lines sit on their pixel floor — low
 

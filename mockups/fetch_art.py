@@ -38,11 +38,20 @@ MANIFEST = ART_DIR / "manifest.json"
 HEADERS = {"User-Agent": "AutoMTG-mockups/0.1", "Accept": "application/json"}
 DELAY = 0.1
 
-# Every distinct card on the mockup board state. Tokens are looked up
-# differently -- there is no `cards/named` entry for "Vampire" the token.
+# Every distinct card on the mockup board state, plus two that are not on it.
+#
+# `mockups/cards/` draws one card of each type tone rather than a board, and the
+# board state has no artifact and no instant -- two of the eight tones in
+# `typeTone`. Sol Ring (data/cards/core.cards.json) and Beast Within
+# (data/cards/aesi.cards.json) are real cards in this game's registry, so the
+# gallery stays honest about what it contains.
+#
+# Tokens are looked up differently -- there is no `cards/named` entry for
+# "Vampire" the token.
 CARDS = [
     "Acidic Slime",
     "Aesi, Tyrant of Gyre Strait",
+    "Beast Within",
     "Edgar Markov",
     "Elvish Visionary",
     "Explore",
@@ -60,6 +69,7 @@ CARDS = [
     "Mountain",
     "Nimble Mongoose",
     "Scoured Barrens",
+    "Sol Ring",
     "Thornwood Falls",
     "Vampire Neonate",
     "Vorel of the Hull Clade",
