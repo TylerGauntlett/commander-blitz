@@ -3,23 +3,6 @@
 
 # Features
 
-
----
-
-## Improved Attackers/Blockers panel
-- Attackers version of the panel make it easy to assign attackers with a single click
-- Defenders panel is more complicated in that it you have to both pick a defender and pick someone to defend against
-- Improve this panel by offering a quick way for blockers to decide of who can be blocked, who should they
-- Ensure the menu shows defenders the power/toughness of the potential attacker so they can make informed decisions
-- Additionally, this same panel can be used to play cards instead of clicking them from your hand
-    - Playable cards can use the same selected highlight color
-
-### Task
-- Make selecting attackers to block via the right panel as seemeless as possible
-- Card playing experience by showing them in the panel as well
-
----
-
 ## All Card Support
 
 ### Overview
@@ -43,8 +26,6 @@
 
 ### Task
 - Impelement a system that automatically scales cards/board areas up and down depending on the number of cards present
-- 
-
 
 ## CPU Improvements
 
@@ -81,13 +62,25 @@
 
 ### Overview
 
-- Mockups were made for a new main page
+- Mockups were made for a new main page, in [mockups/menu/](../mockups/menu/README.md).
+  All five are interactive: pick a deck, open a dossier, set difficulty, import
+  from Moxfield, open a chair to another player, press `g` for greyscale.
 - Combine together elements of the mocks:
-    - Mock 1:
-    - Mock 2:
-    - Mock 3:
-    - Mock 4:
-    - Mock 5:
+    - Mock 1 — **Command Table**: the board's own three-column anatomy, and the
+      *seat strip* — opponents are chairs you fill, each showing the deck that AI
+      holds and how well it plays. Recommended as the base.
+    - Mock 2 — **Deck Rack**: precons as physical boxes with an art window and
+      back-of-box copy; the custom deck is a *dashed gap in the rack*; the
+      dossier *expands in place* instead of opening a modal; difficulty is the
+      shipped brass life dial as a four-detent switch.
+    - Mock 3 — **Pod Lobby**: *difficulty as opponents* — one named persona per
+      seat with its capability lamps, so a pod can be one Apprentice and one
+      Archmage. The direction multiplayer costs nothing to add to.
+    - Mock 4 — **Ink & Dossier**: the *comparison matrix* — all decks rated on
+      one scale so choosing is a comparison, not four readings. Hue spent only on
+      mana; its greyscale twin is identical to the original.
+    - Mock 5 — **Planar Gate**: the screen takes the selected deck's colour.
+      Beautiful, and its greyscale twin is the honest argument against it.
 
 ### Task
 

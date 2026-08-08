@@ -168,6 +168,34 @@ describe("the scrims", () => {
   });
 });
 
+describe("the mana symbols", () => {
+  it("always resolves a size, even unscoped", () => {
+    // `width: var(--pip)` with no value is invalid at computed-value time and
+    // falls back to `auto`, and `auto` on an `<img>` is the SVG's *intrinsic*
+    // size -- 100px for these. So a symbol rendered anywhere nothing scopes
+    // `--pip` comes out the size of a card rather than missing, which is a
+    // failure nobody would think to look for.
+    const pip = rule(".pip");
+    expect(pip, ".pip rule not found").not.toBeNull();
+    expect(pip, ".pip's width has no fallback").toMatch(/width:\s*var\(--pip,\s*[\d.]+px\)/);
+    expect(pip, ".pip's height has no fallback").toMatch(/height:\s*var\(--pip,\s*[\d.]+px\)/);
+  });
+
+  it("caps the symbol size as well as flooring it", () => {
+    // The same both-ends clamp the type scale uses: past ~180px a cost row
+    // scaled purely off `--card-w` stops looking like a cost.
+    expect(CSS).toMatch(/--pip:\s*min\(calc\(var\(--card-w[^)]*\)[^)]*\),\s*[\d.]+px\)/);
+  });
+
+  it("paints no disc behind the artwork", () => {
+    // Scryfall's symbols ship fully coloured and round. A `.pip--{tone}` fill
+    // behind one would be a coloured square peeking out at the corners.
+    for (const tone of ["W", "U", "B", "R", "G", "C"]) {
+      expect(rule(`.pip--${tone}`), `.pip--${tone} is painting a fill again`).toBeNull();
+    }
+  });
+});
+
 describe("the frame", () => {
   it("floors the frame border", () => {
     // Colour identity lives on this border, and it hits a rounding cliff at pod

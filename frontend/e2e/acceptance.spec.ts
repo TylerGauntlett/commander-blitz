@@ -61,7 +61,7 @@ test("a game can be played from deal to result, with every re-themed surface wor
       () =>
         page.evaluate(
           () =>
-            [...document.querySelectorAll<HTMLImageElement>(".face__art img")].filter(
+            [...document.querySelectorAll<HTMLImageElement>(".face__art-img")].filter(
               (img) => img.naturalWidth > 0,
             ).length,
         ),
