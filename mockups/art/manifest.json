@@ -1,0 +1,128 @@
+{
+  "Acidic Slime": {
+    "artist": "Karl Kopinski",
+    "file": "acidic-slime.jpg",
+    "scryfall_id": "932d48fb-42b5-4aaa-a91c-d35cdb5e41a3",
+    "set": "cmm"
+  },
+  "Aesi, Tyrant of Gyre Strait": {
+    "artist": "Viktor Titov",
+    "file": "aesi-tyrant-of-gyre-strait.jpg",
+    "scryfall_id": "673c21f8-02b6-4ac4-b2fc-df065b4ac662",
+    "set": "dsc"
+  },
+  "Edgar Markov": {
+    "artist": "Volkan Ba\u01f5a",
+    "file": "edgar-markov.jpg",
+    "scryfall_id": "a577ba08-0aa8-45be-aa83-d5078770127c",
+    "set": "inr"
+  },
+  "Elvish Visionary": {
+    "artist": "Zuzanna Wu\u017cyk",
+    "file": "elvish-visionary.jpg",
+    "scryfall_id": "6d2f4a37-453f-4a2c-bfba-2d1227394c90",
+    "set": "hoc"
+  },
+  "Explore": {
+    "artist": "Maojin Lee",
+    "file": "explore.jpg",
+    "scryfall_id": "ab9dbf0b-2c1d-463c-b675-ff711c282e56",
+    "set": "tle"
+  },
+  "Explosive Vegetation": {
+    "artist": "John Avon",
+    "file": "explosive-vegetation.jpg",
+    "scryfall_id": "8de3fdf8-d55e-4ffc-8f8b-6314d4d467ce",
+    "set": "dsc"
+  },
+  "Falkenrath Noble": {
+    "artist": "Slawomir Maniak",
+    "file": "falkenrath-noble.jpg",
+    "scryfall_id": "f38eac93-3a0e-40e0-84f8-3670fd84ca00",
+    "set": "dsc"
+  },
+  "Forest": {
+    "artist": "Bastien Grivet",
+    "file": "forest.jpg",
+    "scryfall_id": "dce15387-4114-4b3e-91aa-5b42b45c44ac",
+    "set": "trk"
+  },
+  "Garruk's Packleader": {
+    "artist": "Nils Hamm",
+    "file": "garruk-s-packleader.jpg",
+    "scryfall_id": "dafeafa0-b937-4387-8626-449a810486b4",
+    "set": "c19"
+  },
+  "Gyre Sage": {
+    "artist": "Tyler Jacobson",
+    "file": "gyre-sage.jpg",
+    "scryfall_id": "be573ae7-967a-4b98-9058-ec3ff82ff63f",
+    "set": "moc"
+  },
+  "Island": {
+    "artist": "Bastien Grivet",
+    "file": "island.jpg",
+    "scryfall_id": "f3cc07cd-cc79-4745-b0b7-eade60175cc3",
+    "set": "trk"
+  },
+  "Mountain": {
+    "artist": "Bastien Grivet",
+    "file": "mountain.jpg",
+    "scryfall_id": "2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
+    "set": "trk"
+  },
+  "Nimble Mongoose": {
+    "artist": "Kev Walker",
+    "file": "nimble-mongoose.jpg",
+    "scryfall_id": "8a6374ad-71be-422e-bd76-4f08fbf43048",
+    "set": "mh1"
+  },
+  "Scoured Barrens": {
+    "artist": "Brent Hollowell",
+    "file": "scoured-barrens.jpg",
+    "scryfall_id": "b4b47b80-69ed-44b0-afa0-ca90206dc16d",
+    "set": "tdm"
+  },
+  "Thornwood Falls": {
+    "artist": "Alexander Ostrowski",
+    "file": "thornwood-falls.jpg",
+    "scryfall_id": "ebb502c2-5fd0-46a9-b77d-010f4a942056",
+    "set": "tdm"
+  },
+  "Vampire Neonate": {
+    "artist": "Daarken",
+    "file": "vampire-neonate.jpg",
+    "scryfall_id": "c7649d57-3537-45a2-b57e-98e7d32025c9",
+    "set": "jmp"
+  },
+  "Vorel of the Hull Clade": {
+    "artist": "Mike Bierek",
+    "file": "vorel-of-the-hull-clade.jpg",
+    "scryfall_id": "82c8cac8-29ce-43cc-bdb4-428c614d8545",
+    "set": "lcc"
+  },
+  "Yavimaya Elder": {
+    "artist": "Matt Cavotta",
+    "file": "yavimaya-elder.jpg",
+    "scryfall_id": "27dacbde-a646-418c-b569-4a4f11c9faae",
+    "set": "dsc"
+  },
+  "Zendikar's Roil": {
+    "artist": "Sam Burley",
+    "file": "zendikar-s-roil.jpg",
+    "scryfall_id": "60297593-2438-48d7-9414-48af114a93d2",
+    "set": "znc"
+  },
+  "token:Elemental": {
+    "artist": "Andrew Mar",
+    "file": "token-elemental.jpg",
+    "scryfall_id": "57b98846-85e3-47c7-a903-29953d0b0e8a",
+    "set": "tsos"
+  },
+  "token:Vampire": {
+    "artist": "Svetlin Velinov",
+    "file": "token-vampire.jpg",
+    "scryfall_id": "c5cb4398-e180-472e-8662-2a5902bafb4f",
+    "set": "tinr"
+  }
+}

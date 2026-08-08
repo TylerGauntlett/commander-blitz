@@ -1,0 +1,239 @@
+# Board theme exploration
+
+Five static mockups of one board state, for picking a direction before any
+component is touched. Open any `.html` directly — no build, no server, no network.
+
+```
+01-arcane-slate.html      graphite + brass   · priority stone, phase ribbon
+02-candlelit-table.html   walnut + leather   · zones as physical furniture
+03-neon-arena.html        near-black + neon  · strike band, opponent mana meter
+04-ink-and-signal.html    monochrome         · actions grouped by source card
+05-planar-art.html        indigo + real art  · the art what-if
+shots/                    PNG + greyscale twin of each, 2560×1278
+fetch_art.py              pulls art/ (mockup 5 only)
+_state.js                 the shared board state, kept readable; inlined per file
+```
+
+All five render **turn 8 of the reference screenshot, at declare-attackers**, with
+the same 30 permanents, the same hand, the same life totals — so differences on
+screen are differences in design, not in content.
+
+---
+
+## What's wrong with the current board
+
+Four things, in the order they cost the most:
+
+**1. The table is green, and green is already taken.** `--felt-0: #0a1410` in
+`frontend/src/theme.css` is a green ground. But `--playable: #5ce08a` is the "you
+can do this" rim, and `.face--land-G` is the Forest tone. The one hue carrying the
+most important signal on the board is the same hue as the board. Meanwhile
+`frontend/src/styles/cards.css` goes to real trouble encoding card type in the
+paper and colour identity in the border — an encoding spent against a ground that
+competes with it. Every mockup here starts by making the table neutral, and it is
+the single cheapest change on this page.
+
+**2. Every control has the same weight.** `.btn` in `frontend/src/styles/ui.css` is
+one 7×14px rectangle serving "Attack with 0", "Quit", "Undo", "Auto-pass" and the
+speed toggle alike. The most-pressed control in the game looks exactly like the
+least-pressed one. All five mockups split controls into three tiers: one large
+non-rectangular commit button, contextual choices, and a demoted utility strip.
+
+**3. Activated abilities have no presence on the card.** `Table.onBoardCard`
+([Table.tsx:356](../frontend/src/components/game/Table.tsx#L356)) already routes a
+click on a permanent to its `kind === "activate"` actions, and `LegalAction`
+carries `source_oid` + `ability_index`. But nothing draws it — the only surface is
+a sentence-shaped ghost button in `.bar__overflow`. All five mockups put a rune on
+the card and a popover behind it.
+
+**4. Two thirds of the screen is dead.** `.play` in `board.css` gives opponents
+`1.25fr` against the viewer's `1fr`, permanently, so a one-opponent board spends
+its largest row on empty felt while your own creature lane — the thing the current
+decision is about — falls below the fold. That is
+[playtest-feedback-03.md](../docs/playtest-feedback-03.md) Cycle 4 item 1, still
+open. Every mockup here sizes the opponent row to its content instead.
+
+There is a fifth, found while building: **the client hard-codes `--card-w: 104px`**,
+so a 2560px display shows exactly the same small cards a 1366px one does. All five
+mockups use `clamp()` instead — and, more importantly, **key it off viewport
+height, not width**. The binding constraint on a 1600×950 laptop is vertical: three
+lanes of cards plus a hand simply do not fit, which is why the shipped client's
+`--hand-scale` media queries exist. But `--hand-scale` only ever shrinks the *hand*,
+never the board, so the board is what spills. Scaling both together is what makes
+all five of these fit at 950px.
+
+---
+
+## The five, compared
+
+| | 01 Arcane Slate | 02 Candlelit | 03 Neon Arena | 04 Ink & Signal | 05 Planar |
+|---|---|---|---|---|---|
+| **Ground** | cool graphite | walnut + oxblood | near-black + rim light | warm monochrome | indigo void |
+| **Commit control** | brass hex "priority stone" | wax seal | slanted neon slab | red stadium pill | gold slab |
+| **Ability affordance** | violet halo + rune | violet rune, no pulse | violet diamond, hard glow | violet ring | violet rune |
+| **Opponent board** | smaller cards | dimmed by candle falloff | **lands → mana meter** | smaller cards | smaller cards |
+| **Combat surface** | staged-attacker strip in foot | same | **strike band between boards** | grouped action index | staged strip |
+| **Phase track** | 5 phases, combat expands | brass plaque | angled HUD segments | underline only | pill segments |
+| **Survives greyscale** | yes | yes | yes | **it is the design** | **no** |
+| **Risk to ship** | low | medium (art direction) | medium (new combat surface) | low | high |
+
+### 01 — Arcane Slate *(recommended)*
+The conservative one. Nothing about the information architecture changes; the
+ground goes neutral, panels become recessed wells instead of 1px boxes, and the
+commit action becomes a hex-cut "priority stone" that always says the one thing
+the turn is waiting on. The phase track collapses 13 equal ticks into 5 phases and
+expands only the live one. This is the direction that could ship a piece at a time.
+
+### 02 — Candlelit Table
+The physical one. Its real idea is **zones as furniture**: `Lib 72 / GY 3 / Exile 1`
+stop being text chips and become card piles whose height is the count, and life
+becomes a brass dial. That reads well and takes more room than the chips did — the
+opponent's whole side column had to shrink twice to fit. Worth stealing the life
+dial and the piles even if the wood is not to taste.
+
+### 03 — Neon Arena
+The most structurally interesting, and the two ideas are separable from the skin:
+
+- **The strike band.** Declared attackers leave the creature row and stand in a lit
+  band between the boards, leaving a ghost behind. One "at Edgar Markov" plate
+  replaces five copies of "Attack p1 with …". The wrapping sentence list is gone.
+- **The mana meter.** The opponent's three lands become `R×2 open, W/B×1 tapped`.
+  That is [playtest-feedback-03.md](../docs/playtest-feedback-03.md) Cycle 4 item 2,
+  and `produces` already ships the data. Note the meter lists one entry **per
+  source, not per symbol** — Scoured Barrens makes W *or* B and counting it twice
+  would claim mana that does not exist.
+
+### 04 — Ink & Signal
+One rule: hue is spent on exactly two things — mana, and interaction state.
+Everything else is grey, and card type is carried by the luminance ladder plus the
+glyph. This is not a style choice, it is `cards.css`'s own argument taken to its
+conclusion: the seven type fills are already graded 0.58 → 0.92 relative luminance
+*precisely so the encoding survives greyscale*, and `frontend/tests/palette.test.ts`
+asserts it. The question this mockup asks is whether the hue currently spent on
+card bodies is buying anything that the green "you can play this" rim would rather
+have. Its second idea — **actions grouped under the card that offers them** — is
+the best answer here to the wall of server-written sentences, and is independent
+of the palette.
+
+### 05 — Planar (the art what-if)
+Real art, and **the greyscale twin is the verdict**. Compare
+`shots/05-planar-art.png` with `shots/05-planar-art-grey.png`: in greyscale every
+permanent becomes an indistinguishable grey tile. Land, creature and enchantment
+are no longer separable, because the art band overwrites the exact channel the
+luminance ladder lives in. The frame keeps a hairline of type tint and it is not
+enough at 110px.
+
+The panel on the right is the other bet, and it is the one worth taking: **text
+frames on the board, art only in the preview rail**. It costs nothing — the board's
+encoding is untouched — and it delivers most of what art is actually for, which is
+recognising and enjoying the card you are reading.
+
+---
+
+## Card art: what actually works
+
+[docs/card-hydration.md](../docs/card-hydration.md) proposes Moxfield search → card
+id → asset CDN, fetched once and stored in the repo. Each leg, tested:
+
+| Step | Result |
+|---|---|
+| `api2.moxfield.com/v2/cards/search/user?q=…` | **403 Cloudflare interstitial** to any scripted client |
+| `assets.moxfield.net/cards/card-AWala-normal.webp` | 200, 53 KB — but needs the id only the blocked search returns, and serves the *whole card*, not the art |
+| `api.scryfall.com/cards/named?exact=…` | 200, open, no key, returns `image_uris.art_crop` |
+| `cards.scryfall.io/art_crop/….jpg` | 200, ~40–100 KB |
+| `api.scryfall.com/cards/search?q=!"Vampire" t:token` | 200 — tokens resolve too |
+
+**The doc's architecture is right and its endpoint is not.** Keep fetch-once →
+store-in-repo → skip-if-present → no service running anywhere; swap the lookup to
+Scryfall. That is also a strict improvement, because `art_crop` is already the
+cropped art band a frame wants, where Moxfield's asset would need the art cropped
+back out of a rendered card.
+
+`fetch_art.py` implements exactly that in ~60 lines of stdlib. Running it twice
+downloads nothing the second time.
+
+**Coverage, measured across both decks:** 133 of 138 non-token cards resolve.
+The five that do not are custom names in `data/cards/` — `Gyre Strait Leviathan`
+(internally `aetherling_serpent`), `Surge of Growth`, `Tidal Broodmaster`,
+`Wave of Growth`, `Whelming Tide`. So an art pipeline needs a text-frame fallback
+for ~4% of cards, and mockup 05 shows that fallback on the board rather than
+pretending it away.
+
+21 crops for this board state come to 1.4 MB.
+
+---
+
+## Recommendation
+
+**Take 01 as the base, and port three things from the others.**
+
+01 is the direction that can be adopted incrementally without breaking the
+Playwright suite — it keeps every structural class name, so it lands as token
+edits plus targeted rules rather than a component rewrite.
+
+Port order, cheapest and highest-confidence first:
+
+1. **Neutral ground.** `frontend/src/theme.css` — `--felt-*` and `--rail-*` only.
+   No component changes at all. This is the biggest visible win per line changed.
+2. **Three button tiers.** `frontend/src/styles/ui.css` — add `.btn--commit` (large,
+   shaped, keyboard-hinted) and demote the tool row to icons. `ActionBar.tsx` already
+   separates `PRIMARY` from the overflow, so the split exists; only the styling of
+   each tier is missing.
+3. **The ability rune.** `cards.css` + `CardFace.tsx` + a `hasAbility` prop from
+   `Table.tsx`, computed the way `onBoardCard` already computes it:
+   `actions.filter(a => a.kind === "activate" && a.source_oid === card.oid)`.
+   **Caveat for whoever builds this:** the server can express an *available*
+   ability but not an unaffordable one — `legality.py`'s `unplayable_reason` covers
+   hand cards only — so a greyed-out "you can't afford this" state needs a new
+   field. The mockups only ever show the available state.
+4. **Fluid `--card-w`.** One line in `theme.css`; note `.card--tapped` measures as
+   its own height, so any test reading card size must read `--card-w`, as
+   [playtest-feedback-03.md](../docs/playtest-feedback-03.md) already warns.
+5. **Opponent row sizes to content.** `board.css` `.play` grid rows `1.25fr 1fr`
+   → `auto 1fr`. Closes Cycle 4 item 1.
+
+Then, as separate pieces of work with their own arguments:
+
+- **The mana meter** (from 03) closes Cycle 4 item 2 and is worth doing on its own.
+- **The strike band** (from 03) is the most convincing answer to the combat
+  sentence-list, but it moves a surface `full-game.spec.ts` and `clarity.spec.ts`
+  both drive — every legal pair must keep its own `data-action-id`, which is what
+  lets the action bar stand down.
+- **Art in the preview rail only** (from 05). Low risk, and `fetch_art.py` is
+  already the importer `docs/roadmap.md` asks for.
+
+**Do not** take art onto the board itself without re-running the greyscale check;
+`shots/05-planar-art-grey.png` is what that costs.
+
+---
+
+## Notes on fidelity
+
+- Same board state everywhere, from `data/cards/*.json` — card names, costs and P/T
+  are the real ones. `Sunlit Barrens` in the original screenshot is **Scoured Barrens**.
+- **One deliberate substitution:** one of the eight Forests is a Terramorphic
+  Expanse. Nothing on the screenshot's board has an available activated ability —
+  Gyre Sage's only ability is a *mana* ability, and `engine/legality.py` never
+  offers those as actions (the payment solver taps them). Terramorphic Expanse's
+  `{T}, Sacrifice:` is a real `activate` action at this exact step, so it is what
+  the ability affordance is demonstrated on.
+- Each file inlines its own copy of the state and renderer, because each must open
+  standalone from `file://`. `_state.js` is the readable master; edit it and
+  re-inline.
+- Verified per file at **both 2560×1278 and 1600×950**: no horizontal or vertical
+  overflow, no console errors, no external network requests, no broken images.
+  Mockup 05 requests only local `art/*.jpg`.
+- Two of those checks are worth keeping if any of this is built, because
+  `overflow:hidden` on `body` hides both failures completely — the page reports
+  `scrollHeight === clientHeight` while the board visibly runs under the foot:
+  - **last-lane spill** — measure the last `.lane`'s `bottom` against
+    `.table__foot`'s `top`. Measuring the *mat* does not work: it is stretched to
+    its grid row, so its box always ends exactly at the row edge no matter how far
+    the cards inside overflow. Both of those bugs were in these mockups and both
+    passed a naive overflow check.
+  - **panel collapse** — assert the action list still has a height. At 950px it
+    silently flattened to 0 in three of the five before a `min-height` floor.
+
+  This is the same lesson [playtest-feedback-03.md](../docs/playtest-feedback-03.md)
+  draws from the mana-pip bug: an assertion about content passes happily through a
+  layout failure, so where a visual property reduces to a number, assert the number.

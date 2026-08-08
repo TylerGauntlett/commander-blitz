@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Auto MTG — Planar (art what-if)</title>
+<style>
+/* ============================================================================
+   PLANAR -- the art what-if
+   ----------------------------------------------------------------------------
+   The other four mockups keep cards text-only, which is the deliberate choice
+   docs/frontend.md records. This one asks what changes if cards have art, using
+   REAL crops pulled by mockups/fetch_art.py into mockups/art/ -- fetched once,
+   stored in the repo, no service, no network at render time.
+
+   The trade being examined is specific. frontend/src/styles/cards.css spends the
+   largest channel on a card -- the paper -- encoding card TYPE, graded across
+   relative luminance 0.58->0.92 so it survives greyscale, with
+   frontend/tests/palette.test.ts asserting the spread. An art band overwrites
+   exactly that channel with something whose luminance nobody controls. So this
+   mockup keeps a type-tinted frame *around* the art, and the greyscale capture
+   in mockups/shots/ is the actual test of whether that is enough.
+
+   Two panels, deliberately, because they are different bets:
+     LEFT (the board) -- art-first permanents: art, name strip, P/T, no rules text.
+     RIGHT (the rail) -- the cheap hybrid: text frames on the board, art only in
+     the preview. Risks nothing, and may be most of the value.
+
+   Five of the 138 non-token cards across both decks have no printing to fetch
+   (Gyre Strait Leviathan is `aetherling_serpent`, a renamed card). Those fall
+   back to the text frame, which is what the shipped client would have to do --
+   so one is on the board here on purpose.
+   ========================================================================== */
+
+:root {
+  --void-0:#0b0a16; --void-1:#141328; --void-2:#1d1b38;
+  --edge:rgba(150,140,255,.16); --edge-hi:rgba(170,160,255,.3);
+  --astral:#8f7fe8; --astral-hi:#c3b6ff;
+
+  --playable:#5ce08a; --targetable:#58b6ff; --staged:#ffc14d;
+  --attacking:#ff6b5e; --danger:#ff5c5c; --gold:#ffd479; --ability:#c39bff;
+
+  --stock:#f3ece0; --stock-shade:#ddd2be; --stock-ink:#17130d;
+  --stock-ink-dim:#5d5346; --stock-rule:#b9ad96;
+  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
+  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-generic:#cfc9bd;
+
+  --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
+
+  --card-w: clamp(80px, 4.3vw, 110px);
+  --card-r: calc(var(--card-w) * .06);
+  --font: "Segoe UI", Inter, system-ui, sans-serif;
+}
+* { box-sizing:border-box; }
+html,body,#root { height:100%; margin:0; }
+body {
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90,190,220,.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+  color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button { font:inherit; color:inherit; cursor:pointer; }
+.spacer { flex:1; }
+.tabular { font-variant-numeric:tabular-nums; }
+.table { display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100%; }
+.pane { border-radius:12px; background:rgba(20,19,40,.6); border:1px solid var(--edge);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45); }
+
+/* --- Header -------------------------------------------------------------- */
+.head { display:flex; align-items:center; gap:16px; padding:9px 18px; border-bottom:1px solid var(--edge);
+  background:linear-gradient(180deg, rgba(143,127,232,.12), transparent); }
+.head__turn { display:flex; align-items:baseline; gap:9px; }
+.head__turn b { font-size:20px; font-weight:800; color:var(--astral-hi); }
+.head__turn span { font-size:11.5px; color:var(--text-faint); }
+.steps { display:flex; gap:5px; flex:1; margin:0; padding:0; list-style:none; }
+.ph { display:flex; align-items:center; gap:10px; padding:5px 14px; border-radius:999px;
+  color:var(--text-faint); font-size:11.5px; white-space:nowrap; }
+.ph--past { color:var(--text-dim); }
+.ph--now { flex:1; min-width:0; color:var(--astral-hi);
+  background:linear-gradient(180deg, rgba(143,127,232,.26), rgba(143,127,232,.08));
+  border:1px solid var(--edge-hi); }
+.ph__name { font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:11px; }
+.ph__steps { display:flex; gap:3px; margin:0; padding:0; list-style:none; overflow:hidden; }
+.st { padding:2px 9px; border-radius:999px; font-size:10.5px; opacity:.55; }
+.st--now { background:var(--astral-hi); color:#1b1533; opacity:1; font-weight:800; }
+.head__who { padding:5px 15px; border-radius:999px; border:1px solid rgba(92,224,138,.4);
+  background:rgba(92,224,138,.1); color:var(--playable); font-size:12.5px; font-weight:700; }
+
+/* --- Body ---------------------------------------------------------------- */
+.table__body { display:grid;
+  grid-template-columns:clamp(180px,11.8vw,244px) minmax(0,1fr) clamp(272px,17.4vw,352px);
+  gap:12px; min-height:0; padding:12px; }
+.play { display:grid; grid-template-rows:auto minmax(0,1fr); gap:12px; min-width:0; min-height:0; }
+.play__opponents { display:flex; gap:12px; justify-content:center; }
+.play__opponents .mat { flex:0 1 auto; max-width:100%; }
+.play__mine { min-height:0; display:flex; }
+.play__mine .mat { flex:1; }
+.rail { display:flex; flex-direction:column; gap:12px; min-height:0; }
+.panel { padding:11px 13px; }
+.panel__title { display:flex; align-items:center; gap:7px; margin:0 0 8px; color:var(--astral);
+  font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+.panel__empty { color:var(--text-faint); font-size:12px; font-style:italic; }
+.log__lines { display:flex; flex-direction:column; gap:3px; max-height:26vh; overflow-y:auto; }
+.log__line { color:var(--text-dim); font-size:11.5px; line-height:1.45; margin:0; }
+.log__line--turn { color:var(--astral-hi); font-weight:700; }
+
+/* --- Mats ---------------------------------------------------------------- */
+.mat { display:grid; grid-template-columns:clamp(148px,9.7vw,188px) minmax(0,1fr); gap:12px; padding:10px; min-height:0; }
+.mat--compact { grid-template-columns:clamp(136px,8.9vw,170px) minmax(0,1fr); --card-w:clamp(64px,3.4vw,86px); padding:8px; }
+.mat__side { display:flex; flex-direction:column; gap:9px; min-width:0; }
+.mat__lanes { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.orb { padding:10px 12px; border-radius:10px; background:rgba(0,0,0,.34); border:1px solid var(--edge); }
+.orb--active { border-color:var(--edge-hi); box-shadow:0 0 26px rgba(143,127,232,.14); }
+.orb__name { font-weight:700; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.orb__life { font-size:clamp(30px,2.4vw,42px); font-weight:800; line-height:1.05; }
+.orb__life--foe { color:#ffb2ab; }
+.orb__mana { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.mana-pip { width:11px; height:11px; border-radius:50%; border:1px solid rgba(0,0,0,.5); }
+.mana-pip--W{background:var(--mana-W)} .mana-pip--U{background:var(--mana-U)}
+.mana-pip--B{background:var(--mana-B)} .mana-pip--R{background:var(--mana-R)}
+.mana-pip--G{background:var(--mana-G)} .mana-pip--C{background:var(--mana-C)}
+.mana-pip--any{background:conic-gradient(var(--mana-W) 0 72deg,var(--mana-U) 72deg 144deg,var(--mana-B) 144deg 216deg,var(--mana-R) 216deg 288deg,var(--mana-G) 288deg 360deg)}
+.orb__zones { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.zone-chip { padding:3px 8px; border-radius:5px; background:rgba(255,255,255,.04);
+  border:1px solid var(--edge); color:var(--text-dim); font-size:11px; white-space:nowrap; }
+
+.lane { display:grid; grid-template-columns:clamp(58px,4vw,78px) minmax(0,1fr); gap:10px;
+  align-items:center; padding:4px 7px; }
+.lane__label { display:flex; flex-direction:column; color:var(--text-faint); font-size:9.5px;
+  letter-spacing:.12em; text-transform:uppercase; }
+.lane__count { color:var(--text-dim); font-size:15px; font-weight:800; }
+.lane__cards { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-start; }
+.mat--compact .lane { grid-template-columns:minmax(0,1fr); padding:3px 4px; }
+.mat--compact .lane__label { display:none; }
+.mat--compact .lane__cards { gap:8px; }
+
+/* --- Cards --------------------------------------------------------------- */
+.card { position:relative; width:var(--card-w); height:calc(var(--card-w)*1.4); flex:0 0 auto; }
+.card--tapped { width:calc(var(--card-w)*1.4); height:var(--card-w); }
+.card__pivot { width:100%; height:100%; transform-origin:50% 50%; }
+.card--tapped .card__pivot { width:var(--card-w); height:calc(var(--card-w)*1.4);
+  margin-left:calc(var(--card-w)*.2); margin-top:calc(var(--card-w)*-.2); transform:rotate(90deg); }
+.face { position:relative; display:flex; flex-direction:column; width:100%; height:100%;
+  padding:calc(var(--card-w)*.04); gap:calc(var(--card-w)*.026); overflow:hidden;
+  border:2px solid #2b2f36; border-radius:var(--card-r);
+  background:linear-gradient(160deg, var(--stock) 0%, var(--stock-shade) 100%);
+  color:var(--stock-ink); font-size:calc(var(--card-w)*.082); line-height:1.25;
+  box-shadow:0 1px 2px rgba(0,0,0,.6), 0 8px 18px rgba(0,0,0,.5); }
+.face--W{border-color:#d8cfa8} .face--U{border-color:#4a86b8} .face--B{border-color:#4c4550}
+.face--R{border-color:#b8624a} .face--G{border-color:#4e8a5c} .face--C{border-color:#8a8f96}
+.face--gold{border-color:#b99a45} .face--land{border-color:#6f5a3e}
+.face--commander { border-color:var(--gold); box-shadow:0 0 0 1px rgba(255,212,121,.5), 0 8px 18px rgba(0,0,0,.5); }
+.face--token { border-style:dashed; border-color:#7a8b99; }
+.face--type-land{--stock:#d6c7a8;--stock-shade:#c6b186}
+.face--type-creature{--stock:#ebc9bc;--stock-shade:#e0a894}
+.face--type-sorcery{--stock:#eecfdf;--stock-shade:#e1a9c7}
+.face--type-enchantment{--stock:#e4d9f1;--stock-shade:#cab5e3}
+.face--type-artifact{--stock:#e5eaf0;--stock-shade:#c5d1dd}
+.face--type-instant{--stock:#e4f2f7;--stock-shade:#bce0ec}
+.face--type-other{--stock:#f8f6f1;--stock-shade:#e7decf}
+.face--land-W{--stock:#daca89;--stock-shade:#cdb862}
+.face--land-U{--stock:#afcde3;--stock-shade:#8ab6d6}
+.face--land-B{--stock:#d1c5da;--stock-shade:#b9a5c6}
+.face--land-R{--stock:#ebbfb5;--stock-shade:#e19d8c}
+.face--land-G{--stock:#a6d69e;--stock-shade:#85c67a}
+.face--land-C{--stock:#c5c9ce;--stock-shade:#aab0b6}
+.face--land-multi{--stock:#e2c77d;--stock-shade:#d9b653}
+
+.face__title { display:flex; align-items:flex-start; gap:calc(var(--card-w)*.03); font-weight:700; }
+.face__glyph { flex:0 0 auto; color:var(--stock-ink-dim); font-size:calc(var(--card-w)*.088); line-height:1.15; }
+.face__name { flex:1; min-width:0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
+  -webkit-box-orient:vertical; font-size:calc(var(--card-w)*.086); }
+.face__cost { display:flex; flex:0 0 auto; gap:1px; }
+.face__type { padding-bottom:calc(var(--card-w)*.02); border-bottom:1px solid var(--stock-rule);
+  color:var(--stock-ink-dim); font-size:calc(var(--card-w)*.064); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* THE ART BAND. A window cut in the paper, keeping a hairline of the type tint
+   all the way round so the fill that encodes card type is never fully replaced. */
+.face__art {
+  position:relative; flex:1; min-height:0; border-radius:calc(var(--card-w)*.03);
+  overflow:hidden; background:#2a2438;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);
+}
+.face__art img { width:100%; height:100%; object-fit:cover; display:block; }
+/* A missing crop is a real case -- five deck cards have no printing. It gets a
+   plate, not a broken image, and the frame around it is unchanged. */
+.face__art--none { display:grid; place-items:center;
+  background:repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 6px, transparent 6px 12px), #6b6152; }
+.face__art--none span { color:rgba(255,255,255,.6); font-size:calc(var(--card-w)*.085); font-weight:700;
+  letter-spacing:.06em; text-align:center; padding:0 4px; }
+
+.face__watermark { display:flex; flex:1; align-items:center; justify-content:center; gap:calc(var(--card-w)*.04); min-height:0; }
+.watermark-pip { display:flex; align-items:center; justify-content:center;
+  width:calc(var(--card-w)*.3); height:calc(var(--card-w)*.3); border-radius:50%;
+  border:1px solid rgba(0,0,0,.18); color:rgba(255,255,255,.92);
+  font-size:calc(var(--card-w)*.15); font-weight:800; line-height:1; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+.watermark-pip--W{background:var(--mana-W);color:rgba(40,34,20,.85);text-shadow:none}
+.watermark-pip--U{background:var(--mana-U)} .watermark-pip--B{background:var(--mana-B)}
+.watermark-pip--R{background:var(--mana-R)} .watermark-pip--G{background:var(--mana-G)}
+.watermark-pip--C{background:var(--mana-C);color:rgba(40,40,44,.85);text-shadow:none}
+/* On a land the mana symbol rides the art rather than replacing it. */
+.face__art .watermark-row { position:absolute; left:0; right:0; bottom:calc(var(--card-w)*.03);
+  display:flex; justify-content:center; gap:calc(var(--card-w)*.035); }
+.face__art .watermark-pip { width:calc(var(--card-w)*.26); height:calc(var(--card-w)*.26);
+  font-size:calc(var(--card-w)*.13); box-shadow:0 2px 5px rgba(0,0,0,.55); }
+
+.face__rules { display:flex; flex:1; flex-direction:column; justify-content:safe center; overflow:hidden;
+  font-size:calc(var(--card-w)*.062); line-height:1.3; }
+.face__footer { display:flex; align-items:flex-end; gap:4px; margin-top:auto; padding-top:calc(var(--card-w)*.02); }
+.face__stats { padding:0 calc(var(--card-w)*.04); border:1px solid var(--stock-rule);
+  border-radius:calc(var(--card-w)*.03); background:rgba(255,255,255,.62);
+  font-size:calc(var(--card-w)*.095); font-weight:800; font-variant-numeric:tabular-nums; }
+.face__kwline { flex:1; color:#4a6b52; font-size:calc(var(--card-w)*.066); font-weight:700;
+  overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.face__tag { position:absolute; padding:0 3px; border-radius:3px; font-size:calc(var(--card-w)*.055); font-weight:800; }
+.face__tag--cmd { bottom:calc(var(--card-w)*.03); right:calc(var(--card-w)*.03); background:var(--gold); color:#2a1e05; }
+.face__tag--sick { top:calc(var(--card-w)*.03); right:calc(var(--card-w)*.03); background:rgba(0,0,0,.5); color:#fff; }
+
+.pip { display:inline-flex; align-items:center; justify-content:center;
+  min-width:calc(var(--card-w)*.115); height:calc(var(--card-w)*.115); padding:0 2px; border-radius:999px;
+  background:var(--mana-generic); color:#1a1a1a; font-size:calc(var(--card-w)*.072); font-weight:800;
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.25); }
+.pip--W{background:var(--mana-W)} .pip--U{background:var(--mana-U)} .pip--B{background:var(--mana-B)}
+.pip--R{background:var(--mana-R)} .pip--G{background:var(--mana-G)} .pip--C{background:var(--mana-C)}
+.pip--tap{background:#4a4f52;color:#f2f5f4}
+.pip--inline{min-width:1.2em;height:1.2em;margin:0 .08em;padding:0;font-size:.9em;line-height:1;vertical-align:-.2em}
+
+.card::after { content:""; position:absolute; inset:-3px; border-radius:calc(var(--card-r)+3px); pointer-events:none; opacity:0; }
+.card--playable::after { opacity:1; box-shadow:0 0 0 2px var(--playable), 0 0 18px rgba(92,224,138,.5); }
+.card--staged::after { opacity:1; box-shadow:0 0 0 3px var(--staged), 0 0 22px rgba(255,193,77,.5); }
+.card--ability::after { opacity:1; box-shadow:0 0 0 2px var(--ability), 0 0 20px rgba(195,155,255,.5); }
+.rune { position:absolute; z-index:5; top:calc(var(--card-w)*-.07); right:calc(var(--card-w)*-.07);
+  display:grid; place-items:center; width:calc(var(--card-w)*.3); height:calc(var(--card-w)*.3);
+  border-radius:50%; background:radial-gradient(circle at 34% 28%, #ddd0ff, #7d55c9);
+  border:1px solid #efe6ff; color:#1c1230; font-size:calc(var(--card-w)*.16); font-weight:900;
+  line-height:1; box-shadow:0 0 15px rgba(195,155,255,.75); }
+.ability-pop { position:absolute; z-index:20; left:calc(100% + 14px); top:0;
+  width:max(240px, calc(var(--card-w)*2.2)); padding:11px 13px; border-radius:11px;
+  background:linear-gradient(180deg,#251b40,#161029); border:1px solid rgba(195,155,255,.5);
+  box-shadow:0 18px 44px rgba(0,0,0,.75); }
+.ability-pop::after { content:""; position:absolute; right:100%; top:16px;
+  border:7px solid transparent; border-right-color:#251b40; }
+.ability-pop__label { color:var(--ability); font-size:9.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.ability-pop__text { margin:5px 0 9px; font-size:12px; line-height:1.4; }
+.ability-pop__go { width:100%; padding:8px 0; border-radius:9px; border:1px solid rgba(195,155,255,.55);
+  background:linear-gradient(180deg,#7f5cc8,#553b92); color:#f6efff; font-size:12.5px; font-weight:800; }
+
+.cardstack { position:relative; flex:0 0 auto; width:var(--card-w); height:calc(var(--card-w)*1.4); }
+.cardstack--tapped { width:calc(var(--card-w)*1.4); height:var(--card-w); }
+.cardstack__slot { position:absolute; top:0; left:0; }
+.cardstack__count { position:absolute; right:-7px; bottom:-7px; z-index:40; min-width:23px; padding:1px 6px;
+  border-radius:999px; background:#12102a; border:1px solid var(--edge-hi); color:var(--astral-hi);
+  font-size:11px; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; }
+
+/* --- Right rail: the hybrid bet ------------------------------------------ */
+.preview { padding:12px; display:flex; flex-direction:column; gap:9px; align-items:center; flex:0 0 auto; }
+.preview__note { align-self:flex-start; color:var(--astral); font-size:9.5px; font-weight:800;
+  letter-spacing:.15em; text-transform:uppercase; }
+/* The preview shows a full card, art and rules together -- the version that
+   risks nothing, because nothing on the board has changed to get it. */
+.bigcard { width:100%; border-radius:12px; overflow:hidden; border:1px solid var(--edge-hi);
+  background:linear-gradient(160deg,#f3ece0,#ddd2be); color:#17130d;
+  box-shadow:0 10px 30px rgba(0,0,0,.55); }
+.bigcard__art { position:relative; aspect-ratio:1.4; background:#2a2438; }
+.bigcard__art img { width:100%; height:100%; object-fit:cover; display:block; }
+.bigcard__title { display:flex; align-items:center; gap:7px; padding:8px 10px 3px; font-weight:800; font-size:13.5px; }
+.bigcard__cost { display:flex; gap:2px; margin-left:auto; --card-w:150px; }
+.bigcard__type { padding:0 10px 5px; color:#5d5346; font-size:11px; border-bottom:1px solid var(--stock-rule); margin-bottom:6px; }
+.bigcard__rules { padding:0 10px 8px; font-size:12px; line-height:1.4; --card-w:150px; }
+.bigcard__foot { display:flex; padding:0 10px 9px; }
+.bigcard__pt { margin-left:auto; padding:1px 8px; border:1px solid var(--stock-rule); border-radius:5px;
+  background:rgba(255,255,255,.6); font-weight:800; font-variant-numeric:tabular-nums; }
+.preview__facts { display:grid; grid-template-columns:auto 1fr; gap:3px 10px; width:100%; margin:0; font-size:11.5px; }
+.preview__facts dt { color:var(--text-faint); }
+.preview__facts dd { margin:0; color:var(--text-dim); }
+
+.acts { padding:12px; display:flex; flex-direction:column; gap:9px; flex:1 1 auto; min-height:0; }
+.acts__prompt { font-size:13.5px; font-weight:700; }
+.acts__hint { margin:0; color:var(--text-dim); font-size:11.5px; line-height:1.4; }
+.acts__list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; min-height:0; flex:1 1 auto; }
+.opt { display:flex; align-items:center; gap:9px; width:100%; padding:8px 11px; border-radius:9px;
+  border:1px solid var(--edge); background:rgba(255,255,255,.035); color:var(--text); font-size:12.5px; text-align:left; }
+.opt:hover { border-color:var(--edge-hi); background:rgba(255,255,255,.07); }
+.opt--on { border-color:var(--staged); background:rgba(255,193,77,.13); color:var(--staged); }
+.opt__pt { margin-left:auto; font-weight:800; font-variant-numeric:tabular-nums; opacity:.85; }
+.opt__key { display:grid; place-items:center; width:19px; height:19px; border-radius:5px;
+  background:rgba(255,255,255,.07); border:1px solid var(--edge-hi); color:var(--text-faint);
+  font-size:10.5px; font-weight:800; }
+.tools { display:flex; align-items:center; gap:5px; padding-top:9px; border-top:1px solid var(--edge); }
+.tool { display:grid; place-items:center; min-width:30px; height:28px; padding:0 8px; border-radius:7px;
+  border:1px solid transparent; background:transparent; color:var(--text-faint); font-size:11.5px; font-weight:600; }
+.tool:hover { background:rgba(255,255,255,.06); color:var(--text); }
+.tool--on { color:var(--astral-hi); border-color:var(--edge-hi); }
+.speed { display:flex; margin-right:auto; border:1px solid var(--edge); border-radius:7px; overflow:hidden; }
+.speed button { padding:4px 9px; border:0; background:rgba(255,255,255,.03); color:var(--text-faint); font-size:11px; font-weight:700; }
+.speed button.on { background:var(--astral-hi); color:#1b1533; }
+
+.commit-dock { flex:0 0 auto; display:flex; flex-direction:column; gap:8px; }
+.commit { display:flex; align-items:center; justify-content:center; gap:12px; padding:17px 22px;
+  border-radius:14px; border:0; color:#1b0f05;
+  background:linear-gradient(180deg,#ffd98c,#e0a63f 55%,#b87c1c);
+  box-shadow:0 4px 0 #7d5310, 0 0 32px rgba(224,166,63,.3); }
+.commit:hover { background:linear-gradient(180deg,#ffe6a8,#eeb44d 55%,#c98a22); }
+.commit__main { font-size:21px; font-weight:900; }
+.commit__key { padding:3px 9px; border-radius:6px; background:rgba(0,0,0,.2); font-size:11px; font-weight:800; }
+.commit-alt { display:flex; gap:8px; }
+.commit-alt button { flex:1; padding:8px 10px; border-radius:999px; border:1px solid var(--edge);
+  background:transparent; color:var(--text-dim); font-size:12px; font-weight:600; }
+.commit-alt button:hover { color:var(--text); border-color:var(--edge-hi); }
+
+/* --- Foot ---------------------------------------------------------------- */
+.table__foot { display:flex; flex-direction:column; gap:6px; padding:6px 14px 12px;
+  border-top:1px solid var(--edge); background:linear-gradient(180deg, rgba(143,127,232,.08), transparent); }
+.hand-row { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:flex-end; gap:14px; }
+.cmdzone { padding:7px; border-radius:11px; border:1px solid rgba(255,212,121,.34); background:rgba(255,212,121,.07); }
+.cmdzone__label { color:var(--gold); font-size:9.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.cmdslot { position:relative; --card-w:clamp(74px,4.2vw,100px); margin-top:5px; }
+.mat--compact .cmdslot { --card-w:clamp(46px,2.5vw,60px); }
+.mat--compact .cmdzone { padding:4px; }
+.mat--compact .cmdzone__label { display:none; }
+.cmdslot__tax { position:absolute; top:-7px; right:-7px; padding:1px 7px; border-radius:999px;
+  background:#241a04; border:1px solid rgba(255,212,121,.6); color:var(--gold); font-size:10.5px; font-weight:800; }
+.cmdslot__where { display:block; padding-top:3px; color:var(--text-faint); font-size:9.5px; text-align:center; }
+.hand { position:relative; display:flex; justify-content:center; --card-w:clamp(92px,5.4vw,136px);
+  min-height:calc(var(--card-w)*1.4 + 44px); padding:10px 0 16px; }
+.hand__rail { position:relative; height:calc(var(--card-w)*1.4); }
+.hand__slot { position:absolute; top:0; transform-origin:50% 130%; }
+
+.acts__list { min-height:74px; }
+
+/* Short viewports -- see 01. The preview's full art-and-rules card is the first
+   thing to give up room here, since the board is the art panel in this theme. */
+@media (max-height: 1050px) {
+  :root { --card-w: clamp(62px, 8.1vh, 88px); }
+  .mat--compact { --card-w: clamp(50px, 6.5vh, 70px); }
+  .bigcard__art { aspect-ratio:2; }
+  .bigcard__rules { font-size:11px; }
+  .hand { --card-w: clamp(74px, 10.2vh, 106px); }
+  .cmdslot { --card-w: clamp(56px, 7.6vh, 78px); }
+  .mat--compact .cmdslot { --card-w: clamp(36px, 4.8vh, 50px); }
+  .orb__life { font-size:clamp(26px, 3.6vh, 38px); }
+  .commit { padding:13px 20px; }
+  .commit__main { font-size:18px; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* Board state -- turn 8, DECLARE_ATTACKERS. `art` is the slug fetch_art.py wrote
+   into mockups/art/; a card with no `art` renders the missing-crop plate. */
+const OPP_LANDS = [
+  {n:"Mountain",tl:"Basic Land — Mountain",t:"land",f:"land",land:"R",produces:"R",art:"mountain",count:2},
+  {n:"Scoured Barrens",tl:"Land",t:"land",f:"land",land:"multi",produces:"WB",tapped:true,art:"scoured-barrens"},
+];
+const OPP_CREATURES = [
+  {n:"Vampire",tl:"Token — Vampire",t:"creature",f:"B",pt:"1/1",token:true,tapped:true,art:"token-vampire",count:2},
+  {n:"Vampire Neonate",cost:"1B",tl:"Creature — Vampire",t:"creature",f:"B",pt:"0/3",art:"vampire-neonate"},
+  {n:"Vampire",tl:"Token — Vampire",t:"creature",f:"B",pt:"1/1",token:true,art:"token-vampire"},
+  {n:"Falkenrath Noble",cost:"3B",tl:"Creature — Vampire Noble",t:"creature",f:"B",pt:"2/2",kw:"Flying",art:"falkenrath-noble"},
+];
+const MY_LANDS = [
+  {n:"Forest",tl:"Basic Land — Forest",t:"land",f:"land",land:"G",produces:"G",art:"forest",count:7},
+  {n:"Island",tl:"Basic Land — Island",t:"land",f:"land",land:"U",produces:"U",art:"island",count:3},
+  {n:"Thornwood Falls",tl:"Land",t:"land",f:"land",land:"multi",produces:"GU",art:"thornwood-falls"},
+  {n:"Terramorphic Expanse",tl:"Land",t:"land",f:"land",land:"C",
+   ability:"{T}, Sacrifice: Search for a basic land tapped.",abilityOpen:true},
+];
+const MY_CREATURES = [
+  /* No printing exists for this one -- it is `aetherling_serpent` renamed in
+     data/cards/aesi.cards.json. The fallback plate is the point. */
+  {n:"Gyre Strait Leviathan",cost:"5UU",tl:"Creature — Leviathan",t:"creature",f:"U",pt:"7/7",kw:"Trample",staged:true},
+  {n:"Aesi, Tyrant of Gyre Strait",cost:"4GU",tl:"Legendary Creature — Serpent",t:"creature",f:"gold",pt:"5/5",kw:"Trample",cmd:true,staged:true,art:"aesi-tyrant-of-gyre-strait"},
+  {n:"Elvish Visionary",cost:"1G",tl:"Creature — Elf Shaman",t:"creature",f:"G",pt:"1/1",art:"elvish-visionary"},
+  {n:"Elemental Token",tl:"Token — Elemental",t:"creature",f:"G",pt:"2/2",token:true,staged:true,art:"token-elemental",count:2},
+  {n:"Acidic Slime",cost:"3GG",tl:"Creature — Ooze",t:"creature",f:"G",pt:"2/2",kw:"Deathtouch",sick:true,art:"acidic-slime"},
+  {n:"Yavimaya Elder",cost:"1G",tl:"Creature — Human Druid",t:"creature",f:"G",pt:"1/2",sick:true,art:"yavimaya-elder"},
+];
+const MY_OTHER = [{n:"Zendikar's Roil",cost:"4G",tl:"Enchantment",t:"enchantment",f:"G",art:"zendikar-s-roil"}];
+const HAND = [
+  {n:"Vorel of the Hull Clade",cost:"1GU",tl:"Legendary Creature — Human Merfolk",t:"creature",f:"gold",pt:"1/4",art:"vorel-of-the-hull-clade",playable:true},
+  {n:"Explosive Vegetation",cost:"3G",tl:"Sorcery",t:"sorcery",f:"G",art:"explosive-vegetation",playable:true},
+  {n:"Garruk's Packleader",cost:"4G",tl:"Creature — Beast",t:"creature",f:"G",pt:"3/3",art:"garruk-s-packleader",playable:true},
+  {n:"Nimble Mongoose",cost:"G",tl:"Creature — Mongoose",t:"creature",f:"G",pt:"1/1",kw:"Hexproof",art:"nimble-mongoose",playable:true},
+  {n:"Gyre Sage",cost:"1G",tl:"Creature — Elf Druid",t:"creature",f:"G",pt:"0/2",art:"gyre-sage",playable:true},
+  {n:"Explore",cost:"1G",tl:"Sorcery",t:"sorcery",f:"G",art:"explore",playable:true},
+];
+const COMMANDER = {n:"Aesi, Tyrant of Gyre Strait",cost:"4GU",tl:"Legendary Creature — Serpent",t:"creature",f:"gold",pt:"5/5",kw:"Trample",cmd:true,art:"aesi-tyrant-of-gyre-strait"};
+const OPP_COMMANDER = {n:"Edgar Markov",cost:"3RWB",tl:"Legendary Creature — Vampire Knight",t:"creature",f:"gold",pt:"4/4",kw:"First strike",cmd:true,art:"edgar-markov"};
+const LOG = [["— Your turn 8 —",1],["You play Forest",0],["Zendikar's Roil creates a 2/2 Elemental",0],
+  ["Aesi, Tyrant of Gyre Strait draws you a card",0],["You cast Acidic Slime",0],["Acidic Slime destroys Bloodcrypt Vault",0]];
+
+const GLYPH = {creature:"◆",land:"▲",artifact:"■",enchantment:"✦",instant:"»",sorcery:"●",planeswalker:"★",other:"·"};
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function pips(cost){ if(!cost) return "";
+  return [...cost.matchAll(/(\d+|[WUBRGC])/g)].map(m=>`<span class="pip pip--${/^[WUBRGC]$/.test(m[1])?m[1]:"generic"}">${m[1]}</span>`).join(""); }
+function sym(text){ return esc(text).replace(/\{([^}]+)\}/g,(whole,s)=>{ const S=s.toUpperCase();
+  if(/^[WUBRGC]$/.test(S)) return `<span class="pip pip--inline pip--${S}">${S}</span>`;
+  if(S==="T") return `<span class="pip pip--inline pip--tap">↷</span>`;
+  if(/^\d+$/.test(S)) return `<span class="pip pip--inline">${S}</span>`; return whole; }); }
+
+/** The art window, or the honest plate when there is no printing to fetch. */
+function artBand(c){
+  const marks = c.produces
+    ? `<div class="watermark-row">${[...c.produces].map(s=>`<span class="watermark-pip watermark-pip--${s}">${s}</span>`).join("")}</div>`
+    : "";
+  if (!c.art) return `<div class="face__art face__art--none"><span>no art</span>${marks}</div>`;
+  return `<div class="face__art"><img src="art/${c.art}.jpg" alt="">${marks}</div>`;
+}
+
+/* Art-first: the board card is art, a name strip and a P/T. Rules text has moved
+   to the rail entirely -- at 110px it was never readable anyway. */
+function face(c){
+  const cls=["face",`face--${c.f}`,`face--type-${c.t}`,c.land?`face--land-${c.land}`:"",
+    c.cmd?"face--commander":"",c.token?"face--token":""].filter(Boolean).join(" ");
+  return `<div class="${cls}">
+    <div class="face__title"><span class="face__glyph">${GLYPH[c.t]||"·"}</span>
+      <span class="face__name">${esc(c.n)}</span>${c.cost?`<span class="face__cost">${pips(c.cost)}</span>`:""}</div>
+    <div class="face__type">${esc(c.tl)}</div>
+    ${artBand(c)}
+    <div class="face__footer">${c.kw?`<span class="face__kwline">${esc(c.kw)}</span>`:`<span class="spacer"></span>`}
+      ${c.pt?`<span class="face__stats">${c.pt}</span>`:""}</div>
+    ${c.cmd?`<span class="face__tag face__tag--cmd">CMD</span>`:""}
+    ${c.sick?`<span class="face__tag face__tag--sick">&#9203;</span>`:""}</div>`;
+}
+function card(c){
+  const mods=["card",c.tapped?"card--tapped":"",c.staged?"card--staged":"",
+    c.playable?"card--playable":"",c.ability?"card--ability":""].filter(Boolean).join(" ");
+  const rune=c.ability?`<span class="rune">↷</span>`:"";
+  const pop=c.abilityOpen?`<div class="ability-pop"><div class="ability-pop__label">Ability available</div>
+    <div class="ability-pop__text">${sym(c.ability)}</div><button class="ability-pop__go">Activate</button></div>`:"";
+  return `<div class="${mods}"><div class="card__pivot">${face(c)}</div>${rune}${pop}</div>`;
+}
+function pile(c){
+  if(!c.count||c.count<2) return card(c);
+  const back=card({...c,ability:null,abilityOpen:false,staged:false});
+  return `<div class="cardstack${c.tapped?" cardstack--tapped":""}">
+    <div class="cardstack__slot" style="transform:translate(8px,-5px);opacity:.85">${back}</div>
+    <div class="cardstack__slot">${card(c)}</div>
+    <span class="cardstack__count">×${c.count}</span></div>`;
+}
+function lane(label,cards,{compact=false}={}){
+  const total=cards.reduce((n,c)=>n+(c.count||1),0);
+  return `<div class="lane">${compact?"":`<div class="lane__label"><span>${label}</span><span class="lane__count tabular">${total}</span></div>`}
+    <div class="lane__cards">${cards.map(c=>pile(c)).join("")}</div></div>`;
+}
+function manaRow(spec){ return spec.map(s=>`<span class="mana-pip mana-pip--${s}"></span>`).join(""); }
+
+const oppMat = `
+<section class="mat mat--compact pane">
+  <div class="mat__side">
+    <div class="orb">
+      <div class="orb__name">Edgar Markov</div>
+      <div class="orb__life orb__life--foe tabular">25</div>
+      <div class="orb__mana">${manaRow(["R","R","any"])}</div>
+      <div class="orb__zones"><span class="zone-chip">Lib 84</span><span class="zone-chip">Hand 4</span>
+        <span class="zone-chip">GY 6</span><span class="zone-chip">CMD 1</span></div>
+    </div>
+    <div class="cmdzone"><div class="cmdslot">${card(OPP_COMMANDER)}<span class="cmdslot__tax">+2</span>
+      <span class="cmdslot__where">Command zone</span></div></div>
+  </div>
+  <div class="mat__lanes">
+    ${lane("Lands",OPP_LANDS,{compact:true})}
+    ${lane("Creatures",OPP_CREATURES,{compact:true})}
+  </div>
+</section>`;
+
+const myMat = `
+<section class="mat pane">
+  <div class="mat__side">
+    <div class="orb orb--active">
+      <div class="orb__name">You</div>
+      <div class="orb__life tabular">34</div>
+      <div class="orb__mana">${manaRow(["G","G","G","G","G","G","G","U","U","U","any","C"])}</div>
+      <div class="orb__zones"><span class="zone-chip">Lib 72</span><span class="zone-chip">Hand 6</span>
+        <span class="zone-chip">GY 3</span><span class="zone-chip">Exile 1</span></div>
+    </div>
+  </div>
+  <div class="mat__lanes">
+    ${lane("Lands",MY_LANDS)}
+    ${lane("Creatures",MY_CREATURES)}
+    ${lane("Enchant",MY_OTHER)}
+  </div>
+</section>`;
+
+function handFan(){
+  const n=HAND.length, spread=118, arc=2.2, width=(n-1)*spread+138;
+  const slots=HAND.map((c,i)=>{ const mid=(n-1)/2, rot=(i-mid)*arc, droop=Math.abs(i-mid)**2*1.3;
+    const hovered=i===4, y=hovered?-46:droop;
+    return `<div class="hand__slot" style="left:${i*spread}px;z-index:${hovered?40:i};
+      transform:rotate(${rot}deg) translateY(${y}px) ${hovered?"scale(1.06)":""}">${card(c)}</div>`;
+  }).join("");
+  return `<div class="hand"><div class="hand__rail" style="width:${width}px">${slots}</div></div>`;
+}
+
+document.getElementById("root").innerHTML = `
+<div class="table">
+  <header class="head">
+    <div class="head__turn"><b>T8</b><span>round 8</span></div>
+    <ol class="steps">
+      <li class="ph ph--past"><span class="ph__name">Beginning</span></li>
+      <li class="ph ph--past"><span class="ph__name">Main 1</span></li>
+      <li class="ph ph--now"><span class="ph__name">Combat</span>
+        <ol class="ph__steps"><li class="st">Begin</li><li class="st st--now">Declare attackers</li>
+        <li class="st">Blockers</li><li class="st">First strike</li><li class="st">Damage</li><li class="st">End</li></ol></li>
+      <li class="ph"><span class="ph__name">Main 2</span></li>
+      <li class="ph"><span class="ph__name">End</span></li>
+    </ol>
+    <div class="head__who">Your turn</div>
+  </header>
+
+  <div class="table__body">
+    <aside class="rail">
+      <section class="panel pane"><h3 class="panel__title">Stack</h3><div class="panel__empty">empty</div></section>
+      <section class="panel pane"><h3 class="panel__title">Log</h3>
+        <div class="log__lines">${LOG.map(([t,turn])=>`<p class="log__line${turn?" log__line--turn":""}">${esc(t)}</p>`).join("")}</div></section>
+    </aside>
+
+    <main class="play">
+      <div class="play__opponents">${oppMat}</div>
+      <div class="play__mine">${myMat}</div>
+    </main>
+
+    <aside class="rail">
+      <section class="preview pane">
+        <div class="preview__note">Reading a card — art and rules together</div>
+        <div class="bigcard">
+          <div class="bigcard__art"><img src="art/aesi-tyrant-of-gyre-strait.jpg" alt=""></div>
+          <div class="bigcard__title">Aesi, Tyrant of Gyre Strait
+            <span class="bigcard__cost">${pips("4GU")}</span></div>
+          <div class="bigcard__type">Legendary Creature — Serpent</div>
+          <div class="bigcard__rules">Trample. Whenever you play a land, draw a card.
+            You may play an additional land on each of your turns.</div>
+          <div class="bigcard__foot"><span class="bigcard__pt">5/5</span></div>
+        </div>
+        <dl class="preview__facts">
+          <dt>Status</dt><dd style="color:var(--staged)">Attacking Edgar Markov</dd>
+          <dt>Art</dt><dd>Viktor Titov</dd>
+        </dl>
+      </section>
+
+      <section class="acts pane">
+        <div class="acts__prompt">Declare attackers</div>
+        <p class="acts__hint">Click a creature to send it. Click again to call it back.</p>
+        <div class="acts__list">
+          <button class="opt opt--on"><span class="opt__key">1</span>Gyre Strait Leviathan<span class="opt__pt">7/7</span></button>
+          <button class="opt opt--on"><span class="opt__key">2</span>Aesi, Tyrant of Gyre Strait<span class="opt__pt">5/5</span></button>
+          <button class="opt opt--on"><span class="opt__key">3</span>Elemental Token<span class="opt__pt">2/2</span></button>
+          <button class="opt"><span class="opt__key">4</span>Elemental Token<span class="opt__pt">2/2</span></button>
+          <button class="opt"><span class="opt__key">5</span>Elvish Visionary<span class="opt__pt">1/1</span></button>
+          <button class="opt" style="border-color:rgba(195,155,255,.45)"><span class="opt__key" style="color:var(--ability)">↷</span>Terramorphic Expanse<span class="opt__pt">ability</span></button>
+        </div>
+        <div class="tools">
+          <div class="speed"><button>0.5x</button><button class="on">1x</button><button>≫</button></div>
+          <button class="tool tool--on">🔊</button><button class="tool">⏩</button>
+          <button class="tool">↺</button><button class="tool">✕</button>
+        </div>
+      </section>
+
+      <div class="commit-dock">
+        <button class="commit"><span class="commit__main">Attack with 3</span><span class="commit__key">↵</span></button>
+        <div class="commit-alt"><button>All attack (2)</button><button>No attacks</button></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="table__foot">
+    <div class="hand-row">
+      <div class="cmdzone">
+        <div class="cmdzone__label">Commander</div>
+        <div class="cmdslot">${card(COMMANDER)}<span class="cmdslot__tax">+4</span>
+          <span class="cmdslot__where">On the battlefield</span></div>
+      </div>
+      ${handFan()}
+    </div>
+  </div>
+</div>`;
+</script>
+</body>
+</html>
