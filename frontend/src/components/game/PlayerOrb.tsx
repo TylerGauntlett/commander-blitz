@@ -266,43 +266,52 @@ export function PlayerOrb({
         answers "and what will that leave me with" as well as "what do I have".
         Which lands those are comes from the engine's solved payment, never from
         arithmetic here -- see logic/mana.ts.
+
+        The row itself is still conditional -- an empty mana row would be a
+        control that says nothing -- but the *slot* around it is not. Mana
+        appears and empties several times a turn, and letting the orb grow and
+        shrink with it moved the mat, the opponents row, and with it the whole
+        board underneath the player's cursor. The slot keeps its line whether or
+        not there is anything to draw in it.
       */}
-      {pips.length > 0 && (
-        <div
-          className="orb__mana"
-          data-testid={`mana-${player.pid}`}
-          data-mana={formatManaRow(pips)}
-          data-spending={spentCount}
-          title={
-            spentCount > 0
-              ? `${pips.length} available; this spell taps ${spentCount}`
-              : `${pips.length} available: ${formatManaRow(pips)}`
-          }
-        >
-          {pips.map((pip) => (
-            <span
-              key={pip.key}
-              className={[
-                "mana-pip",
-                `mana-pip--${pip.tone}`,
-                pip.floating ? "mana-pip--floating" : "",
-                pip.spent ? "mana-pip--spent" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              title={
-                pip.spent
-                  ? `${pip.symbols.join(" or ")} — this spell would tap it`
-                  : pip.symbols.length > 1
-                    ? `Either ${pip.symbols.join(" or ")}`
-                    : pip.floating
-                      ? `${pip.symbols[0]} in pool`
-                      : pip.symbols[0]
-              }
-            />
-          ))}
-        </div>
-      )}
+      <div className="orb__manaslot">
+        {pips.length > 0 && (
+          <div
+            className="orb__mana"
+            data-testid={`mana-${player.pid}`}
+            data-mana={formatManaRow(pips)}
+            data-spending={spentCount}
+            title={
+              spentCount > 0
+                ? `${pips.length} available; this spell taps ${spentCount}`
+                : `${pips.length} available: ${formatManaRow(pips)}`
+            }
+          >
+            {pips.map((pip) => (
+              <span
+                key={pip.key}
+                className={[
+                  "mana-pip",
+                  `mana-pip--${pip.tone}`,
+                  pip.floating ? "mana-pip--floating" : "",
+                  pip.spent ? "mana-pip--spent" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                title={
+                  pip.spent
+                    ? `${pip.symbols.join(" or ")} — this spell would tap it`
+                    : pip.symbols.length > 1
+                      ? `Either ${pip.symbols.join(" or ")}`
+                      : pip.floating
+                        ? `${pip.symbols[0]} in pool`
+                        : pip.symbols[0]
+                }
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/*
         Commander tax used to live here as a `CMD +N` chip. It rides on the

@@ -46,15 +46,50 @@
 
 ---
 
-## Standardize Card Placement
+## Standardize Card Placement — done
 
 ### Overview
-- The current board layout puts the lands furthest away from the player
-- This is not traditionally the offical way to play MTG as it's almost always cloeset to the player
-- Additionally, enchancements and creatures typically appear side by side (but with a gap always breaking them up)
+- The board used to render four full-width rows in the same order on every mat,
+  with the lands furthest from the player who controls them
+- That is the opposite of how the game is physically played: your mana sits in
+  the row nearest you, and creatures go out front
+- Creatures and enchantments were also split into separate rows, when on a table
+  they sit side by side
 
-### Task
-- Add support for a standard MTG board layout
+### What shipped
+- **Two bands per mat.** Creatures (with planeswalkers) beside the global
+  artifacts and enchantments across the front, split 2:1 because that is where
+  the cards accumulate; lands in the band behind them. They remain two separate
+  drop targets — only the row is shared.
+- **Lands nearest their controller.** `LANES` in
+  `frontend/src/logic/zoneGrouping.ts` is now declared front to back, so the
+  array is the layout.
+- **Opponent mats are mirrored** (`PlayerMat`'s `mirrored` prop). Their lands sit
+  against their own edge of the screen, which puts the two creature bands either
+  side of the table's midline and makes combat read as a line.
+- **Auras and equipment are tucked under their host**, not loose in the
+  enchantment zone. `attachmentsFor` pulls anything attached to a permanent on
+  the same mat out of the lanes and `CardStack` draws it peeking out from
+  underneath, still individually hoverable and clickable. An attachment whose
+  host is on somebody else's board stays a loose card rather than vanishing.
+- **The board holds still.** Every lane is rendered at a full card's height on
+  every mat whether or not it holds anything, and the orb's mana row has a
+  reserved slot. Before this, playing your first creature shoved the land row
+  down by a whole card and killing it shoved the row back up; an opponent doing
+  the same pushed your entire board down the screen on their turn; and tapping
+  mana did it again several times a turn. The cost is one card height of empty
+  slot on a board that will fill anyway.
+
+### Deliberate divergence from the reference layout
+The reference diagram puts library / graveyard / exile in a strip beside the
+lands. They stay in the orb column instead: graveyard and exile are consulted
+rarely enough that the width is better spent on the board, and the orb already
+gives each one a labelled pile.
+
+Guarded by two cases in `frontend/e2e/layout.spec.ts`: "lands sit nearest the
+player who controls them" and "the board does not move as permanents enter and
+leave play". Both orders render perfectly well and a jumping board renders
+perfectly well, so only a measurement notices a regression.
 
 ---
 

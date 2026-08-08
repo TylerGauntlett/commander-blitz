@@ -54,7 +54,8 @@ A ribbon across the top, three columns, and the hand along the foot.
 - **Left rail** — the stack, and the event log.
 - **Middle** — opponents on a row that sizes to its content, then your own mat. Each
   mat's first column is that player's info panel (`PlayerOrb`): their commander,
-  their life dial, their mana, their zone piles.
+  their life dial, their mana, their zone piles. The board itself is two *bands*
+  — see below.
 - **Right rail** — the card preview, then **combat**, then the tool strip. Combat
   moved here from a full-width banner under the board: the decision now sits
   directly under the card you are reading rather than as far from it as the
@@ -64,6 +65,56 @@ A ribbon across the top, three columns, and the hand along the foot.
 - **Foot** — the hand, and nothing else. Your commander used to sit to its left; it
   is the hero of your info panel now, drawn as a plinth rather than a card. See
   `CommandZone` and `docs/mockup-fidelity.md` defect #5.
+
+## The board is laid out the way it is played
+
+Each mat's battlefield is two bands, and which comes first depends on whose mat it
+is:
+
+```
+OPPONENT   │ LANDS                     │  ← their edge
+           │ CREATURES   │ GLOBAL A/E  │
+═══════════╪═════════════╪═════════════╡  ← combat is declared across here
+           │ CREATURES   │ GLOBAL A/E  │
+YOU        │ LANDS                     │  ← your edge, above the hand
+```
+
+Three facts, none of them cosmetic:
+
+**Your lands are the row nearest you.** They used to be the row furthest away, which
+is the opposite of how anybody arranges a table. `LANES` in `logic/zoneGrouping.ts`
+is declared front to back and `PlayerMat` renders it in that order, so the array *is*
+the layout.
+
+**An opponent's mat is mirrored** (`PlayerMat`'s `mirrored` prop, set from `Table`).
+Their lands sit against their own edge of the screen, which puts the two creature
+bands next to each other with the table's midline between them — combat then reads
+as a line rather than as a diagonal past a wall of mana.
+
+**Creatures and the global artifacts and enchantments share the front band**, split
+2:1 because that is where the cards accumulate. They stay two separate drop targets;
+only the row is shared. Planeswalkers ride with the creatures, since they are what
+combat is pointed at.
+
+**Every lane is always rendered, at a full card's height, on every mat.** That is a
+layout decision paid for in dead space and it buys the board holding still. Empty
+lanes used to collapse to a 30px strip and opponents dropped theirs entirely, so the
+first creature of the game shoved your land row down by a whole card, killing it
+shoved the row back up, and the same thing on an opponent's mat grew the opponents
+row and pushed your entire board down the screen on somebody else's turn. The orb's
+mana row did it a third time, several times a turn, which is why it now has a
+reserved slot (`.orb__manaslot`) rather than appearing and vanishing with the mana.
+`e2e/layout.spec.ts` fails the run if any band drifts more than a few pixels of
+rounding over a game.
+
+Auras and Equipment are not loose cards. `attachmentsFor` pulls anything with an
+`attached_to` on the same mat out of the lanes, and `CardStack` draws it tucked under
+its host, offset far enough that its title bar stays readable and clickable. A host
+is therefore never merged into a stack — see the note in `logic/stacking.ts`.
+
+The one thing the reference layout has that this does not is the zone piles beside
+the lands. They stay in the orb, where they already have a labelled home: graveyard
+and exile are consulted rarely enough that the board is a better use of the width.
 
 ## Dragging is a shortcut, not a rule
 
@@ -223,11 +274,17 @@ npm run lint             # biome check .
 npx playwright test      # end-to-end against the real engine
 ```
 
-144 unit and component tests: lane assignment, seat rotation, stat and counter rendering,
-mana pip splitting, action matching, target disambiguation, stack keying and splitting,
-event-to-beat mapping, card-type tones and glyphs, the mana row and the unplayable-card
-hint, and — via `@testing-library/react` — the card face, the action bar and every
-decision kind the prompt dialog has to cover.
+374 unit and component tests: lane assignment and band order, attachment resolution,
+seat rotation, stat and counter rendering, mana pip splitting, action matching, target
+disambiguation, stack keying and splitting, event-to-beat mapping, card-type tones and
+glyphs, the mana row and the unplayable-card hint, and — via `@testing-library/react` —
+the card face, the action bar, the player mat and every decision kind the prompt dialog
+has to cover.
+
+`tests/playerMat.test.tsx` carries more weight than most: the tucked-attachment path is
+real and unit-tested, but **neither shipped precon contains an Aura or an Equipment**, so
+no game and no e2e spec can currently reach it. Until the card catalogue grows (see
+[roadmap.md](roadmap.md), "All Card Support"), that file is its only coverage.
 
 The Playwright suite boots uvicorn and vite itself and plays the real UI:
 
@@ -236,6 +293,12 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
   action, plus a 4-player pod. **If any decision kind has no surface in the UI the loop
   runs out of buttons and the spec fails**, which is the bug most worth catching.
 - `stacking.spec.ts` — duplicate lands collapse to one counted stack and fan out on hover.
+- `layout.spec.ts` — the measurements no content assertion can make: nothing runs under
+  the hand, no panel collapses to zero, cards scale with the viewport, each player's
+  lands are the band nearest *them*, and no band drifts as permanents enter and leave.
+  Both band orders render fine and a jumping board renders fine, so a flipped `LANES`,
+  a dropped `mirrored` prop and a re-collapsed empty lane are each only visible as a
+  comparison of two numbers.
 - `clarity.spec.ts` — the information surfaces from
   [playtest-feedback-02.md](playtest-feedback-02.md): the mana pip row agrees with its own
   summary, a dimmed hand card explains itself in a sentence, card types render distinct

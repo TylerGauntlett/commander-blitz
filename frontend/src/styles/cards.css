@@ -1030,6 +1030,27 @@
   left: 0;
 }
 
+/*
+ * An aura or equipment, peeking out from under the permanent it is on.
+ *
+ * The offset alone would read as two cards that happen to overlap. Knocking the
+ * attachment back -- dimmer, and with a rim where it passes under the host --
+ * makes the pair read as one object with a stack of effects on it, which is the
+ * fact the player is actually tracking.
+ *
+ * It comes back to full strength on hover, because at that point it has been
+ * singled out and is about to be clicked.
+ */
+.cardstack__attach .card {
+  filter: brightness(0.82) saturate(0.9);
+  box-shadow: -1px -1px 0 1px rgb(0 0 0 / 0.55);
+  transition: filter var(--t-base) ease;
+}
+
+.cardstack__attach:hover .card {
+  filter: none;
+}
+
 .cardstack__count {
   position: absolute;
   right: -6px;

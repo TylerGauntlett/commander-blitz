@@ -92,6 +92,31 @@ describe("stackCards", () => {
   it("returns nothing for an empty battlefield", () => {
     expect(stackCards([])).toEqual([]);
   });
+
+  it("hands a host its attachments", () => {
+    const bear = card({ oid: 1, card_id: "bear" });
+    const aura = card({ oid: 9, card_id: "pump", attached_to: 1 });
+    const groups = stackCards([bear], new Map([[1, [aura]]]));
+    expect(groups[0].attachments.map((c) => c.oid)).toEqual([9]);
+  });
+
+  it("never merges an enchanted permanent with a bare copy of the same card", () => {
+    // `stackKey` describes a card, not what is hanging off it, so without this
+    // the enchanted bear would hide behind the plain one and take its aura --
+    // a whole permanent -- off the board with it.
+    const aura = card({ oid: 9, card_id: "pump", attached_to: 1 });
+    const groups = stackCards(
+      [card({ oid: 1, card_id: "bear" }), card({ oid: 2, card_id: "bear" })],
+      new Map([[1, [aura]]]),
+    );
+    expect(groups).toHaveLength(2);
+    expect(groups.map((g) => g.attachments.length)).toEqual([1, 0]);
+  });
+
+  it("leaves attachments empty when none were passed", () => {
+    const groups = stackCards([forest({ oid: 1 }), forest({ oid: 2 })]);
+    expect(groups[0].attachments).toEqual([]);
+  });
 });
 
 describe("splitActionable", () => {

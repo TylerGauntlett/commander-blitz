@@ -8,38 +8,111 @@
 
 import type { CardView, GameView } from "../api/types";
 
-export const LANES = ["Lands", "Creatures", "Artifacts & Enchantments", "Other"] as const;
+/**
+ * The lanes, declared front to back -- the order they render for the viewer,
+ * nearest the opponent first.
+ *
+ * A player's lands go in the row closest to them, which is how the game is
+ * physically played and the opposite of the order this used to declare. The two
+ * front lanes share one band; lands own the band behind them. See `PlayerMat`.
+ *
+ * These strings are identity, not copy: `Lane` derives `data-dropzone` and
+ * `data-testid` from them, and several e2e specs select on `lane-0-Lands`. What
+ * the player reads comes from `LANE_LABELS`.
+ */
+export const LANES = ["Creatures", "Artifacts & Enchantments", "Lands"] as const;
 export type Lane = (typeof LANES)[number];
 
-/** Which lane a permanent belongs in. Creature beats land for a creature-land. */
+export const LANE_LABELS: Record<Lane, string> = {
+  Creatures: "Creatures",
+  "Artifacts & Enchantments": "Global Artifacts & Enchantments",
+  Lands: "Lands",
+};
+
+/**
+ * Which lane a permanent belongs in.
+ *
+ * Creature beats land, so a creature-land is where its body can be blocked
+ * rather than where it taps -- the same call `laneFor` has always made.
+ *
+ * Planeswalkers ride with the creatures: they are what combat is pointed at, so
+ * they belong on the line combat is declared across, not in a leftover row.
+ *
+ * The two attachment clauses answer different questions. On the battlefield an
+ * Aura or Equipment is placed by `attached_to`, because it is drawn tucked
+ * behind its host. From *hand* nothing is attached yet, and `canDropOnLane` asks
+ * this same function which lane to highlight for a drag -- the subtype clause is
+ * what makes an Aura light up the band it is actually heading for.
+ */
 export function laneFor(card: CardView): Lane {
+  if (card.attached_to != null) return "Creatures";
   if (card.types.includes("Creature")) return "Creatures";
+  if (card.types.includes("Planeswalker")) return "Creatures";
   if (card.types.includes("Land")) return "Lands";
-  if (card.types.includes("Artifact") || card.types.includes("Enchantment")) {
-    return "Artifacts & Enchantments";
-  }
-  return "Other";
+  if (card.subtypes.includes("Aura") || card.subtypes.includes("Equipment")) return "Creatures";
+  return "Artifacts & Enchantments";
 }
 
 export type LaneMap = Record<Lane, CardView[]>;
 
 export function emptyLanes(): LaneMap {
   return {
-    Lands: [],
     Creatures: [],
     "Artifacts & Enchantments": [],
-    Other: [],
+    Lands: [],
   };
 }
 
-/** Group one player's permanents into lanes, preserving battlefield order. */
+/**
+ * Is this card drawn tucked behind a host on the same mat?
+ *
+ * Only then is it held out of the lanes. An Aura you control on an *opponent's*
+ * creature has a host, but not one on this mat, so it stays a loose card in its
+ * own lane -- a permanent that belongs to nobody's mat would simply vanish.
+ */
+function tuckedHost(card: CardView, byOid: Map<number, CardView>): CardView | null {
+  if (card.attached_to == null) return null;
+  const host = byOid.get(card.attached_to);
+  if (!host || host.controller !== card.controller) return null;
+  return host;
+}
+
+function battlefieldIndex(state: GameView): Map<number, CardView> {
+  const byOid = new Map<number, CardView>();
+  for (const card of state.battlefield) byOid.set(card.oid, card);
+  return byOid;
+}
+
+/**
+ * Group one player's permanents into lanes, preserving battlefield order.
+ *
+ * Permanents drawn tucked behind a host are left out; `attachmentsFor` returns
+ * them keyed by the host that carries them.
+ */
 export function groupBattlefield(state: GameView, pid: number): LaneMap {
   const lanes = emptyLanes();
+  const byOid = battlefieldIndex(state);
   for (const card of state.battlefield) {
     if (card.controller !== pid) continue;
+    if (tuckedHost(card, byOid)) continue;
     lanes[laneFor(card)].push(card);
   }
   return lanes;
+}
+
+/** Host oid -> the permanents drawn tucked behind it, in battlefield order. */
+export function attachmentsFor(state: GameView, pid: number): Map<number, CardView[]> {
+  const byOid = battlefieldIndex(state);
+  const tucked = new Map<number, CardView[]>();
+  for (const card of state.battlefield) {
+    if (card.controller !== pid) continue;
+    const host = tuckedHost(card, byOid);
+    if (!host) continue;
+    const existing = tucked.get(host.oid);
+    if (existing) existing.push(card);
+    else tucked.set(host.oid, [card]);
+  }
+  return tucked;
 }
 
 /** Seats in display order: the viewer last (bottom of the screen), then clockwise. */

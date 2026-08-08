@@ -589,6 +589,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 player={state.players[pid]}
                 names={names}
                 compact
+                // Their lands against their own edge of the screen, so the two
+                // creature bands meet across the middle of the table.
+                mirrored
                 cardScale={opponentScale}
                 actionableOids={actionableOids}
                 hasAbility={(card) => abilityOids.has(card.oid)}
