@@ -21,11 +21,12 @@ import type { CSSProperties } from "react";
 import type { CardView } from "../../api/types";
 import { bouncy, mechanical, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
-import { CardFace } from "./CardFace";
+import { CardFace, type CardVariant } from "./CardFace";
 
 export interface CardProps {
   card: CardView;
-  detail?: boolean;
+  /** How much card there is room to draw. See `CardVariant`. */
+  variant?: CardVariant;
   /** Enable drag-to-play. */
   draggable?: boolean;
   /** A legal action would play this card: green rim. */
@@ -62,7 +63,7 @@ function dropZoneAt(x: number, y: number): string | null {
 
 export function Card({
   card,
-  detail = false,
+  variant = "board",
   draggable = false,
   playable = false,
   hasAbility = false,
@@ -83,6 +84,7 @@ export function Card({
 
   const classes = [
     "card",
+    variant === "big" ? "card--big" : "",
     // Swaps the outer box to a landscape footprint so the lane reflows around
     // the rotated card instead of letting it lie across its neighbour.
     tapped ? "card--tapped" : "",
@@ -141,7 +143,7 @@ export function Card({
         animate={{ rotate: tapped ? 90 : 0 }}
         transition={mechanical}
       >
-        <CardFace card={card} detail={detail} />
+        <CardFace card={card} variant={variant} />
       </motion.div>
       {staged && <span className="card__pin" />}
       {/*
@@ -179,18 +181,18 @@ export function Card({
  *  `layoutId` for the same oid would make framer animate between them. */
 export function StaticCard({
   card,
-  detail = true,
+  variant = "detail",
   className,
   style,
 }: {
   card: CardView;
-  detail?: boolean;
+  variant?: CardVariant;
   className?: string;
   style?: CSSProperties;
 }) {
   return (
     <motion.div
-      className={`card card--static ${className ?? ""}`}
+      className={`card card--static ${variant === "big" ? "card--big " : ""}${className ?? ""}`}
       style={style}
       initial={{ opacity: 0, scale: 0.94 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -199,7 +201,7 @@ export function StaticCard({
       data-card-name={card.name}
     >
       <div className="card__pivot">
-        <CardFace card={card} detail={detail} />
+        <CardFace card={card} variant={variant} />
       </div>
     </motion.div>
   );

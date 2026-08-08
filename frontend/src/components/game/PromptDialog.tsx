@@ -123,7 +123,7 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
                   >
                     {card ? (
                       <>
-                        <StaticCard card={card} detail />
+                        <StaticCard card={card} variant="detail" />
                         <span className="opt__caption">{action.label}</span>
                       </>
                     ) : (

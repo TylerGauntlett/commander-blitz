@@ -121,6 +121,43 @@ export async function takeAction(page: Page, prefer: string[] = []): Promise<str
   return id;
 }
 
+/**
+ * Play until we hold a combat declaration with something to declare.
+ *
+ * Shaped after the combat loops in `smoke.spec.ts` rather than a poll on a
+ * predicate: reaching combat means casting creatures and surviving to the step,
+ * so the loop has to keep taking whatever action exists. Returns false if the
+ * game ends first, which is a legitimate outcome and a reason to skip rather
+ * than to fail.
+ *
+ * Blocking needs the extra nudge in `prefer`: a creature that attacked is tapped
+ * and cannot block, so a loop that happily attacks never reaches a blocker
+ * decision with a blocker in it.
+ */
+export async function reachDecision(
+  page: Page,
+  kind: "attackers" | "blockers",
+  limit = 400,
+): Promise<boolean> {
+  const panel = page.getByTestId("combat-panel");
+  const wanted = kind === "attackers" ? "add_attacker" : "add_blocker";
+  const prefer =
+    kind === "attackers"
+      ? ["keep", "play_land", "cast", "pass"]
+      : ["keep", "play_land", "cast", "finish_declaration", "pass"];
+
+  for (let i = 0; i < limit; i += 1) {
+    await waitForOurTurn(page);
+    if (await isOver(page)) return false;
+    if (await panel.isVisible().catch(() => false)) {
+      const seen = await panel.getAttribute("data-combat-kind").catch(() => null);
+      if (seen === kind && (await actionsOfKind(page, wanted).count())) return true;
+    }
+    await takeAction(page, prefer);
+  }
+  return false;
+}
+
 /** The life total a player's orb is showing. */
 export async function lifeOf(page: Page, pid: number): Promise<number> {
   const text = await page.getByTestId(`life-${pid}`).textContent();

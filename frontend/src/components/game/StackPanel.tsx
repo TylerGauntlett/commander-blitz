@@ -79,7 +79,7 @@ export function StackPanel({ state }: Props) {
                   title={targets ? `${item.name} → ${targets}` : item.name}
                 >
                   {item.card ? (
-                    <StaticCard card={item.card} detail />
+                    <StaticCard card={item.card} variant="detail" />
                   ) : (
                     <div className="stackpile__ghost">{item.name}</div>
                   )}

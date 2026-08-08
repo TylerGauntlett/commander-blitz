@@ -17,6 +17,10 @@ uvicorn automtg.server.app:get_app --factory --reload
 The previous text-tile playtest client is archived verbatim at `legacy-frontend/` for
 comparison. Nothing builds or imports it.
 
+The board is themed against `mockups/05-planar-art.html`. Where the two still differ
+— and which of those differences are defects rather than decisions — is tracked in
+[mockup-fidelity.md](mockup-fidelity.md).
+
 ## Layout
 
 ```

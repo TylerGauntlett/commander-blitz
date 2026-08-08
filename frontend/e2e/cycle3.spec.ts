@@ -11,7 +11,14 @@
  */
 
 import { type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  isOver,
+  reachDecision,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 /** Play until `predicate` holds, or give up. Returns whether it held. */
 async function playUntil(
@@ -204,46 +211,37 @@ test.describe("choosing a card shows the card", () => {
   });
 });
 
-/**
- * Play until we hold a declare-attackers decision with something to declare.
- *
- * Shaped after `smoke.spec.ts`'s combat loop rather than the generic helper
- * above: reaching combat means casting creatures and surviving to the step, so
- * the loop has to keep taking whatever action exists rather than polling a
- * predicate. Returns false if the game ends first.
- */
-async function reachAttackers(page: Page, limit = 400): Promise<boolean> {
-  const panel = page.getByTestId("combat-panel");
-  for (let i = 0; i < limit; i += 1) {
-    await waitForOurTurn(page);
-    if (await isOver(page)) return false;
-    if (await panel.isVisible().catch(() => false)) {
-      const kind = await panel.getAttribute("data-combat-kind").catch(() => null);
-      if (kind === "attackers" && (await actionsOfKind(page, "add_attacker").count())) {
-        return true;
-      }
-    }
-    await takeAction(page, ["keep", "play_land", "cast", "pass"]);
-  }
-  return false;
-}
-
 test.describe("combat has one surface", () => {
-  test("the panel carries the action ids and the bar stands down", async ({ page }) => {
+  test("the panel owns every combat action id", async ({ page }) => {
     // Cycle 2's item 1: "Done blocking" in the rail and "No blocks" in the panel,
-    // the same underlying decision rendered twice once the bar moved into it.
-    // The panel now owns the ids, so the bar can stand down like it does for a
-    // modal without leaving the decision unreachable.
+    // the same underlying decision rendered twice because two surfaces both
+    // claimed it. There is only one surface now -- `ActionPanel` is the action
+    // bar as well as the combat panel -- so the question is no longer "did the
+    // bar stand down" but "is every pair still reachable from the one place".
+    //
+    // Asserting it that way matters: the old version located a component that no
+    // longer exists, which is a check that passes by finding nothing.
     test.setTimeout(600_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachAttackers(page)), "never reached a declare-attackers decision");
+    test.skip(
+      !(await reachDecision(page, "attackers")),
+      "never reached a declare-attackers decision",
+    );
 
     const panel = page.getByTestId("combat-panel");
-    // Every combat action id lives inside the panel...
     expect(await panel.locator("[data-action-id]").count()).toBeGreaterThan(0);
-    // ...and none of them is also in the bar.
-    const inBar = await page.getByTestId("action-bar").locator("[data-action-id]").count();
-    expect(inBar, "the action bar is still rendering the combat decision").toBe(0);
+
+    // Every declaration pair on the page is inside the panel, and nowhere else.
+    const outside = await page.evaluate(() => {
+      const panelEl = document.querySelector('[data-testid="combat-panel"]');
+      return [...document.querySelectorAll("[data-action-kind]")]
+        .filter((n) =>
+          ["add_attacker", "add_blocker"].includes(n.getAttribute("data-action-kind") ?? ""),
+        )
+        .filter((n) => !panelEl?.contains(n))
+        .map((n) => n.getAttribute("data-action-id"));
+    });
+    expect(outside, "a combat pair rendered outside the panel").toEqual([]);
 
     // The invariant clarity.spec.ts checks across a whole game, asserted here at
     // the exact moment it used to break.
@@ -258,21 +256,25 @@ test.describe("combat has one surface", () => {
   test("All attack stages every creature that can attack", async ({ page }) => {
     test.setTimeout(600_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachAttackers(page)), "never reached a declare-attackers decision");
+    test.skip(
+      !(await reachDecision(page, "attackers")),
+      "never reached a declare-attackers decision",
+    );
 
     const panel = page.getByTestId("combat-panel");
     const all = page.getByTestId("combat-all");
     await expect(all).toBeEnabled();
-    const candidates = await panel.locator(".combat__options .chip").count();
+    // One row per creature that can attack -- not one per legal *pair*, which is
+    // what the chip cloud this replaced rendered. In a pod that was attackers
+    // times opponents, and this count is the guard against it coming back.
+    const candidates = await panel.locator(".acts__list .act[data-attacker]").count();
+    expect(candidates).toBeGreaterThan(0);
     await all.click();
 
-    // Staging is local, so this is immediate and nothing was posted.
-    // Staged entries are numbered `.opt` rows now, not chips -- combat moved
-    // into the right rail and a wrapping row of chips became a countable list.
-    await expect(panel.locator(".combat__staged .stage")).not.toHaveCount(0);
+    // Staging is local, so this is immediate and nothing was posted. A staged
+    // row says so on itself now -- there is no separate summary list to read.
+    await expect(panel.locator('.act[data-staged="true"]')).toHaveCount(candidates);
     await expect(page.getByTestId("combat-confirm")).toBeEnabled();
-    // Every candidate is staged, so no option button is left unpressed.
-    await expect(panel.locator(".combat__options .chip--on")).toHaveCount(candidates);
     await expect(all).toBeDisabled();
   });
 
@@ -308,21 +310,29 @@ test.describe("combat has one surface", () => {
     if (!(await all.isEnabled())) return;
 
     await all.click();
-    const staged = await panel.locator(".combat__staged .stage").count();
+    const stagedRows = panel.locator('.act[data-blocker][data-staged="true"]');
+    const staged = await stagedRows.count();
     expect(staged).toBeGreaterThan(0);
-    // One blocker to one attacker: no creature staged twice, no attacker
-    // ganged up on by default.
+
+    // One blocker to one attacker: no creature staged twice, no attacker ganged
+    // up on by default.
     //
-    // Read `.opt__name` rather than the whole row: the row also carries an
-    // index badge and a P/T, and the index is unique by construction -- so
-    // splitting the row text would make the "no creature staged twice" check
-    // pass for the wrong reason.
-    const pairs = await panel
-      .locator(".combat__staged .stage__name")
-      .allTextContents()
-      .then((texts) => texts.map((t) => t.split(" blocks ")));
-    expect(new Set(pairs.map((p) => p[0])).size).toBe(staged);
-    expect(new Set(pairs.map((p) => p[1])).size).toBe(staged);
+    // Read the oids off the row rather than splitting its label on " blocks ".
+    // The old version did the latter and it was fragile in a way that failed
+    // safe: any change to the wording made the uniqueness check pass for the
+    // wrong reason, because both halves of a bad split are still distinct.
+    const pairs = await stagedRows.evaluateAll((nodes) =>
+      nodes.map((n) => ({
+        blocker: n.getAttribute("data-blocker"),
+        attacker: n.getAttribute("data-attacker"),
+        tier: n.getAttribute("data-tier"),
+      })),
+    );
+    expect(new Set(pairs.map((p) => p.blocker)).size).toBe(staged);
+    expect(new Set(pairs.map((p) => p.attacker)).size).toBe(staged);
+    // And never a chump: giving a creature away for nothing is a decision a
+    // player makes when they are dying, not a default.
+    expect(pairs.map((p) => p.tier)).not.toContain("4");
     await expect(page.getByTestId("combat-confirm")).toBeEnabled();
   });
 });
@@ -338,10 +348,17 @@ test.describe("mana notation is drawn, not spelled", () => {
     if (await keep.count()) await keep.first().click();
     await waitForOurTurn(page);
 
+    // Rules text lives in the preview rail now, not on the hand card: at hand
+    // size the box rendered at six pixels, so the cards went art-first and the
+    // text moved to the one card big enough to read. So hover something first --
+    // otherwise this looks for a surface that is deliberately not on screen.
+    await page.locator(".hand .card").first().hover();
+    await expect(page.getByTestId("card-preview").locator(".face__rules")).toBeVisible();
+
     // Nothing on screen may still be showing raw brace notation.
     const raw = await page.evaluate(() => {
       const hits: string[] = [];
-      for (const node of document.querySelectorAll(".face__rules, .bar__overflow .btn")) {
+      for (const node of document.querySelectorAll(".face__rules, .acts__list .act")) {
         const text = node.textContent ?? "";
         if (/\{[WUBRGCTQ0-9]+\}/.test(text)) hits.push(text.slice(0, 60));
       }
@@ -351,7 +368,7 @@ test.describe("mana notation is drawn, not spelled", () => {
 
     // And the pips are actually there, coloured by symbol.
     const tones = await page
-      .locator(".face__rules .pip--inline, .bar__overflow .pip--inline")
+      .locator(".face__rules .pip--inline, .acts__list .pip")
       .evaluateAll((nodes) =>
         nodes.flatMap((n) =>
           [...(n as HTMLElement).classList].filter(

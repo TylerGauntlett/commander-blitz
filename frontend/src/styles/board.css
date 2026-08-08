@@ -713,24 +713,30 @@
   overflow-y: hidden;
 }
 
-/* `flex: 1 1 auto` let the preview grow to whatever a 236px card needed --
-   around 460px with rules text -- and squeeze the action bar into the
-   remainder. It takes the slack it is given and no more: the bar is where the
-   turn actually happens, and the card scrolls. */
+/* The rail is three things, in this order: the card you are reading, the panel
+   of things you can do, and the commit slab.
+
+   `flex: 1 1 auto` let the preview grow to whatever the enlarged card needed --
+   around 460px with rules text -- and squeeze the panel into the remainder. It
+   takes the slack it is given and no more: the panel is where the turn actually
+   happens, and the card scrolls. */
+/*
+ * A constant height, not a maximum.
+ *
+ * This is the fix for the panel below it jumping. Sized to its content, the
+ * preview was a different height for every card -- a land has no P/T row and two
+ * lines of rules where a creature has five -- and a different height again when
+ * empty, so the action panel and the commit slab moved every time the pointer
+ * crossed a card. Pointing at something to read it must not relocate the button
+ * you were about to press.
+ *
+ * The value is bounded at both ends so it stays a sane share of the column: the
+ * rail still has to fit the action panel's list and tools plus the commit dock,
+ * and the panel is where the turn actually happens.
+ */
 .rail--right .preview {
-  flex: 1 1 0;
-  min-height: 0;
-  max-height: 52vh;
-}
-
-.rail--right .bar {
   flex: 0 0 auto;
-}
-
-/* A tall rail can afford more of the action list than the old 132px strip at
-   the foot could, and a narrow one needs it: options wrap onto more rows. */
-.rail--right .bar__actions {
-  max-height: 34vh;
+  height: clamp(240px, 34vh, 420px);
 }
 
 .rail__title {
@@ -861,28 +867,36 @@
   line-height: 1.4;
 }
 
+/* A fixed frame. Everything inside is laid out to fill it exactly, so nothing
+   below it ever moves -- see `.rail--right .preview` for the height itself. */
 .preview {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .preview__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  flex: 1 1 auto;
   align-items: center;
+  min-height: 0;
 }
 
-.preview__note {
-  width: 100%;
-  color: var(--astral);
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+/* The facts list is the one part allowed to vary: a creature has a Damage row
+   and a land does not. It sits at the bottom of a fixed box, so a shorter list
+   leaves space rather than shortening the panel. */
+.preview__facts {
+  flex: 0 0 auto;
 }
 
 .preview__idle {
+  display: grid;
+  flex: 1 1 auto;
+  place-items: center;
+  margin: 0;
   color: var(--text-faint);
   font-size: 12px;
   font-style: italic;
@@ -913,8 +927,18 @@
 
 /* Phase track ---------------------------------------------------------- */
 
+/*
+ * A grid, not a flex row, and that is the fix for "the top bar resizes randomly".
+ *
+ * As a flex row the two ends were content-sized: `T8 / round 8` and the turn
+ * chip both change width with their text, so the ribbon between them shifted
+ * every time the active player changed. Three fixed columns pin the ends and
+ * give the middle whatever is left -- `minmax(0, 1fr)` so it *shrinks* rather
+ * than pushing the ends out.
+ */
 .track {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(96px, auto) minmax(0, 1fr) minmax(150px, auto);
   align-items: center;
   gap: 14px;
   padding: 9px 18px;
@@ -946,8 +970,11 @@
    tucked beside the round counter. It is the one piece of state you check
    between every action. */
 .track__who {
-  flex: 0 0 auto;
-  margin-left: auto;
+  justify-self: end;
+  /* A long opponent name truncates instead of widening the chip and shoving
+     the phase ribbon sideways. The name is also in the log and on the mat. */
+  overflow: hidden;
+  max-width: 22ch;
   padding: 5px 14px;
   border: 1px solid var(--edge);
   border-radius: 999px;
@@ -955,6 +982,7 @@
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .track__who--you {
@@ -963,15 +991,24 @@
   color: var(--playable);
 }
 
+/*
+ * `overflow: hidden`, never `overflow-x: auto`.
+ *
+ * A scroller here is what made the ribbon look broken: flex items do not shrink
+ * below their content when the container can scroll, so once the live phase
+ * opened its six combat steps the row outgrew the bar and the phases already
+ * played -- Beginning, Main 1 -- slid out of view entirely. The ribbon's whole
+ * job is saying where in the turn you are, and it was hiding half the turn.
+ */
 .track__steps {
   display: flex;
   gap: 4px;
-  flex: 1;
   align-items: stretch;
+  min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 /* Phases -----------------------------------------------------------------
@@ -986,7 +1023,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 0 0 auto;
+  /* Shrinkable. A dormant phase is four static words; letting it compress a
+     little is always better than letting the row overflow. */
+  flex: 0 1 auto;
+  min-width: 0;
   padding: 5px 14px;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -1001,8 +1041,17 @@
   color: var(--text-dim);
 }
 
+/*
+ * `flex: 1 1 0`, not `1 1 auto`, and the zero basis is the point.
+ *
+ * With an `auto` basis the live pill was sized by its contents, so it grew and
+ * shrank as the turn moved between a phase with one step (Main 1) and one with
+ * six (Combat) -- the bar visibly resized on every phase change. A zero basis
+ * makes the pill the same width in every phase, and the only thing that moves
+ * is the highlight travelling along it, which is the effect this was after.
+ */
 .ph--now {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-width: 0;
   border-color: var(--edge-hi);
   background: linear-gradient(180deg, rgb(143 127 232 / 0.26), rgb(143 127 232 / 0.08));
@@ -1010,13 +1059,20 @@
 }
 
 .ph__name {
+  overflow: hidden;
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  text-overflow: ellipsis;
 }
 
 .ph__steps {
   display: none;
   gap: 2px;
   flex: 1;
+  min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1024,9 +1080,13 @@
 
 /* Only the live phase shows its steps. `display: none` rather than unmounting:
    the labels stay in the document, so nothing that reads them has to know
-   which phase happens to be open. */
+   which phase happens to be open.
+   A fixed six-column track -- the longest phase (Combat) has six steps -- so a
+   step pill is the same width whichever phase is open, and the marker slides
+   between two positions of equal size instead of resizing as it goes. */
 .ph--now .ph__steps {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .track__step {

@@ -72,7 +72,7 @@ for (const viewport of VIEWPORTS) {
       // min-height floor was added. Nothing about the *content* changed, so
       // only a measurement notices.
       const heights = await page.evaluate(() =>
-        [".bar__actions", ".stackpanel", ".preview", ".table__foot"].map((selector) => {
+        [".acts__list", ".stackpanel", ".preview", ".table__foot"].map((selector) => {
           const node = document.querySelector(selector);
           return { selector, height: node ? node.getBoundingClientRect().height : -1 };
         }),

@@ -14,7 +14,7 @@ test.describe("the table renders and plays", () => {
 
     await expect(page.getByTestId("table")).toBeVisible();
     await expect(page.getByTestId("phase-track")).toBeVisible();
-    await expect(page.getByTestId("action-bar")).toBeVisible();
+    await expect(page.locator(".acts")).toBeVisible();
 
     // Commander: 40 life each.
     expect(await lifeOf(page, 0)).toBe(40);
@@ -62,7 +62,7 @@ test.describe("the table renders and plays", () => {
       await page.locator('[data-action-kind="keep"]').click();
     }
     await waitForOurTurn(page);
-    await expect(page.getByTestId("action-bar")).toBeVisible();
+    await expect(page.locator(".acts")).toBeVisible();
   });
 
   test("draws a hand of real cards with names and mana costs", async ({ page }) => {

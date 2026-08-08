@@ -18,6 +18,7 @@ import type { CardView, GameView } from "../../api/types";
 import {
   actionsForCard,
   availableAttackers,
+  blockableBy,
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
@@ -27,10 +28,9 @@ import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
-import { ActionBar } from "./ActionBar";
+import { ActionPanel } from "./ActionPanel";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
-import { CombatPanel, legalBlockTargets } from "./CombatPanel";
 import { CommandZone } from "./CommandZone";
 import { EventTicker } from "./EventTicker";
 import { FxLayer, useScreenShake } from "./FxLayer";
@@ -93,18 +93,13 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const locked = busy || narration.busy;
 
   // A decision's buttons must exist exactly once in the document. Whichever
-  // surface owns a decision renders its ids; the bar shows the prompt and
-  // stands down.
+  // surface owns a decision renders its ids; everything else stands down.
   //
-  // Combat used to be exempt: `CombatPanel` was a pure gesture surface whose
-  // buttons carried no action id, so standing the bar down would have left the
-  // decision unreachable and broken the guarantee at the top of this file. The
-  // two surfaces therefore showed the same decision side by side once the bar
-  // moved into the rail -- "Done blocking" next to "No blocks". The panel now
-  // carries the real ids (one option button per legal pair), so the exemption
-  // is gone and the duplication with it.
+  // There used to be two surfaces to keep straight here -- an action bar and a
+  // combat panel, each with its own stand-down rule and a comment explaining why
+  // they disagreed. `ActionPanel` is both of them, so the only question left is
+  // whether the modal dialog owns the decision instead.
   const modalOwnsDecision = isModalDecision(state);
-  const barActions = modalOwnsDecision || inCombatDecision ? [] : actions;
 
   // Depend on the `mutate` functions, which react-query keeps stable, rather
   // than on the mutation objects, which are new every render -- otherwise every
@@ -349,10 +344,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           select(selectedOid === card.oid ? null : card.oid);
           return;
         }
-        if (
-          selectedOid !== null &&
-          legalBlockTargets(actions, selectedOid).includes(card.oid)
-        ) {
+        if (selectedOid !== null && blockableBy(actions, selectedOid).includes(card.oid)) {
           stageBlock(selectedOid, card.oid);
           select(null);
           return;
@@ -647,48 +639,32 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         </main>
 
         {/*
-          The action bar lives in the right rail rather than beside the hand.
-          It used to take a fixed 420px out of the foot, squeezing the zone the
-          player interacts with most into what was left; the hand now spans the
-          whole width. Stacking it under the preview also puts the buttons next
-          to the card text they act on.
+          The right rail is three things: the card you are reading, the panel of
+          things you can do about it, and the commit slab. Nothing else.
+
+          All of it used to live across the foot -- the action bar took a fixed
+          420px out of the row the hand wanted, and combat was a full-width
+          banner under the board, which put the decision as far as possible from
+          the cards it was about. Here the creature you are reading and the list
+          you are staging it into are one glance apart, and the foot belongs to
+          the hand alone.
         */}
         <aside className="rail rail--right">
           <CardPreview state={state} />
-          {/*
-            Combat lives in the rail, not across the foot.
-
-            It used to be a full-width banner under the board, which put the
-            decision as far as possible from the cards it is about and took the
-            row the hand wanted. Here it sits directly under the card preview --
-            so the creature you are reading and the list you are staging it into
-            are the same glance -- and the foot is the hand's alone.
-
-            Every legal pair still carries its own `data-action-id`; that is
-            what lets the action bar stand down without the decision becoming
-            unreachable, and `clarity.spec.ts` fails the run if any id appears
-            twice.
-          */}
-          <CombatPanel
+          <ActionPanel
             state={state}
             actions={actions}
-            onDeclare={onDeclare}
+            onAct={act}
             onStage={onBarAct}
-            onSkip={act}
-            disabled={locked}
-          />
-          <ActionBar
-            state={state}
-            actions={barActions}
-            onAct={onBarAct}
+            onDeclare={onDeclare}
             onUndo={() => undoMutate()}
             onQuit={onQuit}
+            onToggleFullControl={(value) => fullControlMutate(value)}
             narrating={narration.busy}
-            onSkip={narration.skip}
+            onSkipNarration={narration.skip}
             busy={busy}
             aiThinking={aiThinking}
-            onToggleFullControl={(value) => fullControlMutate(value)}
-            standDown={modalOwnsDecision || inCombatDecision}
+            standDown={modalOwnsDecision}
           />
         </aside>
 

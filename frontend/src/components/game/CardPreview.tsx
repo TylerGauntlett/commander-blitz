@@ -12,7 +12,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
 import { artistOf } from "../../logic/cardArt";
-import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
 import { isWounded, keywordLabel } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
@@ -42,23 +41,39 @@ export function CardPreview({ state }: Props) {
   const card = hoveredOid === null ? null : findCard(state, hoveredOid);
   const artist = card ? artistOf(images, card.card_id) : null;
 
+  /*
+   * The panel is a fixed height, whether it is holding a card or not.
+   *
+   * It used to size to its content, which meant the whole action panel below it
+   * jumped every time the pointer crossed a card -- and jumped again between a
+   * creature and a land, because a land has no P/T row and shorter rules. The
+   * panel underneath is where the turn happens; it cannot move because you
+   * glanced at something. See `.rail--right .preview` in board.css.
+   */
   return (
     <section className="preview pane" data-testid="card-preview">
-      {/* The rail says what it is for. Without it the panel reads as an empty
-          slot rather than as the place a card goes when you point at one. */}
-      <div className="preview__note">Reading a card — art and rules together</div>
       <AnimatePresence mode="wait">
         {card ? (
           <motion.div
             key={card.oid}
             className="preview__body"
-            style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.preview) }}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={ease}
           >
-            <StaticCard card={card} detail />
+            {/*
+              The `big` variant, which is the one card on screen that is not a
+              1.4 portrait: it is as wide as the rail and as tall as its rules
+              text needs, with absolute type sizes. Scaling the portrait card up
+              instead -- what this did -- left the rules box squeezed by the
+              card's own aspect ratio and clipped after a line or two, on the
+              one surface whose entire job is showing that text.
+
+              It sets its own `--card-w`, so there is deliberately no inline
+              width here to fight with it.
+            */}
+            <StaticCard card={card} variant="big" />
             <dl className="preview__facts">
               {card.keywords.length > 0 && (
                 <>
