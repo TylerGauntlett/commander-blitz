@@ -116,6 +116,25 @@ gradient the art sits on, which on the ~4% of cards with no printing is the whol
 card. A land's frame narrows to the colour it taps for and its produced-mana
 symbols go large and centre-frame, so a lane of lands reads without reading a name.
 
+**Mana symbols are the real ones.** Scryfall publishes every card symbol as SVG
+from an open endpoint; `mockups/cards/fetch_symbols.py` pulls them and they are
+vendored into `frontend/public/symbols/`, under the same architecture as the card
+art — fetch once, store in the repo, skip on re-run, nothing running anywhere at
+render time. `ManaSymbol` draws them, and every surface that shows mana notation
+goes through it: the cost row, rules text and action labels (`SymbolText`), the
+commander plinth, the action panel and the deck picker. They were a letter on a
+coloured disc, which is a mark nobody who plays the game recognises.
+
+A code with no SVG falls back to that disc rather than a broken image. Nothing in
+a real game reaches it — the engine rejects hybrid and phyrexian costs at load
+time and generic never passes 16 — and `e2e/cycle3.spec.ts` fails the run if
+anything does, which is the signal that `fetch_symbols.py`'s `WANTED` has fallen
+behind.
+
+The player orb's mana row (`.mana-pip`) is deliberately *not* one of these. It
+shows mana you have rather than a cost you owe, and it hollows out to forecast a
+payment — a different idea that would be worse for borrowing the same mark.
+
 Text over an unknown illustration is the one thing here that can fail silently, so
 it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients
 whose opaque ends clear a darkness floor, and `e2e/greyscale.spec.ts` asserts the

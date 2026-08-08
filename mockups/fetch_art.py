@@ -79,6 +79,33 @@ CARDS = [
 
 TOKENS = ["Vampire", "Elemental"]
 
+# The four precon dossiers in mockups/menu/.
+#
+# Two face commanders that ship no deck yet -- Isperia, Supreme Judge ("First
+# Flight") and Zurgo Stormrender -- plus three signature cards each, the cards a
+# dossier argues the deck with. Aesi and Edgar reuse crops already pulled above
+# for the board state, so a re-run downloads nothing for them.
+MENU_CARDS = [
+    "Isperia, Supreme Judge",
+    "Zurgo Stormrender",
+    # Aesi -- ramp and landfall.
+    "Tatyova, Benthic Druid",
+    "Avenger of Zendikar",
+    "Rampaging Baloths",
+    # Edgar -- vampire aggro and drain.
+    "Sanctum Seeker",
+    "Legion Lieutenant",
+    "Blood Artist",
+    # First Flight -- Azorius flyers and anthems.
+    "Empyrean Eagle",
+    "Favorable Winds",
+    "Watcher of the Spheres",
+    # Zurgo Stormrender -- Mardu tokens and sacrifice payoffs.
+    "Mardu Ascendancy",
+    "Mardu Hordechief",
+    "Goblin Bombardment",
+]
+
 
 def slugify(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
@@ -133,7 +160,7 @@ def main() -> None:
     if MANIFEST.exists():
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    wanted = [(name, False) for name in CARDS] + [(name, True) for name in TOKENS]
+    wanted = [(name, False) for name in CARDS + MENU_CARDS] + [(name, True) for name in TOKENS]
 
     for name, token in wanted:
         key = f"token:{name}" if token else name

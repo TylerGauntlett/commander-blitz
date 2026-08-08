@@ -13,6 +13,7 @@ shots/                    PNG + greyscale twin of each, 2560×1278
 fetch_art.py              pulls art/ (mockup 5 only)
 _state.js                 the shared board state, kept readable; inlined per file
 cards/                    a later, narrower exploration: the card face itself
+menu/                     a later exploration: the new-game screen
 ```
 
 These five are about the **board**. [`cards/`](cards/README.md) is a separate,
@@ -21,6 +22,14 @@ each of the four widths the client uses, with the real Scryfall mana symbols
 instead of the letter-on-a-disc pips. It picks up three problems these mockups
 did not look at: the name colliding with its own mana cost, the invented mana
 symbols, and lands all being one tan rectangle.
+
+[`menu/`](menu/README.md) is a third, about the **new-game screen** —
+`docs/roadmap.md`'s "Redesign main page". Five directions again, but unlike these
+they are **interactive**: each one picks decks, opens a dossier, sets difficulty,
+imports from Moxfield and opens a chair to another player. It also establishes a
+constraint that applies to everything in this folder: **`art_crop` is 626×457 and
+there is nothing sharper to fetch**, so any surface bigger than about 780px has
+to be deliberately soft with something crisp on top of it.
 
 All five render **turn 8 of the reference screenshot, at declare-attackers**, with
 the same 30 permanents, the same hand, the same life totals — so differences on
@@ -114,10 +123,12 @@ The most structurally interesting, and the two ideas are separable from the skin
 ### 04 — Ink & Signal
 One rule: hue is spent on exactly two things — mana, and interaction state.
 Everything else is grey, and card type is carried by the luminance ladder plus the
-glyph. This is not a style choice, it is `cards.css`'s own argument taken to its
-conclusion: the seven type fills are already graded 0.58 → 0.92 relative luminance
-*precisely so the encoding survives greyscale*, and `frontend/tests/palette.test.ts`
-asserts it. The question this mockup asks is whether the hue currently spent on
+glyph. This was not a style choice, it was `cards.css`'s own argument taken to its
+conclusion: at the time the seven type fills were graded 0.58 → 0.92 relative
+luminance *precisely so the encoding survived greyscale*, asserted by
+`frontend/tests/palette.test.ts`. (That ladder has since been removed with the
+art-bleed redesign — see "What was actually built" — so this reads as history.)
+The question this mockup asks is whether the hue currently spent on
 card bodies is buying anything that the green "you can play this" rim would rather
 have. Its second idea — **actions grouped under the card that offers them** — is
 the best answer here to the wall of server-written sentences, and is independent
@@ -175,20 +186,33 @@ pretending it away.
 ## What was actually built
 
 Mockup 05 was taken, art and all -- against the recommendation below, and
-deliberately. The greyscale objection above is real, so rather than accept the
-regression the type encoding was **moved** instead of dropped:
+deliberately. The card face then went **further than 05**, to direction D of
+`cards/index.html`: the illustration now fills the whole frame and the text sits
+on graded scrims. See [docs/mockup-fidelity.md](../docs/mockup-fidelity.md).
 
-- The paper's `--stock` fill still carries card type, and still governs the title
-  bar, type line, footer and the whole of an artless card.
-- A **type ring** is drawn *over* the art at the frame's inner edge, on the same
-  eight tones, spanning L 0.05-0.58 in even steps. This is the channel doing the
-  work once art is in place.
-- The type glyph in the title bar stays visible whatever else happens.
+That settles the greyscale objection above in the opposite direction from the one
+first tried. The first answer was to *move* the type encoding -- keep the `--stock`
+luminance ladder and add a type ring drawn over the art. The second answer, and the
+shipped one, is that **the encoding was solving a problem the illustration solves
+better**. A ladder tells you a card is one of eight categories; a picture tells you
+which card it is. Twelve Forests under the ladder were twelve copies of "one of the
+tan ones" -- the same scanning problem the ladder was built for, one level up.
 
-Both are guarded, because a failure here is invisible in colour:
-`frontend/tests/palette.test.ts` asserts the ring ladder from the stylesheet, and
-`frontend/e2e/greyscale.spec.ts` asserts it again from the *rendered* board,
-where a `theme.css` override would show up and a CSS parse would not.
+So the stock fill and the type ring are both gone. What survives greyscale is the
+illustration itself, the name, the type glyph and the type line, plus a land's
+produced-mana symbols at centre-frame. The frame keeps colour *identity*, which was
+never what the ladder encoded.
+
+The failure mode moved with it, and so did the guards. What can now fail invisibly
+is white text over somebody's bright crop, so that is what is asserted by number:
+`frontend/tests/palette.test.ts` checks both scrims are gradients whose opaque ends
+clear a darkness floor, and `frontend/e2e/greyscale.spec.ts` checks the same on the
+*rendered* board, where a `theme.css` override would show up and a CSS parse would
+not.
+
+`cards/fetch_symbols.py` graduated from prototype support to a real part of the
+build: its SVGs are vendored to `frontend/public/symbols/` and every mana symbol
+in the client is now the published one rather than a letter on a coloured disc.
 
 Also taken: the neutral (indigo) ground, fluid height-keyed `--card-w`, the
 opponent row sizing to content, the three button tiers, the ability rune, the
@@ -240,6 +264,13 @@ Then, as separate pieces of work with their own arguments:
 
 **Do not** take art onto the board itself without re-running the greyscale check;
 `shots/05-planar-art-grey.png` is what that costs.
+
+> **Superseded.** Art did go onto the board, and then to the edge of it -- see
+> "What was actually built" above. The greyscale check was re-run, which is the
+> part of this warning that still stands. What `shots/05-planar-art-grey.png`
+> actually shows is art *plus* a type ladder the art overwrites: two encodings
+> competing for one channel. Committing to the illustration and dropping the
+> ladder reads better in greyscale than either half did.
 
 ---
 

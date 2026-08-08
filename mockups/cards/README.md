@@ -1,5 +1,14 @@
 # Card face exploration
 
+> **Resolved: direction D, "Art Bleed", shipped.** Everything below is the
+> argument that produced that decision, kept as written — including the three
+> complaints in "What's wrong with the card today", all of which are now fixed in
+> `frontend/src/components/game/CardFace.tsx` and `styles/cards.css`. The
+> symbols in `symbols/` are no longer prototype-only: they are vendored to
+> `frontend/public/symbols/` and are what the client draws. See
+> [`docs/mockup-fidelity.md`](../../docs/mockup-fidelity.md) for what was taken,
+> what was adapted, and the one rule that was deliberately not taken.
+
 Five directions for the card face, small and enlarged, for picking one before
 `CardFace.tsx` is touched. Open `index.html` directly — no build, no server, no
 network.

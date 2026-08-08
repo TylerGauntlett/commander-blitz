@@ -25,6 +25,16 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
   }
 }
 
+/*
+ * `.face__art-img`, not `.face__art img`.
+ *
+ * A land's mana symbols are real artwork now, drawn as `<img>` inside the same
+ * absolutely-positioned art box. The descendant selector this used to use
+ * therefore matched them too -- so this test would have gone on passing on a
+ * board with no card art at all, as long as one Forest was on it. That is the
+ * exact shape of bug the comment at the top of `e2e/greyscale.spec.ts` warns
+ * about: a check that survives the failure it was written for.
+ */
 test("art loads and decodes on the board", async ({ page }) => {
   test.setTimeout(180_000);
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
@@ -34,7 +44,7 @@ test("art loads and decodes on the board", async ({ page }) => {
     .poll(
       async () =>
         page.evaluate(() => {
-          const images = [...document.querySelectorAll<HTMLImageElement>(".face__art img")];
+          const images = [...document.querySelectorAll<HTMLImageElement>(".face__art-img")];
           return images.filter((img) => img.naturalWidth > 0).length;
         }),
       { timeout: 20_000 },
@@ -79,7 +89,7 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
     return {
       faces: faces.length,
       plates: faces.filter((f) => f.querySelector(".face__art--none")).length,
-      images: document.querySelectorAll(".face__art img").length,
+      images: document.querySelectorAll(".face__art-img").length,
       // The plate is a fallback, not a blank: the card must still identify
       // itself by name and type glyph.
       named: faces.filter((f) => (f.querySelector(".face__name")?.textContent ?? "").length > 0)

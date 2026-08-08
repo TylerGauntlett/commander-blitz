@@ -74,11 +74,48 @@ What replaced the removed tests, so the surface is not left unguarded:
 - `e2e/greyscale.spec.ts` — a resolved-scrim-contrast check and a type-line check
   replace the `--type-ring` ladder walk.
 
-One measured concession: on an opponent's mat the name clamps to **one** line
-(`.mat--compact .face__name`). At a three-opponent pod cards are ~51px, the name
-is held at its 10px floor, and a wrapped second line left "Indulgent Aristocrat"
-with 4px of illustration between the two scrims. `mockups/cards/index.html` makes
-the same call for the same reason.
+Everything else about D was taken as drawn, including the parts that are easy to
+skip:
+
+- **Real mana symbols.** Scryfall's published SVGs, vendored to
+  `frontend/public/symbols/` by `mockups/cards/fetch_symbols.py` and drawn by
+  `ManaSymbol` everywhere mana notation appears. See `docs/frontend.md`.
+- **Type sizes clamped at both ends.** The mockup names this file's predecessor
+  for getting it wrong — "a floor alone is what the client does, and it is why
+  the preview card looks like a zoomed board card rather than a designed one".
+  `.face` now carries the mockup's `--fs-*` scale; `.face--big` restates it in
+  pixels because its `--card-w` is a fiction.
+- **A 1.4% frame, not 3.2%.** The old border was thick enough to read as a fourth
+  band on a card meant to be an illustration. The 2px floor stays and is what
+  `e2e/greyscale.spec.ts` actually measures.
+- **The commander is a crown inside the name**, not a `CMD` badge in a corner. At
+  pod size the badge rendered at under 3px, which is not a word.
+- **Supertypes come off at board size** (`shortType`): "Legendary Creature — Hu…"
+  spent the whole line on the least useful word on it. The rail keeps the full
+  line.
+- **No hatched plate.** A card with no printing is its colour-identity gradient
+  with a quiet `NO ART`, so it reads as a grey card rather than a damaged one.
+- **Keywords are a chip**, not a loose run of type over an illustration.
+- **A land that taps for no colour gets a neutral mark** — Terramorphic Expanse
+  was the one land on the board with no centre symbol at all.
+
+Two size-driven rules are scoped to `.mat--compact`, which is the client's
+equivalent of the mockup's 60px column:
+
+- The name clamps to **one** line. At a three-opponent pod cards are ~51px, the
+  name is held at its floor, and a wrapped second line left "Indulgent
+  Aristocrat" with 4px of illustration between the two scrims.
+- The mana cost is **dropped entirely**. This is the mockup's strongest argument:
+  a permanent on an opponent's board has already been paid for, so its cost is
+  the one line on the card that cannot change a decision you are about to make —
+  and at 51px it is competing for a row against the name and the type. Your own
+  battlefield and your hand keep theirs, and hovering restores it either way.
+
+Not taken: the mockup's 60px column also reduces the type line to the bare
+subtype and drops it entirely when it repeats the name. `e2e/greyscale.spec.ts`
+asserts every face carries a type line, because with the type-colour ladder gone
+it and the glyph are the non-colour channels — so that one stays open rather than
+being quietly traded away.
 
 ### No rules text on board or hand cards
 

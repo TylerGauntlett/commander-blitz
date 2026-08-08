@@ -70,7 +70,7 @@ describe("when the card has art", () => {
 
   it("renders the image from this server", () => {
     const { container } = render(<CardFace card={bear} />);
-    const img = container.querySelector<HTMLImageElement>(".face__art img");
+    const img = container.querySelector<HTMLImageElement>(".face__art-img");
     expect(img).not.toBeNull();
     expect(img?.getAttribute("src")).toBe("/art/t_bear.jpg");
   });
@@ -84,7 +84,7 @@ describe("when the card has art", () => {
     // The card's name is already on the card; announcing the illustration
     // again is noise to a screen reader.
     const { container } = render(<CardFace card={bear} />);
-    expect(container.querySelector(".face__art img")?.getAttribute("alt")).toBe("");
+    expect(container.querySelector(".face__art-img")?.getAttribute("alt")).toBe("");
   });
 
   it("moves a land's mana symbols on top of the art", () => {
@@ -92,6 +92,20 @@ describe("when the card has art", () => {
     expect(container.querySelector(".face__art .watermark-row")).not.toBeNull();
     // And out of the standalone block that replaced the art before.
     expect(container.querySelector(".face__watermark")).toBeNull();
+  });
+
+  it("keeps the illustration tellable from the symbols drawn over it", () => {
+    // Both are `<img>` inside `.face__art` now that the symbols are real
+    // artwork, so `.face__art img` means "either". `e2e/art.spec.ts` counts
+    // decoded illustrations and would have passed on a board with no card art
+    // at all as long as one Forest was on it -- hence the separate class.
+    const { container } = render(<CardFace card={forest} />);
+    const all = container.querySelectorAll(".face__art img");
+    expect(all.length).toBeGreaterThan(1);
+    expect(container.querySelectorAll(".face__art-img")).toHaveLength(1);
+    expect(container.querySelector(".face__art-img")?.getAttribute("src")).toBe(
+      "/art/forest.jpg",
+    );
   });
 
   it("still renders rules text over the art", () => {
@@ -178,7 +192,7 @@ describe("when the card has no printing", () => {
     const band = container.querySelector(".face__art--none");
     expect(band).not.toBeNull();
     expect(band?.getAttribute("data-art")).toBe("none");
-    expect(container.querySelector(".face__art img")).toBeNull();
+    expect(container.querySelector(".face__art-img")).toBeNull();
     expect(screen.getByText("no art")).toBeTruthy();
   });
 

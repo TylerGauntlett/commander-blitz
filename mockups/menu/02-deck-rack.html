@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Auto MTG — The Deck Rack (menu 02)</title>
+<style>
+/* ============================================================================
+   THE DECK RACK -- precons are physical objects
+   ----------------------------------------------------------------------------
+   THESIS. A precon is a box you own. Listing four of them as rows of text is a
+   filing cabinet, and a filing cabinet is exactly what the current menu feels
+   like. So the screen is a rack: four deck boxes standing on a shelf, faced with
+   their commander's art and edged in their colour identity, with the name
+   running up the spine.
+
+   THE BIG IDEA, stealable on its own: THE EMPTY SLOT. Custom decks are not a
+   button labelled "import". They are a gap in the rack -- a dashed hole where a
+   fifth box should be. That is the repo's own convention doing real work: the
+   board already uses dashed borders to mean "not real / not here" for drop
+   targets and fallen commanders, and a deck you have not imported yet is the
+   purest case of not-here there is. Importing fills the hole with a box.
+
+   SECOND IDEA: EXPAND IN PLACE. There is no modal. Opening a deck's dossier
+   makes the other boxes collapse to their spines and the dossier unfolds in the
+   gap they leave, in the rack's own order. The question this direction is
+   really asking is whether a screen with five things on it needs a modal at all
+   -- a modal exists to stop you losing your place, and you cannot lose your
+   place in a row of five.
+
+   THIRD: THE BRASS DIAL. Difficulty is a rotary switch with four detents, drawn
+   as the shipped life dial from board.css -- the same brass, the same engraved
+   inner ring, the same emboss on the numeral. One physical vocabulary for the
+   whole product.
+
+   THE TRADE. This is the tightest vertical fit of the five: a rack of boxes and
+   an expanding dossier both want height, and at 1600x950 the dossier has to be
+   a fixed header, a scrolling body and a fixed foot or it does not fit at all.
+
+   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   ========================================================================== */
+
+:root {
+  --void-0:#0b0a16; --void-1:#141328; --void-2:#1d1b38;
+  --edge:rgba(150,140,255,.16); --edge-hi:rgba(170,160,255,.3);
+  --astral:#8f7fe8; --astral-hi:#c3b6ff;
+
+  --pane-bg:rgba(20,19,40,.6); --pane-well:rgba(13,12,28,.78);
+  --pane-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45);
+
+  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
+  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-ink:#1a1a1a;
+
+  --danger:#ff5c5c; --gold:#ffd479; --dial-ink:#2a1c04;
+  --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
+
+  --card-w:clamp(124px, 17vh, 168px);
+  --card-r:calc(var(--card-w) * .055);
+  --font:"Segoe UI", Inter, system-ui, sans-serif;
+}
+
+.f-W { --f-hi:#f6eed4; --f-lo:#b9ad86; --fb:#d8cfa8; }
+.f-U { --f-hi:#a9d2ec; --f-lo:#2f6a95; --fb:#4a86b8; }
+.f-B { --f-hi:#b6aeac; --f-lo:#2e282b; --fb:#4c4550; }
+.f-R { --f-hi:#f0a48b; --f-lo:#a4432f; --fb:#b8624a; }
+.f-G { --f-hi:#a9cfa2; --f-lo:#2f6b41; --fb:#4e8a5c; }
+.f-C { --f-hi:#d3d6da; --f-lo:#787e86; --fb:#8a8f96; }
+.f-gold { --f-hi:#eed99c; --f-lo:#9c7a24; --fb:#b99a45; }
+
+* { box-sizing:border-box; }
+html,body,#root { height:100%; margin:0; }
+html.grey { filter:grayscale(1); }
+body {
+  background:
+    radial-gradient(60% 44% at 50% 4%, rgba(143,127,232,.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90,190,220,.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+  color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button,input { font:inherit; color:inherit; }
+button { cursor:pointer; background:none; border:0; }
+.tabular { font-variant-numeric:tabular-nums; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-thumb { background:var(--edge); border-radius:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+
+/* Shell ------------------------------------------------------------------ */
+
+.gate { display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100%; }
+
+.head {
+  display:flex; align-items:baseline; gap:14px; padding:14px 26px 12px;
+  border-bottom:1px solid var(--edge);
+  background:linear-gradient(180deg, rgba(143,127,232,.12), transparent);
+}
+.head__mark { font-size:19px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+.head__sub { font-size:11.5px; color:var(--text-faint); letter-spacing:.04em; }
+.head__spacer { flex:1; }
+.head__ver { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+
+/* The shelf -------------------------------------------------------------- */
+
+.shelf { display:grid; grid-template-rows:auto minmax(0,1fr); min-height:0; padding:16px 26px 0; }
+.shelf__label {
+  display:flex; align-items:center; gap:10px; padding-bottom:11px;
+  font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint);
+}
+.shelf__hint { margin-left:auto; letter-spacing:.02em; font-weight:600; text-transform:none; font-size:11px; }
+
+.rack { display:flex; gap:14px; align-items:stretch; min-height:0; padding-bottom:18px; }
+
+/* A deck box. Commander art is the box face; the colour-identity frame is the
+   box edge; the name runs up the spine. All three come from cards.css. */
+.box {
+  position:relative; flex:1 1 0; min-width:0; max-width:290px; overflow:hidden;
+  display:grid; grid-template-columns:26px minmax(0,1fr);
+  border:2px solid var(--fb); border-radius:12px;
+  background:linear-gradient(160deg, var(--f-hi), var(--f-lo));
+  box-shadow:0 2px 3px rgba(0,0,0,.5), 0 14px 30px rgba(0,0,0,.45);
+  color:#fff; text-align:left; transition:transform 150ms, flex-basis 220ms, box-shadow 150ms;
+}
+.box:hover { transform:translateY(-4px); }
+.box--on { box-shadow:0 0 0 2px var(--gold), 0 16px 34px rgba(0,0,0,.55); }
+
+/* Collapsed to a spine while another box is open. */
+.box--slim { flex:0 0 58px; }
+.box--slim .box__face { display:none; }
+.box--slim .box__spine { border-right:0; }
+
+.box__spine {
+  position:relative; z-index:3; display:grid; place-items:center;
+  padding:10px 0; border-right:1px solid rgba(0,0,0,.35);
+  background:linear-gradient(90deg, rgba(0,0,0,.5), rgba(0,0,0,.2));
+}
+.box__spinetext {
+  writing-mode:vertical-rl; transform:rotate(180deg);
+  font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-height:100%;
+  text-shadow:0 1px 3px rgba(0,0,0,.9);
+}
+.box__face { position:relative; min-width:0; display:flex; flex-direction:column; }
+
+/* ART RESOLUTION IS A HARD CEILING, AND IT DECIDES WHAT A DECK BOX LOOKS LIKE.
+ *
+ * Scryfall's art_crop -- the only art-only asset it publishes -- is 626x457,
+ * and there is nothing sharper to fetch: `large` and `png` are whole cards, and
+ * the art band inside them is ~655px. A box on this rack is ~290x660, so
+ * `object-fit:cover` had to scale by HEIGHT -- 660/457 -- and drew a 626px
+ * image at 2.56x. It was the worst offender of the five and it looked it.
+ *
+ * The fix is also the more honest object: a real deck box is a printed panel
+ * with an art window, not a full-bleed photograph. So the art is a band at its
+ * own 626:457 aspect, which at 290px wide renders at 0.46x -- downscaled, and
+ * therefore sharper than the source. Behind and below it, the same file blurred
+ * to nothing fills the rest of the box with the art's own colour.
+ */
+.box__band {
+  position:relative; z-index:2; width:100%; aspect-ratio:626 / 457; overflow:hidden; flex:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.42), 0 2px 10px rgba(0,0,0,.45);
+}
+.box__bandimg { display:block; width:100%; height:100%; object-fit:cover; object-position:50% 30%; }
+.box__bandimg--none { background:repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 6px, transparent 6px 12px), #6b6152; }
+
+/* Below the window is the box itself, and the box is its colour identity -- the
+   same --f-hi/--f-lo gradient the border uses, knocked back far enough to read
+   white type. A blurred copy of the art was tried here first and it read as a
+   smear rather than as a colour: at this height there is no blur radius that
+   removes the structure without also removing the hue. */
+.box__body {
+  position:relative; z-index:2; flex:1; min-height:0;
+  display:flex; flex-direction:column;
+  background:linear-gradient(180deg, rgba(6,5,14,.34) 0%, rgba(6,5,14,.58) 46%, rgba(6,5,14,.76) 100%);
+}
+.box__scrim { position:relative; z-index:2; padding:12px 13px 0; }
+.box__n { font-size:14.5px; font-weight:800; line-height:1.15; text-shadow:0 1px 4px rgba(0,0,0,.9); }
+.box__cmd { margin-top:4px; font-size:10.5px; color:rgba(255,255,255,.78); text-shadow:0 1px 3px rgba(0,0,0,.9); }
+.box__meta { display:flex; align-items:center; gap:5px; margin-top:8px; flex-wrap:wrap; }
+
+/* The back of the box. A real precon prints its pitch and its numbers here, and
+   an empty panel was the same "two thirds of the screen is dead" complaint
+   mockups/README.md makes about the board, reproduced at box scale. */
+.box__blurb {
+  margin:10px 13px 0; font-size:11px; line-height:1.5; color:rgba(255,255,255,.82);
+  text-shadow:0 1px 3px rgba(0,0,0,.85);
+  display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+}
+.box__tags { display:flex; flex-wrap:wrap; gap:5px; margin:10px 13px 0; }
+.box__spacer { flex:1; min-height:8px; }
+.box__bars { display:grid; gap:4px; margin:0 13px 11px; }
+.box__bars .bar__label { color:rgba(255,255,255,.62); }
+.box__bars .bar__seg { border-color:rgba(255,255,255,.34); }
+.box__bars .bar__seg--on { background:rgba(255,255,255,.86); border-color:rgba(255,255,255,.86); }
+.box .chip { border-color:rgba(255,255,255,.32); color:rgba(255,255,255,.86); background:rgba(0,0,0,.32); }
+.box__badge { position:absolute; top:9px; right:9px; z-index:3; }
+.box__open {
+  position:relative; z-index:3; margin:0 13px 13px; padding:7px 0; border-radius:7px;
+  border:1px solid rgba(255,255,255,.35); background:rgba(0,0,0,.45);
+  font-size:11.5px; font-weight:700; color:#fff; text-align:center;
+}
+.box__open:hover { border-color:#fff; background:rgba(0,0,0,.62); }
+
+/* The gap. Dashed means not-here; a deck you have not imported is not here. */
+.gap {
+  flex:0 1 200px; min-width:0; display:grid; justify-items:center; align-content:center; gap:6px; padding:16px 10px;
+  border:1px dashed var(--edge-hi); border-radius:12px; background:rgba(13,12,28,.4);
+  color:var(--text-dim); font-size:12px; font-weight:650; text-align:center;
+}
+.gap:hover { border-color:var(--gold); color:var(--text); }
+.gap--on { border-style:solid; border-color:var(--gold); }
+.gap__plus { font-size:26px; line-height:1; color:var(--text-faint); }
+.gap__sub { font-size:10.5px; font-weight:500; color:var(--text-faint); line-height:1.4; }
+
+/* The dossier, unfolded in the rack ------------------------------------- */
+
+.dosbox {
+  flex:1 1 0; min-width:340px; display:grid; grid-template-rows:auto minmax(0,1fr) auto;
+  min-height:0; border:1px solid var(--edge); border-radius:12px;
+  background:linear-gradient(180deg,#1b1936,#0d0c1c); box-shadow:var(--pane-shadow);
+}
+.dos__head { display:flex; align-items:center; gap:10px; padding:13px 16px 11px; border-bottom:1px solid var(--edge); }
+.dos__name { font-size:17px; font-weight:800; min-width:0; }
+.dos__x { margin-left:auto; width:27px; height:27px; border-radius:999px; border:1px solid var(--edge); color:var(--text-dim); flex:none; }
+.dos__x:hover { border-color:var(--edge-hi); color:var(--text); }
+.dos__body { min-height:0; overflow:auto; padding:14px 16px; }
+.dos__foot { display:flex; align-items:center; gap:10px; padding:11px 16px; border-top:1px solid var(--edge); }
+
+.dos__top { display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; }
+.dos__card { display:grid; gap:7px; justify-items:center; align-content:start; }
+.dos__artist { font-size:9.5px; color:var(--text-faint); text-align:center; max-width:var(--card-w); }
+.dos__h { margin:15px 0 7px; font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.dos__h:first-child { margin-top:0; }
+.dos__p { margin:0; font-size:12.5px; line-height:1.6; color:var(--text-dim); }
+.dos__tags { display:flex; flex-wrap:wrap; gap:6px; }
+.dos__bars { display:grid; gap:5px; margin-top:10px; }
+.dos__sigs { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:9px; }
+.sig { display:grid; grid-template-columns:56px minmax(0,1fr); gap:9px; align-items:center; }
+.sig__art { width:56px; height:44px; border-radius:5px; object-fit:cover; object-position:50% 30%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.45); }
+.sig__n { font-size:11.5px; font-weight:700; }
+.sig__why { font-size:10.5px; line-height:1.4; color:var(--text-faint); margin-top:2px; }
+
+/* The table strip -------------------------------------------------------- */
+
+.strip {
+  display:flex; align-items:center; gap:26px; flex-wrap:wrap; padding:14px 26px 18px;
+  border-top:1px solid var(--edge); background:rgba(11,10,22,.75);
+}
+.strip__spacer { flex:1; }
+
+/* The brass dial. Same object as the life dial in board.css: radial brass,
+   engraved inner ring, embossed numeral. Four detents on the upper arc. */
+.dial { position:relative; width:126px; height:126px; flex:none; }
+.dial__disc {
+  position:absolute; left:19px; top:19px; width:88px; height:88px; border-radius:999px;
+  background:radial-gradient(circle at 34% 26%, #fbeec2, #d8b055 38%, #8a6a22 72%, #4d3a12);
+  box-shadow:0 3px 10px rgba(0,0,0,.6), inset 0 0 0 3px rgba(0,0,0,.22), inset 0 -6px 14px rgba(0,0,0,.35);
+  display:grid; place-items:center;
+}
+.dial__disc::after { content:""; position:absolute; inset:7px; border-radius:999px; border:1px solid rgba(60,38,8,.5); }
+.dial__num {
+  position:relative; font-size:27px; font-weight:900; color:var(--dial-ink);
+  text-shadow:0 1px 0 rgba(255,255,255,.35);
+}
+.dial__needle {
+  position:absolute; left:62px; top:24px; width:3px; height:20px; border-radius:2px;
+  background:rgba(38,24,4,.85); box-shadow:0 1px 0 rgba(255,255,255,.28);
+  transform-origin:1.5px 39px; transition:transform 200ms; pointer-events:none;
+}
+.dial__detent {
+  position:absolute; width:20px; height:20px; border-radius:999px; padding:0;
+  border:1px solid var(--edge-hi); background:rgba(13,12,28,.85);
+  font-size:9.5px; font-weight:800; color:var(--text-faint);
+}
+.dial__detent--on { border-color:var(--gold); color:var(--gold); background:rgba(60,40,8,.9); }
+
+.tier { min-width:0; max-width:44ch; }
+.tier__label { font-size:9.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--text-faint); }
+.tier__n { display:flex; align-items:center; gap:9px; margin-top:5px; }
+.tier__name { font-size:16px; font-weight:800; }
+.tier__tag { font-size:11px; color:var(--text-faint); }
+.tier__line { margin:6px 0 0; font-size:11.5px; line-height:1.5; color:var(--text-dim); }
+
+.chairs { display:flex; gap:7px; }
+.chair {
+  padding:9px 13px; border:1px solid var(--edge); border-radius:9px;
+  background:var(--pane-well); color:var(--text-dim); font-size:12px; font-weight:650;
+  display:grid; gap:3px; justify-items:center; min-width:52px;
+}
+.chair:hover { border-color:var(--edge-hi); color:var(--text); }
+.chair--on { border-color:var(--gold); color:var(--text); box-shadow:0 0 0 1px rgba(255,212,121,.4); }
+.chair__glyph { font-size:12px; letter-spacing:-.06em; }
+
+/* One chip per chair: who is in it, and what they are holding. Clicking a chip
+   swaps a CPU for an open seat and back -- that is the whole multiplayer UI. */
+.strip__code { color:var(--gold); letter-spacing:.08em; }
+.pews { display:flex; gap:6px; }
+.pew {
+  display:grid; gap:2px; justify-items:start; padding:7px 11px;
+  border:1px solid var(--edge); border-radius:9px; background:var(--pane-well); color:var(--text-dim);
+}
+.pew:hover { border-color:var(--edge-hi); color:var(--text); }
+.pew--open { border-style:dashed; border-color:var(--edge-hi); }
+.pew--human { border-color:rgba(92,224,138,.42); }
+.pew__n { font-size:11.5px; font-weight:700; color:var(--text); }
+.pew__d { font-size:10px; color:var(--text-faint); }
+
+.toggle {
+  display:flex; align-items:center; gap:7px; margin-top:7px; padding:6px 9px;
+  border:1px solid var(--edge); border-radius:8px; background:var(--pane-well);
+  color:var(--text-dim); font-size:11px; font-weight:600;
+}
+.toggle:hover { border-color:var(--edge-hi); color:var(--text); }
+.toggle--on { border-color:var(--gold); color:var(--text); }
+.toggle__box {
+  width:14px; height:14px; flex:none; display:grid; place-items:center; border-radius:4px;
+  border:1px solid var(--edge-hi); font-size:9px; font-style:normal; color:#241a04;
+}
+.toggle--on .toggle__box { background:var(--gold); border-color:var(--gold); }
+
+.play {
+  padding:15px 30px; border-radius:11px; flex:none;
+  background:linear-gradient(180deg,#ffd98c,#e0a63f 55%,#b87c1c); color:#1b0f05;
+  font-size:15px; font-weight:800; letter-spacing:.04em;
+  box-shadow:0 4px 0 #7d5310, 0 0 26px rgba(224,166,63,.28);
+}
+.play:active { transform:translateY(2px); box-shadow:0 2px 0 #7d5310, 0 0 26px rgba(224,166,63,.28); }
+.play:disabled { opacity:.45; cursor:not-allowed; box-shadow:0 4px 0 #4a3a18; }
+.strip__why { flex:none; max-width:22ch; font-size:10.5px; line-height:1.45; color:var(--text-faint); }
+
+/* Import ----------------------------------------------------------------- */
+
+.impbar {
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:11px 26px;
+  border-top:1px solid var(--edge); background:rgba(13,12,28,.9);
+}
+.impbar__label { font-size:9.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--text-faint); flex:none; }
+.impbar__input {
+  flex:1; min-width:180px; padding:8px 11px; border:1px solid var(--edge); border-radius:8px;
+  background:rgba(8,7,18,.8); color:var(--text); font-size:12.5px;
+}
+.impbar__input::placeholder { color:var(--text-faint); }
+.impbar__input:focus { outline:none; border-color:var(--gold); }
+.impbar__note { flex:none; font-size:11px; color:var(--text-faint); }
+.impbar__note--err { color:var(--danger); }
+.impbar__note--busy { color:var(--astral-hi); }
+
+/* Shared vocabulary ------------------------------------------------------ */
+
+.btn { padding:9px 15px; border:1px solid var(--edge-hi); border-radius:8px; background:rgba(20,19,40,.6); color:var(--text); font-size:12.5px; font-weight:650; white-space:nowrap; }
+.btn:hover { border-color:var(--gold); }
+.ghost { padding:9px 14px; border-radius:7px; color:var(--text-faint); font-size:13px; font-weight:500; }
+.ghost:hover { color:var(--text); }
+
+.pip {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:16px; height:16px; padding:0 4px; border-radius:999px;
+  font-size:10px; font-weight:800; font-style:normal; color:var(--mana-ink);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.25);
+}
+.pip--W { background:var(--mana-W); } .pip--U { background:var(--mana-U); }
+.pip--B { background:var(--mana-B); } .pip--R { background:var(--mana-R); }
+.pip--G { background:var(--mana-G); } .pip--C { background:var(--mana-C); }
+
+.chip { padding:3px 8px; border:1px solid var(--edge-hi); border-radius:999px; font-size:10px; font-weight:650; color:var(--text-dim); background:rgba(9,8,20,.5); }
+.count { font-size:11px; color:rgba(255,255,255,.8); }
+.dos__head .count, .strip .count { color:var(--text-dim); }
+.badge { padding:2px 7px; border:1px dashed rgba(255,255,255,.5); border-radius:999px; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,.55); }
+.badge--partial { border-style:solid; border-color:var(--gold); color:var(--gold); }
+
+.bar { display:flex; align-items:center; gap:7px; }
+.bar__label { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); min-width:88px; }
+.bar__track { display:flex; gap:2px; }
+.bar__seg { width:13px; height:5px; border-radius:2px; border:1px solid var(--edge-hi); background:transparent; }
+.bar__seg--on { background:var(--text-dim); border-color:var(--text-dim); }
+
+.lamps { display:inline-flex; gap:3px; }
+.lamp { width:7px; height:7px; border-radius:999px; border:1px solid var(--edge-hi); }
+.lamp--on { background:var(--gold); border-color:var(--gold); }
+
+.face {
+  position:relative; width:var(--card-w); aspect-ratio:1 / 1.4; overflow:hidden;
+  border-radius:var(--card-r); border:2px solid var(--fb);
+  background:linear-gradient(160deg, var(--f-hi), var(--f-lo));
+  display:flex; flex-direction:column; justify-content:space-between;
+  box-shadow:0 1px 2px rgba(0,0,0,.5), 0 6px 14px rgba(0,0,0,.35);
+  color:#fff; flex:none;
+}
+.face__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.face__art--none { background:repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 6px, transparent 6px 12px), #6b6152; }
+.face__head, .face__foot { position:relative; z-index:2; padding:6px 7px; }
+.face__head { background:linear-gradient(180deg, rgba(0,0,0,.82), rgba(0,0,0,.57) 55%, rgba(0,0,0,0)); }
+.face__foot { background:linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.71) 58%, rgba(0,0,0,0)); }
+.face__title { display:flex; align-items:flex-start; gap:5px; }
+.face__name { flex:1; font-size:11px; font-weight:750; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.85); }
+.face__cost { display:flex; gap:2px; flex:none; }
+.face__type { margin-top:3px; font-size:8.5px; color:rgba(255,255,255,.86); text-shadow:0 1px 2px rgba(0,0,0,.85); }
+.face__rules { margin:0 0 5px; font-size:8.5px; line-height:1.38; color:rgba(255,255,255,.92); text-shadow:0 1px 2px rgba(0,0,0,.85); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.face__base { display:flex; align-items:flex-end; gap:6px; }
+.face__kw { flex:1; font-size:8.5px; font-weight:700; color:rgba(255,255,255,.9); text-shadow:0 1px 2px rgba(0,0,0,.85); }
+.face__pt { font-size:12px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,.9); }
+
+.curve__cols { display:flex; align-items:flex-end; gap:4px; height:52px; }
+.curve__bar { flex:1; background:var(--text-faint); border-radius:2px 2px 0 0; min-height:2px; }
+.curve__axis { display:flex; gap:4px; margin-top:4px; }
+.curve__n { flex:1; text-align:center; font-size:9px; color:var(--text-faint); }
+.curve__none { padding:13px; border:1px dashed var(--edge-hi); border-radius:9px; font-size:11.5px; line-height:1.5; color:var(--text-faint); text-align:center; }
+.note { margin-top:8px; padding:10px 12px; border-left:2px solid var(--edge-hi); border-radius:0 7px 7px 0; background:rgba(13,12,28,.55); font-size:11.5px; line-height:1.55; color:var(--text-faint); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* Content, inlined from _menu.js -- the readable master. Not linked, because a
+   <script src> does not load from file:// and every mockup opens standalone. */
+
+const CAPS = [
+  { id: "combat", n: "Combat math" },
+  { id: "removal", n: "Removal & targeting" },
+  { id: "seq", n: "Mana & sequencing" },
+];
+
+const DIFFICULTY = [
+  { id: "goldfish", n: "Goldfish", tag: "Plays solitaire", caps: [], agent: "random",
+    line: "Takes legal actions at random. It will not block you, race you, or notice you exist." },
+  { id: "apprentice", n: "Apprentice", tag: "Knows the basics", caps: ["combat"], rec: true,
+    line: "Blocks when the trade is safe, attacks when the attack is free, and plays to its curve." },
+  { id: "duelist", n: "Duelist", tag: "Plays to win", caps: ["combat", "removal"], agent: "heuristic",
+    line: "Spends removal on your best threat, keeps a blocker home, and counts to lethal." },
+  { id: "archmage", n: "Archmage", tag: "Plays around you", caps: ["combat", "removal", "seq"],
+    line: "Sequences its mana, holds up interaction, and plays around the cards you left mana open for." },
+];
+
+const BAR_LABELS = [
+  ["speed", "Speed"], ["complexity", "Complexity"], ["interaction", "Interaction"],
+  ["resilience", "Resilience"], ["pilot", "Demands on you"],
+];
+
+const PRECONS = [
+  {
+    id: "aesi", name: "Aesi, Tyrant of Gyre Strait", short: "Aesi",
+    ci: ["G", "U"], guild: "Simic", cards: 100, lands: 37,
+    cmd: { n: "Aesi, Tyrant of Gyre Strait", cost: "4GU", tl: "Legendary Creature — Serpent",
+      t: "creature", f: "gold", pt: "5/5", kw: "Trample",
+      rules: "Trample. Whenever you play a land, draw a card. You may play an additional land on each of your turns.",
+      art: "aesi-tyrant-of-gyre-strait", artist: "Viktor Titov" },
+    tags: ["Ramp", "Landfall", "Card draw"],
+    blurb: "Simic ramp and landfall. Plays extra lands, turns each one into cards off Aesi and Tatyova, and closes with large trampling threats.",
+    strategy: "The first four turns are spent almost entirely on mana: a dork, a rock, a land-search sorcery, a second land drop. Aesi lands on turn five or six and converts the whole plan into cards — every land after that draws one, and Aesi lets you play two. By turn eight the deck is drawing three or four cards a turn off lands alone, and the payoffs stop being incremental: Avenger of Zendikar turns a board of lands into a board of bodies, Rampaging Baloths turns each new land into a 4/4. It wins by having more of everything than the table and swinging with trample.",
+    bars: { speed: 2, complexity: 3, interaction: 2, resilience: 3, pilot: 2 },
+    curve: [9, 13, 18, 7, 7, 3, 5],
+    signature: [
+      { n: "Tatyova, Benthic Druid", art: "tatyova-benthic-druid", why: "A second Aesi. Every land is a card and a life." },
+      { n: "Avenger of Zendikar", art: "avenger-of-zendikar", why: "Turns thirty-seven lands into a board in one cast." },
+      { n: "Rampaging Baloths", art: "rampaging-baloths", why: "Every land after this one is a 4/4." },
+      { n: "Explosive Vegetation", art: "explosive-vegetation", why: "Two lands at once, and lands are the engine." },
+    ],
+    engine: "playable", swaps: 5,
+    swapNote: "5 cards swapped for engine-supported equivalents — Scute Swarm, Rhystic Study, Cyclonic Rift, Ancient Greenwarden and Oracle of Mul Daya each need a rules feature the engine does not implement yet.",
+  },
+  {
+    id: "edgar", name: "Edgar Markov", short: "Edgar",
+    ci: ["W", "B", "R"], guild: "Mardu", cards: 100, lands: 37,
+    cmd: { n: "Edgar Markov", cost: "3RWB", tl: "Legendary Creature — Vampire Knight",
+      t: "creature", f: "gold", pt: "4/4", kw: "First strike",
+      rules: "First strike. Eminence — Whenever you cast another Vampire spell, if Edgar Markov is in the command zone or on the battlefield, create a 1/1 black Vampire creature token. Whenever Edgar Markov attacks, put a +1/+1 counter on each Vampire you control.",
+      art: "edgar-markov", artist: "Volkan Baǵa" },
+    tags: ["Aggro", "Tokens", "Drain"],
+    blurb: "Mardu vampire aggro. Eminence makes a token every time a Vampire is cast, lords make the swarm lethal, and drain effects convert every death and life gain into damage.",
+    strategy: "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast — every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Sanctum Seeker turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
+    bars: { speed: 4, complexity: 2, interaction: 3, resilience: 2, pilot: 2 },
+    curve: [15, 21, 11, 3, 9, 2, 1],
+    signature: [
+      { n: "Sanctum Seeker", art: "sanctum-seeker", why: "Every attacking Vampire drains, whether or not it connects." },
+      { n: "Legion Lieutenant", art: "legion-lieutenant", why: "The lord that makes a board of 1/1 tokens lethal." },
+      { n: "Blood Artist", art: "blood-artist", why: "Turns a board wipe into the winning turn." },
+      { n: "Falkenrath Noble", art: "falkenrath-noble", why: "A second Blood Artist, in the air." },
+    ],
+    engine: "playable", swaps: 7,
+    swapNote: "7 cards swapped for engine-supported equivalents — Captivating Vampire, Vampire Nocturnus, Bloodline Keeper and Shared Animosity need unimplemented rules features; Anguished Unmaking, Mortify and Bedevil need target selectors the engine cannot express yet.",
+  },
+  {
+    id: "first-flight", name: "First Flight", short: "First Flight",
+    ci: ["W", "U"], guild: "Azorius", cards: 100, lands: null,
+    cmd: { n: "Isperia, Supreme Judge", cost: "2WWUU", tl: "Legendary Creature — Sphinx",
+      t: "creature", f: "gold", pt: "6/4", kw: "Flying",
+      rules: "Flying. Whenever a creature attacks you or a planeswalker you control, you may draw a card.",
+      art: "isperia-supreme-judge", artist: "Scott M. Fischer" },
+    tags: ["Flyers", "Anthems", "Card draw"],
+    blurb: "Azorius skies. A low, evasive board that anthems itself upward, and a commander who charges the table for attacking into it.",
+    strategy: "The deck goes wide in the air with cheap flyers and then makes them all bigger at once — Empyrean Eagle and Favorable Winds are two of several anthems that only read on things with flying. Isperia is the punishment half: once she is down, attacking you costs a card, so the pod's aggro deck goes and hits somebody else. It plays a longer, more defensive game than Edgar and wins in two or three swings from a board the ground cannot block.",
+    bars: { speed: 2, complexity: 2, interaction: 3, resilience: 3, pilot: 2 },
+    curve: null,
+    signature: [
+      { n: "Empyrean Eagle", art: "empyrean-eagle", why: "An anthem attached to a flyer — the deck's whole shape in one card." },
+      { n: "Watcher of the Spheres", art: "watcher-of-the-spheres", why: "Makes the rest of the curve a mana cheaper." },
+      { n: "Favorable Winds", art: "favorable-winds", why: "Two mana, and every creature in the deck gets bigger." },
+    ],
+    engine: "preview", swaps: 0, swapNote: null,
+  },
+  {
+    id: "zurgo", name: "Zurgo Stormrender", short: "Zurgo",
+    ci: ["B", "R", "W"], guild: "Mardu", cards: 100, lands: null,
+    cmd: { n: "Zurgo Stormrender", cost: "RWB", tl: "Legendary Creature — Orc Warrior",
+      t: "creature", f: "gold", pt: "3/3", kw: "Mobilize 1",
+      rules: "Mobilize 1 (Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior creature token. Sacrifice it at the beginning of the next end step.) Whenever a creature token you control leaves the battlefield, draw a card if it was attacking. Otherwise, each opponent loses 1 life.",
+      art: "zurgo-stormrender", artist: "Lie Setiawan" },
+    tags: ["Tokens", "Attacking", "Sacrifice"],
+    blurb: "Mardu mobilize. Attacking makes tokens, the tokens are meant to die, and Zurgo turns each death into a card or a point of drain.",
+    strategy: "Zurgo costs three and wants to attack immediately — mobilize means every attack is wider than the board looks, and the tokens are built to be sacrificed at end of turn anyway. The second half of his text is the engine: an attacking token that dies draws a card, and any other token that dies drains the table. So the deck is happy to trade tokens into blockers, and happier to have a free sacrifice outlet like Goblin Bombardment that converts a whole attack step into damage and cards. It plays like Edgar with a rate-limiter removed, at the cost of needing an attack every turn to do anything.",
+    bars: { speed: 3, complexity: 3, interaction: 2, resilience: 2, pilot: 3 },
+    curve: null,
+    signature: [
+      { n: "Mardu Ascendancy", art: "mardu-ascendancy", why: "A second mobilize, on every nontoken attacker." },
+      { n: "Mardu Hordechief", art: "mardu-hordechief", why: "Raid rewards the attack the deck was making anyway." },
+      { n: "Goblin Bombardment", art: "goblin-bombardment", why: "The free outlet. Every token becomes damage and a card." },
+    ],
+    engine: "preview", swaps: 0, swapNote: null,
+  },
+];
+
+const CUSTOM = {
+  placeholder: "https://moxfield.com/decks/...",
+  hint: "Paste a public Moxfield deck link.",
+  fake: {
+    id: "custom-vorel", name: "Vorel of the Hull Clade", short: "Vorel",
+    ci: ["G", "U"], guild: "Simic", cards: 100, lands: 36,
+    cmd: { n: "Vorel of the Hull Clade", cost: "1GU", tl: "Legendary Creature — Human Merfolk",
+      t: "creature", f: "gold", pt: "1/4",
+      rules: "{1}{G}{U}, {T}: Double the number of each kind of counter on target artifact, creature, or land you control.",
+      art: "vorel-of-the-hull-clade", artist: "Mike Bierek" },
+    tags: ["Counters", "Ramp", "Combo"],
+    blurb: "Imported from Moxfield. Simic +1/+1 counters, doubled.",
+    strategy: "Imported decks have no editorial write-up — this is whatever you built.",
+    bars: { speed: 2, complexity: 4, interaction: 2, resilience: 2, pilot: 4 },
+    curve: [8, 15, 16, 12, 6, 4, 3],
+    signature: [], engine: "partial", unsupported: 12, swaps: 0, swapNote: null,
+  },
+  errors: {
+    badUrl: "That is not a Moxfield deck link.",
+    private: "That deck is private. Set it to public and try again.",
+  },
+};
+
+const OPPONENTS = [1, 2, 3];
+
+/* Rooms.
+ *
+ * docs/roadmap.md's backlog asks for "multiplayer online support using a basic
+ * system of rooms and room codes". It does not need a second screen, and giving
+ * it one is how products end up with two menus. It needs one new idea: a seat
+ * has a KIND -- cpu, open (holding the code, waiting for a person), or human.
+ * All-CPU, all-human and mixed pods are then the same screen with different
+ * seats in it, and "fill empty chairs with CPU" is both the partial-pod case
+ * and backfill-on-disconnect.
+ */
+const ROOM = {
+  code: "GYRE-8412",
+  // Canned. Opening a chair invites one scripted player who arrives and then
+  // locks in; there is no network in a mockup and there never will be.
+  guest: { name: "Priya", deckId: "edgar" },
+  joinMs: 1200,
+  readyMs: 2600,
+};
+
+/* Primitives (shared with the other four menu mockups) ------------------- */
+
+const root = document.getElementById("root");
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const artUrl = (slug) => "../art/" + slug + ".jpg";
+
+function pips(cost) {
+  if (!cost) return "";
+  const out = []; let num = "";
+  for (const ch of String(cost)) {
+    if (ch >= "0" && ch <= "9") { num += ch; continue; }
+    if (num) { out.push(`<i class="pip pip--C">${num}</i>`); num = ""; }
+    out.push(`<i class="pip pip--${ch}">${ch}</i>`);
+  }
+  if (num) out.push(`<i class="pip pip--C">${num}</i>`);
+  return out.join("");
+}
+const ciPips = (ci) => ci.map((c) => `<i class="pip pip--${c}">${c}</i>`).join("");
+
+function bar(label, value) {
+  let segs = "";
+  for (let i = 1; i <= 4; i += 1) segs += `<i class="bar__seg${i <= value ? " bar__seg--on" : ""}"></i>`;
+  return `<div class="bar"><span class="bar__label">${esc(label)}</span><span class="bar__track">${segs}</span></div>`;
+}
+const bars = (b) => BAR_LABELS.map(([k, l]) => bar(l, b[k])).join("");
+const lamps = (caps) =>
+  `<span class="lamps">${CAPS.map((c) => `<i class="lamp${caps.includes(c.id) ? " lamp--on" : ""}" title="${esc(c.n)}"></i>`).join("")}</span>`;
+const tierOf = (id) => DIFFICULTY.find((d) => d.id === id);
+const subtitle = (d) => (d.cmd.n === d.name ? `${d.guild} · ${d.tags[0].toLowerCase()}` : d.cmd.n);
+
+/* The box edge takes the deck's colour identity.
+ *
+ * A card frame would paint every one of these gold, because all four commanders
+ * are multicoloured -- and a rack of four identical gold boxes says nothing.
+ * So this is a deliberate divergence from cards.css: the box takes the LIT edge
+ * of its first colour and the SHADOWED edge of its second, which gives a Simic
+ * box that runs green to blue and a Mardu one that runs bone to oxblood. The
+ * card face inside the dossier still follows the card rule and stays gold.
+ */
+const FRAME = {
+  W: { hi: "#f6eed4", lo: "#b9ad86", fb: "#d8cfa8" },
+  U: { hi: "#a9d2ec", lo: "#2f6a95", fb: "#4a86b8" },
+  B: { hi: "#b6aeac", lo: "#2e282b", fb: "#4c4550" },
+  R: { hi: "#f0a48b", lo: "#a4432f", fb: "#b8624a" },
+  G: { hi: "#a9cfa2", lo: "#2f6b41", fb: "#4e8a5c" },
+  C: { hi: "#d3d6da", lo: "#787e86", fb: "#8a8f96" },
+};
+function boxTint(d) {
+  const hi = FRAME[d.ci[0]] || FRAME.C;
+  // For a three-colour deck the last colour is often as light as the first, so
+  // the shadow stop comes from the second -- otherwise the box has no depth.
+  const lo = FRAME[d.ci[d.ci.length > 2 ? 1 : d.ci.length - 1]] || FRAME.C;
+  return `--f-hi:${hi.hi}; --f-lo:${lo.lo}; --fb:${hi.fb};`;
+}
+
+function face(c) {
+  const media = c.art ? `<img class="face__art" src="${artUrl(c.art)}" alt="">` : `<div class="face__art face__art--none"></div>`;
+  return `<div class="face f-${c.f || "C"}">
+    ${media}
+    <div class="face__head">
+      <div class="face__title"><span class="face__name">${esc(c.n)}</span><span class="face__cost">${pips(c.cost)}</span></div>
+      <div class="face__type">${esc(c.tl)}</div>
+    </div>
+    <div class="face__foot">
+      ${c.rules ? `<p class="face__rules">${esc(c.rules)}</p>` : ""}
+      <div class="face__base"><span class="face__kw">${esc(c.kw || "")}</span>${c.pt ? `<span class="face__pt tabular">${c.pt}</span>` : ""}</div>
+    </div>
+  </div>`;
+}
+
+function curve(values) {
+  if (!values) return `<div class="curve__none">No deck list yet — the curve arrives with engine support for these cards.</div>`;
+  const max = Math.max(...values);
+  const label = (i) => `${i + 1}${i === 6 ? "+" : ""}`;
+  const cols = values.map((v, i) => `<span class="curve__bar" style="height:${Math.round((v / max) * 100)}%" title="${v} cards at ${label(i)} mana"></span>`).join("");
+  const axis = values.map((v, i) => `<span class="curve__n tabular">${label(i)}</span>`).join("");
+  return `<div class="curve"><div class="curve__cols">${cols}</div><div class="curve__axis">${axis}</div></div>`;
+}
+
+function engineBadge(deck) {
+  if (deck.engine === "preview") return `<span class="badge">Preview</span>`;
+  if (deck.engine === "partial") return `<span class="badge badge--partial">${deck.unsupported} unsupported</span>`;
+  return "";
+}
+
+/* State ------------------------------------------------------------------ */
+
+const state = {
+  deckId: "aesi",
+  seats: [{ kind: "cpu" }, { kind: "cpu", tier: "duelist" }],
+  fillCpu: true,
+  difficulty: "apprentice",
+  open: null,
+  impOpen: false,
+  imp: { status: "idle", url: "", msg: "" },
+  custom: null,
+  starting: false,
+};
+
+const allDecks = () => (state.custom ? PRECONS.concat([state.custom]) : PRECONS.slice());
+const deckById = (id) => allDecks().find((d) => d.id === id) || null;
+const selected = () => deckById(state.deckId);
+
+/* Seats ------------------------------------------------------------------ */
+
+let joinToken = 0;
+
+const podSize = () => state.seats.length + 1;
+const openSeats = () => state.seats.filter((s) => s.kind === "open").length;
+const roomLive = () => state.seats.some((s) => s.kind !== "cpu");
+const filledSeats = () => podSize() - openSeats();
+const canStart = () => openSeats() === 0 || state.fillCpu;
+/** A CPU seat follows the pod's tier unless it has been given its own. */
+const seatTier = (i) => tierOf(state.seats[i].tier || state.difficulty);
+
+function setSeatCount(n) {
+  while (state.seats.length > n) state.seats.pop();
+  while (state.seats.length < n) state.seats.push({ kind: "cpu" });
+}
+
+/** Flip a chair between a CPU and an open seat holding the room code. Opening
+ *  one runs the canned join: a person arrives, then locks their deck in. */
+function toggleSeat(i) {
+  if (state.seats[i].kind === "cpu") {
+    state.seats[i] = { kind: "open" };
+    const token = ++joinToken;
+    setTimeout(() => {
+      if (token !== joinToken || !state.seats[i] || state.seats[i].kind !== "open") return;
+      state.seats[i] = { kind: "human", name: ROOM.guest.name, deckId: ROOM.guest.deckId, ready: false };
+      render();
+      setTimeout(() => {
+        if (token !== joinToken || !state.seats[i] || state.seats[i].kind !== "human") return;
+        state.seats[i].ready = true;
+        render();
+      }, ROOM.readyMs - ROOM.joinMs);
+    }, ROOM.joinMs);
+  } else {
+    state.seats[i] = { kind: "cpu" };
+  }
+}
+
+/** What a seat is holding, or null when it is not knowable yet.
+ *
+ *  CPU opponents cycle through the other decks, exactly as NewGameScreen.tsx
+ *  :44-46 really does -- so the seats are reporting behaviour, not inventing
+ *  it. Preview decks are excluded: a deck the engine cannot deal cannot be
+ *  dealt to an opponent either.
+ *
+ *  A HUMAN's deck is sealed until they lock in. Reading a list before the game
+ *  is scouting, and scouting before mulligans is what a lobby hides. */
+function seatDeck(i) {
+  const s = state.seats[i];
+  if (s.kind === "open") return null;
+  if (s.kind === "human") return s.ready ? deckById(s.deckId) : null;
+  // Skip decks already spoken for -- yours, and any a joined player locked in.
+  // Falling back twice is not defensive coding, it is the real situation: with
+  // two playable decks and three opponents a duplicate is unavoidable, and
+  // docs/playtest-feedback-01.md:202 has been saying so for three cycles.
+  const taken = new Set([state.deckId, ...state.seats.filter((x) => x.kind === "human" && x.ready).map((x) => x.deckId)]);
+  const live = allDecks().filter((d) => d.engine !== "preview");
+  const pool = live.filter((d) => !taken.has(d.id))
+    || [];
+  const fallback = live.filter((d) => d.id !== state.deckId);
+  const chosen = pool.length ? pool : (fallback.length ? fallback : live);
+  return chosen.length ? chosen[i % chosen.length] : allDecks()[0];
+}
+
+
+/** The second line of a seat chip. The sealed/locked-in state has to be visible
+ *  in every mockup, not only the ones with room for a paragraph -- it is a rule
+ *  about what you are allowed to know, and a rule nobody can see is not a rule. */
+function seatSub(i) {
+  const s = state.seats[i];
+  const d = seatDeck(i);
+  if (s.kind === "cpu") return d ? d.short : "—";
+  if (s.kind === "open") return "invite";
+  return s.ready ? `${d.short} · locked in` : "choosing a deck…";
+}
+
+/** The two lines a seat shows, whatever the skin around it. */
+function seatLabel(i) {
+  const s = state.seats[i];
+  if (s.kind === "open") return { title: "Open chair", sub: "Waiting for a player" };
+  if (s.kind === "human") return { title: s.name, sub: s.ready ? "Locked in" : "Choosing a deck…" };
+  const t = seatTier(i);
+  return { title: t.n, sub: t.tag };
+}
+
+function playLabel(idle) {
+  if (state.starting) return "Shuffling…";
+  if (!roomLive()) return idle;
+  if (!canStart()) return `Waiting · ${filledSeats()} of ${podSize()}`;
+  return `Start · ${filledSeats()} of ${podSize()} seats`;
+}
+
+/* Views ------------------------------------------------------------------ */
+
+function box(deck) {
+  const on = deck.id === state.deckId;
+  const slim = state.open !== null && state.open !== deck.id;
+  return `<div class="box${on ? " box--on" : ""}${slim ? " box--slim" : ""}" style="${boxTint(deck)}"
+               data-act="pick" data-id="${deck.id}" data-testid="deck-${deck.id}" role="button" tabindex="0">
+    <div class="box__spine"><span class="box__spinetext">${esc(deck.short)}</span></div>
+    <div class="box__face">
+      <span class="box__band"><img class="box__bandimg" src="${artUrl(deck.cmd.art)}" alt=""></span>
+      <span class="box__badge">${engineBadge(deck)}</span>
+      <div class="box__body">
+        <div class="box__scrim">
+          <div class="box__n">${esc(deck.name)}</div>
+          <div class="box__cmd">${esc(subtitle(deck))}</div>
+          <div class="box__meta">${ciPips(deck.ci)}<span class="count tabular">${deck.cards} cards</span></div>
+        </div>
+        <p class="box__blurb">${esc(deck.blurb)}</p>
+        <div class="box__tags">${deck.tags.map((t) => `<span class="chip">${esc(t)}</span>`).join("")}</div>
+        <div class="box__spacer"></div>
+        <div class="box__bars">${bars(deck.bars)}</div>
+        <button class="box__open" data-act="open" data-id="${deck.id}">Open the box</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function gap() {
+  return `<button class="gap${state.impOpen ? " gap--on" : ""}" data-act="import-open">
+    <span class="gap__plus">+</span>
+    <span>${state.custom ? "Another deck" : "Your own deck"}</span>
+    <span class="gap__sub">Import a list from Moxfield</span>
+  </button>`;
+}
+
+/* The dossier unfolds in the rack, in the box's own position. No scrim, no
+   overlay: the other boxes are still on screen as spines. */
+function dosbox(d) {
+  const sigs = d.signature.length
+    ? `<div class="dos__sigs">${d.signature.map((s) => `<div class="sig">
+        <img class="sig__art" src="${artUrl(s.art)}" alt="">
+        <div><div class="sig__n">${esc(s.n)}</div><div class="sig__why">${esc(s.why)}</div></div>
+      </div>`).join("")}</div>`
+    : `<p class="dos__p">An imported deck brings no editorial notes with it.</p>`;
+  const honesty = d.engine === "preview"
+    ? `<div class="note">Preview. These cards are not in the engine yet, so this deck cannot be dealt. It is here because the menu has to be able to show it before "All Card Support" lands.</div>`
+    : d.engine === "partial"
+      ? `<div class="note">${d.unsupported} of the imported cards use rules the engine does not implement and were dropped from the list.</div>`
+      : `<div class="note">${esc(d.swapNote)}</div>`;
+
+  return `<section class="dosbox" role="dialog" aria-label="${esc(d.name)}">
+    <div class="dos__head">
+      <span class="dos__name">${esc(d.name)}</span>
+      ${ciPips(d.ci)}
+      <span class="count tabular">${d.cards} cards</span>
+      ${engineBadge(d)}
+      <button class="dos__x" data-act="close" aria-label="Close">✕</button>
+    </div>
+    <div class="dos__body">
+      <div class="dos__top">
+        <div class="dos__card">
+          ${face(d.cmd)}
+          <div class="dos__artist">Art: ${esc(d.cmd.artist)}</div>
+        </div>
+        <div>
+          <h3 class="dos__h">The deck</h3>
+          <p class="dos__p">${esc(d.blurb)}</p>
+          <h3 class="dos__h">How it plays</h3>
+          <p class="dos__p">${esc(d.strategy)}</p>
+          <h3 class="dos__h">Playstyle</h3>
+          <div class="dos__tags">${d.tags.map((t) => `<span class="chip">${esc(t)}</span>`).join("")}</div>
+          <div class="dos__bars">${bars(d.bars)}</div>
+        </div>
+      </div>
+      <h3 class="dos__h">Cards that define it</h3>
+      ${sigs}
+      <h3 class="dos__h">Mana curve</h3>
+      ${curve(d.curve)}
+      ${honesty}
+    </div>
+    <div class="dos__foot">
+      <button class="play" style="padding:11px 22px;font-size:14px" data-act="pick-play" data-id="${d.id}" ${d.engine === "preview" ? "disabled" : ""}>Play this deck</button>
+      <button class="ghost" data-act="close">Back to the rack</button>
+    </div>
+  </section>`;
+}
+
+function rack() {
+  const items = [];
+  for (const deck of allDecks()) {
+    items.push(state.open === deck.id ? dosbox(deck) : box(deck));
+  }
+  items.push(gap());
+  return `<div class="rack">${items.join("")}</div>`;
+}
+
+/* The brass dial. Four detents on the upper arc; the needle points at the one
+   in force. Clicking the disc advances a notch, clicking a detent jumps to it. */
+function dial() {
+  const i = DIFFICULTY.findIndex((t) => t.id === state.difficulty);
+  const angles = [-150, -110, -70, -30];
+  const detents = DIFFICULTY.map((t, k) => {
+    const a = (angles[k] * Math.PI) / 180;
+    const x = 63 + 54 * Math.cos(a) - 10;
+    const y = 63 + 54 * Math.sin(a) - 10;
+    return `<button class="dial__detent${k === i ? " dial__detent--on" : ""}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px"
+             data-act="tier" data-id="${t.id}" title="${esc(t.n)}">${k + 1}</button>`;
+  }).join("");
+  return `<div class="dial">
+    ${detents}
+    <button class="dial__disc" data-act="tier-next" aria-label="Difficulty: ${esc(DIFFICULTY[i].n)}">
+      <span class="dial__num tabular">${i + 1}</span>
+    </button>
+    <span class="dial__needle" style="transform:rotate(${angles[i] + 90}deg)"></span>
+  </div>`;
+}
+
+function strip() {
+  const d = selected();
+  const tier = tierOf(state.difficulty);
+  const blocked = !d || d.engine === "preview" || !canStart();
+  return `<div class="strip">
+    ${dial()}
+    <div class="tier">
+      <div class="tier__label">How well they play</div>
+      <div class="tier__n"><span class="tier__name">${esc(tier.n)}</span>${lamps(tier.caps)}<span class="tier__tag">${esc(tier.tag)}</span></div>
+      <p class="tier__line">${esc(tier.line)}</p>
+    </div>
+    <div>
+      <div class="tier__label" style="margin-bottom:7px">Opponents</div>
+      <div class="chairs">
+        ${OPPONENTS.map((n) => `<button class="chair${n === state.seats.length ? " chair--on" : ""}" data-act="seats" data-n="${n}" data-testid="opponents-${n}">
+          <span class="chair__glyph">${"◆".repeat(n)}</span><span class="tabular">${n}</span>
+        </button>`).join("")}
+      </div>
+    </div>
+    <div>
+      <div class="tier__label" style="margin-bottom:7px">${roomLive() ? `Room <b class="strip__code tabular">${ROOM.code}</b>` : "Who is in them"}</div>
+      <div class="pews">
+        ${state.seats.map((s, i) => {
+          const sd = seatDeck(i);
+          const lab = seatLabel(i);
+          return `<button class="pew pew--${s.kind}" data-act="seat-kind" data-i="${i}"
+                   title="${s.kind === "cpu" ? "Open this chair to a player" : "Put a CPU back in this chair"}">
+            <span class="pew__n">${esc(lab.title)}</span>
+            <span class="pew__d">${esc(seatSub(i))}</span>
+          </button>`;
+        }).join("")}
+      </div>
+      ${roomLive() ? `<button class="toggle${state.fillCpu ? " toggle--on" : ""}" data-act="fill">
+        <i class="toggle__box">${state.fillCpu ? "✓" : ""}</i>Fill empty chairs with CPU
+      </button>` : ""}
+    </div>
+    <span class="strip__spacer"></span>
+    <p class="strip__why">${
+      !d || d.engine === "preview" ? "This precon has no deck list in the engine yet."
+      : !canStart() ? `${openSeats()} chair${openSeats() > 1 ? "s" : ""} still open — share the code, or let CPUs fill them.`
+      : `${esc(d.short)} · ${podSize()}-player pod · seed from ?seed=`
+    }</p>
+    <button class="play" data-act="play" data-testid="start-game" ${blocked || state.starting ? "disabled" : ""}>
+      ${playLabel("Deal")}
+    </button>
+  </div>`;
+}
+
+function impbar() {
+  if (!state.impOpen) return "";
+  const { status, msg } = state.imp;
+  let note = `<span class="impbar__note">${esc(CUSTOM.hint)}</span>`;
+  if (status === "fetching") note = `<span class="impbar__note impbar__note--busy">Reading the list…</span>`;
+  if (status === "error") note = `<span class="impbar__note impbar__note--err">${esc(msg)}</span>`;
+  if (status === "ready") note = `<span class="impbar__note">Imported. ${CUSTOM.fake.unsupported} cards are not in the engine yet and were left out.</span>`;
+  return `<div class="impbar">
+    <span class="impbar__label">Moxfield</span>
+    <input class="impbar__input" id="mox" type="text" value="${esc(state.imp.url)}"
+           placeholder="${esc(CUSTOM.placeholder)}" spellcheck="false" aria-label="Moxfield deck link">
+    <button class="btn" data-act="import">Import</button>
+    <button class="ghost" data-act="import-close">Cancel</button>
+    ${note}
+  </div>`;
+}
+
+function render() {
+  root.innerHTML = `<div class="gate" data-testid="new-game">
+    <header class="head">
+      <span class="head__mark">Auto MTG</span>
+      <span class="head__sub">Commander, against the engine</span>
+      <span class="head__spacer"></span>
+      <span class="head__ver">The rack</span>
+    </header>
+    <div class="shelf">
+      <div class="shelf__label">
+        On the shelf
+        <span class="shelf__hint">${state.open ? "The other boxes are still there — they are the spines." : "Four precons, and one gap for a deck of your own."}</span>
+      </div>
+      ${rack()}
+    </div>
+    ${impbar()}
+    ${strip()}
+  </div>`;
+}
+
+/* Behaviour -------------------------------------------------------------- */
+
+root.addEventListener("input", (e) => {
+  if (e.target.id === "mox") state.imp.url = e.target.value;
+});
+
+function runImport() {
+  const url = state.imp.url.trim();
+  if (!/^https?:\/\/(www\.)?moxfield\.com\/decks\/\S+/i.test(url)) {
+    state.imp = { status: "error", url, msg: CUSTOM.errors.badUrl };
+    render();
+    return;
+  }
+  state.imp = { status: "fetching", url, msg: "" };
+  render();
+  setTimeout(() => {   // canned; there is no network here
+    state.custom = CUSTOM.fake;
+    state.deckId = CUSTOM.fake.id;
+    state.imp = { status: "ready", url, msg: "" };
+    state.impOpen = false;
+    render();
+  }, 700);
+}
+
+root.addEventListener("click", (e) => {
+  const hit = e.target.closest("[data-act]");
+  if (!hit) return;
+  const act = hit.dataset.act;
+  switch (act) {
+    case "pick": state.deckId = hit.dataset.id; break;
+    case "open": state.open = hit.dataset.id; state.deckId = hit.dataset.id; break;
+    case "close": state.open = null; break;
+    case "pick-play": state.deckId = hit.dataset.id; state.open = null; break;
+    case "seats": setSeatCount(Number(hit.dataset.n)); break;
+    case "tier":
+      state.difficulty = hit.dataset.id;
+      state.seats.forEach((s) => { delete s.tier; });
+      break;
+    case "seat-kind": toggleSeat(Number(hit.dataset.i)); break;
+    case "fill": state.fillCpu = !state.fillCpu; break;
+    case "tier-next": {
+      const i = DIFFICULTY.findIndex((t) => t.id === state.difficulty);
+      state.difficulty = DIFFICULTY[(i + 1) % DIFFICULTY.length].id;
+      break;
+    }
+    case "import-open": state.impOpen = true; break;
+    case "import-close": state.impOpen = false; state.imp = { status: "idle", url: "", msg: "" }; break;
+    case "import": runImport(); return;
+    case "play": {
+      state.starting = true;
+      render();
+      setTimeout(() => { state.starting = false; render(); }, 1600);
+      return;
+    }
+    default: return;
+  }
+  render();
+  if (act === "import-open") document.getElementById("mox").focus();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (state.open) { state.open = null; render(); return; }
+    if (state.impOpen) { state.impOpen = false; render(); return; }
+  }
+  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
+    document.documentElement.classList.toggle("grey");
+  }
+});
+
+render();
+</script>
+</body>
+</html>

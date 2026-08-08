@@ -170,7 +170,17 @@ export function CardFace({ card, variant = "board" }: Props) {
             // A 404 is a real case: art is fetched lazily for anything outside
             // the shipped card pool, and a fetch can fail. Fall back to the
             // plate rather than to the browser's broken-image glyph.
-            <img src={art} alt="" loading="lazy" onError={() => setBroken(true)} />
+            // `face__art-img` rather than a bare `<img>`: a land's mana symbols
+            // are images too and they live inside this same box, so `.face__art
+            // img` stopped meaning "the illustration" the moment the symbols
+            // became real artwork.
+            <img
+              className="face__art-img"
+              src={art}
+              alt=""
+              loading="lazy"
+              onError={() => setBroken(true)}
+            />
           ) : (
             <span>no art</span>
           )}
