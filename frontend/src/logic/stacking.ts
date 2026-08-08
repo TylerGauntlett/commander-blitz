@@ -21,6 +21,13 @@ export interface CardStackGroup {
   /** The card whose face is drawn; the one a click acts on by default. */
   top: CardView;
   count: number;
+  /**
+   * Permanents drawn tucked behind `top`: its auras and equipment.
+   *
+   * Always empty unless the group is a host, and a host is always a group of
+   * one -- see `stackCards`.
+   */
+  attachments: CardView[];
 }
 
 /** Counters as a stable string: "+1/+1:2|charge:1". */
@@ -57,15 +64,23 @@ export function stackKey(card: CardView): string {
 /**
  * Group cards into stacks, preserving first-appearance order.
  *
- * Attached permanents (auras, equipment) are never stacked away from their
- * host, and anything a stack would hide is split out by `stackKey`.
+ * `attachments` maps a host oid to the permanents drawn tucked behind it (see
+ * `attachmentsFor`). A host never merges with anything: `stackKey` describes a
+ * card, not what is hanging off it, so an enchanted Grizzly Bears would
+ * otherwise hide behind an identical bare one and take the aura with it. Giving
+ * every host a key of its own follows this module's rule -- splitting stacks is
+ * always safe, hiding board state never is -- and it is what makes a group's
+ * `attachments` unambiguously belong to its `top`.
  */
-export function stackCards(cards: CardView[]): CardStackGroup[] {
+export function stackCards(
+  cards: CardView[],
+  attachments?: ReadonlyMap<number, CardView[]>,
+): CardStackGroup[] {
   const groups = new Map<string, CardView[]>();
   const order: string[] = [];
 
   for (const card of cards) {
-    const key = stackKey(card);
+    const key = attachments?.has(card.oid) ? `host/${card.oid}` : stackKey(card);
     const existing = groups.get(key);
     if (existing) {
       existing.push(card);
@@ -77,7 +92,13 @@ export function stackCards(cards: CardView[]): CardStackGroup[] {
 
   return order.map((key) => {
     const members = groups.get(key) as CardView[];
-    return { key, cards: members, top: members[0], count: members.length };
+    return {
+      key,
+      cards: members,
+      top: members[0],
+      count: members.length,
+      attachments: attachments?.get(members[0].oid) ?? [],
+    };
   });
 }
 
@@ -97,8 +118,10 @@ export function splitActionable(
   if (hits.length === 0 || hits.length === group.count) return [group];
 
   const rest = group.cards.filter((card) => !actionableOids.has(card.oid));
+  // A host is always a group of one, so `group.count > 1` guarantees there is
+  // nothing attached here to hand on to either half.
   return [
-    { key: `${group.key}#on`, cards: hits, top: hits[0], count: hits.length },
-    { key: `${group.key}#off`, cards: rest, top: rest[0], count: rest.length },
+    { key: `${group.key}#on`, cards: hits, top: hits[0], count: hits.length, attachments: [] },
+    { key: `${group.key}#off`, cards: rest, top: rest[0], count: rest.length, attachments: [] },
   ];
 }

@@ -27,6 +27,19 @@ import { Card } from "./Card";
 /** How far each hidden ply peeks out from under the top card. */
 const PLY_X = 7;
 const PLY_Y = -4;
+/**
+ * How far an aura or equipment peeks out from under the permanent it is on, as
+ * a fraction of a card. Down and to the right, far enough that the attachment's
+ * own title bar is readable and clickable -- an aura has to stay reachable, or
+ * the only way to destroy one is the action list.
+ */
+const ATTACH_X_RATIO = 0.22;
+const ATTACH_Y_RATIO = 0.1;
+/**
+ * Above every other member of this unit. Whatever the pointer is on has to be
+ * whole: a half-covered card is one you cannot read and can only half click.
+ */
+const TOP_Z = 39;
 /** Beyond this many, plies sit on top of each other: the badge carries the count. */
 const MAX_PLIES = 2;
 /** Fanned members overlap by this much of a card, so each stays clickable. */
@@ -82,25 +95,77 @@ export function CardStack({
   const footprintW = tapped ? cardWidth * 1.4 : cardWidth;
   const footprintH = tapped ? cardWidth : cardWidth * 1.4;
 
-  const closedWidth = footprintW + Math.min(group.count - 1, MAX_PLIES) * PLY_X;
+  /*
+   * A host and its attachments are one object on the table, so they are one
+   * container here -- but the container has to be *sized* for the whole unit,
+   * or the peeking aura would lie across whatever permanent is next to it.
+   *
+   * This is static sizing off the attachment count, which is a different thing
+   * from the hover fan the file header warns about: that one may not animate
+   * `width`, because a live drag must not reflow the lane underneath itself.
+   */
+  const attachX = cardWidth * ATTACH_X_RATIO;
+  const attachY = cardWidth * ATTACH_Y_RATIO;
+  const attachCount = group.attachments.length;
+
+  // The plies' own width, which is what the fan is centred on. A host is always
+  // a group of one (see `stackCards`), so the two never both apply -- but the
+  // fan must stay measured against the cards it spreads, not the container.
+  const plyWidth = footprintW + Math.min(group.count - 1, MAX_PLIES) * PLY_X;
+  const closedWidth = plyWidth + attachCount * attachX;
+  const closedHeight = footprintH + attachCount * attachY;
   // Spread symmetrically about the closed footprint's centre, so opening a stack
   // pushes cards out both ways rather than always to the right.
   const step =
     group.count > 1
       ? Math.min(footprintW * FAN_STEP_RATIO, (footprintW * MAX_FAN_RATIO) / (group.count - 1))
       : 0;
-  const centre = closedWidth / 2 - footprintW / 2;
+  const centre = plyWidth / 2 - footprintW / 2;
 
   return (
     <motion.div
       className={open ? "cardstack cardstack--open" : "cardstack"}
-      style={{ width: closedWidth, height: footprintH }}
+      style={{ width: closedWidth, height: closedHeight }}
       onMouseEnter={() => group.count > 1 && openStackGroup(group.key)}
       onMouseLeave={() => openStackGroup(null)}
       data-stack-key={group.key}
       data-stack-count={group.count}
+      data-stack-attached={attachCount || undefined}
       data-stack-open={open || undefined}
     >
+      {/*
+        Auras and equipment, drawn under the permanent they are on -- the way
+        they sit on a table, and the reason they are in this container at all
+        rather than loose in the global lane. Each is still a whole `Card`: it
+        can be hovered for its face, targeted, and clicked.
+
+        Rendered before the host so the host's slot wins the paint order at
+        equal z, and stepped down through `attachCount - index` so an aura never
+        covers the one printed under it.
+      */}
+      {group.attachments.map((card, index) => (
+        <motion.div
+          className="cardstack__slot cardstack__attach"
+          key={card.oid}
+          animate={{ x: (index + 1) * attachX, y: (index + 1) * attachY }}
+          transition={settle}
+          style={{
+            zIndex: card.oid === hoveredOid ? TOP_Z : attachCount - index - 1,
+          }}
+        >
+          <Card
+            card={card}
+            playable={isPlayable?.(card) ?? false}
+            hasAbility={hasAbility?.(card) ?? false}
+            abilityLabel={abilityLabel?.(card) ?? null}
+            targetable={isTargetable?.(card) ?? false}
+            staged={isStaged?.(card) ?? false}
+            selected={isSelected?.(card) ?? false}
+            onActivate={onActivate}
+          />
+        </motion.div>
+      ))}
+
       {group.cards.map((card, index) => {
         const offset = Math.min(index, MAX_PLIES);
         return (
@@ -117,7 +182,7 @@ export function CardStack({
             // beats all of them, so a fanned card is never half-behind the one
             // to its right when you go to click it.
             style={{
-              zIndex: card.oid === hoveredOid ? group.count + 1 : group.count - index,
+              zIndex: card.oid === hoveredOid ? TOP_Z : attachCount + group.count - index,
             }}
           >
             <Card

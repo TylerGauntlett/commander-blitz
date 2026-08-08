@@ -138,8 +138,38 @@
 .mat__lanes {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  /* Wider than the gap *inside* a band. This is the break between the fighting
+     half of the board and the mana half, and it is the thing that makes the
+     two-band arrangement legible rather than just four rows with new names. */
+  gap: 12px;
   min-width: 0;
+}
+
+/*
+ * A band: one horizontal strip of the board.
+ *
+ * The front band carries what the game is played with -- creatures beside the
+ * global artifacts and enchantments -- and the back band carries the lands.
+ * `PlayerMat` decides which comes first; an opponent's mat is flipped so their
+ * lands sit against their own edge.
+ *
+ * The creature zone gets twice the width because that is where the cards
+ * actually accumulate: a Commander board ends with a dozen creatures and two or
+ * three global enchantments, and splitting the row evenly would wrap the half
+ * that is full to make room for the half that is not.
+ */
+.band {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.band--front {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+.band--back {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 /* The commander plinth --------------------------------------------------
@@ -436,12 +466,6 @@
     12px no-repeat scroll;
 }
 
-.mat__empty {
-  align-self: center;
-  color: var(--text-faint);
-  font-style: italic;
-}
-
 /* Orb ------------------------------------------------------------------ */
 
 .orb {
@@ -599,6 +623,22 @@
 }
 
 /* Mana row -------------------------------------------------------------- */
+
+/*
+ * The line the mana row lives on, reserved whether or not it has anything in
+ * it. Mana appears and empties several times a turn, and an orb that grows and
+ * shrinks with it drags the mat, the opponents row and the whole board with it.
+ *
+ * One line, not two. Fifteen-odd pips wrap and the orb does grow late in a
+ * game, but that is once per game against once per tapped land, and this column
+ * has no spare height to reserve against the rarer case -- the zone piles are
+ * already the first thing to fall below the fold at 1600x950.
+ */
+.orb__manaslot {
+  display: flex;
+  align-items: center;
+  min-height: 11px;
+}
 
 .orb__mana {
   display: flex;
@@ -789,6 +829,18 @@
   transition: background var(--t-base) ease, border-color var(--t-base) ease;
 }
 
+/*
+ * The global zone reads as a separate area, not as the right-hand end of the
+ * creature row -- an inset panel rather than a border, because `.lane` spends
+ * its border on the drop highlight below and a second one there would fight it.
+ *
+ * Declared above `.lane--active` on purpose: a lane being dragged into has to
+ * win the background, and both selectors carry the same specificity.
+ */
+.lane--global {
+  background: rgb(255 255 255 / 0.028);
+}
+
 .lane--active {
   border-color: var(--playable);
   background: rgb(92 224 138 / 0.09);
@@ -801,6 +853,25 @@
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/*
+ * In the front band the label sits above the cards rather than beside them.
+ *
+ * A 74px label column is a fifth of the global zone and it buys a word the
+ * lane's own contents already say. Above the cards it costs one line of 10px
+ * text and hands the whole width back to the board.
+ */
+.band--front .lane {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 4px;
+}
+
+.band--front .lane__label {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .lane__count {
@@ -817,25 +888,22 @@
   min-height: calc(var(--card-w) * 1.4);
 }
 
-/* Collapsed: still a labelled drop target, but not a card-sized hole. */
-.lane--vacant {
-  min-height: 30px;
-}
-
-.lane--vacant .lane__cards {
-  min-height: 0;
-}
-
-/* Except while a drag is live -- a lane you are about to drop into should be
-   the size of the thing you are dropping. */
-.lane--vacant.lane--active {
-  min-height: calc(var(--card-w) * 1.4 + 12px);
-}
-
-.lane--vacant.lane--active .lane__cards {
-  min-height: calc(var(--card-w) * 1.4);
-}
-
+/*
+ * An empty lane keeps its full card height. It is a reserved slot, not a gap.
+ *
+ * It used to collapse to a 30px strip, which was the right call when the mat
+ * was four stacked rows and three of them were usually empty. Under two bands
+ * it costs one card height at most, and it buys the thing that collapsing was
+ * quietly taking away: **the board stops moving.** Playing your first creature
+ * used to shove your entire land row down by a card, and killing it shoved the
+ * row back up -- so the cards you were reading, and the drop targets you were
+ * aiming at, jumped underneath the cursor on every state change.
+ *
+ * Every lane exists in every game and will hold something eventually, so there
+ * is nothing to reclaim by hiding one and a great deal to lose. `.lane--vacant`
+ * is left on the element as a hook; the em-dash below is what says "nothing
+ * here yet".
+ */
 .lane__empty {
   align-self: center;
   color: var(--text-faint);

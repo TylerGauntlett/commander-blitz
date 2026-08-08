@@ -102,9 +102,7 @@
     "symbol": "{9}"
   },
   "B": {
-    "colors": [
-      "B"
-    ],
+    "colors": ["B"],
     "english": "one black mana",
     "file": "B.svg",
     "symbol": "{B}"
@@ -122,9 +120,7 @@
     "symbol": "{E}"
   },
   "G": {
-    "colors": [
-      "G"
-    ],
+    "colors": ["G"],
     "english": "one green mana",
     "file": "G.svg",
     "symbol": "{G}"
@@ -136,9 +132,7 @@
     "symbol": "{Q}"
   },
   "R": {
-    "colors": [
-      "R"
-    ],
+    "colors": ["R"],
     "english": "one red mana",
     "file": "R.svg",
     "symbol": "{R}"
@@ -156,17 +150,13 @@
     "symbol": "{T}"
   },
   "U": {
-    "colors": [
-      "U"
-    ],
+    "colors": ["U"],
     "english": "one blue mana",
     "file": "U.svg",
     "symbol": "{U}"
   },
   "W": {
-    "colors": [
-      "W"
-    ],
+    "colors": ["W"],
     "english": "one white mana",
     "file": "W.svg",
     "symbol": "{W}"

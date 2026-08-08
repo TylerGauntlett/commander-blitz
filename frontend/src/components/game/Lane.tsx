@@ -10,15 +10,24 @@ import { motion } from "motion/react";
 import type { CardView } from "../../api/types";
 import { cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { splitActionable, stackCards } from "../../logic/stacking";
-import type { Lane as LaneName } from "../../logic/zoneGrouping";
+import { LANE_LABELS, type Lane as LaneName } from "../../logic/zoneGrouping";
 import { settle } from "../../motion/springs";
 import { useCardBase } from "../../state/useCardBase";
 import { CardStack } from "./CardStack";
+
+/** Lane name -> the modifier CSS styles it by. */
+const LANE_SLUG: Record<LaneName, string> = {
+  Creatures: "creatures",
+  "Artifacts & Enchantments": "global",
+  Lands: "lands",
+};
 
 interface Props {
   lane: LaneName;
   pid: number;
   cards: CardView[];
+  /** Host oid -> auras and equipment drawn tucked behind it. */
+  attachments?: ReadonlyMap<number, CardView[]>;
   cardScale: number;
   /** Highlight as a legal destination for whatever is being dragged. */
   active?: boolean;
@@ -39,6 +48,7 @@ export function Lane({
   lane,
   pid,
   cards,
+  attachments,
   cardScale,
   active = false,
   draggable = false,
@@ -52,7 +62,9 @@ export function Lane({
   onActivate,
   onDropOn,
 }: Props) {
-  const groups = stackCards(cards).flatMap((group) => splitActionable(group, actionableOids));
+  const groups = stackCards(cards, attachments).flatMap((group) =>
+    splitActionable(group, actionableOids),
+  );
 
   // The lane hands CSS a `calc()` so the cards themselves resize smoothly, and
   // hands `CardStack` a real number, because a stack's container has to be
@@ -62,12 +74,13 @@ export function Lane({
 
   return (
     <motion.div
-      // An empty lane collapses to a thin strip. It still has to exist -- it is
-      // a drop target, and the viewer's four lanes must not reorder mid-drag --
-      // but reserving a full card height for each of them was most of the dead
-      // space in the middle of the table.
+      // An empty lane keeps its full height rather than collapsing: it is a
+      // reserved slot, not a gap. Collapsing meant the first creature of the
+      // game shoved the land row down by a card and killing it shoved the row
+      // back up, which moved every drop target mid-decision. See board.css.
       className={[
         active ? "lane lane--active" : "lane",
+        `lane--${LANE_SLUG[lane]}`,
         cards.length === 0 ? "lane--vacant" : "",
       ]
         .filter(Boolean)
@@ -79,7 +92,7 @@ export function Lane({
       style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
     >
       <div className="lane__label">
-        <span>{lane}</span>
+        <span>{LANE_LABELS[lane]}</span>
         <span className="lane__count tabular">{cards.length}</span>
       </div>
       <div className="lane__cards">

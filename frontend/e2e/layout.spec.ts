@@ -102,6 +102,117 @@ for (const viewport of VIEWPORTS) {
   });
 }
 
+/**
+ * The board is laid out the way it is played: a player's lands are the row
+ * nearest *them*.
+ *
+ * This is the one assertion that catches the whole feature going backwards. Both
+ * orders render perfectly well and every content-level check passes through
+ * either, so the only thing that notices a flipped `LANES` array or a dropped
+ * `mirrored` prop is a comparison of two numbers.
+ */
+test("lands sit nearest the player who controls them, on both sides of the table", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 950 });
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await waitForOurTurn(page);
+
+  const bands = await page.evaluate(() => {
+    const midOf = (root: Element, lane: string) => {
+      const node = root.querySelector(`[data-testid$="-${lane}"]`);
+      if (!node) return null;
+      const box = node.getBoundingClientRect();
+      return box.top + box.height / 2;
+    };
+    const mine = document.querySelector(".play__mine .mat");
+    const theirs = document.querySelector(".play__opponents .mat");
+    return {
+      mine: mine && { lands: midOf(mine, "Lands"), creatures: midOf(mine, "Creatures") },
+      theirs: theirs && {
+        lands: midOf(theirs, "Lands"),
+        creatures: midOf(theirs, "Creatures"),
+      },
+    };
+  });
+
+  expect(bands.mine, "expected a viewer mat").not.toBeNull();
+  if (bands.mine?.lands != null && bands.mine.creatures != null) {
+    expect(
+      bands.mine.lands,
+      "your lands must be the band closest to your hand, not the far one",
+    ).toBeGreaterThan(bands.mine.creatures);
+  }
+
+  // An opponent's mat is mirrored, so their lands are against their own edge of
+  // the screen and the two creature bands meet in the middle. Their lanes are
+  // only rendered once they hold something, so this half is conditional.
+  if (bands.theirs?.lands != null && bands.theirs.creatures != null) {
+    expect(
+      bands.theirs.lands,
+      "an opponent's mat is not mirrored: their lands should sit above their creatures",
+    ).toBeLessThan(bands.theirs.creatures);
+  }
+});
+
+/**
+ * The board holds still while the game is played on it.
+ *
+ * It did not. Empty lanes collapsed to a strip and opponents dropped theirs
+ * altogether, so the first creature of the game shoved the land row down by a
+ * whole card and killing it shoved the row back up -- and the same thing
+ * happening on an *opponent's* mat grew the opponents row and pushed the
+ * viewer's entire board down the screen on somebody else's turn. The orb's mana
+ * row did it a third time, several times a turn, as mana was tapped and spent.
+ *
+ * Every lane is now always rendered at a full card's height and the mana row
+ * has a reserved slot, so a permanent entering or leaving moves nothing. The
+ * budget below is for sub-pixel rounding, not for a row of anything: a single
+ * regression here is worth tens of pixels, so nothing subtle can hide under it.
+ */
+test("the board does not move as permanents enter and leave play", async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 1600, height: 950 });
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await waitForOurTurn(page);
+
+  /** Where each band starts, which is what a player's eye is anchored to. */
+  const anchors = () =>
+    page.evaluate(() => {
+      const top = (selector: string) => {
+        const node = document.querySelector(selector);
+        return node ? node.getBoundingClientRect().top : Number.NaN;
+      };
+      return {
+        creatures: top('.play__mine [data-testid$="-Creatures"]'),
+        lands: top('.play__mine [data-testid$="-Lands"]'),
+        opponent: top(".play__opponents .mat"),
+      };
+    });
+
+  const samples = [await anchors()];
+  for (let i = 0; i < 20; i += 1) {
+    await takeAction(page, ["play_land", "cast", "pass"]);
+    if (
+      await page
+        .getByTestId("game-over")
+        .isVisible()
+        .catch(() => false)
+    )
+      break;
+    samples.push(await anchors());
+  }
+
+  for (const key of ["creatures", "lands", "opponent"] as const) {
+    const seen = samples.map((s) => s[key]).filter((n) => !Number.isNaN(n));
+    const drift = Math.max(...seen) - Math.min(...seen);
+    expect(
+      drift,
+      `${key} moved ${Math.round(drift)}px over a game; the board is jumping again`,
+    ).toBeLessThan(12);
+  }
+});
+
 test("a taller viewport gets bigger cards than a shorter one", async ({ page }) => {
   // The actual regression guard for the clamp: if someone re-pins the base to a
   // constant, every other test here still passes and only this one fails.

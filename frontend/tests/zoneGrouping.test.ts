@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { counterBadges, manaPips, statLine } from "../src/logic/cardStyle";
 import {
+  LANES,
+  attachmentsFor,
   commandersOf,
   findCardByDefId,
   groupBattlefield,
@@ -8,6 +10,18 @@ import {
   seatOrder,
 } from "../src/logic/zoneGrouping";
 import { card, gameView, player } from "./fixtures";
+
+/**
+ * The lanes are declared front to back -- toward the opponent first, the
+ * player's own lands last -- because `PlayerMat` renders them in that order and
+ * a player's mana belongs in the row nearest them. Reordering this array moves
+ * the board, so it is asserted rather than assumed.
+ */
+describe("LANES", () => {
+  it("runs from the opponent's side back to the player's own", () => {
+    expect(LANES).toEqual(["Creatures", "Artifacts & Enchantments", "Lands"]);
+  });
+});
 
 describe("laneFor", () => {
   it("puts creatures in the creature lane", () => {
@@ -27,8 +41,20 @@ describe("laneFor", () => {
     expect(laneFor(card({ types: ["Artifact", "Creature"] }))).toBe("Creatures");
   });
 
-  it("falls back to Other", () => {
-    expect(laneFor(card({ types: ["Planeswalker"] }))).toBe("Other");
+  it("puts planeswalkers on the creature line, where combat is declared", () => {
+    expect(laneFor(card({ types: ["Planeswalker"] }))).toBe("Creatures");
+  });
+
+  it("sends an attached permanent to its host's lane", () => {
+    const aura = card({ types: ["Enchantment"], subtypes: ["Aura"], attached_to: 9 });
+    expect(laneFor(aura)).toBe("Creatures");
+  });
+
+  it("sends an unattached Aura or Equipment there too, so a drag from hand aims right", () => {
+    // `canDropOnLane` asks this same function which lane to highlight, and from
+    // hand nothing is attached yet.
+    expect(laneFor(card({ types: ["Enchantment"], subtypes: ["Aura"] }))).toBe("Creatures");
+    expect(laneFor(card({ types: ["Artifact"], subtypes: ["Equipment"] }))).toBe("Creatures");
   });
 });
 
@@ -55,6 +81,89 @@ describe("groupBattlefield", () => {
       ],
     });
     expect(groupBattlefield(state, 0).Creatures.map((c) => c.oid)).toEqual([7, 3]);
+  });
+
+  it("holds back a permanent that is drawn tucked behind its host", () => {
+    const state = gameView({
+      battlefield: [
+        card({ oid: 1, controller: 0, types: ["Creature"] }),
+        card({
+          oid: 2,
+          controller: 0,
+          types: ["Enchantment"],
+          subtypes: ["Aura"],
+          attached_to: 1,
+        }),
+      ],
+    });
+    const mine = groupBattlefield(state, 0);
+    expect(mine.Creatures.map((c) => c.oid)).toEqual([1]);
+    expect(mine["Artifacts & Enchantments"]).toEqual([]);
+  });
+
+  it("keeps an aura on somebody else's creature as a loose card", () => {
+    // Its host is not on this mat, so tucking it would put it on a board it
+    // does not belong to -- or, worse, drop it from every board at once.
+    const state = gameView({
+      battlefield: [
+        card({ oid: 1, controller: 1, types: ["Creature"] }),
+        card({
+          oid: 2,
+          controller: 0,
+          types: ["Enchantment"],
+          subtypes: ["Aura"],
+          attached_to: 1,
+        }),
+      ],
+    });
+    expect(groupBattlefield(state, 0).Creatures.map((c) => c.oid)).toEqual([2]);
+    expect(attachmentsFor(state, 0).size).toBe(0);
+    expect(attachmentsFor(state, 1).size).toBe(0);
+  });
+
+  it("keeps an attachment whose host has already left", () => {
+    const state = gameView({
+      battlefield: [
+        card({
+          oid: 2,
+          controller: 0,
+          types: ["Enchantment"],
+          subtypes: ["Aura"],
+          attached_to: 99,
+        }),
+      ],
+    });
+    expect(groupBattlefield(state, 0).Creatures.map((c) => c.oid)).toEqual([2]);
+  });
+});
+
+describe("attachmentsFor", () => {
+  it("keys every tucked permanent by the host that carries it", () => {
+    const state = gameView({
+      battlefield: [
+        card({ oid: 1, controller: 0, types: ["Creature"] }),
+        card({
+          oid: 2,
+          controller: 0,
+          types: ["Artifact"],
+          subtypes: ["Equipment"],
+          attached_to: 1,
+        }),
+        card({
+          oid: 3,
+          controller: 0,
+          types: ["Enchantment"],
+          subtypes: ["Aura"],
+          attached_to: 1,
+        }),
+      ],
+    });
+    expect([...(attachmentsFor(state, 0).get(1) ?? [])].map((c) => c.oid)).toEqual([2, 3]);
+  });
+
+  it("is empty for a board with nothing attached", () => {
+    const state = gameView({ battlefield: [card({ oid: 1, types: ["Creature"] })] });
+    expect(attachmentsFor(state, 0).size).toBe(0);
   });
 });
 
