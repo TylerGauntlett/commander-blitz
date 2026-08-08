@@ -59,7 +59,10 @@ def _untap_step(state: GameState) -> None:
     player.lands_played = 0
     player.extra_land_drops = 0
     untap_all(state, player.pid)
-    state.emit(EventType.TURN_BEGAN, player=player.pid, turn=state.turn)
+    # Both counters: `turn` is the rules one, `round` is the one the log prints.
+    state.emit(
+        EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round
+    )
 
 
 def _draw_step(state: GameState) -> None:
@@ -184,8 +187,22 @@ def advance(state: GameState) -> None:
 
 def _begin_next_turn(state: GameState) -> None:
     state.cleanup_repeat = False
+    before = state.active_idx
     state.active_idx = state.next_alive_index(state.active_idx)
     state.turn += 1
+    # A new round starts when the table wraps back past the player who started
+    # the game.  Measured as position *relative to the starting player*, not as
+    # a raw index: the starting seat is chosen at random, so "index wrapped to
+    # 0" would put the first round boundary in the middle of the first lap
+    # whenever anyone but seat 0 goes first.
+    #
+    # ``next_alive_index`` scans forward modulo the seat count, so a wrap is
+    # exactly "the new position is not after the old one".  A lone survivor gets
+    # its own index back, which is one round per turn -- correct.
+    seats = state.num_players
+    start = state.starting_player
+    if (state.active_idx - start) % seats <= (before - start) % seats:
+        state.round += 1
     state.step = Step.UNTAP
     state.step_started = False
     state.priority_idx = None

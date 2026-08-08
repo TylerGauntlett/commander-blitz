@@ -12,7 +12,9 @@
 
 import type { GameEvent } from "../api/types";
 import type { SoundName } from "../audio/sfx";
-import { prettyCardName } from "./labels";
+import { type NameLookup, describeEvent, prettyCardName } from "./labels";
+
+export type { NameLookup };
 
 export type BeatAnchor = { kind: "player"; pid: number } | { kind: "object"; oid: number };
 
@@ -54,8 +56,6 @@ export interface Beat {
   sound?: SoundName;
 }
 
-export type NameLookup = (cardId: string) => string | undefined;
-
 function nameOf(event: GameEvent, lookup?: NameLookup): string | null {
   const cardId = typeof event.data.card === "string" ? event.data.card : null;
   if (!cardId) return null;
@@ -92,8 +92,20 @@ const SILENT = new Set([
  *
  * `names[pid]` are the player names; `lookup` resolves a card id such as
  * `"sol_ring"` to its printed name, falling back to a prettified id.
+ * `viewerSeat` is for verb agreement in the prose -- see `describeEvent`.
+ *
+ * This module owns *timing, sound and effects*. It used to own words as well,
+ * in a switch that ran parallel to `describeEvent` over the same event types --
+ * which is how triggers ended up missing from both at once, and why payment
+ * narrated "You pays {2}{G}". `push` now fills `text` from the one shared
+ * switch, so a new event kind gets its line in exactly one place.
  */
-export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLookup): Beat[] {
+export function beatsFor(
+  events: GameEvent[],
+  names: string[],
+  lookup?: NameLookup,
+  viewerSeat?: number,
+): Beat[] {
   const beats: Beat[] = [];
 
   events.forEach((event, index) => {
@@ -103,21 +115,23 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
     const who = event.player === null ? "" : (names[event.player] ?? `P${event.player}`);
     const card = nameOf(event, lookup);
     const amount = num(event.data.amount);
-    const push = (beat: Omit<Beat, "id">) => beats.push({ id, ...beat });
+    const text = describeEvent(event, names, viewerSeat, lookup);
+    const push = (beat: Omit<Beat, "id" | "text">) => beats.push({ id, text, ...beat });
 
     switch (event.type) {
       case "turn_began":
         push({
           hold: 850,
-          text: `-- ${who}'s turn ${event.data.turn} --`,
-          banner: { text: `${who}'s Turn`, tone: "neutral" },
+          banner: {
+            text: event.player === viewerSeat ? "Your Turn" : `${who}'s Turn`,
+            tone: "neutral",
+          },
         });
         return;
 
       case "spell_cast":
         push({
           hold: 700,
-          text: `${who} casts ${card ?? "a spell"}`,
           sound: "chime",
           spotlight: {
             cardId: typeof event.data.card === "string" ? event.data.card : "",
@@ -128,13 +142,12 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         return;
 
       case "spell_resolved":
-        push({ hold: 180, text: null });
+        push({ hold: 180 });
         return;
 
       case "spell_countered":
         push({
           hold: 650,
-          text: `${card ?? "A spell"} is countered`,
           banner: { text: "Countered", tone: "danger" },
         });
         return;
@@ -142,7 +155,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "spell_fizzled":
         push({
           hold: 650,
-          text: `${card ?? "A spell"} fizzles -- no legal targets`,
           banner: { text: "Fizzled", tone: "danger" },
         });
         return;
@@ -150,7 +162,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "land_played":
         push({
           hold: 260,
-          text: `${who} plays ${card ?? "a land"}`,
           sound: "thump",
           flash:
             event.source === null
@@ -162,7 +173,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "enters_battlefield":
         push({
           hold: 220,
-          text: `${card ?? "A permanent"} enters the battlefield`,
           sound: "thump",
           flash:
             event.source === null
@@ -174,7 +184,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "token_created":
         push({
           hold: 200,
-          text: `${who} creates ${card ?? "a token"}`,
           flash:
             event.source === null
               ? undefined
@@ -185,7 +194,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "dies":
         push({
           hold: 380,
-          text: `${card ?? "A creature"} dies`,
           sound: "toll",
           flash:
             event.source === null
@@ -203,9 +211,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
           : { kind: "object", oid: targetOid ?? event.source ?? 0 };
         push({
           hold: 340,
-          text: toPlayer
-            ? `${who} takes ${amount} damage`
-            : `${amount} damage to ${card ?? "a permanent"}`,
           sound: "hit",
           float: { anchor, value: `-${amount}`, tone: "damage" },
           shake: toPlayer ? Math.min(1, amount / 12) : undefined,
@@ -217,7 +222,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         if (amount === null) return;
         push({
           hold: 280,
-          text: `${who} gains ${amount} life`,
           float: {
             anchor: { kind: "player", pid: event.player ?? 0 },
             value: `+${amount}`,
@@ -230,7 +234,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         if (amount === null) return;
         push({
           hold: 280,
-          text: `${who} loses ${amount} life`,
           float: {
             anchor: { kind: "player", pid: event.player ?? 0 },
             value: `-${amount}`,
@@ -243,7 +246,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         const kind = typeof event.data.counter === "string" ? event.data.counter : "counter";
         push({
           hold: 220,
-          text: `${card ?? "A permanent"} gets ${amount ?? 1} ${kind}`,
           float:
             event.source === null
               ? undefined
@@ -259,26 +261,25 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "attackers_declared":
         push({
           hold: 520,
-          text: `${who} attacks`,
           sound: "hit",
           banner: { text: "Attack!", tone: "damage" },
         });
         return;
 
       case "blockers_declared":
-        push({ hold: 420, text: "Blockers declared" });
+        push({ hold: 420 });
         return;
 
       case "draw":
-        push({ hold: 110, text: `${who} draws a card`, sound: "shuffle" });
+        push({ hold: 110, sound: "shuffle" });
         return;
 
       case "discard":
-        push({ hold: 200, text: `${who} discards ${card ?? "a card"}` });
+        push({ hold: 200 });
         return;
 
       case "mill":
-        push({ hold: 200, text: `${who} mills ${event.data.count ?? "some"} cards` });
+        push({ hold: 200 });
         return;
 
       /*
@@ -292,7 +293,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "ability_triggered":
         push({
           hold: 620,
-          text: `${card ?? "An ability"} triggers`,
           sound: "chime",
           spotlight: {
             cardId: typeof event.data.card === "string" ? event.data.card : "",
@@ -310,7 +310,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "ability_activated":
         push({
           hold: 320,
-          text: `${who} activates ${card ?? "an ability"}`,
           flash:
             event.source === null
               ? undefined
@@ -326,7 +325,6 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
       case "tapped":
         push({
           hold: 90,
-          text: null,
           sound: "tap",
           flash:
             event.source === null
@@ -336,24 +334,20 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         return;
 
       case "mana_spent":
-        push({
-          hold: 120,
-          text: typeof event.data.mana === "string" ? `${who} pays ${event.data.mana}` : null,
-        });
+        push({ hold: 120 });
         return;
 
       case "mulligan_taken":
-        push({ hold: 200, text: `${who} mulligans` });
+        push({ hold: 200 });
         return;
 
       case "hand_kept":
-        push({ hold: 200, text: `${who} keeps ${event.data.cards ?? 7} cards` });
+        push({ hold: 200 });
         return;
 
       case "player_lost":
         push({
           hold: 1100,
-          text: `${who} is eliminated (${event.data.reason})`,
           sound: "toll",
           banner: { text: `${who} is eliminated`, tone: "danger" },
           shake: 0.6,
@@ -361,7 +355,7 @@ export function beatsFor(events: GameEvent[], names: string[], lookup?: NameLook
         return;
 
       case "game_over":
-        push({ hold: 400, text: `Game over: ${event.data.result}` });
+        push({ hold: 400 });
         return;
 
       default:

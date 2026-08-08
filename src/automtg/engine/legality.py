@@ -15,7 +15,7 @@ from .carddef import CardDef
 from .characteristics import chars
 from .costs import can_pay, can_pay_mana, commander_cost, land_drops_available
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
-from .mana import max_affordable_x
+from .mana import Requirement, max_affordable_x, solve_payment
 from .structs import TargetRef
 from .targeting import enumerate_target_tuples
 
@@ -191,17 +191,30 @@ def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
 def _cast_options(
     state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int
 ) -> list[Action]:
+    from .costs import mana_sources
+
+    sources = mana_sources(state, pid)
+    pool = state.players[pid].mana_pool
+
     x = 0
     if card.mana_cost.x_count:
-        from .costs import mana_sources
-
-        x = max_affordable_x(
-            card.mana_cost, state.players[pid].mana_pool, mana_sources(state, pid)
-        )
+        x = max_affordable_x(card.mana_cost, pool, sources)
         if x < 0:
             return []
-    if not can_pay_mana(state, pid, card.mana_cost, x=x, extra_generic=extra_generic):
+
+    # Solve rather than merely test: the solution names the permanents that
+    # would tap, which is what lets the client show a hovered spell eating into
+    # the mana row.  `can_pay_mana` would run the same solver and discard it.
+    req = card.mana_cost.with_x(x)
+    if extra_generic:
+        req = Requirement(colored=req.colored, generic=req.generic + extra_generic)
+    payment = solve_payment(req, pool, sources)
+    if payment is None:
         return []
+    # Sources only.  `Payment` does not itemise which floating mana it spent, so
+    # claiming a pool pip here would be a guess; the client dims source pips and
+    # says nothing about the pool.
+    pays = tuple(dict.fromkeys(tap[0] for tap in payment.taps))
 
     exclude_sid = state.objects[oid].stack_id
     tuples = enumerate_target_tuples(
@@ -219,7 +232,14 @@ def _cast_options(
         if targets:
             label += " -> " + ", ".join(_describe_ref(state, ref) for ref in targets)
         out.append(
-            Action(kind=ActionKind.CAST, source=oid, targets=targets, x=x, label=label)
+            Action(
+                kind=ActionKind.CAST,
+                source=oid,
+                targets=targets,
+                x=x,
+                label=label,
+                pays=pays,
+            )
         )
     return out
 

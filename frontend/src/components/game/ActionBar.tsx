@@ -12,11 +12,24 @@ import type { GameView, LegalAction } from "../../api/types";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { bouncy, ease } from "../../motion/springs";
 import { type Speed, useUiStore } from "../../state/uiStore";
+import { SymbolText } from "./SymbolText";
 
 /** Actions worth a big button; everything else goes in the overflow row. */
 const PRIMARY = new Set(["pass", "keep", "mulligan", "yes", "no", "finish_declaration"]);
 
 const SPEEDS: Speed[] = ["cinematic", "fast", "instant"];
+
+const SPEED_LABELS: Record<Speed, string> = {
+  cinematic: "0.5x",
+  fast: "1x",
+  instant: "≫",
+};
+
+const SPEED_TITLES: Record<Speed, string> = {
+  cinematic: "Half speed — watch every beat",
+  fast: "Normal speed",
+  instant: "Skip narration entirely",
+};
 
 interface Props {
   state: GameView;
@@ -108,7 +121,9 @@ export function ActionBar({
                 whileTap={{ scale: 0.97 }}
                 transition={bouncy}
               >
-                {action.label}
+                {/* Activation costs live in these labels ("{2}, {T}, Sacrifice:
+                    ..."), and they were the last place mana stayed raw text. */}
+                <SymbolText text={action.label} />
               </motion.button>
             ))}
           </div>
@@ -125,6 +140,12 @@ export function ActionBar({
             Skip &raquo;
           </button>
         )}
+        {/*
+          The labels name the multiplier honestly. They used to read 1x/2x while
+          the underlying divisors were 1 and 2, so "1x" was the *slowest* thing
+          on offer and there was no way to ask for less than that -- which is
+          what "the game moves too quickly" was really about.
+        */}
         <fieldset className="speed">
           <legend className="visually-hidden">Animation speed</legend>
           {SPEEDS.map((option) => (
@@ -132,10 +153,11 @@ export function ActionBar({
               type="button"
               key={option}
               className={option === speed ? "speed__btn speed__btn--on" : "speed__btn"}
+              data-speed={option}
               onClick={() => setSpeed(option)}
-              title={`Animation speed: ${option}`}
+              title={SPEED_TITLES[option]}
             >
-              {option === "cinematic" ? "1x" : option === "fast" ? "2x" : "≫"}
+              {SPEED_LABELS[option]}
             </button>
           ))}
         </fieldset>

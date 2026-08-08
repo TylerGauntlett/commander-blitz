@@ -11,10 +11,24 @@ import { create } from "zustand";
 /** How fast the narration queue plays back. */
 export type Speed = "instant" | "fast" | "cinematic";
 
+/**
+ * Divisors applied to every beat's hold and every FX lifetime.
+ *
+ * Halved in cycle 3: the game moved too fast to follow at either watchable
+ * setting, so what used to be the default (2) is now the slow setting and the
+ * new default plays at what used to be "cinematic". The per-beat holds in
+ * `logic/events.ts` were left alone deliberately -- they encode the *relative*
+ * weight of events (a death matters more than a draw), and rescaling them one
+ * by one would have meant re-deciding twenty judgements to change one.
+ *
+ * `instant` is not a speed so much as a bypass: `narration.ts` short-circuits on
+ * it and drops beats rather than holding them for ~0ms, because even a zero
+ * timer costs a React tick per beat.
+ */
 export const SPEED_MULTIPLIER: Record<Speed, number> = {
   instant: 1000,
-  fast: 2,
-  cinematic: 1,
+  fast: 1,
+  cinematic: 0.5,
 };
 
 /**

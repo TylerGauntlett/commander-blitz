@@ -21,6 +21,7 @@ import {
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
+import { sourcesSpentBy } from "../../logic/mana";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -29,6 +30,7 @@ import { ActionBar } from "./ActionBar";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
 import { CombatPanel, legalBlockTargets } from "./CombatPanel";
+import { CommandZone } from "./CommandZone";
 import { EventTicker } from "./EventTicker";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
@@ -47,7 +49,21 @@ const PEEK_KEYS: Record<string, PeekTarget["zone"]> = {
 };
 
 const OWN_CARD_W = 104;
-const OPPONENT_CARD_W = 82;
+
+/**
+ * Opponent card width, by how many of them there are.
+ *
+ * Three mats at 82px wrap their lands onto several rows and outgrow the row they
+ * sit in, so `.mat--compact .mat__lanes` starts scrolling and a permanent ends
+ * up one scroll away in the zone you most need to survey. Shrinking the cards
+ * is the cheaper trade now that type fill, land colour and the type glyph all
+ * survive small sizes far better than the 5.6px type line they replaced.
+ */
+function opponentCardWidth(count: number): number {
+  if (count >= 3) return 60;
+  if (count === 2) return 72;
+  return 82;
+}
 
 /** Decisions where clicking your own creatures means "commit it to combat". */
 const COMBAT_DECISIONS = new Set(["declare_attackers", "declare_blockers"]);
@@ -80,6 +96,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const unstageBlock = useUiStore((s) => s.unstageBlock);
   const setPeek = useUiStore((s) => s.setPeek);
   const peek = useUiStore((s) => s.peek);
+  const hover = useUiStore((s) => s.hover);
+  const hoveredOid = useUiStore((s) => s.hoveredOid);
   const error = useUiStore((s) => s.error);
   const setError = useUiStore((s) => s.setError);
 
@@ -90,17 +108,19 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const inCombatDecision = decisionKind !== null && COMBAT_DECISIONS.has(decisionKind);
   const locked = busy || narration.busy;
 
-  // A decision's buttons must exist exactly once in the document. When the
-  // modal owns the decision the bar shows the prompt but no actions.
+  // A decision's buttons must exist exactly once in the document. Whichever
+  // surface owns a decision renders its ids; the bar shows the prompt and
+  // stands down.
   //
-  // Combat is deliberately not in this rule. `CombatPanel` is a *gesture*
-  // surface -- stage a creature, confirm the set -- and its buttons carry no
-  // action id, so standing the bar down during declaration would leave the
-  // decision with no `data-action-id` anywhere and break the guarantee at the
-  // top of this file that the button always exists. The two surfaces overlap
-  // in appearance, not in identity.
+  // Combat used to be exempt: `CombatPanel` was a pure gesture surface whose
+  // buttons carried no action id, so standing the bar down would have left the
+  // decision unreachable and broken the guarantee at the top of this file. The
+  // two surfaces therefore showed the same decision side by side once the bar
+  // moved into the rail -- "Done blocking" next to "No blocks". The panel now
+  // carries the real ids (one option button per legal pair), so the exemption
+  // is gone and the duplication with it.
   const modalOwnsDecision = isModalDecision(state);
-  const barActions = modalOwnsDecision ? [] : actions;
+  const barActions = modalOwnsDecision || inCombatDecision ? [] : actions;
 
   // Depend on the `mutate` functions, which react-query keeps stable, rather
   // than on the mutation objects, which are new every render -- otherwise every
@@ -214,6 +234,19 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   /** Opponents' attackers that something of ours is staged to block. */
   const blockedAttackers = useMemo(() => new Set(Object.values(stagedBlocks)), [stagedBlocks]);
+
+  /**
+   * The lands a hovered card would tap, straight from the engine's solver.
+   *
+   * The mana row could say what you have but not what a play would leave you
+   * with, which is the interesting question in a turn with two plays in it.
+   * Nothing is computed here: `pays` is the payment `solve_payment` actually
+   * found, so this cannot disagree with what casting the spell will really do.
+   */
+  const spending = useMemo(
+    () => (hoveredOid === null ? new Set<number>() : sourcesSpentBy(actions, hoveredOid)),
+    [hoveredOid, actions],
+  );
 
   /** Lanes that would accept a drop of the selected hand card. */
   const activeLanes = useMemo(() => {
@@ -531,6 +564,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // ---------------------------------------------------------------- render
 
   const opponents = seatOrder(state).filter((pid) => pid !== state.seat);
+  const opponentCardW = opponentCardWidth(opponents.length);
 
   return (
     <div className="table" data-testid="table">
@@ -539,7 +573,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       <motion.div className="table__body" ref={boardRef} animate={shake}>
         <aside className="rail rail--left">
           <StackPanel state={state} />
-          <EventTicker state={state} events={events} />
+          <EventTicker state={state} events={events} cardName={game.cardName} />
         </aside>
 
         <main className="play">
@@ -551,7 +585,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 player={state.players[pid]}
                 names={names}
                 compact
-                cardWidth={OPPONENT_CARD_W}
+                cardWidth={opponentCardW}
                 actionableOids={actionableOids}
                 isTargetable={(card) => targetableOids.has(card.oid)}
                 // stagedBlocks is keyed by blocker; an opponent's attacker is a
@@ -561,6 +595,11 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 onActivate={onBoardCard}
                 playerTargetable={targetablePids.has(pid)}
                 onSelectPlayer={onSelectPlayer}
+                // An opponent's commander is reference, never a click target:
+                // `playableOids` only ever names the viewer's own cards.
+                playableOids={playableOids}
+                onHoverCard={hover}
+                locked={locked}
               />
             ))}
           </div>
@@ -582,6 +621,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               onActivate={onBoardCard}
               playerTargetable={targetablePids.has(state.seat)}
               onSelectPlayer={onSelectPlayer}
+              playableOids={playableOids}
+              onHoverCard={hover}
+              spending={spending}
+              locked={locked}
             />
           </div>
         </main>
@@ -610,7 +653,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         </aside>
 
         <CombatArrows state={state} boardRef={boardRef} />
-        <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} />
+        <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} state={state} />
       </motion.div>
 
       <div className="table__foot">
@@ -618,6 +661,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           state={state}
           actions={actions}
           onDeclare={onDeclare}
+          onStage={onBarAct}
           onSkip={act}
           disabled={locked}
         />
@@ -651,7 +695,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           </div>
         )}
 
+        {/*
+          Your own commander sits beside your hand, not inside your mat.
+
+          It is a zone you *play from*, which is what the hand is; docking it in
+          the mat's side column put it under the orb, where orb + card together
+          overflowed the row and the card was clipped in half. Here it has the
+          full height of the foot, it sits next to the cards it competes with
+          for the turn, and clicking it takes the same route a hand card takes.
+          Opponents keep their (reference-only) dock on the mat.
+        */}
         <div className="table__hand-row">
+          <CommandZone
+            state={state}
+            pid={state.seat}
+            playableOids={playableOids}
+            onActivate={playFromHand}
+            onHover={hover}
+            disabled={locked}
+          />
           <HandFan
             cards={viewer.hand ?? []}
             playableOids={playableOids}

@@ -10,11 +10,30 @@ import { describe, expect, it } from "vitest";
 import {
   type TypeTone,
   frameTone,
+  isPlainLand,
+  isWounded,
+  landSymbols,
+  landTone,
+  symbolTokens,
   typeGlyph,
   typeLabel,
   typeTone,
 } from "../src/logic/cardStyle";
 import { card } from "./fixtures";
+
+/** A land as the server sends one: types, supertypes, and what it taps for. */
+function land(overrides: Parameters<typeof card>[0] = {}) {
+  return card({
+    types: ["Land"],
+    supertypes: ["Basic"],
+    produces: ["U"],
+    mana_cost: "",
+    colors: [],
+    power: null,
+    toughness: null,
+    ...overrides,
+  });
+}
 
 describe("typeTone", () => {
   it.each([
@@ -133,3 +152,170 @@ describe("typeLabel", () => {
 function capitalise(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
+/**
+ * The third channel, added in cycle 3: what a land taps for.
+ *
+ * Every land used to be the same tan rectangle, so a lane of twelve of them
+ * could only be read by reading names. The answer comes from the server's
+ * `produces` -- the union across the card's real mana abilities -- because a
+ * subtype covers the five basics and nothing else, and parsing oracle text in
+ * the browser is the guess `logic/mana.ts` refuses to make.
+ */
+describe("landSymbols", () => {
+  it.each([
+    [["W"], "Plains"],
+    [["U"], "Island"],
+    [["B"], "Swamp"],
+    [["R"], "Mountain"],
+    [["G"], "Forest"],
+  ])("reads %s off a %s", (produces) => {
+    expect(landSymbols(land({ produces }))).toEqual(produces);
+  });
+
+  it("keeps every colour a dual can make", () => {
+    expect(landSymbols(land({ produces: ["U", "G"], supertypes: [] }))).toEqual(["U", "G"]);
+  });
+
+  it("says nothing about a non-land, whatever it taps for", () => {
+    // A mana creature produces {G}, but the body fill is already saying
+    // "creature" and must not start claiming to be a Forest.
+    expect(landSymbols(card({ types: ["Creature"], produces: ["G"] }))).toEqual([]);
+  });
+
+  it("ignores symbols that are not colours", () => {
+    expect(landSymbols(land({ produces: ["U", "2", ""] }))).toEqual(["U"]);
+  });
+
+  it("tolerates a payload from before the field existed", () => {
+    expect(landSymbols(land({ produces: undefined as unknown as string[] }))).toEqual([]);
+  });
+});
+
+describe("landTone", () => {
+  it("gives a mono land its own colour", () => {
+    expect(landTone(land({ produces: ["R"] }))).toBe("R");
+  });
+
+  it("calls anything with a choice 'multi' rather than picking one", () => {
+    // Two solid colours would claim the land is both, which is the same
+    // overstatement the split mana pip exists to avoid.
+    expect(landTone(land({ produces: ["U", "G"] }))).toBe("multi");
+  });
+
+  it("keeps colourless distinct from produces-nothing", () => {
+    // A Wastes and a creature-land that taps for nothing should not look alike.
+    expect(landTone(land({ produces: ["C"] }))).toBe("C");
+    expect(landTone(land({ produces: [] }))).toBeNull();
+  });
+
+  it("is null for a non-land, which keeps its type fill", () => {
+    expect(landTone(card({ types: ["Creature"], produces: ["G"] }))).toBeNull();
+  });
+
+  it("does not disturb the border, which still carries colour identity", () => {
+    // The two channels stay independent: a Forest is a land frame that happens
+    // to be tinted green, not a green card.
+    const forest = land({ produces: ["G"], colors: [] });
+    expect(landTone(forest)).toBe("G");
+    expect(frameTone(forest)).toBe("land");
+  });
+});
+
+describe("isPlainLand", () => {
+  it("is true for a basic, whose rules text is only its mana ability", () => {
+    expect(isPlainLand(land({ supertypes: ["Basic"] }))).toBe(true);
+  });
+
+  it("is false for a nonbasic, which may say something worth reading", () => {
+    // Scoped to Basic deliberately: a land that taps for mana *and* does
+    // something is exactly the card you need the text of.
+    expect(isPlainLand(land({ supertypes: [] }))).toBe(false);
+  });
+
+  it("is false for anything that is not a land", () => {
+    expect(isPlainLand(card({ types: ["Creature"], supertypes: ["Basic"] }))).toBe(false);
+  });
+});
+
+describe("isWounded", () => {
+  it("is true for a damaged permanent", () => {
+    expect(isWounded(card({ zone: "battlefield", damage: 2 }))).toBe(true);
+  });
+
+  it("is false with no damage marked", () => {
+    expect(isWounded(card({ zone: "battlefield", damage: 0 }))).toBe(false);
+    expect(isWounded(card({ zone: "battlefield", damage: undefined }))).toBe(false);
+  });
+
+  it("is false off the battlefield, where damage does not exist", () => {
+    expect(isWounded(card({ zone: "graveyard", damage: 3 }))).toBe(false);
+  });
+});
+
+/**
+ * Mana notation outside a cost row.
+ *
+ * A card's casting cost has been coloured pips since cycle 1, but rules text and
+ * action labels still spelled the same notation out as "{T}: Add {G}." -- two
+ * renderings of one thing on one screen, one of which needs decoding.
+ */
+describe("symbolTokens", () => {
+  it("splits text around its symbols", () => {
+    const tokens = symbolTokens("{T}: Add {G}.");
+    expect(tokens.map((t) => t.kind)).toEqual(["symbol", "text", "symbol", "text"]);
+    expect(tokens.filter((t) => t.kind === "symbol").map((t) => t.value)).toEqual(["T", "G"]);
+  });
+
+  it("returns plain text untouched, as one run", () => {
+    const tokens = symbolTokens("Flying, trample");
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]).toMatchObject({ kind: "text", value: "Flying, trample" });
+  });
+
+  it("handles an empty string", () => {
+    expect(symbolTokens("")).toEqual([]);
+  });
+
+  it("colours mana symbols by their own letter", () => {
+    const tokens = symbolTokens("{2}{G}{U}");
+    expect(tokens.map((t) => (t.kind === "symbol" ? t.tone : null))).toEqual([
+      "generic",
+      "G",
+      "U",
+    ]);
+  });
+
+  it("draws tap and untap as glyphs rather than letters", () => {
+    // "{T}" as the letter T next to "{2}" reads as a mana symbol it is not.
+    const [tap] = symbolTokens("{T}");
+    expect(tap).toMatchObject({ kind: "symbol", value: "T", label: "↷", tone: "tap" });
+    const [untap] = symbolTokens("{Q}");
+    expect(untap).toMatchObject({ value: "Q", label: "↶", tone: "tap" });
+  });
+
+  it("keeps multi-digit generic costs as one symbol", () => {
+    const [pip] = symbolTokens("{10}");
+    expect(pip).toMatchObject({ kind: "symbol", value: "10", label: "10" });
+  });
+
+  it("leaves notation it does not recognise as text rather than guessing", () => {
+    // Inventing a pip for a symbol the engine does not support is worse than
+    // showing the raw notation, which a player can at least look up.
+    const tokens = symbolTokens("{G/U} hybrid");
+    expect(tokens[0]).toMatchObject({ kind: "text", value: "{G/U}" });
+  });
+
+  it("gives every token a distinct key, including repeats", () => {
+    const keys = symbolTokens("{G}{G}{G}").map((t) => t.key);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("preserves the sentence when the tokens are joined back up", () => {
+    const text = "{2}, {T}, Sacrifice: Search your library for a basic land.";
+    const rebuilt = symbolTokens(text)
+      .map((t) => (t.kind === "text" ? t.value : `{${t.value}}`))
+      .join("");
+    expect(rebuilt).toBe(text);
+  });
+});

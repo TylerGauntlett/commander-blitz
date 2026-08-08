@@ -77,6 +77,7 @@ class GameBuilder:
             rng=Rng(seed),
         )
         self.state.turn = 1
+        self.state.round = 1
         self.state.step = Step.PRECOMBAT_MAIN
         self.state.active_idx = 0
         self.state.starting_player = 0

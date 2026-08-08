@@ -17,11 +17,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import chars
-from .costs import commander_cost, land_drops_available, mana_availability
+from .costs import (
+    commander_cost,
+    land_drops_available,
+    mana_availability,
+    produced_symbols,
+    sources_by_controller,
+)
 from .enums import Zone
 from .legality import unplayable_reason
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .mana import ManaSource
     from .state import GameState
 
 
@@ -46,6 +53,11 @@ def card_view(state: GameState, oid: int, *, revealed: bool = True) -> dict[str,
         "zone": obj.zone.value,
         "is_token": obj.is_token,
         "is_commander": obj.is_commander,
+        # Printed, so it is the same in every zone.  Supertypes let the client
+        # say "Basic"; `produces` is what the land actually taps for, which is
+        # what colours it -- see costs.produced_symbols.
+        "supertypes": sorted(card.supertypes),
+        "produces": produced_symbols(card),
     }
     if obj.on_battlefield:
         derived = chars(state, oid)
@@ -80,9 +92,16 @@ def card_view(state: GameState, oid: int, *, revealed: bool = True) -> dict[str,
 
 def player_view(state: GameState, seat: int) -> dict[str, Any]:
     """The game as ``seat`` is allowed to see it."""
+    # One walk of the battlefield for the whole response rather than one per
+    # seat; `mana_availability` filters by controller either way.
+    sources = sources_by_controller(state)
     return {
         "seat": seat,
         "turn": state.turn,
+        # Full cycles of the table.  `turn` counts player-turns, which is what
+        # the rules need but not what a player means by "my second turn"; the
+        # client shows this and keeps `turn` in the tooltip.
+        "round": state.round,
         "step": state.step.name,
         "phase": state.phase.value,
         "active_player": state.active_player,
@@ -90,18 +109,48 @@ def player_view(state: GameState, seat: int) -> dict[str, Any]:
         "game_over": state.game_over,
         "winners": list(state.winners),
         "result": state.result,
-        "players": [_player(state, p.pid, seat) for p in state.players],
+        "players": [_player(state, p.pid, seat, sources.get(p.pid, [])) for p in state.players],
         "battlefield": [card_view(state, oid) for oid in state.battlefield],
         "stack": [_stack_item(state, item) for item in state.stack],
         "combat": state.combat.to_dict() if state.combat else None,
-        "pending": state.pending_decision.to_dict() if state.pending_decision else None,
+        "pending": _pending(state, seat),
         # A viewer preference rather than game state, but the client has to be
         # able to render the toggle in the position the engine actually holds it.
         "full_control": state.players[seat].full_control,
     }
 
 
-def _player(state: GameState, pid: int, seat: int) -> dict[str, Any]:
+def _pending(state: GameState, seat: int) -> dict[str, Any] | None:
+    """The open decision, with a card face on every option that names an object.
+
+    ``DecisionOption`` carries a label and a bare object ref, so the client had
+    to find the card itself -- and ``findCard`` searches the zones ``player_view``
+    sends, which excludes libraries.  Every "search your library", scry, surveil
+    and mulligan-bottom prompt therefore degraded to a row of name-only buttons
+    with no way to tell what you were choosing between.
+
+    Attaching the face here rather than in ``PendingDecision.to_dict`` keeps
+    ``actions.py`` free of display concerns and keeps the RL/agent path
+    unchanged.  The ``seat`` guard is what stops it leaking: only the player who
+    has to answer sees the cards, and they are entitled to -- ``_choice_actions``
+    only generates buttons for that seat in the first place.
+    """
+    decision = state.pending_decision
+    if decision is None:
+        return None
+    data = decision.to_dict()
+    if decision.player != seat:
+        return data
+    for option, out in zip(decision.options, data["options"], strict=True):
+        ref = option.ref
+        if ref is not None and ref.kind == "object" and ref.id in state.objects:
+            out["card"] = card_view(state, ref.id)
+    return data
+
+
+def _player(
+    state: GameState, pid: int, seat: int, sources: list[ManaSource]
+) -> dict[str, Any]:
     player = state.players[pid]
     own = pid == seat
     return {
@@ -117,7 +166,7 @@ def _player(state: GameState, pid: int, seat: int) -> dict[str, Any]:
         # Untapped sources as well as floating mana: the client cannot work this
         # out from the battlefield alone, because whether a permanent taps for
         # mana lives in its abilities, not in its view.
-        "mana": mana_availability(state, pid),
+        "mana": mana_availability(state, pid, sources),
         # The stored value is the number of prior casts; the tax is twice that.
         # Send both so the client never has to know the multiplier.
         "commander_tax": {str(k): v for k, v in player.commander_tax.items()},
@@ -167,6 +216,7 @@ def full_view(state: GameState) -> dict[str, Any]:
     """Everything, hidden zones included.  Golden tests snapshot this."""
     view = {
         "turn": state.turn,
+        "round": state.round,
         "step": state.step.name,
         "active_player": state.active_player,
         "priority_player": state.priority_player,

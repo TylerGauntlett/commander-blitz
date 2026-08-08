@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { GameEvent, GameView } from "../../api/types";
-import { describeEvent, playerNames } from "../../logic/labels";
+import { type NameLookup, describeEvent, playerNames } from "../../logic/labels";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 
@@ -13,16 +13,23 @@ const MAX_LINES = 200;
 interface Props {
   state: GameView;
   events: GameEvent[];
+  /** Card id -> printed name, harvested from every response by `useGame`. */
+  cardName?: NameLookup;
 }
 
-export function EventTicker({ state, events }: Props) {
+export function EventTicker({ state, events, cardName }: Props) {
   const logOpen = useUiStore((s) => s.logOpen);
   const toggleLog = useUiStore((s) => s.toggleLog);
   const bottom = useRef<HTMLDivElement>(null);
   const names = playerNames(state);
 
+  // Printed names, not prettified ids: the same lookup the narration uses, so
+  // the log and the beats cannot disagree about what a card is called.
   const lines = events
-    .map((event, index) => ({ key: index, text: describeEvent(event, names, state.seat) }))
+    .map((event, index) => ({
+      key: index,
+      text: describeEvent(event, names, state.seat, cardName),
+    }))
     .filter((line): line is { key: number; text: string } => line.text !== null)
     .slice(-MAX_LINES);
 

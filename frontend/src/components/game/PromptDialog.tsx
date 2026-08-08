@@ -9,6 +9,13 @@
  * The part that matters for feel: when an option refers to an object, it is
  * drawn as an actual card. Choosing what to sacrifice should look like looking
  * at your board, not like reading a dropdown.
+ *
+ * That worked only for cards in a zone the client could see. Search, scry,
+ * surveil and mulligan-bottom all name cards in a *library*, which `player_view`
+ * sends as a count, so `findCard` came back null and the whole prompt collapsed
+ * to a row of names with no way to tell what you were choosing between. The
+ * server now attaches the face to the option itself (serialize._pending), and
+ * that is what this prefers.
  */
 
 import { AnimatePresence, motion } from "motion/react";
@@ -86,8 +93,16 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
 
             <div className="prompt__options">
               {actions.map((action) => {
-                const ref = action.targets[0];
-                const card = ref && ref.kind === "object" ? findCard(state, ref.id) : null;
+                // `choice` is the index into `pending.options`, so the face the
+                // server attached is reachable directly. `findCard` stays as the
+                // fallback for any action that names an object without being one
+                // of the enumerated choices.
+                const option =
+                  action.choice === null ? undefined : pending.options[action.choice];
+                const ref = option?.ref ?? action.targets[0];
+                const card =
+                  option?.card ??
+                  (ref && ref.kind === "object" ? findCard(state, ref.id) : null);
                 const isPlayerRef = ref?.kind === "player";
                 const playerName = isPlayerRef
                   ? (state.players[ref.id]?.name ?? `P${ref.id}`)

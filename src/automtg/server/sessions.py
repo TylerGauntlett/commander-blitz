@@ -153,6 +153,7 @@ class GameSession:
                 targets=[t.to_dict() for t in action.targets],
                 choice=action.choice,
                 x=action.x,
+                pays=list(action.pays),
             )
             for action_id, action in self._action_ids.items()
         ]

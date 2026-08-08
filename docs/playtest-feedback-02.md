@@ -201,13 +201,12 @@ duplication.
   per response and nothing caches it.
 - `isWounded` in `cardStyle.ts` is still exported and still unused.
 - Turns progress 2x faster than expected as a turn seems to be counted per play (ie i take turn 1, opponent takes turn 2, my next turn shows turn 3. This should be turn 2 as a "turn" is after everyone has preformed an action that turn)
-- "All Attack" button to quickly select all monsters
+- "All Attack" button to quickly select all monsters. Similar an "All Defend" which picks sensible defenders for each attacking card (ie try to first pair cards that will not die and kill the opponent, then those that will not die but can't kill the opponent, then those that will die but will kill the opponent, and finally those that will die and won't kill the opponent)
 - 1x speed becoming .5x speed. 2x speed becoming 1x speed. The game moves too quickly
 
 ### 7. Commander Zone
 - Commander zone should be more pronouced, showing your commander at all times
 - The only way to cast your commander seems to be as a small button in the right sub menu
-
 
 ### 8. Land Colors
 - All lands are idential colors. There should be some visual indicator to seperate them (ie islands being blue, mountians red, plains white, etc). These could be full size colored icons in the middle of the card
@@ -217,6 +216,10 @@ duplication.
 - Card selection models only show a single button of the card to select based on the name
 - There is no way to know what the cards are that you are selecting
 - Instead the entire card can be shown
+
+### 10. Tap Costs
+- Tap costs are shown as raw text (ie {1}{G}{U}) which isn't readable
+- These can instead be shown as colored icons similar to the top card costs
 
 ---
 

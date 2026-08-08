@@ -8,8 +8,14 @@
 
 import { describe, expect, it } from "vitest";
 import type { ManaView } from "../src/api/types";
-import { formatManaRow, manaRow, unplayableHint } from "../src/logic/mana";
-import { card } from "./fixtures";
+import {
+  formatManaRow,
+  manaRow,
+  markSpent,
+  sourcesSpentBy,
+  unplayableHint,
+} from "../src/logic/mana";
+import { action, card } from "./fixtures";
 
 function mana(overrides: Partial<ManaView> = {}): ManaView {
   return { pool: {}, sources: [], total: 0, ...overrides };
@@ -139,5 +145,86 @@ describe("unplayableHint", () => {
     const reasons = ["priority", "timing", "land_drop", "mana", "targets"] as const;
     const messages = reasons.map((r) => unplayableHint(card(), r, mana()));
     expect(new Set(messages).size).toBe(reasons.length);
+  });
+});
+
+/**
+ * What a hovered spell would cost you.
+ *
+ * The row could say what you have but not what a play would leave you with,
+ * which is the interesting question in a turn with two plays in it -- see
+ * docs/playtest-feedback-02.md item 4. The answer is the engine's own solved
+ * payment, arriving on the action as `pays`. Nothing here computes affordability
+ * or picks lands; guessing is precisely what the `options` payload exists to
+ * prevent, since two "{G} or {U}" duals can pay {G}{U} but not {U}{U}.
+ */
+describe("sourcesSpentBy", () => {
+  const cast = (oid: number, pays: number[]) =>
+    action({ id: `a-${oid}`, kind: "cast", source_oid: oid, pays });
+
+  it("finds the payment for the hovered card", () => {
+    expect([...sourcesSpentBy([cast(9, [1, 2])], 9)]).toEqual([1, 2]);
+  });
+
+  it("is empty for a card no action names", () => {
+    expect(sourcesSpentBy([cast(9, [1])], 10).size).toBe(0);
+  });
+
+  it("is empty when nothing is hovered over a card that cannot be cast", () => {
+    expect(sourcesSpentBy([], 9).size).toBe(0);
+  });
+
+  it("ignores a land drop, which taps nothing", () => {
+    const play = action({ kind: "play_land", source_oid: 9, pays: [] });
+    expect(sourcesSpentBy([play], 9).size).toBe(0);
+  });
+
+  it("takes the first of several targetings, which all cost the same", () => {
+    // One card with a choice of targets produces several cast actions. The
+    // payment is a property of the card, not of the target.
+    const a = action({ id: "a1", kind: "cast", source_oid: 9, pays: [1, 2] });
+    const b = action({ id: "a2", kind: "cast", source_oid: 9, pays: [1, 2] });
+    expect([...sourcesSpentBy([a, b], 9)]).toEqual([1, 2]);
+  });
+});
+
+describe("markSpent", () => {
+  it("marks the pips belonging to a tapped source", () => {
+    const pips = manaRow(mana({ sources: [forest(1), forest(2)], total: 2 }));
+    const marked = markSpent(pips, new Set([1]));
+    expect(marked.map((pip) => pip.spent ?? false)).toEqual([true, false]);
+  });
+
+  it("marks every pip of a source that makes two mana", () => {
+    // Tapping is what costs. A land that makes {G}{U} is gone for the step
+    // whether the spell needed one of them or both, so claiming only half of it
+    // would promise a mana the player cannot reach.
+    const pips = manaRow(mana({ sources: [bounce(1)], total: 2 }));
+    expect(markSpent(pips, new Set([1])).every((pip) => pip.spent)).toBe(true);
+  });
+
+  it("never marks floating mana", () => {
+    // `Payment` does not itemise pool spend, so the pool is never claimed.
+    const pips = manaRow(mana({ pool: { G: 2 }, sources: [forest(1)], total: 3 }));
+    const marked = markSpent(pips, new Set([1]));
+    expect(marked.filter((pip) => pip.floating).every((pip) => !pip.spent)).toBe(true);
+  });
+
+  it("returns the row untouched when nothing is being cast", () => {
+    const pips = manaRow(mana({ sources: [forest(1)], total: 1 }));
+    expect(markSpent(pips, new Set())).toBe(pips);
+  });
+
+  it("does not change how many pips there are", () => {
+    // The row still says what you have. Marking is about what would leave.
+    const pips = manaRow(mana({ sources: [forest(1), dual(2), bounce(3)], total: 4 }));
+    expect(markSpent(pips, new Set([1, 3]))).toHaveLength(pips.length);
+  });
+
+  it("ignores a source that is no longer untapped", () => {
+    // The forecast and the board can disagree for one frame while a response is
+    // in flight; a stale oid must not mark somebody else's pip.
+    const pips = manaRow(mana({ sources: [forest(1)], total: 1 }));
+    expect(markSpent(pips, new Set([99])).some((pip) => pip.spent)).toBe(false);
   });
 });

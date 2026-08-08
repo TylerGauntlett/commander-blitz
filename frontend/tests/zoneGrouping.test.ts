@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { counterBadges, manaPips, statLine } from "../src/logic/cardStyle";
-import { groupBattlefield, laneFor, seatOrder } from "../src/logic/zoneGrouping";
+import {
+  commandersOf,
+  findCardByDefId,
+  groupBattlefield,
+  laneFor,
+  seatOrder,
+} from "../src/logic/zoneGrouping";
 import { card, gameView, player } from "./fixtures";
 
 describe("laneFor", () => {
@@ -108,5 +114,189 @@ describe("manaPips", () => {
   it("returns nothing for a free cost", () => {
     expect(manaPips("{0}")).toEqual([]);
     expect(manaPips("")).toEqual([]);
+  });
+});
+
+/**
+ * The commander dock's source of truth.
+ *
+ * In Commander the commander is the card the deck is built around, so the dock
+ * shows it at all times rather than only while it happens to be in the command
+ * zone -- having it vanish from the interface the moment it resolves is the
+ * opposite of what a player wants to track. See docs/playtest-feedback-02.md.
+ */
+describe("commandersOf", () => {
+  const boss = (overrides = {}) =>
+    card({ oid: 50, name: "Aesi", is_commander: true, owner: 0, controller: 0, ...overrides });
+
+  it("finds a commander sitting in the command zone", () => {
+    const state = gameView({
+      players: [player({ command: [boss({ zone: "command" })] }), player({ pid: 1 })],
+    });
+    expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50]);
+  });
+
+  it("still finds it once it has resolved onto the battlefield", () => {
+    const state = gameView({ battlefield: [boss({ zone: "battlefield" })] });
+    expect(commandersOf(state, 0).map((c) => c.name)).toEqual(["Aesi"]);
+  });
+
+  it("keeps showing it while it is on the stack", () => {
+    // Not an edge case: casting the commander is what the dock is for, and
+    // between the click and the spell resolving the card is in no other zone.
+    // Without this the dock blinks empty at the moment the player is watching.
+    const spell = boss({ zone: "stack" });
+    const state = gameView({
+      stack: [
+        {
+          sid: 1,
+          kind: "spell",
+          controller: 0,
+          def_id: "aesi",
+          name: "Aesi",
+          type_line: "Legendary Creature",
+          oid: 50,
+          source_oid: null,
+          targets: [],
+          description: "",
+          card: spell,
+        },
+      ],
+    });
+    expect(commandersOf(state, 0).map((c) => c.zone)).toEqual(["stack"]);
+  });
+
+  it("finds it in the graveyard, before it is put back", () => {
+    const state = gameView({
+      players: [player({ graveyard: [boss({ zone: "graveyard" })] }), player({ pid: 1 })],
+    });
+    expect(commandersOf(state, 0)).toHaveLength(1);
+  });
+
+  it("finds it in exile", () => {
+    const state = gameView({
+      players: [player({ exile: [boss({ zone: "exile" })] }), player({ pid: 1 })],
+    });
+    expect(commandersOf(state, 0)).toHaveLength(1);
+  });
+
+  it("never lists the same object twice", () => {
+    // The command zone is searched first and the battlefield after it; a payload
+    // that somehow carried both must not produce two docked cards.
+    const inZone = boss({ zone: "command" });
+    const state = gameView({
+      battlefield: [inZone],
+      players: [player({ command: [inZone] }), player({ pid: 1 })],
+    });
+    expect(commandersOf(state, 0)).toHaveLength(1);
+  });
+
+  it("does not claim another player's commander", () => {
+    const theirs = card({
+      oid: 60,
+      is_commander: true,
+      owner: 1,
+      controller: 1,
+      zone: "battlefield",
+    });
+    const state = gameView({ battlefield: [theirs] });
+    expect(commandersOf(state, 0)).toEqual([]);
+  });
+
+  it("follows ownership, not control, when a commander is stolen", () => {
+    // Control can change; the dock belongs to whoever will get the card back.
+    const stolen = card({
+      oid: 50,
+      is_commander: true,
+      owner: 0,
+      controller: 1,
+      zone: "battlefield",
+    });
+    const state = gameView({ battlefield: [stolen] });
+    expect(commandersOf(state, 0)).toHaveLength(1);
+    expect(commandersOf(state, 1)).toEqual([]);
+  });
+
+  it("is empty while the commander is somewhere the viewer cannot see", () => {
+    // Returned to hand, or shuffled into the library: there is no view to draw.
+    expect(commandersOf(gameView(), 0)).toEqual([]);
+  });
+
+  it("handles a deck with two commanders", () => {
+    const state = gameView({
+      players: [
+        player({
+          command: [
+            boss({ zone: "command" }),
+            boss({ oid: 51, name: "Partner", zone: "command" }),
+          ],
+        }),
+        player({ pid: 1 }),
+      ],
+    });
+    expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50, 51]);
+  });
+});
+
+/**
+ * Resolving a spotlight's card.
+ *
+ * Events name a card by its *definition* id, not by object id, so the spotlight
+ * cannot resolve a face the way a target can.
+ */
+describe("findCardByDefId", () => {
+  const bolt = (overrides = {}) => card({ card_id: "lightning_bolt", ...overrides });
+
+  it("prefers the copy still on the stack", () => {
+    const state = gameView({
+      stack: [
+        {
+          sid: 1,
+          kind: "spell",
+          controller: 0,
+          def_id: "lightning_bolt",
+          name: "Lightning Bolt",
+          type_line: "Instant",
+          oid: 7,
+          source_oid: null,
+          targets: [],
+          description: "",
+          card: bolt({ oid: 7, zone: "stack" }),
+        },
+      ],
+      battlefield: [bolt({ oid: 8 })],
+    });
+    expect(findCardByDefId(state, "lightning_bolt")?.oid).toBe(7);
+  });
+
+  it("falls back to wherever the card landed once it resolved", () => {
+    const state = gameView({
+      players: [
+        player({ graveyard: [bolt({ oid: 9, zone: "graveyard" })] }),
+        player({ pid: 1 }),
+      ],
+    });
+    expect(findCardByDefId(state, "lightning_bolt")?.oid).toBe(9);
+  });
+
+  it("prefers the requested controller's copy", () => {
+    // Singleton decks make same-card collisions between seats common enough to
+    // matter and cheap enough to get right.
+    const state = gameView({
+      battlefield: [bolt({ oid: 8, controller: 1 }), bolt({ oid: 9, controller: 0 })],
+    });
+    expect(findCardByDefId(state, "lightning_bolt", 0)?.oid).toBe(9);
+  });
+
+  it("takes somebody else's copy rather than showing nothing", () => {
+    // The right card belonging to the wrong player is still the right card.
+    const state = gameView({ battlefield: [bolt({ oid: 8, controller: 1 })] });
+    expect(findCardByDefId(state, "lightning_bolt", 0)?.oid).toBe(8);
+  });
+
+  it("returns null when the card is nowhere visible", () => {
+    // A countered spell has already left every zone the viewer can see; the
+    // spotlight falls back to a name plate rather than rendering a gap.
+    expect(findCardByDefId(gameView(), "lightning_bolt")).toBeNull();
   });
 });

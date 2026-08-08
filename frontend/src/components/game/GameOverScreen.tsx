@@ -45,7 +45,7 @@ export function GameOverScreen({ state, onRematch, onQuit }: Props) {
             <p className="over__sub">
               {draw
                 ? state.result || "Nobody won."
-                : `${state.winners.map((pid) => state.players[pid]?.name).join(", ")} wins on turn ${state.turn}.`}
+                : `${state.winners.map((pid) => state.players[pid]?.name).join(", ")} wins on turn ${state.round}.`}
             </p>
 
             <ul className="over__players">

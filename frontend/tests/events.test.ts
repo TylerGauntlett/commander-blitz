@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
 import { beatsFor, queueDuration } from "../src/logic/events";
+import { describeEvent } from "../src/logic/labels";
 
 const NAMES = ["You", "Edgar AI"];
 
@@ -178,5 +179,106 @@ describe("queueDuration", () => {
 
   it("is zero for an empty queue", () => {
     expect(queueDuration([], 1)).toBe(0);
+  });
+});
+
+/**
+ * One switch owns the words.
+ *
+ * `beatsFor` used to carry its own prose, parallel to `describeEvent` and over
+ * the same event types. That is how triggers came to be missing from both at
+ * once, and why payment narrated "You pays {2}{G}" while the log beside it said
+ * "You pay". These tests pin the two together, so the next event kind cannot be
+ * given a line in one place and forgotten in the other.
+ */
+describe("beat text comes from describeEvent", () => {
+  const cases: GameEvent[] = [
+    event("turn_began", { turn: 3, round: 2 }),
+    event("spell_cast", { card: "sol_ring" }),
+    event("land_played", { card: "forest" }),
+    event("ability_triggered", { card: "scoured_barrens" }),
+    event("mana_spent", { mana: "{2}{G}" }),
+    event("damage_dealt", { amount: 3, to: "player" }),
+    event("life_gained", { amount: 2 }),
+    event("draw"),
+    event("dies", { card: "t_bear" }),
+    event("player_lost", { reason: "life" }),
+  ];
+
+  it.each(cases.map((e) => [e.type, e] as const))(
+    "%s reads the same in the log and in the narration",
+    (_type, raw) => {
+      const [beat] = beatsFor([raw], NAMES, undefined, 0);
+      expect(beat.text).toBe(describeEvent(raw, NAMES, 0));
+    },
+  );
+
+  it("agrees for every event the queue will narrate", () => {
+    // The whole contract in one, across a realistic batch rather than a list of
+    // hand-picked types.
+    const beats = beatsFor(cases, NAMES, undefined, 0);
+    const lines = cases
+      .map((raw) => describeEvent(raw, NAMES, 0))
+      .filter((line) => line !== null);
+    expect(beats.map((b) => b.text).filter((t) => t !== null)).toEqual(lines);
+  });
+
+  it("uses the printed name when a lookup is given", () => {
+    const lookup = (id: string) => (id === "sol_ring" ? "Sol Ring" : undefined);
+    const [beat] = beatsFor([event("spell_cast", { card: "sol_ring" })], NAMES, lookup, 0);
+    expect(beat.text).toContain("Sol Ring");
+  });
+});
+
+describe("verb agreement", () => {
+  it("says 'you pay' rather than 'You pays'", () => {
+    // The bug the duplication caused: `beatsFor` had no notion of the viewer at
+    // all, so every line it wrote used the third-person verb.
+    const [beat] = beatsFor([event("mana_spent", { mana: "{2}{G}" })], NAMES, undefined, 0);
+    expect(beat.text).toBe("You pay {2}{G}");
+  });
+
+  it("keeps the third person for everybody else", () => {
+    const raw = event("mana_spent", { mana: "{2}{G}" }, { player: 1 });
+    const [beat] = beatsFor([raw], NAMES, undefined, 0);
+    expect(beat.text).toBe("Edgar AI pays {2}{G}");
+  });
+
+  it("agrees on the events that make up most of a log", () => {
+    for (const type of ["draw", "land_played", "spell_cast", "attackers_declared"]) {
+      const [beat] = beatsFor([event(type, { card: "forest" })], NAMES, undefined, 0);
+      // "You draws", "You plays", "You casts" -- a third-person verb after
+      // the second-person pronoun, which is what a missing viewerSeat gave.
+      expect(beat.text, `${type} disagrees with "you"`).not.toMatch(/^You \w+s(\s|$)/);
+    }
+  });
+});
+
+describe("beats still own timing and effects", () => {
+  it("keeps the hold, sound and spotlight that describeEvent knows nothing about", () => {
+    const [beat] = beatsFor([event("spell_cast", { card: "sol_ring" })], NAMES, undefined, 0);
+    expect(beat.hold).toBeGreaterThan(0);
+    expect(beat.sound).toBe("chime");
+    expect(beat.spotlight?.cardId).toBe("sol_ring");
+  });
+
+  it("keeps banner text, which is a label rather than play-by-play", () => {
+    const raw = event("turn_began", { round: 2 }, { player: 1 });
+    const [beat] = beatsFor([raw], NAMES, undefined, 0);
+    expect(beat.banner?.text).toBe("Edgar AI's Turn");
+  });
+
+  it("says 'Your Turn' rather than \"You's Turn\"", () => {
+    // The viewer's name is literally "You", so every possessive built by
+    // sticking an apostrophe-s on it came out wrong.
+    const [beat] = beatsFor([event("turn_began", { round: 2 })], NAMES, undefined, 0);
+    expect(beat.banner?.text).toBe("Your Turn");
+    expect(beat.text).toBe("-- Your turn 2 --");
+  });
+
+  it("narrates the round, not the engine's player-turn counter", () => {
+    const [beat] = beatsFor([event("turn_began", { turn: 5, round: 3 })], NAMES, undefined, 0);
+    expect(beat.text).toContain("turn 3");
+    expect(beat.text).not.toContain("turn 5");
   });
 });
