@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PendingDecision } from "../src/api/types";
-import { ActionBar } from "../src/components/game/ActionBar";
+import { ActionPanel } from "../src/components/game/ActionPanel";
 import { CardFace } from "../src/components/game/CardFace";
 import { PromptDialog } from "../src/components/game/PromptDialog";
 import { action, card, gameView } from "./fixtures";
@@ -44,12 +44,12 @@ describe("CardFace", () => {
     expect(screen.getByText("4/5")).toBeTruthy();
   });
 
-  it("shows oracle text only in detail mode", () => {
+  it("shows oracle text only where there is room for it", () => {
     const bear = card({ oracle_text: "Trample. Draw a card." });
     const { unmount } = render(<CardFace card={bear} />);
     expect(screen.queryByText("Trample. Draw a card.")).toBeNull();
     unmount();
-    render(<CardFace card={bear} detail />);
+    render(<CardFace card={bear} variant="detail" />);
     expect(screen.getByText("Trample. Draw a card.")).toBeTruthy();
   });
 
@@ -69,16 +69,25 @@ describe("CardFace", () => {
   });
 });
 
-describe("ActionBar", () => {
+describe("ActionPanel", () => {
   const base = {
+    onStage: noop,
+    onDeclare: noop,
     onUndo: noop,
     onQuit: noop,
-    onSkip: noop,
+    onSkipNarration: noop,
     narrating: false,
     busy: false,
     aiThinking: false,
     onToggleFullControl: noop,
+    standDown: false,
   };
+
+  /** Every action id the panel put in the document, in order. */
+  const renderedIds = () =>
+    [...document.querySelectorAll("[data-action-id]")].map((n) =>
+      n.getAttribute("data-action-id"),
+    );
 
   it("renders one button per legal action", () => {
     const actions = [
@@ -86,16 +95,51 @@ describe("ActionBar", () => {
       action({ id: "a1-cast", kind: "cast", label: "Cast Bear" }),
       action({ id: "a2-play_land", kind: "play_land", label: "Play Forest" }),
     ];
-    render(<ActionBar state={gameView()} actions={actions} onAct={noop} {...base} />);
+    render(<ActionPanel state={gameView()} actions={actions} onAct={noop} {...base} />);
     for (const a of actions) {
       expect(document.querySelector(`[data-action-id="${a.id}"]`)).toBeTruthy();
     }
   });
 
+  /*
+   * The specific way this layout can break the id invariant: one action is
+   * promoted to the commit slab, and if it is not also removed from the list it
+   * renders twice. `clarity.spec.ts` would catch it a hundred actions later; this
+   * catches it here.
+   */
+  it("promotes one action to the slab without also leaving it in the list", () => {
+    const actions = [
+      action({ id: "a0-pass", kind: "pass", label: "Pass" }),
+      action({ id: "a1-cast", kind: "cast", label: "Cast Bear" }),
+    ];
+    render(<ActionPanel state={gameView()} actions={actions} onAct={noop} {...base} />);
+    const ids = renderedIds();
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toHaveLength(2);
+    expect(screen.getByTestId("commit").getAttribute("data-action-id")).toBe("a0-pass");
+  });
+
+  it("renders no action at all while a modal owns the decision", () => {
+    // Otherwise the mulligan buttons exist both here and behind the dialog.
+    render(
+      <ActionPanel
+        state={gameView()}
+        actions={[action({ id: "a0-keep", kind: "keep", label: "Keep" })]}
+        onAct={noop}
+        {...base}
+        standDown
+      />,
+    );
+    expect(renderedIds()).toEqual([]);
+    // The tools stay reachable: the speed control is most wanted exactly when a
+    // dialog is up.
+    expect(screen.getByTestId("full-control")).toBeTruthy();
+  });
+
   it("submits the action id it was given, not a reconstructed action", () => {
     const onAct = vi.fn();
     render(
-      <ActionBar
+      <ActionPanel
         state={gameView()}
         actions={[action({ id: "a7-cast", kind: "cast", label: "Cast" })]}
         onAct={onAct}
@@ -108,27 +152,29 @@ describe("ActionBar", () => {
 
   it("gates every action while narration is playing", () => {
     render(
-      <ActionBar
+      <ActionPanel
         state={gameView()}
-        actions={[action({ label: "Pass" })]}
+        actions={[action({ id: "a3-cast", kind: "cast", label: "Cast Bear" })]}
         onAct={noop}
         {...base}
         narrating
       />,
     );
-    expect(screen.getByText("Pass").hasAttribute("disabled")).toBe(true);
-    expect(screen.getByText(/Skip/)).toBeTruthy();
+    expect(document.querySelector('[data-action-id="a3-cast"]')?.hasAttribute("disabled")).toBe(
+      true,
+    );
+    expect(screen.getByTitle("Skip ahead")).toBeTruthy();
   });
 
   it("shows the stops setting the engine is actually holding", () => {
     const { unmount } = render(
-      <ActionBar state={gameView()} actions={[]} onAct={noop} {...base} />,
+      <ActionPanel state={gameView()} actions={[]} onAct={noop} {...base} />,
     );
     expect(screen.getByTestId("full-control").textContent).toBe("Auto-pass");
     unmount();
 
     render(
-      <ActionBar
+      <ActionPanel
         state={gameView({ full_control: true })}
         actions={[]}
         onAct={noop}
@@ -141,7 +187,7 @@ describe("ActionBar", () => {
   it("asks for the opposite of the current stops setting", () => {
     const onToggleFullControl = vi.fn();
     render(
-      <ActionBar
+      <ActionPanel
         state={gameView()}
         actions={[]}
         onAct={noop}
@@ -155,7 +201,7 @@ describe("ActionBar", () => {
 
   it("says who it is waiting for", () => {
     const state = gameView({ pending: pending({ player: 1 }) });
-    render(<ActionBar state={state} actions={[]} onAct={noop} {...base} />);
+    render(<ActionPanel state={state} actions={[]} onAct={noop} {...base} />);
     expect(screen.getByTestId("prompt").textContent).toContain("Waiting for AI 1");
   });
 });

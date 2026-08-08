@@ -94,7 +94,7 @@ describe("when the card has art", () => {
 
   it("still renders rules text alongside the art", () => {
     const { container } = render(
-      <CardFace card={card({ card_id: "t_bear", oracle_text: "Trample." })} detail />,
+      <CardFace card={card({ card_id: "t_bear", oracle_text: "Trample." })} variant="detail" />,
     );
     expect(container.querySelector(".face__art")).not.toBeNull();
     expect(container.querySelector(".face__rules")).not.toBeNull();

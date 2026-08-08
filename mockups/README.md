@@ -237,6 +237,12 @@ Then, as separate pieces of work with their own arguments:
 
 ## Notes on fidelity
 
+> Where the **shipped client** and mockup 05 differ today, and which of those
+> differences are bugs, is tracked in [`docs/mockup-fidelity.md`](../docs/mockup-fidelity.md).
+> The notes below are about the mockups themselves. Read the other file before
+> "correcting" anything in the client to match a mockup — several differences are
+> deliberate decisions made after these were drawn.
+
 - Same board state everywhere, from `data/cards/*.json` — card names, costs and P/T
   are the real ones. `Sunlit Barrens` in the original screenshot is **Scoured Barrens**.
 - **One deliberate substitution:** one of the eight Forests is a Terramorphic

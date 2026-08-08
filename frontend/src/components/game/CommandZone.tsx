@@ -94,7 +94,7 @@ export function CommandZone({
                 whileTap={castable && !disabled ? { scale: 0.97 } : undefined}
                 transition={bouncy}
               >
-                <StaticCard card={card} detail={false} />
+                <StaticCard card={card} variant="board" />
                 {/*
                   The tax rides on the card rather than on the orb. It is a
                   property of casting *this* card, and reading it next to the

@@ -99,48 +99,67 @@
   box-shadow: 0 4px 0 #6d5015;
 }
 
-/* Action bar ----------------------------------------------------------- */
-
-.bar {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 6px;
-  padding: 8px 10px;
+/* The action panel ------------------------------------------------------
+ *
+ * One surface for attacking, blocking and playing cards. It replaced an action
+ * bar and a combat panel that stacked in the same rail, each with its own
+ * chrome, and it is deliberately the *least* decorated thing there: an ordinary
+ * pane, exactly like the stack and log panes on the other rail.
+ *
+ * THAT IS THE POINT, AND IT IS EASY TO UNDO. The combat panel used to paint
+ * itself amber edge to edge -- `1px solid var(--staged)` over a brown wash. But
+ * `--staged` is the signal meaning "you have committed this and not sent it
+ * yet", and a signal spent on the container is a signal the content cannot use:
+ * with the whole panel already amber, the rows that were actually staged had
+ * nothing left to be distinct with. Same argument theme.css makes about the old
+ * green table. The panel is furniture; the rows carry the colour.
+ */
+.acts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Takes the rail's slack and is allowed to shrink, so the list scrolls rather
+     than pushing the commit dock off the bottom. */
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 11px 13px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
   background: var(--pane-bg);
   box-shadow: var(--pane-shadow);
-  min-height: 150px;
 }
 
-/* Standing down: the bar is nothing but its tool strip, so it takes no room it
-   is not using. Without this it kept its 150px min-height as an empty box under
-   whichever panel had taken the decision. */
-.bar--quiet {
-  grid-template-rows: auto;
-  min-height: 0;
-}
-
-.bar__prompt {
+.acts__head {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: baseline;
+  gap: 8px;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
 }
 
-.bar__prompt-text {
+.acts__prompt {
   font-size: 14px;
   font-weight: 700;
 }
 
-.bar__thinking {
+/* What is actually coming at you, as a number. "Three attackers" and "eleven
+   power" are different decisions and the panel used to say only the first. */
+.acts__stakes {
+  color: var(--attacking);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.acts__thinking {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-left: auto;
   color: var(--text-faint);
   font-size: 11px;
 }
 
-.bar__dot {
+.acts__dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -158,159 +177,113 @@
   }
 }
 
-.bar__actions {
+.acts__hint {
+  margin: 0;
+  flex: 0 0 auto;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.acts__list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
-  align-content: flex-start;
+  flex: 1 1 auto;
   overflow-y: auto;
   /* A floor as well as a ceiling. On a short viewport this list is the first
      thing a flex parent squeezes, and it flattens to 0 without any content
      changing -- so the decision surface disappears while every assertion about
      the buttons still passes. e2e/layout.spec.ts measures this. */
   min-height: 74px;
-  max-height: 132px;
 }
 
-.bar__overflow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  width: 100%;
-  padding-top: 5px;
-  border-top: 1px dashed var(--rail-line);
-}
-
-.bar__overflow .btn {
-  padding: 4px 9px;
-  font-size: 11.5px;
-}
-
-.bar__idle {
+.acts__none {
+  margin: 0;
   color: var(--text-faint);
+  font-size: 12px;
   font-style: italic;
 }
 
-/* The tool row wraps. It used to sit in a 420px column at the foot and now
-   lives in a 304px rail, where Undo and Quit were being clipped off the edge. */
-.bar__tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-
-.bar__tools .btn {
-  padding: 4px 10px;
-  font-size: 11.5px;
-}
-
-.speed {
-  display: flex;
-  margin-right: auto;
-  border: 1px solid var(--rail-line);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.speed__btn {
-  padding: 3px 9px;
-  border: 0;
-  background: var(--pane-well);
-  color: var(--text-faint);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.speed__btn--on {
-  background: var(--gold);
-  color: #241a04;
-}
-
-/* Combat panel and inline choices -------------------------------------- */
-
-/* Combat, as a rail panel ------------------------------------------------
+/* Rows -------------------------------------------------------------------
  *
- * This was a full-width banner under the board: the decision sat as far as
- * possible from the cards it was about, and it took the row the hand wanted.
- * In the rail it stacks under the card preview, so the creature you are reading
- * and the list you are staging it into are one glance apart. */
-.combat {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  padding: 11px 13px;
-  border: 1px solid var(--staged);
-  border-radius: 10px;
-  background: rgb(46 34 8 / 0.4);
-  box-shadow: var(--pane-shadow);
-  min-height: 0;
-}
+ * Named `act`, not `opt`. `.opt` has belonged to the prompt dialog since cycle
+ * 2, and the last surface that defined it a second time silently restyled both:
+ * the later rule won wherever they overlapped, which is how the mulligan buttons
+ * ended up wearing combat's border.
+ *
+ * `--act-tone` is the row's colour, and it is the same token the card's own rim
+ * uses on the board -- so a castable card is green in both places and a staged
+ * attacker is amber in both. The tone is declared per row kind and consumed in
+ * one place, rather than each state carrying its own hard-coded colour. */
+.act {
+  --act-tone: var(--astral);
 
-.choices {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 12px;
-  border: 1px solid var(--staged);
-  border-radius: 9px;
-  background: rgb(46 34 8 / 0.55);
-}
-
-.combat__head {
+  gap: 9px;
   flex: 0 0 auto;
-}
-
-.combat__title {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.combat__hint {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 11.5px;
-}
-
-/* The staged list. A column of numbered rows rather than a wrapping paragraph
-   of chips: at four attackers the chips had to be read, where a list can be
-   counted. */
-.combat__staged {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 0 1 auto;
-  min-width: 0;
-  max-height: 156px;
-  overflow-y: auto;
-}
-
-/* Named `stage`, not `opt`: the prompt dialog has owned `.opt` since cycle 2,
-   and a second definition of it here silently restyled both surfaces -- the
-   later rule won wherever they overlapped, which is how the mulligan buttons
-   ended up wearing combat's border. */
-.stage {
-  display: flex;
-  align-items: center;
-  gap: 9px;
   width: 100%;
-  padding: 7px 10px;
+  padding: 8px 11px;
   border: 1px solid var(--edge);
+  border-left: 3px solid transparent;
   border-radius: 9px;
   background: rgb(255 255 255 / 0.035);
   color: var(--text);
   font-size: 12.5px;
   text-align: left;
+  transition: border-color var(--t-fast), background var(--t-fast);
 }
 
-.stage--on {
-  border-color: var(--staged);
-  background: rgb(255 193 77 / 0.13);
-  color: var(--staged);
+.act:hover:not(:disabled) {
+  border-color: var(--edge-hi);
+  background: rgb(255 255 255 / 0.07);
 }
 
-.stage__key {
+.act:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.act--playable {
+  --act-tone: var(--playable);
+}
+
+.act--ability {
+  --act-tone: var(--ability);
+}
+
+.act--staged {
+  --act-tone: var(--staged);
+}
+
+/* Available, but not chosen: a hairline of the tone on the leading edge. Enough
+   to group the row with the card it names, not enough to read as "on". */
+.act--playable,
+.act--ability {
+  border-left-color: var(--act-tone);
+}
+
+/* Chosen. The one place the tone fills, which is what the panel's flat chrome
+   exists to leave room for. */
+.act--on {
+  border-color: var(--act-tone);
+  border-left-color: var(--act-tone);
+  background: color-mix(in srgb, var(--act-tone) 14%, transparent);
+  color: var(--act-tone);
+}
+
+/* A row that is a container rather than a button: an attacker with more than one
+   legal defender, whose ids live on the chips inside it. */
+.act--group {
+  flex-wrap: wrap;
+}
+
+.act--nested {
+  font-size: 12px;
+}
+
+.act__key {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
@@ -324,62 +297,279 @@
   font-weight: 800;
 }
 
-.stage__name {
+.act__name {
   overflow: hidden;
+  min-width: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.stage__pt {
+.act__aim {
+  color: var(--staged);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.act__type {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--text-faint);
+  font-size: 10.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.act__cost {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1px;
+  margin-left: auto;
+  /* The pips size themselves off --card-w; there is no card here, so pin it. */
+  --card-w: 120px;
+}
+
+.act__pt {
+  flex: 0 0 auto;
   margin-left: auto;
   font-weight: 800;
   opacity: 0.85;
 }
 
-/* Every legal pair, one button each, carrying the server's action id.
-   This is what lets the action bar stand down for combat -- see CombatPanel. */
-.combat__options {
+/* A cost row already took `margin-left: auto`; the P/T then sits beside it
+   rather than fighting it for the same slot. */
+.act__cost ~ .act__pt {
+  margin-left: 0;
+}
+
+.act__aims {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 34px;
-  max-height: 132px;
-  overflow-y: auto;
-  padding-top: 8px;
-  border-top: 1px solid rgb(255 193 77 / 0.25);
+  gap: 4px;
+  width: 100%;
 }
 
-/* Unstaged options read as offers, staged ones as commitments. The staged
-   summary chips above use the solid fill, so these start hollow. */
-.combat__options .chip {
-  background: none;
+/* One defender, one id. Only ever rendered in a pod. */
+.aim {
+  padding: 3px 9px;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: transparent;
   color: var(--text-dim);
-  border-color: var(--rail-line);
-  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
 }
 
-.combat__options .chip:hover:not(:disabled) {
+.aim:hover:not(:disabled) {
+  border-color: var(--edge-hi);
+  color: var(--text);
+}
+
+.aim--on {
   border-color: var(--staged);
-  color: var(--staged);
-  background: rgb(255 193 77 / 0.12);
-}
-
-.combat__options .chip--on {
-  border-color: var(--staged);
-  background: rgb(255 193 77 / 0.22);
+  background: rgb(255 193 77 / 0.18);
   color: var(--staged);
 }
 
-.combat__none {
+/* Blocker groups ---------------------------------------------------------
+ *
+ * One group per creature of yours that can block, and under it the attackers it
+ * may legally block. Grouping this way rather than by attacker is what makes a
+ * block one click: the question a defender is answering is "what do I do with
+ * this creature", and the answer is directly underneath it. */
+.actgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 0 auto;
+  padding-bottom: 4px;
+}
+
+.actgroup__head {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 2px 2px 0;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.actgroup__name {
+  overflow: hidden;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.actgroup__kw {
+  color: var(--playable);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.actgroup__pt {
+  margin-left: auto;
+  color: var(--text);
+}
+
+.actgroup__none {
+  margin: 0 0 0 12px;
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: 11.5px;
   font-style: italic;
 }
 
+.actgroup .act {
+  margin-left: 12px;
+  width: auto;
+}
+
+/* What the block would achieve, from logic/autoBlock.ts's ranking. Coloured by
+   tier so the good ones are findable without reading four words on every row --
+   and the tier is on the element as `data-tier`, so a test asserts the ranking
+   rather than the prose. */
+.verdict {
+  flex: 0 0 auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.verdict--1 {
+  background: rgb(92 224 138 / 0.16);
+  color: var(--playable);
+}
+
+.verdict--2 {
+  background: rgb(88 182 255 / 0.16);
+  color: var(--targetable);
+}
+
+.verdict--3 {
+  background: rgb(255 193 77 / 0.16);
+  color: var(--staged);
+}
+
+.verdict--4 {
+  background: rgb(255 92 92 / 0.14);
+  color: var(--danger);
+}
+
+/* The tools, as this panel's footer ---------------------------------------
+ *
+ * They used to be `.bar__tools` inside a pane of their own, stacked under the
+ * combat panel, so the rail read as three competing surfaces where the mockup
+ * has one. A hairline rule is all the separation controls need when they are
+ * always available and almost never the thing you came here to press. */
+/*
+ * One line, and it must stay one line.
+ *
+ * The rail is `clamp(272px, 17.4vw, 352px)`, so at the narrow end there are
+ * about 250px for six controls. When they wrapped, the second line pushed out of
+ * the panel's box and the quit button rendered *over* the commit dock -- the
+ * panel is `flex: 1 1 auto` in a column that is already full, so it cannot grow
+ * to absorb a wrap. Everything below is sized to fit that budget.
+ */
+.tools {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: center;
+  flex: 0 0 auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--edge);
+}
+
+.tool {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 26px;
+  height: 28px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tool:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.06);
+  color: var(--text);
+}
+
+.tool:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tool--on {
+  border-color: var(--edge-hi);
+  color: var(--astral-hi);
+}
+
+/* Full control keeps a word rather than a glyph: it is a mode with consequences
+   for how the whole game plays, and an icon for that would be a puzzle. It is
+   also the only tool wide enough to matter to the budget above, so it is the one
+   allowed to shrink its label. */
+.tool--wide {
+  overflow: hidden;
+  min-width: 0;
+  padding: 0 6px;
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+}
+
+.speed {
+  display: flex;
+  flex: 0 0 auto;
+  margin-right: auto;
+  border: 1px solid var(--rail-line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.speed__btn {
+  padding: 3px 7px;
+  border: 0;
+  background: var(--pane-well);
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.speed__btn--on {
+  background: var(--astral-hi);
+  color: #1b1533;
+}
+
+/* The inline targeting hint, above the hand. Not part of the panel: it belongs
+   to a gesture in progress, so it sits where the gesture is. */
+.choices {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border: 1px solid var(--targetable);
+  border-radius: 9px;
+  background: rgb(12 34 54 / 0.6);
+}
+
 /* The commit dock: one large control for the thing the turn is waiting on, and
-   the alternatives demoted to a row beneath it. */
+   the alternatives demoted to a row beneath it.
+
+   It sits *outside* the panel, as a sibling. The option list scrolls and this
+   must not scroll with it: the button the turn is waiting on is the one control
+   that can never be one flick of a wheel away. */
 .commit-dock {
   display: flex;
   flex-direction: column;
@@ -388,15 +578,32 @@
 }
 
 .commit {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 12px;
   width: 100%;
-  padding: 14px 20px;
-  border-radius: 12px;
+  padding: 17px 22px;
+  border-radius: 14px;
 }
 
 .commit__main {
-  font-size: 17px;
+  font-size: 21px;
   font-weight: 900;
+}
+
+/* The key that already does this. Enter has committed a declaration since the
+   keyboard handler in Table.tsx was written; nothing said so. */
+.commit__key {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.commit:disabled .commit__key {
+  background: rgb(0 0 0 / 0.14);
 }
 
 .commit-alt {
@@ -404,32 +611,37 @@
   gap: 8px;
 }
 
-.commit-alt .btn {
+/*
+ * Two real choices, not two pieces of dim text.
+ *
+ * These were `.btn--ghost`, whose border is transparent and whose colour is
+ * `--text-faint` -- the tier meant for utilities you almost never press. But
+ * "All attack" and "No attacks" are two of the three answers to the question on
+ * screen, and rendering them as bare text made the dock look like one button
+ * with a caption. An outline is enough to say they are pressable without
+ * competing with the slab above them.
+ */
+.commit-alt button {
   flex: 1;
-  padding: 7px 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--edge);
   border-radius: 999px;
+  background: transparent;
+  color: var(--text-dim);
   font-size: 12px;
-  text-align: center;
-  justify-content: center;
-}
-
-.chip {
-  padding: 3px 9px;
-  border: 1px solid var(--staged);
-  border-radius: 999px;
-  background: rgb(255 193 77 / 0.14);
-  color: var(--staged);
-  font-size: 11.5px;
   font-weight: 600;
+  text-align: center;
+  transition: border-color var(--t-fast), color var(--t-fast);
 }
 
-.chip:hover {
-  background: rgb(255 193 77 / 0.26);
+.commit-alt button:hover:not(:disabled) {
+  border-color: var(--edge-hi);
+  color: var(--text);
 }
 
-.choices {
-  border-color: var(--targetable);
-  background: rgb(12 34 54 / 0.6);
+.commit-alt button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .choices__label {

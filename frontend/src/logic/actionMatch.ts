@@ -73,27 +73,49 @@ export function blockActions(actions: LegalAction[]): LegalAction[] {
   return actions.filter((action) => action.kind === "add_blocker");
 }
 
-/** Creatures this player may declare as attackers, deduplicated. */
+/*
+ * All three of these are sorted, and that is not cosmetic.
+ *
+ * They are what the action panel builds its rows from, and the server's action
+ * list is not order-stable between polls -- so an unsorted list reordered the
+ * panel underneath the player mid-decision, moving the row they were reaching
+ * for. Sorting by oid is the same reasoning `autoBlock.ts` gives for breaking
+ * its ties by oid: the same board must always produce the same list, or it
+ * cannot be reasoned about.
+ */
+
+/** Creatures this player may declare as attackers, deduplicated, in oid order. */
 export function availableAttackers(actions: LegalAction[]): number[] {
   const seen = new Set<number>();
   for (const action of attackActions(actions)) {
     if (action.source_oid !== null) seen.add(action.source_oid);
   }
-  return [...seen];
+  return [...seen].sort((a, b) => a - b);
 }
 
-/** Players a given attacker may be sent at. */
+/** Players a given attacker may be sent at, in seat order. */
 export function defendersFor(actions: LegalAction[], attackerOid: number): number[] {
   return attackActions(actions)
     .filter((action) => action.source_oid === attackerOid)
-    .flatMap((action) => action.targets.filter((r) => r.kind === "player").map((r) => r.id));
+    .flatMap((action) => action.targets.filter((r) => r.kind === "player").map((r) => r.id))
+    .sort((a, b) => a - b);
 }
 
-/** Attackers a given blocker may block. */
+/** Attackers a given blocker may block, in oid order. */
 export function blockableBy(actions: LegalAction[], blockerOid: number): number[] {
   return blockActions(actions)
     .filter((action) => action.source_oid === blockerOid)
-    .flatMap((action) => action.targets.filter((r) => r.kind === "object").map((r) => r.id));
+    .flatMap((action) => action.targets.filter((r) => r.kind === "object").map((r) => r.id))
+    .sort((a, b) => a - b);
+}
+
+/** Creatures this player may declare as blockers, deduplicated, in oid order. */
+export function availableBlockers(actions: LegalAction[]): number[] {
+  const seen = new Set<number>();
+  for (const action of blockActions(actions)) {
+    if (action.source_oid !== null) seen.add(action.source_oid);
+  }
+  return [...seen].sort((a, b) => a - b);
 }
 
 export function findByKind(actions: LegalAction[], kind: string): LegalAction | null {

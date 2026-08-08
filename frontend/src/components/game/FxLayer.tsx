@@ -229,7 +229,7 @@ export function FxLayer({ beat, speed, boardRef, state }: Props) {
                 className="fx-spotlight__card"
                 style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.spotlight) }}
               >
-                <StaticCard card={fx.card} detail />
+                <StaticCard card={fx.card} variant="detail" />
               </div>
             ) : (
               <span className="fx-spotlight__name">{fx.name}</span>

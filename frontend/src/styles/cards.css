@@ -276,12 +276,22 @@
  * Together those are what let the board carry art without giving up the type
  * encoding that mockups/README.md warned it would cost.
  *
- * `flex: 1` so the window takes whatever the title, type line and footer leave.
- * On a card that also shows rules text the band is capped instead -- see
- * `.face--detail` below -- or the text would be squeezed to nothing. */
+ * The band sits at the *top* of the card, above the title, and is capped at a
+ * fixed aspect rather than taking the remaining height. It used to be `flex: 1`
+ * between the type line and the footer, which meant the text got whatever the
+ * art did not want -- on a hand card that was about six pixels of rules. A fixed
+ * cap gives the text a contiguous block of known height underneath, which is the
+ * arrangement mockups/05-planar-art.html's enlarged card uses and the reason
+ * that card is the readable one.
+ *
+ * 1.4 is roughly the aspect of Scryfall's `art_crop`, so nothing is distorted.
+ * `flex: 0 1 auto` rather than `0 0 auto`: on the smallest card in a four-player
+ * pod the floored text below needs more of the height than the art does, and the
+ * art is the channel that can afford to give it up. */
 .face__art {
   position: relative;
-  flex: 1;
+  flex: 0 1 auto;
+  aspect-ratio: 1.4;
   min-height: 0;
   overflow: hidden;
   border-radius: calc(var(--card-w) * 0.03);
@@ -335,12 +345,129 @@
   box-shadow: 0 2px 5px rgb(0 0 0 / 0.55);
 }
 
-/* A face that also renders rules text caps its art rather than taking the
-   remaining height, so the text keeps its room. 1.4 is roughly the aspect of
-   Scryfall's art_crop, so nothing is distorted. */
+/* A face that also renders rules text holds the cap rigidly rather than letting
+   the art shrink: here the text is the point, and a band that gave up height to
+   it would be trading the wrong way round. `.face__art` above already sets the
+   aspect for every variant; this is the stricter version of the same rule, and
+   tests/palette.test.ts asserts it stays. */
 .face--detail .face__art {
   flex: 0 0 auto;
   aspect-ratio: 1.4;
+}
+
+/* The enlarged card ------------------------------------------------------
+ *
+ * The one card on screen that is not a 1.4 portrait. Everything else is a fixed
+ * rectangle the text has to fit inside; this is as wide as the rail and as tall
+ * as its rules text needs, which is the difference between reading a card and
+ * squinting at the first line and a half of it.
+ *
+ * `--card-w: 150px` is set *on the face*, not inherited from the zone. The pips
+ * in the cost row and inside the rules text size themselves off `--card-w`, so
+ * they need a number; pinning it here lets the box be width-driven while the
+ * symbols stay a sensible absolute size. Type sizes are absolute for the same
+ * reason -- a ratio of a width that is now the rail's width means nothing. */
+/*
+ * Every enlarged card is the same size, whatever is on it.
+ *
+ * It used to grow to fit its rules text, which made a land visibly shorter than
+ * a creature -- fewer lines, and no P/T row at all -- and made the whole rail
+ * below it move as the pointer crossed the board. So the card fills a fixed
+ * frame instead, and the rules box is the part that gives: it takes the slack
+ * and scrolls when a card has more text than the frame can show.
+ */
+.card--big {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+
+.card--big .card__pivot {
+  height: 100%;
+}
+
+.face--big {
+  --card-w: 150px;
+
+  height: 100%;
+  /* No padding surround: each row carries its own, and the art is flush to the
+     frame. The type ring in `.face::before` still draws over the whole face, so
+     the type encoding survives the change. */
+  padding: 0;
+  gap: 0;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/*
+ * A share of the frame, not an aspect ratio.
+ *
+ * Everywhere else the art keeps 1.4 and the card grows around it. Here the card
+ * is a fixed box, so an aspect-driven band takes its height off the top and the
+ * rules text gets whatever is left -- which on a 950px-tall display was about
+ * forty pixels, i.e. nothing. Splitting the frame instead keeps the text usable
+ * at every viewport, and `object-fit: cover` on the image means a slightly
+ * wider crop rather than a squashed one.
+ */
+.face--big .face__art,
+.face--big .face__watermark {
+  flex: 0 0 46%;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+.face--big .face__title,
+.face--big .face__type {
+  flex: 0 0 auto;
+}
+
+.face--big .face__title {
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px 3px;
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.face--big .face__glyph,
+.face--big .face__name {
+  font-size: 13.5px;
+}
+
+.face--big .face__type {
+  padding: 0 10px 5px;
+  font-size: 11px;
+}
+
+/* The part that gives. Everything else in the frame is a fixed height, so this
+   takes whatever is left and scrolls when a card has more text than fits --
+   which is the trade for a card that never changes size. Top-aligned: the `safe
+   center` the small faces use is for centring two words in a fixed box, and here
+   long text is the case that matters. */
+.face--big .face__rules {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 6px 10px 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* The P/T slot is reserved whether or not there is a P/T to put in it. A land
+   has none, and without this the footer collapsed and the land came out a row
+   shorter than every creature. */
+.face--big .face__footer {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 0 10px 9px;
+}
+
+.face--big .face__stats {
+  padding: 1px 8px;
+  border-radius: 5px;
+  font-size: 13px;
 }
 
 /* Keywords moved into the footer when the art took their row. */
@@ -348,7 +475,7 @@
   flex: 1;
   overflow: hidden;
   color: var(--stock-ink-dim);
-  font-size: calc(var(--card-w) * 0.066);
+  font-size: max(8.5px, calc(var(--card-w) * 0.066));
   font-weight: 700;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -365,7 +492,10 @@
  * all -- the client must render a complete board either way. */
 .face__watermark {
   display: flex;
-  flex: 1;
+  /* The art's slot and the art's aspect, so the text below does not jump when
+     the image map finally arrives. */
+  flex: 0 1 auto;
+  aspect-ratio: 1.4;
   align-items: center;
   justify-content: center;
   gap: calc(var(--card-w) * 0.04);
@@ -411,7 +541,16 @@
   text-shadow: none;
 }
 
-/* Rows ----------------------------------------------------------------- */
+/* Rows -------------------------------------------------------------------
+ *
+ * Every size below is a ratio of `--card-w` under a pixel floor. The ratio is
+ * what makes one component serve a 40px card in a four-player pod and a 240px
+ * one in the rail; the floor is what stops the small end rendering type nobody
+ * can read. Where the two disagree the floor wins and the art band gives up the
+ * height -- see `.face__art`'s `flex: 0 1 auto`.
+ *
+ * The rules box has no floor because it has no small case: `board` faces do not
+ * render one at all, which is what removed the 6px text this replaced. */
 
 .face__title {
   display: flex;
@@ -426,7 +565,7 @@
 .face__glyph {
   flex: 0 0 auto;
   color: var(--stock-ink-dim);
-  font-size: calc(var(--card-w) * 0.088);
+  font-size: max(10px, calc(var(--card-w) * 0.088));
   line-height: 1.15;
 }
 
@@ -438,7 +577,7 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: calc(var(--card-w) * 0.088);
+  font-size: max(10px, calc(var(--card-w) * 0.088));
 }
 
 .face__cost {
@@ -451,7 +590,7 @@
   padding-bottom: calc(var(--card-w) * 0.02);
   border-bottom: 1px solid var(--stock-rule);
   color: var(--stock-ink-dim);
-  font-size: calc(var(--card-w) * 0.068);
+  font-size: max(8.5px, calc(var(--card-w) * 0.068));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -492,7 +631,7 @@
   border: 1px solid var(--stock-rule);
   border-radius: calc(var(--card-w) * 0.03);
   background: rgb(255 255 255 / 0.55);
-  font-size: calc(var(--card-w) * 0.095);
+  font-size: max(11px, calc(var(--card-w) * 0.095));
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }

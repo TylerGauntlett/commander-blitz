@@ -126,7 +126,7 @@ export function HandFan({
               >
                 <Card
                   card={card}
-                  detail
+                  variant="board"
                   lift={false}
                   draggable={!disabled}
                   playable={playableOids.has(card.oid)}

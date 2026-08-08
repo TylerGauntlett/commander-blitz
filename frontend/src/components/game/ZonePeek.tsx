@@ -88,7 +88,7 @@ export function ZonePeek({ state }: Props) {
               {cards?.length === 0 && <p className="peek__hidden">Empty</p>}
               {groups.map((group) => (
                 <div className="peek__slot" key={group.key}>
-                  <StaticCard card={group.top} detail />
+                  <StaticCard card={group.top} variant="detail" />
                   {group.count > 1 && <span className="peek__count">&times;{group.count}</span>}
                 </div>
               ))}
