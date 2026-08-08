@@ -1,5 +1,5 @@
 /**
- * The art band on a real card face.
+ * The art layer on a real card face.
  *
  * `CardFace` reads the art map straight out of `uiStore`, deliberately: it is
  * rendered bare in `components.test.tsx` with no providers around it, and it
@@ -37,7 +37,7 @@ const forest = card({
 });
 
 describe("before the map loads", () => {
-  it("draws no art band at all", () => {
+  it("draws no art layer at all", () => {
     // Not the "no art" plate. Flashing a hatched placeholder on every card
     // during the first paint reads as a broken board.
     const { container } = render(<CardFace card={bear} />);
@@ -50,10 +50,12 @@ describe("before the map loads", () => {
     const { container } = render(<CardFace card={forest} />);
     const watermark = container.querySelector(".face__watermark");
     expect(watermark).not.toBeNull();
-    // Scoped to the watermark: "G" also appears in the mana cost, and a bare
-    // text query matches both.
+    // `data-symbol`, not `textContent`: these are Scryfall's real symbols drawn
+    // as images, so there is no letter to read back.
     expect(
-      [...(watermark?.querySelectorAll(".watermark-pip") ?? [])].map((n) => n.textContent),
+      [...(watermark?.querySelectorAll(".watermark-pip") ?? [])].map((n) =>
+        n.getAttribute("data-symbol"),
+      ),
     ).toEqual(["G"]);
   });
 });
@@ -73,7 +75,7 @@ describe("when the card has art", () => {
     expect(img?.getAttribute("src")).toBe("/art/t_bear.jpg");
   });
 
-  it("marks the art band as ready", () => {
+  it("marks the art as ready", () => {
     const { container } = render(<CardFace card={bear} />);
     expect(container.querySelector(".face__art")?.getAttribute("data-art")).toBe("ready");
   });
@@ -92,14 +94,79 @@ describe("when the card has art", () => {
     expect(container.querySelector(".face__watermark")).toBeNull();
   });
 
-  it("still renders rules text alongside the art", () => {
+  it("still renders rules text over the art", () => {
     const { container } = render(
       <CardFace card={card({ card_id: "t_bear", oracle_text: "Trample." })} variant="detail" />,
     );
     expect(container.querySelector(".face__art")).not.toBeNull();
     expect(container.querySelector(".face__rules")).not.toBeNull();
-    // `face--detail` is what caps the band so the text keeps its room.
+    // The art no longer has a band to be capped to; the rules box sits on the
+    // foot scrim, which is what `.face--detail` sizes.
     expect(container.querySelector(".face--detail")).not.toBeNull();
+    expect(container.querySelector(".face__foot .face__rules")).not.toBeNull();
+  });
+});
+
+describe("the scrims", () => {
+  // Structural, not visual: jsdom applies no stylesheet, so what can be
+  // asserted here is that every run of text is inside a band that has a scrim,
+  // rather than loose over the illustration. `tests/palette.test.ts` checks the
+  // gradients themselves and `e2e/greyscale.spec.ts` checks what resolved.
+  it("puts the name and cost in the head", () => {
+    const { container } = render(<CardFace card={bear} />);
+    expect(container.querySelector(".face__head .face__name")).not.toBeNull();
+    expect(container.querySelector(".face__head .face__glyph")).not.toBeNull();
+    expect(container.querySelector(".face__head .face__cost")).not.toBeNull();
+  });
+
+  it("puts the type line, rules and footer in the foot", () => {
+    const { container } = render(
+      <CardFace card={card({ card_id: "t_bear", oracle_text: "Trample." })} variant="detail" />,
+    );
+    expect(container.querySelector(".face__foot .face__type")).not.toBeNull();
+    expect(container.querySelector(".face__foot .face__footer")).not.toBeNull();
+  });
+
+  it("gives the cost a row of its own, not the title's", () => {
+    // The point of the direction: a name can be as long as it likes and never
+    // meets its own mana cost.
+    const { container } = render(<CardFace card={bear} />);
+    expect(container.querySelector(".face__title .face__cost")).toBeNull();
+  });
+});
+
+describe("a land that taps for no colour", () => {
+  // Terramorphic Expanse. `produces` is empty, so every design that leans on the
+  // produced symbol leaves the one land that is actually interesting with no
+  // mark at all -- which is the case worth having a test for.
+  const expanse = card({
+    card_id: "terramorphic_expanse",
+    name: "Terramorphic Expanse",
+    type_line: "Land",
+    types: ["Land"],
+    produces: [],
+    power: null,
+    toughness: null,
+  });
+
+  beforeEach(() => seed({ terramorphic_expanse: null }));
+
+  it("still gets a mark", () => {
+    const { container } = render(<CardFace card={expanse} />);
+    expect(container.querySelector(".watermark-none")).not.toBeNull();
+  });
+
+  it("does not claim to produce a colour", () => {
+    // Deliberately not `.watermark-pip`: it is not a mana symbol, and the specs
+    // that read produced colours off that class would have to special-case it.
+    const { container } = render(<CardFace card={expanse} />);
+    expect(container.querySelector(".watermark-pip")).toBeNull();
+  });
+
+  it("leaves a non-land alone", () => {
+    const { container } = render(<CardFace card={bear} />);
+    expect(container.querySelector(".watermark-none")).toBeNull();
+    expect(container.querySelector(".watermark-row")).toBeNull();
   });
 });
 

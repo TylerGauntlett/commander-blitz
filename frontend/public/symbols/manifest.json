@@ -1,0 +1,180 @@
+{
+  "0": {
+    "colors": [],
+    "english": "zero mana",
+    "file": "0.svg",
+    "symbol": "{0}"
+  },
+  "1": {
+    "colors": [],
+    "english": "one generic mana",
+    "file": "1.svg",
+    "symbol": "{1}"
+  },
+  "10": {
+    "colors": [],
+    "english": "ten generic mana",
+    "file": "10.svg",
+    "symbol": "{10}"
+  },
+  "11": {
+    "colors": [],
+    "english": "eleven generic mana",
+    "file": "11.svg",
+    "symbol": "{11}"
+  },
+  "12": {
+    "colors": [],
+    "english": "twelve generic mana",
+    "file": "12.svg",
+    "symbol": "{12}"
+  },
+  "13": {
+    "colors": [],
+    "english": "thirteen generic mana",
+    "file": "13.svg",
+    "symbol": "{13}"
+  },
+  "14": {
+    "colors": [],
+    "english": "fourteen generic mana",
+    "file": "14.svg",
+    "symbol": "{14}"
+  },
+  "15": {
+    "colors": [],
+    "english": "fifteen generic mana",
+    "file": "15.svg",
+    "symbol": "{15}"
+  },
+  "16": {
+    "colors": [],
+    "english": "sixteen generic mana",
+    "file": "16.svg",
+    "symbol": "{16}"
+  },
+  "2": {
+    "colors": [],
+    "english": "two generic mana",
+    "file": "2.svg",
+    "symbol": "{2}"
+  },
+  "3": {
+    "colors": [],
+    "english": "three generic mana",
+    "file": "3.svg",
+    "symbol": "{3}"
+  },
+  "4": {
+    "colors": [],
+    "english": "four generic mana",
+    "file": "4.svg",
+    "symbol": "{4}"
+  },
+  "5": {
+    "colors": [],
+    "english": "five generic mana",
+    "file": "5.svg",
+    "symbol": "{5}"
+  },
+  "6": {
+    "colors": [],
+    "english": "six generic mana",
+    "file": "6.svg",
+    "symbol": "{6}"
+  },
+  "7": {
+    "colors": [],
+    "english": "seven generic mana",
+    "file": "7.svg",
+    "symbol": "{7}"
+  },
+  "8": {
+    "colors": [],
+    "english": "eight generic mana",
+    "file": "8.svg",
+    "symbol": "{8}"
+  },
+  "9": {
+    "colors": [],
+    "english": "nine generic mana",
+    "file": "9.svg",
+    "symbol": "{9}"
+  },
+  "B": {
+    "colors": [
+      "B"
+    ],
+    "english": "one black mana",
+    "file": "B.svg",
+    "symbol": "{B}"
+  },
+  "C": {
+    "colors": [],
+    "english": "one colorless mana",
+    "file": "C.svg",
+    "symbol": "{C}"
+  },
+  "E": {
+    "colors": [],
+    "english": "an energy counter",
+    "file": "E.svg",
+    "symbol": "{E}"
+  },
+  "G": {
+    "colors": [
+      "G"
+    ],
+    "english": "one green mana",
+    "file": "G.svg",
+    "symbol": "{G}"
+  },
+  "Q": {
+    "colors": [],
+    "english": "untap this permanent",
+    "file": "Q.svg",
+    "symbol": "{Q}"
+  },
+  "R": {
+    "colors": [
+      "R"
+    ],
+    "english": "one red mana",
+    "file": "R.svg",
+    "symbol": "{R}"
+  },
+  "S": {
+    "colors": [],
+    "english": "one snow mana",
+    "file": "S.svg",
+    "symbol": "{S}"
+  },
+  "T": {
+    "colors": [],
+    "english": "tap this permanent",
+    "file": "T.svg",
+    "symbol": "{T}"
+  },
+  "U": {
+    "colors": [
+      "U"
+    ],
+    "english": "one blue mana",
+    "file": "U.svg",
+    "symbol": "{U}"
+  },
+  "W": {
+    "colors": [
+      "W"
+    ],
+    "english": "one white mana",
+    "file": "W.svg",
+    "symbol": "{W}"
+  },
+  "X": {
+    "colors": [],
+    "english": "X generic mana",
+    "file": "X.svg",
+    "symbol": "{X}"
+  }
+}

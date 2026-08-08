@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import type { DeckSummary, SeatConfig } from "../../api/types";
 import { bouncy, ease } from "../../motion/springs";
+import { ManaSymbol } from "../game/ManaSymbol";
 
 const COLOR_NAMES: Record<string, string> = {
   W: "White",
@@ -88,13 +89,12 @@ export function NewGameScreen({ decks, loading, error, onStart, starting }: Prop
             <span className="deck__cmd">{deck.commander_names.join(" & ")}</span>
             <span className="deck__colors">
               {deck.color_identity.map((color) => (
-                <span
+                <ManaSymbol
                   key={color}
-                  className={`pip pip--${color}`}
+                  code={color}
+                  className={`pip--${color}`}
                   title={COLOR_NAMES[color] ?? color}
-                >
-                  {color}
-                </span>
+                />
               ))}
               <span className="deck__count">{deck.card_count} cards</span>
             </span>

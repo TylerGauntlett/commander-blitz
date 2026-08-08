@@ -163,8 +163,13 @@ test.describe("lands say what they make", () => {
     // Every land is tinted by what it produces, not left on the shared tan.
     expect(classes.every((c) => /face--land-[WUBRGC]|face--land-multi/.test(c))).toBe(true);
 
-    // And the watermark is there: the channel that survives greyscale.
-    const pips = await lands.first().locator(".watermark-pip").allTextContents();
+    // And the watermark is there: the channel that survives greyscale. Read off
+    // `data-symbol` rather than the text, because these are Scryfall's published
+    // symbols drawn as images and an image has no letter to read.
+    const pips = await lands
+      .first()
+      .locator(".watermark-pip")
+      .evaluateAll((nodes) => nodes.map((n) => (n as HTMLElement).dataset.symbol ?? ""));
     expect(pips.length).toBeGreaterThan(0);
     expect(pips.every((p) => /^[WUBRGC]$/.test(p))).toBe(true);
 
@@ -423,6 +428,46 @@ test.describe("mana notation is drawn, not spelled", () => {
       // factor of ten, so the bound is loose on purpose.
       expect(w / h, `a rules-text pip rendered ${w}x${h}`).toBeLessThan(2.5);
     }
+  });
+
+  test("every symbol is the real one, and it decoded", async ({ page }) => {
+    // These were a letter on a CSS disc -- a `G` in a green circle, which is a
+    // mark nobody who plays the game recognises. They are Scryfall's published
+    // SVGs now, vendored into `public/symbols/`. A missing file is invisible in
+    // the DOM and shows up only as a blank square, so check `naturalWidth`.
+    test.setTimeout(180_000);
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+    const keep = actionsOfKind(page, "keep");
+    if (await keep.count()) await keep.first().click();
+    await waitForOurTurn(page);
+    await page.locator(".hand .card").first().hover();
+    await expect(page.getByTestId("card-preview").locator(".face__rules")).toBeVisible();
+
+    const symbols = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLImageElement>("img.pip")].map((img) => ({
+        src: new URL(img.src).pathname,
+        code: img.dataset.symbol ?? "",
+        decoded: img.naturalWidth > 0,
+        // An image with no alt is a hole to a screen reader, and the notation is
+        // the only thing it could sensibly say.
+        alt: img.alt,
+      })),
+    );
+
+    expect(symbols.length, "no real mana symbols on screen at all").toBeGreaterThan(0);
+    for (const symbol of symbols) {
+      expect(symbol.src).toBe(`/symbols/${symbol.code}.svg`);
+      expect(symbol.decoded, `${symbol.src} did not decode`).toBe(true);
+      expect(symbol.alt).toBe(`{${symbol.code}}`);
+    }
+
+    // The fallback disc exists for symbols with no SVG. The engine rejects
+    // hybrid and phyrexian at load time, so nothing in a real game should reach
+    // it -- if this fires, `fetch_symbols.py`'s WANTED has fallen behind.
+    const fallbacks = await page
+      .locator(".pip--text")
+      .evaluateAll((nodes) => nodes.map((n) => (n as HTMLElement).dataset.symbol ?? "?"));
+    expect(fallbacks, "a symbol had no artwork to draw").toEqual([]);
   });
 });
 

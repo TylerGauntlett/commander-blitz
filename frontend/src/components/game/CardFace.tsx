@@ -1,31 +1,29 @@
 /**
  * A card, drawn as a card.
  *
- * An art window, title bar, type line, rules box and P/T corner, sized in
- * proportion so it reads as a playing card rather than a list item. Every
- * dimension derives from `--card-w`, which the containing zone sets -- one
- * component therefore serves the hand, the battlefield and the preview panel.
+ * **The art is the card.** It fills the whole frame, and the text sits on graded
+ * scrims at the top and bottom -- direction D, "Art Bleed", of
+ * `mockups/cards/index.html`. Three rows of tinted paper with a window cut in
+ * them is what this replaced, and the window was always the part anyone actually
+ * looked at.
  *
- * **The art sits above the text, in every variant.** It used to sit between the
- * type line and the footer, taking the remaining height as `flex: 1` -- which on
- * a hand card meant the rules box was whatever was left after a greedy art band,
- * about six pixels of type. Art first at a fixed 1.4 aspect gives the text a
- * contiguous block of known height underneath it, which is both the arrangement
- * mockups/05-planar-art.html uses for its enlarged card and the reason that card
- * is the readable one. See docs/mockup-fidelity.md.
+ * Every dimension derives from `--card-w`, which the containing zone sets -- one
+ * component therefore serves the hand, the battlefield and the preview panel.
  *
  * The art is served by this application, never by a third party: the build
  * script downloads each crop once and the API serves the bytes. Three cards in
  * a hundred have no printing at all (they are original designs), and those get
  * a deliberate plate rather than a broken image.
  *
- * **Card type is encoded twice, on purpose.** The paper's fill carries it, as a
- * luminance ladder that survives greyscale -- but art covers most of the paper,
- * which is the objection mockups/README.md raises against putting art on the
- * board at all. So the type also gets a ring, drawn *over* the art at the
- * frame's inner edge, and the glyph in the title bar stays whatever else
- * happens. `tests/palette.test.ts` asserts the ring's ladder stays separable,
- * because that is the channel doing the work once the art is in place.
+ * **Card type is no longer a colour.** It used to be: an eight-step luminance
+ * ladder on the card stock, plus a matching ring, because a type line renders at
+ * 5.6px on a pod board and something had to say "creature" from across the
+ * table. A full-bleed illustration says it better and says it per *card* rather
+ * than per category, so the ladder is gone. What survives without colour is the
+ * type glyph in the title and the type line itself -- `e2e/greyscale.spec.ts`
+ * asserts the glyph is rendered on every face, because it is now the non-colour
+ * channel of last resort. The frame keeps colour *identity*, which is a
+ * different fact and was never the thing the ladder encoded.
  */
 
 import { useState } from "react";
@@ -40,12 +38,14 @@ import {
   landSymbols,
   landTone,
   manaPips,
+  shortType,
   statLine,
   typeGlyph,
   typeLabel,
   typeTone,
 } from "../../logic/cardStyle";
 import { useUiStore } from "../../state/uiStore";
+import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
 
 /**
@@ -71,7 +71,7 @@ interface Props {
 
 export function CardFace({ card, variant = "board" }: Props) {
   const images = useUiStore((s) => s.images);
-  // `undefined` = the map has not arrived; draw no band at all rather than
+  // `undefined` = the map has not arrived; draw no art layer at all rather than
   // flashing a "no art" plate on every card during the first paint.
   const art = artUrl(images, card.card_id);
   const [broken, setBroken] = useState(false);
@@ -83,20 +83,25 @@ export function CardFace({ card, variant = "board" }: Props) {
   const damage = card.damage ?? 0;
   const hurt = isWounded(card);
 
-  // What a land taps for, on the two channels a land has spare. Every land used
-  // to be the same tan rectangle, so a board of twelve of them was unreadable
-  // without stopping to read names -- see docs/playtest-feedback-02.md item 8.
+  // What a land taps for. Every land used to be the same tan rectangle, so a
+  // board of twelve of them was unreadable without stopping to read names --
+  // see docs/playtest-feedback-02.md item 8. On a bleed face the symbols are
+  // large and centred over the art, which is direction D's answer for lands.
   const land = landTone(card);
   const mana = landSymbols(card);
 
   const classes = [
     "face",
-    // Border carries colour identity, body fill carries card type. Two axes
-    // that both matter at a glance, on two channels that do not collide.
+    // The frame carries colour identity, and now the ground the art sits on
+    // too -- on the ~4% of cards with no printing that gradient is the whole
+    // card, so it has to be worth looking at.
     `face--${frameTone(card)}`,
+    // Kept for the selectors that read it (`data-type-tone` below, and
+    // `e2e/clarity.spec.ts`). It no longer sets a colour: see the note at the
+    // top of the file.
     `face--type-${typeTone(card)}`,
-    // Lands narrow the type fill to the colour they make. It overrides only the
-    // same two stops `face--type-*` sets, so nothing else about the frame moves.
+    // Lands narrow the frame to the colour they make, so a lane of them reads
+    // as a row of spines without reading a single name.
     land ? `face--land-${land}` : "",
     card.is_commander ? "face--commander" : "",
     card.is_token ? "face--token" : "",
@@ -111,14 +116,50 @@ export function CardFace({ card, variant = "board" }: Props) {
   // that was rebuilt to hold it.
   const showsRules = variant !== "board";
 
+  /*
+    A basic land's rules text *is* its mana ability, which the symbols now say
+    better. Anything else keeps its text -- a nonbasic that taps for mana and
+    does something else is exactly the card you need to read.
+  */
+  const rules = showsRules && card.oracle_text && !isPlainLand(card);
+
+  const isLand = card.types.includes("Land");
+
+  /*
+    The mana symbols a land makes, centred over the art.
+
+    Two class names for one idea, and both are load-bearing: `.watermark-row`
+    rides on top of a real illustration, `.face__watermark` is what a land shows
+    before the art map has arrived -- or forever, on a server with no images.
+    They render identically now that neither one has a layout slot to reserve.
+
+    A land that taps for no colour at all -- Terramorphic Expanse -- gets a
+    neutral mark rather than nothing. It is the one land on the board that is
+    actually interesting, and it was the only one with no centre symbol at all.
+  */
+  const watermark = (className: string) => (
+    <div className={className} aria-hidden="true">
+      {mana.length > 0 ? (
+        mana.map((symbol) => (
+          <ManaSymbol
+            code={symbol}
+            className={`watermark-pip watermark-pip--${symbol}`}
+            key={symbol}
+          />
+        ))
+      ) : (
+        <span className="watermark-none" title="Produces no colour">
+          &#9650;
+        </span>
+      )}
+    </div>
+  );
+
   return (
     <div className={classes} data-card-name={card.name} data-type-tone={typeTone(card)}>
       {/*
-        The art window, and it comes first.
-
-        A hairline of the type tint is kept all the way round -- see `.face`'s
-        padding and the type ring in cards.css -- so the fill that encodes card
-        type is never completely replaced by somebody's illustration.
+        The art, and it is the whole face: `position: absolute; inset: 0` under
+        both scrims. Everything else on the card is drawn over it.
       */}
       {art !== undefined && (
         <div
@@ -133,108 +174,108 @@ export function CardFace({ card, variant = "board" }: Props) {
           ) : (
             <span>no art</span>
           )}
-          {/*
-            On a land the mana symbol rides *over* the art rather than replacing
-            it. That symbol is the channel that reads at 60px in a pod, and it
-            is a shape as well as a colour, so it survives greyscale and colour
-            deficiency the way the type glyph does -- losing it to the art would
-            cost more than the art gains.
-          */}
-          {mana.length > 0 && (
-            <div className="watermark-row" aria-hidden="true">
-              {mana.map((symbol) => (
-                <span className={`watermark-pip watermark-pip--${symbol}`} key={symbol}>
-                  {symbol}
-                </span>
-              ))}
-            </div>
-          )}
+          {isLand && watermark("watermark-row")}
         </div>
       )}
+
+      {art === undefined && isLand && watermark("face__watermark")}
 
       {/*
-        Before the art map loads -- and it may never load, if the server has no
-        images -- a land still shows its mana symbols in the space the art would
-        occupy. It takes the art's slot at the top and the art's aspect, so the
-        text below it does not jump when the map arrives.
-      */}
-      {art === undefined && mana.length > 0 && (
-        <div className="face__watermark" aria-hidden="true">
-          {mana.map((symbol) => (
-            <span className={`watermark-pip watermark-pip--${symbol}`} key={symbol}>
-              {symbol}
-            </span>
-          ))}
-        </div>
-      )}
+        The top scrim: what the card is called, and what it costs.
 
-      <div className="face__title">
-        <span className="face__glyph" title={typeLabel(card)} aria-hidden="true">
-          {typeGlyph(card)}
-        </span>
-        <span className="face__name">{card.name}</span>
+        The cost gets a row of its own rather than sharing the title's. That is
+        the point of the direction -- a name can be as long as it likes and
+        never meets its own mana cost, which is what "Aesi, Tyrant of Gyre
+        Strait" against {4}{G}{U} used to do at every size.
+      */}
+      <div className="face__head">
+        <div className="face__title">
+          <span className="face__glyph" title={typeLabel(card)} aria-hidden="true">
+            {typeGlyph(card)}
+          </span>
+          <span className="face__name">
+            {/*
+              The commander mark goes *inside* the name, not in a corner.
+
+              It was a `CMD` badge pinned to the frame. A corner tag is a second
+              thing competing for a corner the P/T and the sickness mark have
+              already claimed, and at pod size it rendered at under 3px, which is
+              not a word. A real legendary wears a crown on its frame; this is
+              the cheap version of the same idea, it scales with the name, and it
+              costs no space that was not already the name's.
+            */}
+            {card.is_commander && (
+              <span className="crown" title="Commander" aria-label="Commander">
+                &#9819;
+              </span>
+            )}
+            {card.name}
+          </span>
+        </div>
         {pips.length > 0 && (
           <span className="face__cost">
             {pips.map((pip) => (
-              <span className={`pip pip--${pip.tone}`} key={pip.key}>
-                {pip.symbol}
-              </span>
+              <ManaSymbol code={pip.symbol} className={`pip--${pip.tone}`} key={pip.key} />
             ))}
           </span>
         )}
       </div>
 
-      <div className="face__type">{card.type_line}</div>
+      {/*
+        The bottom scrim: what it is, what it does, and what it is wearing.
 
-      {/*
-        A basic land's rules text *is* its mana ability, which the watermark now
-        says better. Anything else keeps its text -- a nonbasic that taps for
-        mana and does something else is exactly the card you need to read.
+        `margin-top: auto` pushes it to the foot whatever the head above it
+        weighs, so the art between them is never squeezed by a two-line name.
       */}
-      {/*
-        The wrapper stays a div and `SymbolText` goes inside it. `.face__rules`
-        is a flex column, so putting the class on `SymbolText`'s own span made
-        every pip a flex *item* -- each one stretched to the full width of the
-        card and the rules box became a stack of coloured bars.
-      */}
-      {showsRules && card.oracle_text && !isPlainLand(card) && (
-        <div className="face__rules">
-          <SymbolText text={card.oracle_text} />
+      <div className="face__foot">
+        {/* Supertypes come off where the line has no room for them; see
+            `shortType`. The rail and the dialogs keep the full line. */}
+        <div className="face__type">
+          {showsRules ? card.type_line : shortType(card.type_line)}
         </div>
-      )}
 
-      <div className="face__footer">
-        {/* Keywords used to have a row of their own; the art band took it, so
-            they share the footer with the counters and the P/T. Only where
-            there is no rules box -- otherwise the text already says them. */}
-        {!showsRules && card.keywords.length > 0 && (
-          <span className="face__kwline">{card.keywords.map(keywordLabel).join(" · ")}</span>
+        {/*
+          The wrapper stays a div and `SymbolText` goes inside it.
+          `.face__rules` is a flex column, so putting the class on
+          `SymbolText`'s own span made every pip a flex *item* -- each one
+          stretched to the full width of the card and the rules box became a
+          stack of coloured bars.
+        */}
+        {rules && (
+          <div className="face__rules">
+            <SymbolText text={card.oracle_text} />
+          </div>
         )}
-        {badges.length > 0 && (
-          <span className="face__counters">
-            {badges.map((badge) => (
-              <span className="counter-badge" key={badge}>
-                {badge}
-              </span>
-            ))}
-          </span>
-        )}
-        <span className="spacer" />
-        {stats && (
-          <span
-            className={hurt ? "face__stats face__stats--hurt" : "face__stats"}
-            title={hurt ? `${damage} damage marked` : undefined}
-          >
-            {stats}
-          </span>
-        )}
+
+        <div className="face__footer">
+          {/* Keywords have no row of their own; they share the footer with the
+              counters and the P/T. Only where there is no rules box --
+              otherwise the text already says them. */}
+          {!showsRules && card.keywords.length > 0 && (
+            <span className="face__kwline">{card.keywords.map(keywordLabel).join(" · ")}</span>
+          )}
+          {badges.length > 0 && (
+            <span className="face__counters">
+              {badges.map((badge) => (
+                <span className="counter-badge" key={badge}>
+                  {badge}
+                </span>
+              ))}
+            </span>
+          )}
+          <span className="spacer" />
+          {stats && (
+            <span
+              className={hurt ? "face__stats face__stats--hurt" : "face__stats"}
+              title={hurt ? `${damage} damage marked` : undefined}
+            >
+              {stats}
+            </span>
+          )}
+        </div>
       </div>
 
-      {card.is_commander && (
-        <span className="face__tag face__tag--cmd" title="Commander">
-          CMD
-        </span>
-      )}
+      {/* The commander mark is the crown in the name above; see the note there. */}
       {card.summoning_sick && card.types.includes("Creature") && (
         <span className="face__tag face__tag--sick" title="Summoning sick">
           &#9203;

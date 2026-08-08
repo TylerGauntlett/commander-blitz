@@ -97,7 +97,15 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
   expect(state.glyphed).toBe(state.faces);
 });
 
-test("the art never covers the type ring", async ({ page }) => {
+/*
+ * This test used to be `the art never covers the type ring`, and it asserted the
+ * exact opposite: that every art band sat inside the frame by at least the width
+ * of a type-tinted ring. That ring encoded card type, and it is gone -- see
+ * `tests/palette.test.ts` and docs/mockup-fidelity.md. The measurement is worth
+ * keeping either way, because "the art fills the frame" is the direction's whole
+ * claim and it is the kind of thing a stray `padding` reverts by accident.
+ */
+test("the art fills the frame", async ({ page }) => {
   test.setTimeout(180_000);
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
@@ -107,24 +115,50 @@ test("the art never covers the type ring", async ({ page }) => {
     for (const face of document.querySelectorAll<HTMLElement>(".face")) {
       const art = face.querySelector<HTMLElement>(".face__art");
       if (!art) continue;
-      const ring = Number.parseFloat(getComputedStyle(face).getPropertyValue("--type-ring-w"));
-      if (!Number.isFinite(ring) || ring <= 0) {
-        bad.push(`${face.dataset.cardName}: no ring width`);
-        continue;
-      }
       const f = face.getBoundingClientRect();
       const a = art.getBoundingClientRect();
-      // The art must sit inside the frame by at least the ring, on all four
-      // sides -- that inset is what keeps the type encoding visible.
+      // Measured against the *border box*, so the colour-identity frame is the
+      // only thing allowed between the illustration and the card's edge. A
+      // pixel of slack for subpixel layout at pod sizes.
+      const border = Number.parseFloat(getComputedStyle(face).borderTopWidth) + 1;
       const insets = [a.left - f.left, f.right - a.right, a.top - f.top, f.bottom - a.bottom];
-      if (insets.some((inset) => inset < ring)) {
+      if (insets.some((inset) => inset > border)) {
         bad.push(`${face.dataset.cardName}: insets ${insets.map((n) => n.toFixed(1))}`);
       }
     }
     return bad;
   });
 
-  expect(violations, "the art band is bleeding over the type ring").toEqual([]);
+  expect(violations, "the art is not reaching the frame").toEqual([]);
+});
+
+test("a land's mana symbols stay on top of the art", async ({ page }) => {
+  // The one channel on a land that reads at 60px in a four-player pod and
+  // survives greyscale. The illustration is the channel that does not.
+  test.setTimeout(180_000);
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await buildABoard(page);
+
+  const lands = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('.face[data-type-tone="land"]')].map((face) => ({
+      name: face.dataset.cardName ?? "?",
+      pips: [...face.querySelectorAll(".watermark-pip")].map(
+        (pip) => pip.getBoundingClientRect().width,
+      ),
+      produces: (face.className.match(/face--land-(\w+)/) ?? [])[1] ?? null,
+    })),
+  );
+
+  if (lands.length === 0) test.skip(true, "no land on the board yet");
+  for (const land of lands) {
+    // A land that taps for nothing -- Terramorphic Expanse -- legitimately has
+    // no symbols, and is the case a naive check gets wrong.
+    if (land.produces === null) continue;
+    expect(land.pips.length, `${land.name} lost its mana symbols`).toBeGreaterThan(0);
+    for (const width of land.pips) {
+      expect(width, `${land.name}'s symbol is not rendered`).toBeGreaterThan(0);
+    }
+  }
 });
 
 test("the preview rail credits the illustrator", async ({ page }) => {

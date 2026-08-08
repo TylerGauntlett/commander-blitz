@@ -32,16 +32,55 @@ so a naive overflow check passes through the exact failure it was written for.
 
 Do not "correct" these. Each is a decision made after the mockup.
 
-### Cards are art-first everywhere; the mockup's small cards are title-first
+### The card is a full-bleed illustration, and card type is no longer a colour
 
-The mockup draws its board and hand cards as title → type → art → P/T, and only
-its *enlarged* rail card as art → title → type → rules → P/T. The client uses the
-enlarged card's arrangement at every size.
+Supersedes the earlier "cards are art-first everywhere" note, which described the
+arrangement this replaced. `mockups/05-planar-art.html` is no longer the reference
+for the card face at all: **`mockups/cards/index.html` direction D, "Art Bleed",
+is.** The illustration fills the frame and the text sits on graded scrims at the
+top and bottom — head (glyph, name, then the cost on a row of its own), foot (type
+line, rules where there is room, then keywords/counters/P-T).
 
-This was an explicit product decision: the enlarged card is the readable one, and
-the reason is that a fixed art band gives the text below it a contiguous block of
-known height instead of whatever a greedy `flex: 1` band leaves over. Applying it
-everywhere is what removed the 6px rules text from the hand. See `CardFace.tsx`.
+The consequential half of this is what came *out*. Card type used to be encoded as
+the colour of the card stock: an eight-step `--stock` luminance ladder plus a
+matching `--type-ring` hairline, ~200 lines of `tests/palette.test.ts`, and a
+`--type-ring` ladder check in `e2e/greyscale.spec.ts`. All of it is gone.
+
+The reasoning, because this looks like a regression if you only read the old
+tests: the ladder existed because a type line renders at 5.6px on a pod board
+(docs/playtest-feedback-01.md item 4) and something had to say "creature" from
+across the table. A full-bleed illustration says it **better and per card rather
+than per category**. Twelve Forests are one recognisable picture; under the ladder
+they were twelve copies of "one of the tan ones", which is the same scanning
+problem the ladder was built to solve, one level up. Verified in greyscale before
+the ladder was removed, not after.
+
+What still carries card type without colour: `.face__glyph` and `.face__type`,
+both of which `e2e/greyscale.spec.ts` now asserts render with content and non-zero
+width on every face. Colour *identity* is a different fact and it keeps the frame
+— the border and the gradient the art sits on, which on the ~4% of cards with no
+printing is the whole card. A land's frame narrows to the colour it taps for, and
+its produced-mana symbols go large and centre-frame.
+
+What replaced the removed tests, so the surface is not left unguarded:
+
+- `tests/palette.test.ts` — now asserts the art *is* full bleed (the inverse of
+  its old "the art window must never cover the whole face" suite), that both
+  scrims exist as gradients whose opaque ends clear a darkness floor, that the
+  text carries a shadow as a second defence, and that no `.face--type-*` colour
+  rule has crept back in.
+- `e2e/art.spec.ts` — `the art fills the frame` replaces `the art never covers the
+  type ring`; the same measurement, the opposite assertion.
+- `e2e/greyscale.spec.ts` — a resolved-scrim-contrast check and a type-line check
+  replace the `--type-ring` ladder walk.
+
+One measured concession: on an opponent's mat the name clamps to **one** line
+(`.mat--compact .face__name`). At a three-opponent pod cards are ~51px, the name
+is held at its 10px floor, and a wrapped second line left "Indulgent Aristocrat"
+with 4px of illustration between the two scrims. `mockups/cards/index.html` makes
+the same call for the same reason.
+
+### No rules text on board or hand cards
 
 ### No rules text on board or hand cards
 
@@ -65,8 +104,10 @@ saving in space.
 
 ### An art-loading state the mockup has no concept of
 
-`.face__watermark` renders in the art band's slot, at the art band's aspect, until
-the image map arrives. The mockup inlines its state and never loads anything.
+A land draws its produced-mana symbols centre-frame whether or not the image map
+has arrived — `.face__watermark` before, `.watermark-row` after, styled
+identically because on a bleed face neither one reserves any layout. The mockup
+inlines its state and never loads anything.
 
 ### The commander is a plinth in the info panel, not a card beside the hand
 
@@ -85,10 +126,10 @@ Ranked by severity. None of these block anything; they are the queue.
 
 - **Mockup**: same design, so it inherits the same problem.
 - **App**: `.card--playable::after` is a green rim plus glow (`frontend/src/styles/cards.css`).
-- **Why it matters**: in the greyscale pass every hand card reads identically. Card
-  *type* survives greyscale — that is what the type ring and the luminance ladder in
-  `tests/palette.test.ts` are for — but "which of these can I actually play right
-  now" has no greyscale-safe channel at all, and it is the more urgent question.
+- **Why it matters**: in the greyscale pass every hand card reads identically. A
+  card's *identity* survives greyscale — the illustration, the name, the type glyph
+  and the type line all do — but "which of these can I actually play right now" has
+  no greyscale-safe channel at all, and it is the more urgent question.
 - **Partly mitigated**: castable cards are now also rows in the action panel, which
   is a second channel. The rim itself is still colour-only.
 - **Fix direction**: a shape as well as a hue — the rim could carry a corner mark, or

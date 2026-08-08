@@ -7,12 +7,13 @@
  * renderings of the same notation on the same screen, one of which needs
  * decoding -- see docs/playtest-feedback-02.md item 10.
  *
- * Splits on `{...}` and hands the pieces to the same `.pip` classes the cost row
- * uses, so a {G} is one thing everywhere. Anything it does not recognise is left
- * as text rather than guessed at.
+ * Splits on `{...}` and hands the pieces to `ManaSymbol`, the same component the
+ * cost row uses, so a {G} is one thing everywhere. Anything it does not
+ * recognise is left as text rather than guessed at.
  */
 
 import { symbolTokens } from "../../logic/cardStyle";
+import { ManaSymbol } from "./ManaSymbol";
 
 interface Props {
   text: string;
@@ -35,9 +36,15 @@ export function SymbolText({ text, className }: Props) {
         token.kind === "text" ? (
           token.value
         ) : (
-          <span className={`pip pip--inline pip--${token.tone}`} key={token.key}>
-            {token.label}
-          </span>
+          <ManaSymbol
+            code={token.value}
+            className={`pip--inline pip--${token.tone}`}
+            // The glyph the disc used to draw -- `↷` for tap, `❄` for snow. Only
+            // reached for a symbol with no SVG, which the engine cannot emit
+            // today; kept so the fallback stays as readable as it was.
+            fallback={token.label}
+            key={token.key}
+          />
         ),
       )}
     </span>
