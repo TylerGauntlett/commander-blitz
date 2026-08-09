@@ -16,11 +16,10 @@
  * card face -- hovering already puts the full card in the right-hand preview
  * rail, which is the surface rebuilt to hold it.
  *
- * **State is said three ways, none of them hue.** A word, the art's luminance,
- * and a glyph shape. The green "you can play this" rim carries its whole meaning
- * in colour, which is docs/mockup-fidelity.md's top-ranked open defect; this
- * element is not allowed to add to that pile, so a player who cannot use colour
- * still reads "READY" and sees a lit portrait against a dim one.
+ * **State is said three ways.** A word, the art's brightness, and a glyph shape.
+ * The green "you can play this" rim is a hairline that is easy to miss, which is
+ * docs/mockup-fidelity.md's top-ranked open defect; this element is not allowed
+ * to add to that pile, so it reads "READY" and lights the portrait as well.
  *
  * This is a *gesture* surface, exactly like `HandFan`: it carries no
  * `data-action-id`, and clicking routes through the same `playFromHand` path a
@@ -44,9 +43,9 @@ import { ManaSymbol } from "./ManaSymbol";
  * What the plinth says about where the commander is and whether you can do
  * anything about it.
  *
- * `word` and `glyph` are the two channels that survive greyscale; the class
- * carries the third (how brightly the portrait is lit). Every state sets all
- * three, which is the whole point -- see the note at the top of the file.
+ * `word` and `glyph` are the two channels that read at 112px; the class carries
+ * the third (how brightly the portrait is lit). Every state sets all three,
+ * which is the whole point -- see the note at the top of the file.
  */
 interface CommanderState {
   key: string;

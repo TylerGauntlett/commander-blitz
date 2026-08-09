@@ -199,11 +199,9 @@
  * `--cmd-art-w` is the single knob. The whole plinth derives from it, so the
  * 190px viewer column and the 112px opponent column differ by one declaration.
  *
- * **Every state is said three ways, and none of them is hue.** A word, the
- * portrait's luminance, and a glyph. The playable rim's meaning lives entirely
- * in its green, which is docs/mockup-fidelity.md's top-ranked open defect; this
- * element is not allowed to add to it. Check that in greyscale, not in theory --
- * `e2e/greyscale.spec.ts` does. */
+ * **Every state is said three ways.** A word, the portrait's brightness, and a
+ * glyph. At 112px a frame colour on its own is a hard thing to notice, so the
+ * plinth says it in words too. */
 
 .cmdzone {
   display: flex;
@@ -326,8 +324,8 @@
   min-width: 0;
 }
 
-/* The shape channel. Small, but it is a different *outline* per state, which is
-   what a colour-blind player and a greyscale screenshot both still get. */
+/* The shape channel. Small, but it is a different *outline* per state, which
+   registers faster than reading the word beside it. */
 .cmdplinth__glyph {
   flex: 0 0 auto;
   font-size: 9px;
@@ -409,7 +407,7 @@
 }
 
 /* Fallen: dead or exiled. Desaturated and dashed -- a broken frame reads as
-   "not here" in greyscale, where a colour change would not. */
+   "not here" at a glance, where a colour change would not. */
 .cmdslot--fallen {
   border-style: dashed;
   border-color: rgb(216 166 60 / 0.25);

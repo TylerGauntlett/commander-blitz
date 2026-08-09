@@ -14,9 +14,8 @@
  * type line renders at 5.6px on a pod board and something had to carry the fact
  * from across the table. A full-bleed illustration carries it better and
  * carries it per card rather than per category -- twelve Forests are one
- * picture, and a Sol Ring is not "one of the pale blue ones". What still works
- * without colour is the type glyph and the type line, and `e2e/greyscale.spec.ts`
- * asserts the glyph renders on every face for exactly that reason.
+ * picture, and a Sol Ring is not "one of the pale blue ones". The type glyph
+ * and the type line carry the category when the illustration is too small to.
  *
  * Colour identity is a different fact and it keeps the frame: the border, and
  * the gradient the art sits on -- which on the ~4% of cards with no printing is
@@ -81,7 +80,7 @@
      enough to be a fourth band on a card that is meant to be an illustration.
      The 2px floor stays and is doing the real work: the smallest card in a
      four-player pod is ~51px, where the ratio alone gives 0.7px and the border
-     stops reading as a colour at all. `e2e/greyscale.spec.ts` measures it. */
+     stops reading as a line at all. `e2e/legibility.spec.ts` measures it. */
   border: max(2px, calc(var(--card-w) * 0.014)) solid var(--frame-default);
   border-radius: var(--card-r);
   /* The ground the art sits on, and the entire card when there is no art.
@@ -191,11 +190,9 @@
  * copies of "one of the tan ones", which is the same problem the ladder was
  * meant to solve, one level up.
  *
- * The non-colour channels that remain are `.face__glyph` and `.face__type`,
- * both of which `e2e/greyscale.spec.ts` and `e2e/art.spec.ts` assert are
- * rendered with content on every face. If you are re-adding a colour encoding
- * here, read `docs/mockup-fidelity.md` first -- this was a decision, not an
- * oversight. */
+ * What carries the category instead is `.face__glyph` and `.face__type`. If you
+ * are re-adding a colour encoding here, read `docs/mockup-fidelity.md` first --
+ * this was a decision, not an oversight. */
 
 /* Land colours ----------------------------------------------------------
  *
@@ -566,10 +563,9 @@
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.85);
 }
 
-/* The type mark, and now the primary non-colour channel rather than a backup
- * for the body fill: the fill is gone. It survives red-green deficiency, it
- * stays legible at 82px inside a stack ply, and `e2e/greyscale.spec.ts` fails
- * the run if any face renders without it. */
+/* The type mark, and now what says "creature" rather than a backup for the body
+ * fill: the fill is gone. It stays legible at 82px inside a stack ply, which the
+ * type line beneath it does not. */
 .face__glyph {
   flex: 0 0 auto;
   color: #e9e4d2;
@@ -769,7 +765,7 @@
  * that is most of why its cards read as cards.
  *
  * So there is no fill, no border-radius and no type here: the artwork already
- * carries all three, including the shape that survives greyscale. The
+ * carries all three, shape included. The
  * `.pip--{tone}` classes stay on the element because `e2e/cycle3.spec.ts`
  * reads them and because the tone is still a true fact about the symbol -- they
  * simply no longer have to paint it.

@@ -13,7 +13,7 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/ai/` | 71 | Action-space correctness, the environment, agents, the arena, the model and trainer |
 | `tests/server/` | 53 | The HTTP API end to end, including hidden information, image serving and the catalog |
 | `frontend/tests/` | 330 | The client's pure logic modules, the palette ladders, and the card face |
-| `frontend/e2e/` | 44 | Playwright: full games, combat, stacking, card art, greyscale, layout |
+| `frontend/e2e/` | 77 | Playwright: full games, combat, stacking, card art, legibility, layout |
 
 `scripts/verify.py` runs 12 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
@@ -33,7 +33,7 @@ Three of them, because the failure modes are all silent:
   text on graded scrims, so white type over somebody's bright crop is the thing that
   can fail on one card and look fine on every other.
   `frontend/tests/palette.test.ts` checks both scrims are gradients whose opaque ends
-  clear a darkness floor; `frontend/e2e/greyscale.spec.ts` checks the same against the
+  clear a darkness floor; `frontend/e2e/legibility.spec.ts` checks the same against the
   *rendered* board, where an override from `theme.css` or a media query would show up
   and a stylesheet parse would not. (This replaces a type-ring luminance ladder, which
   encoded card type as colour — see `docs/mockup-fidelity.md` for why it went.)

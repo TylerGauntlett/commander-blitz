@@ -112,8 +112,8 @@ describe("cardWidthVar", () => {
 
 describe("the legibility bounds the zoom works inside", () => {
   it("never shrinks below the smallest size the suite has checked", () => {
-    // e2e/greyscale.spec.ts reads the type glyph and type line off a
-    // three-opponent pod, whose cards are this wide at a 950px-tall viewport.
+    // e2e/legibility.spec.ts measures the frame off a three-opponent pod, whose
+    // cards are this wide at a 950px-tall viewport.
     const smallestChecked = cardWidthPx(87.4, opponentCardScale(3));
     expect(MIN_CARD_W).toBeGreaterThanOrEqual(smallestChecked);
     expect(MIN_CARD_W).toBeLessThan(smallestChecked + 2);

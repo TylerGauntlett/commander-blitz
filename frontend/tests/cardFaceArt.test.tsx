@@ -125,7 +125,7 @@ describe("the scrims", () => {
   // Structural, not visual: jsdom applies no stylesheet, so what can be
   // asserted here is that every run of text is inside a band that has a scrim,
   // rather than loose over the illustration. `tests/palette.test.ts` checks the
-  // gradients themselves and `e2e/greyscale.spec.ts` checks what resolved.
+  // gradients themselves and `e2e/legibility.spec.ts` checks what resolved.
   it("puts the name and cost in the head", () => {
     const { container } = render(<CardFace card={bear} />);
     expect(container.querySelector(".face__head .face__name")).not.toBeNull();

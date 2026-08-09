@@ -163,7 +163,7 @@ test.describe("lands say what they make", () => {
     // Every land is tinted by what it produces, not left on the shared tan.
     expect(classes.every((c) => /face--land-[WUBRGC]|face--land-multi/.test(c))).toBe(true);
 
-    // And the watermark is there: the channel that survives greyscale. Read off
+    // And the watermark is there: the channel that reads at pod size. Read off
     // `data-symbol` rather than the text, because these are Scryfall's published
     // symbols drawn as images and an image has no letter to read.
     const pips = await lands

@@ -255,7 +255,7 @@ board renders perfectly well, so only a measurement notices a regression.
 
 - Mockups were made for a new main page, in [mockups/menu/](../mockups/menu/README.md).
   All five are interactive: pick a deck, open a dossier, set difficulty, import
-  from Moxfield, open a chair to another player, press `g` for greyscale.
+  from Moxfield, open a chair to another player.
 - Combine together elements of the mocks:
     - Mock 1 — **Command Table**: the board's own three-column anatomy, and the
       *seat strip* — opponents are chairs you fill, each showing the deck that AI
@@ -269,9 +269,9 @@ board renders perfectly well, so only a measurement notices a regression.
       Archmage. The direction multiplayer costs nothing to add to.
     - Mock 4 — **Ink & Dossier**: the *comparison matrix* — all decks rated on
       one scale so choosing is a comparison, not four readings. Hue spent only on
-      mana; its greyscale twin is identical to the original.
+      mana, so nothing on the screen competes with the decks for attention.
     - Mock 5 — **Planar Gate**: the screen takes the selected deck's colour.
-      Beautiful, and its greyscale twin is the honest argument against it.
+      Beautiful, and the tint is the only thing telling the four decks apart.
 
 ### Task
 
@@ -283,9 +283,10 @@ still outstanding is enumerated, with severity and a fix direction, in
 [mockup-fidelity.md](mockup-fidelity.md) — read its "Deliberate divergences"
 section before changing anything to match a mockup.
 
-The two worth doing first are both greyscale failures, and neither is cosmetic:
-the "you can play this" rim and the combat arrows each carry their whole meaning in
-hue, so a player who cannot use colour loses the most urgent fact on screen.
+The two worth doing first are both the same failure, and neither is cosmetic: the
+"you can play this" rim and the combat arrows are thin strokes over a board of
+full-bleed illustrations, so the two most urgent facts on screen are carried by
+its two quietest marks.
 
 ---
 

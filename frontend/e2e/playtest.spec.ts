@@ -108,24 +108,6 @@ test.describe("playtest capture", () => {
 
     await shoot("game-over");
 
-    /*
-     * The greyscale check, as a picture.
-     *
-     * `tests/palette.test.ts` now proves the *numbers* separate -- every type
-     * tone is a distinct relative luminance and the whole dimmed band sits
-     * below the whole live one. What it cannot judge is whether the result
-     * reads, so the board still has to be looked at with the colour taken away.
-     * Applied as a filter on the root rather than captured through a headless
-     * flag, so the shot lines up pixel-for-pixel with the colour one above.
-     */
-    await page.evaluate(() => {
-      document.documentElement.style.filter = "grayscale(1)";
-    });
-    await shoot("greyscale");
-    await page.evaluate(() => {
-      document.documentElement.style.filter = "";
-    });
-
     console.log(`captured ${shots.length} shots: ${shots.join(", ")}`);
   });
 
@@ -165,9 +147,5 @@ test.describe("playtest capture", () => {
 
     await page.waitForTimeout(400);
     await page.screenshot({ path: "e2e-shots/pod-1-board.png" });
-    await page.evaluate(() => {
-      document.documentElement.style.filter = "grayscale(1)";
-    });
-    await page.screenshot({ path: "e2e-shots/pod-2-greyscale.png" });
   });
 });

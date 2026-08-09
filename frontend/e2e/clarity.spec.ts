@@ -77,7 +77,7 @@ test.describe("card type is encoded on the card", () => {
     // that, the assertion below is the honest thing to fail on.
     expect(new Set(tones).size).toBeGreaterThan(1);
 
-    // Every face carries a glyph, which is what survives greyscale and 82px.
+    // Every face carries a glyph, which is what still reads at 82px.
     const glyphs = await page.locator(".hand .face__glyph").allTextContents();
     expect(glyphs).toHaveLength(tones.length);
     expect(glyphs.every((g) => g.trim().length === 1)).toBe(true);

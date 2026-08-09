@@ -57,9 +57,9 @@ Ordered as the cycle-1 doc ranked them.
    ◆ creature, ■ artifact, ✦ enchantment, » instant, ● sorcery, ★ planeswalker)
    goes in the title bar as the redundant channel.
 
-   The doc's greyscale check was run: fills flatten to near-identical greys, and
-   the glyphs still read. That is the glyph doing its job, and it is the reason
-   the encoding is not colour-only.
+   The check the cycle-1 doc asked for was run at pod size: the fills are hard to
+   tell apart down there and the glyphs still read. That is the glyph doing its
+   job, and it is the reason the encoding does not rest on the fill alone.
 
    Precedence resolves an artifact creature as a *creature* and a creature-land as
    a *land*, matching `frameTone`. `.card--dimmed` became a flat scrim on
@@ -136,12 +136,12 @@ confirm button is a composite that posts a staged set to `/declare` and needs a
 decision about what identity it claims. That is the piece of design work this
 item actually is.
 
-### 2. The type palette is honest but the greyscale fallback is thin
+### 2. The type palette is honest but the fallback is thin
 
-Every body fill sits at roughly the same lightness (L≈88%) by design, so the
-greyscale board leans entirely on the glyph. That passes the check the cycle-1
-doc set, but it means a monochrome display, a heavily colour-deficient viewer, or
-a card half-occluded in a stack ply all reduce to one small character.
+Every body fill sits at roughly the same lightness (L≈88%) by design, so at pod
+size the board leans entirely on the glyph. That passes the check the cycle-1 doc
+set, but it means a card at 51px, or one half-occluded in a stack ply, reduces to
+one small character.
 
 **Try:** vary lightness as well as hue across the seven type tones — lands
 noticeably darker, instants lighter. The constraint is that the range must stay
@@ -232,9 +232,8 @@ whole game, that no hand card hangs below the viewport, and that `g` opens the
 graveyard. Those are the regressions that would silently undo cycle 2.
 
 It still cannot see whether any of it *looks* right. The palette, the pip sizes
-and the pile offsets were all chosen by taking screenshots and looking at them,
-and the greyscale check in particular has no automated form — a `grayscale(1)`
-screenshot has to be read by someone. Keep the capture spec.
+and the pile offsets were all chosen by taking screenshots and looking at them.
+Keep the capture spec.
 
 One process note: the API server does not reload on change. Screenshots taken
 against a server started before a `serialize.py` edit will show the old payload —
