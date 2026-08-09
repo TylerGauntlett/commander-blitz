@@ -7,9 +7,14 @@ decision from a player.** Everything else is a *driver* that answers decisions.
 
 ```mermaid
 flowchart LR
-    subgraph data["data/"]
+    subgraph data["data/ — the authored layer"]
         cards["cards/*.cards.json<br/>149 card definitions"]
         decks["decks/*.deck.json<br/>2 Commander decks"]
+    end
+
+    subgraph generated["data/generated/ — imported, gitignored"]
+        pool["cards/pool.cards.json<br/>generated definitions"]
+        mox["decks/mox_*.deck.json"]
     end
 
     subgraph core["automtg.engine — the rules"]
@@ -33,6 +38,8 @@ flowchart LR
 
     cards --> loader
     decks --> loader
+    pool -.->|"server only"| loader
+    mox -.->|"server only"| loader
     loader --> state
     state --> game
     effects --> game
@@ -43,6 +50,12 @@ flowchart LR
     env --> heuristic
     server --> react
 ```
+
+The dotted edges are the **two-layer registry**. `default_registry()` loads only
+`data/`; `server_registry()` loads `data/generated/` on top. Everything except
+the FastAPI app — every test, the trainer, the arena, the CLI — is on the first,
+so importing a deck cannot change the answer any of them gives. See
+[deck-import.md](deck-import.md).
 
 ## Why a single seam matters
 

@@ -959,6 +959,132 @@
   line-height: 1.4;
 }
 
+/* An imported deck, so the grid says which tiles are yours without a legend. */
+.deck__badge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* How much of this deck the engine actually plays. Rendered only when it is not
+   all of it, so the precons carry nothing -- an always-present "0 simplified"
+   would train people to stop reading the line that matters. */
+.deck__engine {
+  color: var(--danger);
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* ---------------------------------------------------------------- */
+/* Moxfield import                                                    */
+
+.import {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: min(560px, 92vw);
+  margin: 4px auto 0;
+  padding: 16px;
+  border: 1px dashed var(--rail-line);
+  border-radius: 12px;
+}
+
+.import__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.import__hint {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.import__row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Overrides `.field__input`'s 120px, which is sized for a seed number. */
+.import__input {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+.import__report {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.import__headline {
+  margin: 0;
+  color: var(--text);
+}
+
+.import__mana,
+.import__problem {
+  margin: 0;
+  color: var(--danger);
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.import__toggle {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Bounded, because a real deck simplifies 70+ cards and an unbounded list would
+   push the Play button off the screen. */
+.import__list {
+  max-height: 240px;
+  margin: 0;
+  padding: 0 0 0 2px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.import__card {
+  padding: 5px 0;
+  border-top: 1px solid var(--rail-line);
+}
+
+.import__card-name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.import__notes {
+  margin: 2px 0 0;
+  padding-left: 16px;
+  color: var(--text-faint);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .menu__options {
   display: flex;
   gap: 24px;

@@ -21,8 +21,10 @@ def decks() -> dict[str, DeckList]:
 
 
 class TestDecksAreLegal:
-    def test_both_decks_exist(self, decks):
-        assert set(decks) == {"aesi", "edgar"}
+    def test_the_shipped_decks_exist(self, decks):
+        # `load_decks` reads the authored layer only, so an imported deck on the
+        # developer's machine cannot make this fail.
+        assert set(decks) == {"aesi", "edgar", "isperia", "zurgo"}
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)
     def test_deck_is_commander_legal(self, deck_id, decks, real_registry: CardRegistry):
@@ -116,3 +118,60 @@ class TestDeckIdentity:
             if "Vampire" in real_registry.get(card_id).subtypes
         )
         assert vampires >= 25, f"only {vampires} vampires"
+
+    def test_isperia_is_a_deck_that_wants_to_be_attacked(self, decks, real_registry):
+        """Isperia turns an attack aimed at you into a card.
+
+        A deck built around that has to survive being attacked, or the trigger
+        never fires twice. So the test is about the *defence*: enough blockers
+        and sweepers that swinging at this seat is the worst option on the table.
+        """
+        deck = decks["isperia"]
+        cards = [real_registry.get(cid) for cid, _ in deck.cards]
+        blockers = [c for c in cards if c.is_creature and c.toughness >= 3]
+        assert len(blockers) >= 12, f"only {len(blockers)} creatures that block well"
+        sweepers = [
+            c
+            for c in cards
+            if any(
+                effect.get("op") in ("destroy", "exile", "return_to_hand")
+                and (effect.get("objects") or {}).get("count") == "all"
+                for effect in c.spell_effects
+            )
+        ]
+        assert len(sweepers) >= 3, f"only {len(sweepers)} sweepers"
+
+    def test_isperia_flies(self, decks, real_registry):
+        fliers = sum(
+            1
+            for card_id, _ in decks["isperia"].cards
+            if "flying" in real_registry.get(card_id).keywords
+        )
+        assert fliers >= 12, f"only {fliers} fliers"
+
+    def test_zurgo_makes_tokens(self, decks, real_registry):
+        """Zurgo's engine is a token that dies. The deck has to supply them.
+
+        Mobilize makes one a turn; a deck relying on that alone is one removal
+        spell away from doing nothing.
+        """
+        makers = 0
+        for card_id, _ in decks["zurgo"].cards:
+            card = real_registry.get(card_id)
+            sources = list(card.spell_effects) + [
+                effect for ability in card.abilities for effect in ability.effects
+            ]
+            if any(effect.get("op") == "create_token" for effect in sources):
+                makers += 1
+        assert makers >= 8, f"only {makers} cards make tokens"
+
+    def test_zurgo_pays_off_a_creature_dying(self, decks, real_registry):
+        payoffs = 0
+        for card_id, _ in decks["zurgo"].cards:
+            card = real_registry.get(card_id)
+            for ability in card.abilities:
+                trigger = ability.trigger
+                if trigger is not None and trigger.event in ("creature_dies", "dies"):
+                    payoffs += 1
+                    break
+        assert payoffs >= 6, f"only {payoffs} death payoffs"

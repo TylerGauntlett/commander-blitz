@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from automtg.cards import images as images_module
 from automtg.cards.images import CardIndex, image_url
 
 REPO = Path(__file__).resolve().parents[2]
@@ -182,6 +183,31 @@ class TestTheWrittenIndex:
         assert forest.color_identity == "G"
         assert forest.artist
 
+    def test_carries_the_fields_the_proxy_generator_needs(self, index):
+        # Without these three a generated card is a blank permanent: no rules
+        # text to read keywords out of, and -- worse -- no way to know a land
+        # taps for anything.  A deck of inert lands is not a deck.
+        forest = index.lookup("Forest")
+        assert forest.produced_list() == ("G",)
+        assert "{T}: Add {G}" in forest.oracle_text
+
+        vampire = index.lookup("Vampire")
+        assert vampire.keyword_list() == ("Lifelink",)
+        assert vampire.produced_list() == ()
+
+    def test_a_two_faced_card_borrows_its_rules_text_from_the_front_face(self, index):
+        # Same shape as the mana_cost fallback below: an adventure or modal DFC
+        # has no top-level oracle_text, only faces.  Without the fallback every
+        # one of them would generate as a vanilla creature.
+        entry = index.lookup("Obyra's Attendants // Desperate Parry")
+        assert entry.oracle_text == "Flying"
+        assert entry.keyword_list() == ("Flying",)
+
+    def test_a_lookup_by_uuid_finds_the_same_row(self, index):
+        forest = index.lookup("Forest")
+        assert index.by_scryfall_id(forest.scryfall_id) == forest
+        assert index.by_scryfall_id("nope") is None
+
     def test_a_modal_dfc_borrows_the_cost_from_its_front_face(self, index):
         # A modal DFC has no top-level mana_cost -- only the faces do -- so
         # `to_row` has to reach into face 0 or the catalog shows a blank cost.
@@ -222,6 +248,44 @@ class TestSearch:
         # into a full table scan.
         total, _ = index.search("%")
         assert total == 0
+
+
+@pytest.fixture(scope="module")
+def old_index(tmp_path_factory, rows) -> CardIndex:
+    """An index written before the proxy columns existed."""
+    target = tmp_path_factory.mktemp("old") / "cards.sqlite"
+    early = [c for c in images_module.COLUMNS if c not in images_module.LATE_COLUMNS]
+    con = sqlite3.connect(target)
+    con.execute(f"CREATE TABLE cards ({', '.join(f'{c} TEXT' for c in early)})")
+    con.executemany(
+        f"INSERT INTO cards VALUES ({', '.join('?' * len(early))})",
+        [row[: len(early)] for row in rows],
+    )
+    con.commit()
+    con.close()
+    return CardIndex(target)
+
+
+class TestAnOlderIndexStillOpens:
+    """A clone that has not rebuilt since the proxy columns landed.
+
+    The committed sqlite is an *artifact*, not a migration target -- there is no
+    migration machinery and there deliberately never was.  So the reader has to
+    treat the late columns as optional, because the alternative is that pulling
+    this branch without running the build script leaves the app unable to serve
+    art it already has on disk.
+    """
+
+    def test_it_opens_and_still_answers_about_art(self, old_index):
+        assert old_index.late_columns_present is False
+        forest = old_index.lookup("Forest")
+        assert forest is not None
+        assert forest.art_url().endswith(".jpg")
+
+    def test_the_missing_columns_read_as_empty_rather_than_crashing(self, old_index):
+        forest = old_index.lookup("Forest")
+        assert forest.oracle_text == ""
+        assert forest.produced_list() == ()
 
 
 class TestImageUrls:
@@ -379,12 +443,36 @@ class TestRefreshLoop:
             for r in records
             if r["name"] == "Forest" and r["layout"] == "normal"
         }
-        before = {"Forest": forests["lowres"]["id"]}
+        # Keyed on (name, is_token), the same pair the table is keyed on.
+        before = {("Forest", 0): forests["lowres"]["id"]}
         rows = [builder.to_row(forests["highres_scan"])]
         builder.summarise(before, rows)
         out = capsys.readouterr().out
         assert "added 0" in out
         assert "reprinted 1" in out
+
+    def test_a_token_and_its_namesake_card_are_two_rows(self, tmp_path, records):
+        """87 real cards used to be evicted by a token that shared their name.
+
+        Tarmogoyf is the one that made this visible: the catalog's only
+        "Tarmogoyf" row was a token printing, so an importer asking for the card
+        by name got a token, and `validate_deck` then rejected the deck for
+        containing one.
+        """
+        card = next(r for r in records if r["name"] == "Forest" and r["layout"] == "normal")
+        token = {**card, "id": "0" * 8 + "-1111-2222-3333-444444444444", "layout": "token"}
+        rows = builder.extract_records([card, token])
+        target = tmp_path / "cards.sqlite"
+        builder.write_index(rows, target, {"source_name": "collide"})
+        index = CardIndex(target)
+        try:
+            assert index.lookup("Forest", token=False) is not None
+            assert index.lookup("Forest", token=True) is not None
+            # Unqualified, the real card wins: a deck can hold it and cannot
+            # hold the token.
+            assert index.lookup("Forest").is_token is False
+        finally:
+            index.close()
 
     @pytest.mark.skipif(sys.platform != "win32", reason="POSIX replaces open files happily")
     def test_says_so_when_the_index_is_locked(self, tmp_path, rows):

@@ -1,0 +1,315 @@
+{
+  "id": "isperia",
+  "name": "Isperia, Supreme Judge",
+  "commanders": [
+    "isperia_supreme_judge"
+  ],
+  "color_identity": [
+    "W",
+    "U"
+  ],
+  "cards": [
+    {
+      "id": "island",
+      "qty": 12
+    },
+    {
+      "id": "plains",
+      "qty": 14
+    },
+    {
+      "id": "absorb",
+      "qty": 1
+    },
+    {
+      "id": "air_elemental",
+      "qty": 1
+    },
+    {
+      "id": "ancient_den",
+      "qty": 1
+    },
+    {
+      "id": "angel_of_sanctions",
+      "qty": 1
+    },
+    {
+      "id": "angel_of_the_dire_hour",
+      "qty": 1
+    },
+    {
+      "id": "anticipate",
+      "qty": 1
+    },
+    {
+      "id": "arcane_signet",
+      "qty": 1
+    },
+    {
+      "id": "archangel_of_thune",
+      "qty": 1
+    },
+    {
+      "id": "augury_owl",
+      "qty": 1
+    },
+    {
+      "id": "aven_fleetwing",
+      "qty": 1
+    },
+    {
+      "id": "azorius_chancery",
+      "qty": 1
+    },
+    {
+      "id": "azorius_guildgate",
+      "qty": 1
+    },
+    {
+      "id": "banishing_light",
+      "qty": 1
+    },
+    {
+      "id": "bident_of_thassa",
+      "qty": 1
+    },
+    {
+      "id": "blue_suns_zenith",
+      "qty": 1
+    },
+    {
+      "id": "bygone_bishop",
+      "qty": 1
+    },
+    {
+      "id": "cancel",
+      "qty": 1
+    },
+    {
+      "id": "cloudkin_seer",
+      "qty": 1
+    },
+    {
+      "id": "coastal_tower",
+      "qty": 1
+    },
+    {
+      "id": "command_tower",
+      "qty": 1
+    },
+    {
+      "id": "commanders_sphere",
+      "qty": 1
+    },
+    {
+      "id": "concentrate",
+      "qty": 1
+    },
+    {
+      "id": "consecrated_sphinx",
+      "qty": 1
+    },
+    {
+      "id": "counterspell",
+      "qty": 1
+    },
+    {
+      "id": "day_of_judgment",
+      "qty": 1
+    },
+    {
+      "id": "deep_analysis",
+      "qty": 1
+    },
+    {
+      "id": "deputy_of_detention",
+      "qty": 1
+    },
+    {
+      "id": "dismiss",
+      "qty": 1
+    },
+    {
+      "id": "dissolve",
+      "qty": 1
+    },
+    {
+      "id": "divination",
+      "qty": 1
+    },
+    {
+      "id": "emeria_angel",
+      "qty": 1
+    },
+    {
+      "id": "empyrean_eagle",
+      "qty": 1
+    },
+    {
+      "id": "essence_scatter",
+      "qty": 1
+    },
+    {
+      "id": "evacuation",
+      "qty": 1
+    },
+    {
+      "id": "evolving_wilds",
+      "qty": 1
+    },
+    {
+      "id": "exclude",
+      "qty": 1
+    },
+    {
+      "id": "inspiration",
+      "qty": 1
+    },
+    {
+      "id": "jaces_ingenuity",
+      "qty": 1
+    },
+    {
+      "id": "loyal_drake",
+      "qty": 1
+    },
+    {
+      "id": "lyra_dawnbringer",
+      "qty": 1
+    },
+    {
+      "id": "man_o_war",
+      "qty": 1
+    },
+    {
+      "id": "meandering_river",
+      "qty": 1
+    },
+    {
+      "id": "mind_stone",
+      "qty": 1
+    },
+    {
+      "id": "mulldrifter",
+      "qty": 1
+    },
+    {
+      "id": "negate",
+      "qty": 1
+    },
+    {
+      "id": "oblivion_ring",
+      "qty": 1
+    },
+    {
+      "id": "omenspeaker",
+      "qty": 1
+    },
+    {
+      "id": "opt",
+      "qty": 1
+    },
+    {
+      "id": "path_to_exile",
+      "qty": 1
+    },
+    {
+      "id": "ponder",
+      "qty": 1
+    },
+    {
+      "id": "preordain",
+      "qty": 1
+    },
+    {
+      "id": "rapid_hybridization",
+      "qty": 1
+    },
+    {
+      "id": "reconnaissance_mission",
+      "qty": 1
+    },
+    {
+      "id": "seat_of_the_synod",
+      "qty": 1
+    },
+    {
+      "id": "serra_angel",
+      "qty": 1
+    },
+    {
+      "id": "skyknight_vanguard",
+      "qty": 1
+    },
+    {
+      "id": "sol_ring",
+      "qty": 1
+    },
+    {
+      "id": "solemn_simulacrum",
+      "qty": 1
+    },
+    {
+      "id": "sphinx_of_magosi",
+      "qty": 1
+    },
+    {
+      "id": "sphinxs_revelation",
+      "qty": 1
+    },
+    {
+      "id": "sun_titan",
+      "qty": 1
+    },
+    {
+      "id": "sunblast_angel",
+      "qty": 1
+    },
+    {
+      "id": "swords_to_plowshares",
+      "qty": 1
+    },
+    {
+      "id": "temple_of_enlightenment",
+      "qty": 1
+    },
+    {
+      "id": "terramorphic_expanse",
+      "qty": 1
+    },
+    {
+      "id": "tranquil_cove",
+      "qty": 1
+    },
+    {
+      "id": "wall_of_omens",
+      "qty": 1
+    },
+    {
+      "id": "warden_of_evos_isle",
+      "qty": 1
+    },
+    {
+      "id": "watcher_of_the_spheres",
+      "qty": 1
+    },
+    {
+      "id": "wayfarers_bauble",
+      "qty": 1
+    },
+    {
+      "id": "wind_drake",
+      "qty": 1
+    },
+    {
+      "id": "windreader_sphinx",
+      "qty": 1
+    },
+    {
+      "id": "wrath_of_god",
+      "qty": 1
+    }
+  ],
+  "substitutions": [],
+  "notes": "Azorius fliers and control. Isperia turns every attack aimed at you into a card, so the deck is built to make attacking you the worst option on the table: cheap blockers, two wraths, and enough counterspells that the alpha strike never lands."
+}

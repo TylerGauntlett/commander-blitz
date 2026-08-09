@@ -1,9 +1,15 @@
 /**
- * Title and setup.
+ * Title and setup: pick a deck, pick how many opponents, deal.
  *
- * Two decks ship with the engine, so this is a short screen: pick yours, pick
- * how many opponents, deal. The seed field is kept because a reproducible game
- * is the fastest way to re-examine something that went wrong.
+ * The seed field is kept because a reproducible game is the fastest way to
+ * re-examine something that went wrong.
+ *
+ * The deck list is not fixed any more -- `DeckImport` below the grid adds a
+ * Moxfield deck, which then appears as one more tile. That is a deliberate
+ * divergence from `mockups/flow/01-front-door.html`, which opens a modal
+ * catalogue: the grid's `deck-${id}` hooks are what ~14 e2e specs click, and a
+ * modal would cost a re-verify of every one of them for nothing this feature
+ * needs. See docs/mockup-fidelity.md.
  */
 
 import { motion } from "motion/react";
@@ -11,6 +17,7 @@ import { useState } from "react";
 import type { DeckSummary, SeatConfig } from "../../api/types";
 import { bouncy, ease } from "../../motion/springs";
 import { ManaSymbol } from "../game/ManaSymbol";
+import { DeckImport } from "./DeckImport";
 
 const COLOR_NAMES: Record<string, string> = {
   W: "White",
@@ -28,9 +35,18 @@ interface Props {
   error: Error | null;
   onStart: (seats: SeatConfig[], seed?: number) => void;
   starting: boolean;
+  /** Re-reads `/api/decks` after an import so the new tile appears. */
+  onDecksChanged?: () => void;
 }
 
-export function NewGameScreen({ decks, loading, error, onStart, starting }: Props) {
+export function NewGameScreen({
+  decks,
+  loading,
+  error,
+  onStart,
+  starting,
+  onDecksChanged,
+}: Props) {
   const [deckId, setDeckId] = useState<string | null>(null);
   const [opponents, setOpponents] = useState(1);
   const [agent, setAgent] = useState<AgentName>("heuristic");
@@ -85,7 +101,10 @@ export function NewGameScreen({ decks, loading, error, onStart, starting }: Prop
             whileHover={{ y: -6, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <span className="deck__name">{deck.name}</span>
+            <span className="deck__name">
+              {deck.name}
+              {deck.source === "moxfield" && <span className="deck__badge">Yours</span>}
+            </span>
             <span className="deck__cmd">{deck.commander_names.join(" & ")}</span>
             <span className="deck__colors">
               {deck.color_identity.map((color) => (
@@ -98,10 +117,27 @@ export function NewGameScreen({ decks, loading, error, onStart, starting }: Prop
               ))}
               <span className="deck__count">{deck.card_count} cards</span>
             </span>
+            {/* Only when there is something to admit. A precon is all
+                hand-written, so this stays off its tiles entirely. */}
+            {deck.simplified > 0 && (
+              <span className="deck__engine" data-testid={`deck-${deck.id}-simplified`}>
+                {deck.simplified} of {deck.card_count} cards simplified
+              </span>
+            )}
             {deck.notes && <span className="deck__notes">{deck.notes}</span>}
           </motion.button>
         ))}
       </div>
+
+      <DeckImport
+        onImported={(imported) => {
+          onDecksChanged?.();
+          // Select what was just imported: somebody who pasted a link wants to
+          // play that deck, and making them find it in the grid afterwards is a
+          // step with no decision in it.
+          setDeckId(imported.deck.id);
+        }}
+      />
 
       <div className="menu__options">
         {/* A button group is not a form control, so these are fieldsets rather

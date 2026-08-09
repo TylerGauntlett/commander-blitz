@@ -7,6 +7,7 @@ useful before the first training run has finished.
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
@@ -37,13 +38,36 @@ class PolicyAgent:
         self.model = None
         self.vocab = vocab
         if checkpoint:
-            from ..model import load
+            from ..model import load, load_vocab_ids
 
-            self.model, _ = load(checkpoint)
+            self.model, config = load(checkpoint)
             if self.vocab is None:
                 from automtg.cards.registry import default_registry
 
-                self.vocab = encoding.CardVocabulary(default_registry().registry)
+                registry = default_registry().registry
+                saved = load_vocab_ids(checkpoint)
+                if saved is not None:
+                    # The card list this network was actually trained on. Using
+                    # today's registry instead would shift every index the
+                    # moment a card is added that sorts early -- and the model
+                    # would load cleanly and quietly read the wrong embeddings.
+                    self.vocab = encoding.CardVocabulary(registry, saved)
+                else:
+                    self.vocab = encoding.CardVocabulary(registry)
+                    if len(self.vocab) != config.n_cards:
+                        # An older checkpoint against a registry that has since
+                        # grown. There is no way to recover the mapping, and
+                        # guessing would be an IndexError at best. Fall back to
+                        # the heuristic, which is a worse player but a correct
+                        # one, and say so.
+                        warnings.warn(
+                            f"{checkpoint} was trained on {config.n_cards} cards but the "
+                            f"registry now holds {len(self.vocab)}; falling back to the "
+                            "heuristic agent. Retrain with scripts/train.py.",
+                            RuntimeWarning,
+                            stacklevel=2,
+                        )
+                        self.model = None
 
     def act(self, game: Game, seat: int, actions: Sequence[Action]) -> Action:
         if self.model is None or self.vocab is None:

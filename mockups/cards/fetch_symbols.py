@@ -31,6 +31,7 @@ needs recolouring through `currentColor` -- which is just as well, because an
 from __future__ import annotations
 
 import json
+import re
 import time
 import urllib.error
 import urllib.request
@@ -63,10 +64,31 @@ SYMBOLOGY = "https://api.scryfall.com/symbology"
 #   T Q S E     the four non-mana symbols `SYMBOL_LABELS` in cardStyle.ts covers:
 #               tap, untap, snow, energy.
 #
-# Hybrid and phyrexian costs are rejected by the engine at load time, so they are
-# deliberately not downloaded -- a prototype that draws one is drawing a card this
-# game cannot contain.
-WANTED = ["W", "U", "B", "R", "G", "C"] + [str(n) for n in range(17)] + ["X", "T", "Q", "S", "E"]
+# Hybrid and phyrexian used to be skipped, on the grounds that the engine rejects
+# those costs at load time so no card could show one. That stopped being true
+# with deck import: `cards/proxy.py` rewrites a hybrid *cost* into something
+# `ManaCost.parse` accepts, but the card's oracle text is displayed verbatim and
+# is full of `{W/U}` and `{G/P}` in activation costs. A missing symbol there is a
+# blank square in the middle of a sentence.
+#
+# Written in `key_for`'s dash form, because that is both the lookup key into the
+# symbology response and the filename. A `/` here matches nothing and fails
+# silently as "not in symbology".
+_COLORS = ["W", "U", "B", "R", "G"]
+_HYBRID = [f"{a}-{b}" for i, a in enumerate(_COLORS) for b in _COLORS[i + 1 :]]
+_MONO_HYBRID = [f"2-{c}" for c in _COLORS]  # {2/W}: two generic, or one white
+_PHYREXIAN = [f"{c}-P" for c in [*_COLORS, "C"]]
+_COLORLESS_HYBRID = [f"C-{c}" for c in _COLORS]
+
+WANTED = (
+    ["W", "U", "B", "R", "G", "C"]
+    + [str(n) for n in range(17)]
+    + ["X", "T", "Q", "S", "E"]
+    + _HYBRID
+    + _MONO_HYBRID
+    + _PHYREXIAN
+    + _COLORLESS_HYBRID
+)
 
 
 def key_for(symbol: str) -> str:
@@ -93,6 +115,29 @@ def download(url: str, path: Path) -> bool:
     except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as error:
         print(f"  download failed: {error}")
         return False
+
+
+#: An array of short strings, expanded across lines by `json.dumps`.
+#: `"colors": [\n  "B",\n  "G"\n]` -> `"colors": ["B", "G"]`.
+_SHORT_ARRAY = re.compile(r'\[\s*\n\s*((?:"[^"\n]*"(?:,\s*\n\s*)?)+)\n?\s*\]')
+
+
+def write_manifest(manifest: dict) -> None:
+    """Write the manifest the way biome would format it.
+
+    The copy under `frontend/public/` is inside biome's remit, and biome keeps a
+    short array on one line where `json.dumps(indent=2)` always expands it. The
+    two only ever agreed because the committed file had been hand-formatted once;
+    every regeneration since would have broken `npm run lint`, on a run that
+    reported doing nothing. Matching biome here is what makes a refresh free.
+
+    `newline=""` keeps it LF on Windows, for the same reason.
+    """
+    text = json.dumps(manifest, indent=2, sort_keys=True)
+    # Just collapse the whitespace: the elements already carry their own commas,
+    # so re-joining on ", " would double them.
+    collapsed = _SHORT_ARRAY.sub(lambda m: "[" + " ".join(m.group(1).split()) + "]", text)
+    MANIFEST.write_text(collapsed + "\n", encoding="utf-8", newline="")
 
 
 def mirror() -> None:
@@ -127,6 +172,11 @@ def main() -> None:
     missing = [k for k in WANTED if not ((SYMBOL_DIR / f"{k}.svg").exists() and k in manifest)]
     if not missing:
         print(f"all {len(WANTED)} symbols present -- nothing to fetch")
+        # Rewritten even here, so the file on disk is always what this script
+        # would produce. Otherwise a manifest formatted by some other hand stays
+        # that way until the next symbol is added, and the frontend lint fails on
+        # a run that reported doing nothing.
+        write_manifest(manifest)
         mirror()
         return
 
@@ -161,7 +211,7 @@ def main() -> None:
             "colors": entry.get("colors"),
         }
 
-    MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    write_manifest(manifest)
     print(f"\n{len(manifest)} entries in {MANIFEST}")
     mirror()
 

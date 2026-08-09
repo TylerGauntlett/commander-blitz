@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player orb — Docket (orb 02)</title>
+<style>
+/* ============================================================================
+   DOCKET -- the orb stops being a column
+   ----------------------------------------------------------------------------
+   THESIS. Nothing about a player's status is tall. It is a name, a portrait, a
+   number, two small tracks and five counts -- and it has been laid out as a
+   190px column for no reason except that `.mat` has a 190px column in it. That
+   column is the single most expensive object on the board: it costs 190px of
+   WIDTH on every mat, forever, on a screen whose scarce axis is width and whose
+   plentiful axis, at 16:9, is height. Turn the orb ninety degrees and the board
+   gets all of it back.
+
+   THE BIG IDEA, stealable on its own: STATUS IS A HEADER, NOT A SIDEBAR. The
+   docket is a 104px strip across the top of the mat, and the lanes run the full
+   width beneath it. At 1600x950 that is roughly two more cards per lane before
+   anything wraps. It also fixes something the column never could: the opponent
+   mats are 112px wide today and their orbs are a squeezed second implementation
+   of this component -- a strip is the same strip at any width, so the compact
+   variant stops being a different design and becomes the same one with fewer
+   optional sections.
+
+   SECOND IDEA: sections divided by hairlines, in the order you ask the
+   questions -- who am I and what can I cast, how am I doing, what is trying to
+   kill me, what is left. Left to right is a reading order the column never had,
+   because a column's order is only ever "up".
+
+   One thing the rotation is NOT allowed to break, and the first draft of this
+   file broke it: the commander's cost has to sit directly above the mana row
+   that pays it. CommandZone.tsx calls that adjacency "the reason the commander
+   moved into this panel at all", and a version with MANA as its own section two
+   hairlines away had quietly thrown it out. So mana is not a section here -- it
+   lives inside the identity block, one line under the cost, exactly as it does
+   in the column today.
+
+   THE TRADE. This is the largest port of the five and the README says so
+   plainly: `.mat`'s grid changes from `190px minmax(0,1fr)` to a single column
+   with a header row, `.mat--compact` follows, and `--pod-lanes-h`'s solver reads
+   a lane width that this changes. It also concedes something real -- the
+   commander portrait can only be about 160x80 here before the strip grows
+   taller than the height it is trying to save, so this is the direction where
+   the commander is smallest.
+
+   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   ========================================================================== */
+
+/* Tokens ----------------------------------------------------------------- */
+
+:root {
+  --void-0:#0b0a16; --void-1:#141328; --void-2:#1d1b38;
+  --edge:rgba(150,140,255,.16); --edge-hi:rgba(170,160,255,.3);
+  --astral:#8f7fe8; --astral-hi:#c3b6ff;
+
+  --pane-bg:rgba(20,19,40,.6); --pane-well:rgba(13,12,28,.78);
+  --pane-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45);
+
+  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
+  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-generic:#cfc9bd; --mana-ink:#1a1a1a;
+
+  --playable:#5ce08a; --targetable:#58b6ff; --staged:#ffc14d;
+  --danger:#ff5c5c; --gain:#6ee7a0; --gold:#ffd479; --ability:#c39bff;
+  --frame-commander:#d8a63c; --dial-ink:#2a1c04;
+  --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
+
+  --card-w:78px;
+  --card-r:calc(var(--card-w) * .055);
+  --font:"Segoe UI", Inter, system-ui, sans-serif;
+}
+
+* { box-sizing:border-box; }
+html,body,#root { height:100%; margin:0; }
+html.grey { filter:grayscale(1); }
+body {
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90,190,220,.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+  color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button { cursor:pointer; background:none; border:0; font:inherit; color:inherit; }
+.tabular { font-variant-numeric:tabular-nums; }
+
+/* Shared vocabulary ------------------------------------------------------ */
+
+.pip {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:13px; height:13px; padding:0 3px; border-radius:999px;
+  font-size:8.5px; font-weight:800; font-style:normal; color:var(--mana-ink);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.25);
+}
+.pip--W { background:var(--mana-W); } .pip--U { background:var(--mana-U); }
+.pip--B { background:var(--mana-B); } .pip--R { background:var(--mana-R); }
+.pip--G { background:var(--mana-G); } .pip--C { background:var(--mana-C); }
+.pip--gen { background:var(--mana-generic); }
+
+.note { margin:0; padding:11px 13px; border-left:2px solid var(--edge-hi); border-radius:0 7px 7px 0; background:rgba(13,12,28,.55); font-size:11.5px; line-height:1.6; color:var(--text-faint); }
+.note b { color:var(--text-dim); font-weight:700; }
+
+/* Stage: the mockup's own chrome, not part of the design ------------------ */
+
+.stage { height:100%; display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+.stage__top { display:flex; align-items:baseline; gap:14px; padding:18px 26px 0; }
+.stage__id { font-size:12px; font-weight:800; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); }
+.stage__t { font-size:12px; color:var(--text-dim); }
+.stage__sp { flex:1; }
+.stage__k { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.stage__mid { display:grid; place-items:center; min-height:0; padding:14px 26px; overflow:hidden; }
+.stage__bot { padding:0 26px 20px; max-width:1180px; }
+
+/* The mat, re-shaped: a header row and then lanes at the full width. The
+   dashed column on the right is the 190px this direction hands back. */
+.mat { display:grid; grid-template-rows:auto minmax(0,1fr); gap:10px; padding:10px; width:min(1120px, 100%); border:1px solid var(--edge); border-radius:12px; background:var(--pane-bg); box-shadow:var(--pane-shadow); }
+.mat__lanes { display:grid; grid-template-rows:repeat(3, minmax(0,1fr)); gap:8px; min-width:0; }
+.lane { display:flex; align-items:center; gap:6px; padding:7px 9px; border:1px dashed var(--edge); border-radius:8px; background:rgba(9,8,20,.34); overflow:hidden; }
+.lane__tag { flex:none; width:44px; font-size:8.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }
+.ghost { flex:none; width:var(--card-w); height:calc(var(--card-w) * 1.4); border-radius:var(--card-r); border:1px solid var(--edge); background:linear-gradient(160deg, rgba(40,36,74,.55), rgba(16,14,34,.55)); }
+.ghost--won { border-style:dashed; border-color:rgba(92,224,138,.4); background:linear-gradient(160deg, rgba(30,60,44,.5), rgba(12,26,20,.5)); }
+
+/* THE DOCKET -------------------------------------------------------------- */
+
+.dock { display:flex; align-items:stretch; height:104px; border:1px solid var(--gold); border-radius:10px; background:var(--pane-well); box-shadow:0 0 0 1px rgba(255,212,121,.35), 0 0 22px rgba(255,212,121,.14); overflow:hidden; }
+.dock__sec { display:flex; flex-direction:column; justify-content:center; gap:5px; padding:9px 14px; border-left:1px solid var(--edge); min-width:0; }
+.dock__sec:first-child { border-left:0; }
+.dock__lab { font-size:8px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.dock__grow { flex:1; }
+
+/* 1. Who, and what am I casting ------------------------------------------ */
+
+/* The identity section is the one that takes the slack, so the commander's name
+   gets the extra width and the four fixed-size sections pack to the right. Let
+   the ZONES section grow instead and the piles float in a gap. */
+.who { display:grid; grid-template-columns:auto minmax(150px, 1fr); gap:11px; align-items:stretch; height:100%; }
+.who__id { display:flex; align-items:center; gap:6px; }
+.who__name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:700; }
+.who__priority { flex:none; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+.who__body { display:flex; flex-direction:column; justify-content:space-between; min-width:0; }
+
+.cmdslot { position:relative; display:block; width:160px; padding:4px; border:1px solid var(--playable); border-radius:8px; background:rgba(20,40,28,.5); box-shadow:0 0 0 1px var(--playable), 0 0 16px rgba(92,224,138,.35); text-align:left; }
+.cmdslot__art { position:relative; display:block; aspect-ratio:2; overflow:hidden; border-radius:5px; background:#241f33; box-shadow:inset 0 0 0 1px rgba(0,0,0,.45); }
+.cmdslot__art img { display:block; width:100%; height:100%; object-fit:cover; }
+.cmdslot__tag { position:absolute; top:7px; left:7px; padding:0 4px; border-radius:3px; background:var(--frame-commander); color:#2a1e05; font-size:8px; font-weight:800; letter-spacing:.08em; line-height:1.5; box-shadow:0 1px 3px rgba(0,0,0,.6); }
+.cmdslot__name { display:-webkit-box; overflow:hidden; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:11px; font-weight:700; line-height:1.22; }
+.cmdslot__strip { display:flex; align-items:center; gap:5px; min-width:0; margin-top:3px; }
+.cmdslot__glyph { flex:none; font-size:9px; line-height:1; color:var(--playable); }
+.cmdslot__word { overflow:hidden; font-size:8.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; text-overflow:ellipsis; color:var(--playable); }
+.cmdslot__cost { display:flex; flex:none; gap:2px; align-items:center; margin-left:auto; }
+.cmdslot__tax { padding:0 5px; border:1px solid rgba(216,166,60,.6); border-radius:999px; background:#2a2008; color:var(--gold); font-size:9.5px; font-weight:800; line-height:1.5; }
+
+/* 2. Life ------------------------------------------------------------------
+   The dial recipe is board.css:550 verbatim -- it is the part of today's orb
+   that already works, and turning the panel sideways is no reason to redraw it. */
+
+.dial { position:relative; display:grid; place-items:center; width:82px; height:82px; margin:0 auto; border-radius:50%;
+  background:radial-gradient(circle at 34% 26%, #fbeec2 0%, #d8b055 38%, #8a6a22 72%, #4d3a12 100%);
+  box-shadow:0 3px 10px rgba(0,0,0,.6), inset 0 0 0 3px rgba(0,0,0,.22), inset 0 -6px 14px rgba(0,0,0,.35), 0 0 34px rgba(255,206,120,.42); }
+.dial::after { content:""; position:absolute; inset:6px; border-radius:50%; border:1px solid rgba(60,38,8,.5); }
+.dial__n { position:relative; color:var(--dial-ink); font-size:31px; font-weight:900; line-height:1; text-shadow:0 1px 0 rgba(255,255,255,.35); }
+
+/* 3. What is trying to kill me --------------------------------------------
+   One row per source that has connected. The track runs to 21, so "16" is a
+   bar that is nearly full rather than a number you weigh against a rule you
+   have to remember. The warn tier is a hatch as well as a colour, so the
+   nearly-full bar and the striped bar are both still there in greyscale. */
+
+.dmg { display:grid; gap:4px; }
+.dmg__row { display:grid; grid-template-columns:74px 92px auto; gap:7px; align-items:center; }
+.dmg__who { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:9.5px; color:var(--text-dim); }
+.dmg__trk { position:relative; height:9px; border:1px solid var(--edge-hi); border-radius:3px; background:rgba(9,8,20,.6); overflow:hidden; }
+.dmg__fill { position:absolute; inset:0 auto 0 0; background:var(--text-dim); }
+.dmg__ticks { position:absolute; inset:0; background:repeating-linear-gradient(90deg, transparent 0 calc(100%/21*5 - 1px), rgba(11,10,22,.85) calc(100%/21*5 - 1px) calc(100%/21*5)); }
+.dmg__n { font-size:10px; font-weight:800; color:var(--text-dim); }
+.dmg__row--warn .dmg__fill { background:repeating-linear-gradient(135deg, var(--danger) 0 3px, #7d1f1f 3px 6px); }
+.dmg__row--warn .dmg__trk { border-color:var(--danger); }
+.dmg__row--warn .dmg__n { color:#ffb3b3; }
+.dmg__cap { display:flex; justify-content:space-between; font-size:8px; font-weight:800; color:var(--text-faint); }
+
+/* 4. What can I spend ----------------------------------------------------- */
+
+.manaslot { min-height:12px; display:flex; align-items:center; margin-top:4px; }
+.mana { display:flex; flex-wrap:wrap; gap:4px; }
+.mana__pip { width:10px; height:10px; border-radius:50%; border:1px solid rgba(0,0,0,.45); background:var(--mana-C); box-shadow:inset 0 1px 1px rgba(255,255,255,.35); }
+.mana__pip--W { background:var(--mana-W); } .mana__pip--U { background:var(--mana-U); }
+.mana__pip--B { background:var(--mana-B); } .mana__pip--R { background:var(--mana-R); }
+.mana__pip--G { background:var(--mana-G); } .mana__pip--C { background:var(--mana-C); }
+.mana__pip--any { background:conic-gradient(var(--mana-W) 0deg 72deg, var(--mana-U) 72deg 144deg, var(--mana-B) 144deg 216deg, var(--mana-R) 216deg 288deg, var(--mana-G) 288deg 360deg); }
+.mana__pip--floating { box-shadow:0 0 0 1px var(--gold), 0 0 6px rgba(255,212,121,.5); }
+.mana__pip--spent { background:none; box-shadow:inset 0 0 0 1.5px var(--text-faint); opacity:.75; }
+
+/* 5. What is left ---------------------------------------------------------
+   The piles, laid on their side but still bottom-aligned to a shared baseline:
+   the leaves grow upward from one line, so the comparative read survives the
+   rotation. The exact count stays on the top leaf, as it does today. */
+
+.piles { display:flex; align-items:flex-end; gap:8px; }
+.pile { display:flex; flex-direction:column; align-items:center; gap:4px; padding:0; border:0; background:none; }
+.pile__stack { display:flex; flex-direction:column; justify-content:flex-end; width:30px; }
+.pile__leaf { height:3px; margin-bottom:1px; border-radius:2px; background:linear-gradient(90deg,#2b1d3a,#4a3560 40%,#2b1d3a); box-shadow:0 1px 0 rgba(0,0,0,.55); }
+.pile__top { display:grid; place-items:center; height:20px; border-radius:3px; border:1px solid var(--edge-hi); background:linear-gradient(150deg,#43305c,#241834); color:var(--astral-hi); font-size:10px; font-weight:800; }
+.pile--gy .pile__leaf { background:linear-gradient(90deg,#2a1d13,#5a4030 40%,#2a1d13); } .pile--gy .pile__top { background:linear-gradient(150deg,#4a3323,#241a12); }
+.pile--ex .pile__leaf { background:linear-gradient(90deg,#22222b,#43434f 40%,#22222b); } .pile--ex .pile__top { background:linear-gradient(150deg,#3a3a48,#1d1d26); }
+.pile--cmd .pile__leaf { background:linear-gradient(90deg,#332a12,#6a5626 40%,#332a12); } .pile--cmd .pile__top { background:linear-gradient(150deg,#5a4a1e,#2c2410); border-color:rgba(216,166,60,.6); color:var(--gold); }
+.pile__label { font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+.pile--empty .pile__top { opacity:.4; }
+.pile:not(.pile--static):hover .pile__top { border-color:var(--astral-hi); color:#fff; }
+.pile--static { cursor:default; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ===========================================================================
+   Content, inlined from _orb.js -- the readable master. Not linked, because a
+   <script src> does not load from file:// and every mockup opens standalone.
+   =========================================================================== */
+
+const ME = { pid: 0, name: "You", life: 27, active: true, priority: true, lost: false, loss: null };
+
+const CMD = {
+  oid: 101,
+  name: "Aesi, Tyrant of Gyre Strait",
+  art: "aesi-tyrant-of-gyre-strait.jpg",
+  cost: ["4", "G", "U"],
+  zone: "command",
+  castable: true,
+  tax: 2,
+  identity: ["G", "U"],
+};
+
+/* Word + glyph. The third channel is the portrait's luminance and lives in CSS.
+   None of the three is hue -- CommandZone.tsx:57-76, and the reason is
+   docs/mockup-fidelity.md's top-ranked open defect. */
+const CMD_STATE = {
+  ready: { word: "Ready", glyph: "▶" },
+  waiting: { word: "In command", glyph: "·" },
+  stack: { word: "On the stack", glyph: "✦" },
+  deployed: { word: "On the battlefield", glyph: "✦" },
+  dead: { word: "In the graveyard", glyph: "✕" },
+  exiled: { word: "Exiled", glyph: "✕" },
+};
+const STATE = CMD_STATE.ready;
+
+const LETHAL = 21;
+const WARN = LETHAL - 6;
+
+const FOES = [
+  { pid: 1, name: "Edgar Markov", dmg: 16 },
+  { pid: 2, name: "Atraxa, Praetors' Voice", dmg: 7 },
+  { pid: 3, name: "Chulane, Teller of Tales", dmg: 0 },
+];
+const DMG = FOES.filter((f) => f.dmg > 0);
+
+/* markSpent(manaRow(...)) already applied -- logic/mana.ts. An ambiguous source
+   ("Add {G} or {U}") is ONE split pip and never two solid ones, because two
+   would claim a mana that does not exist. `spent` is the engine's own solved
+   payment for a hovered spell, never arithmetic done here. */
+const MANA = [
+  { k: "pool-U-0", tone: "U", symbols: ["U"], floating: true, spent: false },
+  { k: "src-31-0", tone: "G", symbols: ["G"], floating: false, spent: false },
+  { k: "src-32-0", tone: "G", symbols: ["G"], floating: false, spent: false },
+  { k: "src-33-0", tone: "any", symbols: ["G", "U"], floating: false, spent: true },
+  { k: "src-34-0", tone: "U", symbols: ["U"], floating: false, spent: true },
+  { k: "src-35-0", tone: "C", symbols: ["C"], floating: false, spent: false },
+];
+const SPENT = MANA.filter((m) => m.spent).length;
+
+/* `peek: false` is the library, and it is deliberate: hidden information, and a
+   control that does nothing when clicked is worse than no control. The other
+   four are the only route into ZonePeek, so a direction that draws them
+   decoratively makes the graveyard unreachable. */
+const ZONES = [
+  { name: "library", label: "Lib", kind: "lib", count: 41, peek: false, title: "Cards in library" },
+  { name: "hand", label: "Hand", kind: "lib", count: 5, peek: true, title: "Your hand" },
+  { name: "graveyard", label: "GY", kind: "gy", count: 12, peek: true, title: "GY: 12" },
+  { name: "exile", label: "Exile", kind: "ex", count: 3, peek: true, title: "Exile: 3" },
+  { name: "command", label: "CMD", kind: "cmd", count: 1, peek: true, title: "Command zone" },
+];
+
+/* Helpers ---------------------------------------------------------------- */
+
+const root = document.getElementById("root");
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const artUrl = (file) => "../art/" + file;
+
+/* zones.ts: one leaf per nine cards, nine leaves and then it stops. The top
+   leaf still carries the exact number, so the cap costs resolution and never
+   information. */
+const LEAF = 9;
+const MAX_LEAVES = 9;
+const leaves = (n) => (n <= 0 ? 0 : Math.min(MAX_LEAVES, Math.ceil(n / LEAF)));
+
+const manaTitle = (p) =>
+  p.spent
+    ? p.symbols.join(" or ") + " — this spell would tap it"
+    : p.symbols.length > 1
+      ? "Either " + p.symbols.join(" or ")
+      : p.floating
+        ? p.symbols[0] + " in pool"
+        : p.symbols[0];
+
+const manaRowTitle =
+  SPENT > 0 ? MANA.length + " available; this spell taps " + SPENT : MANA.length + " available";
+
+const costPips = (cost) =>
+  cost
+    .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
+    .join("");
+
+/* A key, not a control: the viewport IS the design, and dev chrome would
+   contaminate the screenshot. */
+const greyKey = () =>
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
+      document.documentElement.classList.toggle("grey");
+    }
+  });
+
+/* Views ------------------------------------------------------------------- */
+
+function commander() {
+  return (
+    '<button type="button" class="cmdslot" data-testid="commander-' + CMD.oid + '" data-castable="true" data-zone="' + CMD.zone + '" data-cmd-state="ready" title="Cast ' + esc(CMD.name) + " — +" + CMD.tax + ' commander tax">' +
+      '<span class="cmdslot__art"><img src="' + artUrl(CMD.art) + '" alt=""></span>' +
+      '<span class="cmdslot__tag" title="Commander">CMD</span>' +
+    "</button>"
+  );
+}
+
+function commanderText() {
+  return (
+    '<div class="who__body">' +
+      '<div class="who__id">' +
+        '<span class="who__name">' + esc(ME.name) + "</span>" +
+        (ME.priority ? '<span class="who__priority" title="Has priority"></span>' : "") +
+      "</div>" +
+      "<div>" +
+        '<div class="cmdslot__name">' + esc(CMD.name) + "</div>" +
+        '<div class="cmdslot__strip">' +
+          '<span class="cmdslot__glyph" aria-hidden="true">' + STATE.glyph + "</span>" +
+          '<span class="cmdslot__word">' + esc(STATE.word) + "</span>" +
+          '<span class="cmdslot__cost">' + costPips(CMD.cost) +
+            '<span class="cmdslot__tax" title="+' + CMD.tax + ' generic to cast from the command zone">+' + CMD.tax + "</span>" +
+          "</span>" +
+        "</div>" +
+        /* What you owe, then what you have, one line apart. */
+        '<div class="manaslot"><div class="mana" data-testid="mana-' + ME.pid + '" data-spending="' + SPENT + '" title="' + esc(manaRowTitle) + '">' +
+          MANA.map((p) =>
+            '<span class="mana__pip mana__pip--' + p.tone + (p.floating ? " mana__pip--floating" : "") + (p.spent ? " mana__pip--spent" : "") + '" title="' + esc(manaTitle(p)) + '"></span>'
+          ).join("") +
+        "</div></div>" +
+      "</div>" +
+    "</div>"
+  );
+}
+
+function damage() {
+  const rows = DMG.map((foe) => {
+    const pct = (Math.min(foe.dmg, LETHAL) / LETHAL) * 100;
+    return (
+      '<div class="dmg__row' + (foe.dmg >= WARN ? " dmg__row--warn" : "") + '" title="' + esc(foe.dmg + " from " + foe.name) + '">' +
+        '<span class="dmg__who">' + esc(foe.name) + "</span>" +
+        '<span class="dmg__trk"><span class="dmg__fill" style="width:' + pct.toFixed(1) + '%"></span><span class="dmg__ticks"></span></span>' +
+        '<span class="dmg__n tabular">' + foe.dmg + "</span>" +
+      "</div>"
+    );
+  }).join("");
+  return (
+    '<div class="dmg" title="Commander damage taken">' + rows +
+      '<div class="dmg__row"><span></span><span class="dmg__cap"><span>0</span><span>21 = lethal</span></span><span></span></div>' +
+    "</div>"
+  );
+}
+
+function piles() {
+  return (
+    '<div class="piles">' +
+      ZONES.map((z) => {
+        const stack =
+          Array.from({ length: leaves(z.count) }, () => '<span class="pile__leaf"></span>').join("") +
+          '<span class="pile__top tabular">' + z.count + "</span>";
+        const cls = "pile pile--" + z.kind + (z.count > 0 ? "" : " pile--empty") + (z.peek ? "" : " pile--static");
+        const attrs = 'class="' + cls + '" data-testid="pile-' + ME.pid + "-" + z.name + '" data-count="' + z.count + '" title="' + esc(z.title) + '"';
+        const body = '<span class="pile__stack">' + stack + '</span><span class="pile__label">' + esc(z.label) + "</span>";
+        return z.peek ? "<button type=\"button\" " + attrs + ">" + body + "</button>" : "<div " + attrs + ">" + body + "</div>";
+      }).join("") +
+    "</div>"
+  );
+}
+
+function docket() {
+  return (
+    '<div class="dock" data-player="' + ME.pid + '" data-testid="player-' + ME.pid + '">' +
+      '<div class="dock__sec dock__grow"><div class="who">' + commander() + commanderText() + "</div></div>" +
+
+      '<div class="dock__sec">' +
+        '<span class="dock__lab" style="text-align:center">Life</span>' +
+        '<div class="dial"><span class="dial__n tabular" data-testid="life-' + ME.pid + '">' + (ME.lost ? "OUT" : ME.life) + "</span></div>" +
+      "</div>" +
+
+      '<div class="dock__sec">' +
+        '<span class="dock__lab">Commander damage</span>' + damage() +
+      "</div>" +
+
+      '<div class="dock__sec">' +
+        '<span class="dock__lab">Zones</span>' + piles() +
+      "</div>" +
+    "</div>"
+  );
+}
+
+function lanes() {
+  const row = (tag, n, won) =>
+    '<div class="lane"><span class="lane__tag">' + tag + "</span>" +
+    Array.from({ length: n }, (_, i) => '<span class="ghost' + (won && i >= n - won ? " ghost--won" : "") + '"></span>').join("") + "</div>";
+  return '<div class="mat__lanes">' + row("Lands", 9, 2) + row("Creatures", 7, 2) + row("Other", 4, 0) + "</div>";
+}
+
+function render() {
+  root.innerHTML =
+    '<div class="stage">' +
+      '<div class="stage__top">' +
+        '<span class="stage__id">Orb · 02 Docket</span>' +
+        '<span class="stage__t">status is a header · the 190px column goes back to the board</span>' +
+        '<span class="stage__sp"></span>' +
+        '<span class="stage__k">full width × 104px · press g for greyscale</span>' +
+      "</div>" +
+      '<div class="stage__mid"><div class="mat">' + docket() + lanes() + "</div></div>" +
+      '<div class="stage__bot"><p class="note">' +
+        "<b>Every channel, and where it went.</b> Four sections, left to right, in the order you ask the questions. " +
+        "Name and the gold priority dot head the first; the commander keeps its portrait, CMD badge, two-line name, " +
+        "its state said three ways, its cost with the <b>+2</b> tax, and then the mana row on the line directly under that cost — inside the same block, " +
+        "because that adjacency is the one thing the rotation was not allowed to break. Life is the same dial at 82px. " +
+        "Commander damage gets the room a column never had: one row per source, a track that runs to 21, and the warn tier " +
+        "hatched as well as reddened so both readings survive greyscale. The five piles keep their leaves, their exact counts and their shared baseline; " +
+        "library is the one that is not a button. " +
+        "<b>The dashed green cards</b> in the lanes are the two extra per row this buys at 1120px — the whole argument, drawn. " +
+        "<b>Not shown:</b> targetable is a blue rim on the strip; eliminated greys it and the dial reads OUT with the loss reason beside the name; " +
+        "an opponent's docket is the same four sections at the same height, with the mana row and the cost dropped from the identity block — you are not paying it." +
+      "</p></div>" +
+    "</div>";
+}
+
+render();
+greyKey();
+</script>
+</body>
+</html>

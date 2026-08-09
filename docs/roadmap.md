@@ -3,7 +3,7 @@
 
 # Features
 
-## All Card Support
+## All Card Support — done
 
 ### Overview
 - The application was written to support just 2 precon decks
@@ -14,6 +14,68 @@
 
 ### Task
 - Add support for all cards, 2 additional precons (Isperia, Supreme Judge and zurgo stormrender), and custom decks via Moxfield deck import
+
+### What shipped
+
+**Custom decks via Moxfield, end to end.** Paste a public deck link and play it.
+The whole loop is documented in [deck-import.md](deck-import.md); the short
+version is that `api2.moxfield.com/v3/decks/all/{publicId}` is open to a scripted
+client (the 403 recorded in `mockups/README.md` was a *different* endpoint), and
+every card characteristic comes from our own catalog rather than from the payload.
+
+**"All cards" was mostly a catalog problem, and it split in two.** `cards.sqlite`
+already held every English card; what was limited to the precons was the *engine
+registry*, the ~149 hand-written cards. So the work was:
+
+- Three columns on the catalog — `oracle_text`, `keywords`, `produced_mana`.
+  Without the last, a generated land taps for nothing and a deck of inert lands
+  is not a deck. The index grew 7.3 MB → 14.4 MB.
+- A **key fix that mattered more than it looks**: the table was keyed on `name`
+  alone, so 87 real cards printed with a same-named token — Tarmogoyf, Champion
+  of Wits, Adorned Pouncer — had been evicted by it and were unreachable. Now
+  keyed on `(name, is_token)`.
+- `cards/proxy.py`, which generates a playable definition for a card nobody
+  wrote: real name, art, cost, types, stats, keywords and mana abilities, with
+  the rest of the rules text inert *and listed*. All 32,827 catalog rows
+  generate and compile.
+- A **two-layer registry**. `default_registry()` is the authored pool and is what
+  every test and the trainer see; `server_registry()` adds `data/generated/`.
+  Without the split, `pytest` would answer differently depending on what somebody
+  imported last week.
+
+### The two precons
+
+**Isperia, Supreme Judge** and **Zurgo Stormrender** ship, hand-written, at the
+Aesi/Edgar bar: every card in both is implemented and covered by
+`test_every_card_works`. 81 new card definitions, 230 in the registry, and the
+artless set is still exactly five. See [decks.md](decks.md).
+
+Neither commander's own text was expressible before, and none of the three
+engine additions is visible in a two-player game — which is why the original two
+decks never wanted them:
+
+- `defending` on an `attacks` trigger — *"whenever a creature attacks **you**"*.
+  `controller` answers whose creature is swinging, a different question; written
+  with `controller: "opponent"` Isperia draws a card when one opponent attacks
+  another.
+- `attacking` on `create_token` — a token put onto the battlefield already in
+  combat, against whoever its maker is attacking. That is mobilize. It is not a
+  *declared* attacker, which is the real rule and also what stops it making
+  another token forever.
+- `was_attacking` on `leaves_battlefield` — last-known information, snapshotted
+  where `was_creature` already was, because by the time the trigger resolves the
+  object is out of combat and there is nothing left to ask. That is Zurgo's
+  second ability.
+
+All three have tests in `tests/unit/test_attack_triggers.py`, several of which
+need a three-player pod to mean anything.
+
+**Three cards were dropped rather than shipped wrong**, and the reasons are worth
+keeping: Isperia's pillowfort (Propaganda, Ghostly Prison) needs a cost-to-attack
+mechanic the engine does not have; Condemn's only legal target is an attacking
+creature, which the `test_every_card_works` sandbox has no way to produce; and
+Village Rites puts a sacrifice in its casting cost, which the DSL only models on
+an activated ability. Each would have been an inert card that looked implemented.
 
 ---
 
@@ -159,6 +221,20 @@ so an always-present global lane wrapped their creatures onto an extra row. What
 has changed is that it is no longer a layout-stability question, only a width one:
 hiding an empty lane cannot move the mat's box any more. `PlayerMat`'s `visible`
 is a pure width optimisation now.
+
+**Shipping Isperia and Zurgo made the remaining half of this measurable.** A pod
+used to be one deck three times over, because opponent seats cycle whatever
+`/api/decks` returns and there were only two. With four decks a pod is genuinely
+four different boards, and Zurgo's is a token deck: an opponent mat then hides
+about **two** card rows behind its scroll rather than the under-one the fixed
+lane height was sized for (136px hidden against a 73px card, measured).
+
+Nothing regressed — the layout code is untouched and the row still never clips.
+What changed is that the worst realistic case got worse, and it is now
+reproducible instead of hypothetical. `frontend/e2e/cycle3.spec.ts`'s "opponent
+cards shrink with the pod" pins its pod to two decks so it keeps measuring card
+*sizing*, which is what it was written for; the row-budget question wants its own
+test and a taller `--pod-lanes-h` for four-player pods.
 
 ### Deliberate divergence from the reference layout
 The reference diagram puts library / graveyard / exile in a strip beside the

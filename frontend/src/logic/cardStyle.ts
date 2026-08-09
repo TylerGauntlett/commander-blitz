@@ -173,29 +173,46 @@ export interface ManaPip {
 /**
  * Mana symbols split for pip rendering: "{4}{G}{U}" -> 4, G, U.
  *
- * The engine rejects hybrid and phyrexian costs at load time, so the only
- * symbols that reach here are numbers, WUBRG and C -- but a slash is still
- * mapped to `generic` rather than emitting an unmatchable class name.
+ * A hybrid pip takes the tone of its *first* colour rather than a blend. The
+ * tone drives a background wash behind the symbol, and the symbol itself is
+ * already drawn as Scryfall's two-tone mark -- so a second wash underneath it
+ * would fight the thing it is meant to support.
  */
 export function manaPips(manaCost: string): ManaPip[] {
   if (!manaCost || manaCost === "{0}") return [];
   return [...manaCost.matchAll(/\{([^}]*)\}/g)].map((match, index) => {
     const symbol = match[1];
-    const simple = /^[WUBRGC]$/.test(symbol);
-    return {
-      symbol,
-      key: `${index}-${symbol}`,
-      tone: simple ? symbol : "generic",
-    };
+    return { symbol, key: `${index}-${symbol}`, tone: toneFor(symbol) };
   });
+}
+
+/**
+ * The wash a symbol sits on. Shared by `manaPips` and `symbolTokens` so a cost
+ * row and the same cost quoted inside rules text cannot disagree.
+ *
+ * A hybrid takes its *first* colour rather than a blend: Scryfall's mark is
+ * already two-tone, so a second gradient underneath would fight it.
+ */
+function toneFor(symbol: string): string {
+  if (/^[WUBRGC]$/.test(symbol)) return symbol;
+  const hybrid = /^([WUBRGC2])\/([WUBRGCP])$/.exec(symbol);
+  if (hybrid) return /^[WUBRGC]$/.test(hybrid[1]) ? hybrid[1] : hybrid[2];
+  return "generic";
 }
 
 export type SymbolToken =
   | { kind: "text"; value: string; key: string }
   | { kind: "symbol"; value: string; label: string; tone: string; key: string };
 
-/** Symbols worth drawing as a pip. Anything else stays as text. */
-const RENDERABLE = /^([WUBRGC]|\d+|X|T|Q|S|E)$/;
+/**
+ * Symbols worth drawing as a pip. Anything else stays as text.
+ *
+ * Hybrid and phyrexian are included because an imported card's oracle text is
+ * shown verbatim, and activation costs in it are full of `{W/U}` and `{G/P}`.
+ * `public/symbols/` carries all of them -- see `ManaSymbol`'s `KNOWN`, which
+ * this has to stay in step with.
+ */
+const RENDERABLE = /^([WUBRGC]|\d+|X|T|Q|S|E|[WUBRGC2]\/[WUBRGCP])$/;
 
 /** What a non-mana symbol draws as. Mana symbols draw as their own letter. */
 const SYMBOL_LABELS: Record<string, string> = {
@@ -230,11 +247,7 @@ export function symbolTokens(text: string): SymbolToken[] {
         kind: "symbol",
         value: symbol,
         label: SYMBOL_LABELS[symbol] ?? symbol,
-        tone: /^[WUBRGC]$/.test(symbol)
-          ? symbol
-          : symbol === "T" || symbol === "Q"
-            ? "tap"
-            : "generic",
+        tone: symbol === "T" || symbol === "Q" ? "tap" : toneFor(symbol),
         key: `s${index++}`,
       });
     } else {

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from automtg import __version__
 from automtg.cards.images import load_index
-from automtg.cards.registry import GameData, default_registry
+from automtg.cards.registry import GameData, server_registry
 
 from .art import build_store
 from .routes import art_router, router
@@ -35,7 +35,11 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    game_data = data if data is not None else default_registry()
+    # `server_registry` rather than `default_registry`: the server is the one
+    # caller that should see imported decks. Everything else -- tests, the
+    # trainer, the arena -- stays on the authored layer.
+    pinned = data is not None
+    game_data = data if pinned else server_registry()
     app.state.sessions = SessionRegistry(game_data)
 
     # Both are optional. A fresh clone that has not run the build script must
@@ -45,6 +49,29 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
     app.state.art = build_store(
         game_data.registry, app.state.card_index, allow_fetch=allow_art_fetch
     )
+
+    def reload() -> None:
+        """Pick up cards and decks that an import just wrote to disk.
+
+        Clearing the ``lru_cache`` is not sufficient: ``SessionRegistry`` holds
+        the ``GameData`` it was constructed with, so the new one has to be
+        rebound onto it.  That rebinding is a single attribute assignment and so
+        atomic under the GIL -- a concurrent reader sees the old registry or the
+        new one, never a half-built one.  Games already in progress keep their
+        own reference and are deliberately untouched: swapping the card pool
+        under a running game is not a refresh, it is a corruption.
+        """
+        if pinned:
+            # An explicitly-passed GameData is a test fixture or a script's
+            # curated pool.  Reloading would silently replace it with whatever
+            # is on disk, which is the opposite of what pinning asked for.
+            return
+        server_registry.cache_clear()
+        fresh = server_registry()
+        app.state.sessions.data = fresh
+        app.state.art.reload(fresh.registry, app.state.card_index)
+
+    app.state.reload = reload
 
     app.include_router(router)
     app.include_router(art_router)

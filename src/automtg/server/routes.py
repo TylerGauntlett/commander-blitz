@@ -8,10 +8,14 @@ the whole rules vocabulary can grow without touching the frontend.
 
 from __future__ import annotations
 
+import json
+
 from fastapi import APIRouter, Body, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
+from automtg.cards import importer, moxfield
 from automtg.cards.images import CardIndex, IndexEntry
+from automtg.cards.registry import default_registry
 from automtg.engine.errors import IllegalActionError
 from automtg.engine.serialize import event_log, full_view, player_view
 
@@ -21,11 +25,14 @@ from .schemas import (
     CardResponse,
     CatalogCardDTO,
     CatalogResponse,
+    DeckImportResponse,
     DeckSummary,
     DeclareRequest,
     GameCreatedResponse,
     ImageRefDTO,
     ImagesResponse,
+    ImportDeckRequest,
+    ImportedCardDTO,
     NewGameRequest,
     OptionsRequest,
     StateResponse,
@@ -33,6 +40,17 @@ from .schemas import (
 from .sessions import GameSession, SessionRegistry
 
 router = APIRouter(prefix="/api")
+
+#: An import failure is not one status code.  "Private" sends somebody to their
+#: Moxfield settings and "not found" sends them back to the address bar, so
+#: collapsing them into a single 400 sends them to neither.
+_IMPORT_STATUS = {
+    "bad_url": 400,
+    "private": 403,
+    "not_found": 404,
+    "unreachable": 502,
+    "no_catalog": 503,
+}
 
 #: Art is served from the app root rather than under ``/api`` so it reads as a
 #: static asset to the browser, the dev proxy and any future cache in front.
@@ -79,23 +97,130 @@ def _state_response(session: GameSession, seat: int, since: int = 0) -> StateRes
 # ----------------------------------------------------------------------
 
 
+def _deck_summary(deck, data) -> DeckSummary:
+    coverage = _coverage_map()
+    simplified = sum(
+        qty
+        for card_id, qty in (*deck.cards, *((c, 1) for c in deck.commanders))
+        if coverage.get(card_id) == "partial"
+    )
+    return DeckSummary(
+        id=deck.id,
+        name=deck.name,
+        commanders=list(deck.commanders),
+        commander_names=[data.registry.get(c).name for c in deck.commanders],
+        color_identity=sorted(deck.color_identity),
+        card_count=deck.total_cards(),
+        notes=deck.notes,
+        source=deck.source,
+        playable=deck.total_cards() - simplified,
+        simplified=simplified,
+    )
+
+
+def _coverage_map() -> dict[str, str]:
+    """``card_id -> coverage`` for generated cards.
+
+    Read per request rather than cached: an import writes it, and a stale map
+    would report the deck somebody just imported as fully playable.  The file is
+    a few KB and absent entirely on a machine that has never imported.
+    """
+    from automtg.cards.importer import coverage_path
+
+    path = coverage_path()
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):  # pragma: no cover
+        return {}
+    return {k: v.get("coverage", "partial") for k, v in raw.items()}
+
+
 @router.get("/decks", response_model=list[DeckSummary])
 def list_decks(request: Request) -> list[DeckSummary]:
     data = _registry(request).data
-    out = []
-    for deck in data.decks.values():
-        out.append(
-            DeckSummary(
-                id=deck.id,
-                name=deck.name,
-                commanders=list(deck.commanders),
-                commander_names=[data.registry.get(c).name for c in deck.commanders],
-                color_identity=sorted(deck.color_identity),
-                card_count=deck.total_cards(),
-                notes=deck.notes,
-            )
+    return [_deck_summary(deck, data) for deck in data.decks.values()]
+
+
+@router.post("/decks/import", response_model=DeckImportResponse, status_code=201)
+def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse:
+    """Import a public Moxfield deck.
+
+    Cards the engine already implements are reused whole; the rest are generated
+    with their rules text inert, and the response says exactly how many of each.
+    On success the deck is a ``deck_id`` like any other, so starting a game with
+    it goes through ``POST /api/games`` unchanged.
+    """
+    try:
+        parsed = moxfield.load(body.url)
+        report = importer.import_deck(
+            parsed,
+            # The *authored* layer, deliberately. Handed the server's merged
+            # registry, a re-import would find the proxies the first import
+            # wrote and report them as hand-written cards.
+            default_registry().registry,
+            getattr(request.app.state, "card_index", None),
+            dry_run=body.dry_run,
         )
-    return out
+    except moxfield.ImportFailed as exc:
+        raise HTTPException(
+            status_code=_IMPORT_STATUS.get(exc.code, 422),
+            detail={"detail": exc.message, "code": exc.code},
+        ) from None
+
+    if not body.dry_run:
+        # Picks up the files the import just wrote.  Without this the deck is on
+        # disk and invisible until somebody restarts the server.
+        request.app.state.reload()
+
+    data = _registry(request).data
+    deck = data.decks.get(report.deck_id)
+    summary = (
+        _deck_summary(deck, data)
+        if deck is not None
+        else DeckSummary(
+            id=report.deck_id,
+            name=report.deck_name,
+            commanders=[],
+            commander_names=[],
+            color_identity=[],
+            card_count=report.total,
+            source="moxfield",
+            playable=report.playable,
+            simplified=report.simplified,
+        )
+    )
+    return DeckImportResponse(
+        deck=summary,
+        source_id=report.source_id,
+        total=report.total,
+        playable=report.playable,
+        simplified=report.simplified,
+        lands=report.lands,
+        lands_producing_mana=report.lands_producing_mana,
+        cards=[
+            ImportedCardDTO(
+                name=c.name, qty=c.qty, card_id=c.card_id,
+                origin=c.origin, notes=list(c.notes),
+            )
+            for c in report.cards
+        ],
+        problems=report.problems,
+    )
+
+
+@router.delete("/decks/{deck_id}", status_code=204)
+def delete_deck(request: Request, deck_id: str) -> None:
+    """Remove an imported deck.  Precons are not deletable."""
+    data = _registry(request).data
+    deck = data.decks.get(deck_id)
+    if deck is None:
+        raise HTTPException(status_code=404, detail=f"no deck {deck_id}")
+    if deck.source != "moxfield":
+        raise HTTPException(status_code=400, detail=f"{deck_id} ships with the engine")
+    importer.delete_deck(deck_id)
+    request.app.state.reload()
 
 
 @router.get("/cards/{card_id}", response_model=CardResponse)
@@ -123,18 +248,28 @@ def get_card(request: Request, card_id: str) -> CardResponse:
 
 
 @router.get("/images", response_model=ImagesResponse)
-def list_images(request: Request) -> ImagesResponse:
-    """Every engine card's art location, in one cacheable response.
+def list_images(request: Request, game_id: str | None = Query(None)) -> ImagesResponse:
+    """Card art locations, in one cacheable response.
 
-    Static for the life of the process, so the client fetches it once at boot
-    rather than receiving it inside every state poll.  A ``null`` value is
-    meaningful: that card has no printing anywhere and the client should draw
-    its "no art" plate rather than request an image that will 404.
+    Static for the life of the process, so the client fetches it once rather
+    than receiving it inside every state poll.  A ``null`` value is meaningful:
+    that card has no printing anywhere and the client should draw its "no art"
+    plate rather than request an image that will 404.
+
+    ``?game_id=`` narrows it to the cards reachable from that game's decks.
+    Unscoped this was ~17 KB for the two precons; with imported decks in the
+    registry it grows without bound, and no game needs more than its own ~200
+    cards.  The unscoped form is kept byte-identical -- scripts depend on it, and
+    "every card the engine has" is a genuinely different question.
     """
     art = _art(request)
     registry = _registry(request).data.registry
+    if game_id is not None:
+        wanted = sorted(_wanted_ids(_session(request, game_id), registry))
+    else:
+        wanted = registry.ids()
     images: dict[str, ImageRefDTO | None] = {}
-    for card_id in registry.ids():
+    for card_id in wanted:
         url = art.url_for(card_id)
         images[card_id] = (
             None
@@ -142,6 +277,22 @@ def list_images(request: Request) -> ImagesResponse:
             else ImageRefDTO(card_id=card_id, art=url, artist=art.artist_for(card_id))
         )
     return ImagesResponse(images=images)
+
+
+def _wanted_ids(session: GameSession, registry) -> set[str]:
+    """Every card that can appear in this game.
+
+    The seats' decks, plus every token they can make -- a token is never in a
+    deck list but is very much on the board, and missing one is a blank plate
+    the first time somebody attacks.
+    """
+    ids: set[str] = set()
+    for seat in session.seats:
+        ids |= session.data.deck(seat.deck_id).unique_ids()
+    for card in registry:
+        if card.is_token:
+            ids.add(card.id)
+    return ids
 
 
 # ----------------------------------------------------------------------
@@ -195,7 +346,7 @@ def search_catalog(
 @router.get("/catalog/{scryfall_id}", response_model=CatalogCardDTO)
 def get_catalog_card(request: Request, scryfall_id: str) -> CatalogCardDTO:
     index = _index(request)
-    entry = next((e for e in index.iter_all() if e.scryfall_id == scryfall_id), None)
+    entry = index.by_scryfall_id(scryfall_id)
     if entry is None:
         raise HTTPException(status_code=404, detail=f"no catalog card {scryfall_id}")
     return _catalog_dto(entry)

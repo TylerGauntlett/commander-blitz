@@ -57,6 +57,11 @@ def move_object(
 
     was_creature = from_zone is Zone.BATTLEFIELD and "Creature" in chars(state, oid).types
     was_on_battlefield = from_zone is Zone.BATTLEFIELD
+    # Snapshotted here for the same reason `was_creature` is: by the time a
+    # leaves-battlefield trigger resolves, the object is out of combat and there
+    # is nothing left to ask.  This is the engine's explicit-LKI pattern, in the
+    # one place a card cannot reach with a `snapshot` op of its own.
+    was_attacking = was_on_battlefield and state.combat is not None and state.combat.attacking(oid)
 
     _remove_from_zone(state, obj)
 
@@ -88,6 +93,10 @@ def move_object(
             oid=oid,
             card=card.id,
             was_creature=was_creature,
+            # 1/0 rather than a bool, so a card reads it with the ordinary
+            # `{"binding": "was_attacking"}` value expression and no new
+            # condition vocabulary has to exist for it.
+            was_attacking=1 if was_attacking else 0,
         )
         if to_zone is Zone.GRAVEYARD:
             fire(

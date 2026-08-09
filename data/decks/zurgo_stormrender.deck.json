@@ -1,0 +1,308 @@
+{
+  "id": "zurgo",
+  "name": "Zurgo Stormrender",
+  "commanders": [
+    "zurgo_stormrender"
+  ],
+  "color_identity": [
+    "W",
+    "B",
+    "R"
+  ],
+  "cards": [
+    {
+      "id": "plains",
+      "qty": 9
+    },
+    {
+      "id": "mountain",
+      "qty": 10
+    },
+    {
+      "id": "swamp",
+      "qty": 10
+    },
+    {
+      "id": "nomad_outpost",
+      "qty": 1
+    },
+    {
+      "id": "savai_triome",
+      "qty": 1
+    },
+    {
+      "id": "scoured_barrens",
+      "qty": 1
+    },
+    {
+      "id": "bloodfell_caves",
+      "qty": 1
+    },
+    {
+      "id": "wind_scarred_crag",
+      "qty": 1
+    },
+    {
+      "id": "command_tower",
+      "qty": 1
+    },
+    {
+      "id": "terramorphic_expanse",
+      "qty": 1
+    },
+    {
+      "id": "evolving_wilds",
+      "qty": 1
+    },
+    {
+      "id": "adanto_vanguard",
+      "qty": 1
+    },
+    {
+      "id": "angel_of_despair",
+      "qty": 1
+    },
+    {
+      "id": "arcane_signet",
+      "qty": 1
+    },
+    {
+      "id": "bastion_of_remembrance",
+      "qty": 1
+    },
+    {
+      "id": "bishop_of_rebirth",
+      "qty": 1
+    },
+    {
+      "id": "bishop_of_the_bloodstained",
+      "qty": 1
+    },
+    {
+      "id": "blood_artist",
+      "qty": 1
+    },
+    {
+      "id": "bloodline_necromancer",
+      "qty": 1
+    },
+    {
+      "id": "bloodthrone_vampire",
+      "qty": 1
+    },
+    {
+      "id": "chief_of_the_edge",
+      "qty": 1
+    },
+    {
+      "id": "commanders_sphere",
+      "qty": 1
+    },
+    {
+      "id": "cruel_celebrant",
+      "qty": 1
+    },
+    {
+      "id": "dictate_of_erebos",
+      "qty": 1
+    },
+    {
+      "id": "disfigure",
+      "qty": 1
+    },
+    {
+      "id": "dragon_fodder",
+      "qty": 1
+    },
+    {
+      "id": "dreadbore",
+      "qty": 1
+    },
+    {
+      "id": "dusk_legion_zealot",
+      "qty": 1
+    },
+    {
+      "id": "epicure_of_blood",
+      "qty": 1
+    },
+    {
+      "id": "falkenrath_noble",
+      "qty": 1
+    },
+    {
+      "id": "gifted_aetherborn",
+      "qty": 1
+    },
+    {
+      "id": "go_for_the_throat",
+      "qty": 1
+    },
+    {
+      "id": "grave_titan",
+      "qty": 1
+    },
+    {
+      "id": "hellrider",
+      "qty": 1
+    },
+    {
+      "id": "heros_downfall",
+      "qty": 1
+    },
+    {
+      "id": "hordeling_outburst",
+      "qty": 1
+    },
+    {
+      "id": "impact_tremors",
+      "qty": 1
+    },
+    {
+      "id": "increasing_devotion",
+      "qty": 1
+    },
+    {
+      "id": "indulgent_aristocrat",
+      "qty": 1
+    },
+    {
+      "id": "intangible_virtue",
+      "qty": 1
+    },
+    {
+      "id": "kalastria_highborn",
+      "qty": 1
+    },
+    {
+      "id": "krenkos_command",
+      "qty": 1
+    },
+    {
+      "id": "lightning_strike",
+      "qty": 1
+    },
+    {
+      "id": "marauding_maulhorn",
+      "qty": 1
+    },
+    {
+      "id": "mardu_hateblade",
+      "qty": 1
+    },
+    {
+      "id": "mardu_woe_reaper",
+      "qty": 1
+    },
+    {
+      "id": "martyr_of_dusk",
+      "qty": 1
+    },
+    {
+      "id": "mavren_fein_dusk_apostle",
+      "qty": 1
+    },
+    {
+      "id": "mind_stone",
+      "qty": 1
+    },
+    {
+      "id": "nights_whisper",
+      "qty": 1
+    },
+    {
+      "id": "path_to_exile",
+      "qty": 1
+    },
+    {
+      "id": "phyrexian_arena",
+      "qty": 1
+    },
+    {
+      "id": "raise_the_alarm",
+      "qty": 1
+    },
+    {
+      "id": "read_the_bones",
+      "qty": 1
+    },
+    {
+      "id": "sangromancer",
+      "qty": 1
+    },
+    {
+      "id": "sanguine_bond",
+      "qty": 1
+    },
+    {
+      "id": "secure_the_wastes",
+      "qty": 1
+    },
+    {
+      "id": "sengir_vampire",
+      "qty": 1
+    },
+    {
+      "id": "sol_ring",
+      "qty": 1
+    },
+    {
+      "id": "solemn_simulacrum",
+      "qty": 1
+    },
+    {
+      "id": "stromkirk_noble",
+      "qty": 1
+    },
+    {
+      "id": "swords_to_plowshares",
+      "qty": 1
+    },
+    {
+      "id": "terminate",
+      "qty": 1
+    },
+    {
+      "id": "timely_hordemate",
+      "qty": 1
+    },
+    {
+      "id": "vampire_aristocrat",
+      "qty": 1
+    },
+    {
+      "id": "vampire_nighthawk",
+      "qty": 1
+    },
+    {
+      "id": "vampiric_rites",
+      "qty": 1
+    },
+    {
+      "id": "vanquishers_banner",
+      "qty": 1
+    },
+    {
+      "id": "vicious_conquistador",
+      "qty": 1
+    },
+    {
+      "id": "vindicate",
+      "qty": 1
+    },
+    {
+      "id": "wayfarers_bauble",
+      "qty": 1
+    },
+    {
+      "id": "zealous_persecution",
+      "qty": 1
+    },
+    {
+      "id": "zulaport_cutthroat",
+      "qty": 1
+    }
+  ],
+  "substitutions": [],
+  "notes": "Mardu mobilize. Attacking makes a token, the token is meant to die, and Zurgo turns each death into a card or a point of drain. The aristocrats half of the list is shared with Edgar Markov - same colours, and a deck built to sacrifice its own creatures wants exactly those payoffs."
+}

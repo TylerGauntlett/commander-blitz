@@ -77,7 +77,11 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
   // Forced rather than hunted for: whether an artless card reaches the board
   // depends on the shuffle, and a test that depends on the shuffle is a test
   // that fails on Tuesdays.
-  await page.route("**/api/images", (route) =>
+  // `**/api/images*` rather than `**/api/images`: the client scopes the request
+  // to a game (`?game_id=`) once there is one, and a glob without the trailing
+  // wildcard stops matching the moment a query string appears -- which would
+  // silently let the real art through and make this test assert nothing.
+  await page.route("**/api/images*", (route) =>
     route.fulfill({ json: { art_base: "/art", images: {} } }),
   );
 

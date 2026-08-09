@@ -34,14 +34,20 @@ class TestStaticData:
     def test_health(self, client):
         body = client.get("/health").json()
         assert body["status"] == "ok"
-        assert set(body["decks"]) == {"aesi", "edgar"}
+        # The fixture pins this client to `default_registry()`, so this is the
+        # shipped set regardless of what anyone has imported locally.
+        assert set(body["decks"]) == {"aesi", "edgar", "isperia", "zurgo"}
 
     def test_deck_list(self, client):
         decks = client.get("/api/decks").json()
-        assert {d["id"] for d in decks} == {"aesi", "edgar"}
+        assert {d["id"] for d in decks} == {"aesi", "edgar", "isperia", "zurgo"}
         for deck in decks:
             assert deck["card_count"] == 100
             assert deck["commander_names"]
+            # A precon is hand-written all the way through, so it has nothing
+            # to admit -- an imported deck is where these are non-zero.
+            assert deck["source"] == "precon"
+            assert deck["simplified"] == 0
 
     def test_card_lookup(self, client):
         card = client.get("/api/cards/edgar_markov").json()

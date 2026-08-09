@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Player orb — Ink &amp; Signal (orb 04)</title>
+<style>
+/* ============================================================================
+   INK & SIGNAL -- the control, and the one that gives width back for free
+   ----------------------------------------------------------------------------
+   THESIS. This one is here to be the bar the other four have to clear. It is a
+   ledger: hairline rules, one type scale, aligned columns, and exactly one
+   filled object per question. It fits in 150px, which is 40px NARROWER than
+   today's column, and it hands those 40px straight to the board.
+
+   Measured, it is 150 x 434, and the height is the honest cost: giving every
+   zone and every damage source its own labelled row is what makes the ledger a
+   ledger, and seven rows plus their eyebrows are taller than five piles in a
+   wrapped flex row. On a 16:9 board that is the right way round -- width is the
+   scarce axis and height is not -- but it is a trade and not a free lunch. If
+   the column has to get shorter rather than narrower, this is the wrong one.
+
+   THE RULE, which is menu 04's rule and the reason that direction's greyscale
+   twin was indistinguishable from its colour shot: HUE IS SPENT ON MANA AND ON
+   NOTHING ELSE. Mana is the one place in this app where colour IS the datum, so
+   it keeps its pips and gains their letters. Everything else -- priority, ready,
+   the warn tier, a full track -- is said with fill, weight or rule thickness. If
+   you press `g` and this file changes, something in it is wrong.
+
+   THE BIG IDEA, stealable on its own: ONE TRACK, TWO SCALES. Commander damage
+   and the five zones are the same object at two resolutions -- a segmented
+   track, filled from the left, with the exact number right-aligned beside it.
+   The damage track is 21 segments because 21 is lethal. The zone track is nine
+   segments because `pileLeaves` already draws one leaf per nine cards and stops
+   at nine, so the horizontal track is the shipped pile's own scale, turned on
+   its side and given a label column to align against. A library at 41 and a
+   graveyard at 12 compare by bar length the way the piles do, and by number the
+   way the old chips did, in one row each.
+
+   THE TRADE. It is the least game-like surface of the five, on purpose. There is
+   no brass, no glow, and the life dial -- the one part of today's orb that is
+   genuinely good -- is gone, replaced by the largest numeral on the panel. If
+   the dial is load-bearing for the app's feel, this direction loses on that and
+   its ideas should be ported into whichever one wins instead.
+
+   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   ========================================================================== */
+
+/* Tokens ----------------------------------------------------------------- */
+
+:root {
+  --void-0:#0b0a16; --void-1:#141328; --void-2:#1d1b38;
+  --edge:rgba(150,140,255,.16); --edge-hi:rgba(170,160,255,.3);
+  --astral:#8f7fe8; --astral-hi:#c3b6ff;
+
+  --pane-bg:rgba(20,19,40,.6); --pane-well:rgba(13,12,28,.78);
+  --pane-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45);
+
+  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
+  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-generic:#cfc9bd; --mana-ink:#1a1a1a;
+
+  --playable:#5ce08a; --targetable:#58b6ff; --staged:#ffc14d;
+  --danger:#ff5c5c; --gain:#6ee7a0; --gold:#ffd479; --ability:#c39bff;
+  --frame-commander:#d8a63c; --dial-ink:#2a1c04;
+  --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
+
+  --card-w:78px;
+  --card-r:calc(var(--card-w) * .055);
+  --font:"Segoe UI", Inter, system-ui, sans-serif;
+}
+
+* { box-sizing:border-box; }
+html,body,#root { height:100%; margin:0; }
+html.grey { filter:grayscale(1); }
+body {
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90,190,220,.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+  color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button { cursor:pointer; background:none; border:0; font:inherit; color:inherit; }
+.tabular { font-variant-numeric:tabular-nums; }
+
+/* Shared vocabulary ------------------------------------------------------ */
+
+.pip {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:13px; height:13px; padding:0 3px; border-radius:999px;
+  font-size:8.5px; font-weight:800; font-style:normal; color:var(--mana-ink);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.25);
+}
+.pip--W { background:var(--mana-W); } .pip--U { background:var(--mana-U); }
+.pip--B { background:var(--mana-B); } .pip--R { background:var(--mana-R); }
+.pip--G { background:var(--mana-G); } .pip--C { background:var(--mana-C); }
+.pip--gen { background:var(--mana-generic); }
+
+.note { margin:0; padding:11px 13px; border-left:2px solid var(--edge-hi); border-radius:0 7px 7px 0; background:rgba(13,12,28,.55); font-size:11.5px; line-height:1.6; color:var(--text-faint); }
+.note b { color:var(--text-dim); font-weight:700; }
+
+/* Stage: the mockup's own chrome, not part of the design ------------------ */
+
+.stage { height:100%; display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+.stage__top { display:flex; align-items:baseline; gap:14px; padding:18px 26px 0; }
+.stage__id { font-size:12px; font-weight:800; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); }
+.stage__t { font-size:12px; color:var(--text-dim); }
+.stage__sp { flex:1; }
+.stage__k { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.stage__mid { display:grid; place-items:center; min-height:0; padding:14px 26px; overflow:hidden; }
+.stage__bot { padding:0 26px 20px; max-width:1180px; }
+
+.mat { display:grid; grid-template-columns:150px minmax(0,1fr); gap:10px; padding:10px; border:1px solid var(--edge); border-radius:12px; background:var(--pane-bg); box-shadow:var(--pane-shadow); max-height:100%; }
+.mat__side { min-width:0; }
+.mat__lanes { display:grid; grid-template-rows:repeat(3, minmax(0,1fr)); gap:8px; min-width:0; }
+.lane { display:flex; align-items:center; gap:6px; padding:7px 9px; border:1px dashed var(--edge); border-radius:8px; background:rgba(9,8,20,.34); overflow:hidden; }
+.lane__tag { flex:none; width:44px; font-size:8.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }
+.ghost { flex:none; width:var(--card-w); height:calc(var(--card-w) * 1.4); border-radius:var(--card-r); border:1px solid var(--edge); background:linear-gradient(160deg, rgba(40,36,74,.55), rgba(16,14,34,.55)); }
+
+/* THE ORB ----------------------------------------------------------------- */
+
+/* The active seat is a 2px left rule and a brighter frame -- weight, not glow.
+   Both survive greyscale, and neither costs a pixel of layout. */
+.orb { width:150px; padding:9px 8px; border:1px solid rgba(230,227,245,.45); border-left:3px solid var(--text); border-radius:8px; background:rgba(13,12,28,.66); }
+.orb__rule { height:1px; margin:6px 0; background:var(--edge); }
+
+.orb__head { display:flex; align-items:center; gap:6px; }
+.orb__name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:750; letter-spacing:.02em; }
+/* Priority is the only filled square on the panel. A shape, not a colour. */
+.orb__priority { flex:none; width:8px; height:8px; background:var(--text); }
+
+.eyebrow { display:flex; align-items:baseline; justify-content:space-between; gap:6px; font-size:8px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+
+/* The commander ------------------------------------------------------------
+   The one place art is allowed, so it is the only colour on the panel besides
+   the mana pips. Castable is an inverse READY tag plus a solid frame: the
+   portrait stays lit, a non-castable one dims to 62% -- the same luminance
+   channel CommandZone.tsx already uses, doing the work the green rim did. */
+.cmd { position:relative; display:block; width:100%; padding:0; text-align:left; border:1px solid rgba(230,227,245,.6); border-radius:5px; overflow:hidden; background:rgba(9,8,20,.5); }
+.cmd__art { position:relative; display:block; aspect-ratio:2; overflow:hidden; background:#241f33; }
+.cmd__art img { display:block; width:100%; height:100%; object-fit:cover; }
+.cmd__tag { position:absolute; top:6px; left:6px; padding:0 4px; border-radius:2px; background:var(--text); color:var(--void-0); font-size:8px; font-weight:800; letter-spacing:.08em; line-height:1.5; }
+/* `display:block` is load-bearing, not tidiness. As an inline span this box
+   establishes no width for the clamp inside it, so the name ran on one line and
+   `overflow:hidden` cut it -- which is docs/mockup-fidelity.md defect #5,
+   "Aesi, Tyra...", reproduced exactly. The clamp needs a block to clamp in. */
+.cmd__body { display:block; padding:5px 6px 6px; }
+.cmd__name { display:-webkit-box; overflow:hidden; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:10.5px; font-weight:700; line-height:1.2; }
+.cmd__strip { display:flex; align-items:center; gap:5px; margin-top:4px; }
+.cmd__state { flex:none; display:inline-flex; align-items:center; gap:3px; padding:0 4px; border-radius:2px; background:var(--text); color:var(--void-0); font-size:8px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; line-height:1.6; }
+.cmd__cost { display:flex; gap:2px; align-items:center; margin-left:auto; }
+.cmd__tax { padding:0 4px; border:1px solid rgba(230,227,245,.55); border-radius:2px; font-size:9px; font-weight:800; line-height:1.5; }
+
+/* Life: the largest numeral on the panel, and the only thing at this weight.
+   No disc, no glow -- size IS the emphasis, and size is a greyscale channel. */
+.life { display:flex; align-items:baseline; gap:7px; }
+.life__n { font-size:38px; font-weight:900; line-height:.9; letter-spacing:-.02em; }
+.life__loss { font-size:9.5px; color:var(--text-dim); }
+
+/* One track, two scales -----------------------------------------------------
+   The damage track is 21 segments because 21 is lethal. The zone track is nine
+   because `pileLeaves` is one leaf per nine cards, capped at nine -- so this is
+   the shipped pile's own scale, on its side, with a label column to align to. */
+.trk { display:flex; gap:1px; }
+.trk__s { flex:1; height:7px; border:1px solid rgba(230,227,245,.35); border-radius:1px; }
+.trk__s--on { background:var(--text-dim); border-color:var(--text-dim); }
+
+.row { display:grid; align-items:center; gap:6px; padding:1px 0; }
+.row--dmg { grid-template-columns:minmax(0,1fr) 22px; }
+.row--zone { grid-template-columns:32px minmax(0,1fr) 20px; width:100%; text-align:left; border:0; background:none; padding:1px 0; }
+.row__lab { font-size:8.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+.row__n { font-size:11px; font-weight:800; text-align:right; color:var(--text); }
+
+/* The warn tier, said twice and neither time with hue: the track fills solid
+   and the numeral inverts into a filled chip. At 15 of 21 you can see it in a
+   thumbnail, in greyscale, at the edge of your vision. */
+.row--warn .trk__s--on { background:var(--text); border-color:var(--text); }
+.row--warn .row__n { display:block; padding:0 3px; background:var(--text); color:var(--void-0); border-radius:2px; }
+
+.row--zone:not(.row--static) { cursor:pointer; }
+.row--zone:not(.row--static):hover .row__lab { color:var(--text); }
+.row--zone:not(.row--static):hover .trk__s { border-color:rgba(230,227,245,.7); }
+.row--empty { opacity:.45; }
+
+/* Mana: the one place hue is the datum, so the pips keep their colour AND take
+   their letters. Floating is a ring, spent is hollow with the letter still on
+   it -- because "this spell would tap it" has to stay readable, not just
+   dimmer. */
+.manaslot { min-height:14px; }
+.mana { display:flex; flex-wrap:wrap; gap:3px; }
+.mana__pip { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; border:1px solid rgba(0,0,0,.45); background:var(--mana-C); color:var(--mana-ink); font-size:8px; font-weight:900; }
+.mana__pip--W { background:var(--mana-W); } .mana__pip--U { background:var(--mana-U); }
+.mana__pip--B { background:var(--mana-B); } .mana__pip--R { background:var(--mana-R); }
+.mana__pip--G { background:var(--mana-G); } .mana__pip--C { background:var(--mana-C); }
+.mana__pip--any { background:conic-gradient(var(--mana-W) 0deg 72deg, var(--mana-U) 72deg 144deg, var(--mana-B) 144deg 216deg, var(--mana-R) 216deg 288deg, var(--mana-G) 288deg 360deg); color:#111; text-shadow:0 0 2px rgba(255,255,255,.9); }
+.mana__pip--floating { box-shadow:0 0 0 2px var(--text); }
+.mana__pip--spent { background:none; border-style:dashed; border-color:rgba(230,227,245,.6); color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ===========================================================================
+   Content, inlined from _orb.js -- the readable master. Not linked, because a
+   <script src> does not load from file:// and every mockup opens standalone.
+   =========================================================================== */
+
+const ME = { pid: 0, name: "You", life: 27, active: true, priority: true, lost: false, loss: null };
+
+const CMD = {
+  oid: 101,
+  name: "Aesi, Tyrant of Gyre Strait",
+  art: "aesi-tyrant-of-gyre-strait.jpg",
+  cost: ["4", "G", "U"],
+  zone: "command",
+  castable: true,
+  tax: 2,
+  identity: ["G", "U"],
+};
+
+/* Word + glyph. The third channel is the portrait's luminance and lives in CSS.
+   None of the three is hue -- CommandZone.tsx:57-76, and the reason is
+   docs/mockup-fidelity.md's top-ranked open defect. */
+const CMD_STATE = {
+  ready: { word: "Ready", glyph: "▶" },
+  waiting: { word: "In command", glyph: "·" },
+  stack: { word: "On the stack", glyph: "✦" },
+  deployed: { word: "On the battlefield", glyph: "✦" },
+  dead: { word: "In the graveyard", glyph: "✕" },
+  exiled: { word: "Exiled", glyph: "✕" },
+};
+const STATE = CMD_STATE.ready;
+
+const LETHAL = 21;
+const WARN = LETHAL - 6;
+
+const FOES = [
+  { pid: 1, name: "Edgar Markov", dmg: 16 },
+  { pid: 2, name: "Atraxa, Praetors' Voice", dmg: 7 },
+  { pid: 3, name: "Chulane, Teller of Tales", dmg: 0 },
+];
+const DMG = FOES.filter((f) => f.dmg > 0);
+
+/* markSpent(manaRow(...)) already applied -- logic/mana.ts. An ambiguous source
+   ("Add {G} or {U}") is ONE split pip and never two solid ones, because two
+   would claim a mana that does not exist. `spent` is the engine's own solved
+   payment for a hovered spell, never arithmetic done here. */
+const MANA = [
+  { k: "pool-U-0", tone: "U", symbols: ["U"], floating: true, spent: false },
+  { k: "src-31-0", tone: "G", symbols: ["G"], floating: false, spent: false },
+  { k: "src-32-0", tone: "G", symbols: ["G"], floating: false, spent: false },
+  { k: "src-33-0", tone: "any", symbols: ["G", "U"], floating: false, spent: true },
+  { k: "src-34-0", tone: "U", symbols: ["U"], floating: false, spent: true },
+  { k: "src-35-0", tone: "C", symbols: ["C"], floating: false, spent: false },
+];
+const SPENT = MANA.filter((m) => m.spent).length;
+
+/* `peek: false` is the library, and it is deliberate: hidden information, and a
+   control that does nothing when clicked is worse than no control. The other
+   four are the only route into ZonePeek, so a direction that draws them
+   decoratively makes the graveyard unreachable. */
+const ZONES = [
+  { name: "library", label: "Lib", kind: "lib", count: 41, peek: false, title: "Cards in library" },
+  { name: "hand", label: "Hand", kind: "lib", count: 5, peek: true, title: "Your hand" },
+  { name: "graveyard", label: "GY", kind: "gy", count: 12, peek: true, title: "GY: 12" },
+  { name: "exile", label: "Exile", kind: "ex", count: 3, peek: true, title: "Exile: 3" },
+  { name: "command", label: "CMD", kind: "cmd", count: 1, peek: true, title: "Command zone" },
+];
+
+/* Helpers ---------------------------------------------------------------- */
+
+const root = document.getElementById("root");
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const artUrl = (file) => "../art/" + file;
+
+/* zones.ts: one leaf per nine cards, nine leaves and then it stops. The top
+   leaf still carries the exact number, so the cap costs resolution and never
+   information. */
+const LEAF = 9;
+const MAX_LEAVES = 9;
+const leaves = (n) => (n <= 0 ? 0 : Math.min(MAX_LEAVES, Math.ceil(n / LEAF)));
+
+const manaTitle = (p) =>
+  p.spent
+    ? p.symbols.join(" or ") + " — this spell would tap it"
+    : p.symbols.length > 1
+      ? "Either " + p.symbols.join(" or ")
+      : p.floating
+        ? p.symbols[0] + " in pool"
+        : p.symbols[0];
+
+const manaRowTitle =
+  SPENT > 0 ? MANA.length + " available; this spell taps " + SPENT : MANA.length + " available";
+
+const costPips = (cost) =>
+  cost
+    .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
+    .join("");
+
+/* A key, not a control: the viewport IS the design, and dev chrome would
+   contaminate the screenshot. */
+const greyKey = () =>
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
+      document.documentElement.classList.toggle("grey");
+    }
+  });
+
+/* Views ------------------------------------------------------------------- */
+
+const track = (on, of) =>
+  '<span class="trk">' +
+  Array.from({ length: of }, (_, i) => '<span class="trk__s' + (i < on ? " trk__s--on" : "") + '"></span>').join("") +
+  "</span>";
+
+function damage() {
+  return DMG.map((foe) =>
+    '<div class="row row--dmg' + (foe.dmg >= WARN ? " row--warn" : "") + '" title="' + esc(foe.dmg + " from " + foe.name) + '">' +
+      track(Math.min(foe.dmg, LETHAL), LETHAL) +
+      '<span class="row__n tabular">' + foe.dmg + "</span>" +
+    "</div>"
+  ).join("");
+}
+
+function zones() {
+  return ZONES.map((z) => {
+    const cls = "row row--zone" + (z.count > 0 ? "" : " row--empty") + (z.peek ? "" : " row--static");
+    const attrs = 'class="' + cls + '" data-testid="pile-' + ME.pid + "-" + z.name + '" data-count="' + z.count + '" title="' + esc(z.title) + '"';
+    const body =
+      '<span class="row__lab">' + esc(z.label) + "</span>" +
+      track(leaves(z.count), MAX_LEAVES) +
+      '<span class="row__n tabular">' + z.count + "</span>";
+    return z.peek ? '<button type="button" ' + attrs + ">" + body + "</button>" : "<div " + attrs + ">" + body + "</div>";
+  }).join("");
+}
+
+function orb() {
+  return (
+    '<div class="orb" data-player="' + ME.pid + '" data-testid="player-' + ME.pid + '">' +
+      '<div class="orb__head">' +
+        '<span class="orb__name">' + esc(ME.name) + "</span>" +
+        (ME.priority ? '<span class="orb__priority" title="Has priority"></span>' : "") +
+      "</div>" +
+
+      '<div class="orb__rule"></div>' +
+
+      '<button type="button" class="cmd" data-testid="commander-' + CMD.oid + '" data-castable="true" data-zone="' + CMD.zone + '" data-cmd-state="ready" title="Cast ' + esc(CMD.name) + " — +" + CMD.tax + ' commander tax">' +
+        '<span class="cmd__art"><img src="' + artUrl(CMD.art) + '" alt=""><span class="cmd__tag" title="Commander">CMD</span></span>' +
+        '<span class="cmd__body">' +
+          '<span class="cmd__name">' + esc(CMD.name) + "</span>" +
+          '<span class="cmd__strip">' +
+            '<span class="cmd__state"><span aria-hidden="true">' + STATE.glyph + "</span>" + esc(STATE.word) + "</span>" +
+            '<span class="cmd__cost">' + costPips(CMD.cost) +
+              '<span class="cmd__tax" title="+' + CMD.tax + ' generic to cast from the command zone">+' + CMD.tax + "</span>" +
+            "</span>" +
+          "</span>" +
+        "</span>" +
+      "</button>" +
+
+      '<div class="orb__rule"></div>' +
+
+      '<div class="eyebrow"><span>Life</span></div>' +
+      '<div class="life">' +
+        '<span class="life__n tabular" data-testid="life-' + ME.pid + '">' + (ME.lost ? "OUT" : ME.life) + "</span>" +
+        (ME.lost ? '<span class="life__loss">' + esc(ME.loss || "") + "</span>" : "") +
+      "</div>" +
+
+      '<div class="orb__rule"></div>' +
+
+      '<div class="eyebrow" title="Commander damage taken"><span>Cmd dmg</span><span>21 lethal</span></div>' +
+      damage() +
+
+      '<div class="orb__rule"></div>' +
+
+      '<div class="eyebrow"><span>Mana</span><span>' + MANA.length + " · " + SPENT + " tapped</span></div>" +
+      '<div class="manaslot"><div class="mana" data-testid="mana-' + ME.pid + '" data-spending="' + SPENT + '" title="' + esc(manaRowTitle) + '">' +
+        MANA.map((p) =>
+          '<span class="mana__pip mana__pip--' + p.tone + (p.floating ? " mana__pip--floating" : "") + (p.spent ? " mana__pip--spent" : "") + '" title="' + esc(manaTitle(p)) + '">' +
+          (p.symbols.length > 1 ? "?" : p.symbols[0]) + "</span>"
+        ).join("") +
+      "</div></div>" +
+
+      '<div class="orb__rule"></div>' +
+
+      '<div class="eyebrow"><span>Zones</span><span>9 per bar</span></div>' +
+      zones() +
+    "</div>"
+  );
+}
+
+function lanes() {
+  const row = (tag, n) =>
+    '<div class="lane"><span class="lane__tag">' + tag + "</span>" +
+    Array.from({ length: n }, () => '<span class="ghost"></span>').join("") + "</div>";
+  return '<div class="mat__lanes">' + row("Lands", 8) + row("Creatures", 6) + row("Other", 3) + "</div>";
+}
+
+function render() {
+  root.innerHTML =
+    '<div class="stage">' +
+      '<div class="stage__top">' +
+        '<span class="stage__id">Orb · 04 Ink &amp; Signal</span>' +
+        '<span class="stage__t">a ledger · one track, two scales · hue only on mana</span>' +
+        '<span class="stage__sp"></span>' +
+        '<span class="stage__k">150 × 434 · 40px narrower, taller · press g</span>' +
+      "</div>" +
+      '<div class="stage__mid">' +
+        '<div class="mat"><div class="mat__side">' + orb() + "</div>" + lanes() + "</div>" +
+      "</div>" +
+      '<div class="stage__bot"><p class="note">' +
+        "<b>Every channel, and where it went.</b> Name at the top; priority is the filled square beside it — a shape, not a colour. " +
+        "The commander keeps its portrait, CMD badge, two-line name, cost and <b>+2</b> tax, with its state as an inverse <b>▶ READY</b> tag (word, glyph, and a lit portrait: three channels, none of them hue). " +
+        "Life is the biggest numeral on the panel and nothing else is at that weight. Commander damage is a 21-segment track per source, the exact amount right-aligned, " +
+        "the name still in the tooltip as it is today; at 15 the track fills solid and the numeral inverts, so the warn tier is said twice without red. " +
+        "The five zones are the same track at nine segments — <b>one segment per nine cards, capped at nine, which is <code>pileLeaves</code> exactly</b> — so a library at 41 still reads long beside a graveyard at 12, and the exact counts align in a column the piles never had. " +
+        "Library is the row with no pointer. Mana keeps its hue because mana is the one place hue is the datum, and gains letters on top. " +
+        "<b>The claim:</b> press <b>g</b>. If this panel changes, the direction has failed its own rule." +
+      "</p></div>" +
+    "</div>";
+}
+
+render();
+greyKey();
+</script>
+</body>
+</html>

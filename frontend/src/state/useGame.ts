@@ -33,6 +33,13 @@ const STALL_LIMIT = 24;
 /** Breathing room between AI decisions, on top of the narration hold. */
 const PUMP_DELAY_MS = 60;
 
+/**
+ * `staleTime: Infinity` because the deck list was fixed for the life of the
+ * server -- which stopped being true with deck import. It is still never
+ * *stale*, though: it changes only when this client causes it to, so the import
+ * invalidates the key by hand rather than every consumer polling for a change
+ * that almost never happens.
+ */
 export function useDecks() {
   return useQuery({
     queryKey: ["decks"],

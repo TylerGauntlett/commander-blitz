@@ -32,6 +32,23 @@ so a naive overflow check passes through the exact failure it was written for.
 
 Do not "correct" these. Each is a decision made after the mockup.
 
+### The deck picker stays inline; there is no modal catalogue
+
+`mockups/flow/01-front-door.html` opens deck selection as a modal catalogue with
+search, colour-identity and source facets (`catalogue()` at :1386). The shipped
+screen keeps the flat grid it had and puts the Moxfield import box underneath it,
+so an imported deck arrives as one more tile.
+
+The reason is a measurement, not a preference. Every deck tile carries
+`data-testid="deck-${id}"`, and `frontend/e2e/helpers.ts:33` clicks it on the way
+into roughly fourteen spec files — every smoke, layout, stacking and playtest
+case starts by picking a deck. A modal puts a click and a wait in front of all of
+them, for a facet UI that is only worth anything once there are more decks than
+fit on a screen. Two precons and however many you have imported is not that.
+
+Revisit when the deck list is routinely long. The facets in the mockup are the
+right design for that screen; this is a claim about *when*, not about *whether*.
+
 ### The card is a full-bleed illustration, and card type is no longer a colour
 
 Supersedes the earlier "cards are art-first everywhere" note, which described the
