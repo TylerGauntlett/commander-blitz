@@ -471,6 +471,11 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
         cost["mana"] = extra_cost
     ability = {
         "kind": "activated",
+        # The printed line this implements, verbatim.  Not decoration: the
+        # authoring verifier's residual gate decides "is every sentence
+        # accounted for" by asking each ability which sentence it claims, and an
+        # ability with no text claims nothing.
+        "text": line.strip(),
         "is_mana_ability": True,
         "cost": cost,
         "effects": effects,

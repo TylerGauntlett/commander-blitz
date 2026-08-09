@@ -3,6 +3,59 @@
 
 # Features
 
+## Systematic card support — in progress
+
+### Overview
+
+Deck import shipped and immediately exposed the real problem: a real imported
+deck had **41 of its 100 cards doing nothing**. The proxy generator gives every
+card its name, art, cost, types and keywords, but the rules text is inert. That
+is honest, and it is not a game.
+
+MTG has tens of thousands of cards. Hand-writing them does not scale, so this is
+a repeatable batch: read a card's oracle text, emit a structured DSL object, and
+**refuse to ship any that cannot prove it works**.
+
+Full design in [card-authoring.md](card-authoring.md).
+
+### What shipped
+
+**Playable cards: 230 → 510.** 280 written by the pipeline, committed to
+`data/cards/auto/`, re-verified on every test run.
+
+- **A verifier with six gates**, which is the centre of the design rather than
+  the generator. `compile_card` validates *vocabulary*, not *meaning* — a card
+  can say "draw two cards", do `gain_life`, and compile, cast and resolve without
+  raising. So every candidate must come with an assertion about the board and
+  demonstrate it. `tests/cards/test_authoring.py` has that exact case.
+- **A priority queue**: cards from a deck somebody imported first, then EDHREC
+  rank. It records *why* each card failed, so the tail is a roadmap rather than a
+  mystery — `--report` prints it.
+- **A deterministic template tier**, free and exact, covering the sentence shapes
+  common enough to be worth a rule.
+
+### What is left, and it is the part that matters
+
+`--report` names the blockers, ranked by how many cards each one holds up:
+
+```
+128  Equip {M}          40  Cycling {M}      21  Convoke
+ 85  Enchant creature   34  Crew N           20  Ward {M}
+ 62  Choose one —       42  Flashback
+```
+
+Those are **engine mechanics**, each unlocking hundreds of cards for one piece of
+work. Auras and Equipment alone are ~1,700 cards, and the object model is already
+half-built (`attached_to`, the `attach` op, `CardDef.is_aura`, SBA unattachment).
+
+Beyond them is the genuine long tail — cards that need bespoke rules, one work
+packet each, for an agent. That is what an imported deck's remaining dead cards
+actually are: Ancient Greenwarden's "play lands from your graveyard", Scute
+Swarm's landfall, Ghalta's cost reduction.
+
+The template tier was never going to touch those. It was the cheap coverage that
+had to come first so the expensive tier is not spent on Grizzly Bears.
+
 ## All Card Support — done
 
 ### Overview

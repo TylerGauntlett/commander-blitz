@@ -258,6 +258,9 @@ def to_row(record: dict) -> tuple:
         # for double-faced cards, so `pick` only matters for the other two.
         ",".join(record.get("keywords") or []),
         ",".join(pick("produced_mana", []) or []),
+        # Popularity, for the card-authoring queue: 32k cards and finite effort,
+        # so implement the ones people play. Absent for ~12% of printings.
+        record.get("edhrec_rank"),
     )
 
 

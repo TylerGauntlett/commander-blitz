@@ -1,0 +1,899 @@
+{
+  "adventurer_s_inn": {
+    "life": {
+      "0": 42
+    }
+  },
+  "akoum_refuge": {
+    "life": {
+      "0": 41
+    }
+  },
+  "alloy_myr": {
+    "zone": "battlefield"
+  },
+  "alpine_meadow": {
+    "zone": "battlefield"
+  },
+  "ambush_viper": {
+    "zone": "battlefield"
+  },
+  "amulet_of_vigor": {
+    "zone": "battlefield"
+  },
+  "ancient_ziggurat": {
+    "zone": "battlefield"
+  },
+  "ankle_biter": {
+    "zone": "battlefield"
+  },
+  "arboreal_grazer": {
+    "zone": "battlefield"
+  },
+  "arcane_sanctum": {
+    "zone": "battlefield"
+  },
+  "arctic_treeline": {
+    "zone": "battlefield"
+  },
+  "avacyn_s_pilgrim": {
+    "zone": "battlefield"
+  },
+  "axebane_guardian": {
+    "zone": "battlefield"
+  },
+  "badlands": {
+    "zone": "battlefield"
+  },
+  "baleful_strix": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "baron_airship_kingdom": {
+    "zone": "battlefield"
+  },
+  "battlefield_raptor": {
+    "zone": "battlefield"
+  },
+  "bayou": {
+    "zone": "battlefield"
+  },
+  "beastcaller_savant": {
+    "zone": "battlefield"
+  },
+  "birds_of_paradise": {
+    "zone": "battlefield"
+  },
+  "blood_crypt": {
+    "zone": "battlefield"
+  },
+  "blossoming_sands": {
+    "life": {
+      "0": 41
+    }
+  },
+  "boreal_druid": {
+    "zone": "battlefield"
+  },
+  "boros_guildgate": {
+    "zone": "battlefield"
+  },
+  "breeding_pool": {
+    "zone": "battlefield"
+  },
+  "cabal_coffers": {
+    "zone": "battlefield"
+  },
+  "callidus_assassin": {
+    "zone": "battlefield"
+  },
+  "carnelian_orb_of_dragonkind": {
+    "zone": "battlefield"
+  },
+  "carven_caryatid": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "charcoal_diamond": {
+    "zone": "battlefield"
+  },
+  "choked_estuary": {
+    "zone": "battlefield"
+  },
+  "cinder_barrens": {
+    "zone": "battlefield"
+  },
+  "circle_of_dreams_druid": {
+    "zone": "battlefield"
+  },
+  "claim_jumper": {
+    "zone": "battlefield"
+  },
+  "cloudpost": {
+    "zone": "battlefield"
+  },
+  "commercial_district": {
+    "zone": "battlefield"
+  },
+  "consider": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "contaminated_aquifer": {
+    "zone": "battlefield"
+  },
+  "copper_myr": {
+    "zone": "battlefield"
+  },
+  "crossroads_village": {
+    "zone": "battlefield"
+  },
+  "crumbling_necropolis": {
+    "zone": "battlefield"
+  },
+  "curate": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "darkmoss_bridge": {
+    "zone": "battlefield"
+  },
+  "darksteel_citadel": {
+    "zone": "battlefield"
+  },
+  "darksteel_ingot": {
+    "zone": "battlefield"
+  },
+  "darksteel_myr": {
+    "zone": "battlefield"
+  },
+  "deadly_recluse": {
+    "zone": "battlefield"
+  },
+  "deathbloom_gardener": {
+    "zone": "battlefield"
+  },
+  "deep_gnome_terramancer": {
+    "zone": "battlefield"
+  },
+  "dimir_guildgate": {
+    "zone": "battlefield"
+  },
+  "dismal_backwater": {
+    "life": {
+      "0": 41
+    }
+  },
+  "dragon_sniper": {
+    "zone": "battlefield"
+  },
+  "drossforge_bridge": {
+    "zone": "battlefield"
+  },
+  "druid_of_the_anima": {
+    "zone": "battlefield"
+  },
+  "druid_of_the_cowl": {
+    "zone": "battlefield"
+  },
+  "dryad_arbor": {
+    "zone": "battlefield"
+  },
+  "echoing_deeps": {
+    "zone": "battlefield"
+  },
+  "elegant_parlor": {
+    "zone": "battlefield"
+  },
+  "elves_of_deep_shadow": {
+    "zone": "battlefield"
+  },
+  "exotic_orchard": {
+    "zone": "battlefield"
+  },
+  "faerie_seer": {
+    "zone": "battlefield"
+  },
+  "fang_of_shigeki": {
+    "zone": "battlefield"
+  },
+  "fellwar_stone": {
+    "zone": "battlefield"
+  },
+  "fire_diamond": {
+    "zone": "battlefield"
+  },
+  "firemind_vessel": {
+    "zone": "battlefield"
+  },
+  "flamebraider": {
+    "zone": "battlefield"
+  },
+  "foreboding_ruins": {
+    "zone": "battlefield"
+  },
+  "forsaken_sanctuary": {
+    "zone": "battlefield"
+  },
+  "fortified_village": {
+    "zone": "battlefield"
+  },
+  "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "frontier_bivouac": {
+    "zone": "battlefield"
+  },
+  "frostboil_snarl": {
+    "zone": "battlefield"
+  },
+  "furycalm_snarl": {
+    "zone": "battlefield"
+  },
+  "gaea_s_cradle": {
+    "zone": "battlefield"
+  },
+  "game_trail": {
+    "zone": "battlefield"
+  },
+  "geothermal_bog": {
+    "zone": "battlefield"
+  },
+  "gigantosaurus": {
+    "zone": "battlefield"
+  },
+  "gilded_lotus": {
+    "zone": "battlefield"
+  },
+  "gilt_leaf_palace": {
+    "zone": "battlefield"
+  },
+  "glacial_floodplain": {
+    "zone": "battlefield"
+  },
+  "godless_shrine": {
+    "zone": "battlefield"
+  },
+  "gohn_town_of_ruin": {
+    "zone": "battlefield"
+  },
+  "gold_myr": {
+    "zone": "battlefield"
+  },
+  "goldmire_bridge": {
+    "zone": "battlefield"
+  },
+  "golgari_guildgate": {
+    "zone": "battlefield"
+  },
+  "gongaga_reactor_town": {
+    "zone": "battlefield"
+  },
+  "graypelt_refuge": {
+    "life": {
+      "0": 41
+    }
+  },
+  "great_forest_druid": {
+    "zone": "battlefield"
+  },
+  "great_furnace": {
+    "zone": "battlefield"
+  },
+  "gruul_guildgate": {
+    "zone": "battlefield"
+  },
+  "guadosalam_farplane_gateway": {
+    "zone": "battlefield"
+  },
+  "hallowed_fountain": {
+    "zone": "battlefield"
+  },
+  "harabaz_druid": {
+    "zone": "battlefield"
+  },
+  "haunted_mire": {
+    "zone": "battlefield"
+  },
+  "healer_s_hawk": {
+    "zone": "battlefield"
+  },
+  "hedge_maze": {
+    "zone": "battlefield"
+  },
+  "hedron_crawler": {
+    "zone": "battlefield"
+  },
+  "helpful_hunter": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "highland_forest": {
+    "zone": "battlefield"
+  },
+  "highland_lake": {
+    "zone": "battlefield"
+  },
+  "hover_barrier": {
+    "zone": "battlefield"
+  },
+  "hovermyr": {
+    "zone": "battlefield"
+  },
+  "ice_tunnel": {
+    "zone": "battlefield"
+  },
+  "idyllic_beachfront": {
+    "zone": "battlefield"
+  },
+  "ilysian_caryatid": {
+    "zone": "battlefield"
+  },
+  "indomitable_ancients": {
+    "zone": "battlefield"
+  },
+  "insomnia_crown_city": {
+    "zone": "battlefield"
+  },
+  "iron_myr": {
+    "zone": "battlefield"
+  },
+  "isamaru_hound_of_konda": {
+    "zone": "battlefield"
+  },
+  "ixalli_s_lorekeeper": {
+    "zone": "battlefield"
+  },
+  "izzet_guildgate": {
+    "zone": "battlefield"
+  },
+  "jade_orb_of_dragonkind": {
+    "zone": "battlefield"
+  },
+  "jungle_hollow": {
+    "life": {
+      "0": 41
+    }
+  },
+  "jungle_shrine": {
+    "zone": "battlefield"
+  },
+  "jwar_isle_refuge": {
+    "life": {
+      "0": 41
+    }
+  },
+  "kabira_crossroads": {
+    "life": {
+      "0": 42
+    }
+  },
+  "karametra_s_acolyte": {
+    "zone": "battlefield"
+  },
+  "kari_zev_skyship_raider": {
+    "zone": "battlefield"
+  },
+  "kazandu_refuge": {
+    "life": {
+      "0": 41
+    }
+  },
+  "kinjalli_s_sunwing": {
+    "zone": "battlefield"
+  },
+  "kor_cartographer": {
+    "zone": "battlefield"
+  },
+  "lapis_orb_of_dragonkind": {
+    "zone": "battlefield"
+  },
+  "leaden_myr": {
+    "zone": "battlefield"
+  },
+  "leafkin_druid": {
+    "zone": "battlefield"
+  },
+  "leyline_prowler": {
+    "zone": "battlefield"
+  },
+  "llanowar_visionary": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "loyal_warhound": {
+    "zone": "battlefield"
+  },
+  "lush_portico": {
+    "zone": "battlefield"
+  },
+  "magus_of_the_coffers": {
+    "zone": "battlefield"
+  },
+  "mana_geode": {
+    "zone": "battlefield"
+  },
+  "manakin": {
+    "zone": "battlefield"
+  },
+  "manalith": {
+    "zone": "battlefield"
+  },
+  "maraleaf_pixie": {
+    "zone": "battlefield"
+  },
+  "marble_diamond": {
+    "zone": "battlefield"
+  },
+  "memnite": {
+    "zone": "battlefield"
+  },
+  "meticulous_archive": {
+    "zone": "battlefield"
+  },
+  "mirage_mesa": {
+    "zone": "battlefield"
+  },
+  "mistvault_bridge": {
+    "zone": "battlefield"
+  },
+  "molten_tributary": {
+    "zone": "battlefield"
+  },
+  "mona_lisa_science_geek": {
+    "zone": "battlefield"
+  },
+  "moss_diamond": {
+    "zone": "battlefield"
+  },
+  "moss_viper": {
+    "zone": "battlefield"
+  },
+  "mox_amber": {
+    "zone": "battlefield"
+  },
+  "mox_jasper": {
+    "zone": "battlefield"
+  },
+  "mystic_monastery": {
+    "zone": "battlefield"
+  },
+  "necroblossom_snarl": {
+    "zone": "battlefield"
+  },
+  "noxious_newt": {
+    "zone": "battlefield"
+  },
+  "opulent_palace": {
+    "zone": "battlefield"
+  },
+  "ornithopter": {
+    "zone": "battlefield"
+  },
+  "ornithopter_of_paradise": {
+    "zone": "battlefield"
+  },
+  "orzhov_guildgate": {
+    "zone": "battlefield"
+  },
+  "overgrown_battlement": {
+    "zone": "battlefield"
+  },
+  "overgrown_tomb": {
+    "zone": "battlefield"
+  },
+  "path_of_ancestry": {
+    "zone": "battlefield"
+  },
+  "phyrexian_walker": {
+    "zone": "battlefield"
+  },
+  "pillar_of_the_paruns": {
+    "zone": "battlefield"
+  },
+  "plateau": {
+    "zone": "battlefield"
+  },
+  "pond_prophet": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "port_town": {
+    "zone": "battlefield"
+  },
+  "priest_of_titania": {
+    "zone": "battlefield"
+  },
+  "primeval_herald": {
+    "zone": "battlefield"
+  },
+  "pristine_talisman": {
+    "zone": "battlefield"
+  },
+  "prophetic_prism": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "pyromancer_s_goggles": {
+    "zone": "battlefield"
+  },
+  "quakestrider_ceratops": {
+    "zone": "battlefield"
+  },
+  "quick_study": {
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "rabanastre_royal_city": {
+    "zone": "battlefield"
+  },
+  "radiant_fountain": {
+    "life": {
+      "0": 42
+    }
+  },
+  "radiant_grove": {
+    "zone": "battlefield"
+  },
+  "rakdos_guildgate": {
+    "zone": "battlefield"
+  },
+  "raucous_audience": {
+    "zone": "battlefield"
+  },
+  "raucous_theater": {
+    "zone": "battlefield"
+  },
+  "razortide_bridge": {
+    "zone": "battlefield"
+  },
+  "reflecting_pool": {
+    "zone": "battlefield"
+  },
+  "rendmaw_creaking_nest": {
+    "zone": "battlefield"
+  },
+  "revitalize": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 43
+    }
+  },
+  "rimewood_falls": {
+    "zone": "battlefield"
+  },
+  "river_of_tears": {
+    "zone": "battlefield"
+  },
+  "rugged_highlands": {
+    "life": {
+      "0": 41
+    }
+  },
+  "rustvale_bridge": {
+    "zone": "battlefield"
+  },
+  "sacred_foundry": {
+    "zone": "battlefield"
+  },
+  "sacred_peaks": {
+    "zone": "battlefield"
+  },
+  "sagu_wildling_roost_seek": {
+    "life": {
+      "0": 43
+    }
+  },
+  "sanctum_weaver": {
+    "zone": "battlefield"
+  },
+  "sandsteppe_citadel": {
+    "zone": "battlefield"
+  },
+  "savage_lands": {
+    "zone": "battlefield"
+  },
+  "savannah": {
+    "zone": "battlefield"
+  },
+  "scaled_nurturer": {
+    "zone": "battlefield"
+  },
+  "scampering_surveyor": {
+    "zone": "battlefield"
+  },
+  "scrubland": {
+    "zone": "battlefield"
+  },
+  "seaside_citadel": {
+    "zone": "battlefield"
+  },
+  "secluded_glen": {
+    "zone": "battlefield"
+  },
+  "segovian_angel": {
+    "zone": "battlefield"
+  },
+  "sejiri_refuge": {
+    "life": {
+      "0": 41
+    }
+  },
+  "selesnya_guildgate": {
+    "zone": "battlefield"
+  },
+  "serra_s_sanctum": {
+    "zone": "battlefield"
+  },
+  "shadowy_backstreet": {
+    "zone": "battlefield"
+  },
+  "sharlayan_nation_of_scholars": {
+    "zone": "battlefield"
+  },
+  "shineshadow_snarl": {
+    "zone": "battlefield"
+  },
+  "shrike_force": {
+    "zone": "battlefield"
+  },
+  "silver_myr": {
+    "zone": "battlefield"
+  },
+  "silver_raven": {
+    "zone": "battlefield"
+  },
+  "silverbluff_bridge": {
+    "zone": "battlefield"
+  },
+  "simic_guildgate": {
+    "zone": "battlefield"
+  },
+  "sky_diamond": {
+    "zone": "battlefield"
+  },
+  "skyscanner": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "slagwoods_bridge": {
+    "zone": "battlefield"
+  },
+  "smokebraider": {
+    "zone": "battlefield"
+  },
+  "snowfield_sinkhole": {
+    "zone": "battlefield"
+  },
+  "solar_array": {
+    "zone": "battlefield"
+  },
+  "somberwald_sage": {
+    "zone": "battlefield"
+  },
+  "spirited_companion": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "star_compass": {
+    "zone": "battlefield"
+  },
+  "steam_vents": {
+    "zone": "battlefield"
+  },
+  "stomping_ground": {
+    "zone": "battlefield"
+  },
+  "stone_quarry": {
+    "zone": "battlefield"
+  },
+  "submerged_boneyard": {
+    "zone": "battlefield"
+  },
+  "sulfurous_mire": {
+    "zone": "battlefield"
+  },
+  "sunlit_marsh": {
+    "zone": "battlefield"
+  },
+  "swiftblade_vindicator": {
+    "zone": "battlefield"
+  },
+  "swiftwater_cliffs": {
+    "life": {
+      "0": 41
+    }
+  },
+  "sylvan_caryatid": {
+    "zone": "battlefield"
+  },
+  "taiga": {
+    "zone": "battlefield"
+  },
+  "tangled_islet": {
+    "zone": "battlefield"
+  },
+  "tanglepool_bridge": {
+    "zone": "battlefield"
+  },
+  "temple_garden": {
+    "zone": "battlefield"
+  },
+  "temple_of_abandon": {
+    "zone": "battlefield"
+  },
+  "temple_of_deceit": {
+    "zone": "battlefield"
+  },
+  "temple_of_epiphany": {
+    "zone": "battlefield"
+  },
+  "temple_of_malady": {
+    "zone": "battlefield"
+  },
+  "temple_of_malice": {
+    "zone": "battlefield"
+  },
+  "temple_of_plenty": {
+    "zone": "battlefield"
+  },
+  "temple_of_silence": {
+    "zone": "battlefield"
+  },
+  "temple_of_triumph": {
+    "zone": "battlefield"
+  },
+  "thalia_heretic_cathar": {
+    "zone": "battlefield"
+  },
+  "thornglint_bridge": {
+    "zone": "battlefield"
+  },
+  "thornweald_archer": {
+    "zone": "battlefield"
+  },
+  "three_tree_rootweaver": {
+    "zone": "battlefield"
+  },
+  "thriving_bluff": {
+    "zone": "battlefield"
+  },
+  "thriving_grove": {
+    "zone": "battlefield"
+  },
+  "thriving_heath": {
+    "zone": "battlefield"
+  },
+  "thriving_isle": {
+    "zone": "battlefield"
+  },
+  "thriving_moor": {
+    "zone": "battlefield"
+  },
+  "thundering_falls": {
+    "zone": "battlefield"
+  },
+  "tranquil_expanse": {
+    "zone": "battlefield"
+  },
+  "tree_of_tales": {
+    "zone": "battlefield"
+  },
+  "treno_dark_city": {
+    "zone": "battlefield"
+  },
+  "tropical_island": {
+    "zone": "battlefield"
+  },
+  "tundra": {
+    "zone": "battlefield"
+  },
+  "typhoid_rats": {
+    "zone": "battlefield"
+  },
+  "uncharted_haven": {
+    "zone": "battlefield"
+  },
+  "undercity_sewers": {
+    "zone": "battlefield"
+  },
+  "underground_mortuary": {
+    "zone": "battlefield"
+  },
+  "underground_sea": {
+    "zone": "battlefield"
+  },
+  "urza_s_mine": {
+    "zone": "battlefield"
+  },
+  "urza_s_power_plant": {
+    "zone": "battlefield"
+  },
+  "urza_s_tower": {
+    "zone": "battlefield"
+  },
+  "valgavoth_s_lair": {
+    "zone": "battlefield"
+  },
+  "vault_of_whispers": {
+    "zone": "battlefield"
+  },
+  "vector_imperial_capital": {
+    "zone": "battlefield"
+  },
+  "vedalken_engineer": {
+    "zone": "battlefield"
+  },
+  "venomthrope": {
+    "zone": "battlefield"
+  },
+  "vesuva": {
+    "zone": "battlefield"
+  },
+  "vine_trellis": {
+    "zone": "battlefield"
+  },
+  "vineglimmer_snarl": {
+    "zone": "battlefield"
+  },
+  "viridian_joiner": {
+    "zone": "battlefield"
+  },
+  "volatile_fjord": {
+    "zone": "battlefield"
+  },
+  "volcanic_island": {
+    "zone": "battlefield"
+  },
+  "wall_of_blossoms": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "wall_of_runes": {
+    "zone": "battlefield"
+  },
+  "watery_grave": {
+    "zone": "battlefield"
+  },
+  "white_lotus_tile": {
+    "zone": "battlefield"
+  },
+  "windurst_federation_center": {
+    "zone": "battlefield"
+  },
+  "wirewood_channeler": {
+    "zone": "battlefield"
+  },
+  "wooded_ridgeline": {
+    "zone": "battlefield"
+  },
+  "woodland_chasm": {
+    "zone": "battlefield"
+  },
+  "yargle_and_multani": {
+    "zone": "battlefield"
+  },
+  "yargle_glutton_of_urborg": {
+    "zone": "battlefield"
+  },
+  "zetalpa_primal_dawn": {
+    "zone": "battlefield"
+  },
+  "zhalfirin_void": {
+    "zone": "battlefield"
+  }
+}

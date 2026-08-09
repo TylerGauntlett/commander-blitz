@@ -129,6 +129,17 @@ imported in — and these ids are art filenames and deck-list keys that must
 survive a re-import unchanged. Re-importing the same deck rewrites the same
 bytes.
 
+## Shrinking the "simplified" number
+
+A proxy exists because nobody had implemented that card yet, so the way to have
+fewer of them is to implement more cards. That is
+[card-authoring.md](card-authoring.md) — a batch pipeline that writes card
+definitions and refuses to ship any that cannot demonstrate what they do.
+
+Once a card is authored, **the stale proxy is dropped**: the deck goes on
+referencing the same id and silently picks up the real rules on the next boot.
+Nothing about the deck file changes.
+
 ## Promoting a generated card
 
 A generated card is written in exactly the `data/cards/*.cards.json` format, so

@@ -116,6 +116,11 @@ class IndexEntry:
     #: no honest way to give a generated land a mana ability, and a deck whose
     #: lands are inert is not a deck.
     produced_mana: str = ""
+    #: EDHREC's popularity rank, 1 = most played.  ``None`` for the 12% of
+    #: printings it does not cover.  The card-authoring queue orders by this:
+    #: there are 32k cards and finite effort, so the ones people actually play
+    #: are worth implementing first, and alphabetical order is worth nothing.
+    edhrec_rank: int | None = None
 
     def art_url(self) -> str:
         return image_url(self.scryfall_id, ART_CROP)
@@ -150,6 +155,7 @@ COLUMNS = (
     "oracle_text",
     "keywords",
     "produced_mana",
+    "edhrec_rank",
 )
 
 SCHEMA = f"""
@@ -172,6 +178,7 @@ CREATE TABLE cards (
     {COLUMNS[15]} TEXT,
     {COLUMNS[16]} TEXT,
     {COLUMNS[17]} TEXT,
+    {COLUMNS[18]} INTEGER,
     -- Not `name` alone.  87 names are printed both as a real card and as a
     -- token -- Tarmogoyf, Champion of Wits, Adorned Pouncer -- and with `name`
     -- as the sole key whichever printing happened to win the sort evicted the
@@ -210,14 +217,15 @@ def _row_to_entry(row: sqlite3.Row | tuple) -> IndexEntry:
         oracle_text=values[15] or "",
         keywords=values[16] or "",
         produced_mana=values[17] or "",
+        edhrec_rank=values[18],
     )
 
 
-#: The three columns added for the proxy generator.  An index built before them
-#: is still perfectly good for art, which is all the game path wants, so
-#: :class:`CardIndex` selects ``NULL`` for whichever are absent rather than
-#: failing to open -- a fresh clone must boot on whatever it was handed.
-LATE_COLUMNS = frozenset({"oracle_text", "keywords", "produced_mana"})
+#: Columns added after the first build.  An index written before them is still
+#: perfectly good for art, which is all the game path wants, so :class:`CardIndex`
+#: selects ``NULL`` for whichever are absent rather than failing to open -- a
+#: fresh clone must boot on whatever it was handed.
+LATE_COLUMNS = frozenset({"oracle_text", "keywords", "produced_mana", "edhrec_rank"})
 
 
 def _select_for(present: set[str]) -> str:
@@ -349,6 +357,23 @@ class CardIndex:
 
     def iter_all(self) -> Iterator[IndexEntry]:
         for row in self._con.execute(f"{self._select} ORDER BY name"):
+            yield _row_to_entry(row)
+
+    def iter_by_popularity(self, *, limit: int | None = None) -> Iterator[IndexEntry]:
+        """Real cards, most-played first.
+
+        The card-authoring queue's default order.  Cards EDHREC does not rank sort
+        last rather than being dropped -- they are still cards, just not ones worth
+        spending the first thousand units of effort on.  ``name`` breaks ties so a
+        rebuild does not reshuffle the queue.
+        """
+        sql = (
+            f"{self._select} WHERE is_token = 0 "
+            "ORDER BY edhrec_rank IS NULL, edhrec_rank, name"
+        )
+        if limit is not None:
+            sql += f" LIMIT {int(limit)}"
+        for row in self._con.execute(sql):
             yield _row_to_entry(row)
 
 

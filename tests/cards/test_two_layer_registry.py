@@ -97,6 +97,57 @@ class TestTheLayersStayApart:
         assert card.type_line.startswith("Creature")
 
 
+class TestAnAuthoredCardSupersedesItsOwnProxy:
+    """What happens when the card pipeline implements a card somebody imported.
+
+    An imported deck writes a proxy for every card nobody had written yet. The
+    authoring pipeline then implements some of those. Both files now define the
+    same id, and `CardRegistry.from_paths` raises on a duplicate -- so without
+    the skip, the server stops booting the first time the two meet. It is not a
+    hypothetical: it happened the moment 280 cards were authored, on
+    `simic_guildgate`.
+
+    The deck keeps referencing the id either way, so it silently picks up the
+    real rules. Which is exactly what should happen.
+    """
+
+    @pytest.fixture
+    def collision(self, tmp_path, monkeypatch):
+        root = tmp_path / "data"
+        for name in ("cards", "decks"):
+            shutil.copytree(DEFAULT_DATA_DIR / name, root / name)
+
+        # A proxy for a card that also exists in the authored pool.
+        gen = root / "generated" / "cards"
+        gen.mkdir(parents=True)
+        inert = {
+            "id": "forest",
+            "name": "Forest",
+            "supertypes": ["Basic"],
+            "types": ["Land"],
+            "subtypes": ["Forest"],
+        }
+        (gen / "pool.cards.json").write_text(
+            json.dumps({"cards": [inert]}), encoding="utf-8"
+        )
+        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(root))
+        default_registry.cache_clear()
+        server_registry.cache_clear()
+        yield root
+        default_registry.cache_clear()
+        server_registry.cache_clear()
+
+    def test_the_pool_still_loads(self, collision):
+        data = load_game_data(include_generated=True)
+        assert "forest" in data.registry
+
+    def test_the_authored_card_wins(self, collision):
+        # The proxy has no mana ability; the real Forest does. Getting this
+        # backwards would leave every deck's basics unable to make mana.
+        card = load_game_data(include_generated=True).registry.get("forest")
+        assert any(a.is_mana_ability for a in card.abilities)
+
+
 class TestNameResolutionPrefersTheAuthoredCard:
     def test_an_import_cannot_shadow_a_hand_written_card(self, tmp_path, monkeypatch):
         """The whole reason `load_game_data` loads the authored paths first.
