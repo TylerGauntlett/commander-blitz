@@ -1,0 +1,34 @@
+{
+  "card": {
+    "name": "Ramunap Excavator",
+    "oracle_text": "You may play lands from your graveyard.",
+    "mana_cost": "{2}{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Snake",
+      "Cleric"
+    ],
+    "power": 2,
+    "toughness": 3,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You may play lands from your graveyard.",
+        "effect": "play_lands_from_graveyard",
+        "affects_player": "you"
+      }
+    ],
+    "id": "ramunap_excavator"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

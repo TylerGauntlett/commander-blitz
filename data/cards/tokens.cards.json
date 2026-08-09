@@ -2,143 +2,317 @@
   "_comment": "Token definitions. Referenced by create_token effects; never in a deck list.",
   "cards": [
     {
-      "id": "vampire_1_1_bw",
-      "name": "Vampire",
-      "oracle_text": "1/1 black and white Vampire creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Vampire"],
-      "power": 1,
-      "toughness": 1,
-      "colors": ["B", "W"],
-      "color_identity": ["B", "W"],
-      "is_token": true
-    },
-    {
-      "id": "vampire_1_1_b",
-      "name": "Vampire",
-      "oracle_text": "1/1 black Vampire creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Vampire"],
-      "power": 1,
-      "toughness": 1,
-      "colors": ["B"],
-      "color_identity": ["B"],
-      "is_token": true
-    },
-    {
-      "id": "vampire_1_1_b_lifelink",
-      "name": "Vampire Lifelink Token",
-      "oracle_text": "1/1 black Vampire creature token with lifelink.",
-      "types": ["Creature"],
-      "subtypes": ["Vampire"],
-      "power": 1,
-      "toughness": 1,
-      "keywords": ["lifelink"],
-      "colors": ["B"],
-      "color_identity": ["B"],
-      "is_token": true
-    },
-    {
-      "id": "knight_2_2_w_vigilance",
-      "name": "Knight Token",
-      "oracle_text": "2/2 white Knight creature token with vigilance.",
-      "types": ["Creature"],
-      "subtypes": ["Knight"],
-      "power": 2,
-      "toughness": 2,
-      "keywords": ["vigilance"],
-      "colors": ["W"],
-      "color_identity": ["W"],
-      "is_token": true
-    },
-    {
-      "id": "beast_4_4_g",
-      "name": "Beast Token",
-      "oracle_text": "4/4 green Beast creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Beast"],
-      "power": 4,
-      "toughness": 4,
-      "colors": ["G"],
-      "color_identity": ["G"],
-      "is_token": true
-    },
-    {
-      "id": "elemental_2_2_g",
-      "name": "Elemental Token",
-      "oracle_text": "2/2 green Elemental creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Elemental"],
-      "power": 2,
-      "toughness": 2,
-      "colors": ["G"],
-      "color_identity": ["G"],
-      "is_token": true
-    },
-    {
-      "id": "plant_0_1_g",
-      "name": "Plant Token",
-      "oracle_text": "0/1 green Plant creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Plant"],
-      "power": 0,
-      "toughness": 1,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "id": "badger_3_3_g",
+      "name": "Badger Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Badger"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 3,
+      "toughness": 3,
       "is_token": true
     },
     {
       "id": "beast_3_3_g",
       "name": "Beast Token",
       "oracle_text": "3/3 green Beast creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Beast"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
       "power": 3,
       "toughness": 3,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "beast_4_4_g",
+      "name": "Beast Token",
+      "oracle_text": "4/4 green Beast creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_2_2_g",
+      "name": "Elemental Token",
+      "oracle_text": "2/2 green Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elephant_3_3_g",
+      "name": "Elephant Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elephant"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 3,
+      "toughness": 3,
       "is_token": true
     },
     {
       "id": "frog_lizard_3_3_g",
       "name": "Frog Lizard Token",
       "oracle_text": "3/3 green Frog Lizard creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Frog", "Lizard"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Frog",
+        "Lizard"
+      ],
       "power": 3,
       "toughness": 3,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "insect_1_1_g",
+      "name": "Insect Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "is_token": true
+    },
+    {
+      "id": "knight_2_2_w_vigilance",
+      "name": "Knight Token",
+      "oracle_text": "2/2 white Knight creature token with vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "is_token": true
     },
     {
       "id": "kraken_8_8_u",
       "name": "Kraken Token",
       "oracle_text": "8/8 blue Kraken creature token.",
-      "types": ["Creature"],
-      "subtypes": ["Kraken"],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kraken"
+      ],
       "power": 8,
       "toughness": 8,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "plant_0_1_g",
+      "name": "Plant Token",
+      "oracle_text": "0/1 green Plant creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Plant"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "saproling_1_1_g",
+      "name": "Saproling Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Saproling"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 1,
+      "toughness": 1,
       "is_token": true
     },
     {
       "id": "treasure_token",
       "name": "Treasure",
       "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
-      "types": ["Artifact"],
-      "subtypes": ["Treasure"],
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Treasure"
+      ],
       "is_token": true,
       "abilities": [
         {
           "kind": "activated",
           "text": "{T}, Sacrifice: Add {C}.",
           "is_mana_ability": true,
-          "cost": { "tap": true },
-          "effects": [{ "op": "add_mana", "mana": "{C}" }]
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
         }
       ]
+    },
+    {
+      "id": "vampire_1_1_b",
+      "name": "Vampire",
+      "oracle_text": "1/1 black Vampire creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_1_1_b_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 black Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_1_1_bw",
+      "name": "Vampire",
+      "oracle_text": "1/1 black and white Vampire creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "is_token": true
     }
   ]
 }

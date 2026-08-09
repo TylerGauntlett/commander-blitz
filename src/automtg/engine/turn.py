@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
 from .actions import PendingDecision
+from .characteristics import player_has_no_hand_limit
 from .effects.context import EffectContext, ask_objects
 from .enums import DecisionKind, Step
 from .events import EventType
@@ -118,7 +119,7 @@ def _next_blocker_decision(state: GameState) -> None:
 def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     pid = state.active_player
     player = state.players[pid]
-    excess = len(player.hand) - MAX_HAND_SIZE
+    excess = 0 if player_has_no_hand_limit(state, pid) else len(player.hand) - MAX_HAND_SIZE
     if excess > 0:
         ctx = EffectContext(state=state, controller=pid, source_name="Cleanup")
         picked = yield from ask_objects(

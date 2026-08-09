@@ -1,0 +1,58 @@
+{
+  "card": {
+    "name": "Memorial to Genius",
+    "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{4}{U}, {T}, Sacrifice this land: Draw two cards.",
+    "types": [
+      "Land"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{4}{U}, {T}, Sacrifice this land: Draw two cards.",
+        "cost": {
+          "mana": "{4}{U}",
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "self_only": true
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ],
+    "id": "memorial_to_genius"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

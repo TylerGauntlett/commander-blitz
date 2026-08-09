@@ -152,6 +152,10 @@ class CardDef:
     abilities: tuple[Ability, ...] = ()
     type_line: str = ""
     is_token: bool = False
+    #: "This spell can't be countered."  A printed property of the card
+    #: rather than a granted one, read by the `counter` op -- a spell is on
+    #: the stack, where static abilities do not reach it.
+    uncounterable: bool = False
 
     # -- type predicates ----------------------------------------------------
 

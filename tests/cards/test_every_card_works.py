@@ -21,6 +21,7 @@ from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.game import Game
+from automtg.engine.objects import PLUS_ONE
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
 from tests.conftest import GameBuilder
@@ -176,11 +177,11 @@ class TestActivatedAbilities:
 
         for ability in activated:
             game = build_sandbox(registry, card_id, in_hand=False)
-            game.state.battlefield.append(
-                new_object(game.state, card_id, owner=0, zone=Zone.BATTLEFIELD).oid
-            )
-            for oid in game.state.battlefield:
-                game.state.objects[oid].entered_turn = 0
+            oid = new_object(game.state, card_id, owner=0, zone=Zone.BATTLEFIELD).oid
+            game.state.battlefield.append(oid)
+            _pay_the_counters(game, oid, ability)
+            for other in game.state.battlefield:
+                game.state.objects[other].entered_turn = 0
             game.state.bump_chars()
             game._advance()
 
@@ -200,6 +201,24 @@ class TestActivatedAbilities:
             )
             game.apply(action)
             drive(game)
+
+
+def _pay_the_counters(game: Game, oid: int, ability) -> None:
+    """Stock the counters an ability's cost wants to remove.
+
+    The sandbox already hands every card a mana base deep enough that "could not
+    pay for it" never means "does not work". A counter cost is the same kind of
+    setup: Khalni Heart Expedition's ability costs three quest counters, and a
+    card that arrives with none would report as unusable when it is only
+    unstocked.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "remove_counters", None) if cost else None
+    if not spec:
+        return
+    kind = str(spec.get("counter", PLUS_ONE))
+    amount = int(spec.get("amount", 1))
+    game.state.objects[oid].counters[kind] = amount
 
 
 class TestManaAbilities:

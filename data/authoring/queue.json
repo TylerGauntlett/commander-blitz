@@ -26972,12 +26972,12 @@
     },
     "Blighted Woodland": {
       "edhrec_rank": 879,
-      "gate": "template",
+      "gate": null,
       "name": "Blighted Woodland",
-      "reason": "no template for: {3}{G}, {T}, Sacrifice this land: Search your library for up to two basic land cards, put ",
+      "reason": "",
       "scryfall_id": "94e0ad38-31b3-46ba-9999-9b6ff57906ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Blightning": {
@@ -75792,12 +75792,12 @@
     },
     "Dryad of the Ilysian Grove": {
       "edhrec_rank": 299,
-      "gate": "template",
+      "gate": null,
       "name": "Dryad of the Ilysian Grove",
-      "reason": "no template for: Lands you control are every basic land type in addition to their other types",
+      "reason": "",
       "scryfall_id": "76e85c9f-bd0a-4285-b86c-69e170d4405a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dryad's Caress": {
@@ -138302,12 +138302,12 @@
     },
     "Ior Ruin Expedition": {
       "edhrec_rank": 14796,
-      "gate": "template",
+      "gate": null,
       "name": "Ior Ruin Expedition",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you may put a quest counter on this enchant",
+      "reason": "",
       "scryfall_id": "fd466b20-d11d-419e-8765-9befb9590299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ioreth of the Healing House": {
@@ -147142,12 +147142,12 @@
     },
     "Khalni Heart Expedition": {
       "edhrec_rank": 2548,
-      "gate": "template",
+      "gate": null,
       "name": "Khalni Heart Expedition",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you may put a quest counter on this enchant",
+      "reason": "",
       "scryfall_id": "159c309c-568d-4780-9db5-b50a997e7bb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Khalni Hydra": {
@@ -160482,12 +160482,12 @@
     },
     "Lotus Cobra": {
       "edhrec_rank": 326,
-      "gate": "template",
+      "gate": null,
       "name": "Lotus Cobra",
-      "reason": "no template for: Landfall — Whenever a land you control enters, add one mana of any color",
+      "reason": "",
       "scryfall_id": "9c3f861f-0f46-4360-970e-a5cfc5ef194b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Lotus Field": {
@@ -161552,12 +161552,12 @@
     },
     "Lumra, Bellow of the Woods": {
       "edhrec_rank": 1157,
-      "gate": "template",
+      "gate": null,
       "name": "Lumra, Bellow of the Woods",
-      "reason": "no template for: Lumra's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "3d99587a-7fb1-41fc-b7ea-1178f9625081",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Lunar Avenger": {
@@ -169192,12 +169192,12 @@
     },
     "Memorial to Genius": {
       "edhrec_rank": 9343,
-      "gate": "template",
+      "gate": null,
       "name": "Memorial to Genius",
-      "reason": "no template for: {4}{U}, {T}, Sacrifice this land: Draw two cards",
+      "reason": "",
       "scryfall_id": "29c999f7-caed-4d24-9881-d5b07c5cd579",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Memorial to Glory": {
@@ -175942,12 +175942,12 @@
     },
     "Molimo, Maro-Sorcerer": {
       "edhrec_rank": 11544,
-      "gate": "template",
+      "gate": null,
       "name": "Molimo, Maro-Sorcerer",
-      "reason": "no template for: Molimo's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "6c5d3eba-e456-47c2-992b-a97ba66e9676",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Molly Hayes, Runaway": {
@@ -184462,12 +184462,12 @@
     },
     "Nezahal, Primal Tide": {
       "edhrec_rank": 1088,
-      "gate": "template",
+      "gate": "residual",
       "name": "Nezahal, Primal Tide",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "printed text not represented: This spell can't be countered / Discard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step",
       "scryfall_id": "83731072-3c9f-4e47-802c-b54a59b865f8",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": true
     },
     "Nezumi Bladeblesser": {
@@ -191862,12 +191862,12 @@
     },
     "Oracle of Mul Daya": {
       "edhrec_rank": 503,
-      "gate": "template",
+      "gate": null,
       "name": "Oracle of Mul Daya",
-      "reason": "no template for: Play with the top card of your library revealed",
+      "reason": "",
       "scryfall_id": "ab19808f-a5b8-4dfd-800e-2064cd6538c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oracle of Nectars": {
@@ -213122,12 +213122,12 @@
     },
     "Ramunap Excavator": {
       "edhrec_rank": 462,
-      "gate": "template",
+      "gate": null,
       "name": "Ramunap Excavator",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "a6ebb0c9-59d7-4c27-83a5-16dac9a890e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ramunap Hydra": {
@@ -218002,12 +218002,12 @@
     },
     "Reliquary Tower": {
       "edhrec_rank": 10,
-      "gate": "template",
+      "gate": null,
       "name": "Reliquary Tower",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "064e88cb-b9ae-4b70-a788-7a0c2e215f1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Relive the Past": {
@@ -220012,12 +220012,12 @@
     },
     "Retreat to Kazandu": {
       "edhrec_rank": 2506,
-      "gate": "template",
+      "gate": null,
       "name": "Retreat to Kazandu",
-      "reason": "no template for: Landfall — Whenever a land you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "6d33f025-9c5f-4437-8415-397126d1227d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Retreat to Valakut": {
@@ -258732,12 +258732,12 @@
     },
     "Sporemound": {
       "edhrec_rank": 3494,
-      "gate": "template",
+      "gate": null,
       "name": "Sporemound",
-      "reason": "no template for: Landfall — Whenever a land you control enters, create a 1/1 green Saproling creature token",
+      "reason": "",
       "scryfall_id": "90594c9c-95a5-4d3c-9005-863fa710cdbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sporesower Thallid": {
@@ -275722,12 +275722,12 @@
     },
     "Terastodon": {
       "edhrec_rank": 1372,
-      "gate": "template",
+      "gate": null,
       "name": "Terastodon",
-      "reason": "no template for: When this creature enters, you may destroy up to three target noncreature permanents. For ",
+      "reason": "",
       "scryfall_id": "48783dc1-0976-4955-b7e3-afa311160d68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teremko Griffin": {
@@ -281872,12 +281872,12 @@
     },
     "Thought Vessel": {
       "edhrec_rank": 21,
-      "gate": "template",
+      "gate": null,
       "name": "Thought Vessel",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "ad077996-6b5e-4eb8-bb6e-93d43c5efa8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Thought-Knot Seer": {
@@ -296492,12 +296492,12 @@
     },
     "Urban Evolution": {
       "edhrec_rank": 2306,
-      "gate": "template",
+      "gate": null,
       "name": "Urban Evolution",
-      "reason": "no template for: Draw three cards. You may play an additional land this turn",
+      "reason": "",
       "scryfall_id": "6eecff8f-89c6-425d-baf7-1148b3cfc381",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Urban Retreat": {
@@ -303332,12 +303332,12 @@
     },
     "Vivid Creek": {
       "edhrec_rank": 4452,
-      "gate": "template",
+      "gate": null,
       "name": "Vivid Creek",
-      "reason": "no template for: {T}, Remove a charge counter from this land: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "c9082527-aa88-42f7-b2f2-de21878cb179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vivid Flying Fish": {
@@ -303352,12 +303352,12 @@
     },
     "Vivid Grove": {
       "edhrec_rank": 4491,
-      "gate": "template",
+      "gate": null,
       "name": "Vivid Grove",
-      "reason": "no template for: {T}, Remove a charge counter from this land: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "c2152076-0023-4fb8-9321-205e0d1b1b26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vivid Marsh": {

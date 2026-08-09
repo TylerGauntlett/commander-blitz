@@ -2324,6 +2324,65 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 2
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}, {T}, Sacrifice this land: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "id": "blighted_woodland",
+      "name": "Blighted Woodland",
+      "oracle_text": "{T}: Add {C}.\n{3}{G}, {T}, Sacrifice this land: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -5096,6 +5155,58 @@
       "toughness": 1,
       "types": [
         "Land",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Plains",
+            "Island",
+            "Swamp",
+            "Mountain",
+            "Forest"
+          ],
+          "text": "Lands you control are every basic land type in addition to their other types."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dryad_of_the_ilysian_grove",
+      "mana_cost": "{2}{G}",
+      "name": "Dryad of the Ilysian Grove",
+      "oracle_text": "You may play an additional land on each of your turns.\nLands you control are every basic land type in addition to their other types.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Nymph",
+        "Dryad"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -8940,6 +9051,79 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a quest counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 3,
+              "counter": "quest"
+            },
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Remove three quest counters from this enchantment and sacrifice it: Draw two cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ior_ruin_expedition",
+      "mana_cost": "{1}{U}",
+      "name": "Ior Ruin Expedition",
+      "oracle_text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Draw two cards.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "iron_giant",
@@ -9704,6 +9888,89 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a quest counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 3,
+              "counter": "quest"
+            },
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 2
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Remove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "khalni_heart_expedition",
+      "mana_cost": "{1}{G}",
+      "name": "Khalni Heart Expedition",
+      "oracle_text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -10385,6 +10652,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, add one mana of any color.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lotus_cobra",
+      "mana_cost": "{1}{G}",
+      "name": "Lotus Cobra",
+      "oracle_text": "Landfall — Whenever a land you control enters, add one mana of any color.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Snake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -10508,6 +10863,91 @@
         "Dog"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Lumra's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "chooser": "none",
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Lumra enters, mill four cards. Then return all land cards from your graveyard to the battlefield tapped.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lumra_bellow_of_the_woods",
+      "keywords": [
+        "vigilance",
+        "reach"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Lumra, Bellow of the Woods",
+      "oracle_text": "Vigilance, reach\nLumra's power and toughness are each equal to the number of lands you control.\nWhen Lumra enters, mill four cards. Then return all land cards from your graveyard to the battlefield tapped.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Bear"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -11056,6 +11496,60 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{U}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{U}, {T}, Sacrifice this land: Draw two cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "id": "memorial_to_genius",
+      "name": "Memorial to Genius",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{4}{U}, {T}, Sacrifice this land: Draw two cards.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -11278,6 +11772,60 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Molimo's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "molimo_maro_sorcerer",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Molimo, Maro-Sorcerer",
+      "oracle_text": "Trample\nMolimo's power and toughness are each equal to the number of lands you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Sorcerer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -12311,6 +12859,45 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_library_top",
+          "kind": "static",
+          "text": "Play with the top card of your library revealed.\nYou may play lands from the top of your library."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "oracle_of_mul_daya",
+      "mana_cost": "{3}{G}",
+      "name": "Oracle of Mul Daya",
+      "oracle_text": "You may play an additional land on each of your turns.\nPlay with the top card of your library revealed.\nYou may play lands from the top of your library.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -13583,6 +14170,36 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play lands from your graveyard."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ramunap_excavator",
+      "mana_cost": "{2}{G}",
+      "name": "Ramunap Excavator",
+      "oracle_text": "You may play lands from your graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -13776,6 +14393,38 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [],
+      "id": "reliquary_tower",
+      "name": "Reliquary Tower",
+      "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "G"
@@ -13809,6 +14458,78 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on a creature"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "You gain 2 life"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, choose one — • Put a +1/+1 counter on target creature. • You gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "retreat_to_kazandu",
+      "mana_cost": "{2}{G}",
+      "name": "Retreat to Kazandu",
+      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Put a +1/+1 counter on target creature.\n• You gain 2 life.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -16372,6 +17093,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 1/1 green Saproling creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sporemound",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Sporemound",
+      "oracle_text": "Landfall — Whenever a land you control enters, create a 1/1 green Saproling creature token.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Fungus"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -18116,6 +18882,59 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller creates a 3/3 green Elephant creature token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "terastodon",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Terastodon",
+      "oracle_text": "When this creature enters, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller creates a 3/3 green Elephant creature token.",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Elephant"
+      ],
+      "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -18272,6 +19091,39 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [],
+      "id": "thought_vessel",
+      "mana_cost": "{2}",
+      "name": "Thought Vessel",
+      "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -19256,6 +20108,40 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "urban_evolution",
+      "mana_cost": "{3}{G}{U}",
+      "name": "Urban Evolution",
+      "oracle_text": "Draw three cards. You may play an additional land this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "extra_land_drop",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -19820,6 +20706,210 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "charge"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Remove a charge counter from this land: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "id": "vivid_creek",
+      "name": "Vivid Creek",
+      "oracle_text": "This land enters tapped with two charge counters on it.\n{T}: Add {U}.\n{T}, Remove a charge counter from this land: Add one mana of any color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 2,
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "charge"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Remove a charge counter from this land: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "id": "vivid_grove",
+      "name": "Vivid Grove",
+      "oracle_text": "This land enters tapped with two charge counters on it.\n{T}: Add {G}.\n{T}, Remove a charge counter from this land: Add one mana of any color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 2,
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
