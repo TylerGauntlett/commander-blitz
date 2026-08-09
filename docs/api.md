@@ -61,9 +61,11 @@ a card, never enough to decide legality.
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/health` | Version, card count, deck list, live game count |
-| `GET` | `/api/decks` | Deck summaries for the new-game dialog |
+| `GET` | `/api/decks` | Deck summaries for the new-game dialog, with `source`/`playable`/`simplified` |
+| `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}` |
+| `DELETE` | `/api/decks/{deck_id}` | Remove an imported deck. `400` on a precon |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
-| `GET` | `/api/images` | Every engine card's art path. Static, so fetched once at boot |
+| `GET` | `/api/images?game_id=` | Card art paths. Static, so fetched once. Scoped to a game's own cards when `game_id` is given — unscoped it grows with every imported deck |
 | `GET` | `/art/{card_id}.jpg` | The art itself, from disk. Lazily fetched for cards outside the shipped pool |
 | `GET` | `/api/catalog?q=&colors=&types=&limit=` | Search the ~32,700-card Scryfall-derived catalog |
 | `GET` | `/api/catalog/{scryfall_id}` | One catalog card |
@@ -80,6 +82,13 @@ a card, never enough to decide legality.
 | `DELETE` | `/api/games/{id}` | Discard the session |
 
 Errors: `400` for an illegal or out-of-turn action, `404` for an unknown game or card.
+
+**Deck import is the one route whose errors carry a machine-readable code**, as
+`{"detail": {"detail": "...", "code": "private"}}`. "That deck is private" and
+"there is no such deck" send somebody to two different places — their Moxfield
+settings, or the address bar — and a client that switched on the sentence would
+break the first time somebody reworded it. Codes and statuses are tabulated in
+[deck-import.md](deck-import.md).
 
 ## Hidden information
 

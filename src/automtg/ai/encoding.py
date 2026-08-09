@@ -17,6 +17,7 @@ action slot *k* refer to the same object.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -68,12 +69,23 @@ TYPE_BITS = ("Creature", "Land", "Artifact", "Enchantment")
 
 
 class CardVocabulary:
-    """Maps card ids to embedding indices.  Index 0 means "empty slot"."""
+    """Maps card ids to embedding indices.  Index 0 means "empty slot".
+
+    ``ids`` may be given explicitly, and a checkpoint must always do so.  The
+    list is ``sorted(registry.ids())``, so adding a card that sorts early shifts
+    the index of every card after it -- a saved network would then load without
+    complaint and read the wrong embedding for most of the pool.  That is a
+    silent failure, and it is worse than the loud one: growing the registry past
+    ``n_cards`` raises ``IndexError`` inside the embedding lookup instead.
+
+    Both happen the moment a new precon ships, which is why the ids travel with
+    the weights.
+    """
 
     __slots__ = ("_index", "ids")
 
-    def __init__(self, registry: CardRegistry) -> None:
-        self.ids = ["<empty>", *registry.ids()]
+    def __init__(self, registry: CardRegistry, ids: Sequence[str] | None = None) -> None:
+        self.ids = list(ids) if ids is not None else ["<empty>", *registry.ids()]
         self._index = {card_id: i for i, card_id in enumerate(self.ids)}
 
     def __len__(self) -> int:

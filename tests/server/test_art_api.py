@@ -58,6 +58,57 @@ class TestImagesEndpoint:
         # issues a request it knows will 404.
         assert client.get("/api/images").json()["images"]["aetherling_serpent"] is None
 
+
+class TestScopingToAGame:
+    """`?game_id=` exists because the unscoped map is no longer bounded.
+
+    It used to carry the ~149 cards the engine shipped. With deck import a
+    server can hold thousands, and a board still only ever draws its own ninety.
+    """
+
+    @pytest.fixture
+    def game_id(self, client) -> str:
+        return client.post(
+            "/api/games",
+            json={
+                "seats": [
+                    {"deck_id": "aesi", "kind": "human"},
+                    {"deck_id": "edgar", "kind": "ai", "agent": "random"},
+                ],
+                "seed": 5,
+            },
+        ).json()["game_id"]
+
+    def test_it_covers_the_cards_in_that_game(self, client, game_id, game_data):
+        scoped = client.get(f"/api/images?game_id={game_id}").json()["images"]
+        for deck_id in ("aesi", "edgar"):
+            assert game_data.deck(deck_id).unique_ids() <= set(scoped)
+
+    def test_it_still_covers_the_tokens(self, client, game_id, game_data):
+        # A token is never in a deck list but is very much on the board, and a
+        # missing one is a blank plate the first time somebody attacks.
+        scoped = client.get(f"/api/images?game_id={game_id}").json()["images"]
+        tokens = {c.id for c in game_data.registry if c.is_token}
+        assert tokens
+        assert tokens <= set(scoped)
+
+    def test_it_leaves_out_cards_no_seat_can_draw(self, client, game_id, game_data):
+        scoped = set(client.get(f"/api/images?game_id={game_id}").json()["images"])
+        reachable = {c.id for c in game_data.registry if c.is_token}
+        for deck_id in ("aesi", "edgar"):
+            reachable |= game_data.deck(deck_id).unique_ids()
+        assert scoped == reachable
+
+    def test_the_unscoped_form_is_unchanged(self, client, game_id, game_data):
+        # Scripts depend on it, and "every card the engine has" is a genuinely
+        # different question from "every card in this game".
+        assert set(client.get("/api/images").json()["images"]) == set(
+            game_data.registry.ids()
+        )
+
+    def test_an_unknown_game_is_a_404(self, client):
+        assert client.get("/api/images?game_id=nope").status_code == 404
+
     def test_no_third_party_url_reaches_the_client(self, client):
         # The whole point. If this fails the board has a runtime dependency on
         # Scryfall again, and it will fail on someone's plane.

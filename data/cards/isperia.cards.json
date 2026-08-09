@@ -1,0 +1,1933 @@
+{
+  "cards": [
+    {
+      "id": "isperia_supreme_judge",
+      "name": "Isperia, Supreme Judge",
+      "oracle_text": "Flying\nWhenever a creature attacks you or a planeswalker you control, you may draw a card.",
+      "mana_cost": "{2}{W}{W}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 6,
+      "toughness": 4,
+      "supertypes": [
+        "Legendary"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature attacks you, you may draw a card.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "defending": "you"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Draw a card?",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tranquil_cove",
+      "name": "Tranquil Cove",
+      "oracle_text": "Tranquil Cove enters tapped. When it enters, you gain 1 life. {T}: Add {W} or {U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, you gain 1 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "W",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "U",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "meandering_river",
+      "name": "Meandering River",
+      "oracle_text": "Meandering River enters tapped. {T}: Add {W} or {U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "W",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "U",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "azorius_guildgate",
+      "name": "Azorius Guildgate",
+      "oracle_text": "Azorius Guildgate enters tapped. {T}: Add {W} or {U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "W",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "U",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coastal_tower",
+      "name": "Coastal Tower",
+      "oracle_text": "Coastal Tower enters tapped. {T}: Add {W} or {U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "W",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "U",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "temple_of_enlightenment",
+      "name": "Temple of Enlightenment",
+      "oracle_text": "Temple of Enlightenment enters tapped. When it enters, scry 1. {T}: Add {W} or {U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, scry 1.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "scry",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "W",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "U",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seat_of_the_synod",
+      "name": "Seat of the Synod",
+      "oracle_text": "{T}: Add {U}.",
+      "types": [
+        "Artifact",
+        "Land"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{U}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ancient_den",
+      "name": "Ancient Den",
+      "oracle_text": "{T}: Add {W}.",
+      "types": [
+        "Artifact",
+        "Land"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{W}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "azorius_chancery",
+      "name": "Azorius Chancery",
+      "oracle_text": "Azorius Chancery enters tapped. When it enters, return a land you control to its owner's hand.\n{T}: Add {W}{U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W}{U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{W}{U}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wall_of_omens",
+      "name": "Wall of Omens",
+      "oracle_text": "Defender\nWhen Wall of Omens enters, draw a card.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "keywords": [
+        "defender"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cloudkin_seer",
+      "name": "Cloudkin Seer",
+      "oracle_text": "Flying\nWhen Cloudkin Seer enters, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "augury_owl",
+      "name": "Augury Owl",
+      "oracle_text": "Flying\nWhen Augury Owl enters, scry 3.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, scry 3.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "scry",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "omenspeaker",
+      "name": "Omenspeaker",
+      "oracle_text": "When Omenspeaker enters, scry 2.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, scry 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "scry",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wind_drake",
+      "name": "Wind Drake",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "air_elemental",
+      "name": "Air Elemental",
+      "oracle_text": "Flying",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "serra_angel",
+      "name": "Serra Angel",
+      "oracle_text": "Flying, vigilance",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
+    },
+    {
+      "id": "aven_fleetwing",
+      "name": "Aven Fleetwing",
+      "oracle_text": "Flying, hexproof",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying",
+        "hexproof"
+      ]
+    },
+    {
+      "id": "warden_of_evos_isle",
+      "name": "Warden of Evos Isle",
+      "oracle_text": "Flying\nWhen Warden of Evos Isle enters, draw a card.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "empyrean_eagle",
+      "name": "Empyrean Eagle",
+      "oracle_text": "Flying\nOther creatures you control with flying get +1/+1.",
+      "mana_cost": "{1}{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird",
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other creatures you control with flying get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "flying"
+            ],
+            "exclude_self": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "watcher_of_the_spheres",
+      "name": "Watcher of the Spheres",
+      "oracle_text": "Flying",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "windreader_sphinx",
+      "name": "Windreader Sphinx",
+      "oracle_text": "Flying",
+      "mana_cost": "{5}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 3,
+      "toughness": 7,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "lyra_dawnbringer",
+      "name": "Lyra Dawnbringer",
+      "oracle_text": "Flying, first strike, lifelink\nOther Angels you control get +1/+1 and have lifelink.",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "supertypes": [
+        "Legendary"
+      ],
+      "keywords": [
+        "flying",
+        "first_strike",
+        "lifelink"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Angels you control get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Angel"
+            ],
+            "exclude_self": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Other Angels you control have lifelink.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Angel"
+            ],
+            "exclude_self": true
+          },
+          "keywords": [
+            "lifelink"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "emeria_angel",
+      "name": "Emeria Angel",
+      "oracle_text": "Flying\nWhenever a land you control enters, create a 1/1 white Bird creature token with flying.",
+      "mana_cost": "{2}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a land you control enters, create a 1/1 white Bird with flying.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "bird_1_1_w_flying",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "consecrated_sphinx",
+      "name": "Consecrated Sphinx",
+      "oracle_text": "Flying\nWhenever an opponent draws a card, you may draw two cards.",
+      "mana_cost": "{4}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 4,
+      "toughness": 6,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, you may draw two cards.",
+          "trigger": {
+            "event": "draw",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Draw two cards?",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "archangel_of_thune",
+      "name": "Archangel of Thune",
+      "oracle_text": "Flying, lifelink\nWhenever you gain life, put a +1/+1 counter on each creature you control.",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 3,
+      "toughness": 4,
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life, put a +1/+1 counter on each creature you control.",
+          "trigger": {
+            "event": "you_gain_life",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sun_titan",
+      "name": "Sun Titan",
+      "oracle_text": "When Sun Titan enters, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+      "mana_cost": "{4}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Giant"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return a permanent with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "graveyard",
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Instant"
+                ],
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skyknight_vanguard",
+      "name": "Skyknight Vanguard",
+      "oracle_text": "Whenever Skyknight Vanguard attacks, create a 1/1 white Soldier creature token that's tapped and attacking.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this attacks, create a tapped and attacking 1/1 white Soldier.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "soldier_1_1_w",
+              "amount": {
+                "const": 1
+              },
+              "tapped": true,
+              "attacking": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bygone_bishop",
+      "name": "Bygone Bishop",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "loyal_drake",
+      "name": "Loyal Drake",
+      "oracle_text": "Flying",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "angel_of_sanctions",
+      "name": "Angel of Sanctions",
+      "oracle_text": "Flying\nWhen Angel of Sanctions enters, exile target nonland permanent an opponent controls.",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sphinx_of_magosi",
+      "name": "Sphinx of Magosi",
+      "oracle_text": "Flying\n{2}{U}: Draw a card, then put a +1/+1 counter on Sphinx of Magosi.",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}{U}: Draw a card, then put a +1/+1 counter on this.",
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deputy_of_detention",
+      "name": "Deputy of Detention",
+      "oracle_text": "When Deputy of Detention enters, exile target nonland permanent an opponent controls until Deputy of Detention leaves the battlefield.",
+      "mana_cost": "{1}{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vedalken",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bird_1_1_w_flying",
+      "name": "Bird Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "soldier_1_1_w",
+      "name": "Soldier Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "is_token": true
+    },
+    {
+      "id": "wrath_of_god",
+      "name": "Wrath of God",
+      "oracle_text": "Destroy all creatures. They can't be regenerated.",
+      "mana_cost": "{2}{W}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day_of_judgment",
+      "name": "Day of Judgment",
+      "oracle_text": "Destroy all creatures.",
+      "mana_cost": "{2}{W}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dismiss",
+      "name": "Dismiss",
+      "oracle_text": "Counter target spell.\nDraw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "negate",
+      "name": "Negate",
+      "oracle_text": "Counter target noncreature spell.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "essence_scatter",
+      "name": "Essence Scatter",
+      "oracle_text": "Counter target creature spell.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "dissolve",
+      "name": "Dissolve",
+      "oracle_text": "Counter target spell. Scry 1.",
+      "mana_cost": "{1}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "scry",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "opt",
+      "name": "Opt",
+      "oracle_text": "Scry 1. Draw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "scry",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ponder",
+      "name": "Ponder",
+      "oracle_text": "Look at the top three cards of your library, then put them back in any order. You may shuffle. Draw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "scry",
+          "player": "you",
+          "amount": {
+            "const": 3
+          }
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "anticipate",
+      "name": "Anticipate",
+      "oracle_text": "Scry 2, then draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "scry",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "blue_suns_zenith",
+      "name": "Blue Sun's Zenith",
+      "oracle_text": "Target player draws X cards.",
+      "mana_cost": "{X}{U}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "x": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "sphinxs_revelation",
+      "name": "Sphinx's Revelation",
+      "oracle_text": "You gain X life and draw X cards.",
+      "mana_cost": "{X}{W}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "x": true
+          }
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "x": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "man_o_war",
+      "name": "Man-o'-War",
+      "oracle_text": "When Man-o'-War enters, return target creature to its owner's hand.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Jellyfish"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return target creature to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "angel_of_the_dire_hour",
+      "name": "Angel of the Dire Hour",
+      "oracle_text": "Flash, flying\nWhen Angel of the Dire Hour enters, if it was cast, exile all attacking creatures.",
+      "mana_cost": "{5}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 5,
+      "toughness": 4,
+      "keywords": [
+        "flying",
+        "flash"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, exile all attacking creatures.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ],
+                "attacking": true,
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sunblast_angel",
+      "name": "Sunblast Angel",
+      "oracle_text": "Flying\nWhen Sunblast Angel enters, destroy all tapped creatures.",
+      "mana_cost": "{4}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 4,
+      "toughness": 5,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, destroy all tapped creatures.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "destroy",
+              "objects": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ],
+                "tapped": true,
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "banishing_light",
+      "name": "Banishing Light",
+      "oracle_text": "When Banishing Light enters, exile target nonland permanent an opponent controls until Banishing Light leaves the battlefield.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "oblivion_ring",
+      "name": "Oblivion Ring",
+      "oracle_text": "When Oblivion Ring enters, exile another target nonland permanent.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reconnaissance_mission",
+      "name": "Reconnaissance Mission",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bident_of_thassa",
+      "name": "Bident of Thassa",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment",
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "exclude",
+      "name": "Exclude",
+      "oracle_text": "Counter target creature spell. Draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "absorb",
+      "name": "Absorb",
+      "oracle_text": "Counter target spell. You gain 3 life.",
+      "mana_cost": "{W}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 3
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "inspiration",
+      "name": "Inspiration",
+      "oracle_text": "Target player draws two cards.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "jaces_ingenuity",
+      "name": "Jace's Ingenuity",
+      "oracle_text": "Draw three cards.",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "concentrate",
+      "name": "Concentrate",
+      "oracle_text": "Draw three cards.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "evacuation",
+      "name": "Evacuation",
+      "oracle_text": "Return all creatures to their owners' hands.",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "return_to_hand",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    }
+  ]
+}

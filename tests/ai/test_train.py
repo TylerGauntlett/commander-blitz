@@ -17,7 +17,14 @@ from automtg.ai.agents.base import play  # noqa: E402
 from automtg.ai.agents.policy_agent import PolicyAgent  # noqa: E402
 from automtg.ai.agents.random_agent import RandomAgent  # noqa: E402
 from automtg.ai.env import make_env  # noqa: E402
-from automtg.ai.model import ModelConfig, build_model, load, save, to_batch  # noqa: E402
+from automtg.ai.model import (  # noqa: E402
+    ModelConfig,
+    build_model,
+    load,
+    load_vocab_ids,
+    save,
+    to_batch,
+)
 from automtg.ai.train import TrainConfig, train  # noqa: E402
 from automtg.engine.game import create_game  # noqa: E402
 
@@ -82,6 +89,56 @@ class TestModel:
         original, _ = model(scalar, card_ids, mask)
         reloaded, _ = restored(scalar, card_ids, mask)
         assert torch.allclose(original, reloaded, atol=1e-6)
+
+
+class TestACheckpointRemembersItsCardList:
+    """Why the vocabulary travels with the weights.
+
+    `CardVocabulary` indexes `sorted(registry.ids())`. Adding a card that sorts
+    early -- which shipping a new precon does a hundred times over -- shifts the
+    index of every card after it. The checkpoint then loads *without complaint*
+    and reads the wrong embedding for most of the pool, which is a far worse
+    failure than the loud one of running off the end of the table.
+    """
+
+    def test_the_ids_are_saved_alongside_the_weights(self, model, vocab, tmp_path: Path):
+        path = tmp_path / "policy.pt"
+        save(model, path, ModelConfig(n_cards=len(vocab)), vocab.ids)
+        assert load_vocab_ids(path) == vocab.ids
+
+    def test_an_older_checkpoint_without_them_is_not_an_error(self, model, vocab, tmp_path: Path):
+        # `load` must keep working on every checkpoint written before this
+        # existed, which is why the ids sit beside `config` and not inside it.
+        path = tmp_path / "old.pt"
+        save(model, path, ModelConfig(n_cards=len(vocab)))
+        assert load_vocab_ids(path) is None
+        assert load(path)[1].n_cards == len(vocab)
+
+    def test_a_saved_list_survives_the_registry_growing(self, model, vocab, tmp_path: Path):
+        path = tmp_path / "policy.pt"
+        save(model, path, ModelConfig(n_cards=len(vocab)), vocab.ids)
+        agent = PolicyAgent(str(path))
+        # Built from the checkpoint's list, not from today's registry, so every
+        # card keeps the index it was trained under.
+        assert agent.vocab.ids == vocab.ids
+        assert agent.model is not None
+
+    def test_an_older_checkpoint_against_a_grown_registry_falls_back_loudly(
+        self, model, vocab, tmp_path: Path
+    ):
+        # No saved list and a size mismatch means the mapping is unrecoverable.
+        # The heuristic is a worse player but a correct one; guessing is an
+        # IndexError at best and nonsense at worst.
+        #
+        # Built at the smaller size, not merely labelled with it: this is a
+        # checkpoint from before five cards were added, which is exactly what
+        # every existing `runs/*.pt` becomes when a precon ships.
+        stale_config = ModelConfig(n_cards=len(vocab) - 5)
+        path = tmp_path / "stale.pt"
+        save(build_model(stale_config), path, stale_config)
+        with pytest.warns(RuntimeWarning, match="[Rr]etrain"):
+            agent = PolicyAgent(str(path))
+        assert agent.model is None
 
 
 class TestPolicyAgent:

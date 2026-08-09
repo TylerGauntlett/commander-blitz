@@ -240,9 +240,21 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
 
 
 def create_token(
-    state: GameState, def_id: str, controller: int, count: int = 1, *, tapped: bool = False
+    state: GameState,
+    def_id: str,
+    controller: int,
+    count: int = 1,
+    *,
+    tapped: bool = False,
+    attacking: int | None = None,
 ) -> list[int]:
-    """Put ``count`` copies of a token onto the battlefield under ``controller``."""
+    """Put ``count`` copies of a token onto the battlefield under ``controller``.
+
+    ``attacking`` is the player the token joins combat against.  A token put onto
+    the battlefield attacking was **never declared** as an attacker, so it does
+    not trigger anything that fires on attacking -- that is the actual rule, and
+    it is also what stops a mobilize token making another mobilize token forever.
+    """
     made: list[int] = []
     for _ in range(max(0, count)):
         obj = new_object(
@@ -252,6 +264,8 @@ def create_token(
         # triggers and enters-tapped replacements run through the normal path.
         state.players[controller].exile.append(obj.oid)
         move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
+        if attacking is not None and state.combat is not None:
+            state.combat.attackers[obj.oid] = attacking
         state.emit(EventType.TOKEN_CREATED, player=controller, source=obj.oid, card=def_id)
         made.append(obj.oid)
     return made

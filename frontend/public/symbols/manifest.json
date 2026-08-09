@@ -59,6 +59,36 @@
     "file": "2.svg",
     "symbol": "{2}"
   },
+  "2-B": {
+    "colors": ["B"],
+    "english": "two generic mana or one black mana",
+    "file": "2-B.svg",
+    "symbol": "{2/B}"
+  },
+  "2-G": {
+    "colors": ["G"],
+    "english": "two generic mana or one green mana",
+    "file": "2-G.svg",
+    "symbol": "{2/G}"
+  },
+  "2-R": {
+    "colors": ["R"],
+    "english": "two generic mana or one red mana",
+    "file": "2-R.svg",
+    "symbol": "{2/R}"
+  },
+  "2-U": {
+    "colors": ["U"],
+    "english": "two generic mana or one blue mana",
+    "file": "2-U.svg",
+    "symbol": "{2/U}"
+  },
+  "2-W": {
+    "colors": ["W"],
+    "english": "two generic mana or one white mana",
+    "file": "2-W.svg",
+    "symbol": "{2/W}"
+  },
   "3": {
     "colors": [],
     "english": "three generic mana",
@@ -107,11 +137,65 @@
     "file": "B.svg",
     "symbol": "{B}"
   },
+  "B-G": {
+    "colors": ["B", "G"],
+    "english": "one black or green mana",
+    "file": "B-G.svg",
+    "symbol": "{B/G}"
+  },
+  "B-P": {
+    "colors": ["B"],
+    "english": "one black mana or two life",
+    "file": "B-P.svg",
+    "symbol": "{B/P}"
+  },
+  "B-R": {
+    "colors": ["B", "R"],
+    "english": "one black or red mana",
+    "file": "B-R.svg",
+    "symbol": "{B/R}"
+  },
   "C": {
     "colors": [],
     "english": "one colorless mana",
     "file": "C.svg",
     "symbol": "{C}"
+  },
+  "C-B": {
+    "colors": ["B"],
+    "english": "one colorless mana or one black mana",
+    "file": "C-B.svg",
+    "symbol": "{C/B}"
+  },
+  "C-G": {
+    "colors": ["G"],
+    "english": "one colorless mana or one green mana",
+    "file": "C-G.svg",
+    "symbol": "{C/G}"
+  },
+  "C-P": {
+    "colors": [],
+    "english": "one colorless mana or two life",
+    "file": "C-P.svg",
+    "symbol": "{C/P}"
+  },
+  "C-R": {
+    "colors": ["R"],
+    "english": "one colorless mana or one red mana",
+    "file": "C-R.svg",
+    "symbol": "{C/R}"
+  },
+  "C-U": {
+    "colors": ["U"],
+    "english": "one colorless mana or one blue mana",
+    "file": "C-U.svg",
+    "symbol": "{C/U}"
+  },
+  "C-W": {
+    "colors": ["W"],
+    "english": "one colorless mana or one white mana",
+    "file": "C-W.svg",
+    "symbol": "{C/W}"
   },
   "E": {
     "colors": [],
@@ -125,6 +209,12 @@
     "file": "G.svg",
     "symbol": "{G}"
   },
+  "G-P": {
+    "colors": ["G"],
+    "english": "one green mana or two life",
+    "file": "G-P.svg",
+    "symbol": "{G/P}"
+  },
   "Q": {
     "colors": [],
     "english": "untap this permanent",
@@ -136,6 +226,18 @@
     "english": "one red mana",
     "file": "R.svg",
     "symbol": "{R}"
+  },
+  "R-G": {
+    "colors": ["R", "G"],
+    "english": "one red or green mana",
+    "file": "R-G.svg",
+    "symbol": "{R/G}"
+  },
+  "R-P": {
+    "colors": ["R"],
+    "english": "one red mana or two life",
+    "file": "R-P.svg",
+    "symbol": "{R/P}"
   },
   "S": {
     "colors": [],
@@ -155,11 +257,47 @@
     "file": "U.svg",
     "symbol": "{U}"
   },
+  "U-B": {
+    "colors": ["U", "B"],
+    "english": "one blue or black mana",
+    "file": "U-B.svg",
+    "symbol": "{U/B}"
+  },
+  "U-P": {
+    "colors": ["U"],
+    "english": "one blue mana or two life",
+    "file": "U-P.svg",
+    "symbol": "{U/P}"
+  },
+  "U-R": {
+    "colors": ["U", "R"],
+    "english": "one blue or red mana",
+    "file": "U-R.svg",
+    "symbol": "{U/R}"
+  },
   "W": {
     "colors": ["W"],
     "english": "one white mana",
     "file": "W.svg",
     "symbol": "{W}"
+  },
+  "W-B": {
+    "colors": ["W", "B"],
+    "english": "one white or black mana",
+    "file": "W-B.svg",
+    "symbol": "{W/B}"
+  },
+  "W-P": {
+    "colors": ["W"],
+    "english": "one white mana or two life",
+    "file": "W-P.svg",
+    "symbol": "{W/P}"
+  },
+  "W-U": {
+    "colors": ["W", "U"],
+    "english": "one white or blue mana",
+    "file": "W-U.svg",
+    "symbol": "{W/U}"
   },
   "X": {
     "colors": [],

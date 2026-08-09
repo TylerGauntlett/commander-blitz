@@ -25,18 +25,21 @@
 /**
  * What `public/symbols/` actually contains, per `fetch_symbols.py`'s `WANTED`.
  *
- * Anything outside this renders as its own notation instead. The engine rejects
- * hybrid and phyrexian costs at load time so they cannot reach here, and a
- * generic cost above 16 is not a card this game can contain -- but inventing a
- * broken `<img>` for one would be worse than showing text the player can look
- * up, which is the same call `symbolTokens` already makes.
+ * Anything outside this renders as its own notation instead: a generic cost
+ * above 16 is not a card this game can contain, and inventing a broken `<img>`
+ * for one would be worse than showing text the player can at least look up --
+ * the same call `symbolTokens` already makes.
+ *
+ * Hybrid and phyrexian are here now. They used to be excluded because the engine
+ * rejects those costs at load time, but deck import changed that: `cards/proxy.py`
+ * rewrites a hybrid *cost* into something the engine parses, and then displays
+ * the card's real oracle text, which is full of `{W/U}` and `{G/P}` inside
+ * activation costs.
  */
+const COLORS = ["W", "U", "B", "R", "G"];
+
 const KNOWN = new Set([
-  "W",
-  "U",
-  "B",
-  "R",
-  "G",
+  ...COLORS,
   "C",
   "X",
   "T",
@@ -44,10 +47,23 @@ const KNOWN = new Set([
   "S",
   "E",
   ...Array.from({ length: 17 }, (_, n) => String(n)),
+  ...COLORS.flatMap((a, i) => COLORS.slice(i + 1).map((b) => `${a}/${b}`)),
+  ...COLORS.map((c) => `2/${c}`),
+  ...[...COLORS, "C"].map((c) => `${c}/P`),
+  ...COLORS.map((c) => `C/${c}`),
 ]);
 
 export function hasSymbol(code: string): boolean {
   return KNOWN.has(code);
+}
+
+/**
+ * `{G/U}` is stored as `G-U.svg`: a slash cannot be a filename on Windows, and
+ * `fetch_symbols.py`'s `key_for` already makes the same substitution on the way
+ * in. The two have to agree or every hybrid pip is a broken image.
+ */
+function fileFor(code: string): string {
+  return code.replace("/", "-");
 }
 
 interface Props {
@@ -80,7 +96,7 @@ export function ManaSymbol({ code, className, fallback, title }: Props) {
       className={classes}
       // Root-relative: the hand, the preview rail and the action panel all draw
       // these, and none of them know where they are in a URL.
-      src={`/symbols/${code}.svg`}
+      src={`/symbols/${fileFor(code)}.svg`}
       alt={label}
       title={title ?? label}
       data-symbol={code}

@@ -216,12 +216,20 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_condition(model.trigger.condition, f"{where}.trigger.condition")
+        if model.trigger.defending is not None and model.trigger.event != "attacks":
+            # Silently ignoring it would produce a card that looks like it reads
+            # "attacks you" and fires on everything.
+            raise DslError(
+                f"{where}: 'defending' only means anything on an 'attacks' trigger, "
+                f"not on {model.trigger.event!r}"
+            )
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
             source=model.trigger.source,
             filter=dict(model.trigger.filter) if model.trigger.filter else None,
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
+            defending=model.trigger.defending,
         )
         active_zones = tuple(Zone(z) for z in model.active_zones)
 

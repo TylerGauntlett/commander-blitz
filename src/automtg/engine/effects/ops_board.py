@@ -63,8 +63,30 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
+    attacking = _attack_target(ctx) if spec.get("attacking") else None
     for pid in _players(ctx, spec.get("controller", "you")):
-        create_token(ctx.state, token, pid, amount, tapped=bool(spec.get("tapped")))
+        create_token(
+            ctx.state,
+            token,
+            pid,
+            amount,
+            tapped=bool(spec.get("tapped")),
+            attacking=attacking,
+        )
+
+
+def _attack_target(ctx: EffectContext) -> int | None:
+    """Whom a token created attacking should be attacking.
+
+    The same player the source is already attacking -- which is what "create a
+    tapped and attacking token" means on a card whose trigger is "whenever this
+    creature attacks".  Outside combat, or from a source that is not itself
+    attacking, there is nobody to join, and the token simply arrives tapped.
+    """
+    combat = ctx.state.combat
+    if combat is None or ctx.source_oid is None:
+        return None
+    return combat.attackers.get(ctx.source_oid)
 
 
 @register("add_counters")

@@ -52,6 +52,10 @@ class TriggerModel(BaseModel):
     source: Literal["self"] | None = None
     filter: dict[str, Any] | None = None
     condition: dict[str, Any] | None = None
+    #: For ``attacks``: whom the creature is attacking.  ``controller`` says
+    #: whose creature is swinging, which is a different question -- "attacks you"
+    #: needs this one.
+    defending: Literal["you", "opponent", "any"] | None = None
 
 
 class AbilityModel(BaseModel):
@@ -165,3 +169,7 @@ class DeckModel(BaseModel):
     cards: list[DeckEntryModel]
     substitutions: list[SubstitutionModel] = Field(default_factory=list)
     notes: str = ""
+    #: Where the list came from.  Defaulted so the two committed precons stay
+    #: valid untouched -- the model is ``extra="forbid"``, so a required field
+    #: here would have broken every deck file in the repository.
+    source: Literal["precon", "moxfield"] = "precon"

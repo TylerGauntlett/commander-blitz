@@ -19,8 +19,9 @@ export function App() {
 
   const decks = useDecks();
   const newGame = useNewGame();
-  // One fetch for the whole session; the map never changes while the server runs.
-  useImages();
+  // One fetch per game. Scoped to it once there is one, because an unscoped map
+  // grows with every imported deck and a board only ever draws its own ~90 cards.
+  useImages(session?.gameId);
   const game = useGame(session);
   const clearStaging = useUiStore((s) => s.clearStaging);
   const setError = useUiStore((s) => s.setError);
@@ -111,6 +112,7 @@ export function App() {
             error={(decks.error as Error | null) ?? (newGame.error as Error | null)}
             onStart={start}
             starting={newGame.isPending}
+            onDecksChanged={() => decks.refetch()}
           />
         </motion.div>
       )}

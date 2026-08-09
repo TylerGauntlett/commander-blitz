@@ -2,6 +2,7 @@
 
 import type {
   CardResponse,
+  DeckImportResponse,
   DeckSummary,
   GameCreated,
   ImagesResponse,
@@ -11,6 +12,25 @@ import type {
 
 const BASE = "/api";
 
+/**
+ * A failed request, with the server's machine-readable code when there is one.
+ *
+ * Deck import is the reason this exists: "that deck is private" and "there is no
+ * such deck" want different copy, and switching on a translated sentence is how
+ * that breaks the first time somebody rewords it.
+ */
+export class ApiError extends Error {
+  readonly status: number;
+  readonly code?: string;
+
+  constructor(status: number, message: string, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${BASE}${path}`, {
     headers: { "Content-Type": "application/json" },
@@ -18,13 +38,21 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
   if (!response.ok) {
     let detail = response.statusText;
+    let code: string | undefined;
     try {
       const body = await response.json();
-      detail = body.detail ?? detail;
+      // FastAPI wraps whatever the route raised. A plain string is the usual
+      // case; an object is a route that wanted to say more than one thing.
+      if (typeof body.detail === "string") {
+        detail = body.detail;
+      } else if (body.detail && typeof body.detail === "object") {
+        detail = body.detail.detail ?? detail;
+        code = body.detail.code;
+      }
     } catch {
       // Non-JSON error body; the status text is the best we have.
     }
-    throw new Error(`${response.status}: ${detail}`);
+    throw new ApiError(response.status, `${response.status}: ${detail}`, code);
   }
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
@@ -42,17 +70,39 @@ function stepQuery(aiSteps?: number): string {
 export const api = {
   decks: () => request<DeckSummary[]>("/decks"),
 
+  /**
+   * Import a public Moxfield deck.
+   *
+   * `dryRun` reports what would happen without writing anything, so the coverage
+   * panel can be shown before the deck is committed to disk. On a real import
+   * the deck becomes a `deck_id` like any other and `newGame` takes it unchanged.
+   */
+  importDeck: (url: string, dryRun = false) =>
+    request<DeckImportResponse>("/decks/import", {
+      method: "POST",
+      body: JSON.stringify({ url, dry_run: dryRun }),
+    }),
+
+  deleteDeck: (deckId: string) => request<void>(`/decks/${deckId}`, { method: "DELETE" }),
+
   card: (cardId: string) => request<CardResponse>(`/cards/${cardId}`),
 
   /**
-   * Every engine card's art location, in one response.
+   * Card art locations, in one response.
    *
    * Static for the life of the server process, so this is fetched once and
    * cached forever rather than riding along on each state poll -- the AI pump
    * polls several times a second, and the image is a function of the immutable
    * `card_id`.
+   *
+   * `gameId` narrows it to the cards that game can actually contain. Without it
+   * the response carries every card the server knows, which imported decks make
+   * unbounded.
    */
-  images: () => request<ImagesResponse>("/images"),
+  images: (gameId?: string) =>
+    request<ImagesResponse>(
+      gameId ? `/images?game_id=${encodeURIComponent(gameId)}` : "/images",
+    ),
 
   newGame: (seats: SeatConfig[], seed?: number) =>
     request<GameCreated>("/games", {

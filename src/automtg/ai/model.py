@@ -97,10 +97,19 @@ def to_batch(observations: list[dict[str, np.ndarray]]):
     return scalar, card_ids, mask
 
 
-def save(model, path, config: ModelConfig) -> None:
+def save(model, path, config: ModelConfig, vocab_ids: list[str] | None = None) -> None:
+    """Write the weights, the shape, and the card list they were trained on.
+
+    ``vocab_ids`` sits at the top level rather than inside ``config`` on purpose:
+    :func:`load` does ``ModelConfig(**blob["config"])``, so a new key in there
+    would raise on every checkpoint written before this existed.
+    """
     import torch
 
-    torch.save({"state_dict": model.state_dict(), "config": config.__dict__}, path)
+    blob = {"state_dict": model.state_dict(), "config": config.__dict__}
+    if vocab_ids is not None:
+        blob["vocab_ids"] = list(vocab_ids)
+    torch.save(blob, path)
 
 
 def load(path):
@@ -113,3 +122,17 @@ def load(path):
     model.load_state_dict(blob["state_dict"])
     model.eval()
     return model, config
+
+
+def load_vocab_ids(path) -> list[str] | None:
+    """The card list a checkpoint was trained on, or ``None`` for an older one.
+
+    Without it, a checkpoint has no way to say which embedding row belongs to
+    which card, and the registry it is used against may no longer be the one it
+    was trained on.
+    """
+    import torch
+
+    blob = torch.load(path, map_location="cpu", weights_only=False)
+    ids = blob.get("vocab_ids")
+    return list(ids) if ids else None

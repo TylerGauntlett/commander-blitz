@@ -90,6 +90,46 @@ class DeckSummary(BaseModel):
     color_identity: list[str]
     card_count: int
     notes: str = ""
+    #: "precon" or "moxfield".  Lets a deck tile carry its own badge without the
+    #: client fetching anything else.
+    source: str = "precon"
+    #: Cards whose printed text this engine represents in full, and cards whose
+    #: non-keyword text does nothing.  A precon is all playable by construction.
+    playable: int = 0
+    simplified: int = 0
+
+
+class ImportDeckRequest(BaseModel):
+    url: str = Field(max_length=400)
+    #: Report what would happen without writing anything, so the coverage panel
+    #: can be shown before the deck is committed to disk.
+    dry_run: bool = False
+
+
+class ImportedCardDTO(BaseModel):
+    name: str
+    qty: int
+    card_id: str
+    #: ``native`` -- a hand-written card, reused whole.
+    #: ``full``   -- generated, and nothing was lost.
+    #: ``partial``-- generated, non-keyword rules text inert.
+    origin: Literal["native", "full", "partial"]
+    notes: list[str] = Field(default_factory=list)
+
+
+class DeckImportResponse(BaseModel):
+    deck: DeckSummary
+    source: str = "moxfield"
+    source_id: str
+    total: int
+    playable: int
+    simplified: int
+    #: The mana base, called out on its own: a deck that looks like 37 lands and
+    #: behaves like 34 is the most confusing thing an import can produce.
+    lands: int = 0
+    lands_producing_mana: int = 0
+    cards: list[ImportedCardDTO] = Field(default_factory=list)
+    problems: list[str] = Field(default_factory=list)
 
 
 class CardResponse(BaseModel):

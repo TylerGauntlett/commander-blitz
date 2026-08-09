@@ -243,6 +243,43 @@ export interface DeckSummary {
   color_identity: string[];
   card_count: number;
   notes: string;
+  /** "precon" ships with the engine; "moxfield" was imported. */
+  source: string;
+  /** Cards whose printed text the engine represents in full. */
+  playable: number;
+  /** Cards whose non-keyword rules text does nothing. */
+  simplified: number;
+}
+
+/**
+ * How an imported card reached the engine.
+ *
+ * `native`  - a hand-written card in `data/cards/`, reused whole.
+ * `full`    - generated, and nothing was lost (a vanilla creature, a land).
+ * `partial` - generated, non-keyword rules text inert. `notes` says what.
+ */
+export type CardOrigin = "native" | "full" | "partial";
+
+export interface ImportedCard {
+  name: string;
+  qty: number;
+  card_id: string;
+  origin: CardOrigin;
+  notes: string[];
+}
+
+export interface DeckImportResponse {
+  deck: DeckSummary;
+  source: string;
+  source_id: string;
+  total: number;
+  playable: number;
+  simplified: number;
+  /** Called out separately: a deck can look like 37 lands and behave like 34. */
+  lands: number;
+  lands_producing_mana: number;
+  cards: ImportedCard[];
+  problems: string[];
 }
 
 export interface SeatConfig {

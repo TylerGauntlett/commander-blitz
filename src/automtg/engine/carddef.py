@@ -89,6 +89,11 @@ class TriggerSpec:
     source: str | None = None  # "self" restricts to this permanent
     filter: Mapping[str, Any] | None = None
     condition: Mapping[str, Any] | None = None  # intervening "if" clause
+    #: Who is being attacked, for ``attacks``.  ``controller`` answers *whose
+    #: creature* is attacking, which is a different question and not a
+    #: substitute: in a pod, "whenever a creature attacks you" must not fire when
+    #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``.
+    defending: str | None = None
 
 
 @dataclass(frozen=True)

@@ -162,6 +162,9 @@ def _matches(
         if spec.controller == "opponent" and actor == obj.controller:
             return False
 
+    if spec.defending is not None and not _defender_matches(spec.defending, obj, event):
+        return False
+
     if spec.filter is not None:
         if subject_oid is None:
             return False
@@ -174,6 +177,25 @@ def _matches(
         if not evaluate_condition(state, spec.condition, controller=obj.controller, source=obj.oid):
             return False
 
+    return True
+
+
+def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
+    """Whether the player being attacked is the one the trigger asks about.
+
+    ``defender`` is already on the ``attacks`` event -- combat records which
+    player each attacker was declared against -- so this is a filter rather than
+    new bookkeeping.  It exists because ``controller`` cannot answer the
+    question: "whenever a creature attacks you" is about the *defending* player,
+    and a two-player game hides the difference that a pod makes obvious.
+    """
+    defender = event.data.get("defender")
+    if defender is None:
+        return False
+    if clause == "you":
+        return int(defender) == obj.controller
+    if clause == "opponent":
+        return int(defender) != obj.controller
     return True
 
 
@@ -299,7 +321,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     subject = _subject_oid(spec.event, event)
     if subject is not None:
         bindings["subject"] = subject
-    for key in ("amount", "damage", "life", "sid", "defender"):
+    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking"):
         if key in event.data:
             bindings[key] = event.data[key]
 

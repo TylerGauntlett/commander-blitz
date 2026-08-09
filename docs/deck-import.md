@@ -1,0 +1,157 @@
+# Importing a deck
+
+Paste a public Moxfield link on the setup screen and you get a playable deck.
+The engine hand-implements about 149 cards; a real Commander deck contains a
+hundred, most of which say something nobody has written rules for. So the deal
+this feature makes is:
+
+> **Every card is on the board with its real name, art, cost, types and stats.
+> Cards nobody implemented keep their printed text but do nothing beyond their
+> keywords — and the screen tells you exactly which ones, and what changed.**
+
+That last clause is the whole feature. A silently-inert removal spell costs
+somebody a game and an hour working out why.
+
+## The round trip
+
+```
+paste  ->  moxfield.py   fetch the list        (names and quantities only)
+       ->  importer.py   reconcile each name against our catalog
+       ->  proxy.py      generate what nobody wrote
+       ->  data/generated/                     (gitignored)
+       ->  app.state.reload()                  visible without a restart
+```
+
+`GET https://api2.moxfield.com/v3/decks/all/{publicId}` is open to a plain
+`urllib` client. `mockups/README.md` records a Cloudflare 403 against
+`api2.moxfield.com` — that was `/v2/cards/search/user`, a different endpoint, and
+it is still true of that one.
+
+**Only three things are read from Moxfield**: a card's name, its quantity, and
+which board it was in. Every characteristic comes from our own
+`data/catalog/cards.sqlite`, so an imported card's id, art and colour identity
+agree with what `/api/catalog` already says. Supporting Archidekt later is an
+adapter, not a second card pipeline.
+
+## Three outcomes per card
+
+| | What it means |
+|---|---|
+| **native** | A hand-written card in `data/cards/`. Reused whole — real rules, existing art, and the id every precon already uses. An imported deck's Forests are `forest`. |
+| **full** | Generated, and nothing was lost. Vanilla and french-vanilla creatures, basic lands, taplands, duals, Signets. |
+| **partial** | Generated, non-keyword rules text inert. Every simplification is listed. |
+
+A name the catalog has never heard of is a **failure**, not a fourth outcome. A
+99-card deck is not a deck, and dropping the card silently is how somebody spends
+a game wondering where their commander went.
+
+## What the generator does and does not do
+
+`src/automtg/cards/proxy.py`, and it emits a `CardModel` that goes through the
+ordinary `compile_card` — so a generator bug is a `DslError` at import time
+rather than a mystery mid-game.
+
+**Kept:** name, mana cost, supertypes/types/subtypes, power/toughness, colours,
+colour identity, printed oracle text (displayed), the 14 keywords the engine
+implements, `{T}: Add` mana abilities, and enters-tapped.
+
+**Not modelled**, each recorded as a note on the card:
+
+- Any rules text that is not a bare keyword line or a mana ability.
+- **Back faces.** A transform or modal DFC generates as its front face only.
+  Called out loudly for MDFC lands, because the deck loses a land it thought it
+  had.
+- **The second half of a split or adventure card.**
+- **Hybrid, phyrexian and snow mana**, rewritten to something `ManaCost.parse`
+  accepts — `{W/U}` to a half the deck can produce, `{2/W}` to `{2}`, `{W/P}` to
+  `{W}`, `{S}` to `{1}`. Mana value is always preserved. This is not politeness:
+  `parse` *raises* on those symbols and the exception travels out through
+  `CardRegistry.from_paths`, so one hybrid card would stop the whole registry
+  loading at boot.
+- **Loyalty and defence.** Planeswalkers and Battles enter play as inert
+  permanents.
+- **Mana quantity.** Scryfall's `produced_mana` carries no amount, so a generated
+  Sol Ring taps for one.
+- **Conditional taplands** enter tapped unconditionally. Generating the *upgrade*
+  would quietly hand every imported deck a better mana base than it was built
+  with.
+- **Variable power/toughness.** `*` reads as 0.
+- **Lands that produce nothing** — fetchlands, creature-lands — are inert. This
+  is the biggest playability risk in an import, so the report has a line for it:
+  *"37 lands, but 3 of them make no mana here."*
+
+Measured over the whole catalog: **32,827 rows, zero compile failures**, ~4.4%
+`full`. `tests/cards/test_proxy_against_the_catalog.py` is the gate.
+
+## Where it goes, and why it is not committed
+
+```
+data/generated/          gitignored in full
+├── cards/pool.cards.json      one shared pool, not one file per deck
+├── cards/pool.images.json     {card_id: {scryfall_id, artist} | null}
+├── cards/pool.coverage.json   {card_id: {coverage, notes[]}}
+└── decks/mox_<publicId>.deck.json
+```
+
+**Two registries, and the split is load-bearing.** `default_registry()` is the
+authored layer — `data/cards/` and `data/decks/`, exactly what the repository
+ships. `server_registry()` is that plus `data/generated/`. Tests, the trainer and
+the arena all use the first.
+
+Three gates assume the authored pool is exactly what the repo ships:
+`test_every_card_works` parametrises over all of it, `test_image_resolution`
+pins the artless set at exactly five ids, and `ai/encoding` builds an embedding
+index from `registry.ids()`. If an import could reach those, `pytest` would give
+a different answer depending on what somebody imported last week. Gitignoring
+`data/generated/` is what makes the split actually hold.
+
+One shared card pool rather than one file per deck, because two decks that both
+contain Lightning Bolt would each generate `lightning_bolt` and
+`CardRegistry.from_paths` raises `duplicate card id`.
+
+**Ids are derived, never counted.** `slug_for` folds the name to the charset
+`server/art.py`'s path guard allows, and a collision appends six hex of the
+Scryfall id. A counter would make an id depend on the order things happened to be
+imported in — and these ids are art filenames and deck-list keys that must
+survive a re-import unchanged. Re-importing the same deck rewrites the same
+bytes.
+
+## Promoting a generated card
+
+A generated card is written in exactly the `data/cards/*.cards.json` format, so
+promotion is a copy: move the object into an authored file, fill in its
+`abilities` and `spell_effects` by hand (see [card-dsl.md](card-dsl.md)), delete
+it from the pool. Every deck referencing that id picks up the real rules on the
+next import.
+
+## The API
+
+| | |
+|---|---|
+| `POST /api/decks/import` | `{url, dry_run}` → 201 with the coverage report. `dry_run` reports without writing. |
+| `DELETE /api/decks/{id}` | Imported decks only; 400 on a precon. |
+| `GET /api/decks` | Now carries `source`, `playable`, `simplified`. |
+
+Errors carry a **code** as well as a sentence, because "that deck is private"
+and "there is no such deck" send somebody to two different places:
+
+| code | status |
+|---|---|
+| `bad_url` | 400 |
+| `private` | 403 |
+| `not_found` | 404 |
+| `not_commander`, `bad_size`, `unknown_cards`, `illegal` | 422 |
+| `unreachable` | 502 |
+| `no_catalog` | 503 |
+
+Once imported, the deck is a `deck_id` like any other: `POST /api/games` takes it
+through the same path as `aesi`, with no new code at all. That is the payoff for
+persisting rather than holding an ephemeral deck in session state.
+
+## Testing it without a network
+
+`moxfield.fetch_deck` takes its opener as an argument.
+`tests/server/test_import.py` passes a fake one backed by
+`tests/data/moxfield_deck.json` — a real, trimmed v3 payload, for the same reason
+`mini_cards.jsonl` is real: the shapes that break this code are the ones nobody
+would think to invent, like the em-dash in `type_line`.

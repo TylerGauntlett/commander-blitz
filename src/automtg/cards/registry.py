@@ -26,13 +26,34 @@ def data_dir() -> Path:
     return Path(override) if override else DEFAULT_DATA_DIR
 
 
+def generated_dir() -> Path:
+    """Where imported decks and their generated cards land.
+
+    Deliberately *not* under ``data/cards`` or ``data/decks``, and deliberately
+    gitignored.  Three gates read the authored pool and assume it is exactly what
+    the repository ships: ``test_every_card_works`` parametrises over all of it,
+    ``test_image_resolution`` pins the artless set at exactly five, and
+    ``ai/encoding`` builds an embedding index from it.  If an import could add to
+    that pool, ``pytest`` would return a different answer depending on what
+    somebody imported last week.
+    """
+    return data_dir() / "generated"
+
+
 class CardRegistry:
     """Immutable lookup from card id to :class:`CardDef`."""
 
-    __slots__ = ("_cards",)
+    __slots__ = ("_by_name", "_cards")
 
     def __init__(self, cards: dict[str, CardDef]) -> None:
         self._cards = dict(cards)
+        # Built once rather than scanned per call: importing a 100-card deck
+        # does 100 name lookups, and a linear scan makes that quadratic in the
+        # pool.  `setdefault` is first-wins, and the authored cards are loaded
+        # before any generated ones, so an authored card can never be shadowed.
+        self._by_name: dict[str, CardDef] = {}
+        for card in self._cards.values():
+            self._by_name.setdefault(card.name, card)
 
     def get(self, def_id: str) -> CardDef:
         try:
@@ -53,10 +74,7 @@ class CardRegistry:
         return sorted(self._cards)
 
     def by_name(self, name: str) -> CardDef | None:
-        for card in self._cards.values():
-            if card.name == name:
-                return card
-        return None
+        return self._by_name.get(name)
 
     @classmethod
     def from_paths(cls, paths: Iterable[Path]) -> CardRegistry:
@@ -89,6 +107,7 @@ class DeckList:
     cards: tuple[tuple[str, int], ...]
     substitutions: tuple[dict, ...] = ()
     notes: str = ""
+    source: str = "precon"
 
     def expanded(self) -> list[str]:
         """The 99 non-commander cards, one entry per physical card."""
@@ -113,6 +132,7 @@ class DeckList:
             cards=tuple((e.id, e.qty) for e in model.cards),
             substitutions=tuple(s.model_dump() for s in model.substitutions),
             notes=model.notes,
+            source=model.source,
         )
 
 
@@ -199,12 +219,49 @@ class GameData:
             ) from None
 
 
+def load_game_data(*, include_generated: bool = False) -> GameData:
+    """Compile the card pool and the deck lists.
+
+    The authored layer always comes first, so ``CardRegistry.by_name`` resolves
+    to a hand-written card whenever one exists and a generated proxy can never
+    shadow ``forest``.
+    """
+    paths = sorted((data_dir() / "cards").glob("*.cards.json"))
+    if not paths:
+        raise DslError(f"no card files found in {data_dir() / 'cards'}")
+    deck_dirs = [data_dir() / "decks"]
+    if include_generated:
+        paths += sorted((generated_dir() / "cards").glob("*.cards.json"))
+        deck_dirs.append(generated_dir() / "decks")
+
+    registry = CardRegistry.from_paths(paths)
+    decks: dict[str, DeckList] = {}
+    for directory in deck_dirs:
+        for deck_id, deck in load_decks(directory).items():
+            if deck_id in decks:
+                raise DeckError(f"duplicate deck id {deck_id!r}")
+            decks[deck_id] = deck
+    return GameData(registry=registry, decks=decks)
+
+
 @lru_cache(maxsize=4)
 def default_registry() -> GameData:
-    """Load ``data/`` once per process.
+    """The authored layer alone -- what the tests and the trainer see.
 
     Cached because card compilation is pure and the files never change during a
     run; a self-play session would otherwise re-parse 200 cards per game.
     """
-    registry = CardRegistry.from_dir()
-    return GameData(registry=registry, decks=load_decks())
+    return load_game_data()
+
+
+@lru_cache(maxsize=2)
+def server_registry() -> GameData:
+    """The authored layer plus anything imported -- what the server serves.
+
+    Separate from :func:`default_registry` so that importing a deck cannot
+    change the answer any test gives.  Invalidated by
+    ``automtg.server.app``'s reload hook after an import writes new files;
+    clearing this cache alone is not enough, because :class:`SessionRegistry`
+    holds the :class:`GameData` it was built with.
+    """
+    return load_game_data(include_generated=True)

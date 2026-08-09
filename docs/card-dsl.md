@@ -138,11 +138,19 @@ Anywhere a number is expected:
     "controller": "you",             // whose action must it be
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
-    "condition": { ... }             // intervening "if", re-checked on resolution
+    "condition": { ... },            // intervening "if", re-checked on resolution
+    "defending": "you"               // `attacks` only: whom it is attacking
   },
   "effects": [ ... ]
 }
 ```
+
+`defending` is **not** a synonym for `controller`. `controller` says whose
+creature is swinging; `defending` says who is being swung at. "Whenever a
+creature attacks you" needs the second, and in a duel the two are
+indistinguishable — which is exactly why writing it with `controller:
+"opponent"` looks right until a pod draws you a card for a combat you were not
+in. The loader rejects `defending` on any other event rather than ignoring it.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
@@ -150,7 +158,25 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `end_step` · `you_gain_life` · `counter_placed` · `draw`
 
 Triggers carry bindings the effects can read: `subject` (the object the event was
-about), `amount` (damage dealt, life gained), `self`, `x`.
+about), `amount` (damage dealt, life gained), `self`, `x`, `defender` (the player
+attacked), and `was_attacking` on `leaves_battlefield`.
+
+`was_attacking` is 1 or 0 rather than a boolean, so it reads with the ordinary
+`{"binding": "was_attacking"}` value expression and needs no new condition
+vocabulary:
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "binding": "was_attacking" },
+                 "right": { "const": 1 } },
+  "then": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ],
+  "else": [ { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } } ] }
+```
+
+It is last-known information and has to be: by the time the trigger resolves the
+object is out of combat and there is nothing left to ask. It is snapshotted where
+`was_creature` already was — the one LKI case a card cannot reach with a
+`snapshot` op of its own, because the object has already gone.
 
 ## Static abilities
 
@@ -225,6 +251,23 @@ Last-known information, made explicit:
 Without the `snapshot`, the creature would already be gone by the time the life gain
 is computed. Declaring it is the engine's substitute for a general LKI system.
 
+## Making a token that is already attacking
+
+```jsonc
+{ "op": "create_token", "token": "warrior_1_1_r",
+  "amount": { "const": 1 }, "tapped": true, "attacking": true }
+```
+
+`attacking` puts the token into combat against **whoever the source is already
+attacking**, which is what a mobilize-style trigger means. Outside combat, or
+from a source that is not itself attacking, there is nobody to join and the
+token simply arrives (tapped, if asked).
+
+A token created this way was never *declared* as an attacker, so it triggers
+nothing that fires on attacking. That is the real rule, and it is also what keeps
+"whenever this attacks, make a token that is attacking" from making tokens
+forever.
+
 ## Mana abilities
 
 A mana ability must contain only `add_mana`, or a single `choose_mode` whose modes each
@@ -238,3 +281,32 @@ the engine adds exactly that mana without running the effect interpreter at all.
    `@register("name")`. Make it a generator if it needs a decision.
 2. Add a unit test.
 3. That is all — the loader now accepts it, and card files can use it.
+
+## Generated cards, and promoting one
+
+Deck import writes card files too. `src/automtg/cards/proxy.py` turns a catalog
+row into a `CardModel` for a card nobody wrote rules for: real name, cost, types,
+stats, colours, the keywords the engine implements, and a `{T}: Add` mana ability
+where there is one. **Everything else its printed text claims does nothing**, and
+every such simplification is recorded and shown at import.
+
+Those land in `data/generated/cards/pool.cards.json`, which is gitignored and is
+**not** loaded by `default_registry()` — see [deck-import.md](deck-import.md) for
+why that separation is load-bearing.
+
+The generator emits a `CardModel` and runs it through the same `compile_card`
+above, so it gets the identical vocabulary and constraint validation, and a
+generator bug is a `DslError` at import time rather than a card that looks
+implemented and does nothing.
+
+That also gives a **promotion path**, which is how the proxy backlog gets burnt
+down one card at a time:
+
+1. Find the card in `data/generated/cards/pool.cards.json`. It is already in
+   this file format.
+2. Move the object into an authored file in `data/cards/`.
+3. Fill in its `abilities` / `spell_effects` by hand, using everything above.
+4. Delete it from the pool.
+
+It is now a first-class card with the full test suite behind it, and every deck
+that references that id picks up the real rules on the next import.

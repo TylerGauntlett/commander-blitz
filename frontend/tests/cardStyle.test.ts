@@ -300,11 +300,25 @@ describe("symbolTokens", () => {
     expect(pip).toMatchObject({ kind: "symbol", value: "10", label: "10" });
   });
 
+  it("draws hybrid and phyrexian symbols", () => {
+    // These used to fall back to text, on the grounds that the engine rejects
+    // hybrid costs at load time so none could reach the screen. Deck import
+    // changed that: a generated card's oracle text is shown verbatim and its
+    // activation costs are full of them, so `public/symbols/` carries all 24.
+    expect(symbolTokens("{G/U} hybrid")[0]).toMatchObject({
+      kind: "symbol",
+      value: "G/U",
+      tone: "G",
+    });
+    expect(symbolTokens("{2/W}")[0]).toMatchObject({ kind: "symbol", value: "2/W", tone: "W" });
+    expect(symbolTokens("{U/P}")[0]).toMatchObject({ kind: "symbol", value: "U/P", tone: "U" });
+  });
+
   it("leaves notation it does not recognise as text rather than guessing", () => {
-    // Inventing a pip for a symbol the engine does not support is worse than
-    // showing the raw notation, which a player can at least look up.
-    const tokens = symbolTokens("{G/U} hybrid");
-    expect(tokens[0]).toMatchObject({ kind: "text", value: "{G/U}" });
+    // Inventing a pip for a symbol there is no SVG for is worse than showing
+    // the raw notation, which a player can at least look up.
+    const tokens = symbolTokens("{HW} half");
+    expect(tokens[0]).toMatchObject({ kind: "text", value: "{HW}" });
   });
 
   it("gives every token a distinct key, including repeats", () => {

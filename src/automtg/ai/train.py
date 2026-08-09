@@ -132,11 +132,11 @@ def train(config: TrainConfig) -> Path:
 
         if update % config.snapshot_every == 0 or update == config.updates:
             path = out_dir / f"snapshot_{update:04d}.pt"
-            save(model, path, model_config)
+            save(model, path, model_config, vocab.ids)
             snapshots.append(path)
 
     final = out_dir / "policy.pt"
-    save(model, final, model_config)
+    save(model, final, model_config, vocab.ids)
     (out_dir / "history.json").write_text(json.dumps(history, indent=2), encoding="utf-8")
     return final
 

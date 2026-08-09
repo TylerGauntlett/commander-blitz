@@ -28,7 +28,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .registry import data_dir
+from .registry import data_dir, generated_dir
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.engine.carddef import CardDef
@@ -53,6 +53,15 @@ def catalog_path() -> Path:
 
 def registry_images_path() -> Path:
     return data_dir() / "catalog" / "registry_images.json"
+
+
+def generated_images_path() -> Path:
+    """The same shape as :func:`registry_images_path`, for imported cards.
+
+    A second file rather than an edit to the committed one, so that rebuilding
+    the catalog can never sweep somebody's imported card into version control.
+    """
+    return generated_dir() / "cards" / "pool.images.json"
 
 
 def art_dir() -> Path:
@@ -95,12 +104,30 @@ class IndexEntry:
     color_identity: str = ""
     is_token: bool = False
     artist: str | None = None
+    #: Printed rules text, newlines intact.  The proxy generator reads it line by
+    #: line, so joining the lines here would destroy the only signal separating a
+    #: keyword line from a sentence.
+    oracle_text: str = ""
+    #: Scryfall's keyword list, comma-joined.  Beware: it includes keywords the
+    #: card *grants* as well as ones it has, which is why ``proxy.py`` only ever
+    #: uses it to cross-check what it found in ``oracle_text``.
+    keywords: str = ""
+    #: The mana symbols this card can produce, comma-joined.  Without it there is
+    #: no honest way to give a generated land a mana ability, and a deck whose
+    #: lands are inert is not a deck.
+    produced_mana: str = ""
 
     def art_url(self) -> str:
         return image_url(self.scryfall_id, ART_CROP)
 
     def normal_url(self) -> str:
         return image_url(self.scryfall_id, NORMAL)
+
+    def keyword_list(self) -> tuple[str, ...]:
+        return tuple(k for k in self.keywords.split(",") if k)
+
+    def produced_list(self) -> tuple[str, ...]:
+        return tuple(m for m in self.produced_mana.split(",") if m)
 
 
 #: Column order shared by the writer and the reader, so the two cannot drift.
@@ -120,11 +147,14 @@ COLUMNS = (
     "color_identity",
     "is_token",
     "artist",
+    "oracle_text",
+    "keywords",
+    "produced_mana",
 )
 
 SCHEMA = f"""
 CREATE TABLE cards (
-    {COLUMNS[0]} TEXT PRIMARY KEY,
+    {COLUMNS[0]} TEXT NOT NULL,
     {COLUMNS[1]} TEXT NOT NULL,
     {COLUMNS[2]} TEXT,
     {COLUMNS[3]} TEXT,
@@ -138,10 +168,23 @@ CREATE TABLE cards (
     {COLUMNS[11]} TEXT,
     {COLUMNS[12]} TEXT,
     {COLUMNS[13]} INTEGER NOT NULL DEFAULT 0,
-    {COLUMNS[14]} TEXT
+    {COLUMNS[14]} TEXT,
+    {COLUMNS[15]} TEXT,
+    {COLUMNS[16]} TEXT,
+    {COLUMNS[17]} TEXT,
+    -- Not `name` alone.  87 names are printed both as a real card and as a
+    -- token -- Tarmogoyf, Champion of Wits, Adorned Pouncer -- and with `name`
+    -- as the sole key whichever printing happened to win the sort evicted the
+    -- other.  That silently made 87 real Commander playables unreachable by
+    -- name, which a deck importer notices immediately and a search box does not.
+    PRIMARY KEY (name, is_token)
 );
 CREATE INDEX idx_cards_name_nocase ON cards(name COLLATE NOCASE);
 CREATE INDEX idx_cards_token ON cards(is_token);
+-- `name` is the primary key, so a lookup by uuid would otherwise scan all 32k
+-- rows.  The catalog-card route and the importer's last-chance match both go
+-- through it.
+CREATE INDEX idx_cards_scryfall ON cards(scryfall_id);
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT);
 """
 
@@ -164,10 +207,25 @@ def _row_to_entry(row: sqlite3.Row | tuple) -> IndexEntry:
         color_identity=values[12] or "",
         is_token=bool(values[13]),
         artist=values[14],
+        oracle_text=values[15] or "",
+        keywords=values[16] or "",
+        produced_mana=values[17] or "",
     )
 
 
-_SELECT = f"SELECT {', '.join(COLUMNS)} FROM cards"
+#: The three columns added for the proxy generator.  An index built before them
+#: is still perfectly good for art, which is all the game path wants, so
+#: :class:`CardIndex` selects ``NULL`` for whichever are absent rather than
+#: failing to open -- a fresh clone must boot on whatever it was handed.
+LATE_COLUMNS = frozenset({"oracle_text", "keywords", "produced_mana"})
+
+
+def _select_for(present: set[str]) -> str:
+    fields = [col if col in present else f"NULL AS {col}" for col in COLUMNS]
+    return f"SELECT {', '.join(fields)} FROM cards"
+
+
+_SELECT = _select_for(set(COLUMNS))
 
 
 class CardIndex:
@@ -185,6 +243,9 @@ class CardIndex:
         self._con = sqlite3.connect(
             f"file:{path.as_posix()}?mode=ro", uri=True, check_same_thread=False
         )
+        present = {row[1] for row in self._con.execute("PRAGMA table_info(cards)")}
+        self.late_columns_present = present >= LATE_COLUMNS
+        self._select = _select_for(present)
 
     def close(self) -> None:
         self._con.close()
@@ -205,15 +266,36 @@ class CardIndex:
         engine token named "Vampire Lifelink Token" resolve to the Scryfall
         token named "Vampire" rather than to some real card that happens to
         share a word.
+
+        Left unrestricted, a name printed as *both* -- there are 87 -- resolves
+        to the **real card**.  A deck can hold Tarmogoyf and cannot hold the
+        token that shares its name, so preferring the card is the only ordering
+        that makes an unqualified lookup useful.
         """
         if not name:
             return None
-        sql = f"{_SELECT} WHERE name = ? COLLATE NOCASE"
+        sql = f"{self._select} WHERE name = ? COLLATE NOCASE"
         params: list[object] = [name]
         if token is not None:
             sql += " AND is_token = ?"
             params.append(1 if token else 0)
+        else:
+            sql += " ORDER BY is_token"
         row = self._con.execute(sql, params).fetchone()
+        return _row_to_entry(row) if row else None
+
+    def by_scryfall_id(self, scryfall_id: str) -> IndexEntry | None:
+        """One printing by uuid.
+
+        The importer's last-chance match, for a card Moxfield knows under a name
+        this dump does not carry -- a rename, or a printing newer than the
+        bundle.  ``idx_cards_scryfall`` is what keeps it a lookup.
+        """
+        if not scryfall_id:
+            return None
+        row = self._con.execute(
+            f"{self._select} WHERE scryfall_id = ?", (scryfall_id,)
+        ).fetchone()
         return _row_to_entry(row) if row else None
 
     def search(
@@ -260,13 +342,13 @@ class CardIndex:
 
         # Placeholders bind in statement order: WHERE, then ORDER BY, then LIMIT.
         rows = self._con.execute(
-            f"{_SELECT}{clause} ORDER BY {order} LIMIT ?",
+            f"{self._select}{clause} ORDER BY {order} LIMIT ?",
             [*params, *rank_params, limit],
         ).fetchall()
         return total, [_row_to_entry(row) for row in rows]
 
     def iter_all(self) -> Iterator[IndexEntry]:
-        for row in self._con.execute(f"{_SELECT} ORDER BY name"):
+        for row in self._con.execute(f"{self._select} ORDER BY name"):
             yield _row_to_entry(row)
 
 

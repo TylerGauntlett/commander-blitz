@@ -58,6 +58,17 @@ class ArtStore:
 
     # -- paths ----------------------------------------------------------
 
+    def reload(self, registry, index: CardIndex | None) -> None:
+        """Adopt a freshly imported card pool.
+
+        The negative set is dropped with it: a card that had no art because it
+        was not in the registry at boot may well have one now, and keeping the
+        old set would cache that "no" forever.
+        """
+        with self._lock:
+            self.images = _resolve_images(registry, index)
+            self._missing = set()
+
     def path_for(self, card_id: str) -> Path:
         return self.directory / f"{card_id}.jpg"
 
@@ -132,6 +143,28 @@ class ArtStore:
             return False
 
 
+def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
+    """Where each card's art comes from.
+
+    ``registry_images.json`` is the committed answer for the authored cards.
+    Generated cards have their own file beside them, written at import time; it
+    is deliberately a second file rather than an edit to the committed one, so a
+    refresh of the catalog can never sweep an imported card into an artifact
+    that is under version control.
+    """
+    from automtg.cards.images import (
+        build_registry_images,
+        generated_images_path,
+        read_registry_images,
+    )
+
+    images = read_registry_images()
+    if not images and index is not None:
+        images = build_registry_images(registry, index)
+    images.update(read_registry_images(generated_images_path()))
+    return images
+
+
 def build_store(registry, index: CardIndex | None, *, allow_fetch: bool = True) -> ArtStore:
     """Resolve the engine's cards against ``registry_images.json``.
 
@@ -139,11 +172,9 @@ def build_store(registry, index: CardIndex | None, *, allow_fetch: bool = True) 
     an empty map when neither exists -- a fresh clone must still start a game,
     it just draws text frames.
     """
-    from automtg.cards.images import build_registry_images, read_registry_images
-
-    images = read_registry_images()
-    if not images and index is not None:
-        images = build_registry_images(registry, index)
     return ArtStore(
-        images=images, directory=art_dir(), index=index, allow_fetch=allow_fetch
+        images=_resolve_images(registry, index),
+        directory=art_dir(),
+        index=index,
+        allow_fetch=allow_fetch,
     )

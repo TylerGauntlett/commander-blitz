@@ -39,6 +39,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -251,6 +252,12 @@ def to_row(record: dict) -> tuple:
         "".join(record.get("color_identity") or []),
         1 if record.get("layout") in ("token", "double_faced_token") else 0,
         pick("artist"),
+        pick("oracle_text", ""),
+        # Comma-joined: no keyword or mana symbol contains a comma, so the split
+        # on the read side is exact.  `keywords` is card-level on Scryfall even
+        # for double-faced cards, so `pick` only matters for the other two.
+        ",".join(record.get("keywords") or []),
+        ",".join(pick("produced_mana", []) or []),
     )
 
 
@@ -266,33 +273,64 @@ def open_bundle(source: Path):
     return source.open(encoding="utf-8")
 
 
+def dedupe_key(record: dict) -> tuple[str, int]:
+    """One winner per ``(name, is a token)``, not per name.
+
+    87 names are printed both as a real card and as a token -- Tarmogoyf,
+    Champion of Wits, Adorned Pouncer.  Keying on the name alone let whichever
+    printing won the sort evict the other, which made those 87 real cards
+    unreachable by name.  Harmless while the catalog was only a search box;
+    fatal to a deck importer that has to turn a name into a playable card.
+    """
+    return (
+        record.get("name") or "",
+        1 if record.get("layout") in ("token", "double_faced_token") else 0,
+    )
+
+
+def extract_records(records: Iterable[dict], *, include_funny: bool = False) -> list[tuple]:
+    """Reduce records to one winning printing per ``(name, is a token)``.
+
+    Split out of :func:`extract` so the dedupe can be tested without inventing a
+    bulk dump on disk -- it is the part with the judgement in it.
+    """
+    best: dict[tuple[str, int], dict] = {}
+    for record in records:
+        if not is_wanted(record, include_funny=include_funny):
+            continue
+        if not record.get("name"):
+            continue
+        key = dedupe_key(record)
+        incumbent = best.get(key)
+        if incumbent is None or better(record, incumbent):
+            best[key] = record
+    # Sorted by the same pair the table is keyed on, so two builds of one dump
+    # stay byte-identical.
+    return sorted((to_row(r) for r in best.values()), key=lambda row: (row[0], row[13]))
+
+
 def extract(source: Path, *, include_funny: bool, limit: int | None = None) -> list[tuple]:
     """One streaming pass.  Never holds the dump in memory, only the winners."""
-    best: dict[str, dict] = {}
-    scanned = 0
-    with open_bundle(source) as handle:
-        for line in handle:
-            line = line.strip()
-            if not line or line in ("[", "]"):
-                continue
-            scanned += 1
-            if limit and scanned > limit:
-                break
-            try:
-                record = json.loads(line.rstrip(","))
-            except json.JSONDecodeError:
-                continue
-            if not is_wanted(record, include_funny=include_funny):
-                continue
-            name = record.get("name")
-            if not name:
-                continue
-            incumbent = best.get(name)
-            if incumbent is None or better(record, incumbent):
-                best[name] = record
 
-    print(f"  scanned {scanned:,} records -> {len(best):,} distinct names")
-    return sorted((to_row(r) for r in best.values()), key=lambda row: row[0])
+    def stream():
+        nonlocal scanned
+        with open_bundle(source) as handle:
+            for line in handle:
+                line = line.strip()
+                if not line or line in ("[", "]"):
+                    continue
+                scanned += 1
+                if limit and scanned > limit:
+                    break
+                try:
+                    yield json.loads(line.rstrip(","))
+                except json.JSONDecodeError:
+                    continue
+
+    scanned = 0
+    rows = extract_records(stream(), include_funny=include_funny)
+    print(f"  scanned {scanned:,} records -> {len(rows):,} distinct printings")
+    return rows
 
 
 # ----------------------------------------------------------------------
@@ -331,31 +369,46 @@ def write_index(rows: list[tuple], target: Path, meta: dict[str, str]) -> None:
         temp.unlink(missing_ok=True)
 
 
-def previous_rows(path: Path) -> dict[str, str]:
-    """name -> scryfall_id for the committed index, for the change summary."""
+def previous_rows(path: Path) -> dict[tuple[str, int], str]:
+    """``(name, is_token) -> scryfall_id`` for the committed index.
+
+    Keyed on the pair the table is keyed on, so the change summary and
+    ``--check`` both see a token and its same-named card as two rows rather than
+    as one row flapping between two ids on every build.
+    """
     if not path.exists():
         return {}
     try:
         con = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
-        rows = dict(con.execute("SELECT name, scryfall_id FROM cards").fetchall())
+        rows = {
+            (name, int(is_token or 0)): scryfall_id
+            for name, is_token, scryfall_id in con.execute(
+                "SELECT name, is_token, scryfall_id FROM cards"
+            )
+        }
         con.close()
         return rows
     except sqlite3.Error:
         return {}
 
 
-def summarise(before: dict[str, str], rows: list[tuple]) -> None:
-    after = {row[0]: row[1] for row in rows}
+def _label(key: tuple[str, int]) -> str:
+    name, is_token = key
+    return f"{name} (token)" if is_token else name
+
+
+def summarise(before: dict[tuple[str, int], str], rows: list[tuple]) -> None:
+    after = {(row[0], row[13]): row[1] for row in rows}
     added = sorted(set(after) - set(before))
     removed = sorted(set(before) - set(after))
     changed = sorted(n for n in set(after) & set(before) if after[n] != before[n])
     print(f"  rows {len(before):,} -> {len(after):,}")
     print(f"  added {len(added):,}  removed {len(removed):,}  reprinted {len(changed):,}")
-    for label, names in (("added", added), ("removed", removed), ("reprinted", changed)):
-        for name in names[:5]:
-            print(f"    {label}: {name}")
-        if len(names) > 5:
-            print(f"    {label}: ... and {len(names) - 5:,} more")
+    for label, keys in (("added", added), ("removed", removed), ("reprinted", changed)):
+        for key in keys[:5]:
+            print(f"    {label}: {_label(key)}")
+        if len(keys) > 5:
+            print(f"    {label}: ... and {len(keys) - 5:,} more")
 
 
 # ----------------------------------------------------------------------
@@ -421,7 +474,7 @@ def main() -> int:
     before = previous_rows(index_file)
 
     if args.check:
-        after = {row[0]: row[1] for row in rows}
+        after = {(row[0], row[13]): row[1] for row in rows}
         if after == before:
             print(f"index is current ({len(after):,} rows)")
             return 0

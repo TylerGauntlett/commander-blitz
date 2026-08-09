@@ -33,7 +33,7 @@ data/catalog/
 ├── bulk/                        the Scryfall dump. NEVER committed.
 │   ├── .gitignore                 ← the only thing between a refresh and a huge commit
 │   └── default_cards-*.jsonl.gz   ~74 MB, a download cache
-├── cards.sqlite                 the built index          (committed, ~7 MB)
+├── cards.sqlite                 the built index          (committed, ~14 MB)
 └── registry_images.json         the engine's cards only  (committed, ~20 KB)
 data/art/{card_id}.jpg           owned image bytes        (committed, ~9 MB)
 ```
@@ -46,6 +46,28 @@ engine actually ships, and is what the server reads at boot.
 
 **The bundle stays gzipped.** `gzip` streams line by line perfectly well, so
 there is no reason to spend 600 MB of disk expanding it.
+
+### The three columns that are not about art
+
+`oracle_text`, `keywords` and `produced_mana` cost ~7 MB and exist for one
+consumer: `src/automtg/cards/proxy.py`, which generates a playable card
+definition for a card nobody has hand-written. Without `produced_mana` a
+generated land taps for nothing, and a deck of inert lands is not a deck.
+
+`oracle_text` keeps its **line breaks** — the proxy generator tells a bare
+keyword line from a sentence by splitting on `\n`, so joining them at write time
+would silently destroy the only signal it has.
+
+`keywords` is Scryfall's own list, and it is a trap: it includes keywords a card
+*grants* as well as ones it has, so "creatures you control have flying" puts
+`Flying` in it. The generator only ever uses it to cross-check what it already
+found in the oracle text.
+
+An index built before these columns existed still opens: `CardIndex` checks
+`PRAGMA table_info` and selects `NULL` for whichever are absent, because pulling
+a branch without rebuilding must not cost you the art you already have on disk.
+`--check` compares only `{name: scryfall_id}`, so it will **not** tell you the
+columns are missing — `CardIndex.late_columns_present` is what answers that.
 
 ## Which bundle am I on?
 

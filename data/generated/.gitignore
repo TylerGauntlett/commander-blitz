@@ -1,0 +1,15 @@
+# Imported decks and the card definitions generated for them. User data, not
+# repository content: every byte here is reproducible from a Moxfield URL.
+#
+# Ignoring it is not tidiness, it is what makes the two-layer registry hold.
+# `pytest` reads the *authored* pool (data/cards, data/decks) and three gates
+# assume it is exactly what the repository ships -- test_every_card_works
+# parametrises over all of it, test_image_resolution pins the artless set at
+# exactly five, ai/encoding builds an embedding index from it. If imports were
+# committed, the test suite's answer would depend on what somebody imported last
+# week.
+#
+# Do not remove this file.
+*
+!.gitignore
+!README.md
