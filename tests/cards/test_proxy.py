@@ -399,6 +399,89 @@ class TestLands:
         )
         assert card.abilities == ()
 
+    def test_a_signet_keeps_the_mana_half_of_its_cost(self):
+        """`{1}, {T}: Add {G}{U}` is not `{T}: Add`.
+
+        Dropping the `{1}` generates a rock strictly cheaper than the printed
+        card -- the same "quietly hand the deck an upgrade" failure the
+        conditional taplands are guarded against.
+        """
+        result, card = built(
+            name="Simic Signet",
+            type_line="Artifact",
+            mana_cost="{2}",
+            oracle_text="{1}, {T}: Add {G}{U}.",
+            produced_mana=("G", "U"),
+            color_identity="GU",
+        )
+        ability = next(a for a in card.abilities if a.is_mana_ability)
+        assert ability.cost.tap is True
+        assert str(ability.cost.mana) == "{1}"
+        assert result.coverage == "partial"
+
+    def test_a_mana_ability_with_a_cost_the_dsl_cannot_express_is_not_generated(self):
+        # A bounce land's "return an Island you control to its owner's hand" has
+        # no expression here. Generating the tap half alone would be a dual land
+        # with no drawback at all.
+        result, card = built(
+            name="Coral Atoll",
+            type_line="Land",
+            oracle_text="This land enters tapped.\nWhen this land enters, sacrifice it "
+            "unless you return an untapped Island you control to its owner's hand.\n"
+            "{T}: Add {G}{U}.",
+            produced_mana=("G", "U"),
+            color_identity="GU",
+        )
+        # The tap-for-mana line itself is plain, so it is still generated -- what
+        # is dropped is the separate sacrifice trigger, which the residual names.
+        assert any(a.is_mana_ability for a in card.abilities)
+        assert result.coverage == "partial"
+
+    def test_a_fetchland_whose_whole_cost_is_unexpressible_makes_no_mana(self):
+        result, card = built(
+            name="Windswept Heath",
+            type_line="Land",
+            oracle_text="{T}, Pay 1 life, Sacrifice this land: Search your library for a "
+            "Forest or Plains card, put it onto the battlefield, then shuffle.",
+            color_identity="",
+            produced_mana=(),
+        )
+        assert not any(a.is_mana_ability for a in card.abilities)
+        assert result.coverage == "partial"
+
+    def test_an_aura_does_not_take_the_mana_ability_it_grants(self):
+        """The same trap as Scryfall's `keywords` listing what a card grants.
+
+        Abundant Growth reads `Enchanted land has "{T}: Add one mana of any
+        color."` and carries `produced_mana` for all five. Lifting that gives
+        the *Aura* a five-colour mana ability it does not have.
+        """
+        result, card = built(
+            name="Abundant Growth",
+            type_line="Enchantment — Aura",
+            mana_cost="{G}",
+            oracle_text='Enchant land\nWhen Abundant Growth enters, draw a card.\n'
+            'Enchanted land has "{T}: Add one mana of any color."',
+            produced_mana=("W", "U", "B", "R", "G"),
+            colors="G",
+            color_identity="G",
+        )
+        assert not any(a.is_mana_ability for a in card.abilities)
+        assert result.coverage == "partial"
+
+    def test_a_basic_lands_reminder_text_still_counts_as_its_ability(self):
+        # A basic land's *entire* rules text is the parenthesised reminder, so
+        # code that strips reminders before looking for `{T}: Add` leaves Forest
+        # unable to make mana.
+        _, card = built(
+            name="Forest",
+            type_line="Basic Land — Forest",
+            oracle_text="({T}: Add {G}.)",
+            produced_mana=("G",),
+            color_identity="G",
+        )
+        assert any(a.is_mana_ability for a in card.abilities)
+
     def test_a_rock_that_taps_for_two_says_it_only_taps_for_one(self):
         # `produced_mana` carries no quantity, so this is a real difference
         # between a fast deck and a slow one.

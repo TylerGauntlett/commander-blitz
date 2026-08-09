@@ -353,5 +353,15 @@ class TestDeleting:
 
 class TestNoTestWritesIntoTheRepository:
     def test_the_real_data_directory_is_untouched(self, client, payload):
-        do_import(client, payload)
-        assert not (DEFAULT_DATA_DIR / "generated" / "decks").exists()
+        """The fixture's deck must not land in the developer's own `data/`.
+
+        Asserted on *this deck's* file rather than on the directory being empty:
+        `data/generated/` is where a real import goes, so anyone who has actually
+        used the feature has decks in there, and a test that fails because the
+        developer imported something is a test that gets deleted.
+        """
+        before = sorted((DEFAULT_DATA_DIR / "generated" / "decks").glob("*.deck.json"))
+        deck_id = do_import(client, payload).json()["deck"]["id"]
+        after = sorted((DEFAULT_DATA_DIR / "generated" / "decks").glob("*.deck.json"))
+        assert after == before
+        assert not (DEFAULT_DATA_DIR / "generated" / "decks" / f"{deck_id}.deck.json").exists()

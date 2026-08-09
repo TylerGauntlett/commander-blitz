@@ -95,8 +95,25 @@ _LIGATURES = str.maketrans(
 )
 
 _REMINDER = re.compile(r"\([^()]*\)")
-_TAPS_FOR_MANA = re.compile(r"\{T\}[^:]*:\s*Add\b", re.I)
 _ENTERS_TAPPED = re.compile(r"\benters?\b[^.]*\btapped\b", re.I)
+
+#: A tap-for-mana ability, capturing whatever the cost says *before* the ``{T}``.
+#: That prefix is the whole point: ``{1}, {T}: Add {G}{U}`` is a Signet, and
+#: dropping the ``{1}`` generates a card strictly cheaper than the real one.
+_TAPS_FOR_MANA = re.compile(r"^(?P<pre>[^:]*?)\{T\}\s*(?:,\s*)?:\s*Add\b", re.I)
+
+#: A cost prefix made only of mana symbols, which the engine can express.
+_MANA_ONLY = re.compile(r"^(?:\{[^}]+\}[,\s]*)+$")
+
+#: Lines that give the ability to *something else*.  Scryfall's text for an Aura
+#: or a lord reads "Enchanted land has "{T}: Add {C}."" -- lifting that gives the
+#: Aura its own mana ability.  Same trap as ``keywords`` listing what a card
+#: grants; see :func:`lift_keywords`.
+_GRANTS_TO_OTHERS = re.compile(
+    r"^(enchanted|equipped|other|each other|creatures|lands|permanents|artifacts|"
+    r"they|those)\b.*\b(has|have|gains?|gain)\b",
+    re.I,
+)
 
 
 # ----------------------------------------------------------------------
@@ -418,13 +435,25 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
         return [], [], set()
     if not any(t in _PERMANENT_TYPE_NAMES for t in types):
         return [], [], set()
-    lines = [ln for ln in facts.oracle_text.split("\n") if _TAPS_FOR_MANA.search(ln)]
-    if not lines:
+
+    line, prefix = _find_mana_line(facts.oracle_text)
+    if line is None:
         return [], [], set()
 
     symbols = [s for s in facts.produced_mana if s in ("W", "U", "B", "R", "G", "C")]
     if not symbols:
         return [], [], set()
+
+    # The cost beyond tapping.  Mana is expressible; a sacrifice, a life payment
+    # or "return an Island you control" is not -- and generating those as *free*
+    # would hand the deck a Signet that costs nothing and a bounce land with no
+    # bounce.  A generated card must never be better than the printed one, which
+    # is the same rule the conditional taplands follow.
+    extra_cost = None
+    if prefix:
+        if not _MANA_ONLY.match(prefix):
+            return [], [f"mana ability not generated; its cost is {prefix!r}"], set()
+        extra_cost, _ = simplify_mana_cost(prefix.replace(",", "").replace(" ", ""), facts.color_identity)
 
     if len(symbols) == 1:
         effects: list[dict] = [{"op": "add_mana", "mana": f"{{{symbols[0]}}}"}]
@@ -437,10 +466,13 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
                 ],
             }
         ]
+    cost: dict = {"tap": True}
+    if extra_cost:
+        cost["mana"] = extra_cost
     ability = {
         "kind": "activated",
         "is_mana_ability": True,
-        "cost": {"tap": True},
+        "cost": cost,
         "effects": effects,
     }
 
@@ -450,7 +482,29 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
     # a fast deck and a slow one.
     if re.search(r"Add (\{[WUBRGC]\}\s*){2,}", facts.oracle_text):
         notes.append("taps for one mana; the printed card adds more")
-    return [ability], notes, set(lines)
+    return [ability], notes, {line}
+
+
+def _find_mana_line(oracle_text: str) -> tuple[str | None, str]:
+    """The card's *own* tap-for-mana line, and whatever its cost says before ``{T}``.
+
+    Skips a line that hands the ability to something else.  Scryfall writes an
+    Aura as ``Enchanted land has "{T}: Add {C}."``, and lifting that gives the
+    Aura a mana ability of its own -- the same trap as ``keywords`` listing what
+    a card *grants* rather than what it has.
+    """
+    for line in oracle_text.split("\n"):
+        # Parentheses are *unwrapped*, not stripped: a basic land's entire text
+        # is the reminder "({T}: Add {G}.)", and deleting it leaves Forest with
+        # no way to make mana -- which is the single most deck-breaking thing
+        # this generator could do.
+        bare = line.replace("(", "").replace(")", "").strip()
+        if not bare or '"' in bare or _GRANTS_TO_OTHERS.match(bare):
+            continue
+        match = _TAPS_FOR_MANA.match(bare)
+        if match:
+            return line, match.group("pre").strip().rstrip(",").strip()
+    return None, ""
 
 
 _PERMANENT_TYPE_NAMES = frozenset(
