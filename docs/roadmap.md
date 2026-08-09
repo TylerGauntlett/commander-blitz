@@ -13,7 +13,7 @@
 - In addition, this should offer general support for moxfield deck looking up so that users can choose their own custom deck when starting a game
 
 ### Task
-- Add support for all cards, 2 additional precons (first flight and zurgo stormrender), and custom decks via Moxfield deck import
+- Add support for all cards, 2 additional precons (Isperia, Supreme Judge and zurgo stormrender), and custom decks via Moxfield deck import
 
 ---
 
