@@ -140,9 +140,52 @@ _ATTACHED_BUFF = re.compile(
     re.I,
 )
 
-#: ``Enchant creature``.  Not an ability at all -- it is the spell's targeting
-#: clause, and the engine attaches the Aura to what it targeted on resolution.
-_ENCHANT = re.compile(r"^enchant (?P<what>creature|permanent|land|artifact)$", re.I)
+#: ``Equipped creature has flying`` / ``Enchanted creature has trample and haste``.
+#: The other half of what an Aura or Equipment says; without it a card that grants
+#: rather than buffs still falls to the all-or-nothing rule.
+_ATTACHED_GRANT = re.compile(
+    r"^(?:enchanted|equipped) (?:creature|permanent) (?:has|have|gains?) (?P<kw>[^.]+)$",
+    re.I,
+)
+
+#: ``Equipped creature gets +1/+2 and has vigilance`` -- one printed sentence
+#: that is two abilities. Common enough on Auras and Equipment to be worth its
+#: own pattern rather than leaving those cards to the all-or-nothing rule.
+_ATTACHED_BUFF_AND_GRANT = re.compile(
+    r"^(?:enchanted|equipped) (?:creature|permanent) gets (?P<p>[+-]\d+)/(?P<t>[+-]\d+) "
+    r"and (?:has|have|gains?) (?P<kw>[^.]+)$",
+    re.I,
+)
+
+#: ``Enchant creature``, and the variants that only narrow *what* it may enchant.
+#: "you control" and "an opponent controls" are real restrictions, so they are
+#: carried into the selector rather than dropped.
+_ENCHANT = re.compile(
+    r"^enchant (?P<what>creature|permanent|land|artifact|player)"
+    r"(?: (?P<whose>you control|an opponent controls))?$",
+    re.I,
+)
+
+#: ``Devoid`` -- "this card has no color".  Self-implementing: the catalog already
+#: reports the card as colourless, so the proxy's `colors` is already right and
+#: there is nothing left to build.
+_DEVOID = re.compile(r"^devoid$", re.I)
+
+#: ``Changeling`` -- "this card is every creature type".  `add_subtype` covers it.
+_CHANGELING = re.compile(r"^changeling$", re.I)
+
+#: ``Prowess`` -- a triggered ability spelled as a keyword.
+_PROWESS = re.compile(r"^prowess$", re.I)
+
+#: Every creature type a shipped card mentions.  A real Changeling is *all* of
+#: them, which is unbounded; this is the closed set the engine can actually be
+#: asked about, and anything outside it could not be selected for anyway.
+CHANGELING_SUBTYPES = (
+    "Human", "Soldier", "Warrior", "Wizard", "Cleric", "Rogue", "Knight", "Elf",
+    "Goblin", "Zombie", "Vampire", "Spirit", "Beast", "Elemental", "Dragon",
+    "Angel", "Demon", "Sphinx", "Bird", "Cat", "Snake", "Insect", "Serpent",
+    "Giant", "Orc", "Merfolk", "Druid", "Shaman", "Bear", "Wall",
+)
 
 #: ``Equip {2}``.  A sorcery-speed activated ability that re-attaches.
 _EQUIP = re.compile(r"^equip (?P<cost>(?:\{[^}]+\})+)$", re.I)
@@ -241,10 +284,20 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
             )
         kind, produced, translation, name = handled
         used.append(name)
-        if kind in ("static", "trigger"):
+        if kind == "statics":
+            # One printed sentence that is two abilities -- "gets +1/+2 and has
+            # vigilance". Both carry the same `text`, which is correct: they
+            # implement the same line between them.
+            abilities.extend(produced)
+        elif kind in ("static", "trigger"):
             abilities.append(produced)
         elif kind == "enchant":
             targets.append(produced)
+        elif kind == "nothing":
+            # A line that is already true of the generated card -- Devoid on a
+            # card the catalog already reports as colourless. Consumed, with
+            # nothing to build.
+            pass
         else:
             spell_effects.extend(translation.effects)
         _merge(expectation, translation.expect)
@@ -280,20 +333,126 @@ def _translate_line(line: str, *, is_spell: bool):
     """``(kind, payload, translation, template_name)`` or ``None``."""
     bare = _bare(line)
 
+    if _DEVOID.match(bare):
+        # Nothing to build: "this card has no color" is already true of the
+        # generated card, because the catalog reports it colourless.
+        return (
+            "nothing",
+            None,
+            Translation(effects=[], expect={}),
+            "devoid",
+        )
+
+    if _CHANGELING.match(bare):
+        return (
+            "static",
+            {
+                "kind": "static",
+                "text": line.strip(),
+                "effect": "add_subtype",
+                "affects": {"self_only": True},
+                "subtypes": list(CHANGELING_SUBTYPES),
+            },
+            Translation(effects=[], expect={}),
+            "changeling",
+        )
+
+    if _PROWESS.match(bare):
+        return (
+            "trigger",
+            {
+                "kind": "triggered",
+                "text": line.strip(),
+                "trigger": {
+                    "event": "spell_cast",
+                    "controller": "you",
+                    "filter": {"not_types": ["Creature"]},
+                },
+                "effects": [
+                    {
+                        "op": "pump",
+                        "power": {"const": 1},
+                        "toughness": {"const": 1},
+                        "objects": {"zone": "battlefield", "self_only": True},
+                    }
+                ],
+            },
+            Translation(effects=[], expect={}),
+            "prowess",
+        )
+
+    both = _ATTACHED_BUFF_AND_GRANT.match(bare)
+    if both:
+        keywords = _keywords_in(both.group("kw"))
+        if keywords is None:
+            return None
+        return (
+            "statics",
+            [
+                {
+                    "kind": "static",
+                    "text": line.strip(),
+                    "effect": "buff",
+                    "affects": {"attached": True},
+                    "power": {"const": int(both.group("p"))},
+                    "toughness": {"const": int(both.group("t"))},
+                },
+                {
+                    "kind": "static",
+                    "text": line.strip(),
+                    "effect": "grant_keyword",
+                    "affects": {"attached": True},
+                    "keywords": keywords,
+                },
+            ],
+            Translation(effects=[], expect={}),
+            "attached:buff+grant",
+        )
+
+    grant = _ATTACHED_GRANT.match(bare)
+    if grant:
+        keywords = _keywords_in(grant.group("kw"))
+        if keywords is None:
+            # A parameterised or unimplemented keyword -- "ward {2}",
+            # "protection from red". Claiming the line and granting nothing
+            # would be a card that says it has protection and does not.
+            return None
+        return (
+            "static",
+            {
+                "kind": "static",
+                "text": line.strip(),
+                "effect": "grant_keyword",
+                "affects": {"attached": True},
+                "keywords": keywords,
+            },
+            Translation(effects=[], expect={}),
+            "attached:grant",
+        )
+
     enchant = _ENCHANT.match(bare)
     if enchant:
         # Not an ability: the Aura's spell targets what it will enchant, and
         # `stack._attach_aura` attaches it once the permanent is on the
         # battlefield. So this produces a *target spec*, and `translate` puts it
         # on the card rather than in `abilities`.
-        types = _ENCHANT_TYPES[enchant.group("what").lower()]
+        what = enchant.group("what").lower()
+        if what == "player":
+            # An Aura on a *player* has no `attached_to` to hang off -- the
+            # engine attaches to objects only. Guessing would put it on nothing.
+            return None
         selector: dict = {"zone": "battlefield"}
-        if types:
-            selector["types"] = types
+        if _ENCHANT_TYPES[what]:
+            selector["types"] = _ENCHANT_TYPES[what]
+        whose = (enchant.group("whose") or "").lower()
+        if whose == "you control":
+            selector["controller"] = "you"
+        elif whose == "an opponent controls":
+            selector["controller"] = "opponent"
         return (
             "enchant",
             {"id": "enchanted", "kind": "permanent", "selector": selector, "count": 1},
-            Translation(effects=[], expect={"zone": "battlefield"}),
+            Translation(effects=[], expect={}),
             "enchant",
         )
 
@@ -309,7 +468,7 @@ def _translate_line(line: str, *, is_spell: bool):
                 "power": {"const": int(buff.group("p"))},
                 "toughness": {"const": int(buff.group("t"))},
             },
-            Translation(effects=[], expect={"zone": "battlefield"}),
+            Translation(effects=[], expect={}),
             "attached:buff",
         )
 
@@ -336,7 +495,7 @@ def _translate_line(line: str, *, is_spell: bool):
                 ],
                 "effects": [{"op": "attach", "objects": {"target": "equip_target"}}],
             },
-            Translation(effects=[], expect={"zone": "battlefield"}),
+            Translation(effects=[], expect={}),
             "equip",
         )
 
@@ -345,7 +504,7 @@ def _translate_line(line: str, *, is_spell: bool):
             return (
                 "static",
                 {**ability, "text": line.strip()},
-                Translation(effects=[], expect={"zone": "battlefield"}),
+                Translation(effects=[], expect={}),
                 "static:extra_land_drops",
             )
 
@@ -380,6 +539,26 @@ def _translate_line(line: str, *, is_spell: bool):
     return None
 
 
+def _keywords_in(text: str) -> list[str] | None:
+    """``"flying and haste"`` -> ``["flying", "haste"]``, or ``None``.
+
+    ``None`` when any part is a keyword the engine does not implement -- "ward
+    {2}", "protection from red". Claiming the line and granting nothing would
+    produce a card that *says* it has protection and does not, which is the
+    failure mode this whole pipeline is built to refuse.
+    """
+    from ..loader import KNOWN_KEYWORDS
+
+    parts = [p.strip() for p in re.split(r",|\band\b", text) if p.strip()]
+    out: list[str] = []
+    for part in parts:
+        word = part.lower().replace(" ", "_")
+        if word not in KNOWN_KEYWORDS:
+            return None
+        out.append(word)
+    return out or None
+
+
 def _bare(line: str) -> str:
     """A sentence with reminder text and trailing punctuation removed."""
     text = re.sub(r"\([^()]*\)", "", line)
@@ -402,6 +581,11 @@ def _fallback_expectation(model: CardModel) -> dict:
     that fizzled into the graveyard fails it -- and it is the only thing that can
     be said without inventing a stronger one that checks nothing.
     """
+    if "Aura" in (model.subtypes or []):
+        # An Aura's destination depends on what its own static does to its host:
+        # Dead Weight's -2/-2 can kill the creature, and state-based actions then
+        # correctly put the Aura in the graveyard. Both are the card working.
+        return {"zone": ["battlefield", "graveyard"]}
     return {"zone": "battlefield" if _is_permanent(model) else "graveyard"}
 
 

@@ -38,6 +38,105 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 0
+          },
+          "text": "Equipped creature gets +0/+3 and has vigilance",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +0/+3 and has vigilance"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "accorder_s_shield",
+      "mana_cost": "{0}",
+      "name": "Accorder's Shield",
+      "oracle_text": "Equipped creature gets +0/+3 and has vigilance. (Attacking doesn't cause it to tap.)\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "adult_gold_dragon",
+      "keywords": [
+        "flying",
+        "lifelink",
+        "haste"
+      ],
+      "mana_cost": "{3}{R}{W}",
+      "name": "Adult Gold Dragon",
+      "oracle_text": "Flying, lifelink, haste",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -125,6 +224,102 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+0 and has flying",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+0 and has flying"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "aeronaut_s_wings",
+      "mana_cost": "{2}",
+      "name": "Aeronaut's Wings",
+      "oracle_text": "Equipped creature gets +1/+0 and has flying.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ajani_s_sunstriker",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Ajani's Sunstriker",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Cleric"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -350,6 +545,30 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "alpine_watchdog",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Alpine Watchdog",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dog"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -587,6 +806,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. If that mana is spent to cast a non-Human creature spell, that creature enters with an additional +1/+1 counter on it."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "animal_attendant",
+      "mana_cost": "{1}{G}",
+      "name": "Animal Attendant",
+      "oracle_text": "{T}: Add one mana of any color. If that mana is spent to cast a non-Human creature spell, that creature enters with an additional +1/+1 counter on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -682,6 +980,64 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1 and has flying",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has flying"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "arcane_flight",
+      "mana_cost": "{U}",
+      "name": "Arcane Flight",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has flying.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -736,6 +1092,61 @@
         }
       ],
       "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "arctic_flats",
+      "name": "Arctic Flats",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {W}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "supertypes": [
+        "Snow"
+      ],
       "types": [
         "Land"
       ]
@@ -890,6 +1301,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "first_strike",
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has flying, first strike, and vigilance"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "asha_s_favor",
+      "mana_cost": "{2}{W}",
+      "name": "Asha's Favor",
+      "oracle_text": "Enchant creature\nEnchanted creature has flying, first strike, and vigilance.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -1034,6 +1491,72 @@
         "Monk"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "avian_changeling",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Avian Changeling",
+      "oracle_text": "Changeling (This card is every creature type.)\nFlying",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -1270,6 +1793,134 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has deathtouch and lifelink"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "basilisk_collar",
+      "mana_cost": "{1}",
+      "name": "Basilisk Collar",
+      "oracle_text": "Equipped creature has deathtouch and lifelink. (Any amount of damage it deals to a creature is enough to destroy it. Damage dealt by this creature also causes you to gain that much life.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bassara_tower_archer",
+      "keywords": [
+        "hexproof",
+        "reach"
+      ],
+      "mana_cost": "{G}{G}",
+      "name": "Bassara Tower Archer",
+      "oracle_text": "Hexproof, reach",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Archer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has double strike"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "battle_mastery",
+      "mana_cost": "{2}{W}",
+      "name": "Battle Mastery",
+      "oracle_text": "Enchant creature\nEnchanted creature has double strike. (It deals both first-strike and regular combat damage.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -1451,6 +2102,84 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has trample and lifelink",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has trample and lifelink"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "behemoth_sledge",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Behemoth Sledge",
+      "oracle_text": "Equipped creature gets +2/+2 and has trample and lifelink.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -1527,6 +2256,64 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "first_strike"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has flying and first strike"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bladed_pinions",
+      "mana_cost": "{2}",
+      "name": "Bladed Pinions",
+      "oracle_text": "Equipped creature has flying and first strike.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -1766,6 +2553,81 @@
       "mana_cost": "{1}",
       "name": "Bonesplitter",
       "oracle_text": "Equipped creature gets +2/+0.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+0 and has haste",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+0 and has haste"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "boots_of_speed",
+      "mana_cost": "{R}",
+      "name": "Boots of Speed",
+      "oracle_text": "Equipped creature gets +1/+0 and has haste.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
       "source": "auto",
       "subtypes": [
         "Equipment"
@@ -2042,6 +2904,32 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "brightblade_stoat",
+      "keywords": [
+        "first_strike",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Brightblade Stoat",
+      "oracle_text": "First strike, lifelink",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Weasel",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -2295,6 +3183,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 0
+          },
+          "text": "Equipped creature gets +0/+3 and has vigilance",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +0/+3 and has vigilance"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cathar_s_shield",
+      "mana_cost": "{0}",
+      "name": "Cathar's Shield",
+      "oracle_text": "Equipped creature gets +0/+3 and has vigilance.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -2350,6 +3309,65 @@
         }
       ],
       "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "first_strike",
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has first strike, trample, and haste"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chariot_of_victory",
+      "mana_cost": "{3}",
+      "name": "Chariot of Victory",
+      "oracle_text": "Equipped creature has first strike, trample, and haste.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
       "types": [
         "Artifact"
       ]
@@ -2529,6 +3547,64 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has flying and haste"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cloak_of_the_bat",
+      "mana_cost": "{2}",
+      "name": "Cloak of the Bat",
+      "oracle_text": "Equipped creature has flying and haste.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -2559,6 +3635,63 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has flying"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cobbled_wings",
+      "mana_cost": "{2}",
+      "name": "Cobbled Wings",
+      "oracle_text": "Equipped creature has flying.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -3002,6 +4135,69 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "darksteel_axe",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{1}",
+      "name": "Darksteel Axe",
+      "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this Equipment.)\nEquipped creature gets +2/+0.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -3124,6 +4320,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has indestructible"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "darksteel_plate",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}",
+      "name": "Darksteel Plate",
+      "oracle_text": "Indestructible\nEquipped creature has indestructible.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "darksteel_relic",
@@ -3167,6 +4423,79 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dawn_s_light_archer",
+      "keywords": [
+        "flash",
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Dawn's Light Archer",
+      "oracle_text": "Flash\nReach",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Archer"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": -2
+          },
+          "text": "Enchanted creature gets -2/-2",
+          "toughness": {
+            "const": -2
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dead_weight",
+      "mana_cost": "{B}",
+      "name": "Dead Weight",
+      "oracle_text": "Enchant creature\nEnchanted creature gets -2/-2.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -3332,6 +4661,75 @@
       "id": "desolate_mire",
       "name": "Desolate Mire",
       "oracle_text": "{1}, {T}: Add {W}{B}.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, you gain 1 life",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "dimension_x",
+      "name": "Dimension X",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
       "source": "auto",
       "types": [
         "Land"
@@ -3757,6 +5155,26 @@
       ]
     },
     {
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_devastator",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Eldrazi Devastator",
+      "oracle_text": "Trample",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -4086,6 +5504,190 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has double strike"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "fireshrieker",
+      "mana_cost": "{3}",
+      "name": "Fireshrieker",
+      "oracle_text": "Equipped creature has double strike. (It deals both first-strike and regular combat damage.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has flying and haste"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "fleetfeather_sandals",
+      "mana_cost": "{2}",
+      "name": "Fleetfeather Sandals",
+      "oracle_text": "Equipped creature has flying and haste.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, you gain 1 life",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "foot_headquarters",
+      "name": "Foot Headquarters",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {W} or {B}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -4133,6 +5735,26 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "forest_bear",
+      "mana_cost": "{1}{G}",
+      "name": "Forest Bear",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bear"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -4313,6 +5935,67 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has trample",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has trample"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "frantic_strength",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Frantic Strength",
+      "oracle_text": "Flash\nEnchant creature\nEnchanted creature gets +2/+2 and has trample.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -4564,6 +6247,44 @@
           },
           "effects": [
             {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fyndhorn_elder",
+      "mana_cost": "{2}{G}",
+      "name": "Fyndhorn Elder",
+      "oracle_text": "{T}: Add {G}{G}.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -4684,6 +6405,46 @@
         "Beast"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "generous_stray",
+      "mana_cost": "{2}{G}",
+      "name": "Generous Stray",
+      "oracle_text": "When this creature enters, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -4897,6 +6658,92 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "gladecover_scout",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{G}",
+      "name": "Gladecover Scout",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has flying and lifelink",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has flying and lifelink"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "glasswing_grace_age_graced_chapel",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Glasswing Grace // Age-Graced Chapel",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has flying and lifelink.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -5285,6 +7132,134 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1 and has deathtouch",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has deathtouch"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gorgon_flail",
+      "mana_cost": "{2}",
+      "name": "Gorgon Flail",
+      "oracle_text": "Equipped creature gets +1/+1 and has deathtouch. (Any amount of damage it deals to a creature is enough to destroy that creature.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has deathtouch"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gorgon_s_head",
+      "mana_cost": "{1}",
+      "name": "Gorgon's Head",
+      "oracle_text": "Equipped creature has deathtouch.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -5458,6 +7433,104 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "Equipped creature gets +4/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {5}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "greataxe",
+      "mana_cost": "{1}",
+      "name": "Greataxe",
+      "oracle_text": "Equipped creature gets +4/+0.\nEquip {5} ({5}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "greenweaver_druid",
+      "mana_cost": "{2}{G}",
+      "name": "Greenweaver Druid",
+      "oracle_text": "{T}: Add {G}{G}.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -5727,6 +7800,33 @@
       ]
     },
     {
+      "color_identity": [],
+      "colors": [],
+      "id": "h_e_r_b_i_e_scout_unit",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}",
+      "name": "H.E.R.B.I.E. Scout Unit",
+      "oracle_text": "Flying\nWhen this creature enters, draw a card, then you may put a land card from your hand onto the battlefield tapped.",
+      "power": 2,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Robot",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -5780,6 +7880,126 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has double strike"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hard_won_jitte",
+      "mana_cost": "{1}{R}",
+      "name": "Hard-Won Jitte",
+      "oracle_text": "Equipped creature has double strike.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance",
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has vigilance, trample, and haste"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "haunted_cloak",
+      "mana_cost": "{3}",
+      "name": "Haunted Cloak",
+      "oracle_text": "Equipped creature has vigilance, trample, and haste.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -6540,6 +8760,110 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "impostor_of_the_sixth_pride",
+      "mana_cost": "{1}{W}",
+      "name": "Impostor of the Sixth Pride",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted permanent has indestructible"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "indestructibility",
+      "mana_cost": "{3}{W}",
+      "name": "Indestructibility",
+      "oracle_text": "Enchant permanent\nEnchanted permanent has indestructible. (Effects that say \"destroy\" don't destroy that permanent. A creature with indestructible can't be destroyed by damage.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -6893,6 +9217,52 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "jungle_barrier",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}{G}{U}",
+      "name": "Jungle Barrier",
+      "oracle_text": "Defender (This creature can't attack.)\nWhen this creature enters, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Wall"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -7812,6 +10182,118 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has lifelink"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "lifelink",
+      "mana_cost": "{W}",
+      "name": "Lifelink",
+      "oracle_text": "Enchant creature\nEnchanted creature has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lightshell_duo",
+      "mana_cost": "{3}{U}",
+      "name": "Lightshell Duo",
+      "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhen this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Rat",
+        "Otter"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -7900,6 +10382,105 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "loxodon_gatekeeper",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Loxodon Gatekeeper",
+      "oracle_text": "Artifacts, creatures, and lands your opponents control enter tapped.",
+      "power": 2,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Equipped creature gets +3/+0 and has trample and lifelink",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +3/+0 and has trample and lifelink"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "loxodon_warhammer",
+      "mana_cost": "{3}",
+      "name": "Loxodon Warhammer",
+      "oracle_text": "Equipped creature gets +3/+0 and has trample and lifelink.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -8002,6 +10583,64 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Enchanted creature gets +3/+0 and has menace",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +3/+0 and has menace"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "madcap_skills",
+      "mana_cost": "{1}{R}",
+      "name": "Madcap Skills",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +3/+0 and has menace.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -8327,6 +10966,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+2 and has hexproof",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+2 and has hexproof"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mask_of_avacyn",
+      "mana_cost": "{2}",
+      "name": "Mask of Avacyn",
+      "oracle_text": "Equipped creature gets +1/+2 and has hexproof. (It can't be the target of spells or abilities your opponents control.)\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "memnite",
@@ -8341,6 +11051,51 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has trample and haste"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "messenger_s_speed",
+      "mana_cost": "{R}",
+      "name": "Messenger's Speed",
+      "oracle_text": "Enchant creature\nEnchanted creature has trample and haste.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -8414,6 +11169,32 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "midnight_assassin",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Midnight Assassin",
+      "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Assassin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -8553,6 +11334,60 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "monastery_swiftspear",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{R}",
+      "name": "Monastery Swiftspear",
+      "oracle_text": "Haste\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -8715,6 +11550,74 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "mutable_explorer",
+      "mana_cost": "{2}{G}",
+      "name": "Mutable Explorer",
+      "oracle_text": "Changeling (This card is every creature type.)\nWhen this creature enters, create a tapped Mutavault token. (It's a land with \"{T}: Add {C}\" and \"{1}: This token becomes a 2/2 creature with all creature types until end of turn. It's still a land.\")",
+      "power": 1,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -9134,6 +12037,63 @@
                 {
                   "effects": [
                     {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}, {U}, or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "obelisk_of_esper",
+      "mana_cost": "{3}",
+      "name": "Obelisk of Esper",
+      "oracle_text": "{T}: Add {W}, {U}, or {B}.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{U}",
                       "op": "add_mana"
                     }
@@ -9351,6 +12311,26 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "orazca_frillback",
+      "mana_cost": "{2}{G}",
+      "name": "Orazca Frillback",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -9726,6 +12706,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "pharika_s_chosen",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{B}",
+      "name": "Pharika's Chosen",
+      "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "phyrexian_walker",
@@ -10026,6 +13030,26 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "primordial_wurm",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Primordial Wurm",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Wurm"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -10051,6 +13075,34 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "prized_amalgam",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Prized Amalgam",
+      "oracle_text": "Whenever a creature enters, if it entered from your graveyard or you cast it from your graveyard, return this card from your graveyard to the battlefield tapped at the beginning of the next end step.",
+      "power": 3,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -10393,6 +13445,74 @@
                 {
                   "effects": [
                     {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. An opponent gains control of this land at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "rainbow_vale",
+      "name": "Rainbow Vale",
+      "oracle_text": "{T}: Add one mana of any color. An opponent gains control of this land at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
                       "mana": "{R}",
                       "op": "add_mana"
                     }
@@ -10625,6 +13745,34 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "reach_through_mists",
+      "mana_cost": "{U}",
+      "name": "Reach Through Mists",
+      "oracle_text": "Draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "subtypes": [
+        "Arcane"
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -11244,6 +14392,37 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "sarinth_greatwurm",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{R}{G}",
+      "name": "Sarinth Greatwurm",
+      "oracle_text": "Trample\nWhenever a land enters, create a tapped Powerstone token. (It's an artifact with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
+      "power": 7,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Wurm"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -11433,6 +14612,33 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "scholarship_sponsor",
+      "mana_cost": "{3}{W}",
+      "name": "Scholarship Sponsor",
+      "oracle_text": "When this creature enters, each player who controls fewer lands than the player who controls the most lands searches their library for a number of basic land cards less than or equal to the difference, puts those cards onto the battlefield tapped, then shuffles.",
+      "power": 3,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -12075,6 +15281,130 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "shivan_oasis",
+      "name": "Shivan Oasis",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R} or {G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1 and has vigilance and reach",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance",
+            "reach"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has vigilance and reach"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "short_bow",
+      "mana_cost": "{2}",
+      "name": "Short Bow",
+      "oracle_text": "Equipped creature gets +1/+1 and has vigilance and reach.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -12742,6 +16072,33 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "slumbering_trudge",
+      "mana_cost": "{X}{G}",
+      "name": "Slumbering Trudge",
+      "oracle_text": "This creature enters with a number of stun counters on it equal to three minus X. If X is 2 or less, it enters tapped. (If a permanent with a stun counter would become untapped, remove one from it instead.)",
+      "power": 6,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Beast"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -12898,6 +16255,77 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 0
+          },
+          "text": "Equipped creature gets +0/+2 and has reach",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "reach"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +0/+2 and has reach"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "spidersilk_net",
+      "mana_cost": "{0}",
+      "name": "Spidersilk Net",
+      "oracle_text": "Equipped creature gets +0/+2 and has reach. (It can block creatures with flying.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -13179,6 +16607,103 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "stormchaser_mage",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Stormchaser Mage",
+      "oracle_text": "Flying, haste\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "striped_bears",
+      "mana_cost": "{3}{G}",
+      "name": "Striped Bears",
+      "oracle_text": "When this creature enters, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bear"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -13285,6 +16810,30 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sundial_dawn_tyrant",
+      "mana_cost": "{1}{W}",
+      "name": "Sundial, Dawn Tyrant",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -13585,6 +17134,80 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "first_strike",
+            "vigilance",
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sword_of_vengeance",
+      "mana_cost": "{3}",
+      "name": "Sword of Vengeance",
+      "oracle_text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -14499,6 +18122,26 @@
       "colors": [
         "G"
       ],
+      "id": "terrain_elemental",
+      "mana_cost": "{1}{G}",
+      "name": "Terrain Elemental",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "id": "terrian_world_tyrant",
       "mana_cost": "{2}{G}{G}{G}",
       "name": "Terrian, World Tyrant",
@@ -15169,6 +18812,53 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has double strike"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "twinblade_blessing",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Twinblade Blessing",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\nEnchanted creature has double strike. (It deals both first-strike and regular combat damage.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -15390,6 +19080,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has trample and lifelink",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has trample and lifelink"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "unflinching_courage",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Unflinching Courage",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has trample and lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -15413,6 +19164,66 @@
       ],
       "toughness": 13,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "universal_automaton",
+      "mana_cost": "{1}",
+      "name": "Universal Automaton",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -15740,6 +19551,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "venomous_changeling",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Venomous Changeling",
+      "oracle_text": "Changeling (This card is every creature type.)\nDeathtouch",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -16056,6 +19933,27 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "vorstclaw",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Vorstclaw",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Horror"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -16138,6 +20036,117 @@
         "Wall"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "wanderwine_hub",
+      "name": "Wanderwine Hub",
+      "oracle_text": "As this land enters, you may reveal a Merfolk card from your hand. If you don't, this land enters tapped.\n{T}: Add {W} or {U}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}. ({C} represents colorless mana.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "warden_of_geometries",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}",
+      "name": "Warden of Geometries",
+      "oracle_text": "Vigilance\n{T}: Add {C}. ({C} represents colorless mana.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Drone"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "watchwolf",
+      "mana_cost": "{G}{W}",
+      "name": "Watchwolf",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Wolf"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -16354,6 +20363,69 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "woodland_changeling",
+      "mana_cost": "{1}{G}",
+      "name": "Woodland Changeling",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -16441,6 +20513,50 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wreckage_wickerfolk",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Wreckage Wickerfolk",
+      "oracle_text": "Flying\nWhen this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

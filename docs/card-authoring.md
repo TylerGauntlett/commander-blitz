@@ -55,9 +55,16 @@ Gate 6 exists because a naive merge lets an authored card **replace** a
 hand-written one, and every deck referencing that id would silently change.
 
 An expectation may assert `life`, `hand_size`, `library_size`, `graveyard_size`,
-`counters`, `tokens`, `battlefield_count`, `opponent_battlefield_count` and
-`zone` — all things a person can read off a board and check against the printed
-card by eye.
+`counters`, `tokens`, `battlefield_count`, `opponent_battlefield_count`,
+`granted` and `zone` — all things a person can read off a board and check against
+the printed card by eye.
+
+`zone` accepts a list when a card's destination is genuinely conditional: Dead
+Weight's -2/-2 kills what it enchants, and state-based actions then correctly put
+the Aura in the graveyard, so battlefield *and* graveyard are both the card
+working. Pinning one would reject a card for behaving properly — and gate 4 makes
+the same allowance, because the two harnesses have to agree or a card passes one
+and fails the other for the same behaviour.
 
 ## What to work on next
 
@@ -108,7 +115,28 @@ op, `CardDef.is_aura`, SBA unattachment). Two things were missing:
 Equipment needed no new engine work at all: `Equip {2}` is a sorcery-speed
 activated ability whose effect is the existing `attach` op.
 
-Still outstanding: Cycling, Flashback, Crew, Kicker, Convoke, Ward, Prowess.
+Then the sentences those cards actually say, which is where the second batch of
+work went — an Equipment that *grants* rather than buffs, and the very common
+"gets +1/+2 **and** has vigilance", which is one printed sentence and two
+abilities. Without those the all-or-nothing rule kept throwing the cards away
+even though the mechanic worked.
+
+Three more keywords turned out to need no engine work at all:
+
+- **Devoid** is self-implementing — the catalog already reports the card as
+  colourless, so the generated card is already right and the line is consumed
+  with nothing built.
+- **Changeling** is the existing `add_subtype` static.
+- **Prowess** is a `spell_cast` trigger filtered to noncreature spells, which
+  the DSL has always been able to say.
+
+Still outstanding: **Cycling** (71), **Crew** (74), **Flashback** (75),
+**Kicker**, **Convoke** (39), **Ward** (41), and **modal spells** (153).
+
+Modal is the one that looks cheap and is not. `choose_mode` exists, but modes are
+chosen *on resolution* while targets are chosen *at cast*, and a card whose first
+mode targets a creature and whose second targets a player has nowhere to put
+that. It needs engine work, not a template.
 
 **The agent** (`authoring/packet.py`) — the long tail, one self-contained work
 packet per card:
