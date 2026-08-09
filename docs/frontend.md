@@ -96,16 +96,24 @@ as a line rather than as a diagonal past a wall of mana.
 only the row is shared. Planeswalkers ride with the creatures, since they are what
 combat is pointed at.
 
-**Every lane is always rendered, at a full card's height, on every mat.** That is a
-layout decision paid for in dead space and it buys the board holding still. Empty
-lanes used to collapse to a 30px strip and opponents dropped theirs entirely, so the
-first creature of the game shoved your land row down by a whole card, killing it
-shoved the row back up, and the same thing on an opponent's mat grew the opponents
-row and pushed your entire board down the screen on somebody else's turn. The orb's
-mana row did it a third time, several times a turn, which is why it now has a
+**The viewer's lanes are always rendered, at a full card's height, empty or not.**
+That is dead space bought deliberately, and what it buys is the board holding still.
+An empty lane used to collapse to a 30px strip, so playing your first creature shoved
+your land row down by a whole card and killing it shoved the row back up — under the
+cursor, mid-decision, on the one mat that owns every drop target. The orb's mana row
+did the same a second time, several times a turn, which is why it now sits in a
 reserved slot (`.orb__manaslot`) rather than appearing and vanishing with the mana.
-`e2e/layout.spec.ts` fails the run if any band drifts more than a few pixels of
-rounding over a game.
+
+**Opponents still drop their empty lanes**, and that asymmetry was measured rather
+than assumed. Three opponents leave each compact mat about 158px of lane width
+against a 51px card, so the front band's 2:1 split gives creatures room for one card
+per row: an always-present, usually-empty global lane wrapped an opponent's creatures
+onto a second row, grew the opponents row by 20px and pushed the viewer's board down
+the screen — the opposite of the intent. Their mats are therefore still
+content-sized, and an opponent's first artifact can still translate your board
+vertically. What cannot change is the spacing *within* your own mat, which is the gap
+a card actually jumps across, and `e2e/layout.spec.ts` fails the run if any of your
+bands drifts more than a few pixels of rounding relative to your mat over a game.
 
 Auras and Equipment are not loose cards. `attachmentsFor` pulls anything with an
 `attached_to` on the same mat out of the lanes, and `CardStack` draws it tucked under

@@ -72,13 +72,23 @@
   the same mat out of the lanes and `CardStack` draws it peeking out from
   underneath, still individually hoverable and clickable. An attachment whose
   host is on somebody else's board stays a loose card rather than vanishing.
-- **The board holds still.** Every lane is rendered at a full card's height on
-  every mat whether or not it holds anything, and the orb's mana row has a
-  reserved slot. Before this, playing your first creature shoved the land row
-  down by a whole card and killing it shoved the row back up; an opponent doing
-  the same pushed your entire board down the screen on their turn; and tapping
-  mana did it again several times a turn. The cost is one card height of empty
-  slot on a board that will fill anyway.
+- **Your own board holds still.** All three of the viewer's lanes render at a
+  full card's height whether or not they hold anything, and the orb's mana row
+  has a reserved slot. Before this, playing your first creature shoved the land
+  row down by a whole card, killing it shoved the row back up, and tapping mana
+  did it again several times a turn. The cost is one card height of empty slot
+  on a mat that fills anyway.
+
+### Known limit
+Opponent mats are still content-sized, so an opponent's board growing can still
+translate your board down the screen. Reserving their lanes too was tried and
+measured, and it made things worse: a compact mat has about 158px of lane width
+against a 51px card, so an always-present global lane wrapped their creatures
+onto an extra row, grew the opponents row 20px and clipped the viewer's lands in
+a four-player pod. Fixing this properly means giving compact mats a fixed lane
+height and letting them scroll internally — the fade affordance on
+`.mat--compact .mat__lanes` already exists for it — rather than reserving width
+they do not have.
 
 ### Deliberate divergence from the reference layout
 The reference diagram puts library / graveyard / exile in a strip beside the
@@ -87,9 +97,9 @@ rarely enough that the width is better spent on the board, and the orb already
 gives each one a labelled pile.
 
 Guarded by two cases in `frontend/e2e/layout.spec.ts`: "lands sit nearest the
-player who controls them" and "the board does not move as permanents enter and
-leave play". Both orders render perfectly well and a jumping board renders
-perfectly well, so only a measurement notices a regression.
+player who controls them" and "the viewer's bands do not move as permanents
+enter and leave play". Both band orders render perfectly well and a jumping
+board renders perfectly well, so only a measurement notices a regression.
 
 ---
 

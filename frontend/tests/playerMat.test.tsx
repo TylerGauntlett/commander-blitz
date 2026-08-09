@@ -56,7 +56,7 @@ describe("PlayerMat bands", () => {
       [card({ oid: 1, types: ["Creature"] }), card({ oid: 2, types: ["Land"] })],
       { mirrored: true, compact: true },
     );
-    expect(laneOrder(container)).toEqual(["Lands", "Creatures", "Artifacts-Enchantments"]);
+    expect(laneOrder(container)).toEqual(["Lands", "Creatures"]);
   });
 
   it("shares one band between the creatures and the global permanents", () => {
@@ -67,29 +67,34 @@ describe("PlayerMat bands", () => {
   });
 
   /*
-   * Every lane is rendered on every mat whether or not it holds anything, and
-   * an empty one keeps its full card height (board.css). Together those two are
-   * the whole reason a mat is a fixed height -- and a fixed height is the whole
-   * reason the board stops moving when a permanent enters or leaves.
+   * The viewer keeps every lane whether or not it holds anything, and an empty
+   * one keeps its full card height (board.css). Those two together are what
+   * make the viewer's mat a fixed height, which is what stops the board moving
+   * when a permanent enters or leaves.
    */
   it("keeps all three lanes for the viewer even when empty", () => {
     const { container } = renderMat([]);
     expect(container.querySelectorAll(".lane")).toHaveLength(3);
   });
 
-  it("keeps all three for an opponent too, so their first creature moves nothing", () => {
-    // Dropping their empty lanes grew the opponents row when they played
-    // something, which pushed *your* board down the screen on somebody else's
-    // turn.
+  it("drops an opponent's empty lanes, and the band with them", () => {
+    // A compact mat has about 158px of lane width against a 51px card, so an
+    // always-present global lane leaves creatures room for one card per row and
+    // wraps their board onto an extra line. See the note in PlayerMat.
     const { container } = renderMat([card({ oid: 1, types: ["Land"] })], {
       mirrored: true,
       compact: true,
     });
-    expect(container.querySelectorAll(".lane")).toHaveLength(3);
-    expect(container.querySelector(".band--front")).not.toBeNull();
+    expect(laneOrder(container)).toEqual(["Lands"]);
+    expect(container.querySelector(".band--front")).toBeNull();
   });
 
-  it("renders the same lanes in the same order whether the board is empty or full", () => {
+  it("gives a one-lane band the whole width rather than the hidden lane's track", () => {
+    const { container } = renderMat([card({ oid: 1, types: ["Creature"] })], { compact: true });
+    expect(container.querySelector(".band--front")?.classList).toContain("band--solo");
+  });
+
+  it("renders the viewer's lanes in the same order whether the board is empty or full", () => {
     const empty = laneOrder(renderMat([]).container);
     cleanup();
     const full = laneOrder(
