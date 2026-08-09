@@ -21,7 +21,9 @@ import { card, gameView, player } from "./fixtures";
 
 afterEach(() => {
   cleanup();
-  useUiStore.setState({ peek: null });
+  // `images` too, now that the orb reads it for the wash. A test that left a map
+  // behind would hand the next one a background it never asked for.
+  useUiStore.setState({ peek: null, images: null, hoveredOid: null });
 });
 
 function renderOrb(
@@ -122,12 +124,52 @@ describe("the commander plinth", () => {
   );
 
   it("only lets you click a commander the server says you can cast", () => {
-    const waiting = renderOrb({ command: [commander()] });
-    expect((waiting.getByTestId("commander-99") as HTMLButtonElement).disabled).toBe(true);
+    // Announced as disabled, not *made* disabled. The plinth has to keep
+    // dispatching mouse events in every state or hovering it stops filling the
+    // preview rail -- see the hover cases in commandZone.test.tsx. So the gate
+    // is the click handler, and this asserts the gate rather than the attribute.
+    const cast: number[] = [];
+    const waiting = renderOrb(
+      { command: [commander()] },
+      { onCastCommander: (c: { oid: number }) => cast.push(c.oid) },
+    );
+    const slot = waiting.getByTestId("commander-99");
+    expect(slot.getAttribute("aria-disabled")).toBe("true");
+    expect((slot as HTMLButtonElement).disabled).toBe(false);
+    fireEvent.click(slot);
+    expect(cast).toEqual([]);
 
     cleanup();
-    const ready = renderOrb({ command: [commander()] }, { playableOids: new Set([99]) });
-    expect((ready.getByTestId("commander-99") as HTMLButtonElement).disabled).toBe(false);
+    const ready = renderOrb(
+      { command: [commander()] },
+      {
+        playableOids: new Set([99]),
+        onCastCommander: (c: { oid: number }) => cast.push(c.oid),
+      },
+    );
+    const live = ready.getByTestId("commander-99");
+    expect(live.getAttribute("aria-disabled")).toBe("false");
+    fireEvent.click(live);
+    expect(cast).toEqual([99]);
+  });
+
+  it("stops casting while input is locked, without going unhoverable", () => {
+    // `locked` is the narration/in-flight gate. It must not reach for the
+    // `disabled` attribute either: a player watching narration can still want to
+    // read their own commander.
+    const cast: number[] = [];
+    const { getByTestId } = renderOrb(
+      { command: [commander()] },
+      {
+        playableOids: new Set([99]),
+        locked: true,
+        onCastCommander: (c: { oid: number }) => cast.push(c.oid),
+      },
+    );
+    const slot = getByTestId("commander-99");
+    expect((slot as HTMLButtonElement).disabled).toBe(false);
+    fireEvent.click(slot);
+    expect(cast).toEqual([]);
   });
 
   it("casts through the caller's play path rather than an action id", () => {
@@ -170,7 +212,84 @@ describe("the commander plinth", () => {
   });
 });
 
+describe("the commander as the panel's ground", () => {
+  it("washes the orb with the commander's art", () => {
+    // The reason this direction was picked: four seats in a pod are four grey
+    // rectangles told apart by a name in 12px type, and the one asset that
+    // separates them instantly was already loaded.
+    useUiStore.setState({
+      images: { aesi: { card_id: "aesi", art: "/art/aesi.jpg", artist: "A" } },
+    });
+    const { container } = renderOrb({ command: [commander({ card_id: "aesi" })] });
+    const wash = container.querySelector<HTMLElement>(".orb__wash");
+    expect(wash).not.toBeNull();
+    expect(wash?.style.backgroundImage).toContain("/art/aesi.jpg");
+    // Unconditionally dark, so no type in the panel depends on the picture.
+    expect(container.querySelector(".orb__veil")).not.toBeNull();
+  });
+
+  it("uses the art the plinth already asked for, not a second URL", () => {
+    // Same `artUrl` call on the same card, so the wash is a cache hit rather
+    // than a second request for a 626x457 crop.
+    useUiStore.setState({
+      images: { aesi: { card_id: "aesi", art: "/art/aesi.jpg", artist: "A" } },
+    });
+    const { container } = renderOrb({ command: [commander({ card_id: "aesi" })] });
+    const wash = container.querySelector<HTMLElement>(".orb__wash");
+    const img = container.querySelector<HTMLImageElement>(".cmdplinth__art img");
+    expect(img?.getAttribute("src")).toBe("/art/aesi.jpg");
+    expect(wash?.style.backgroundImage).toContain(img?.getAttribute("src") ?? "");
+  });
+
+  it("falls back to the flat panel when there is no art to wash with", () => {
+    // `null` images is the map not yet fetched. Drawing a half-built wash there
+    // would flash on every first paint; the plain well is a perfectly good panel.
+    useUiStore.setState({ images: null });
+    const { container } = renderOrb({ command: [commander()] });
+    expect(container.querySelector(".orb__wash")).toBeNull();
+    expect(container.querySelector(".orb__veil")).toBeNull();
+  });
+
+  it("carries no colour-identity tint", () => {
+    // Dropped from mockup 03 on purpose: a tint is the first channel to die in
+    // greyscale, and the portrait underneath it is not. If a tint layer ever
+    // comes back, e2e/greyscale.spec.ts is the thing that has to agree first.
+    useUiStore.setState({
+      images: { aesi: { card_id: "aesi", art: "/art/aesi.jpg", artist: "A" } },
+    });
+    const { container } = renderOrb({ command: [commander({ card_id: "aesi" })] });
+    expect(container.querySelector(".orb__tint")).toBeNull();
+  });
+});
+
 describe("the life dial", () => {
+  it("stamps the dial on the commander's portrait rather than in a row", () => {
+    // The seal: it costs the overlap instead of a row, which is what pays for
+    // the portrait being this size in a 190px column.
+    const { container } = renderOrb({ command: [commander()] });
+    const frame = container.querySelector(".cmdplinth__frame");
+    expect(frame?.querySelector(".dial")).not.toBeNull();
+    expect(container.querySelector(".orb__life-row")).toBeNull();
+  });
+
+  it("gives life a row of its own when no commander is visible", () => {
+    // A commander in a hidden zone renders no plinth at all, and life is not
+    // allowed to vanish with it.
+    const { container, getByTestId } = renderOrb({ command: [] });
+    expect(container.querySelector(".cmdzone")).toBeNull();
+    expect(container.querySelector(".orb__life-row .dial")).not.toBeNull();
+    expect(getByTestId("life-0").textContent).toBe("40");
+  });
+
+  it("draws one seal for a pair of partners, not two", () => {
+    // Partners share a life total; two dials for one number would be a lie.
+    const { container } = renderOrb({
+      command: [commander(), commander({ oid: 98, name: "Second Commander" })],
+    });
+    expect(container.querySelectorAll(".cmdslot").length).toBe(2);
+    expect(container.querySelectorAll(".dial").length).toBe(1);
+  });
+
   it("keeps the life testid holding a bare number", () => {
     // `lifeOf()` in e2e/helpers.ts does `Number(textContent)` on this node.
     // Any extra character in it breaks every spec that reads a life total.

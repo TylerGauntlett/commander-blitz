@@ -196,6 +196,60 @@ decorative.
 
 ---
 
+## What was actually built
+
+**03 Plinth shipped, with the height of 01 and without the tint.** Three
+departures from the recommendation below, each made for a reason the mockup could
+not have known:
+
+**1. The panel fills its column.** 03 measures 190×318 against the ~341px the orb
+gets at 1600×950, and more at 2560×1278 — so it left a strip of dead mat under
+itself. `.orb` is now `flex: 1` inside `.mat__side` and `.orb__body` spreads its
+rows with `space-between`, which is 01 Astrolabe's proportion on 03's geometry.
+Measured after: 190×353 at 1600×950 and 190×475 at 2560×1278, both exactly the
+column's height. The cost is a visible gap mid-panel on turn one, when there is no
+commander damage and no mana to draw; it closes as a game starts happening.
+
+**2. No colour-identity tint.** The greyscale twin was the verdict and the verdict
+was taken. `.orb__wash` and `.orb__veil` shipped; `.orb__tint` did not. The veil
+is unconditionally dark, so no type in the panel depends on the picture — which
+means dropping the tint cost nothing but the tint. Seats are told apart by
+portrait alone, which is what survives `e2e/greyscale.spec.ts` anyway.
+
+**3. The seal reserves its overhang instead of indenting the caption.** The first
+attempt gave `.cmdplinth__name` a right padding. That has to be the seal's whole
+width, not just the part hanging below the art, and at 2560×1278 — where the disc
+clamps to 76px of a 156px portrait — it put the seal through the middle of "Aesi,
+Tyrant of Gyre Strait". `.cmdplinth__frame` now carries a `margin-bottom` of the
+overhang and the caption gets its full width back, which is what `.cmdwrap`'s
+`padding-bottom: 36px` was doing here all along.
+
+Two things the mockup was silent on, both found by measuring the built panel:
+
+- **`.orb--compact`'s piles must not wrap.** They did, at 112px, and a wrapped
+  pile row reads as a different component rather than a narrower one. The binding
+  constraint turned out to be the *labels*, not the stacks: `.pile` is a centred
+  flex column, so a pile is as wide as `max(stack, label)` and "Hand" beat a 20px
+  stack. Retuned to fit five — exile included — with about 5px spare.
+- **The plinth was unhoverable.** `CommandZone.tsx` said "the full card is one
+  hover away in the preview rail" and rendered `disabled={disabled || !castable}`.
+  A disabled control dispatches no mouse events, so that sentence was false for an
+  opponent's commander and for your own whenever you could not cast it. It is
+  `aria-disabled` now, with the click gated in the handler. `findCard` also
+  learned to search the stack, so a commander mid-cast previews instead of blanking
+  the rail — `commandersOf` had searched it since it was written.
+
+Not taken, and still open: the 21-notch damage gauge (port item 1 below), the
+nine-segment zone ledger (item 2), and the seat-shaped component that would kill
+`.orb--compact` (item 3).
+
+Guards: `frontend/e2e/orb.spec.ts` (height against the column, escape, the seal's
+overlap, one pile row in both columns, hover-to-preview per state),
+`frontend/tests/commandZone.test.tsx` (the hover, per commander state) and
+`frontend/tests/cardPreview.test.tsx` (the rail, which had no test at all).
+
+---
+
 ## Recommendation
 
 **Take 03 as the base and port two things into it.**

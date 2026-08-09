@@ -10,10 +10,22 @@
  * under the player's name now, and its cost lands one glance above the mana row
  * that has to pay it. See `CommandZone`.
  *
- * **Life is a dial.** It is the one number people actually hunt for, so it is
- * the largest object in the column rather than a slightly bigger numeral. It
- * still pops and flashes on every change, in the direction of the change, and
- * `data-player` still marks it as the anchor for floating damage numerals.
+ * **The commander is also the panel's ground.** Its art, blurred and scrimmed,
+ * is the orb's background -- so four seats in a pod stop being four grey
+ * rectangles told apart by a name in 12px type, which is the one thing the old
+ * column could not do and the reason `mockups/orb/` picked this direction. It is
+ * the same `/art/{card_id}.jpg` the plinth already draws, so it costs no second
+ * request. There is deliberately **no colour-identity tint** over it: a tint
+ * dies in greyscale and the portrait does not, and every scrap of type here is
+ * legible against the unconditional dark veil rather than against the hue.
+ *
+ * **Life is a seal, not a row.** It is the one number people actually hunt for,
+ * so it is the largest object in the column -- but it is stamped over the
+ * portrait's lower right rather than given a row of its own, which is what buys
+ * the portrait its size in a 190px column. It still pops and flashes on every
+ * change, in the direction of the change, and `data-player` still marks it as
+ * the anchor for floating damage numerals. When there is no commander anywhere
+ * visible, it falls back to a row -- see `orb__life-row` below.
  *
  * **Zones are piles.** `Lib 72 / GY 3 / Exile 1` gave three numbers to compare
  * by reading; a pile shows the shape of the game as well as the count. The
@@ -24,8 +36,10 @@
 import { motion, useAnimationControls } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { CardView, GameView, PlayerView } from "../../api/types";
+import { artUrl } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import { formatManaRow, manaRow, markSpent } from "../../logic/mana";
+import { commandersOf } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -146,6 +160,22 @@ export function PlayerOrb({
 }: Props) {
   const controls = useAnimationControls();
   const previous = useRef(player.life);
+  const images = useUiStore((s) => s.images);
+
+  /*
+   * The seat's own commander, and with it the seat's own ground.
+   *
+   * The same `commandersOf` call `CommandZone` makes on the same state, so the
+   * two cannot disagree about which commander is the hero of this panel -- and
+   * the same `artUrl`, so the wash is a second reference to the URL the plinth's
+   * `<img>` has already put in the cache rather than a second request.
+   *
+   * `undefined` (map not fetched) and `null` (no printing) both mean "draw no
+   * wash": the panel falls back to its flat well, which is what it looked like
+   * before this direction and is a perfectly good panel. See logic/cardArt.ts.
+   */
+  const commanders = commandersOf(state, player.pid);
+  const wash = commanders.length > 0 ? artUrl(images, commanders[0].card_id) : undefined;
 
   useEffect(() => {
     const before = previous.current;
@@ -181,6 +211,44 @@ export function PlayerOrb({
     .filter(Boolean)
     .join(" ");
 
+  /*
+   * The dial, built once and placed in one of two ways.
+   *
+   * Normally it is the seal: `CommandZone` stamps it over the first commander's
+   * portrait, where it costs the overlap rather than a row. But `CommandZone`
+   * renders nothing at all when the commander is in a hidden zone -- shuffled
+   * back into the library, say -- and life is not allowed to vanish with it, so
+   * `orb__life-row` is the fallback and not dead code.
+   */
+  // A span, not a div: the seal is stamped *inside* the plinth's `<button>`, and
+  // a button may only contain phrasing content. `.dial` is `display: grid`
+  // already, so nothing about it changes but its validity.
+  const dial = (
+    <span
+      className={[
+        "dial",
+        isViewer ? "dial--mine" : "dial--foe",
+        isActive ? "dial--active" : "",
+        player.has_lost ? "dial--out" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {/*
+        The testid sits on the numeral, not the disc: `lifeOf()` in
+        e2e/helpers.ts does `Number(textContent)` on this node, so it has
+        to hold the bare number and nothing else.
+      */}
+      <motion.span
+        className="dial__n tabular"
+        animate={controls}
+        data-testid={`life-${player.pid}`}
+      >
+        {player.has_lost ? "OUT" : player.life}
+      </motion.span>
+    </span>
+  );
+
   return (
     <motion.div
       className={classes}
@@ -191,186 +259,193 @@ export function PlayerOrb({
       onClick={onSelect ? () => onSelect(player.pid) : undefined}
       whileHover={targetable ? { scale: 1.04 } : undefined}
     >
-      <div className="orb__head">
-        <span className="orb__name">{player.name}</span>
-        {hasPriority && <span className="orb__priority" title="Has priority" />}
-      </div>
-
       {/*
-        The commander, above the life total rather than below the fold.
+        The ground, and the reason a pod stops being four identical rectangles.
 
-        Clicking it is a gesture, not an action id -- `onCastCommander` routes
-        through the same path a hand card takes. Nothing in this subtree may
-        carry `data-action-id`; see the note at the top of `CommandZone`.
+        Two layers rather than one blended one. Tinting the scrim itself lifts
+        the whole panel toward the art's dominant colour and takes the header
+        type with it; the veil is unconditionally dark so that no piece of type
+        in this panel depends on what the portrait happens to look like.
       */}
-      <CommandZone
-        state={state}
-        pid={player.pid}
-        playableOids={playableOids ?? EMPTY}
-        compact={compact}
-        onActivate={onCastCommander}
-        onHover={onHoverCard}
-        disabled={locked}
-      />
-
-      <div className="orb__life-row">
-        <div
-          className={[
-            "dial",
-            isViewer ? "dial--mine" : "dial--foe",
-            isActive ? "dial--active" : "",
-            player.has_lost ? "dial--out" : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {/*
-            The testid sits on the numeral, not the disc: `lifeOf()` in
-            e2e/helpers.ts does `Number(textContent)` on this node, so it has
-            to hold the bare number and nothing else.
-          */}
-          <motion.span
-            className="dial__n tabular"
-            animate={controls}
-            data-testid={`life-${player.pid}`}
-          >
-            {player.has_lost ? "OUT" : player.life}
-          </motion.span>
-        </div>
-        {player.has_lost && <span className="orb__loss">{lossReason(player.loss_reason)}</span>}
-      </div>
-
-      {commanderDamage.length > 0 && (
-        <div className="orb__cmd" title="Commander damage taken">
-          {commanderDamage.map(([source, amount]) => (
-            <span
-              key={source}
-              className={amount >= COMMANDER_LETHAL - 6 ? "cmd-pip cmd-pip--warn" : "cmd-pip"}
-              title={`${amount} from ${names[Number(source)] ?? `P${source}`}`}
-            >
-              {amount}
-            </span>
-          ))}
-        </div>
+      {typeof wash === "string" && (
+        <>
+          {/* Quoted, because an unquoted `url()` gives a bare path meaning to
+              parentheses and whitespace. Card ids are slugs today, but the deck
+              importer mints them from names it did not choose. */}
+          <div
+            className="orb__wash"
+            style={{ backgroundImage: `url("${wash}")` }}
+            aria-hidden="true"
+          />
+          <div className="orb__veil" aria-hidden="true" />
+        </>
       )}
 
-      {/*
-        Available mana. The server sends it, nothing rendered it, and lands
-        tapped during auto-payment with no indication of what was spent -- so
-        the player had no running sense of what they could afford.
+      <div className="orb__body">
+        <div className="orb__head">
+          <span className="orb__name">{player.name}</span>
+          {hasPriority && <span className="orb__priority" title="Has priority" />}
+        </div>
 
-        An ambiguous source ("Add {G} or {U}") is one split pip, not two solid
-        ones: two solid pips would claim a mana that does not exist.
+        {/*
+          The commander, above the life total rather than below the fold.
 
-        Hovering a castable card hollows out the pips it would spend, so the row
-        answers "and what will that leave me with" as well as "what do I have".
-        Which lands those are comes from the engine's solved payment, never from
-        arithmetic here -- see logic/mana.ts.
+          Clicking it is a gesture, not an action id -- `onCastCommander` routes
+          through the same path a hand card takes. Nothing in this subtree may
+          carry `data-action-id`; see the note at the top of `CommandZone`.
+        */}
+        <CommandZone
+          state={state}
+          pid={player.pid}
+          playableOids={playableOids ?? EMPTY}
+          compact={compact}
+          onActivate={onCastCommander}
+          onHover={onHoverCard}
+          disabled={locked}
+          seal={dial}
+        />
 
-        The row itself is still conditional -- an empty mana row would be a
-        control that says nothing -- but the *slot* around it is not. Mana
-        appears and empties several times a turn, and letting the orb grow and
-        shrink with it moved the mat, the opponents row, and with it the whole
-        board underneath the player's cursor. The slot keeps its line whether or
-        not there is anything to draw in it.
-      */}
-      <div className="orb__manaslot">
-        {pips.length > 0 && (
-          <div
-            className="orb__mana"
-            data-testid={`mana-${player.pid}`}
-            data-mana={formatManaRow(pips)}
-            data-spending={spentCount}
-            title={
-              spentCount > 0
-                ? `${pips.length} available; this spell taps ${spentCount}`
-                : `${pips.length} available: ${formatManaRow(pips)}`
-            }
-          >
-            {pips.map((pip) => (
+        {commanders.length === 0 && <div className="orb__life-row">{dial}</div>}
+
+        {player.has_lost && <div className="orb__loss">{lossReason(player.loss_reason)}</div>}
+
+        {commanderDamage.length > 0 && (
+          <div className="orb__cmd" title="Commander damage taken">
+            {/* The label was a `title` attribute, which is a fact you can only
+                find by hunting for it. Over art the chips need a scrim plate
+                anyway, and a plate has room for the word. */}
+            {!compact && <span className="orb__cmd-lab">Cmd dmg</span>}
+            {commanderDamage.map(([source, amount]) => (
               <span
-                key={pip.key}
-                className={[
-                  "mana-pip",
-                  `mana-pip--${pip.tone}`,
-                  pip.floating ? "mana-pip--floating" : "",
-                  pip.spent ? "mana-pip--spent" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-                title={
-                  pip.spent
-                    ? `${pip.symbols.join(" or ")} — this spell would tap it`
-                    : pip.symbols.length > 1
-                      ? `Either ${pip.symbols.join(" or ")}`
-                      : pip.floating
-                        ? `${pip.symbols[0]} in pool`
-                        : pip.symbols[0]
-                }
-              />
+                key={source}
+                className={amount >= COMMANDER_LETHAL - 6 ? "cmd-pip cmd-pip--warn" : "cmd-pip"}
+                title={`${amount} from ${names[Number(source)] ?? `P${source}`}`}
+              >
+                {amount}
+              </span>
             ))}
           </div>
         )}
-      </div>
 
-      {/*
-        Commander tax used to live here as a `CMD +N` chip. It rides on the
-        plinth above now, beside the mana cost it modifies and directly over the
-        mana row -- which is the only arrangement in which a surcharge means
-        anything.
-      */}
-      {/*
-        Bottom-aligned, so the piles' heights read comparatively: a library
-        that has been drawn down to nothing is visibly a short stack next to a
-        graveyard that has grown, which is a thing you want to notice rather
-        than work out.
-      */}
-      <div className="piles">
-        <ZonePile
-          pid={player.pid}
-          zone={null}
-          name="library"
-          kind="lib"
-          label="Lib"
-          count={player.library_count}
-          title="Cards in library"
-        />
-        <ZonePile
-          pid={player.pid}
-          zone="hand"
-          name="hand"
-          kind="lib"
-          label="Hand"
-          count={player.hand_count}
-          title={isViewer ? "Your hand" : "Hidden"}
-        />
-        <ZonePile
-          pid={player.pid}
-          zone="graveyard"
-          name="graveyard"
-          kind="gy"
-          label="GY"
-          count={player.graveyard.length}
-        />
-        {player.exile.length > 0 && (
+        {/*
+          Available mana. The server sends it, nothing rendered it, and lands
+          tapped during auto-payment with no indication of what was spent -- so
+          the player had no running sense of what they could afford.
+
+          An ambiguous source ("Add {G} or {U}") is one split pip, not two solid
+          ones: two solid pips would claim a mana that does not exist.
+
+          Hovering a castable card hollows out the pips it would spend, so the
+          row answers "and what will that leave me with" as well as "what do I
+          have". Which lands those are comes from the engine's solved payment,
+          never from arithmetic here -- see logic/mana.ts.
+
+          The row itself is still conditional -- an empty mana row would be a
+          control that says nothing -- but the *slot* around it is not. Mana
+          appears and empties several times a turn, and letting the orb grow and
+          shrink with it moved the mat, the opponents row, and with it the whole
+          board underneath the player's cursor. The slot keeps its line whether
+          or not there is anything to draw in it.
+        */}
+        <div className="orb__manaslot">
+          {pips.length > 0 && (
+            <div
+              className="orb__mana"
+              data-testid={`mana-${player.pid}`}
+              data-mana={formatManaRow(pips)}
+              data-spending={spentCount}
+              title={
+                spentCount > 0
+                  ? `${pips.length} available; this spell taps ${spentCount}`
+                  : `${pips.length} available: ${formatManaRow(pips)}`
+              }
+            >
+              {pips.map((pip) => (
+                <span
+                  key={pip.key}
+                  className={[
+                    "mana-pip",
+                    `mana-pip--${pip.tone}`,
+                    pip.floating ? "mana-pip--floating" : "",
+                    pip.spent ? "mana-pip--spent" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  title={
+                    pip.spent
+                      ? `${pip.symbols.join(" or ")} — this spell would tap it`
+                      : pip.symbols.length > 1
+                        ? `Either ${pip.symbols.join(" or ")}`
+                        : pip.floating
+                          ? `${pip.symbols[0]} in pool`
+                          : pip.symbols[0]
+                  }
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/*
+          Commander tax used to live here as a `CMD +N` chip. It rides on the
+          plinth above now, beside the mana cost it modifies and directly over
+          the mana row -- which is the only arrangement in which a surcharge
+          means anything.
+        */}
+        {/*
+          Bottom-aligned, so the piles' heights read comparatively: a library
+          that has been drawn down to nothing is visibly a short stack next to a
+          graveyard that has grown, which is a thing you want to notice rather
+          than work out. `orb__body` spreads its rows, so this one lands on the
+          panel's bottom edge whatever height the column turns out to have.
+        */}
+        <div className="piles">
           <ZonePile
             pid={player.pid}
-            zone="exile"
-            name="exile"
-            kind="ex"
-            label="Exile"
-            count={player.exile.length}
+            zone={null}
+            name="library"
+            kind="lib"
+            label="Lib"
+            count={player.library_count}
+            title="Cards in library"
           />
-        )}
-        <ZonePile
-          pid={player.pid}
-          zone="command"
-          name="command"
-          kind="cmd"
-          label="CMD"
-          count={player.command.length}
-          title="Command zone"
-        />
+          <ZonePile
+            pid={player.pid}
+            zone="hand"
+            name="hand"
+            kind="lib"
+            label="Hand"
+            count={player.hand_count}
+            title={isViewer ? "Your hand" : "Hidden"}
+          />
+          <ZonePile
+            pid={player.pid}
+            zone="graveyard"
+            name="graveyard"
+            kind="gy"
+            label="GY"
+            count={player.graveyard.length}
+          />
+          {player.exile.length > 0 && (
+            <ZonePile
+              pid={player.pid}
+              zone="exile"
+              name="exile"
+              kind="ex"
+              label="Exile"
+              count={player.exile.length}
+            />
+          )}
+          <ZonePile
+            pid={player.pid}
+            zone="command"
+            name="command"
+            kind="cmd"
+            label="CMD"
+            count={player.command.length}
+            title="Command zone"
+          />
+        </div>
       </div>
     </motion.div>
   );

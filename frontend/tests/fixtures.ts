@@ -1,4 +1,10 @@
-import type { CardView, GameView, LegalAction, PlayerView } from "../src/api/types";
+import type {
+  CardView,
+  GameView,
+  LegalAction,
+  PlayerView,
+  StackItemView,
+} from "../src/api/types";
 
 export function card(overrides: Partial<CardView> = {}): CardView {
   return {
@@ -52,6 +58,31 @@ export function player(overrides: Partial<PlayerView> = {}): PlayerView {
     graveyard: [],
     exile: [],
     command: [],
+    ...overrides,
+  };
+}
+
+/**
+ * A spell waiting to resolve.
+ *
+ * `oid` defaults to the face's own, because a spell on the stack *is* the object
+ * it will become -- that identity is what lets a hover on the commander plinth
+ * resolve to the card mid-cast.
+ */
+export function stackItem(overrides: Partial<StackItemView> = {}): StackItemView {
+  const face = overrides.card === undefined ? card({ zone: "stack" }) : overrides.card;
+  return {
+    sid: 1,
+    kind: "spell",
+    controller: 0,
+    def_id: face?.card_id ?? "t_bear",
+    name: face?.name ?? "Test Bear",
+    type_line: face?.type_line ?? "Creature - Bear",
+    oid: face?.oid ?? null,
+    source_oid: null,
+    targets: [],
+    description: face?.name ?? "Test Bear",
+    card: face,
     ...overrides,
   };
 }

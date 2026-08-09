@@ -13,8 +13,17 @@
  * So this is not a card any more. It is a **plinth**: a cropped portrait in a
  * frame, a name, and a state strip, sized for the 190px column it lives in
  * rather than shrunk to fit it. Nothing legible is lost by not drawing a tiny
- * card face -- hovering already puts the full card in the right-hand preview
- * rail, which is the surface rebuilt to hold it.
+ * card face -- hovering puts the full card in the right-hand preview rail, which
+ * is the surface rebuilt to hold it. That sentence was aspirational for a while:
+ * the plinth was a `disabled` button in every state but "ready", and a disabled
+ * control dispatches no mouse events, so the rail stayed empty for an opponent's
+ * commander and for your own whenever you could not cast it. See `aria-disabled`
+ * below.
+ *
+ * The portrait also carries the **life seal**: `PlayerOrb` hands the dial down
+ * as `seal` and the plinth stamps it over the art's lower right. Life is not a
+ * fact about the command zone, but the art's bottom edge is the only anchor that
+ * does not have to guess at the column's width, and it lives here.
  *
  * **State is said three ways.** A word, the art's brightness, and a glyph shape.
  * The green "you can play this" rim is a hairline that is easy to miss, which is
@@ -30,7 +39,7 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
 import { artUrl } from "../../logic/cardArt";
 import { manaPips } from "../../logic/cardStyle";
@@ -83,9 +92,23 @@ interface PlinthProps {
   disabled: boolean;
   onActivate?: (card: CardView) => void;
   onHover?: (oid: number | null) => void;
+  /**
+   * The life seal, stamped over the portrait's lower right. Owned by
+   * `PlayerOrb` -- the plinth knows where the art ends, and nothing else does.
+   */
+  seal?: ReactNode;
 }
 
-function Plinth({ card, castable, tax, compact, disabled, onActivate, onHover }: PlinthProps) {
+function Plinth({
+  card,
+  castable,
+  tax,
+  compact,
+  disabled,
+  onActivate,
+  onHover,
+  seal,
+}: PlinthProps) {
   const images = useUiStore((s) => s.images);
   const [broken, setBroken] = useState(false);
   // Three states, and the last two differ: `undefined` means the image map has
@@ -101,6 +124,27 @@ function Plinth({ card, castable, tax, compact, disabled, onActivate, onHover }:
   const showCost = card.zone === "command" && !compact;
   const pips = showCost ? manaPips(card.mana_cost) : [];
 
+  // Castable *and* not gated. `disabled` is the narration/in-flight lock.
+  const clickable = castable && !disabled;
+
+  /*
+   * The pointer left because the plinth stopped existing.
+   *
+   * `hoveredOid` is only ever cleared by an element's own leave handler, so a
+   * commander that is hovered and then leaves every visible zone -- shuffled
+   * back into the library, say -- pins the preview rail to a card nobody is
+   * pointing at. docs/mockup-fidelity.md open defect #4.
+   *
+   * Guarded on the store rather than fired blind: by the time a plinth unmounts
+   * the pointer may already have arrived somewhere else, and clearing then would
+   * blank a preview that is correct.
+   */
+  useEffect(() => {
+    return () => {
+      if (useUiStore.getState().hoveredOid === card.oid) onHover?.(null);
+    };
+  }, [card.oid, onHover]);
+
   return (
     <motion.button
       type="button"
@@ -109,46 +153,83 @@ function Plinth({ card, castable, tax, compact, disabled, onActivate, onHover }:
       data-castable={castable ? "true" : "false"}
       data-zone={card.zone}
       data-cmd-state={state.key}
-      disabled={disabled || !castable}
+      /*
+        `aria-disabled`, not `disabled`, and the difference is the whole reason
+        hovering an opponent's commander does nothing today: browsers do not
+        dispatch mouse events over a disabled control, and every plinth but a
+        castable one was disabled. So the surface whose documented job is "the
+        full card is one hover away in the preview rail" was unhoverable in every
+        state except the one where you were about to cast it anyway.
+
+        Announced as disabled, click gated below, still focusable -- which also
+        hands the preview to the keyboard, the way ActionPanel's `previewing()`
+        already does.
+      */
+      aria-disabled={!clickable}
       title={
         castable
           ? `Cast ${card.name}${tax > 0 ? ` — +${tax} commander tax` : ""}`
           : `${card.name} — ${state.word}`
       }
-      onClick={() => onActivate?.(card)}
+      onClick={() => {
+        if (clickable) onActivate?.(card);
+      }}
       onMouseEnter={() => onHover?.(card.oid)}
       onMouseLeave={() => onHover?.(null)}
-      whileHover={castable && !disabled ? { y: -3, scale: 1.03 } : undefined}
-      whileTap={castable && !disabled ? { scale: 0.98 } : undefined}
+      onFocus={() => onHover?.(card.oid)}
+      onBlur={() => onHover?.(null)}
+      whileHover={clickable ? { y: -3, scale: 1.03 } : undefined}
+      whileTap={clickable ? { scale: 0.98 } : undefined}
       transition={bouncy}
     >
-      {art !== undefined && (
-        <span
-          className={showArt ? "cmdplinth__art" : "cmdplinth__art cmdplinth__art--none"}
-          data-art={showArt ? "ready" : "none"}
-        >
-          {showArt ? (
-            // A 404 is a real case: art outside the shipped pool is fetched
-            // lazily and a fetch can fail. Fall back to the plate rather than
-            // to the browser's broken-image glyph.
-            <img src={art} alt="" loading="lazy" onError={() => setBroken(true)} />
-          ) : (
-            <span>no art</span>
-          )}
-        </span>
-      )}
-
       {/*
-        What this portrait is, pinned over its own corner rather than given a
-        row of its own. The eyebrow it replaces cost 22px of a column that has
-        to fit an orb, a mana row and five piles into the height of one mat --
-        and at 1600x950 that was 22px the piles did not have.
+        The portrait's own box, and the thing the life seal hangs off.
+
+        It reserves the 2:1 banner whether or not there is an image in it yet.
+        The art element itself is still conditional -- drawing the hatched "no
+        art" plate before the image map arrives would flash it on every first
+        paint -- but the *box* cannot be, because the seal is positioned against
+        this element's bottom edge and a box that appears when `/images`
+        resolves would drop the life dial into place a beat after the panel.
       */}
-      {!compact && (
-        <span className="cmdplinth__tag" title="Commander">
-          CMD
-        </span>
-      )}
+      <span className="cmdplinth__frame">
+        {art !== undefined && (
+          <span
+            className={showArt ? "cmdplinth__art" : "cmdplinth__art cmdplinth__art--none"}
+            data-art={showArt ? "ready" : "none"}
+          >
+            {showArt ? (
+              // A 404 is a real case: art outside the shipped pool is fetched
+              // lazily and a fetch can fail. Fall back to the plate rather than
+              // to the browser's broken-image glyph.
+              <img src={art} alt="" loading="lazy" onError={() => setBroken(true)} />
+            ) : (
+              <span>no art</span>
+            )}
+          </span>
+        )}
+
+        {/*
+          What this portrait is, pinned over its own corner rather than given a
+          row of its own. The eyebrow it replaces cost 22px of a column that has
+          to fit an orb, a mana row and five piles into the height of one mat --
+          and at 1600x950 that was 22px the piles did not have.
+        */}
+        {!compact && (
+          <span className="cmdplinth__tag" title="Commander">
+            CMD
+          </span>
+        )}
+
+        {/*
+          Life, stamped half on the art and half off it. It costs the overlap
+          instead of a row, which is what pays for the portrait being this size
+          in a column this narrow. `pointer-events: none` in the CSS, because the
+          portrait underneath is the cast control and a decorative disc must not
+          eat the click that casts your commander.
+        */}
+        {seal}
+      </span>
 
       <span className="cmdplinth__name">{card.name}</span>
 
@@ -203,6 +284,15 @@ interface Props {
   onActivate?: (card: CardView) => void;
   onHover?: (oid: number | null) => void;
   disabled?: boolean;
+  /**
+   * The player's life dial, to be stamped over the first commander's portrait.
+   *
+   * It belongs to `PlayerOrb` -- life is not a fact about the command zone --
+   * but only the plinth knows where the art ends, and the seal is anchored to
+   * that edge. `PlayerOrb` draws it in a row of its own when there is no
+   * commander anywhere visible and this component renders nothing at all.
+   */
+  seal?: ReactNode;
 }
 
 export function CommandZone({
@@ -213,6 +303,7 @@ export function CommandZone({
   onActivate,
   onHover,
   disabled = false,
+  seal,
 }: Props) {
   const player = state.players[pid];
   const commanders = commandersOf(state, pid);
@@ -222,7 +313,7 @@ export function CommandZone({
     <div className="cmdzone" data-testid={`command-zone-${pid}`}>
       <div className="cmdzone__cards">
         <AnimatePresence initial={false}>
-          {commanders.map((card) => (
+          {commanders.map((card, index) => (
             <Plinth
               key={card.oid}
               card={card}
@@ -235,6 +326,9 @@ export function CommandZone({
               disabled={disabled}
               onActivate={onActivate}
               onHover={onHover}
+              // One seal per player, not per commander: partners share a life
+              // total, and two dials for one number would be a lie.
+              seal={index === 0 ? seal : undefined}
             />
           ))}
         </AnimatePresence>

@@ -232,6 +232,20 @@ Ranked by severity. None of these block anything; they are the queue.
 - **Test status**: `e2e/action-panel.spec.ts` asserts the panel's hover wiring
   structurally for the blocker list rather than behaviourally, with a comment
   pointing here. The play-mode hover is asserted end to end and passes.
+- **Partly closed by the orb rebuild** — still open for everything else. The
+  commander plinth now clears `hoveredOid` on unmount when it still owns it
+  (guarded, so it cannot blank a hover that has already moved), and
+  `frontend/tests/commandZone.test.tsx` asserts both halves. `Card.tsx` and
+  `HandFan.tsx` are the ones that matter for the symptom above and are untouched,
+  as is `mode="wait"`. The panel also has a test file now
+  (`frontend/tests/cardPreview.test.tsx`), so the "no coverage" half of this entry
+  no longer holds.
+- **Adjacent bug, fixed**: `findCard` did not search `state.stack`, so a spell
+  mid-cast resolved to nothing. That is the beat the commander plinth is
+  deliberately still drawing (`commandersOf` has searched the stack since it was
+  written), so hovering a commander you had just cast blanked the rail. Both
+  functions search the stack first now; `frontend/tests/zoneGrouping.test.ts`
+  pins the ordering.
 
 ### 5. The command-zone card is cramped — **resolved**, by not drawing a card
 
