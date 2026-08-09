@@ -8,7 +8,7 @@
  *
  * WHAT CHANGED FROM ../menu/_menu.js, and why
  *
- * 1. PRECONS (4) became DECKS (25). The menu round showed the catalogue the repo
+ * 1. PRECONS (4) became DECKS (24). The menu round showed the catalogue the repo
  *    ships. A browse surface is only a design problem above about a dozen decks
  *    -- below that it is a list and there is nothing to decide -- so the flow
  *    round draws the catalogue at its post-"All Card Support" size (roadmap.md
@@ -32,7 +32,7 @@
  * from Scryfall via ../fetch_art.py. Aesi and Edgar carry real deck data out of
  * data/decks/*.deck.json -- their blurbs are those files' own `notes`, their
  * curves were counted from the real lists, their swap notes are the real
- * `reason` strings. The other twenty-three have NO deck list in this repo, so:
+ * `reason` strings. The other twenty-two have NO deck list in this repo, so:
  *
  *   - `bars`, `tags`, `blurb` and `strategy` are authored editorial judgement.
  *     Legitimate: these are opinions about an archetype, not measurements.
@@ -108,9 +108,9 @@ const SORTS = [
 // ---------------------------------------------------------------------------
 // The catalogue
 //
-// ENGINE HONESTY, restated for twenty-five decks. The menu round's rule was "a
+// ENGINE HONESTY, restated for twenty-four decks. The menu round's rule was "a
 // preview deck can be chosen but not dealt, and never sits in an opponent's
-// chair". Applied literally to a catalogue this size it makes twenty-three decks
+// chair". Applied literally to a catalogue this size it makes twenty-two decks
 // un-startable and the flow undemonstrable, which would be a mockup that is
 // honest about the engine by being useless about the design.
 //
@@ -812,7 +812,7 @@ const POD = {
 //   layered on top at or below 1x.
 //
 // This matters more here than it did in the menu round, because a catalogue of
-// twenty-five tiles is twenty-five chances to upscale a crop. The tile art box
+// twenty-four tiles is twenty-four chances to upscale a crop. The tile art box
 // is deliberately small.
 
 const ART_NATIVE = { w: 626, h: 457 };

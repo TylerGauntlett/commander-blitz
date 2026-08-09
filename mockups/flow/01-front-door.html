@@ -538,8 +538,11 @@ button { cursor:pointer; background:none; border:0; }
 .face__head { background:linear-gradient(180deg, rgba(0,0,0,.82), rgba(0,0,0,.57) 55%, rgba(0,0,0,0)); }
 .face__foot { background:linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.71) 58%, rgba(0,0,0,0)); }
 .face__title { display:flex; align-items:flex-start; gap:5px; }
-.face__name { flex:1; font-size:11px; font-weight:750; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.85); }
-.face__cost { display:flex; gap:2px; flex:none; }
+/* min-width:0 and a wrapping cost row. Without them a six-pip cost like The
+   Ur-Dragon's pushes .face__head past the card at small --card-w, which the
+   card clips but which is still the escape failure the menu round documented. */
+.face__name { flex:1; min-width:0; font-size:11px; font-weight:750; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.85); overflow-wrap:anywhere; }
+.face__cost { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:2px; flex:none; max-width:56%; }
 .face__type { margin-top:3px; font-size:8.5px; color:rgba(255,255,255,.86); text-shadow:0 1px 2px rgba(0,0,0,.85); }
 .face__rules { margin:0 0 5px; font-size:8.5px; line-height:1.38; color:rgba(255,255,255,.92); text-shadow:0 1px 2px rgba(0,0,0,.85); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
 .face__base { display:flex; align-items:flex-end; gap:6px; }
@@ -1436,7 +1439,7 @@ function catalogue() {
         ${[["all", "All"], ["precon", "Precons"], ["yours", "Yours"]].map(([id, n]) =>
           `<button class="seg__b${state.src === id ? " seg__b--on" : ""}" data-act="src" data-v="${id}">${n}</button>`).join("")}
       </span>
-      <select class="sel" data-act="sort" aria-label="Sort decks">
+      <select class="sel" id="sort" name="sort" data-act="sort" aria-label="Sort decks">
         ${SORTS.map((s) => `<option value="${s.id}"${state.sort === s.id ? " selected" : ""}>Sort: ${s.n}</option>`).join("")}
       </select>
       <span class="filters__spacer"></span>
