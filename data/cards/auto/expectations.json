@@ -2,6 +2,12 @@
   "aang_and_katara": {
     "zone": "battlefield"
   },
+  "accorder_s_shield": {
+    "zone": "battlefield"
+  },
+  "adult_gold_dragon": {
+    "zone": "battlefield"
+  },
   "adventurer_s_inn": {
     "life": {
       "0": 42
@@ -11,6 +17,12 @@
     "zone": "battlefield"
   },
   "aerial_responder": {
+    "zone": "battlefield"
+  },
+  "aeronaut_s_wings": {
+    "zone": "battlefield"
+  },
+  "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
   "akoum_refuge": {
@@ -25,6 +37,9 @@
     "zone": "battlefield"
   },
   "alpine_meadow": {
+    "zone": "battlefield"
+  },
+  "alpine_watchdog": {
     "zone": "battlefield"
   },
   "ambush_viper": {
@@ -48,6 +63,9 @@
   "angelic_wall": {
     "zone": "battlefield"
   },
+  "animal_attendant": {
+    "zone": "battlefield"
+  },
   "ankle_biter": {
     "zone": "battlefield"
   },
@@ -57,7 +75,16 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arcane_flight": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "arcane_sanctum": {
+    "zone": "battlefield"
+  },
+  "arctic_flats": {
     "zone": "battlefield"
   },
   "arctic_treeline": {
@@ -67,6 +94,12 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "asha_s_favor": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "ashcoat_bear": {
     "zone": "battlefield"
@@ -78,6 +111,9 @@
     "zone": "battlefield"
   },
   "avacyn_s_pilgrim": {
+    "zone": "battlefield"
+  },
+  "avian_changeling": {
     "zone": "battlefield"
   },
   "azorius_signet": {
@@ -100,6 +136,18 @@
   "baron_airship_kingdom": {
     "zone": "battlefield"
   },
+  "basilisk_collar": {
+    "zone": "battlefield"
+  },
+  "bassara_tower_archer": {
+    "zone": "battlefield"
+  },
+  "battle_mastery": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "battlefield_raptor": {
     "zone": "battlefield"
   },
@@ -112,7 +160,13 @@
   "beastcaller_savant": {
     "zone": "battlefield"
   },
+  "behemoth_sledge": {
+    "zone": "battlefield"
+  },
   "birds_of_paradise": {
+    "zone": "battlefield"
+  },
+  "bladed_pinions": {
     "zone": "battlefield"
   },
   "blood_crypt": {
@@ -127,6 +181,9 @@
     "zone": "battlefield"
   },
   "bonesplitter": {
+    "zone": "battlefield"
+  },
+  "boots_of_speed": {
     "zone": "battlefield"
   },
   "boreal_druid": {
@@ -145,6 +202,9 @@
     "zone": "battlefield"
   },
   "breeding_pool": {
+    "zone": "battlefield"
+  },
+  "brightblade_stoat": {
     "zone": "battlefield"
   },
   "bronze_walrus": {
@@ -167,12 +227,18 @@
       "0": 1
     }
   },
+  "cathar_s_shield": {
+    "zone": "battlefield"
+  },
   "chaplain_s_blessing": {
     "life": {
       "0": 45
     }
   },
   "charcoal_diamond": {
+    "zone": "battlefield"
+  },
+  "chariot_of_victory": {
     "zone": "battlefield"
   },
   "choked_estuary": {
@@ -187,7 +253,13 @@
   "claim_jumper": {
     "zone": "battlefield"
   },
+  "cloak_of_the_bat": {
+    "zone": "battlefield"
+  },
   "cloudpost": {
+    "zone": "battlefield"
+  },
+  "cobbled_wings": {
     "zone": "battlefield"
   },
   "commercial_district": {
@@ -227,6 +299,9 @@
   "darkmoss_bridge": {
     "zone": "battlefield"
   },
+  "darksteel_axe": {
+    "zone": "battlefield"
+  },
   "darksteel_citadel": {
     "zone": "battlefield"
   },
@@ -236,11 +311,23 @@
   "darksteel_myr": {
     "zone": "battlefield"
   },
+  "darksteel_plate": {
+    "zone": "battlefield"
+  },
   "darksteel_relic": {
     "zone": "battlefield"
   },
   "darkwater_catacombs": {
     "zone": "battlefield"
+  },
+  "dawn_s_light_archer": {
+    "zone": "battlefield"
+  },
+  "dead_weight": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "deadly_recluse": {
     "zone": "battlefield"
@@ -253,6 +340,11 @@
   },
   "desolate_mire": {
     "zone": "battlefield"
+  },
+  "dimension_x": {
+    "life": {
+      "0": 41
+    }
   },
   "dimir_guildgate": {
     "zone": "battlefield"
@@ -286,6 +378,9 @@
   "echoing_deeps": {
     "zone": "battlefield"
   },
+  "eldrazi_devastator": {
+    "zone": "battlefield"
+  },
   "elegant_parlor": {
     "zone": "battlefield"
   },
@@ -310,7 +405,21 @@
   "fire_diamond": {
     "zone": "battlefield"
   },
+  "fireshrieker": {
+    "zone": "battlefield"
+  },
+  "fleetfeather_sandals": {
+    "zone": "battlefield"
+  },
+  "foot_headquarters": {
+    "life": {
+      "0": 41
+    }
+  },
   "foreboding_ruins": {
+    "zone": "battlefield"
+  },
+  "forest_bear": {
     "zone": "battlefield"
   },
   "forsaken_sanctuary": {
@@ -324,6 +433,12 @@
   },
   "foul_orchard": {
     "zone": "battlefield"
+  },
+  "frantic_strength": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "frontier_bivouac": {
     "zone": "battlefield"
@@ -340,6 +455,9 @@
   "furycalm_snarl": {
     "zone": "battlefield"
   },
+  "fyndhorn_elder": {
+    "zone": "battlefield"
+  },
   "gaea_s_cradle": {
     "zone": "battlefield"
   },
@@ -351,6 +469,11 @@
   },
   "garruk_s_gorehorn": {
     "zone": "battlefield"
+  },
+  "generous_stray": {
+    "hand_size": {
+      "0": 1
+    }
   },
   "geothermal_bog": {
     "zone": "battlefield"
@@ -366,6 +489,15 @@
   },
   "glacial_wall": {
     "zone": "battlefield"
+  },
+  "gladecover_scout": {
+    "zone": "battlefield"
+  },
+  "glasswing_grace_age_graced_chapel": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "godless_shrine": {
     "zone": "battlefield"
@@ -391,6 +523,12 @@
   "goobbue_gardener": {
     "zone": "battlefield"
   },
+  "gorgon_flail": {
+    "zone": "battlefield"
+  },
+  "gorgon_s_head": {
+    "zone": "battlefield"
+  },
   "graypelt_refuge": {
     "life": {
       "0": 41
@@ -400,6 +538,12 @@
     "zone": "battlefield"
   },
   "great_furnace": {
+    "zone": "battlefield"
+  },
+  "greataxe": {
+    "zone": "battlefield"
+  },
+  "greenweaver_druid": {
     "zone": "battlefield"
   },
   "grizzly_bears": {
@@ -423,7 +567,16 @@
   "gyre_engineer": {
     "zone": "battlefield"
   },
+  "h_e_r_b_i_e_scout_unit": {
+    "zone": "battlefield"
+  },
   "hallowed_fountain": {
+    "zone": "battlefield"
+  },
+  "hard_won_jitte": {
+    "zone": "battlefield"
+  },
+  "haunted_cloak": {
     "zone": "battlefield"
   },
   "haunted_mire": {
@@ -487,6 +640,15 @@
   "imposing_sovereign": {
     "zone": "battlefield"
   },
+  "impostor_of_the_sixth_pride": {
+    "zone": "battlefield"
+  },
+  "indestructibility": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "indomitable_ancients": {
     "zone": "battlefield"
   },
@@ -513,6 +675,11 @@
   },
   "jade_orb_of_dragonkind": {
     "zone": "battlefield"
+  },
+  "jungle_barrier": {
+    "hand_size": {
+      "0": 1
+    }
   },
   "jungle_hollow": {
     "life": {
@@ -590,6 +757,15 @@
   "leyline_prowler": {
     "zone": "battlefield"
   },
+  "lifelink": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
+  "lightshell_duo": {
+    "zone": "battlefield"
+  },
   "llanowar_tribe": {
     "zone": "battlefield"
   },
@@ -598,11 +774,23 @@
       "0": 1
     }
   },
+  "loxodon_gatekeeper": {
+    "zone": "battlefield"
+  },
+  "loxodon_warhammer": {
+    "zone": "battlefield"
+  },
   "loyal_warhound": {
     "zone": "battlefield"
   },
   "lush_portico": {
     "zone": "battlefield"
+  },
+  "madcap_skills": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "magus_of_the_coffers": {
     "zone": "battlefield"
@@ -622,10 +810,22 @@
   "marble_diamond": {
     "zone": "battlefield"
   },
+  "mask_of_avacyn": {
+    "zone": "battlefield"
+  },
   "memnite": {
     "zone": "battlefield"
   },
+  "messenger_s_speed": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "meticulous_archive": {
+    "zone": "battlefield"
+  },
+  "midnight_assassin": {
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
@@ -635,6 +835,9 @@
     "zone": "battlefield"
   },
   "molten_tributary": {
+    "zone": "battlefield"
+  },
+  "monastery_swiftspear": {
     "zone": "battlefield"
   },
   "moss_diamond": {
@@ -647,6 +850,9 @@
     "zone": "battlefield"
   },
   "mox_jasper": {
+    "zone": "battlefield"
+  },
+  "mutable_explorer": {
     "zone": "battlefield"
   },
   "mystic_monastery": {
@@ -675,6 +881,9 @@
       "0": 42
     }
   },
+  "obelisk_of_esper": {
+    "zone": "battlefield"
+  },
   "obelisk_of_grixis": {
     "zone": "battlefield"
   },
@@ -685,6 +894,9 @@
     "zone": "battlefield"
   },
   "opulent_palace": {
+    "zone": "battlefield"
+  },
+  "orazca_frillback": {
     "zone": "battlefield"
   },
   "ornithopter": {
@@ -716,6 +928,9 @@
   "palladium_myr": {
     "zone": "battlefield"
   },
+  "pharika_s_chosen": {
+    "zone": "battlefield"
+  },
   "phyrexian_walker": {
     "zone": "battlefield"
   },
@@ -739,7 +954,13 @@
   "primeval_herald": {
     "zone": "battlefield"
   },
+  "primordial_wurm": {
+    "zone": "battlefield"
+  },
   "pristine_talisman": {
+    "zone": "battlefield"
+  },
+  "prized_amalgam": {
     "zone": "battlefield"
   },
   "prophetic_prism": {
@@ -769,6 +990,9 @@
   "radiant_grove": {
     "zone": "battlefield"
   },
+  "rainbow_vale": {
+    "zone": "battlefield"
+  },
   "rakdos_guildgate": {
     "zone": "battlefield"
   },
@@ -783,6 +1007,11 @@
   },
   "razortide_bridge": {
     "zone": "battlefield"
+  },
+  "reach_through_mists": {
+    "hand_size": {
+      "0": 1
+    }
   },
   "rendmaw_creaking_nest": {
     "zone": "battlefield"
@@ -835,6 +1064,9 @@
   "sandsteppe_citadel": {
     "zone": "battlefield"
   },
+  "sarinth_greatwurm": {
+    "zone": "battlefield"
+  },
   "savage_lands": {
     "zone": "battlefield"
   },
@@ -848,6 +1080,9 @@
     "zone": "battlefield"
   },
   "scampering_surveyor": {
+    "zone": "battlefield"
+  },
+  "scholarship_sponsor": {
     "zone": "battlefield"
   },
   "scouting_hawk": {
@@ -892,6 +1127,12 @@
     "zone": "battlefield"
   },
   "shineshadow_snarl": {
+    "zone": "battlefield"
+  },
+  "shivan_oasis": {
+    "zone": "battlefield"
+  },
+  "short_bow": {
     "zone": "battlefield"
   },
   "shrike_force": {
@@ -946,6 +1187,9 @@
   "slagwurm_armor": {
     "zone": "battlefield"
   },
+  "slumbering_trudge": {
+    "zone": "battlefield"
+  },
   "snowfield_sinkhole": {
     "zone": "battlefield"
   },
@@ -953,6 +1197,9 @@
     "zone": "battlefield"
   },
   "space_marine_scout": {
+    "zone": "battlefield"
+  },
+  "spidersilk_net": {
     "zone": "battlefield"
   },
   "spirited_companion": {
@@ -973,12 +1220,26 @@
     "zone": "battlefield"
   },
   "stoneskin": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
+  "stormchaser_mage": {
     "zone": "battlefield"
+  },
+  "striped_bears": {
+    "hand_size": {
+      "0": 1
+    }
   },
   "submerged_boneyard": {
     "zone": "battlefield"
   },
   "sulfurous_mire": {
+    "zone": "battlefield"
+  },
+  "sundial_dawn_tyrant": {
     "zone": "battlefield"
   },
   "sungrass_prairie": {
@@ -1002,6 +1263,9 @@
     }
   },
   "swooping_lookout": {
+    "zone": "battlefield"
+  },
+  "sword_of_vengeance": {
     "zone": "battlefield"
   },
   "sylvan_caryatid": {
@@ -1049,6 +1313,9 @@
   "temple_of_triumph": {
     "zone": "battlefield"
   },
+  "terrain_elemental": {
+    "zone": "battlefield"
+  },
   "terrian_world_tyrant": {
     "zone": "battlefield"
   },
@@ -1094,6 +1361,12 @@
   "tundra": {
     "zone": "battlefield"
   },
+  "twinblade_blessing": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "typhoid_rats": {
     "zone": "battlefield"
   },
@@ -1106,7 +1379,16 @@
   "underground_sea": {
     "zone": "battlefield"
   },
+  "unflinching_courage": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "unhallowed_phalanx": {
+    "zone": "battlefield"
+  },
+  "universal_automaton": {
     "zone": "battlefield"
   },
   "ur_golem_s_eye": {
@@ -1133,6 +1415,9 @@
   "vector_imperial_capital": {
     "zone": "battlefield"
   },
+  "venomous_changeling": {
+    "zone": "battlefield"
+  },
   "venomthrope": {
     "zone": "battlefield"
   },
@@ -1157,12 +1442,24 @@
   "volcanic_island": {
     "zone": "battlefield"
   },
+  "vorstclaw": {
+    "zone": "battlefield"
+  },
   "wall_of_blossoms": {
     "hand_size": {
       "0": 1
     }
   },
   "wall_of_runes": {
+    "zone": "battlefield"
+  },
+  "wanderwine_hub": {
+    "zone": "battlefield"
+  },
+  "warden_of_geometries": {
+    "zone": "battlefield"
+  },
+  "watchwolf": {
     "zone": "battlefield"
   },
   "watery_grave": {
@@ -1179,10 +1476,16 @@
       "0": 1
     }
   },
+  "woodland_changeling": {
+    "zone": "battlefield"
+  },
   "woodland_chasm": {
     "zone": "battlefield"
   },
   "worn_powerstone": {
+    "zone": "battlefield"
+  },
+  "wreckage_wickerfolk": {
     "zone": "battlefield"
   },
   "yargle_and_multani": {

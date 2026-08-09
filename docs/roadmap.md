@@ -20,7 +20,7 @@ Full design in [card-authoring.md](card-authoring.md).
 
 ### What shipped
 
-**Playable cards: 230 → 510.** 280 written by the pipeline, committed to
+**Playable cards: 230 → 687.** 457 written by the pipeline, committed to
 `data/cards/auto/`, re-verified on every test run.
 
 - **A verifier with six gates**, which is the centre of the design rather than
@@ -34,24 +34,35 @@ Full design in [card-authoring.md](card-authoring.md).
 - **A deterministic template tier**, free and exact, covering the sentence shapes
   common enough to be worth a rule.
 
-### What is left, and it is the part that matters
+**Auras and Equipment** — the largest block in the catalog, ~1,700 cards. Most of
+the object model already existed; what was missing was an Aura *attaching to what
+its spell targeted* (after placement, because `reset_permanent_state` clears
+`attached_to` on the way in — so an Aura attaching itself during `spell_effects`
+arrives enchanting nothing and is silently binned), and a static that reads
+`{"attached": true}`. Equipment needed no engine work at all: `Equip {2}` is a
+sorcery-speed activated ability whose effect is the existing `attach` op.
 
-`--report` names the blockers, ranked by how many cards each one holds up:
+**Devoid, Changeling and Prowess** turned out to need none either — the first is
+self-implementing, the second is `add_subtype`, the third is a `spell_cast`
+trigger the DSL has always been able to say.
 
-```
-128  Equip {M}          40  Cycling {M}      21  Convoke
- 85  Enchant creature   34  Crew N           20  Ward {M}
- 62  Choose one —       42  Flashback
-```
+**The agent loop** — self-contained work packets on disk, so a Claude Code
+session and an unattended API worker read the identical file and write the
+identical answer.
 
-Those are **engine mechanics**, each unlocking hundreds of cards for one piece of
-work. Auras and Equipment alone are ~1,700 cards, and the object model is already
-half-built (`attached_to`, the `attach` op, `CardDef.is_aura`, SBA unattachment).
+### What is left
 
-Beyond them is the genuine long tail — cards that need bespoke rules, one work
-packet each, for an agent. That is what an imported deck's remaining dead cards
-actually are: Ancient Greenwarden's "play lands from your graveyard", Scute
-Swarm's landfall, Ghalta's cost reduction.
+`--report` names the blockers, ranked by how many cards each holds up: **modal
+spells** (153), **Flashback** (75), **Crew** (74), **Cycling** (71), **Ward**
+(41), **Convoke** (39), **Kicker**.
+
+Modal looks cheap and is not: `choose_mode` exists, but modes resolve *after*
+targets are chosen at cast, and a card whose modes target different things has
+nowhere to put that.
+
+Beyond them is the genuine long tail — bespoke rules, one packet each. That is
+what an imported deck's remaining dead cards are: Ancient Greenwarden's "play
+lands from your graveyard", Scute Swarm's landfall, Ghalta's cost reduction.
 
 The template tier was never going to touch those. It was the cheap coverage that
 had to come first so the expensive tier is not spent on Grizzly Bears.
@@ -343,7 +354,16 @@ its two quietest marks.
 
 ---
 
-## 
+## Variable Cost Cards
+
+### Overview
+- There are MTG cards that offer users multiple options for different costs
+- There is currently no way to select which effect you'd like to trigger (example: Commanders Sphere)
+- When playing/activating cards, users need to be able to trigger these
+- There are also broad catagories of cards (ie kicker cost) that are flexible to how they should be used
+
+### Task
+- Add support for users to decide how they want to activate a card/which efffect to trigger. Consider using the existing attacking/defending/play panel on the right
 
 ---
 

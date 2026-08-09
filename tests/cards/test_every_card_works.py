@@ -143,7 +143,15 @@ class TestEveryCardIsPlayable:
         assert obj.zone is not Zone.STACK, f"{card_id} never left the stack"
 
         if card.is_permanent:
-            assert obj.zone is Zone.BATTLEFIELD, (
+            # An Aura in the graveyard is the card working, not failing: Dead
+            # Weight's -2/-2 can kill what it enchanted, and state-based actions
+            # then correctly bin the Aura. `authoring/verify.py` makes the same
+            # allowance, and the two harnesses have to agree or a card passes one
+            # gate and fails the other for the same behaviour.
+            allowed = (
+                {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
+            )
+            assert obj.zone in allowed, (
                 f"{card_id} is a permanent but ended in {obj.zone.value}"
             )
         else:

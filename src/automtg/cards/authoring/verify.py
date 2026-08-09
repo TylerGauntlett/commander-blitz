@@ -262,7 +262,17 @@ def check_expectation(game: Game, card_id: str, oid: int, expectation: dict) -> 
             expectation["opponent_battlefield_count"],
         )
     if "zone" in expectation:
-        compare("the card's zone", state.objects[oid].zone.value, expectation["zone"])
+        # A list means "any of these", for a card whose destination is genuinely
+        # conditional: Dead Weight kills what it enchants and is then binned by
+        # state-based actions, so battlefield and graveyard are both correct
+        # outcomes and pinning one would reject the card for working.
+        wanted_zone = expectation["zone"]
+        actual = state.objects[oid].zone.value
+        if isinstance(wanted_zone, list):
+            if actual not in wanted_zone:
+                problems.append(f"the card's zone is {actual}, expected one of {wanted_zone}")
+        else:
+            compare("the card's zone", actual, wanted_zone)
 
     if "granted" in expectation:
         # "Permanents you control gain hexproof", "Equipped creature has haste".
@@ -401,7 +411,12 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
         return [f"{card.id} vanished entirely"]
     if obj.zone is Zone.STACK:
         return [f"{card.id} never left the stack"]
-    if card.is_permanent and obj.zone is not Zone.BATTLEFIELD:
+    # An Aura in the graveyard is not a failure. Dead Weight gives -2/-2, kills
+    # what it enchanted, and state-based actions correctly bin it a moment later
+    # -- the card working exactly as printed. Rejecting that would throw away
+    # every Aura whose own effect can finish its host.
+    allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
+    if card.is_permanent and obj.zone not in allowed:
         return [f"{card.id} is a permanent but ended in {obj.zone.value}"]
     if not card.is_permanent and obj.zone is not Zone.GRAVEYARD:
         return [f"{card.id} is a spell but ended in {obj.zone.value}"]
