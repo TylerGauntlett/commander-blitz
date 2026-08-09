@@ -72,6 +72,16 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   permanents.
 - **Mana quantity.** Scryfall's `produced_mana` carries no amount, so a generated
   Sol Ring taps for one.
+- **A mana ability whose cost is more than `{T}` and mana** is not generated at
+  all — a bounce land's "return an Island you control", a fetchland's "pay 1
+  life, sacrifice". The mana half of a cost *is* kept: a Signet is `{1}, {T}`,
+  not a free tap. The rule is that **a generated card is never better than the
+  printed one**, which is the same rule the conditional taplands follow, and
+  getting it wrong silently hands the deck cheaper rocks and drawback-free duals.
+- **An ability a card grants to something else is not taken for itself.**
+  Abundant Growth reads `Enchanted land has "{T}: Add one mana of any color."`
+  and carries `produced_mana` for all five colours; lifting that would give the
+  *Aura* a five-colour mana ability. Same trap as `keywords`.
 - **Conditional taplands** enter tapped unconditionally. Generating the *upgrade*
   would quietly hand every imported deck a better mana base than it was built
   with.
@@ -80,8 +90,11 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   is the biggest playability risk in an import, so the report has a line for it:
   *"37 lands, but 3 of them make no mana here."*
 
-Measured over the whole catalog: **32,827 rows, zero compile failures**, ~4.4%
-`full`. `tests/cards/test_proxy_against_the_catalog.py` is the gate.
+Measured over the whole catalog: **32,827 rows, zero compile failures**, ~3.8%
+`full`, and 37 of the 1,081 mana-producing lands generate inert because their
+cost is unexpressible. The import report counts those.
+
+`tests/cards/test_proxy_against_the_catalog.py` is the gate.
 
 ## Where it goes, and why it is not committed
 
