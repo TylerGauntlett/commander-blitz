@@ -27,8 +27,8 @@
    THE RULE: HUE IS SPENT ON MANA AND ON NOTHING ELSE. There is no gold button
    on this screen. The commit control is a near-white slab -- the one filled
    object on a page of outlines -- and every other distinction is weight, shape
-   and luminance. Press `g` and this screen should be indistinguishable from
-   itself apart from the pips. That is the whole claim, and it is checkable.
+   and luminance. Take the pips away and there is no hue left on the screen at
+   all. That is the whole claim, and it is checkable.
 
    SECOND IDEA: THE ESCAPE IS PART OF THE DESIGN. A returning player pays three
    screens for what one screen could do, so "Skip to the last step" is in the
@@ -39,7 +39,7 @@
    it loses the brief's first sentence on purpose. Its ideas are meant to be
    ported into whichever direction wins rather than to win on their own.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -82,7 +82,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 72%);
   color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
@@ -1526,9 +1525,6 @@ document.addEventListener("keydown", (e) => {
     if (state.invite) { state.invite = false; render(); return; }
   }
   if (e.key === "Enter" && e.target.id === "code") { state.route = "wizard"; state.step = 0; render(); return; }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
-  }
 });
 
 render();

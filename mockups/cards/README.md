@@ -18,7 +18,7 @@ index.html          the comparison page, self-contained
 _cards.js           the sample card set, kept readable; inlined into the page
 fetch_symbols.py    Scryfall /symbology -> symbols/
 symbols/            28 real mana symbols as SVG, 93 KB
-shots/              cards.png, cards-grey.png, cards-land.png at 2560 wide
+shots/              cards.png, cards-land.png at 2560 wide
 ```
 
 Every direction is drawn at the four widths the client actually uses — 60px (a
@@ -149,35 +149,31 @@ ground. At 60px that is more legible than anything else on this page.
 
 ---
 
-## Greyscale: what this costs
+## The type ladder: what this costs
 
-`shots/cards-grey.png` is the twin of `shots/cards.png`. Read it before deciding.
-
-**None of the five preserve card type through greyscale**, and that is deliberate
-— the constraint was explicitly lifted for this exploration in favour of
-resembling real Magic frames. In the grey twin A, B and C are three mid-grey
-cards you cannot tell apart by type, and D and E are two dark ones. Type survives
-only as the words in the type line.
+**None of the five preserve card type as a luminance ladder**, and that is
+deliberate — the constraint was explicitly lifted for this exploration in favour
+of resembling real Magic frames. A, B and C are three cards of much the same
+brightness, and D and E are two dark ones. Type survives only as the words in the
+type line.
 
 What that means concretely, so it is not a surprise later:
 
 - [`frontend/tests/palette.test.ts`](../../frontend/tests/palette.test.ts) parses
   `cards.css` and asserts the seven type fills span 0.58 → 0.92 relative
   luminance. Any of these five fails it.
-- [`frontend/e2e/greyscale.spec.ts`](../../frontend/e2e/greyscale.spec.ts)
-  asserts the type ring's ladder on the rendered board. Same.
 
-Shipping any direction here means rewriting both, and deciding what — if
-anything — replaces the ladder. The type glyph is the cheapest candidate: it is
-already computed by `typeGlyph`, it is a shape rather than a hue, and none of
-these five currently draw it.
+Shipping any direction here means rewriting it, and deciding what — if anything
+— replaces the ladder. The type glyph is the cheapest candidate: it is already
+computed by `typeGlyph`, it is a shape rather than a hue, and none of these five
+currently draw it.
 
-**One thing greyscale gains.** The real mana symbols are distinct *shapes* — a
-tree, a droplet, a skull, a flame, a sun — where the current pips are the same
-disc with a different letter and a different tint. Colour identity therefore
-reads in the grey twin better than it does today, and it also reads on a **tapped**
-card: the symbols are circular, so a land rotated 90° still says what it makes.
-A horizontal text watermark does not.
+**One thing these gain.** The real mana symbols are distinct *shapes* — a tree, a
+droplet, a skull, a flame, a sun — where the current pips are the same disc with a
+different letter and a different tint. Colour identity therefore reads at a glance
+better than it does today, and it also reads on a **tapped** card: the symbols are
+circular, so a land rotated 90° still says what it makes. A horizontal text
+watermark does not.
 
 ---
 
@@ -251,8 +247,8 @@ sample. Both are real cards in `data/cards/`.
     face collapsed to its content and every enlarged card wore a band of empty
     stock under its textbox. It looks like padding. It is not.
   - the name band's default `flex-shrink: 1`, above.
-- The greyscale toggle is an **inspection tool, not a gate**. It is there so the
-  cost above is visible per direction, not to fail a direction.
+- The 60px column is an **inspection tool, not a gate**. It is there so the cost
+  above is visible per direction, not to fail a direction.
 
 ---
 
@@ -269,7 +265,7 @@ which happen to sit in different files:
    the fallback if C's row-flex rewrite is too much.
 2. **A land is its symbol** (E at small, C at large). Both beat the current tan
    rectangle by a wide margin, and the symbol is the only thing on a land that
-   reads at 60px, sideways, in greyscale.
+   reads at 60px and sideways.
 3. **Bands, not bevels** (B). B is the cheapest to port — closest to the class
    structure `cards.css` already has — and its no-reflow property is worth more
    in play than A's frame is: a card that changes shape when you hover it costs

@@ -129,11 +129,10 @@ small change in three files with unit-testable logic. Pick the type palette *aga
 five rim colours*, not just against each other — a green creature body inside a green
 playable rim is precisely the ambiguity worth avoiding.
 
-**Pair it with a glyph, not just a hue.** A small type mark in the title bar does two jobs
-colour alone cannot: it survives red-green deficiency (~8% of men), and it stays legible
-when the card is 82px and half-covered inside a `CardStack` ply, where a fill is mostly
-occluded. If a greyscale screenshot of the pod board no longer reads, the encoding is
-colour-only and the glyph is doing no work yet — that is the check to run.
+**Pair it with a glyph, not just a hue.** A small type mark in the title bar does a job a
+fill cannot: it stays legible when the card is 82px and half-covered inside a `CardStack`
+ply, where the fill is mostly occluded. Check it on a pod board, not on a hand card — the
+pod is where a fill runs out first.
 
 **Subtype shading: recommend against.** The second axis in Yu-Gi-Oh is small and closed.
 Magic creature subtypes number in the hundreds and rarely change what you may do this

@@ -18,14 +18,14 @@
    THE COLOUR CARRIES NOTHING. This is 05-planar-gate.html's idea with its
    verdict applied. That mockup set two custom properties from the selected
    deck's colour identity and let them drive the wash, the accents, the lit seal
-   AND the selected frame -- and its greyscale twin was the honest argument
-   against it, because the one thing it spent itself on was the one thing a
-   player who cannot use colour does not receive.
+   AND the selected frame -- and that was the honest argument against it,
+   because a screen whose every signal is one tint has no way to say two things
+   at once.
 
    Here the tint drives the wash and nothing else. Every fact -- whose seat this
    is, which colours a deck plays, locked or not, dealable or not -- is carried
-   by shape, weight, a lettered pip or a word. Press `g`: the room loses its
-   mood and loses nothing else. That is the difference between atmosphere and
+   by shape, weight, a lettered pip or a word. Change the tint and the room
+   changes mood and nothing else. That is the difference between atmosphere and
    information, and it is the whole reason this direction is in the round twice.
 
    SECOND IDEA: THE CODE IS AN OBJECT. An invite code typeset in a field is a
@@ -39,7 +39,7 @@
    box is capped so a 626px crop is never stretched past it, and the only crisp
    picture in the room is a card at 0.3x.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -58,7 +58,7 @@
   --text:#e9e6f7; --text-dim:#a9a4cd; --text-faint:#736e99;
 
   /* Set per selected deck. They reach the wall and the table glow and stop
-     there -- deliberately, and the greyscale twin is the proof. */
+     there -- deliberately: the tint is mood, and mood carries no facts. */
   --tint-a:#5a4fa8; --tint-b:#2c6c8e;
 
   --card-w:clamp(128px, 18vh, 176px);
@@ -76,7 +76,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:var(--void-0);
   color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
@@ -927,9 +926,9 @@ function engineBadge(deck) {
  * Two custom properties set from the selected deck's colour identity. They
  * reach the wall wash and the table glow and NOTHING ELSE -- no border, no
  * badge, no status, no selection. That restraint is the entire difference
- * between this direction and 05-planar-gate.html, whose greyscale twin was the
- * argument against it. Press `g` and the room should lose its mood and keep
- * every fact.
+ * between this direction and 05-planar-gate.html, which spent the tint on
+ * everything and so could say only one thing at a time. Swap the tint here and
+ * the room changes mood and keeps every fact.
  */
 
 const TINTS = {
@@ -1564,9 +1563,6 @@ document.addEventListener("keydown", (e) => {
     if (state.cat) { state.cat = false; render(); return; }
   }
   if (e.key === "Enter" && e.target.id === "code") { state.route = "room"; render(); return; }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
-  }
 });
 
 render();

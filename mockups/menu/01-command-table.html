@@ -31,10 +31,6 @@
    dossier (x, backdrop, Escape), change difficulty, fill and empty seats, paste
    a Moxfield link and watch it fail or succeed, press Play.
 
-   Press `g` to toggle greyscale. It is a key rather than an on-screen control
-   because the whole viewport is the design and dev chrome would contaminate the
-   screenshot.
-
    No build, no server, no network. Local ../art/*.jpg only.
    ========================================================================== */
 
@@ -70,7 +66,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -352,8 +347,8 @@ button { cursor:pointer; background:none; border:0; }
 }
 .badge--partial { border-style:solid; border-color:rgba(255,212,121,.5); color:var(--gold); }
 
-/* Ratings and lamps are filled/hollow segments, never a hue ramp -- they have
-   to survive frontend/e2e/greyscale.spec.ts's question. */
+/* Ratings and lamps are filled/hollow segments, never a hue ramp -- a count you
+   can read at a glance beats a shade you have to interpret. */
 .bar { display:flex; align-items:center; gap:7px; }
 .bar__label { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); min-width:88px; }
 .bar__track { display:flex; gap:2px; }
@@ -1120,9 +1115,6 @@ root.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && state.open) { state.open = null; render(); return; }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
-  }
 });
 
 render();

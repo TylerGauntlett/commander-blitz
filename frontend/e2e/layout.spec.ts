@@ -302,8 +302,8 @@ test("no card ever leaves the size band its face is legible in", async ({ page }
   await waitForOurTurn(page);
 
   // A pod is the case that pushes the floor: three mats share the row, and their
-  // cards are the smallest anything renders at. `e2e/greyscale.spec.ts` is what
-  // established that the type glyph survives down there; this is what stops the
+  // cards are the smallest anything renders at. `e2e/legibility.spec.ts` is
+  // what established that a card still reads down there; this is what stops the
   // solver going below the size that was checked.
   for (let i = 0; i < 16; i += 1) {
     const { mine, pod } = await laneCardWidths(page);

@@ -20,8 +20,8 @@
    do -- 16 is five away from lethal and 7 is fourteen away, and nothing on
    screen says so. Here each opponent is a bead on a 21-notch arc. Sixteen sits
    visibly near the end of its track. The red warn tier still exists, but the
-   POSITION already carries the warning, which is the point: it survives
-   greyscale without being told to.
+   POSITION already carries the warning, which is the point: you see it
+   without being told to look.
 
    SECOND IDEA: the bottom half of the same ring is the five zones, hanging
    inward toward the dial. Their counts still print exactly, and they still start
@@ -38,7 +38,7 @@
    touching. Judge this one on the idea rather than the geometry: the damage
    gauge is worth stealing even if the circle is not.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -66,7 +66,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -128,7 +127,7 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 .astro svg { display:block; width:236px; height:236px; overflow:visible; }
 
 /* Ring furniture. Every stroke here is luminance, not hue -- the ring has to
-   read at 40% opacity in greyscale or the gauge is decorative. */
+   read at 40% opacity or the gauge is decorative. */
 .ring { fill:none; stroke:rgba(170,160,255,.22); stroke-width:1; }
 .tick { stroke:rgba(170,160,255,.3); stroke-width:1; }
 .tick--5 { stroke:rgba(195,182,255,.62); stroke-width:1.4; }
@@ -136,8 +135,8 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 .ringlab { fill:var(--text-faint); font-size:7.5px; font-weight:800; letter-spacing:.14em; }
 
 /* A bead per opponent, sitting where its damage sits on the way to 21. The
-   fill is the warn channel and the POSITION is the same warning said again in
-   a form that survives greyscale -- which is the whole argument for the arc. */
+   fill is the warn channel and the POSITION is the same warning said again as
+   a distance you can see -- which is the whole argument for the arc. */
 .bead circle { fill:#241a34; stroke:var(--astral-hi); stroke-width:1.4; }
 .bead text { fill:var(--text); font-size:8.5px; font-weight:800; text-anchor:middle; }
 .bead--warn circle { fill:#3a1616; stroke:var(--danger); stroke-width:2; }
@@ -299,14 +298,6 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });
 
 /* Geometry ---------------------------------------------------------------- */
 
@@ -486,7 +477,6 @@ function render() {
 }
 
 render();
-greyKey();
 </script>
 </body>
 </html>

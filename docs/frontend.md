@@ -213,9 +213,8 @@ image. See [card-catalog.md](card-catalog.md).
 eight-step luminance ladder on the card stock plus a matching ring, because a type
 line renders at 5.6px on a pod board. A full-bleed illustration does that job
 better and does it *per card* rather than per category -- twelve Forests are one
-recognisable picture rather than twelve of "the tan ones". What carries type
-without colour now is the glyph and the type line, and `e2e/greyscale.spec.ts`
-fails the run if either is missing or unrendered on any face. The full reasoning
+recognisable picture rather than twelve of "the tan ones". What carries type at
+pod size now is the glyph and the type line. The full reasoning
 and the list of tests that changed is in
 [mockup-fidelity.md](mockup-fidelity.md) -- read it before re-adding a type tint.
 
@@ -245,7 +244,7 @@ payment — a different idea that would be worse for borrowing the same mark.
 
 Text over an unknown illustration is the one thing here that can fail silently, so
 it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients
-whose opaque ends clear a darkness floor, and `e2e/greyscale.spec.ts` asserts the
+whose opaque ends clear a darkness floor, and `e2e/legibility.spec.ts` asserts the
 same against the *rendered* board, where a `theme.css` override would show up and a
 CSS parse would not.
 

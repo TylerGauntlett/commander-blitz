@@ -39,7 +39,7 @@
    is a lobby that could be for anything, and the only thing making it Magic is
    the art inside it.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -73,7 +73,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 70%);
   color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
@@ -1517,9 +1516,6 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.key === "Enter" && e.target.id === "code") {
     state.inPod = true; state.route = "pod"; render(); return;
-  }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
   }
 });
 

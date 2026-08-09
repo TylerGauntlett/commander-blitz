@@ -32,13 +32,13 @@
    this panel is narrow. Do not port the wash to a surface wider than ~780px
    without re-reading mockups/README.md.
 
-   THE TRADE, stated because the greyscale twin is the verdict. The colour tint
-   is the thing this direction spends itself on, and in greyscale every seat
-   lights identically -- exactly the finding against menu 05. What survives is
-   the PORTRAIT, which is different per seat regardless of hue, so the
-   identity-at-a-glance claim degrades rather than dies. Press `g` and judge it.
+   THE TRADE. The colour tint is the thing this direction spends itself on, and
+   a tint that is carrying seat identity cannot also carry seat state -- exactly
+   the finding against menu 05. What saves it is the PORTRAIT, which is different
+   per seat regardless of the wash, so the identity-at-a-glance claim degrades
+   rather than dies.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -74,7 +74,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -180,7 +179,7 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 
 /* Commander damage. Chips on a scrim plate, because a bare chip over art is the
    thing that always goes illegible first. The warn tier keeps the red AND takes
-   a heavier rule, so the pair still separate in greyscale. */
+   a heavier rule, so the pair separate at a glance. */
 .dmg { display:flex; align-items:center; justify-content:center; gap:4px; padding:3px 5px; border-radius:6px; background:rgba(9,8,20,.55); }
 .dmg__lab { font-size:7.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }
 .dmg__pip { padding:0 5px; border:1px solid var(--edge-hi); border-radius:4px; background:rgba(20,19,40,.8); color:var(--text-dim); font-size:11px; font-weight:800; }
@@ -314,14 +313,6 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });
 
 /* Views ------------------------------------------------------------------- */
 
@@ -417,14 +408,13 @@ function render() {
         "Life is the seal — the same brass dial, moved into the overlap so it costs no row of its own, which is how the panel lands at 190 × 318 without dropping anything. " +
         "Commander damage and the five piles keep their existing forms but sit on scrim plates, because a bare chip over art is the first thing to go illegible; " +
         "counts are exact, the baseline is shared, and library is still not a button. The warn tier takes a 2px rule as well as its red. " +
-        "<b>The claim to judge in greyscale:</b> the tint dies, the portrait does not — press <b>g</b> and decide whether a lit portrait alone still tells four seats apart. " +
+        "<b>The claim to judge:</b> the tint is spent on seat identity, so decide whether the portrait alone would still tell four seats apart without it. " +
         "<b>Not shown:</b> a fallen commander desaturates the wash as well as the window, which is this direction's strongest state and the one worth building next." +
       "</p></div>" +
     "</div>";
 }
 
 render();
-greyKey();
 </script>
 </body>
 </html>

@@ -26,7 +26,7 @@
    player who has not chosen, and a player whose list is sealed are all "you do
    not get to know this yet", and they are all the same card back. The menu
    round split those into a dashed box, a hatch plate and an italic caption; one
-   object says it better and reads without colour.
+   object says it better, and says it once.
 
    THIRD: THE CATALOGUE TAKES THE WHOLE SCREEN. A row of four large cards owns
    the lobby, so there is nowhere to put a twenty-four-deck browser except over
@@ -39,7 +39,7 @@
    a CPU seat is two lines where 01 gives it five. The pod is more beautiful and
    slightly less informative.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -73,7 +73,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(64% 44% at 50% 26%, rgba(143,127,232,.14) 0%, transparent 62%),
@@ -1543,9 +1542,6 @@ document.addEventListener("keydown", (e) => {
     if (state.cat) { state.cat = false; render(); return; }
   }
   if (e.key === "Enter" && e.target.id === "code") { state.route = "lobby"; render(); return; }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
-  }
 });
 
 render();

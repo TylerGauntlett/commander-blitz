@@ -23,6 +23,7 @@ separately:
 - [adr/0003-auto-mana-payment.md](adr/0003-auto-mana-payment.md) — the engine taps your lands for you
 - [adr/0004-incremental-combat.md](adr/0004-incremental-combat.md) — declaring attackers one at a time
 - [adr/0005-no-state-cloning.md](adr/0005-no-state-cloning.md) — replay instead of snapshots
+- [adr/0006-no-colour-accessibility-requirement.md](adr/0006-no-colour-accessibility-requirement.md) — colour accessibility is out of scope
 
 ## If you are here to...
 

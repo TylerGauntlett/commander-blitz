@@ -114,11 +114,3 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });

@@ -69,10 +69,9 @@ export function typeTone(card: CardView): TypeTone {
 /**
  * A shape for the title bar, carrying the same fact as the body fill.
  *
- * Deliberately redundant with colour. It survives red-green deficiency, and it
- * stays readable at 82px inside a stack ply where the fill is mostly occluded.
- * Geometric shapes rather than emoji: they render in every font, and they still
- * read in a greyscale screenshot, which is the check the doc asks for.
+ * Deliberately redundant with colour: it stays readable at 82px inside a stack
+ * ply, where the fill is mostly occluded. Geometric shapes rather than emoji,
+ * because they render in every font.
  */
 const TYPE_GLYPHS: Record<TypeTone, string> = {
   creature: "◆", // filled diamond

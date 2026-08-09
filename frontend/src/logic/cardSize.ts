@@ -23,9 +23,8 @@ export const FALLBACK_BASE = 104;
  * floors on `--fs-tp` and `--fs-tx` stop binding at about a 137px card -- so below
  * that the text has already stopped shrinking and every further pixel taken off
  * the card is pure crowding. Meanwhile 50.7px (`opponentCardScale(3)` against an
- * 87.4px base) is the smallest width the suite has *demonstrated* still renders
- * the type glyph and type line: `e2e/greyscale.spec.ts` reads them off a
- * three-opponent pod at exactly that size.
+ * 87.4px base) is the smallest width the suite has *demonstrated* still reads:
+ * `e2e/legibility.spec.ts` measures a three-opponent pod at exactly that size.
  *
  * So this is that size, rounded up: the zoom may go as small as something we have
  * checked is readable, and no smaller.

@@ -19,11 +19,10 @@
  * ladder on the card stock, plus a matching ring, because a type line renders at
  * 5.6px on a pod board and something had to say "creature" from across the
  * table. A full-bleed illustration says it better and says it per *card* rather
- * than per category, so the ladder is gone. What survives without colour is the
- * type glyph in the title and the type line itself -- `e2e/greyscale.spec.ts`
- * asserts the glyph is rendered on every face, because it is now the non-colour
- * channel of last resort. The frame keeps colour *identity*, which is a
- * different fact and was never the thing the ladder encoded.
+ * than per category, so the ladder is gone. What carries the category at pod
+ * size instead is the type glyph in the title and the type line itself. The
+ * frame keeps colour *identity*, which is a different fact and was never the
+ * thing the ladder encoded.
  */
 
 import { useState } from "react";

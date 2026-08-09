@@ -22,9 +22,7 @@ the setup flow; all five rounds share `../art/` and its one `manifest.json`.
 
 Unlike the menu and flow rounds these are **not interactive**. The orb is one
 component in one moment, so each file draws the viewer's panel in a single state
-and the comparison is about form. Press **`g`** for greyscale — a key, not a
-control, because the panel *is* the design and dev chrome would contaminate the
-view.
+and the comparison is about form.
 
 Each file also renders a ghosted mat beside the panel, at the real board's card
 proportions, so a direction's claim about **footprint** is visible rather than
@@ -96,7 +94,7 @@ wide**, and the orb gets roughly **341px of height** at 1600×950.
 | **Commander damage** | **21-notch arc** | track to 21, per source | chips | 21-seg track | chips |
 | **Zones** | radial spokes | piles | piles | 9-seg ledger | **proportional pole** |
 | **Tells four seats apart** | no | no | **yes (in colour)** | no | no |
-| **Survives greyscale** | yes | yes | **partly — see below** | **it is the design** | yes |
+| **Says two things at once** | yes | yes | **partly — see below** | **it is the design** | yes |
 | **Kills `.orb--compact`** | no | partly | no | no | **yes** |
 | **Port cost** | high | **highest** | low (CSS only) | **lowest** | medium |
 
@@ -105,8 +103,8 @@ wide**, and the orb gets roughly **341px of height** at 1600×950.
 *The component is called an orb and is currently a rectangle.* Life at the
 centre; one ring around it carrying the two things that move. The top half is a
 21-notch commander-damage arc with a bead per source — sixteen sits visibly near
-the end of its track, so the position carries the warning and does so in
-greyscale without being told to. The bottom half is the five zones as spokes
+the end of its track, so the position carries the warning without anything having
+to point at it. The bottom half is the five zones as spokes
 hanging inward from the ring, exact counts on chips, leaves at one per nine
 cards.
 
@@ -152,20 +150,18 @@ the window at 160px (0.26×). Nothing is upscaled — the blur is for the type's
 sake. That is only true because this panel is narrow. Do not port the wash to
 anything wider than ~780px without re-reading [`../README.md`](../README.md).
 
-**The greyscale twin is the verdict, and it is mixed** — as it was for menu 05.
-Press `g`: the tint dies completely and all four seats light the same. What
-survives is the portrait, which differs per seat regardless of hue, so the
-identity claim degrades rather than dies. That is the call to make about this
-direction.
+**The verdict is mixed** — as it was for menu 05. The tint is entirely spent on
+seat identity, so it has nothing left for seat *state*. What saves it is the
+portrait, which differs per seat regardless of the wash, so the identity claim
+degrades rather than dies. That is the call to make about this direction.
 
 ### 04 — Ink & Signal
 
 *The bar the other four have to clear.* A ledger: hairline rules, one type scale,
 aligned columns, one filled object per question. **Hue is spent on mana and on
 nothing else** — priority is a filled square, ready is an inverse tag, the warn
-tier is a solid fill plus an inverted numeral. Its greyscale twin is
-indistinguishable from its colour shot apart from the mana pips and the art,
-which is the whole claim.
+tier is a solid fill plus an inverted numeral. There is no hue anywhere on the
+panel but the mana pips and the art, which is the whole claim.
 
 **One track, two scales** is the idea worth taking anywhere. Commander damage and
 the five zones are the same object at two resolutions — 21 segments because 21 is
@@ -274,6 +270,6 @@ should be made on the board's evidence.
 - **`commander_cost` is not `commander_tax`.** The mockups show `+2`, which is the
   extra generic already doubled by the engine — see the contract note in
   `api/types.ts`.
-- **Whatever wins, run it through `e2e/greyscale.spec.ts` before believing the
-  colour shot.** Direction 03 is the one this will have something to say about,
-  and the README above says what it will say.
+- **Whatever wins, draw four seats before believing a single-panel shot.**
+  Direction 03 is the one this will have something to say about, and the README
+  above says what it will say.

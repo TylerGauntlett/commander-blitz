@@ -31,20 +31,19 @@ Ordered as the cycle-2 doc ranked them.
    work the doc identified, and the answer turned out to be that the composite
    does not need an identity — the *parts* do.
 
-2. **The type palette has a greyscale range, and the check is automated.** The
+2. **The type palette has a lightness range, and the check is automated.** The
    seven fills sat at L≈88% by design; they now climb in even steps of relative
    luminance from land (0.58) to the neutral stock (0.92).
 
-   The doc said twice that the greyscale check "has no automated form — a
-   `grayscale(1)` screenshot has to be read by someone". That is true of layout
-   and false of the palette: greyscale legibility is relative luminance, which is
-   arithmetic. `frontend/tests/palette.test.ts` parses `cards.css`, computes
-   WCAG luminance for every tone, and asserts a minimum pairwise gap — plus the
-   constraint the doc itself set, that the whole dimmed band stays below the
-   whole live band so a dark land never reads as disabled. The bound is
-   min/max > 0.556 (the scrim multiplies luminance by that); the shipped spread
-   is 0.63. A screenshot still has to be looked at, but a hex can no longer
-   quietly collapse the encoding.
+   The doc said twice that the palette check "has no automated form — a
+   screenshot has to be read by someone". That is true of layout and false of the
+   palette: separability at pod size is relative luminance, which is arithmetic.
+   `frontend/tests/palette.test.ts` parses `cards.css`, computes luminance for
+   every tone, and asserts a minimum pairwise gap — plus the constraint the doc
+   itself set, that the whole dimmed band stays below the whole live band so a
+   dark land never reads as disabled. The bound is min/max > 0.556 (the scrim
+   multiplies luminance by that); the shipped spread is 0.63. A screenshot still
+   has to be looked at, but a hex can no longer quietly collapse the encoding.
 
 3. **A four-player pod stops scrolling.** `OPPONENT_CARD_W` scales with the pod
    (82 / 72 / 60), the compact mat's side column went 132 → 96px, and compact
@@ -149,7 +148,7 @@ Ordered as the cycle-2 doc ranked them.
     All seven land tones sit at the *same* luminance as each other and as the
     land type tone. Lightness is already spoken for by card type, so varying it
     here would say "this Island is a different kind of card from that Mountain".
-    In greyscale the tint collapses and the watermark letter carries it — which
+    At pod size the tint collapses and the watermark letter carries it — which
     is the check, run, and it holds.
 
 13. **Card-selection modals show cards.** The root cause was not in the dialog:
@@ -318,7 +317,7 @@ hollows pips and un-hovering restores them; and that a pod's cards shrink and it
 mats never hide more than one row.
 
 Two of the new unit files are worth naming. `palette.test.ts` is the automated
-form of the greyscale check both previous docs asked for and could not find, and
+form of the palette check both previous docs asked for and could not find, and
 it reads the shipped stylesheet rather than a copy of its values, so it fails on
 the change rather than on a stale duplicate. `autoBlock.test.ts` pins the block
 ranking including its boundaries — exactly-lethal power, damage already marked —
@@ -330,7 +329,7 @@ player "You's" through a full green suite. Every inline mana pip rendered as a
 full-width bar while three assertions about it passed, because the text and the
 classes were both correct and only the geometry was wrong. All three were found
 by taking a screenshot and looking at it, which is why `playtest.spec.ts` now
-captures twelve surfaces plus a greyscale pass and a four-player pod — the two
+captures twelve surfaces plus a four-player pod — the two
 previous cycles only ever got three shots out of it, because the capture loop
 stalled on a hover behind a modal backdrop.
 

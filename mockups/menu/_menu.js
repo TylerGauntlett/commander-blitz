@@ -27,7 +27,8 @@
 // `heuristic`; tiers 2 and 4 are the roadmap's CPU work (roadmap.md:48-63) and
 // do not exist in the engine yet. Each tier lights a cumulative prefix of three
 // capability lamps, drawn filled/hollow -- so the ladder says what it turns on
-// rather than asking you to trust an adjective, and reads without colour.
+// rather than asking you to trust an adjective, and is a count rather than a
+// shade you have to interpret.
 
 const CAPS = [
   { id: "combat", n: "Combat math" },

@@ -11,7 +11,7 @@ build, no server, no network.
 04-three-steps.html     the control        · the comparison matrix
 05-the-room.html        atmosphere         · the tint that carries nothing
 _flow.js                the shared content; kept readable, inlined per file
-shots/                  home, pod, greyscale twin and catalogue of each
+shots/                  home, pod and catalogue of each
 ```
 
 The application is called **Snap Keep** in this round only. The shipped
@@ -74,8 +74,6 @@ Identical in all five, so the comparison is about layout and not capability:
 9. Change a CPU seat's persona; empty a chair; leave the pod.
 10. **Start**, which refuses until every seat is resolved *and* you are locked
     in, commits visibly, and does nothing else.
-11. Press **`g`** for greyscale — a key, not a control, because the viewport
-    *is* the design and dev chrome would contaminate the screenshot.
 
 ---
 
@@ -89,7 +87,7 @@ Identical in all five, so the comparison is about layout and not capability:
 | **Compare 24 decks at rest** | 3 ratings a tile | 3 ratings a card | 5 ratings a row | **all five, all decks** | 3 ratings a frame |
 | **Lock-in reads as** | a strip completing | **a stamp on the card** | a rail control | the last step | a near-edge control |
 | **Pod visible while browsing** | no | no | **yes** | no | no |
-| **Survives greyscale** | yes | yes | yes | **it is the design** | mood no, facts yes |
+| **Says two things at once** | yes | yes | yes | **it is the design** | mood no, facts yes |
 | **Port cost to React** | low | medium | medium | low | high |
 
 ### 01 — Front Door *(recommended base)*
@@ -184,14 +182,13 @@ at rather than a string you have to be told to share.
 **The room takes your deck's colour, and the colour carries nothing.** This is
 `../menu/05-planar-gate.html`'s idea with its verdict applied. That mockup let two
 custom properties drive the wash, the accents, the lit seal *and* the selected
-frame — and its greyscale twin was the honest argument against it, because the
-one thing it spent itself on was the one thing a player who cannot use colour
-does not receive.
+frame — and that was the honest argument against it, because a screen whose every
+signal is one tint can only ever say one thing at a time.
 
 Here the tint reaches the wall and the table glow and stops. Whose seat this is,
 which colours a deck plays, locked or not, dealable or not — all carried by
-shape, weight, a lettered pip or a word. Compare `shots/05-the-room.png` with
-`shots/05-the-room-grey.png`: **the room loses its mood and loses nothing else.**
+shape, weight, a lettered pip or a word. Swap the tint and **the room changes its
+mood and changes nothing else** — see `shots/05-the-room.png`.
 
 Highest port cost of the five, and text over uncontrolled art luminance is the
 same bet `../05-planar-art.html` made on the board.
@@ -267,16 +264,16 @@ Port order, cheapest and highest-confidence first:
 
 1. **The comparison matrix** (from 04) as the catalogue's list view, with 01's
    tiles as the alternate. It is the only thing in this round that helps somebody
-   choose a first deck out of twenty-four, it is cheap, and it survives greyscale
-   by construction.
+   choose a first deck out of twenty-four, it is cheap, and it spends no hue at
+   all.
 2. **The pod summary that does not leave** (from 03), but as a compact strip
    rather than a 300px rail — enough that opening the catalogue never hides who
    has locked in.
 3. **The lock-in stamp** (from 02). 01's readiness strip is the correct system;
    02's stamp is the correct *feeling* for the individual act, and they compose.
 4. **The tint** (from 05), on the pod's backdrop only, and only if it drives
-   nothing but the wash. 05's greyscale twin is the standing proof that this is
-   the version worth having.
+   nothing but the wash. 05 is the standing proof that this is the version worth
+   having.
 
 **Do not** take 05's full-bleed room without also taking its blur rule and its
 caps; and do not take any of them without re-running the two layout checks below,

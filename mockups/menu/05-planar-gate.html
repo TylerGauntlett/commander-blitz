@@ -22,13 +22,12 @@
    per selection and it is the entire mood.
 
    THE TRADE, and it is the same one 05-planar-art.html made on the board: text
-   over uncontrolled art luminance, and identity carried by hue. Press `g`. The
-   controls survive -- pips keep their letters, ratings and lamps are filled or
-   hollow, the preview badge is dashed and says "Preview". What does not survive
-   is the tint: in greyscale all four decks light the room identically, so the
-   one thing this direction spends itself on is the one thing a player who
-   cannot use colour does not receive. That is the verdict, and README.md states
-   it rather than hiding it.
+   over uncontrolled art luminance, and identity carried by hue. The controls
+   hold up -- pips keep their letters, ratings and lamps are filled or hollow,
+   the preview badge is dashed and says "Preview". The tint does not: it is the
+   only thing telling the four decks apart, so the screen can say which deck is
+   selected or which deck you are hovering, but never both at once. That is the
+   verdict, and README.md states it rather than hiding it.
 
    Interactive: pick a deck from the filmstrip, open and close the codex (x,
    backdrop, Escape), change difficulty and opponents on the console, import a
@@ -69,7 +68,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
   color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
@@ -1044,9 +1042,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (state.open) { state.open = null; render(); return; }
     if (state.impOpen) { state.impOpen = false; render(); return; }
-  }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
   }
 });
 

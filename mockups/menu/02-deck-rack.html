@@ -36,7 +36,7 @@
    an expanding dossier both want height, and at 1600x950 the dossier has to be
    a fixed header, a scrolling body and a fixed foot or it does not fit at all.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 :root {
@@ -68,7 +68,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 4%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -1023,9 +1022,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (state.open) { state.open = null; render(); return; }
     if (state.impOpen) { state.impOpen = false; render(); return; }
-  }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
   }
 });
 

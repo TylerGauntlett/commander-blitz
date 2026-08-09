@@ -106,8 +106,7 @@ describe("the commander plinth", () => {
     "says %s in words as well as in colour",
     (key, word, seat, view, castable) => {
       // The word channel, and the glyph beside it. They exist so the state is
-      // readable in greyscale and to a player who cannot use colour -- which the
-      // green rim, on its own, never was.
+      // legible at orb size, which the green rim, on its own, never was.
       const { getByTestId } = renderOrb(
         seat,
         // A castable commander is one the *server* named in a legal action. The

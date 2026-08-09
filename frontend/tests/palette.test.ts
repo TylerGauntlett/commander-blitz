@@ -1,25 +1,17 @@
 /**
- * The greyscale check, automated -- for a card that is now an illustration.
+ * Can you read a card that is an illustration?
  *
- * This file used to guard an eight-step luminance ladder: card type was the
- * colour of the card stock, plus a matching `--type-ring` hairline, and ~200
- * lines here computed relative luminance off `cards.css` to prove the eight
- * tones stayed separable without colour. It also contained a suite called "the
- * art window must never cover the whole face", whose stated purpose was to fail
- * if anyone ever let the art bleed to the edge.
+ * The art bleeds to the frame -- a decision, see docs/mockup-fidelity.md and
+ * the header of `cards.css`: a full-bleed illustration identifies a card better
+ * than one of eight pale washes, and it does it per card rather than per
+ * category.
  *
- * The art bleeds to the edge now. That was a decision (see
- * docs/mockup-fidelity.md and the header of `cards.css`): a full-bleed
- * illustration identifies a card better than one of eight pale washes, and it
- * does it per card rather than per category. The ladder is gone, so the tests
- * that measured it are gone with it.
- *
- * What replaces them is the property the ladder was really a proxy for: **can
- * you read this card.** On a bleed face that reduces to two numbers -- how dark
- * the scrims are, and how thick the frame is -- plus the structural facts that
- * the art is actually full bleed and a land's symbols are actually on top of it.
- * Those are arithmetic, so they are asserted here; the rest is `e2e/greyscale.spec.ts`,
- * which reads resolved values in a real browser.
+ * What that costs is legibility, and on a bleed face that reduces to two
+ * numbers -- how dark the scrims are, and how thick the frame is -- plus the
+ * structural facts that the art is actually full bleed and a land's symbols are
+ * actually on top of it. Those are arithmetic, so they are asserted here; the
+ * rest is `e2e/legibility.spec.ts`, which reads resolved values in a real
+ * browser.
  *
  * Read from the stylesheet rather than from a constant so these test the thing
  * that actually ships.
@@ -76,7 +68,7 @@ function peakAlpha(gradient: string): number {
  * crop in `data/art` is readable; at 0.4 it is not, and the failure is invisible
  * on any card whose illustration happens to be dark. This is the number that
  * stops "let's make the scrims subtler" from silently costing the board its
- * legibility, which is the same job the luminance ladder used to do.
+ * legibility.
  */
 const MIN_SCRIM = 0.7;
 
@@ -111,8 +103,8 @@ describe("the art", () => {
   });
 
   it("keeps a land's mana symbols on top of the art", () => {
-    // The channel that reads at 60px and survives greyscale. Losing it to the
-    // illustration would cost more than the illustration gains.
+    // The channel that reads at 60px. Losing it to the illustration would cost
+    // more than the illustration gains.
     const marks = rule(".face__art .watermark-row,\n.face__watermark");
     expect(marks, "the watermark rule moved or was split").not.toBeNull();
     expect(marks).toMatch(/position:\s*absolute/);

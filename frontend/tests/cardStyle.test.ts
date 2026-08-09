@@ -112,8 +112,8 @@ describe("typeGlyph", () => {
   ];
 
   it("gives every tone a distinct glyph", () => {
-    // The doc's greyscale check: if two types share a mark, the encoding is
-    // colour-only and the glyph is doing no work.
+    // If two types share a mark the glyph is doing no work: the tone is then
+    // the only thing telling them apart.
     const glyphs = tones.map((tone) =>
       typeGlyph(card({ types: [tone === "other" ? "Conspiracy" : capitalise(tone)] })),
     );
@@ -355,8 +355,8 @@ describe("shortType", () => {
   });
 
   it("never empties the line", () => {
-    // `e2e/greyscale.spec.ts` asserts every face carries a type line, because
-    // with the type-colour ladder gone this and the glyph are what is left.
+    // With the type-colour ladder gone, this line and the glyph are what tell
+    // you what kind of card you are looking at.
     for (const line of ["Legendary Creature - Serpent", "Basic Land - Island", "Artifact"]) {
       expect(shortType(line).length).toBeGreaterThan(0);
     }

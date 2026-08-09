@@ -456,8 +456,6 @@ button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
    the rules box stayed squeezed by the 1.4 aspect. */
 .card--big .tx{flex:0 0 auto;overflow:visible}
 
-/* ------------------------------------------------------------- greyscale */
-body.grey .strip{filter:grayscale(1)}
 </style>
 </head>
 <body>
@@ -478,7 +476,6 @@ body.grey .strip{filter:grayscale(1)}
   <div class="row" id="picker"><span class="lbl">Card</span></div>
   <div class="row">
     <span class="lbl">View</span>
-    <button id="t-grey" aria-pressed="false">Greyscale</button>
     <button id="t-noart" aria-pressed="false">No art</button>
     <button id="t-tap" aria-pressed="false">Tapped</button>
   </div>
@@ -817,7 +814,7 @@ const TEMPLATES = { A: tplA, B: tplB, C: tplC, D: tplD, E: tplE };
 
 /* ------------------------------------------------------------------- render */
 
-const state = { card: CARDS[0], grey: false, noArt: false, tap: false };
+const state = { card: CARDS[0], noArt: false, tap: false };
 
 function cardHtml(dir, card, size, opts) {
   const tapped = opts.tap && size.small;
@@ -857,7 +854,6 @@ function render() {
     </section>`).join("");
 
   document.getElementById("why").textContent = state.card.why;
-  document.body.classList.toggle("grey", state.grey);
   for (const btn of document.querySelectorAll("#picker button")) {
     btn.setAttribute("aria-pressed", String(btn.dataset.key === state.card.key));
   }
@@ -885,7 +881,6 @@ function toggle(id, key) {
     render();
   });
 }
-toggle("t-grey", "grey");
 toggle("t-noart", "noArt");
 toggle("t-tap", "tap");
 

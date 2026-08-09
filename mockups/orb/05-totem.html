@@ -37,7 +37,7 @@
    here is load-bearing, not decorative, and the full card is still one hover
    away in the preview rail.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -65,7 +65,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -278,14 +277,6 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });
 
 /* Views ------------------------------------------------------------------- */
 
@@ -384,7 +375,6 @@ function render() {
 }
 
 render();
-greyKey();
 </script>
 </body>
 </html>

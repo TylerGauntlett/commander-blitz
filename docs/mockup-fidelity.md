@@ -17,9 +17,8 @@ verified at — 2560×1278 and 1600×950 (`mockups/README.md`, "Notes on fidelit
 and walk the board region by region: phase ribbon, left rail, opponent mats, own
 mat, card faces at each scale, hand fan, command zone, right rail, overlays.
 
-Then repeat the pass in greyscale (`html { filter: grayscale(1) }`). That is the
-check the type encoding exists for, and it is the one that finds signals which are
-carrying information in colour alone.
+Then repeat the pass at a four-player pod, where cards are ~51px. That is the size
+that decides whether a signal is really carrying anything.
 
 Where a visual property reduces to a number, measure it rather than looking at it.
 `e2e/layout.spec.ts` explains why: `body { overflow: hidden }` means the page
@@ -60,8 +59,8 @@ line, rules where there is room, then keywords/counters/P-T).
 
 The consequential half of this is what came *out*. Card type used to be encoded as
 the colour of the card stock: an eight-step `--stock` luminance ladder plus a
-matching `--type-ring` hairline, ~200 lines of `tests/palette.test.ts`, and a
-`--type-ring` ladder check in `e2e/greyscale.spec.ts`. All of it is gone.
+matching `--type-ring` hairline, and ~200 lines of `tests/palette.test.ts`. All of
+it is gone.
 
 The reasoning, because this looks like a regression if you only read the old
 tests: the ladder existed because a type line renders at 5.6px on a pod board
@@ -69,12 +68,11 @@ tests: the ladder existed because a type line renders at 5.6px on a pod board
 across the table. A full-bleed illustration says it **better and per card rather
 than per category**. Twelve Forests are one recognisable picture; under the ladder
 they were twelve copies of "one of the tan ones", which is the same scanning
-problem the ladder was built to solve, one level up. Verified in greyscale before
+problem the ladder was built to solve, one level up. Verified at pod size before
 the ladder was removed, not after.
 
-What still carries card type without colour: `.face__glyph` and `.face__type`,
-both of which `e2e/greyscale.spec.ts` now asserts render with content and non-zero
-width on every face. Colour *identity* is a different fact and it keeps the frame
+What still carries card type at that size: `.face__glyph` and `.face__type`.
+Colour *identity* is a different fact and it keeps the frame
 — the border and the gradient the art sits on, which on the ~4% of cards with no
 printing is the whole card. A land's frame narrows to the colour it taps for, and
 its produced-mana symbols go large and centre-frame.
@@ -88,8 +86,8 @@ What replaced the removed tests, so the surface is not left unguarded:
   rule has crept back in.
 - `e2e/art.spec.ts` — `the art fills the frame` replaces `the art never covers the
   type ring`; the same measurement, the opposite assertion.
-- `e2e/greyscale.spec.ts` — a resolved-scrim-contrast check and a type-line check
-  replace the `--type-ring` ladder walk.
+- `e2e/legibility.spec.ts` — a resolved-scrim-contrast check and a frame-width
+  check replace the `--type-ring` ladder walk.
 
 Everything else about D was taken as drawn, including the parts that are easy to
 skip:
@@ -104,7 +102,7 @@ skip:
   pixels because its `--card-w` is a fiction.
 - **A 1.4% frame, not 3.2%.** The old border was thick enough to read as a fourth
   band on a card meant to be an illustration. The 2px floor stays and is what
-  `e2e/greyscale.spec.ts` actually measures.
+  `e2e/legibility.spec.ts` actually measures.
 - **The commander is a crown inside the name**, not a `CMD` badge in a corner. At
   pod size the badge rendered at under 3px, which is not a word.
 - **Supertypes come off at board size** (`shortType`): "Legendary Creature — Hu…"
@@ -129,10 +127,9 @@ equivalent of the mockup's 60px column:
   battlefield and your hand keep theirs, and hovering restores it either way.
 
 Not taken: the mockup's 60px column also reduces the type line to the bare
-subtype and drops it entirely when it repeats the name. `e2e/greyscale.spec.ts`
-asserts every face carries a type line, because with the type-colour ladder gone
-it and the glyph are the non-colour channels — so that one stays open rather than
-being quietly traded away.
+subtype and drops it entirely when it repeats the name. With the type-colour
+ladder gone, the type line and the glyph are what say what kind of card this is —
+so that one stays open rather than being quietly traded away.
 
 ### No rules text on board or hand cards
 
@@ -176,27 +173,27 @@ reasoning lives — read that before restoring anything card-shaped here.
 
 Ranked by severity. None of these block anything; they are the queue.
 
-### 1. The `--playable` rim carries its meaning in colour alone — medium
+### 1. The `--playable` rim is easy to miss — medium
 
 - **Mockup**: same design, so it inherits the same problem.
 - **App**: `.card--playable::after` is a green rim plus glow (`frontend/src/styles/cards.css`).
-- **Why it matters**: in the greyscale pass every hand card reads identically. A
-  card's *identity* survives greyscale — the illustration, the name, the type glyph
-  and the type line all do — but "which of these can I actually play right now" has
-  no greyscale-safe channel at all, and it is the more urgent question.
+- **Why it matters**: it is a hairline against a hand of full-bleed illustrations,
+  several of which have green in them. "Which of these can I actually play right
+  now" is the most urgent question the hand has to answer, and it is answered by
+  the quietest mark on the card.
 - **Partly mitigated**: castable cards are now also rows in the action panel, which
-  is a second channel. The rim itself is still colour-only.
-- **Fix direction**: a shape as well as a hue — the rim could carry a corner mark, or
-  the dimming applied to unplayable cards could be strengthened so the distinction
-  is luminance rather than hue.
+  is a second channel and a much louder one.
+- **Fix direction**: give the rim more weight, or strengthen the dimming applied to
+  unplayable cards so the distinction is a difference in brightness across the whole
+  hand rather than a line around one card.
 
-### 2. Combat arrows vanish in greyscale — medium
+### 2. Combat arrows are hard to pick out — medium
 
 - **App**: `CombatArrows.tsx` draws `--attacking` red lines over the board.
-- **Why it matters**: same failure as above. Who is attacking whom is not
-  recoverable from a greyscale capture, and it is the single most important fact on
-  screen during combat.
-- **Fix direction**: stroke width or dash pattern, not only colour.
+- **Why it matters**: they are thin strokes over a board of illustrations, and who
+  is attacking whom is the single most important fact on screen during combat.
+- **Fix direction**: more stroke weight, or a dash pattern, or an outline that
+  separates the line from whatever art is under it.
 
 ### 3. The tools are visible but unreachable while a dialog is open — medium
 
@@ -253,12 +250,11 @@ Ranked by severity. None of these block anything; they are the queue.
   state strip. Rules text and the type line were never legible at this size anyway
   and are one hover away in the preview rail, which is the surface rebuilt to hold
   them.
-- **Bonus**: the plinth's state is carried on a word, the art's luminance, and a
-  glyph — three channels, none of them hue. That makes it the first interaction
-  affordance on the board that does *not* fail defect #1 below.
+- **Bonus**: the plinth's state is carried on a word, the art's brightness, and a
+  glyph — three channels rather than one line of colour. That makes it the first
+  interaction affordance on the board that does *not* fail defect #1 below.
 - **Guards**: `e2e/cycle3.spec.ts` asserts the name is not clipped
-  (`scrollWidth <= clientWidth`); `e2e/greyscale.spec.ts` asserts the word and glyph
-  are laid out, not merely present; `tests/playerOrb.test.tsx` covers the state table.
+  (`scrollWidth <= clientWidth`); `tests/playerOrb.test.tsx` covers the state table.
 
 ### 6. Card type and keyword lines sit on their pixel floor — low
 

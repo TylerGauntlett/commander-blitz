@@ -37,7 +37,7 @@
    the CPU work has to keep. This mockup is the most opinionated about the
    roadmap and therefore the most able to be wrong about it.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 :root {
@@ -69,7 +69,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(66% 46% at 50% 30%, rgba(143,127,232,.15) 0%, transparent 64%),
@@ -1001,9 +1000,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (state.open) { state.open = null; render(); return; }
     if (state.drawer) { state.drawer = false; render(); return; }
-  }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
   }
 });
 

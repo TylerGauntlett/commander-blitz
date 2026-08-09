@@ -9,7 +9,7 @@ component is touched. Open any `.html` directly — no build, no server, no netw
 03-neon-arena.html        near-black + neon  · strike band, opponent mana meter
 04-ink-and-signal.html    monochrome         · actions grouped by source card
 05-planar-art.html        indigo + real art  · the art what-if
-shots/                    PNG + greyscale twin of each, 2560×1278
+shots/                    PNG of each, 2560×1278
 fetch_art.py              pulls art/ (mockup 5 only)
 _state.js                 the shared board state, kept readable; inlined per file
 cards/                    a later, narrower exploration: the card face itself
@@ -91,7 +91,7 @@ all five of these fit at 950px.
 | **Opponent board** | smaller cards | dimmed by candle falloff | **lands → mana meter** | smaller cards | smaller cards |
 | **Combat surface** | staged-attacker strip in foot | same | **strike band between boards** | grouped action index | staged strip |
 | **Phase track** | 5 phases, combat expands | brass plaque | angled HUD segments | underline only | pill segments |
-| **Survives greyscale** | yes | yes | yes | **it is the design** | **no** |
+| **Reads at pod size** | yes | yes | yes | **it is the design** | **no** |
 | **Risk to ship** | low | medium (art direction) | medium (new combat surface) | low | high |
 
 ### 01 — Arcane Slate *(recommended)*
@@ -125,7 +125,7 @@ One rule: hue is spent on exactly two things — mana, and interaction state.
 Everything else is grey, and card type is carried by the luminance ladder plus the
 glyph. This was not a style choice, it was `cards.css`'s own argument taken to its
 conclusion: at the time the seven type fills were graded 0.58 → 0.92 relative
-luminance *precisely so the encoding survived greyscale*, asserted by
+luminance *precisely so the seven tones stayed separable at pod size*, asserted by
 `frontend/tests/palette.test.ts`. (That ladder has since been removed with the
 art-bleed redesign — see "What was actually built" — so this reads as history.)
 The question this mockup asks is whether the hue currently spent on
@@ -135,12 +135,11 @@ the best answer here to the wall of server-written sentences, and is independent
 of the palette.
 
 ### 05 — Planar (the art what-if)
-Real art, and **the greyscale twin is the verdict**. Compare
-`shots/05-planar-art.png` with `shots/05-planar-art-grey.png`: in greyscale every
-permanent becomes an indistinguishable grey tile. Land, creature and enchantment
-are no longer separable, because the art band overwrites the exact channel the
-luminance ladder lives in. The frame keeps a hairline of type tint and it is not
-enough at 110px.
+Real art, and **it costs the board its type encoding**. Look at
+`shots/05-planar-art.png` at 110px: land, creature and enchantment are no longer
+separable, because the art band overwrites the exact channel the luminance ladder
+lives in, and it overwrites it with something whose brightness nobody controls.
+The frame keeps a hairline of type tint and it is not enough at that size.
 
 The panel on the right is the other bet, and it is the one worth taking: **text
 frames on the board, art only in the preview rail**. It costs nothing — the board's
@@ -190,7 +189,7 @@ deliberately. The card face then went **further than 05**, to direction D of
 `cards/index.html`: the illustration now fills the whole frame and the text sits
 on graded scrims. See [docs/mockup-fidelity.md](../docs/mockup-fidelity.md).
 
-That settles the greyscale objection above in the opposite direction from the one
+That settles the objection above in the opposite direction from the one
 first tried. The first answer was to *move* the type encoding -- keep the `--stock`
 luminance ladder and add a type ring drawn over the art. The second answer, and the
 shipped one, is that **the encoding was solving a problem the illustration solves
@@ -198,7 +197,7 @@ better**. A ladder tells you a card is one of eight categories; a picture tells 
 which card it is. Twelve Forests under the ladder were twelve copies of "one of the
 tan ones" -- the same scanning problem the ladder was built for, one level up.
 
-So the stock fill and the type ring are both gone. What survives greyscale is the
+So the stock fill and the type ring are both gone. What carries a card now is the
 illustration itself, the name, the type glyph and the type line, plus a land's
 produced-mana symbols at centre-frame. The frame keeps colour *identity*, which was
 never what the ladder encoded.
@@ -206,7 +205,7 @@ never what the ladder encoded.
 The failure mode moved with it, and so did the guards. What can now fail invisibly
 is white text over somebody's bright crop, so that is what is asserted by number:
 `frontend/tests/palette.test.ts` checks both scrims are gradients whose opaque ends
-clear a darkness floor, and `frontend/e2e/greyscale.spec.ts` checks the same on the
+clear a darkness floor, and `frontend/e2e/legibility.spec.ts` checks the same on the
 *rendered* board, where a `theme.css` override would show up and a CSS parse would
 not.
 
@@ -262,15 +261,15 @@ Then, as separate pieces of work with their own arguments:
 - **Art in the preview rail only** (from 05). Low risk, and `fetch_art.py` is
   already the importer `docs/roadmap.md` asks for.
 
-**Do not** take art onto the board itself without re-running the greyscale check;
-`shots/05-planar-art-grey.png` is what that costs.
+**Do not** take art onto the board itself without checking a four-player pod;
+`shots/05-planar-art.png` at 110px is what that costs.
 
 > **Superseded.** Art did go onto the board, and then to the edge of it -- see
-> "What was actually built" above. The greyscale check was re-run, which is the
-> part of this warning that still stands. What `shots/05-planar-art-grey.png`
-> actually shows is art *plus* a type ladder the art overwrites: two encodings
-> competing for one channel. Committing to the illustration and dropping the
-> ladder reads better in greyscale than either half did.
+> "What was actually built" above. Checking it at pod size is the part of this
+> warning that still stands. What `shots/05-planar-art.png` actually shows is art
+> *plus* a type ladder the art overwrites: two encodings competing for one
+> channel. Committing to the illustration and dropping the ladder reads better
+> than either half did.
 
 ---
 

@@ -23,14 +23,13 @@
    THE RULE. Hue is spent on exactly two things: mana, and nothing else. Every
    distinction on this page is carried by shape, weight and luminance. That is
    not a style preference, it is `frontend/tests/palette.test.ts`'s own argument
-   taken to its conclusion -- the repo already asserts that card-type encoding
-   survives greyscale, and this asks whether the menu needs hue at all. Even the
-   commit control is luminance: a near-white slab, the one filled object on a
-   page of outlines, rather than the brass one the other four use.
+   taken to its conclusion -- the repo already asserts card type is legible
+   without leaning on its fill, and this asks whether the menu needs hue at all.
+   Even the commit control is luminance: a near-white slab, the one filled object
+   on a page of outlines, rather than the brass one the other four use.
 
-   Press `g`. This is the only one of the five where the greyscale twin should be
-   indistinguishable from the colour original except for the mana pips, and that
-   is the whole claim.
+   This is the only one of the five with no hue anywhere but the mana pips, and
+   that is the whole claim.
 
    THE TRADE. It is the least game-like screen here, on purpose, and it will
    look austere next to 05. If the brief's first sentence -- "does not feel like
@@ -69,7 +68,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 4%, rgba(143,127,232,.1) 0%, transparent 62%),
@@ -905,9 +903,6 @@ root.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && state.open) { state.open = null; render(); return; }
-  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-    document.documentElement.classList.toggle("grey");
-  }
 });
 
 render();

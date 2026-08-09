@@ -11,7 +11,7 @@ server, no network.
 04-ink-dossier.html     the best form      · the comparison matrix
 05-planar-gate.html     atmosphere         · the screen takes the deck's colour
 _menu.js                the shared content; kept readable, inlined per file
-shots/                  colour, greyscale twin, dossier and room state of each
+shots/                  colour, dossier and room state of each
 ```
 
 These five are about the **menu**. [`../`](../README.md) is the earlier board
@@ -27,8 +27,6 @@ things, so the comparison is about layout and not about capability:
 - add and empty chairs; open a chair to a player and watch them join
 - paste a Moxfield link and watch it fail, then succeed
 - press Play, which commits visibly and does nothing else
-- press **`g`** for greyscale — a key, not a control, because the viewport *is*
-  the design and dev chrome would contaminate the screenshot
 
 ---
 
@@ -73,7 +71,7 @@ central new axis and nothing on the current menu can express it.
 | **Custom deck, un-imported** | dashed row in a group | **a gap in the rack** | field in the drawer | hollow matrix row | dashed filmstrip frame |
 | **Compare four decks at rest** | no | partly (back of box) | no | **yes** | no |
 | **Multiplayer cost** | small | small | **near zero** | small | small |
-| **Survives greyscale** | yes | yes | yes | **it is the design** | controls yes, identity no |
+| **Says two things at once** | yes | yes | yes | **it is the design** | controls yes, identity no |
 | **Port cost to React** | low | medium | medium | low | high |
 
 ### 01 — Command Table *(recommended base)*
@@ -157,12 +155,11 @@ selected filmstrip frame all read from them. Picking Edgar makes the room warm;
 picking First Flight makes it cold. One variable swap per selection, and it is
 the entire mood.
 
-**The greyscale twin is the verdict, and it is mixed.** The controls survive:
-pips keep their letters, ratings and lamps are filled or hollow, the preview
-badge is dashed and says "Preview". What does not survive is the tint — in
-greyscale all four decks light the room identically, so the one thing this
-direction spends itself on is the one thing a player who cannot use colour does
-not receive. Compare `shots/05-planar-gate.png` with `shots/05-planar-gate-grey.png`.
+**The verdict is mixed.** The controls hold up: pips keep their letters, ratings
+and lamps are filled or hollow, the preview badge is dashed and says "Preview".
+The tint does not — it is already spent saying which deck is selected, so it has
+nothing left to say which deck you are hovering, or whether a chair is open. One
+channel, four jobs. See `shots/05-planar-gate.png`.
 
 ---
 
@@ -208,8 +205,8 @@ ladder shares the 4-segment bar every deck rating already uses.
 
 Honesty is structural rather than textual: each tier lights a cumulative prefix
 of three **capability lamps** — combat math, removal & targeting, mana &
-sequencing — drawn filled or hollow, so the ladder says what it turns on and
-reads without colour.
+sequencing — drawn filled or hollow, so the ladder says what it turns on rather
+than only how far along it is.
 
 | Tier | Tag | Lamps |
 |---|---|---|
@@ -271,14 +268,14 @@ Port order, cheapest and highest-confidence first:
 
 1. **The comparison matrix's ratings** (from 04). Five 1–4 ratings per deck,
    drawn as filled/hollow segments, shown on the deck rows *and* in the dossier.
-   Cheap, survives greyscale by construction, and it is the only thing here that
+   Cheap, spends no hue at all, and it is the only thing here that
    helps somebody choose a first deck.
 2. **The back of the box** (from 02). Blurb, playstyle chips and ratings on the
    deck tile itself, so a tile is worth looking at before it is clicked.
 3. **The persona seat** (from 03). One named opponent per chair, with its lamps
    and its doctrine line — the difficulty control and the pod become one object.
 4. **The tint** (from 05), but only on the hero panel, not the page. It buys most
-   of 05's mood for none of its greyscale cost.
+   of 05's mood without spending the page's only tint on it.
 
 **Do not** take 05's full-bleed stage without also taking its blur rule and its
 crisp card; and do not take any of them without re-running the two layout checks

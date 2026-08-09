@@ -14,11 +14,11 @@
 
    The trade being examined is specific. frontend/src/styles/cards.css spends the
    largest channel on a card -- the paper -- encoding card TYPE, graded across
-   relative luminance 0.58->0.92 so it survives greyscale, with
+   relative luminance 0.58->0.92 so the seven tones stay separable, with
    frontend/tests/palette.test.ts asserting the spread. An art band overwrites
    exactly that channel with something whose luminance nobody controls. So this
-   mockup keeps a type-tinted frame *around* the art, and the greyscale capture
-   in mockups/shots/ is the actual test of whether that is enough.
+   mockup keeps a type-tinted frame *around* the art, and the captures in
+   mockups/shots/ are the actual test of whether that is enough.
 
    Two panels, deliberately, because they are different bets:
      LEFT (the board) -- art-first permanents: art, name strip, P/T, no rules text.

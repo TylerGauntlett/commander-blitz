@@ -32,7 +32,7 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
  * absolutely-positioned art box. The descendant selector this used to use
  * therefore matched them too -- so this test would have gone on passing on a
  * board with no card art at all, as long as one Forest was on it. That is the
- * exact shape of bug the comment at the top of `e2e/greyscale.spec.ts` warns
+ * exact shape of bug the comment at the top of `e2e/legibility.spec.ts` warns
  * about: a check that survives the failure it was written for.
  */
 test("art loads and decodes on the board", async ({ page }) => {
@@ -147,8 +147,8 @@ test("the art fills the frame", async ({ page }) => {
 });
 
 test("a land's mana symbols stay on top of the art", async ({ page }) => {
-  // The one channel on a land that reads at 60px in a four-player pod and
-  // survives greyscale. The illustration is the channel that does not.
+  // The one channel on a land that reads at 60px in a four-player pod. The
+  // illustration, at that size, does not.
   test.setTimeout(180_000);
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);

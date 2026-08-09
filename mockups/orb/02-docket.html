@@ -45,7 +45,7 @@
    taller than the height it is trying to save, so this is the direction where
    the commander is smallest.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -73,7 +73,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -164,8 +163,8 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 /* 3. What is trying to kill me --------------------------------------------
    One row per source that has connected. The track runs to 21, so "16" is a
    bar that is nearly full rather than a number you weigh against a rule you
-   have to remember. The warn tier is a hatch as well as a colour, so the
-   nearly-full bar and the striped bar are both still there in greyscale. */
+   have to remember. The warn tier is a hatch as well as a colour, so the bar
+   says it twice: nearly full, and striped. */
 
 .dmg { display:grid; gap:4px; }
 .dmg__row { display:grid; grid-template-columns:74px 92px auto; gap:7px; align-items:center; }
@@ -312,14 +311,6 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });
 
 /* Views ------------------------------------------------------------------- */
 
@@ -428,7 +419,7 @@ function render() {
         '<span class="stage__id">Orb · 02 Docket</span>' +
         '<span class="stage__t">status is a header · the 190px column goes back to the board</span>' +
         '<span class="stage__sp"></span>' +
-        '<span class="stage__k">full width × 104px · press g for greyscale</span>' +
+        '<span class="stage__k">full width × 104px</span>' +
       "</div>" +
       '<div class="stage__mid"><div class="mat">' + docket() + lanes() + "</div></div>" +
       '<div class="stage__bot"><p class="note">' +
@@ -437,7 +428,7 @@ function render() {
         "its state said three ways, its cost with the <b>+2</b> tax, and then the mana row on the line directly under that cost — inside the same block, " +
         "because that adjacency is the one thing the rotation was not allowed to break. Life is the same dial at 82px. " +
         "Commander damage gets the room a column never had: one row per source, a track that runs to 21, and the warn tier " +
-        "hatched as well as reddened so both readings survive greyscale. The five piles keep their leaves, their exact counts and their shared baseline; " +
+        "hatched as well as reddened so the bar says it twice. The five piles keep their leaves, their exact counts and their shared baseline; " +
         "library is the one that is not a button. " +
         "<b>The dashed green cards</b> in the lanes are the two extra per row this buys at 1120px — the whole argument, drawn. " +
         "<b>Not shown:</b> targetable is a blue rim on the strip; eliminated greys it and the dial reads OUT with the loss reason beside the name; " +
@@ -447,7 +438,6 @@ function render() {
 }
 
 render();
-greyKey();
 </script>
 </body>
 </html>

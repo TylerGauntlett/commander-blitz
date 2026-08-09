@@ -19,12 +19,11 @@
    scarce axis and height is not -- but it is a trade and not a free lunch. If
    the column has to get shorter rather than narrower, this is the wrong one.
 
-   THE RULE, which is menu 04's rule and the reason that direction's greyscale
-   twin was indistinguishable from its colour shot: HUE IS SPENT ON MANA AND ON
-   NOTHING ELSE. Mana is the one place in this app where colour IS the datum, so
-   it keeps its pips and gains their letters. Everything else -- priority, ready,
-   the warn tier, a full track -- is said with fill, weight or rule thickness. If
-   you press `g` and this file changes, something in it is wrong.
+   THE RULE, which is menu 04's rule: HUE IS SPENT ON MANA AND ON NOTHING ELSE.
+   Mana is the one place in this app where colour IS the datum, so it keeps its
+   pips and gains their letters. Everything else -- priority, ready, the warn
+   tier, a full track -- is said with fill, weight or rule thickness. There is no
+   hue anywhere in this file but the pips.
 
    THE BIG IDEA, stealable on its own: ONE TRACK, TWO SCALES. Commander damage
    and the five zones are the same object at two resolutions -- a segmented
@@ -42,7 +41,7 @@
    the dial is load-bearing for the app's feel, this direction loses on that and
    its ideas should be ported into whichever one wins instead.
 
-   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   No build, no server, no network. Local ../art/ only.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -70,7 +69,6 @@
 
 * { box-sizing:border-box; }
 html,body,#root { height:100%; margin:0; }
-html.grey { filter:grayscale(1); }
 body {
   background:
     radial-gradient(60% 44% at 50% 6%, rgba(143,127,232,.13) 0%, transparent 62%),
@@ -119,7 +117,7 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 /* THE ORB ----------------------------------------------------------------- */
 
 /* The active seat is a 2px left rule and a brighter frame -- weight, not glow.
-   Both survive greyscale, and neither costs a pixel of layout. */
+   Both read at a glance, and neither costs a pixel of layout. */
 .orb { width:150px; padding:9px 8px; border:1px solid rgba(230,227,245,.45); border-left:3px solid var(--text); border-radius:8px; background:rgba(13,12,28,.66); }
 .orb__rule { height:1px; margin:6px 0; background:var(--edge); }
 
@@ -151,7 +149,7 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 .cmd__tax { padding:0 4px; border:1px solid rgba(230,227,245,.55); border-radius:2px; font-size:9px; font-weight:800; line-height:1.5; }
 
 /* Life: the largest numeral on the panel, and the only thing at this weight.
-   No disc, no glow -- size IS the emphasis, and size is a greyscale channel. */
+   No disc, no glow -- size IS the emphasis. */
 .life { display:flex; align-items:baseline; gap:7px; }
 .life__n { font-size:38px; font-weight:900; line-height:.9; letter-spacing:-.02em; }
 .life__loss { font-size:9.5px; color:var(--text-dim); }
@@ -172,7 +170,7 @@ button { cursor:pointer; background:none; border:0; font:inherit; color:inherit;
 
 /* The warn tier, said twice and neither time with hue: the track fills solid
    and the numeral inverts into a filled chip. At 15 of 21 you can see it in a
-   thumbnail, in greyscale, at the edge of your vision. */
+   thumbnail, at the edge of your vision. */
 .row--warn .trk__s--on { background:var(--text); border-color:var(--text); }
 .row--warn .row__n { display:block; padding:0 3px; background:var(--text); color:var(--void-0); border-radius:2px; }
 
@@ -298,14 +296,6 @@ const costPips = (cost) =>
     .map((s) => '<i class="pip pip--' + (/^\d+$/.test(s) ? "gen" : s) + '">' + s + "</i>")
     .join("");
 
-/* A key, not a control: the viewport IS the design, and dev chrome would
-   contaminate the screenshot. */
-const greyKey = () =>
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
-      document.documentElement.classList.toggle("grey");
-    }
-  });
 
 /* Views ------------------------------------------------------------------- */
 
@@ -421,7 +411,6 @@ function render() {
 }
 
 render();
-greyKey();
 </script>
 </body>
 </html>
