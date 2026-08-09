@@ -273,6 +273,57 @@ def effective_toughness(state: GameState, oid: int) -> int:
     return chars(state, oid).toughness - obj.damage
 
 
+def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
+    """Whether any ``no_hand_limit`` static frees this player from discarding.
+
+    Reliquary Tower, Thought Vessel, Nezahal. Written as a player-wide static
+    like ``extra_land_drops`` rather than as a characteristic, because it is a
+    fact about the *player* and there is no object for it to attach to.
+    """
+    return _player_static(state, pid, "no_hand_limit")
+
+
+def _player_static(state: GameState, pid: int, effect: str) -> bool:
+    """Whether any permanent grants ``effect`` to this player."""
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        for ability in state.card_of(obj).abilities:
+            static = ability.static
+            if not ability.is_static or not static:
+                continue
+            if static.get("effect") != effect:
+                continue
+            who = static.get("affects_player", "you")
+            if who == "you" and obj.controller != pid:
+                continue
+            if who == "opponent" and obj.controller == pid:
+                continue
+            return True
+    return False
+
+
+def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
+    """Whether this player may play lands from their graveyard.
+
+    Ramunap Excavator, Crucible of Worlds, Ancient Greenwarden. Widens *where* a
+    land may be played from; the one-land-per-turn rule is untouched and still
+    enforced by `lands_played`.
+    """
+    return _player_static(state, pid, "play_lands_from_graveyard")
+
+
+def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
+    """Whether this player may play the top card of their library, if it is a land.
+
+    Oracle of Mul Daya, Courser of Kruphix. Only the *top* card, which is what
+    the cards say and also the only part of a hidden zone anybody is allowed to
+    know about.
+    """
+    return _player_static(state, pid, "play_lands_from_library_top")
+
+
 def player_extra_land_drops(state: GameState, pid: int) -> int:
     """Sum of every ``extra_land_drops`` static affecting this player."""
     total = 0

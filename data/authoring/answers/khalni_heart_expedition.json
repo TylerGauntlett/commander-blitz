@@ -1,0 +1,87 @@
+{
+  "card": {
+    "name": "Khalni Heart Expedition",
+    "oracle_text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a quest counter on it?",
+            "effects": [
+              {
+                "op": "add_counters",
+                "counter": "quest",
+                "amount": {
+                  "const": 1
+                },
+                "objects": {
+                  "zone": "battlefield",
+                  "self_only": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Remove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+        "cost": {
+          "remove_counters": {
+            "counter": "quest",
+            "amount": 3
+          },
+          "sacrifice": {
+            "zone": "battlefield",
+            "self_only": true
+          }
+        },
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": {
+              "const": 2
+            },
+            "tapped": true,
+            "destination": "battlefield",
+            "selector": {
+              "types": [
+                "Land"
+              ],
+              "supertypes": [
+                "Basic"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "id": "khalni_heart_expedition"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

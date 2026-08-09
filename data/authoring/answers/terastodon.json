@@ -1,0 +1,57 @@
+{
+  "card": {
+    "name": "Terastodon",
+    "oracle_text": "When this creature enters, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller creates a 3/3 green Elephant creature token.",
+    "mana_cost": "{6}{G}{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elephant"
+    ],
+    "power": 9,
+    "toughness": 9,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you may destroy up to three target noncreature permanents. For each permanent put into a graveyard this way, its controller creates a 3/3 green Elephant creature token.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "not_types": [
+                "Creature"
+              ]
+            },
+            "count": 3,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "op": "destroy",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ],
+    "id": "terastodon"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

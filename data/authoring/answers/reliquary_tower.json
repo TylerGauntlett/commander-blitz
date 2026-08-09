@@ -1,0 +1,36 @@
+{
+  "card": {
+    "name": "Reliquary Tower",
+    "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
+    "types": [
+      "Land"
+    ],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You have no maximum hand size.",
+        "effect": "no_hand_limit",
+        "affects_player": "you"
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      }
+    ],
+    "id": "reliquary_tower"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

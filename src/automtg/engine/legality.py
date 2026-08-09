@@ -146,14 +146,31 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     ``card.id`` here made the second and third Forest unclickable and
     undraggable, which is a much worse trade than a slightly wider action list.
     """
+    from .characteristics import (
+        player_plays_lands_from_graveyard,
+        player_plays_lands_from_library_top,
+    )
+
+    zones = [state.players[pid].hand]
+    if player_plays_lands_from_graveyard(state, pid):
+        # Ramunap Excavator, Crucible of Worlds, Ancient Greenwarden. Still one
+        # land drop -- this widens *where* a land may be played from, not how
+        # many, which `lands_played` already governs.
+        zones.append(state.players[pid].graveyard)
+    if player_plays_lands_from_library_top(state, pid) and state.players[pid].library:
+        # The top card only -- which is what the cards say, and the only part
+        # of a hidden zone anybody is entitled to see.
+        zones.append(state.players[pid].library[:1])
+
     out: list[Action] = []
-    for oid in state.players[pid].hand:
-        card = state.card(oid)
-        if not card.is_land:
-            continue
-        out.append(
-            Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}")
-        )
+    for zone in zones:
+        for oid in zone:
+            card = state.card(oid)
+            if not card.is_land:
+                continue
+            out.append(
+                Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}")
+            )
     return out
 
 

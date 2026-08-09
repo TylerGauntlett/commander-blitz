@@ -354,3 +354,36 @@ Attaching during an Aura's `spell_effects` does **not** work, and the failure is
 silent: `move_object` calls `reset_permanent_state` on the way onto the
 battlefield, which clears `attached_to`, so the Aura arrives enchanting nothing
 and state-based actions put it in the graveyard.
+
+## Player-wide statics
+
+Four static effects describe the *player* rather than a characteristic, so they
+take `affects_player` instead of `affects`:
+
+```jsonc
+{ "kind": "static", "effect": "extra_land_drops",
+  "affects_player": "you", "amount": { "const": 1 } }
+{ "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
+{ "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
+```
+
+The two land permissions widen *where* a land may be played from, never how
+many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
+Dryad of the Ilysian Grove is two drops from anywhere, which is correct.
+
+`play_lands_from_library_top` offers the top card only. That is what the cards
+say, and it is also the only part of a hidden zone anybody is entitled to see.
+
+## "This spell can't be countered"
+
+A flag on the card, not an ability:
+
+```jsonc
+{ "id": "koma_cosmos_serpent", "uncounterable": true, ... }
+```
+
+It has to be, because a spell is on the stack and static abilities do not reach
+it there. The `counter` op checks it and emits a `spell_countered` event carrying
+`failed: "cannot be countered"`, so the log says what happened rather than the
+spell silently surviving.

@@ -1,0 +1,58 @@
+{
+  "card": {
+    "name": "Molimo, Maro-Sorcerer",
+    "oracle_text": "Trample\nMolimo's power and toughness are each equal to the number of lands you control.",
+    "mana_cost": "{4}{G}{G}{G}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elemental",
+      "Sorcerer"
+    ],
+    "power": 0,
+    "toughness": 0,
+    "keywords": [
+      "trample"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "set_pt",
+        "affects": {
+          "self_only": true
+        },
+        "power": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "toughness": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "text": "Molimo's power and toughness are each equal to the number of lands you control."
+      }
+    ],
+    "id": "molimo_maro_sorcerer"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

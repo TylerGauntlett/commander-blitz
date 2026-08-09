@@ -25,6 +25,19 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
         item = state.stack_item(sid)
         if item is None:
             continue
+        # "This spell can't be countered." Printed on the card rather than
+        # granted, so it is read off the definition and needs no static: the
+        # spell is on the stack, where statics do not reach it anyway.
+        if item.is_spell and state.registry.get(item.def_id).uncounterable:
+            state.emit(
+                EventType.SPELL_COUNTERED,
+                player=item.controller,
+                source=ctx.source_oid,
+                sid=sid,
+                card=item.def_id,
+                failed="cannot be countered",
+            )
+            continue
         state.stack = [it for it in state.stack if it.sid != sid]
         state.emit(
             EventType.SPELL_COUNTERED,

@@ -38,7 +38,18 @@ KNOWN_COLORS = frozenset(c.value for c in Color)
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
-    {"buff", "grant_keyword", "set_pt", "add_subtype", "extra_land_drops"}
+    {
+        "buff",
+        "grant_keyword",
+        "set_pt",
+        "add_subtype",
+        "extra_land_drops",
+        # Player-wide, like `extra_land_drops`: a fact about the player rather
+        # than a characteristic, with no object for it to attach to.
+        "no_hand_limit",
+        "play_lands_from_graveyard",
+        "play_lands_from_library_top",
+    }
 )
 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
@@ -177,6 +188,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         abilities=abilities,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
+        uncounterable=model.uncounterable,
     )
 
 
@@ -278,9 +290,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: static filters may only read printed characteristics; "
                 f"unsupported keys {sorted(unknown)}"
             )
-    if model.effect == "extra_land_drops":
+    if model.effect in (
+        "extra_land_drops",
+        "no_hand_limit",
+        "play_lands_from_graveyard",
+        "play_lands_from_library_top",
+    ):
         if model.affects_player is None:
-            raise DslError(f"{where}: extra_land_drops needs 'affects_player'")
+            raise DslError(f"{where}: {model.effect} needs 'affects_player'")
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
 

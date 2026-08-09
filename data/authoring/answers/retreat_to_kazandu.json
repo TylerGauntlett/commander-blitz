@@ -1,0 +1,76 @@
+{
+  "card": {
+    "name": "Retreat to Kazandu",
+    "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Put a +1/+1 counter on target creature.\n• You gain 2 life.",
+    "mana_cost": "{2}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Landfall — Whenever a land you control enters, choose one — • Put a +1/+1 counter on target creature. • You gain 2 life.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "Put a +1/+1 counter on a creature",
+                "effects": [
+                  {
+                    "op": "add_counters",
+                    "counter": "+1/+1",
+                    "amount": {
+                      "const": 1
+                    },
+                    "objects": {
+                      "zone": "battlefield",
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "count": 1,
+                      "chooser": "controller"
+                    }
+                  }
+                ]
+              },
+              {
+                "label": "You gain 2 life",
+                "effects": [
+                  {
+                    "op": "gain_life",
+                    "player": "you",
+                    "amount": {
+                      "const": 2
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "retreat_to_kazandu"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

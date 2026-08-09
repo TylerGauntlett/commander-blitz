@@ -1,0 +1,89 @@
+{
+  "card": {
+    "name": "Lumra, Bellow of the Woods",
+    "oracle_text": "Vigilance, reach\nLumra's power and toughness are each equal to the number of lands you control.\nWhen Lumra enters, mill four cards. Then return all land cards from your graveyard to the battlefield tapped.",
+    "mana_cost": "{4}{G}{G}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elemental",
+      "Bear"
+    ],
+    "power": 0,
+    "toughness": 0,
+    "keywords": [
+      "vigilance",
+      "reach"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "set_pt",
+        "affects": {
+          "self_only": true
+        },
+        "power": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "toughness": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "text": "Lumra's power and toughness are each equal to the number of lands you control."
+      },
+      {
+        "kind": "triggered",
+        "text": "When Lumra enters, mill four cards. Then return all land cards from your graveyard to the battlefield tapped.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "mill",
+            "player": "you",
+            "amount": {
+              "const": 4
+            }
+          },
+          {
+            "op": "put_onto_battlefield",
+            "tapped": true,
+            "objects": {
+              "zone": "graveyard",
+              "controller": "you",
+              "types": [
+                "Land"
+              ],
+              "count": "all",
+              "chooser": "none"
+            }
+          }
+        ]
+      }
+    ],
+    "id": "lumra_bellow_of_the_woods"
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

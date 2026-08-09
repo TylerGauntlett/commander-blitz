@@ -494,6 +494,11 @@ def _covered(card: CardDef, line: str) -> bool:
     # unauthorable.
     if stripped.lower().startswith("enchant ") and card.targets:
         return True
+
+    # "This spell can't be countered" is the `uncounterable` flag, not an
+    # ability: a spell is on the stack, where abilities do not reach it.
+    if card.uncounterable and "can't be countered" in stripped.lower():
+        return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if claimed and (claimed == stripped or claimed in line or stripped in claimed):
