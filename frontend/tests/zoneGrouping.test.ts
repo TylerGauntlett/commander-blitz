@@ -4,12 +4,13 @@ import {
   LANES,
   attachmentsFor,
   commandersOf,
+  findCard,
   findCardByDefId,
   groupBattlefield,
   laneFor,
   seatOrder,
 } from "../src/logic/zoneGrouping";
-import { card, gameView, player } from "./fixtures";
+import { card, gameView, player, stackItem } from "./fixtures";
 
 /**
  * The lanes are declared front to back -- toward the opponent first, the
@@ -407,5 +408,62 @@ describe("findCardByDefId", () => {
     // A countered spell has already left every zone the viewer can see; the
     // spotlight falls back to a name plate rather than rendering a gap.
     expect(findCardByDefId(gameView(), "lightning_bolt")).toBeNull();
+  });
+});
+
+/**
+ * What the preview rail resolves a hovered oid against.
+ *
+ * The stack case is the one that was missing, and it was not an edge case:
+ * `commandersOf` deliberately keeps a commander on the plinth while it is
+ * mid-cast, so the panel was drawing a card the rail could not find for exactly
+ * the beat the player was watching it.
+ */
+describe("findCard", () => {
+  it("finds a card on the stack", () => {
+    const state = gameView({ stack: [stackItem({ card: card({ oid: 7, zone: "stack" }) })] });
+    expect(findCard(state, 7)?.oid).toBe(7);
+  });
+
+  it("searches the stack before the battlefield, as findCardByDefId does", () => {
+    // Mid-cast the object is on its way to the battlefield; the stack copy is
+    // the live one. Two functions answering the same question in two orders is
+    // how they drift apart.
+    const state = gameView({
+      stack: [stackItem({ card: card({ oid: 7, zone: "stack", name: "In flight" }) })],
+      battlefield: [card({ oid: 7, zone: "battlefield", name: "Landed" })],
+    });
+    expect(findCard(state, 7)?.name).toBe("In flight");
+  });
+
+  it("still finds the battlefield, hand, graveyard, exile and command zone", () => {
+    const state = gameView({
+      players: [
+        player({
+          pid: 0,
+          hand: [card({ oid: 2, zone: "hand" })],
+          graveyard: [card({ oid: 3, zone: "graveyard" })],
+          exile: [card({ oid: 4, zone: "exile" })],
+          command: [card({ oid: 5, zone: "command" })],
+        }),
+        player({ pid: 1, hand: null }),
+      ],
+      battlefield: [card({ oid: 1 })],
+    });
+    for (const oid of [1, 2, 3, 4, 5]) {
+      expect(findCard(state, oid)?.oid).toBe(oid);
+    }
+  });
+
+  it("returns null for an oid in a hidden zone", () => {
+    // A card in the library has no view to return. An empty preview beats a
+    // crash, and the rail falls back to its idle line.
+    expect(findCard(gameView(), 4242)).toBeNull();
+  });
+
+  it("survives a stack item whose face has already left the game", () => {
+    // `StackItemView.card` is nullable for exactly that case.
+    const state = gameView({ stack: [stackItem({ card: null })] });
+    expect(findCard(state, 1)).toBeNull();
   });
 });

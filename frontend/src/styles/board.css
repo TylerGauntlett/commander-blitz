@@ -250,10 +250,40 @@
  * `object-fit: cover` on a 1.4 source crops the top and bottom rather than
  * squashing it, which on creature art keeps the creature.
  */
-.cmdplinth__art {
+/*
+ * The banner's box, separately from the picture in it.
+ *
+ * It exists for two reasons. It is what the life seal is positioned against --
+ * the art's bottom edge is the only anchor in this column that does not have to
+ * guess at a width. And it reserves the 2:1 band whether or not there is an
+ * image yet: the art element is still conditional (drawing the hatched "no art"
+ * plate before `/images` resolves would flash it on every first paint), and a
+ * box that appeared on fetch would drop the life dial into place a beat after
+ * the rest of the panel.
+ *
+ * It does not clip. The seal hangs a third of itself out of the bottom, and
+ * `margin-bottom` is that third, reserved.
+ *
+ * Reserving it *vertically* rather than indenting the caption around it is the
+ * second attempt. The first gave `.cmdplinth__name` a right padding, which has
+ * to be the seal's whole width and not just its overhang -- and at 2560x1278,
+ * where the seal clamps to 76px of a 156px portrait, that left 76px for a
+ * two-line name and put the disc through the middle of "Aesi, Tyrant of Gyre
+ * Strait". Half the caption's width is a bad trade for 26px of height in a panel
+ * that now has height to spare, and it is the same trade `mockups/orb/03`
+ * already made with `.cmdwrap`'s bottom padding.
+ */
+.cmdplinth__frame {
   position: relative;
   display: block;
+  margin-bottom: calc(var(--seal-w) * 0.34);
   aspect-ratio: 2;
+}
+
+.cmdplinth__art {
+  position: absolute;
+  display: block;
+  inset: 0;
   overflow: hidden;
   border-radius: 5px;
   background: #241f33;
@@ -289,8 +319,9 @@
    in this column is the whole point. */
 .cmdplinth__tag {
   position: absolute;
-  top: 9px;
-  left: 9px;
+  z-index: 2;
+  top: 4px;
+  left: 4px;
   padding: 0 4px;
   border-radius: 3px;
   background: var(--frame-commander);
@@ -305,6 +336,13 @@
 /* Two lines and then an ellipsis. The name is the thing the old card face could
    not fit, so it gets the room here rather than the type line and the P/T --
    both of which the preview rail already carries. */
+/* Two lines and then an ellipsis. The name is the thing the old card face could
+   not fit, so it gets the room here rather than the type line and the P/T --
+   both of which the preview rail already carries.
+
+   Full width, because the seal's overhang is reserved above it rather than
+   indented around it -- see `.cmdplinth__frame`. That is what keeps this and
+   `.cmdplinth__word` unclipped, which `e2e/cycle3.spec.ts` measures. */
 .cmdplinth__name {
   display: -webkit-box;
   overflow: hidden;
@@ -315,6 +353,7 @@
   font-size: 10.5px;
   font-weight: 700;
   line-height: 1.2;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.85);
 }
 
 .cmdplinth__strip {
@@ -387,7 +426,11 @@
   color: var(--playable);
 }
 
-.cmdslot--ready:disabled {
+/* `aria-disabled`, not `:disabled`. The plinth stopped being a disabled control
+   so that it still dispatches mouse events -- a disabled button dispatches none,
+   which is why hovering an opponent's commander never filled the preview rail.
+   See the note in CommandZone.tsx. */
+.cmdslot[aria-disabled="true"] {
   cursor: default;
 }
 
@@ -489,16 +532,106 @@
     12px no-repeat scroll;
 }
 
-/* Orb ------------------------------------------------------------------ */
+/* Orb ------------------------------------------------------------------
+ *
+ * The commander's art is the panel's ground, and that is the whole direction:
+ * four seats in a pod used to be four grey rectangles told apart by a name in
+ * 12px type, while the one asset that separates them instantly was already
+ * loaded and drawn at 80px. `mockups/orb/README.md` calls that defect #4 and
+ * picks this direction to answer it.
+ *
+ * **There is no colour-identity tint**, deliberately, and it is the one thing
+ * dropped from the mockup. A tint is the channel that dies first in greyscale;
+ * the portrait differs per seat regardless of hue and survives. So the seat's
+ * identity is spent entirely on the picture, and every piece of type in here is
+ * legible against the veil rather than against the wash's colour.
+ *
+ * **Full height.** The orb fills `.mat__side` rather than sitting at its own
+ * content height with dead column beneath it, and `.orb__body` spreads its rows
+ * into the slack. `min-height: 0` with a flex item's default `min-height: auto`
+ * floors it at its content, so a short viewport crops nothing.
+ *
+ * `--seal-w` is the single knob for the life dial at both column widths, which
+ * is one fewer place `.orb--compact` is a second design wearing the first one's
+ * class names -- README defect #3. */
 
 .orb {
+  --seal-w: clamp(52px, 6.6vh, 76px);
+  position: relative;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px 10px;
+  min-height: 0;
+  /* The wash bleeds past the panel on every side; the radius has to clip it. */
+  overflow: hidden;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
   background: var(--pane-well);
+}
+
+.orb--compact {
+  --seal-w: clamp(30px, 3.8vh, 42px);
+}
+
+/*
+ * The portrait, blurred to a ground.
+ *
+ * `inset: -14%` so the blur's soft edge falls outside the panel instead of
+ * feathering into a visible border. The blur is for the type's sake, not to hide
+ * a stretch: the crop is 626x457 and this box is 190px wide (0.30x) or 112px
+ * (0.18x) -- see the art ceiling rule in mockups/README.md before porting this
+ * to anything wider.
+ */
+.orb__wash {
+  position: absolute;
+  z-index: 0;
+  inset: -14%;
+  background-position: 50% 32%;
+  background-size: cover;
+  filter: blur(16px) saturate(0.95);
+  opacity: 0.5;
+}
+
+/*
+ * Two layers, not one blended layer.
+ *
+ * Blending the ground into the scrim lifts the whole panel toward the art's
+ * dominant colour and takes the header type with it. This one is unconditionally
+ * dark, so no piece of type in the panel depends on what the portrait happens to
+ * look like -- which is also what lets the tint go without anything else moving.
+ *
+ * The stops are tuned against the *full-height* panel rather than the mockup's
+ * 318px one. 03 put 0.88 at 58% because 58% of 318px was the mana row; at 475px
+ * that lands in the open middle of the panel and blacks out the ground exactly
+ * where there is nothing else to look at. The damage chips and the piles carry
+ * their own plates, so the gradient does not have to cover for them.
+ */
+.orb__veil {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(11 10 22 / 0.72) 0%,
+    rgb(11 10 22 / 0.55) 22%,
+    rgb(11 10 22 / 0.7) 62%,
+    rgb(11 10 22 / 0.92) 100%
+  );
+}
+
+/* Everything that is not the ground. `space-between` is where the extra column
+   height goes: the plinth stays at the top, the piles land on the bottom edge,
+   and the rows between them breathe rather than the panel ending early. */
+.orb__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 0;
+  padding: 8px 10px;
 }
 
 .orb--active {
@@ -523,10 +656,13 @@
   gap: 6px;
 }
 
+/* On art now, so it takes a shadow. Cheaper than a plate, and the head is the
+   one row where a plate would box in the portrait underneath it. */
 .orb__name {
   overflow: hidden;
   font-weight: 700;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
   white-space: nowrap;
 }
 
@@ -538,6 +674,8 @@
   box-shadow: 0 0 8px var(--gold);
 }
 
+/* The fallback perch, for a seat whose commander is in a hidden zone and so has
+   no plinth to be stamped on. Life is not allowed to vanish with it. */
 .orb__life-row {
   display: flex;
   align-items: center;
@@ -545,11 +683,15 @@
   gap: 8px;
 }
 
-/* The life dial ---------------------------------------------------------
+/* The life seal ---------------------------------------------------------
  *
  * Life as a physical object rather than a number in a box. It is the one figure
- * a player hunts for every few seconds, so making it the largest thing in the
- * column is worth the room it costs.
+ * a player hunts for every few seconds, so it is the largest thing in the
+ * column -- but it no longer costs a row to be that. It is stamped over the
+ * commander portrait's lower right, half on the art and half off it, so it costs
+ * the *overlap*. That is what pays for the portrait being this size in a column
+ * this narrow, and it puts the two things you hunt for -- who am I, how am I
+ * doing -- in one glance instead of two.
  *
  * The brass is a radial gradient with its highlight at 34%/26% -- one light
  * source, consistently placed, which is what makes it read as a disc rather
@@ -558,7 +700,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(58px, 7.6vh, 92px);
+  width: var(--seal-w);
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(
@@ -602,31 +744,67 @@
   filter: grayscale(0.8);
 }
 
+/* Sized off the disc rather than off the viewport a second time. Two clamps for
+   one object is how the numeral and the disc drift apart at the sizes nobody
+   screenshots. */
 .dial__n {
   color: var(--dial-ink);
-  font-size: clamp(22px, 3vh, 34px);
+  font-size: calc(var(--seal-w) * 0.41);
   font-weight: 900;
   line-height: 1;
   text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
 }
 
-.orb--compact .dial {
-  width: clamp(42px, 5.4vh, 62px);
-}
-
-.orb--compact .dial__n {
-  font-size: clamp(16px, 2.1vh, 23px);
+/*
+ * Stamped, once it has a portrait to be stamped on.
+ *
+ * Positioned against `.cmdplinth__frame`, which is the art's own box -- the only
+ * anchor here that does not have to guess at the column's width. A third of the
+ * disc hangs below the art and lands on the name's two clamped lines, which is
+ * why the name reserves room on its right and the state strip below it does not
+ * have to.
+ *
+ * `pointer-events: none` is load-bearing: the portrait underneath is the cast
+ * control, and a decorative disc must not eat the click that casts your
+ * commander.
+ */
+.cmdplinth__frame .dial {
+  position: absolute;
+  right: 2px;
+  bottom: calc(var(--seal-w) * -0.34);
+  z-index: 3;
+  pointer-events: none;
 }
 
 .orb__loss {
   color: var(--danger);
   font-size: 11px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
 }
 
+/* Commander damage --------------------------------------------------------
+ *
+ * On a scrim plate, because a bare chip over art is the first thing to go
+ * illegible -- and a plate has room for the word, which used to live only in a
+ * `title` attribute nobody hunts for. */
 .orb__cmd {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  background: rgb(9 8 20 / 0.55);
+}
+
+.orb__cmd-lab {
+  color: var(--text-faint);
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .cmd-pip {
@@ -639,7 +817,11 @@
   font-weight: 700;
 }
 
+/* The heavier rule is not decoration. Red is the only thing separating this from
+   its neighbour, and red is exactly what `e2e/greyscale.spec.ts` takes away --
+   a 2px border survives that and a hue does not. */
 .cmd-pip--warn {
+  border-width: 2px;
   border-color: var(--danger);
   background: #331616;
   color: #ffb3b3;
@@ -742,7 +924,11 @@
   gap: 6px 5px;
   align-items: flex-end;
   justify-content: center;
-  padding-top: 2px;
+  /* On a plate, for the same reason the damage chips are: a leaf stack is a low
+     contrast graphic and the wash underneath it is a picture. */
+  padding: 5px 4px 4px;
+  border-radius: 8px;
+  background: rgb(9 8 20 / 0.55);
 }
 
 .pile {
@@ -817,25 +1003,46 @@
   color: #fff;
 }
 
-/* An opponent's column is 96px wide and has five piles to fit in it. They wrap
-   to two rows rather than clipping their labels, which is the one part of a
-   pile that says *which* zone it is. */
+/* An opponent's column is 112px wide and has five piles to fit across it, on
+   ONE row -- the same shape the viewer's column has, because two rows here read
+   as a different component rather than a narrower one.
+ *
+ * The binding constraint is not the stack, it is the *label*: `.pile` is a
+ * centred flex column, so each pile is as wide as its widest child, and "HAND"
+ * at 8px is wider than a 20px stack. So the budget is spent on the labels.
+ *
+ * Measured in the browser rather than reasoned about, because the numbers land
+ * close together: at 112px, 2px of border plus 10px of `.orb__body` padding plus
+ * 4px of plate padding leave 96px inside. A pile is as wide as
+ * `max(stack, label)`, so at a 16px stack the five come to
+ * 16 + 18.5 + 16 + 16 + 16 = 82.5, and four 2px gaps to 8. About five spare --
+ * checked with the *exile* pile present, since that is the conditional fifth and
+ * therefore the case that has to fit. */
+.orb--compact .orb__body {
+  padding: 8px 5px;
+}
+
 .orb--compact .piles {
-  gap: 5px 4px;
+  /* Never two rows. A wrapped pile row reads as a different component rather
+     than a narrower one, and the comparative read the piles exist for is
+     between stacks standing side by side on one baseline. */
+  flex-wrap: nowrap;
+  gap: 2px;
+  padding: 4px 2px 3px;
 }
 
 .orb--compact .pile__stack {
-  width: 20px;
+  width: 16px;
 }
 
 .orb--compact .pile__leaf--top {
   height: 16px;
-  font-size: 9px;
+  font-size: 8.5px;
 }
 
 .orb--compact .pile__label {
-  font-size: 8px;
-  letter-spacing: 0.04em;
+  font-size: 6.5px;
+  letter-spacing: 0;
 }
 
 /* Lanes ---------------------------------------------------------------- */

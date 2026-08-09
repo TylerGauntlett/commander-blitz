@@ -216,7 +216,20 @@ export function findCardByDefId(
   return fallback;
 }
 
+/**
+ * The card behind an oid, wherever the viewer can currently see it.
+ *
+ * The stack is searched first, and it is not an edge case: `commandersOf` above
+ * deliberately keeps a commander on the plinth while it is mid-cast, so between
+ * the click and the spell resolving the panel is showing a card that lives in no
+ * other zone. Without this pass the preview rail blanks to "Hover a card to read
+ * it" for exactly the beat the player is watching. `findCardByDefId` has
+ * searched the stack first for the same reason since it was written.
+ */
 export function findCard(state: GameView, oid: number): CardView | null {
+  for (const item of state.stack) {
+    if (item.card?.oid === oid) return item.card;
+  }
   for (const card of state.battlefield) {
     if (card.oid === oid) return card;
   }
