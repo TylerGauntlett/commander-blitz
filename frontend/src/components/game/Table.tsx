@@ -22,12 +22,12 @@ import {
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
-import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
 import { sourcesSpentBy } from "../../logic/mana";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
+import { useZoomFit } from "../../state/useZoomFit";
 import { ActionPanel } from "./ActionPanel";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
@@ -64,6 +64,12 @@ interface Props {
 export function Table({ game, state, onQuit, onRematch }: Props) {
   const { actions, events, narration, busy, aiThinking, stalled } = game;
   const boardRef = useRef<HTMLDivElement>(null);
+  // The three the zoom measures. Each is a grid track whose size the cards inside
+  // it cannot change, which is the only reason reading them is safe; see
+  // `state/useZoomFit.ts`.
+  const tableRef = useRef<HTMLDivElement>(null);
+  const mineRef = useRef<HTMLDivElement>(null);
+  const podRef = useRef<HTMLDivElement>(null);
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
@@ -567,11 +573,45 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // ---------------------------------------------------------------- render
 
-  const opponents = seatOrder(state).filter((pid) => pid !== state.seat);
-  const opponentScale = opponentCardScale(opponents.length);
+  // Memoised because `useZoomFit` keys its solve on it: a fresh array every render
+  // would re-run the fit on every render rather than when the board changes.
+  const opponents = useMemo(
+    () => seatOrder(state).filter((pid) => pid !== state.seat),
+    [state],
+  );
+
+  /*
+   * How big the cards are, solved against the room they actually have.
+   *
+   * The three refs below are the only measurements taken, and `useZoomFit`
+   * documents why each is safe to read -- the short version is that all three are
+   * grid tracks whose size the cards inside cannot change. `opponentCardScale` and
+   * `CARD_SCALE.own` / `.hand` are still here, but as the *ceilings* the solve may
+   * not exceed rather than as the sizes; see `logic/cardSize.ts`.
+   */
+  const zoom = useZoomFit({
+    state,
+    actionableOids,
+    opponents,
+    handCount: viewer.hand?.length ?? 0,
+    tableRef,
+    mineRef,
+    podRef,
+  });
 
   return (
-    <div className="table" data-testid="table">
+    <div
+      className="table"
+      data-testid="table"
+      ref={tableRef}
+      // Read by e2e rather than making it parse a resolved `calc()` off a lane, and
+      // handy for eyeballing the solve in devtools. Same spirit as
+      // `data-stack-count` on a stack.
+      data-zoom-board={zoom.board.toFixed(3)}
+      data-zoom-pod={zoom.pod.toFixed(3)}
+      data-zoom-hand={zoom.hand.toFixed(3)}
+      data-zoom-locked={zoom.locked || undefined}
+    >
       <PhaseTrack state={state} />
 
       <motion.div className="table__body" ref={boardRef} animate={shake}>
@@ -581,7 +621,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         </aside>
 
         <main className="play">
-          <div className="play__opponents">
+          <div className="play__opponents" ref={podRef}>
             {opponents.map((pid) => (
               <PlayerMat
                 key={pid}
@@ -592,7 +632,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 // Their lands against their own edge of the screen, so the two
                 // creature bands meet across the middle of the table.
                 mirrored
-                cardScale={opponentScale}
+                cardScale={zoom.pod}
                 actionableOids={actionableOids}
                 hasAbility={(card) => abilityOids.has(card.oid)}
                 abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
@@ -613,12 +653,12 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             ))}
           </div>
 
-          <div className="play__mine">
+          <div className="play__mine" ref={mineRef}>
             <PlayerMat
               state={state}
               player={viewer}
               names={names}
-              cardScale={CARD_SCALE.own}
+              cardScale={zoom.board}
               actionableOids={actionableOids}
               hasAbility={(card) => abilityOids.has(card.oid)}
               abilityLabel={(card) => abilityLabels.get(card.oid) ?? null}
@@ -724,6 +764,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           reasons={viewer.hand_reasons ?? {}}
           mana={viewer.mana}
           selectedOid={selectedOid}
+          cardScale={zoom.hand}
           onActivate={playFromHand}
           onDropOn={onDropOnZone}
           disabled={locked}

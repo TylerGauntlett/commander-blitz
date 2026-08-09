@@ -12,22 +12,24 @@ import { useState } from "react";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
+import { HAND_FAN_W, handStep } from "../../logic/zoomFit";
 import { bouncy, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useCardBase } from "../../state/useCardBase";
 import { Card } from "./Card";
 
-/** Cards overlap once the hand is wider than this. */
-const MAX_SPREAD = 118;
-/**
- * How wide the fan may grow before cards start overlapping harder.
+/*
+ * The fan's width and its pitch live in `logic/zoomFit.ts` (`HAND_FAN_W`,
+ * `HAND_MAX_SPREAD`, `handStep`).
  *
- * The action bar used to take 420px out of this row; now that it lives in the
- * right rail the hand has the whole foot, so the rail that was capped at 760px
- * can breathe. Still a cap rather than `100%`: a two-card hand spread across
- * 1400px reads as two unrelated cards, not as a hand.
+ * They used to be `MAX_FAN_W` and `MAX_SPREAD` here, which was right while the fan
+ * was the only thing that had an opinion about them. The zoom now has to work out
+ * how wide a hand card can be *before* the fan is laid out -- crowding is what
+ * bounds it -- so the spacing rule has one home and both callers read it. The
+ * action bar used to take 420px out of this row; now that it lives in the right
+ * rail the hand has the whole foot.
  */
-const MAX_FAN_W = 1180;
+
 /** Degrees between neighbouring cards. */
 const ARC = 2.6;
 /** How far the hovered card lifts, and how far its neighbours slide away. */
@@ -50,6 +52,15 @@ interface Props {
   reasons?: Record<string, UnplayableReason>;
   mana?: ManaView;
   selectedOid: number | null;
+  /**
+   * How wide a hand card is, as a multiple of `--card-w-base`.
+   *
+   * Solved against the foot's height and how crowded the fan is (see
+   * `state/useZoomFit.ts`). Defaults to the designed ratio, which is also what the
+   * zoom returns when it is pinned -- so a bare `<HandFan>` in a test renders the
+   * geometry it always did.
+   */
+  cardScale?: number;
   onActivate: (card: CardView) => void;
   onDropOn: (card: CardView, zone: string) => void;
   disabled?: boolean;
@@ -61,6 +72,7 @@ export function HandFan({
   reasons = {},
   mana,
   selectedOid,
+  cardScale = CARD_SCALE.hand,
   onActivate,
   onDropOn,
   disabled = false,
@@ -72,10 +84,10 @@ export function HandFan({
   // positioned absolutely at `left: index * step`, and `step` derives from the
   // card width -- so the fan needs the resolved number, not a variable the
   // browser will substitute later.
-  const cardW = cardWidthPx(useCardBase(), CARD_SCALE.hand);
+  const cardW = cardWidthPx(useCardBase(), cardScale);
 
   const count = cards.length;
-  const step = count > 1 ? Math.min(MAX_SPREAD, (MAX_FAN_W - cardW) / (count - 1)) : 0;
+  const step = handStep(count, cardW, HAND_FAN_W);
   const width = count > 0 ? cardW + step * (count - 1) : 0;
   const mid = (count - 1) / 2;
 
@@ -85,7 +97,7 @@ export function HandFan({
     : null;
 
   return (
-    <div className="hand" style={{ ["--card-w" as string]: cardWidthVar(CARD_SCALE.hand) }}>
+    <div className="hand" style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}>
       <div className="hand__rail" style={{ width }}>
         <AnimatePresence initial={false}>
           {cards.map((card, index) => {

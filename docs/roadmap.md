@@ -17,15 +17,81 @@
 
 ---
 
-## Progressive Zoom
+## Progressive Zoom — done
 
 ### Overview
 - The game typically starts with very few cards and ends with very many
 - This leads to poor use of screen real estate early in the game as the benifit of being able to show the game state end game
 - Instead, the board zooms (both user and CPU) + cards in hand could use a more intelligent zoom system that tries to maximize readability at all stages of the game
 
-### Task
-- Impelement a system that automatically scales cards/board areas up and down depending on the number of cards present
+### What shipped
+
+**A measured fit solver, not a lookup table.** `frontend/src/logic/zoomFit.ts` is a
+pure module that shelf-packs each lane's real footprints — a tapped permanent is
+landscape, a stack of basics is one box, a host carries its auras — and returns the
+largest card width whose wrapped rows still fit a given height.
+`frontend/src/state/useZoomFit.ts` supplies the measurements and applies the
+answer through the `cardScale` prop that already ran `Table` → `PlayerMat` → `Lane`.
+
+A count→ratio table was the obvious alternative and it cannot work: it has no idea
+whether slack exists. There is 580px of lane budget at 2560×1278 and 160px at
+1600×700, and no function of card count knows the difference.
+
+**The measurements say the win is asymmetric, and it is a win in both directions:**
+
+| | 1600×950 | 2560×1278 | 1600×700 |
+|---|---|---|---|
+| board card, before | 87.4px | 110px | 68px |
+| board card, after | 88.9px | **150px** | **52px** |
+| lane budget | 305px | 584px | 160px |
+
+At 2560×1278 the board grows 36% into space that was simply being wasted. At
+1600×700 it *shrinks* 24%, because the honest answer on a cramped screen is smaller
+cards rather than a board you have to scroll. At 1600×950 it barely moves, and the
+reason is worth writing down: the empty board already needs 304px of a 305px budget.
+
+**Opponents scale with the viewer, never past it.** Their ceiling is the viewer's
+solved width times the existing seat ratio, so the designed proportion holds and a
+one-opponent pod with two lands cannot render cards bigger than your own. Each mat
+is solved for its own fullness and the fullest sets the size for the row.
+
+### The real ceiling on this, and it is not the solver
+
+**The orb columns own the vertical space.** At 1600×950 the viewer's `.mat__side` is
+330px — taller than its own lanes at 299px — and the compact orb is 297px. Together
+the two consume 627px of a 649px play area, and the cards get the remainder. That is
+why the gain at the most common viewport is ~2%: there is nothing to give.
+
+Worse, the orb's mana row grows as lands are played, so mid-game the viewer's mat
+can hide 150px of itself and no card size fixes it, because the overflow is not the
+cards. Making that column fluid — or moving the piles out of it — is the change that
+would unlock 1600×950, and it is a separate piece of work.
+
+### Deliberate divergence from the plan
+
+The plan called for a binary search. `boardHeight` turns out **not** to be monotone
+in card width: a tapped permanent is shorter but wider, so growing the cards can push
+a tall card onto the next row and leave a short row behind it, making the lane
+briefly *shorter*. Bisection over that returns a size that overflows, silently. It is
+a descending scan instead, and `tests/zoomFit.test.ts` pins the counter-example.
+
+The plan also called for rewriting `CardStack`'s container and `HandFan`'s slot pitch
+as `calc()` so they could animate. Neither was needed: `--card-w` is a registered
+`<length>`, so transitioning it animates every declaration that reads it, and a plain
+CSS transition on the two JS-set properties covers the rest.
+
+### Guarded by
+Four cases in `frontend/e2e/layout.spec.ts` — the zoom responds on a big display, no
+card leaves the 52–150px legibility band, the zoom never grows the board under the
+hand at any point in a game, and an opponent's board filling up does not move yours.
+`tests/zoomFit.test.ts` holds the wrap model to the *real rendered lane heights* at
+three viewports, which is the assertion that caught the model being wrong by 19px per
+front lane.
+
+The pre-existing "the viewer's bands do not move" case now pins the zoom
+(`startGame(page, { zoomLock: true })`). Progressive zoom moves those bands on
+purpose, so with it live that assertion would have had to be loosened past the point
+of catching the collapsing lane it exists for.
 
 ## CPU Improvements
 
@@ -79,16 +145,20 @@
   did it again several times a turn. The cost is one card height of empty slot
   on a mat that fills anyway.
 
-### Known limit
-Opponent mats are still content-sized, so an opponent's board growing can still
-translate your board down the screen. Reserving their lanes too was tried and
-measured, and it made things worse: a compact mat has about 158px of lane width
-against a 51px card, so an always-present global lane wrapped their creatures
-onto an extra row, grew the opponents row 20px and clipped the viewer's lands in
-a four-player pod. Fixing this properly means giving compact mats a fixed lane
-height and letting them scroll internally — the fade affordance on
-`.mat--compact .mat__lanes` already exists for it — rather than reserving width
-they do not have.
+### Known limit — fixed by Progressive Zoom
+Opponent mats used to be content-sized, so an opponent's board growing translated
+your board down the screen. The fix was the one this section predicted: compact
+mats now get a fixed lane height (`--pod-lanes-h`) and scroll inside it, using the
+fade affordance on `.mat--compact .mat__lanes` that already existed for it, rather
+than reserving width they do not have. Guarded by "an opponent's board filling up
+does not move the viewer's board" in `frontend/e2e/layout.spec.ts`.
+
+Reserving their *lanes* is still not done, and the measurement that argued against
+it still stands — a compact mat has about 158px of lane width against a 51px card,
+so an always-present global lane wrapped their creatures onto an extra row. What
+has changed is that it is no longer a layout-stability question, only a width one:
+hiding an empty lane cannot move the mat's box any more. `PlayerMat`'s `visible`
+is a pure width optimisation now.
 
 ### Deliberate divergence from the reference layout
 The reference diagram puts library / graveyard / exile in a strip beside the

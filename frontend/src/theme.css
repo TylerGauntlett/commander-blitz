@@ -37,6 +37,18 @@
 }
 
 /*
+ * Registered for the same reason, and it is the same trap: `--pod-lanes-h` is a
+ * `clamp()`, and an unregistered custom property hands `getComputedStyle` back the
+ * literal `clamp(...)` text. `state/useZoomFit.ts` reads this as the height budget
+ * a compact mat's lanes have to fit inside, so it needs a number.
+ */
+@property --pod-lanes-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 228px;
+}
+
+/*
  * `--type-ring` and `--type-ring-w` were registered here for the same reason,
  * so `e2e/greyscale.spec.ts` could read the card-type luminance ladder back as
  * numbers off the rendered board. The ladder went with the art-bleed redesign --
@@ -158,9 +170,41 @@
   --card-r: calc(var(--card-w) * 0.055);
   --card-h: calc(var(--card-w) * 1.4);
 
+  /*
+   * How tall a compact mat's lanes are. A fixed box they scroll inside.
+   *
+   * Keyed off viewport height and **nothing else**, which is the whole point.
+   * `.play` caps the opponent row with `fit-content(58%)`, so the row's height is
+   * a function of the pod mats' content height. If that content height depended
+   * on the pod card size -- as it did while the lanes were content-sized -- then
+   * solving the pod card size against the space available would be solving a
+   * value against a box that value defines. Pinning the box breaks the loop.
+   *
+   * It also closes the limit `docs/roadmap.md` recorded: an opponent's board
+   * growing used to translate the viewer's whole board down the screen. Now it
+   * scrolls in place, and `.mat--compact .mat__lanes` already had the fade
+   * affordance for exactly this.
+   *
+   * `vh` rather than px (a short laptop needs it smaller or the pod row eats the
+   * viewer's board), rather than a `calc()` off `--card-w` (that is the loop), and
+   * rather than a percentage (`.mat__lanes` has no definite-height parent to
+   * resolve against). The 150px floor is what keeps the row inside its 58% cap at
+   * 700px tall.
+   */
+  --pod-lanes-h: clamp(150px, 24vh, 300px);
+
   /* Motion */
   --t-fast: 120ms;
   --t-base: 220ms;
+  /*
+   * How long a zoom change takes.
+   *
+   * One clock for every consequence of `--card-w` moving, so the card, its type
+   * sizes, its lane's reserved height, its stack's container and its hand slot's
+   * pitch all arrive together. Split across two durations they visibly disagree
+   * mid-transition, which reads as a bug rather than as a resize.
+   */
+  --t-zoom: 240ms;
 
   /* Layering */
   --z-board: 1;

@@ -10,38 +10,50 @@
  * `layoutId` identity, and a Forest tapped for mana would pop instead of
  * turning. Closed and open are the same nodes at different offsets.
  *
- * The container's size never changes. Fanning used to animate `width` on an
- * in-flow flex item, which wrapped the lane onto new rows, grew the mat, and
- * flickered the scrollbar -- the whole board slid out from under the cursor for
- * the length of a spring, which made picking a blocker out of a stack
- * impossible. Only transforms move here, so neighbours never notice.
+ * The container's size never changes *for anything this component does*. Fanning
+ * used to animate `width` on an in-flow flex item, which wrapped the lane onto new
+ * rows, grew the mat, and flickered the scrollbar -- the whole board slid out from
+ * under the cursor for the length of a spring, which made picking a blocker out of
+ * a stack impossible. Only transforms move here, so neighbours never notice.
+ *
+ * One thing outside this component does resize it: the zoom (`state/useZoomFit.ts`)
+ * re-solves `cardWidth`, and `.cardstack` in cards.css transitions `width` and
+ * `height` so the container arrives with its cards instead of snapping ahead of
+ * them. That is not the case the paragraph above forbids. A zoom change reflows the
+ * lane by definition -- as a permanent entering play does -- and it cannot land
+ * mid-drag, because it is triggered by a game-state change or a viewport resize and
+ * a drag produces neither until it has ended. The rule that still holds without
+ * exception: **nothing driven by hover may change this container's size.**
  */
 
 import { motion } from "motion/react";
 import type { CardView } from "../../api/types";
+import {
+  ATTACH_X_RATIO,
+  ATTACH_Y_RATIO,
+  MAX_PLIES,
+  PLY_X,
+} from "../../logic/cardStackGeometry";
 import type { CardStackGroup } from "../../logic/stacking";
 import { settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { Card } from "./Card";
 
-/** How far each hidden ply peeks out from under the top card. */
-const PLY_X = 7;
-const PLY_Y = -4;
-/**
- * How far an aura or equipment peeks out from under the permanent it is on, as
- * a fraction of a card. Down and to the right, far enough that the attachment's
- * own title bar is readable and clickable -- an aura has to stay reachable, or
- * the only way to destroy one is the action list.
+/*
+ * `PLY_X`, `MAX_PLIES` and the two attachment ratios live in
+ * `logic/cardStackGeometry.ts`. They describe how much room a closed stack takes,
+ * and `logic/zoomFit.ts` has to predict that at a card width nothing has rendered
+ * at yet -- so they are shared rather than duplicated. What stays here is
+ * everything that is only about drawing.
  */
-const ATTACH_X_RATIO = 0.22;
-const ATTACH_Y_RATIO = 0.1;
+
+/** How far each hidden ply lifts as it peeks out. */
+const PLY_Y = -4;
 /**
  * Above every other member of this unit. Whatever the pointer is on has to be
  * whole: a half-covered card is one you cannot read and can only half click.
  */
 const TOP_Z = 39;
-/** Beyond this many, plies sit on top of each other: the badge carries the count. */
-const MAX_PLIES = 2;
 /** Fanned members overlap by this much of a card, so each stays clickable. */
 const FAN_STEP_RATIO = 0.58;
 /**
