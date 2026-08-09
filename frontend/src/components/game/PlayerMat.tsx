@@ -93,16 +93,29 @@ export function PlayerMat({
   const lanes = groupBattlefield(state, player.pid);
   const attachments = attachmentsFor(state, player.pid);
   /*
-   * Every lane is always rendered, on every mat, empty or not.
+   * The viewer keeps every lane, always. An opponent keeps only the ones
+   * holding something.
    *
-   * Opponents used to drop their empty lanes as noise. The noise was real, but
-   * the cost was worse: an opponent's first creature grew their mat, which grew
-   * the opponents row, which pushed your own board down the screen -- so the
-   * table moved under your cursor because of something happening on somebody
-   * else's turn. Reserving the slot is what makes a mat a fixed height, and a
-   * fixed height is what makes the board hold still.
+   * The viewer's mat is the one that has to hold still: it owns every drop
+   * target, and a collapsing lane meant playing your first creature shoved your
+   * land row down by a whole card and killing it shoved the row back up, under
+   * the cursor, mid-decision. Reserving all three costs one card height on a mat
+   * that will fill anyway.
+   *
+   * A compact mat cannot afford the same deal, and it was measured rather than
+   * assumed. Three opponents leave each mat about 158px of lane width against a
+   * 51px card, so the front band's 2:1 split gives creatures room for one card
+   * per row -- an always-present, usually-empty global lane wrapped an
+   * opponent's creatures onto a second row, which grew the opponents row and
+   * pushed the viewer's whole board down. Hiding their empty lanes buys that
+   * width back. The cost is that an opponent's first artifact still nudges the
+   * layout, which is what it did before any of this.
    */
-  const bands = mirrored ? [BACK_BAND, FRONT_BAND] : [FRONT_BAND, BACK_BAND];
+  const visible = (band: readonly LaneName[]) =>
+    compact ? band.filter((lane) => lanes[lane].length > 0) : band;
+  const bands = (mirrored ? [BACK_BAND, FRONT_BAND] : [FRONT_BAND, BACK_BAND])
+    .map((band) => ({ band, shown: visible(band) }))
+    .filter(({ shown }) => shown.length > 0);
 
   return (
     <section className={compact ? "mat mat--compact" : "mat"} data-testid={`mat-${player.pid}`}>
@@ -128,12 +141,21 @@ export function PlayerMat({
         />
       </div>
       <div className="mat__lanes">
-        {bands.map((band) => (
+        {bands.map(({ band, shown }) => (
           <div
             key={band === FRONT_BAND ? "front" : "back"}
-            className={band === FRONT_BAND ? "band band--front" : "band band--back"}
+            // A front band down to one lane takes the whole width: leaving the
+            // hidden lane's track in place would give away the third of a
+            // compact mat that hiding it was meant to reclaim.
+            className={[
+              "band",
+              band === FRONT_BAND ? "band--front" : "band--back",
+              shown.length === 1 ? "band--solo" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
-            {band.map((lane) => (
+            {shown.map((lane) => (
               <Lane
                 key={lane}
                 lane={lane}

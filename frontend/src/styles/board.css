@@ -168,7 +168,10 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
-.band--back {
+/* One lane in the band -- the back band always, a compact front band whose
+   other lane is empty and hidden. It takes the whole width. */
+.band--back,
+.band--solo {
   grid-template-columns: minmax(0, 1fr);
 }
 

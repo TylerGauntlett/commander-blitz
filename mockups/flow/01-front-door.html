@@ -1,0 +1,1702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Snap Keep — Front Door (flow 01)</title>
+<style>
+/* ============================================================================
+   FRONT DOOR -- home is a door, not a place
+   ----------------------------------------------------------------------------
+   THESIS. The menu round designed one screen and stopped. What it never
+   answered is where you are before that screen and what it costs to get to the
+   table. This direction answers it with the smallest possible claim: HOME IS A
+   DOOR. It holds a name, one primary action, and a way in for somebody who was
+   handed a code. It is not a dashboard, it does not have news on it, and you
+   are meant to leave it within two seconds.
+
+   Everything after that door happens on ONE surface. The catalogue, the invite
+   and the dossier all arrive as overlays over the pod -- never as navigations
+   -- so the table you are assembling is continuously visible behind whatever
+   you are doing to it. You cannot lose your place, because you never left it.
+
+   THE BIG IDEA, stealable on its own: THE READINESS STRIP. Four segments in the
+   footer, one per seat, filling as each seat locks in. Start is not a button
+   somebody may press whenever they feel like it -- it is that strip completing.
+   This is what fixes the menu round's one real asymmetry: in 03-pod-lobby.html
+   the guest locked in and the host did not, so the host's deck was the single
+   commitment on the screen that could be quietly changed after everybody else
+   had committed. Here you lock in like everybody else and the strip says so.
+
+   SECOND IDEA: THE CATALOGUE IS A TOOL, NOT A LIST. Twenty-five decks is past
+   the size where a list works, so the overlay opens with search, colour
+   identity, source and sort already on screen. Colour identity is first because
+   it is the filter a Commander player actually reaches for.
+
+   THE TRADE. It is the least surprising of the five, deliberately. It keeps the
+   information architecture the app already has -- a hero, a set of seats, a
+   commit control -- so it ports as new markup around surviving structure rather
+   than as a rewrite. If the brief's word is "modern", 03 and 05 are further from
+   here than this is; if the brief's word is "intuitive", this is the one that
+   asks the player to learn nothing.
+
+   Press `g` for greyscale. No build, no server, no network. Local ../art/ only.
+   ========================================================================== */
+
+/* Tokens ----------------------------------------------------------------- */
+
+:root {
+  --void-0:#0b0a16; --void-1:#141328; --void-2:#1d1b38;
+  --edge:rgba(150,140,255,.16); --edge-hi:rgba(170,160,255,.3);
+  --astral:#8f7fe8; --astral-hi:#c3b6ff;
+
+  --pane-bg:rgba(20,19,40,.6); --pane-well:rgba(13,12,28,.78);
+  --pane-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45);
+
+  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
+  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-ink:#1a1a1a;
+
+  --danger:#ff5c5c; --gold:#ffd479; --live:#5ce08a;
+  --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
+
+  --card-w:clamp(128px, 18vh, 176px);
+  --card-r:calc(var(--card-w) * .055);
+  --font:"Segoe UI", Inter, system-ui, sans-serif;
+}
+
+.f-W { --f-hi:#f6eed4; --f-lo:#b9ad86; --fb:#d8cfa8; }
+.f-U { --f-hi:#a9d2ec; --f-lo:#2f6a95; --fb:#4a86b8; }
+.f-B { --f-hi:#b6aeac; --f-lo:#2e282b; --fb:#4c4550; }
+.f-R { --f-hi:#f0a48b; --f-lo:#a4432f; --fb:#b8624a; }
+.f-G { --f-hi:#a9cfa2; --f-lo:#2f6b41; --fb:#4e8a5c; }
+.f-C { --f-hi:#d3d6da; --f-lo:#787e86; --fb:#8a8f96; }
+.f-gold { --f-hi:#eed99c; --f-lo:#9c7a24; --fb:#b99a45; }
+
+* { box-sizing:border-box; }
+html,body,#root { height:100%; margin:0; }
+html.grey { filter:grayscale(1); }
+body {
+  background:
+    radial-gradient(66% 46% at 50% 30%, rgba(143,127,232,.15) 0%, transparent 64%),
+    radial-gradient(70% 50% at 50% 104%, rgba(90,190,220,.08) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 66%);
+  color:var(--text); font-family:var(--font); font-size:14px; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select { font:inherit; color:inherit; }
+button { cursor:pointer; background:none; border:0; }
+.tabular { font-variant-numeric:tabular-nums; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-thumb { background:var(--edge); border-radius:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+
+/* THE DOOR ---------------------------------------------------------------- */
+
+.door { position:relative; height:100%; display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden; }
+
+/* The backdrop is one commander crop at 30px of blur. It is 626px of source
+   stretched across a 2560px viewport, which is a 4x upscale -- allowed, and only
+   allowed, because it is blurred ON PURPOSE and carries no detail. Everything
+   crisp on this screen is type or a thumbnail at or below 1x. */
+.door__wash {
+  position:absolute; inset:-10%; z-index:0; pointer-events:none;
+  background-size:cover; background-position:50% 38%;
+  filter:blur(30px) saturate(.85); opacity:.72;
+}
+.door__veil {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:
+    radial-gradient(46% 44% at 50% 46%, rgba(11,10,22,.82) 0%, rgba(11,10,22,.6) 58%, rgba(11,10,22,.34) 100%),
+    linear-gradient(180deg, rgba(11,10,22,.72) 0%, rgba(11,10,22,.3) 34%, rgba(11,10,22,.55) 72%, rgba(11,10,22,.94) 100%);
+}
+
+.door__top { position:relative; z-index:2; display:flex; align-items:center; gap:12px; padding:20px 28px; }
+.door__mid { position:relative; z-index:2; display:grid; place-items:center; min-height:0; padding:0 28px; }
+.door__bot { position:relative; z-index:2; padding:0 28px 22px; }
+
+.brand { display:flex; align-items:baseline; gap:10px; }
+.brand__mark { font-size:15px; font-weight:800; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); }
+.brand__sub { font-size:11px; color:var(--text-faint); letter-spacing:.04em; }
+.door__spacer { flex:1; }
+.door__ver { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+
+.hero { display:grid; justify-items:center; gap:0; text-align:center; max-width:640px; }
+.hero__mark {
+  margin:0; font-size:clamp(46px, 7.4vh, 78px); font-weight:800; line-height:1;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
+  text-shadow:0 0 42px rgba(255,212,121,.22);
+}
+.hero__rule { width:74px; height:2px; margin:18px 0 16px; background:linear-gradient(90deg, transparent, var(--edge-hi), transparent); }
+.hero__line { margin:0; font-size:15px; line-height:1.6; color:var(--text-dim); }
+.hero__acts { display:flex; align-items:center; gap:14px; margin-top:30px; flex-wrap:wrap; justify-content:center; }
+
+.big {
+  padding:16px 34px; border-radius:12px; flex:none;
+  background:linear-gradient(180deg,#ffd98c,#e0a63f 55%,#b87c1c); color:#1b0f05;
+  font-size:16px; font-weight:800; letter-spacing:.04em;
+  box-shadow:0 4px 0 #7d5310, 0 0 30px rgba(224,166,63,.26);
+}
+.big:active { transform:translateY(2px); box-shadow:0 2px 0 #7d5310, 0 0 30px rgba(224,166,63,.26); }
+.big:disabled { opacity:.45; cursor:not-allowed; box-shadow:0 4px 0 #4a3a18; }
+
+.or { font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint); }
+
+.join { display:flex; align-items:center; gap:0; border:1px solid var(--edge); border-radius:10px; background:rgba(8,7,18,.72); overflow:hidden; }
+.join__in {
+  width:150px; padding:14px 14px; border:0; background:none; font-size:14px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+}
+.join__in::placeholder { color:var(--text-faint); font-weight:600; letter-spacing:.1em; }
+.join__in:focus { outline:none; }
+.join:focus-within { border-color:var(--gold); }
+.join__go { padding:14px 18px; border-left:1px solid var(--edge); color:var(--text-dim); font-size:13px; font-weight:700; }
+.join__go:hover { color:var(--text); background:rgba(143,127,232,.1); }
+
+/* The shelf advertises the catalogue with real art at real size. Each thumb is
+   118px of a 626px crop -- 0.19x, nowhere near the ceiling -- so it is the one
+   crisp picture on a screen whose backdrop is deliberately not. */
+.shelf { display:grid; gap:9px; justify-items:center; }
+.shelf__row { display:flex; gap:9px; }
+.shelf__t {
+  width:118px; height:74px; border-radius:8px; overflow:hidden; flex:none;
+  border:1px solid var(--edge); box-shadow:0 4px 14px rgba(0,0,0,.4);
+}
+.shelf__t img { width:100%; height:100%; object-fit:cover; object-position:50% 26%; display:block; }
+.shelf__cap { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-faint); }
+.shelf__cap b { color:var(--text-dim); font-weight:750; }
+.link { color:var(--text-dim); text-decoration:underline; text-underline-offset:3px; font-size:11.5px; }
+.link:hover { color:var(--text); }
+
+/* THE POD ----------------------------------------------------------------- */
+
+.pod { position:relative; display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100%; overflow:hidden; }
+
+.head {
+  display:flex; align-items:center; gap:14px; padding:12px 24px;
+  border-bottom:1px solid var(--edge);
+  background:linear-gradient(180deg, rgba(143,127,232,.12), transparent);
+}
+.head__spacer { flex:1; }
+
+.codechip {
+  display:flex; align-items:center; gap:9px; padding:6px 8px 6px 12px;
+  border:1px solid var(--edge); border-radius:9px; background:var(--pane-well);
+}
+.codechip__l { font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.codechip__v { font-size:13.5px; font-weight:800; letter-spacing:.1em; color:var(--astral-hi); }
+
+/* The table --------------------------------------------------------------- */
+
+.table { position:relative; display:grid; grid-template-rows:auto minmax(0,1fr); gap:8px; min-height:0; padding:14px 24px 0; }
+.table__label { display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint); }
+.table__hint { margin-left:auto; text-transform:none; letter-spacing:.02em; font-size:11px; font-weight:600; }
+
+.felt { position:relative; min-height:0; overflow:hidden; display:grid; place-items:center; }
+/* The felt exists so the space around the seats reads as a TABLE and not as
+   void -- which is the exact complaint mockups/README.md makes about the board,
+   and it would be embarrassing to reproduce it here. Its far edge runs behind
+   the seats and its near edge runs off the bottom of the stage, into the strip
+   where you are sitting. */
+.felt__ring {
+  position:absolute; left:50%; bottom:-42%; transform:translateX(-50%);
+  width:min(1420px, 96%); height:152%; pointer-events:none;
+  border:1px solid var(--edge-hi); border-bottom:0; border-radius:50% 50% 0 0 / 58% 58% 0 0;
+  background:
+    radial-gradient(112% 88% at 50% 100%, rgba(143,127,232,.3) 0%, rgba(143,127,232,.09) 46%, transparent 72%),
+    linear-gradient(180deg, rgba(38,35,72,.85), rgba(20,19,40,.55) 46%, rgba(13,12,28,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 -18px 60px rgba(143,127,232,.07);
+}
+.chairs { position:relative; z-index:2; display:flex; align-items:flex-start; justify-content:center; gap:20px; max-height:100%; padding:4px 0; }
+
+/* A seat ------------------------------------------------------------------ */
+
+.seat {
+  position:relative; width:clamp(234px, 22vw, 356px); min-width:0; overflow:hidden;
+  display:grid; grid-template-rows:auto auto minmax(0,1fr) auto;
+  border:1px solid var(--edge); border-radius:13px;
+  background:var(--pane-bg); box-shadow:var(--pane-shadow);
+}
+/* The arc: the far seat sits highest, the two beside it sit lower, because that
+   is where they would be around a round table seen from your chair. */
+.seat--arc { margin-top:46px; }
+.seat--human { border-color:rgba(92,224,138,.4); }
+.seat--open { border-style:dashed; border-color:var(--edge-hi); }
+.seat--ready { box-shadow:var(--pane-shadow), 0 0 0 1px rgba(255,212,121,.34); }
+
+.seat__top { position:relative; }
+.seat__art { display:block; width:100%; height:clamp(100px, 19vh, 236px); object-fit:cover; object-position:50% 24%; }
+/* The hatch plate cards.css draws for a card with no printing. An unknown deck
+   and an unprinted card are the same fact, so they look the same. Darkened from
+   the card-scale #6b6152 because this field is 236px tall rather than 60px, and
+   at that size the original reads as a decision rather than as an absence. */
+.seat__art--none { background:repeating-linear-gradient(135deg, rgba(0,0,0,.22) 0 7px, transparent 7px 14px), #443e34; }
+.seat__lock {
+  position:absolute; left:0; right:0; top:38%; z-index:2; text-align:center; pointer-events:none;
+  font-size:10px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.45);
+}
+.seat__scrim {
+  position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(0deg, rgba(13,12,28,.95) 0%, rgba(13,12,28,.3) 58%, rgba(13,12,28,0) 100%);
+}
+.seat__no {
+  position:absolute; top:8px; left:10px; z-index:2;
+  font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.82); text-shadow:0 1px 3px rgba(0,0,0,.9);
+}
+.seat__x {
+  position:absolute; top:6px; right:6px; z-index:2; width:24px; height:24px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.28); background:rgba(0,0,0,.5); color:rgba(255,255,255,.75); font-size:12px;
+}
+.seat__x:hover { border-color:var(--danger); color:var(--danger); }
+.seat__stamp {
+  position:absolute; z-index:2; bottom:8px; right:8px; padding:3px 9px; border-radius:999px;
+  border:1px solid var(--gold); background:rgba(11,10,22,.8);
+  font-size:9px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--gold);
+}
+
+.seat__deck { padding:10px 12px 0; }
+.seat__deckn { font-size:12.5px; font-weight:750; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.seat__deckn--sealed { color:var(--text-faint); font-style:italic; font-weight:600; }
+.seat__meta { display:flex; align-items:center; gap:5px; margin-top:5px; flex-wrap:wrap; }
+
+.seat__body { padding:10px 12px 0; min-height:0; }
+.seat__who { display:flex; align-items:baseline; gap:8px; }
+.seat__n { font-size:15px; font-weight:800; }
+.seat__tag { font-size:10.5px; color:var(--text-faint); }
+.seat__line { margin:6px 0 0; font-size:11.5px; line-height:1.5; color:var(--text-dim); }
+
+.caps { display:grid; gap:4px; margin-top:9px; }
+.cap { display:flex; align-items:center; gap:7px; font-size:10px; color:var(--text-faint); }
+.cap--on { color:var(--text-dim); }
+.cap__lamp { width:8px; height:8px; border-radius:999px; border:1px solid var(--edge-hi); flex:none; }
+.cap--on .cap__lamp { background:var(--gold); border-color:var(--gold); }
+
+.seat__foot { display:flex; gap:6px; padding:10px 12px 12px; }
+.seat__foot .btn { flex:1; text-align:center; min-width:0; }
+
+/* An empty chair. Two ways to fill it, offered together and never behind a mode
+   switch -- that choice IS the multiplayer feature. */
+.chair {
+  width:clamp(196px, 17vw, 278px); align-self:start;
+  display:grid; justify-items:center; align-content:center; gap:8px;
+  padding:30px 14px; border:1px dashed var(--edge-hi); border-radius:13px;
+  background:rgba(13,12,28,.4); color:var(--text-dim); text-align:center;
+}
+.chair--arc { margin-top:46px; }
+.chair:hover { border-color:var(--gold); }
+.chair__plus { font-size:26px; line-height:1; color:var(--text-faint); }
+.chair__t { font-size:12.5px; font-weight:700; }
+.chair__s { font-size:10.5px; color:var(--text-faint); line-height:1.45; }
+.chair__acts { display:grid; gap:6px; width:100%; margin-top:4px; }
+
+/* Your edge of the table -------------------------------------------------- */
+
+.mine {
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:13px 24px 15px;
+  border-top:1px solid var(--edge); background:rgba(11,10,22,.8);
+}
+.mine__seat {
+  display:grid; grid-template-columns:56px minmax(0,1fr); gap:11px; align-items:center;
+  padding:8px 14px 8px 8px; border:1px solid rgba(255,212,121,.4); border-radius:11px;
+  background:var(--pane-well); min-width:262px;
+}
+.mine__seat--locked { border-color:var(--gold); box-shadow:0 0 0 1px rgba(255,212,121,.28); }
+.mine__art { width:56px; height:56px; border-radius:8px; object-fit:cover; object-position:50% 26%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.5); }
+.mine__l { font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.mine__n { font-size:14px; font-weight:800; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mine__meta { display:flex; align-items:center; gap:5px; margin-top:4px; }
+.mine__spacer { flex:1; }
+
+/* THE READINESS STRIP -- the idea. Start is this completing, not a button. */
+.ready { display:grid; gap:6px; }
+.ready__l { display:flex; align-items:center; gap:8px; font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.ready__n { color:var(--text-dim); }
+.ready__track { display:flex; gap:4px; }
+.ready__seg {
+  width:46px; height:8px; border-radius:3px; border:1px solid var(--edge-hi); background:transparent;
+  position:relative; transition:background .18s ease, border-color .18s ease;
+}
+.ready__seg--on { background:var(--gold); border-color:var(--gold); }
+.ready__seg--wait { border-style:dashed; }
+.ready__seg--none { opacity:.3; }
+.ready__why { font-size:10.5px; line-height:1.4; color:var(--text-faint); max-width:34ch; }
+
+.play {
+  padding:15px 28px; border-radius:11px; flex:none;
+  background:linear-gradient(180deg,#ffd98c,#e0a63f 55%,#b87c1c); color:#1b0f05;
+  font-size:15px; font-weight:800; letter-spacing:.04em;
+  box-shadow:0 4px 0 #7d5310, 0 0 26px rgba(224,166,63,.28);
+}
+.play:active { transform:translateY(2px); box-shadow:0 2px 0 #7d5310, 0 0 26px rgba(224,166,63,.28); }
+.play:disabled { opacity:.45; cursor:not-allowed; box-shadow:0 4px 0 #4a3a18; }
+
+.lock {
+  padding:13px 22px; border-radius:10px; flex:none; border:1px solid var(--gold);
+  color:var(--gold); font-size:13.5px; font-weight:800; letter-spacing:.03em; background:rgba(255,212,121,.07);
+}
+.lock:hover { background:rgba(255,212,121,.15); }
+.lock--on { border-color:var(--edge-hi); color:var(--text-dim); background:none; font-weight:700; }
+.lock--on:hover { color:var(--text); background:rgba(143,127,232,.1); }
+.lock:disabled { opacity:.4; cursor:not-allowed; }
+
+/* THE CATALOGUE ----------------------------------------------------------- */
+
+.veil { position:fixed; inset:0; z-index:420; background:rgba(6,5,16,.68); }
+
+.cat {
+  position:fixed; z-index:430; inset:34px; max-width:1520px; margin:0 auto;
+  display:grid; grid-template-rows:auto auto minmax(0,1fr) auto; min-height:0;
+  border:1px solid var(--edge-hi); border-radius:16px;
+  background:linear-gradient(180deg,#1b1936,#0d0c1c);
+  box-shadow:0 30px 90px rgba(0,0,0,.7);
+}
+.cat__head { display:flex; align-items:center; gap:12px; padding:15px 18px 13px; border-bottom:1px solid var(--edge); }
+.cat__t { font-size:16px; font-weight:800; }
+.cat__for { font-size:11.5px; color:var(--text-faint); }
+.cat__x { margin-left:auto; width:28px; height:28px; border-radius:999px; border:1px solid var(--edge); color:var(--text-dim); flex:none; }
+.cat__x:hover { border-color:var(--edge-hi); color:var(--text); }
+
+.filters { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:11px 18px; border-bottom:1px solid var(--edge); background:rgba(9,8,20,.4); }
+.search { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid var(--edge); border-radius:9px; background:rgba(8,7,18,.8); min-width:230px; }
+.search:focus-within { border-color:var(--gold); }
+.search__i { flex:1; min-width:0; border:0; background:none; font-size:12.5px; }
+.search__i:focus { outline:none; }
+.search__i::placeholder { color:var(--text-faint); }
+.search__g { color:var(--text-faint); font-size:12px; }
+
+.fgroup { display:flex; align-items:center; gap:7px; }
+.fgroup__l { font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+
+/* Colour filter buttons are the mana pips themselves at full size, hollow when
+   off. In greyscale the letter is what remains, which is the point of drawing
+   pips with letters in them at all. */
+.cbtn {
+  width:26px; height:26px; border-radius:999px; display:grid; place-items:center;
+  border:1px solid var(--edge-hi); background:rgba(9,8,20,.5);
+  font-size:11px; font-weight:800; color:var(--text-faint);
+}
+.cbtn:hover { border-color:var(--text-dim); color:var(--text-dim); }
+.cbtn--on { color:var(--mana-ink); border-color:transparent; box-shadow:inset 0 -1px 1px rgba(0,0,0,.25); }
+.cbtn--on.cbtn--W { background:var(--mana-W); } .cbtn--on.cbtn--U { background:var(--mana-U); }
+.cbtn--on.cbtn--B { background:var(--mana-B); } .cbtn--on.cbtn--R { background:var(--mana-R); }
+.cbtn--on.cbtn--G { background:var(--mana-G); }
+
+.seg { display:flex; border:1px solid var(--edge); border-radius:8px; overflow:hidden; }
+.seg__b { padding:7px 13px; font-size:11.5px; font-weight:650; color:var(--text-faint); border-right:1px solid var(--edge); }
+.seg__b:last-child { border-right:0; }
+.seg__b:hover { color:var(--text); }
+.seg__b--on { background:rgba(255,212,121,.14); color:var(--gold); }
+
+.sel { padding:8px 11px; border:1px solid var(--edge); border-radius:8px; background:rgba(8,7,18,.8); font-size:12px; color:var(--text-dim); }
+.sel:focus { outline:none; border-color:var(--gold); }
+.filters__spacer { flex:1; }
+.filters__n { font-size:11.5px; color:var(--text-faint); }
+
+.cat__body { min-height:0; overflow:auto; padding:14px 18px 18px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(228px, 1fr)); gap:12px; }
+
+/* A catalogue tile. The art box is 100% of a ~250px column -- 0.4x of a 626px
+   crop, comfortably under the ceiling, which is exactly why the tile is this
+   size and not bigger. */
+.tile {
+  position:relative; display:grid; grid-template-rows:auto auto minmax(0,1fr) auto; text-align:left;
+  min-width:0; overflow:hidden; border:1px solid var(--edge); border-radius:12px;
+  background:var(--pane-bg); color:var(--text); box-shadow:var(--pane-shadow);
+}
+.tile:hover { border-color:var(--edge-hi); }
+.tile--on { border-color:var(--gold); box-shadow:var(--pane-shadow), 0 0 0 1px rgba(255,212,121,.4); }
+.tile__top { position:relative; }
+.tile__art { display:block; width:100%; height:96px; object-fit:cover; object-position:50% 24%; }
+.tile__scrim { position:absolute; inset:0; background:linear-gradient(0deg, rgba(13,12,28,.9), rgba(13,12,28,0) 68%); pointer-events:none; }
+.tile__src {
+  position:absolute; top:7px; left:8px; padding:2px 7px; border-radius:999px;
+  background:rgba(11,10,22,.78); border:1px solid var(--edge-hi);
+  font-size:8.5px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:var(--text-dim);
+}
+.tile__tick {
+  position:absolute; top:7px; right:8px; width:20px; height:20px; border-radius:999px; display:grid; place-items:center;
+  background:var(--gold); color:#1b0f05; font-size:11px; font-weight:800;
+}
+.tile__main { padding:9px 11px 0; min-width:0; }
+.tile__n { font-size:13px; font-weight:750; line-height:1.25; }
+.tile__s { font-size:10.5px; color:var(--text-faint); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile__meta { display:flex; align-items:center; gap:5px; margin-top:6px; flex-wrap:wrap; }
+.tile__bars { padding:9px 11px 0; display:grid; gap:4px; align-content:start; }
+.tile__foot { display:flex; align-items:center; gap:8px; padding:9px 11px 10px; }
+.tile__more { margin-left:auto; font-size:10.5px; color:var(--text-faint); text-decoration:underline; text-underline-offset:2px; }
+.tile__more:hover { color:var(--text); }
+
+.empty { padding:44px 20px; text-align:center; color:var(--text-faint); font-size:13px; line-height:1.6; }
+
+.cat__foot { display:flex; align-items:center; gap:12px; padding:12px 18px; border-top:1px solid var(--edge); flex-wrap:wrap; }
+.imp { display:flex; align-items:center; gap:8px; flex:1; min-width:300px; }
+.imp__l { font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); flex:none; }
+.imp__in { flex:1; min-width:0; padding:9px 11px; border:1px solid var(--edge); border-radius:8px; background:rgba(8,7,18,.8); font-size:12px; }
+.imp__in::placeholder { color:var(--text-faint); }
+.imp__in:focus { outline:none; border-color:var(--gold); }
+.imp__note { font-size:10.5px; line-height:1.4; color:var(--text-faint); max-width:38ch; }
+.imp__note--err { color:var(--danger); }
+.imp__note--busy { color:var(--astral-hi); }
+
+/* THE DOSSIER — a slide-over, so the pod stays visible beside it ----------- */
+
+.over {
+  position:fixed; z-index:460; right:0; top:0; bottom:0; width:min(660px, 96vw);
+  display:grid; grid-template-rows:auto minmax(0,1fr) auto; min-height:0;
+  border-left:1px solid var(--edge); background:linear-gradient(180deg,#1b1936,#0d0c1c);
+  box-shadow:-26px 0 70px rgba(0,0,0,.7);
+}
+.over__head { display:flex; align-items:center; gap:10px; padding:15px 18px 13px; border-bottom:1px solid var(--edge); }
+.over__n { font-size:18px; font-weight:800; min-width:0; }
+.over__x { margin-left:auto; width:28px; height:28px; border-radius:999px; border:1px solid var(--edge); color:var(--text-dim); flex:none; }
+.over__x:hover { border-color:var(--edge-hi); color:var(--text); }
+.over__body { min-height:0; overflow:auto; padding:16px 18px; }
+.over__foot { display:flex; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--edge); }
+.over__foot .play { padding:11px 22px; font-size:14px; }
+
+.dos__top { display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; }
+.dos__card { display:grid; gap:7px; justify-items:center; align-content:start; }
+.dos__artist { font-size:9.5px; color:var(--text-faint); text-align:center; max-width:var(--card-w); }
+.dos__h { margin:16px 0 7px; font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.dos__h:first-child { margin-top:0; }
+.dos__p { margin:0; font-size:12.5px; line-height:1.6; color:var(--text-dim); }
+.dos__tags { display:flex; flex-wrap:wrap; gap:6px; }
+.dos__bars { display:grid; gap:5px; margin-top:10px; }
+.dos__sigs { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:9px; }
+.sig { display:grid; grid-template-columns:56px minmax(0,1fr); gap:9px; align-items:center; }
+.sig__art { width:56px; height:44px; border-radius:5px; object-fit:cover; object-position:50% 30%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.45); }
+.sig__n { font-size:11.5px; font-weight:700; }
+.sig__why { font-size:10.5px; line-height:1.4; color:var(--text-faint); margin-top:2px; }
+
+/* THE INVITE -------------------------------------------------------------- */
+
+.inv {
+  position:fixed; z-index:470; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(452px, 94vw); border:1px solid var(--edge-hi); border-radius:15px;
+  background:linear-gradient(180deg,#1b1936,#0d0c1c); box-shadow:0 30px 90px rgba(0,0,0,.7);
+}
+.inv__head { display:flex; align-items:center; gap:10px; padding:15px 18px 12px; border-bottom:1px solid var(--edge); }
+.inv__t { font-size:15px; font-weight:800; }
+.inv__x { margin-left:auto; width:27px; height:27px; border-radius:999px; border:1px solid var(--edge); color:var(--text-dim); }
+.inv__x:hover { border-color:var(--edge-hi); color:var(--text); }
+.inv__body { padding:18px; display:grid; gap:14px; }
+.inv__l { font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:7px; }
+.inv__code {
+  display:flex; align-items:center; gap:10px; padding:14px 16px;
+  border:1px solid var(--edge); border-radius:11px; background:rgba(8,7,18,.72);
+}
+.inv__codev { flex:1; min-width:0; font-size:25px; font-weight:800; letter-spacing:.16em; color:var(--astral-hi); }
+.inv__linkv { flex:1; min-width:0; font-size:12.5px; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.inv__note { margin:0; font-size:11.5px; line-height:1.55; color:var(--text-faint); }
+.inv__foot { padding:0 18px 16px; }
+
+/* Shared vocabulary ------------------------------------------------------- */
+
+.btn { padding:8px 13px; border:1px solid var(--edge-hi); border-radius:8px; background:rgba(20,19,40,.6); color:var(--text); font-size:12px; font-weight:650; white-space:nowrap; }
+.btn:hover { border-color:var(--gold); }
+.btn--wide { width:100%; padding:11px; text-align:center; }
+.btn--live { border-color:rgba(92,224,138,.45); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn:disabled:hover { border-color:var(--edge-hi); }
+.ghost { padding:9px 14px; border-radius:7px; color:var(--text-faint); font-size:13px; font-weight:500; }
+.ghost:hover { color:var(--text); }
+
+.pip {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:16px; height:16px; padding:0 4px; border-radius:999px;
+  font-size:10px; font-weight:800; font-style:normal; color:var(--mana-ink);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.25);
+}
+.pip--W { background:var(--mana-W); } .pip--U { background:var(--mana-U); }
+.pip--B { background:var(--mana-B); } .pip--R { background:var(--mana-R); }
+.pip--G { background:var(--mana-G); } .pip--C { background:var(--mana-C); }
+
+.chip { padding:3px 8px; border:1px solid var(--edge-hi); border-radius:999px; font-size:10px; font-weight:650; color:var(--text-dim); background:rgba(9,8,20,.5); }
+.count { font-size:10.5px; color:var(--text-faint); }
+.badge { padding:2px 7px; border:1px dashed var(--edge-hi); border-radius:999px; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); }
+.badge--partial { border-style:solid; border-color:rgba(255,212,121,.55); color:var(--gold); }
+.badge--live { border-style:solid; border-color:rgba(92,224,138,.5); color:var(--live); }
+
+.bar { display:flex; align-items:center; gap:7px; }
+.bar__label { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); min-width:88px; }
+.bar--tiny .bar__label { min-width:74px; font-size:9px; letter-spacing:.06em; }
+.bar__track { display:flex; gap:2px; }
+.bar__seg { width:13px; height:5px; border-radius:2px; border:1px solid var(--edge-hi); background:transparent; }
+.bar--tiny .bar__seg { width:11px; height:4px; }
+.bar__seg--on { background:var(--text-dim); border-color:var(--text-dim); }
+
+.face {
+  position:relative; width:var(--card-w); aspect-ratio:1 / 1.4; overflow:hidden;
+  border-radius:var(--card-r); border:2px solid var(--fb);
+  background:linear-gradient(160deg, var(--f-hi), var(--f-lo));
+  display:flex; flex-direction:column; justify-content:space-between;
+  box-shadow:0 1px 2px rgba(0,0,0,.5), 0 6px 14px rgba(0,0,0,.35);
+  color:#fff; flex:none;
+}
+.face__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.face__art--none { background:repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 6px, transparent 6px 12px), #6b6152; }
+.face__head, .face__foot { position:relative; z-index:2; padding:6px 7px; }
+.face__head { background:linear-gradient(180deg, rgba(0,0,0,.82), rgba(0,0,0,.57) 55%, rgba(0,0,0,0)); }
+.face__foot { background:linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.71) 58%, rgba(0,0,0,0)); }
+.face__title { display:flex; align-items:flex-start; gap:5px; }
+.face__name { flex:1; font-size:11px; font-weight:750; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.85); }
+.face__cost { display:flex; gap:2px; flex:none; }
+.face__type { margin-top:3px; font-size:8.5px; color:rgba(255,255,255,.86); text-shadow:0 1px 2px rgba(0,0,0,.85); }
+.face__rules { margin:0 0 5px; font-size:8.5px; line-height:1.38; color:rgba(255,255,255,.92); text-shadow:0 1px 2px rgba(0,0,0,.85); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.face__base { display:flex; align-items:flex-end; gap:6px; }
+.face__kw { flex:1; font-size:8.5px; font-weight:700; color:rgba(255,255,255,.9); text-shadow:0 1px 2px rgba(0,0,0,.85); }
+.face__pt { font-size:12px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,.9); }
+
+.curve__cols { display:flex; align-items:flex-end; gap:4px; height:54px; }
+.curve__bar { flex:1; background:var(--text-faint); border-radius:2px 2px 0 0; min-height:2px; }
+.curve__axis { display:flex; gap:4px; margin-top:4px; }
+.curve__n { flex:1; text-align:center; font-size:9px; color:var(--text-faint); }
+.curve__none { padding:13px; border:1px dashed var(--edge-hi); border-radius:9px; font-size:11.5px; line-height:1.5; color:var(--text-faint); text-align:center; }
+.note { margin-top:8px; padding:10px 12px; border-left:2px solid var(--edge-hi); border-radius:0 7px 7px 0; background:rgba(13,12,28,.55); font-size:11.5px; line-height:1.55; color:var(--text-faint); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ===========================================================================
+   Content, inlined from _flow.js -- the readable master. Not linked, because a
+   <script src> does not load from file:// and every mockup opens standalone.
+   =========================================================================== */
+
+const CAPS = [
+  { id: "combat", n: "Combat math" },
+  { id: "removal", n: "Removal & targeting" },
+  { id: "seq", n: "Mana & sequencing" },
+];
+
+const DIFFICULTY = [
+  { id: "goldfish", n: "Goldfish", tag: "Plays solitaire", caps: [], agent: "random",
+    line: "Takes legal actions at random. It will not block you, race you, or notice you exist." },
+  { id: "apprentice", n: "Apprentice", tag: "Knows the basics", caps: ["combat"], rec: true,
+    line: "Blocks when the trade is safe, attacks when the attack is free, and plays to its curve." },
+  { id: "duelist", n: "Duelist", tag: "Plays to win", caps: ["combat", "removal"], agent: "heuristic",
+    line: "Spends removal on your best threat, keeps a blocker home, and counts to lethal." },
+  { id: "archmage", n: "Archmage", tag: "Plays around you", caps: ["combat", "removal", "seq"],
+    line: "Sequences its mana, holds up interaction, and plays around the cards you left mana open for." },
+];
+
+const BAR_LABELS = [
+  ["speed", "Speed"], ["complexity", "Complexity"], ["interaction", "Interaction"],
+  ["resilience", "Resilience"], ["pilot", "Demands on you"],
+];
+
+const COLOURS = [["W", "White"], ["U", "Blue"], ["B", "Black"], ["R", "Red"], ["G", "Green"]];
+
+const SORTS = [
+  { id: "name", n: "Name" },
+  { id: "speed", n: "Fastest" },
+  { id: "complexity", n: "Most complex" },
+  { id: "pilot", n: "Easiest to pilot", invert: true },
+];
+
+const DECKS = [
+  { id: "aesi", name: "Aesi, Tyrant of Gyre Strait", short: "Aesi",
+    ci: ["G", "U"], guild: "Simic", cards: 100, lands: 37, source: "precon",
+    cmd: { n: "Aesi, Tyrant of Gyre Strait", cost: "4GU", tl: "Legendary Creature — Serpent",
+      t: "creature", f: "gold", pt: "5/5", kw: "Trample",
+      rules: "Trample. Whenever you play a land, draw a card. You may play an additional land on each of your turns.",
+      art: "aesi-tyrant-of-gyre-strait", artist: "Viktor Titov" },
+    tags: ["Ramp", "Landfall", "Card draw"],
+    blurb: "Simic ramp and landfall. Plays extra lands, turns each one into cards off Aesi and Tatyova, and closes with large trampling threats.",
+    strategy: "The first four turns are spent almost entirely on mana: a dork, a rock, a land-search sorcery, a second land drop. Aesi lands on turn five or six and converts the whole plan into cards — every land after that draws one, and Aesi lets you play two. By turn eight the deck is drawing three or four cards a turn off lands alone, and the payoffs stop being incremental: Avenger of Zendikar turns a board of lands into a board of bodies, Rampaging Baloths turns each new land into a 4/4. It wins by having more of everything than the table and swinging with trample.",
+    bars: { speed: 2, complexity: 3, interaction: 2, resilience: 3, pilot: 2 },
+    curve: [9, 13, 18, 7, 7, 3, 5],
+    signature: [
+      { n: "Tatyova, Benthic Druid", art: "tatyova-benthic-druid", why: "A second Aesi. Every land is a card and a life." },
+      { n: "Avenger of Zendikar", art: "avenger-of-zendikar", why: "Turns thirty-seven lands into a board in one cast." },
+      { n: "Rampaging Baloths", art: "rampaging-baloths", why: "Every land after this one is a 4/4." },
+      { n: "Explosive Vegetation", art: "explosive-vegetation", why: "Two lands at once, and lands are the engine." },
+    ],
+    engine: "playable", swaps: 5,
+    swapNote: "5 cards swapped for engine-supported equivalents — Scute Swarm, Rhystic Study, Cyclonic Rift, Ancient Greenwarden and Oracle of Mul Daya each need a rules feature the engine does not implement yet." },
+
+  { id: "edgar", name: "Edgar Markov", short: "Edgar",
+    ci: ["W", "B", "R"], guild: "Mardu", cards: 100, lands: 37, source: "precon",
+    cmd: { n: "Edgar Markov", cost: "3RWB", tl: "Legendary Creature — Vampire Knight",
+      t: "creature", f: "gold", pt: "4/4", kw: "First strike",
+      rules: "First strike. Eminence — Whenever you cast another Vampire spell, if Edgar Markov is in the command zone or on the battlefield, create a 1/1 black Vampire creature token. Whenever Edgar Markov attacks, put a +1/+1 counter on each Vampire you control.",
+      art: "edgar-markov", artist: "Volkan Baǵa" },
+    tags: ["Aggro", "Tokens", "Drain"],
+    blurb: "Mardu vampire aggro. Eminence makes a token every time a Vampire is cast, lords make the swarm lethal, and drain effects convert every death and life gain into damage.",
+    strategy: "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast — every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Sanctum Seeker turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
+    bars: { speed: 4, complexity: 2, interaction: 3, resilience: 2, pilot: 2 },
+    curve: [15, 21, 11, 3, 9, 2, 1],
+    signature: [
+      { n: "Sanctum Seeker", art: "sanctum-seeker", why: "Every attacking Vampire drains, whether or not it connects." },
+      { n: "Legion Lieutenant", art: "legion-lieutenant", why: "The lord that makes a board of 1/1 tokens lethal." },
+      { n: "Blood Artist", art: "blood-artist", why: "Turns a board wipe into the winning turn." },
+      { n: "Falkenrath Noble", art: "falkenrath-noble", why: "A second Blood Artist, in the air." },
+    ],
+    engine: "playable", swaps: 7,
+    swapNote: "7 cards swapped for engine-supported equivalents — Captivating Vampire, Vampire Nocturnus, Bloodline Keeper and Shared Animosity need unimplemented rules features; Anguished Unmaking, Mortify and Bedevil need target selectors the engine cannot express yet." },
+
+  { id: "first-flight", name: "First Flight", short: "First Flight",
+    ci: ["W", "U"], guild: "Azorius", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Isperia, Supreme Judge", cost: "2WWUU", tl: "Legendary Creature — Sphinx",
+      t: "creature", f: "gold", pt: "6/4", kw: "Flying",
+      rules: "Flying. Whenever a creature attacks you or a planeswalker you control, you may draw a card.",
+      art: "isperia-supreme-judge", artist: "Scott M. Fischer" },
+    tags: ["Flyers", "Anthems", "Card draw"],
+    blurb: "Azorius skies. A low, evasive board that anthems itself upward, and a commander who charges the table for attacking into it.",
+    strategy: "The deck goes wide in the air with cheap flyers and then makes them all bigger at once — Empyrean Eagle and Favorable Winds are two of several anthems that only read on things with flying. Isperia is the punishment half: once she is down, attacking you costs a card, so the pod's aggro deck goes and hits somebody else. It plays a longer, more defensive game than Edgar and wins in two or three swings from a board the ground cannot block.",
+    bars: { speed: 2, complexity: 2, interaction: 3, resilience: 3, pilot: 2 },
+    curve: null,
+    signature: [
+      { n: "Empyrean Eagle", art: "empyrean-eagle", why: "An anthem attached to a flyer — the deck's whole shape in one card." },
+      { n: "Watcher of the Spheres", art: "watcher-of-the-spheres", why: "Makes the rest of the curve a mana cheaper." },
+      { n: "Favorable Winds", art: "favorable-winds", why: "Two mana, and every creature in the deck gets bigger." },
+    ],
+    engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "zurgo", name: "Zurgo Stormrender", short: "Zurgo",
+    ci: ["W", "B", "R"], guild: "Mardu", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Zurgo Stormrender", cost: "RWB", tl: "Legendary Creature — Orc Warrior",
+      t: "creature", f: "gold", pt: "3/3", kw: "Mobilize 1",
+      rules: "Mobilize 1 (Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior creature token. Sacrifice it at the beginning of the next end step.) Whenever a creature token you control leaves the battlefield, draw a card if it was attacking. Otherwise, each opponent loses 1 life.",
+      art: "zurgo-stormrender", artist: "Lie Setiawan" },
+    tags: ["Tokens", "Attacking", "Sacrifice"],
+    blurb: "Mardu mobilize. Attacking makes tokens, the tokens are meant to die, and Zurgo turns each death into a card or a point of drain.",
+    strategy: "Zurgo costs three and wants to attack immediately — mobilize means every attack is wider than the board looks, and the tokens are built to be sacrificed at end of turn anyway. The second half of his text is the engine: an attacking token that dies draws a card, and any other token that dies drains the table. So the deck is happy to trade tokens into blockers, and happier to have a free sacrifice outlet like Goblin Bombardment that converts a whole attack step into damage and cards. It plays like Edgar with a rate-limiter removed, at the cost of needing an attack every turn to do anything.",
+    bars: { speed: 3, complexity: 3, interaction: 2, resilience: 2, pilot: 3 },
+    curve: null,
+    signature: [
+      { n: "Mardu Ascendancy", art: "mardu-ascendancy", why: "A second mobilize, on every nontoken attacker." },
+      { n: "Mardu Hordechief", art: "mardu-hordechief", why: "Raid rewards the attack the deck was making anyway." },
+      { n: "Goblin Bombardment", art: "goblin-bombardment", why: "The free outlet. Every token becomes damage and a card." },
+    ],
+    engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "ur-dragon", name: "The Ur-Dragon", short: "Ur-Dragon",
+    ci: ["W", "U", "B", "R", "G"], guild: "Five-colour", cards: 100, lands: null, source: "precon",
+    cmd: { n: "The Ur-Dragon", cost: "4WUBRG", tl: "Legendary Creature — Dragon Avatar",
+      t: "creature", f: "gold", pt: "10/10", kw: "Flying",
+      rules: "Eminence — As long as The Ur-Dragon is in the command zone or on the battlefield, other Dragon spells you cast cost {1} less to cast. Flying. Whenever one or more Dragons you control attack, draw that many cards, then you may put a permanent card from your hand onto the battlefield.",
+      art: "the-ur-dragon", artist: "Jaime Jones" },
+    tags: ["Tribal", "Big mana", "Flyers"],
+    blurb: "Every Dragon ever printed, in one deck. Eminence discounts them from the command zone, and an attack refills your hand and puts a free permanent onto the battlefield.",
+    strategy: "This is the most expensive deck in the catalogue and it does not pretend otherwise — the first six turns are ramp, fixing and one discounted Dragon. What it buys is a board where every attack draws cards equal to the number of Dragons swinging and then deploys a permanent for free, so one connected attack step usually ends the game's competitive phase. It is slow, it is obvious, and every table will point removal at it, which is exactly what makes it the pod's best lightning rod.",
+    bars: { speed: 1, complexity: 3, interaction: 2, resilience: 3, pilot: 2 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "atraxa", name: "Atraxa, Praetors' Voice", short: "Atraxa",
+    ci: ["W", "U", "B", "G"], guild: "Witch-Maw", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Atraxa, Praetors' Voice", cost: "GWUB", tl: "Legendary Creature — Phyrexian Angel Horror",
+      t: "creature", f: "gold", pt: "4/4", kw: "Flying, vigilance, deathtouch, lifelink",
+      rules: "Flying, vigilance, deathtouch, lifelink. At the beginning of your end step, proliferate.",
+      art: "atraxa-praetors-voice", artist: "Victor Adame Minguez" },
+    tags: ["Counters", "Proliferate", "Value"],
+    blurb: "Four colours of counters. Every +1/+1, loyalty and charge counter on the board grows again at the end of every one of your turns, for free, forever.",
+    strategy: "Atraxa's body would be a fine commander on its own — four keywords for four mana — and the proliferate trigger is the actual deck. Anything that enters with counters becomes an engine: planeswalkers ultimate two turns early, creatures outgrow the table, and Doubling Season turns a single trigger into a doubling. The weakness is the obvious one: it is a four-colour deck that wants to untap with a four-drop, so the first six turns are lands and the game is decided by whether Atraxa survives one rotation.",
+    bars: { speed: 2, complexity: 4, interaction: 2, resilience: 3, pilot: 3 },
+    curve: null,
+    signature: [
+      { n: "Doubling Season", art: "doubling-season", why: "Every counter and every token arrives twice." },
+      { n: "Deepglow Skate", art: "deepglow-skate", why: "One cast doubles every counter on the board at once." },
+      { n: "Vorinclex, Monstrous Raider", art: "vorinclex-monstrous-raider", why: "Doubles yours and halves theirs — a proliferate deck's best and rudest card." },
+    ],
+    engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "omnath", name: "Omnath, Locus of Creation", short: "Omnath",
+    ci: ["W", "U", "R", "G"], guild: "Ink-Treader", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Omnath, Locus of Creation", cost: "RGWU", tl: "Legendary Creature — Elemental",
+      t: "creature", f: "gold", pt: "4/4",
+      rules: "When Omnath enters, draw a card. Landfall — Whenever a land you control enters, you gain 4 life if this is the first time this ability has resolved this turn. If it's the second time, add {R}{G}{W}{U}. If it's the third time, Omnath deals 4 damage to each opponent and each planeswalker you don't control.",
+      art: "omnath-locus-of-creation", artist: "Chris Rahn" },
+    tags: ["Landfall", "Ramp", "Reach"],
+    blurb: "Landfall that counts to three. The first land gains you life, the second refunds four mana, the third burns the table — and the deck exists to hit all three every turn.",
+    strategy: "Everything here is a land or a way to play an extra one. The third landfall trigger is the win condition and the second is how you pay for it: four mana back on the second land drop means the turn you go off is not the turn you stop. It is a genuinely hard deck to sequence, because the order you play lands in decides whether the burn trigger happens this turn or next. Play the fetch-effects before the untapped ones, and count before you commit.",
+    bars: { speed: 3, complexity: 4, interaction: 2, resilience: 2, pilot: 4 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "kaalia", name: "Kaalia of the Vast", short: "Kaalia",
+    ci: ["W", "B", "R"], guild: "Mardu", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Kaalia of the Vast", cost: "1RWB", tl: "Legendary Creature — Human Cleric",
+      t: "creature", f: "gold", pt: "2/2", kw: "Flying",
+      rules: "Flying. Whenever Kaalia attacks an opponent, you may put an Angel, Demon, or Dragon creature card from your hand onto the battlefield tapped and attacking that opponent.",
+      art: "kaalia-of-the-vast", artist: "Justyna Dura" },
+    tags: ["Cheat", "Flyers", "Aggro"],
+    blurb: "A four-mana 2/2 that puts a nine-mana Angel into play attacking. The whole deck is the biggest things in Mardu and one creature who does not pay for them.",
+    strategy: "Kaalia costs four and the deck's average creature costs eight, which is the joke and the plan. Attack, trigger, drop a Demon, and the maths of the game changes in one step. It is the most explosive opening in the catalogue and the most fragile: Kaalia is a 2/2, everybody at the table knows what she does, and a single removal spell on the attack trigger costs you the turn and the card. Hold a protection spell before you commit, or accept that you are drawing removal off the top for the rest of the game.",
+    bars: { speed: 4, complexity: 2, interaction: 2, resilience: 1, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "muldrotha", name: "Muldrotha, the Gravetide", short: "Muldrotha",
+    ci: ["U", "B", "G"], guild: "Sultai", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Muldrotha, the Gravetide", cost: "3BGU", tl: "Legendary Creature — Elemental Avatar",
+      t: "creature", f: "gold", pt: "6/6",
+      rules: "During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard.",
+      art: "muldrotha-the-gravetide", artist: "Jason Rainville" },
+    tags: ["Graveyard", "Value", "Grind"],
+    blurb: "Your graveyard is a second hand. One land, one creature, one artifact, one enchantment out of the yard every single turn, and self-mill is card advantage.",
+    strategy: "Muldrotha turns the two things every deck hates — milling yourself and losing permanents — into the resource the deck runs on. Sakura-Tribe Elder is a land every turn; a sacrificed artifact comes straight back. The correct way to play it is not to hold cards but to spend them, because a card in the graveyard is a card you get to use again and a card in hand is not. It never wins fast. It wins by being the only player at the table with resources on turn fourteen.",
+    bars: { speed: 1, complexity: 4, interaction: 3, resilience: 4, pilot: 4 },
+    curve: null,
+    signature: [
+      { n: "World Shaper", art: "world-shaper", why: "Mills you on attack, then returns every land you milled." },
+      { n: "Ramunap Excavator", art: "ramunap-excavator", why: "Makes Muldrotha's land clause matter every single turn." },
+      { n: "Sakura-Tribe Elder", art: "sakura-tribe-elder", why: "A land, a blocker and a recursion target, over and over." },
+    ],
+    engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "chulane", name: "Chulane, Teller of Tales", short: "Chulane",
+    ci: ["W", "U", "G"], guild: "Bant", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Chulane, Teller of Tales", cost: "2GWU", tl: "Legendary Creature — Human Druid",
+      t: "creature", f: "gold", pt: "2/4", kw: "Vigilance",
+      rules: "Vigilance. Whenever you cast a creature spell, draw a card, then you may put a land card from your hand onto the battlefield. {3}, {T}: Return target creature you control to its owner's hand.",
+      art: "chulane-teller-of-tales", artist: "Victor Adame Minguez" },
+    tags: ["Card draw", "Ramp", "Blink"],
+    blurb: "Every creature you cast draws a card and puts a land into play. A deck of cheap creatures with enter-the-battlefield triggers, and a commander who never runs out of either.",
+    strategy: "Chulane makes creature spells free in the only sense that matters: you get the card back and a land besides. So the deck is full of two-mana bodies that do something on the way in, and the turn Chulane resolves is the turn your hand stops shrinking. His own activated ability is the second half — bouncing your own creature is how you reuse an enter-the-battlefield trigger, and there are twenty of them in here. The deck is a slow, wide, endlessly renewing board that eventually finds something unfair to loop.",
+    bars: { speed: 2, complexity: 3, interaction: 2, resilience: 3, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "kykar", name: "Kykar, Wind's Fury", short: "Kykar",
+    ci: ["W", "U", "R"], guild: "Jeskai", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Kykar, Wind's Fury", cost: "1URW", tl: "Legendary Creature — Bird Wizard",
+      t: "creature", f: "gold", pt: "3/3", kw: "Flying",
+      rules: "Flying. Whenever you cast a noncreature spell, create a 1/1 white Spirit creature token with flying. Sacrifice a Spirit: Add {R}.",
+      art: "kykar-wind-s-fury", artist: "G-host Lee" },
+    tags: ["Spells", "Tokens", "Combo"],
+    blurb: "A spellslinger who leaves a board behind. Every instant and sorcery makes a flying blocker, and every blocker is a red mana when you need one.",
+    strategy: "The usual problem with a deck of instants and sorceries is that you have nothing on the battlefield when the counterspells run out. Kykar fixes it in one line: cast anything, get a body. Those bodies are simultaneously a clock in the air, insurance against the table's aggro deck, and a ritual — sacrificing three Spirits is three red mana toward the turn you go off. Play it as a control deck that happens to be attacking for four in the air by turn seven.",
+    bars: { speed: 3, complexity: 4, interaction: 4, resilience: 2, pilot: 4 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "gishath", name: "Gishath, Sun's Avatar", short: "Gishath",
+    ci: ["W", "R", "G"], guild: "Naya", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Gishath, Sun's Avatar", cost: "5RGW", tl: "Legendary Creature — Dinosaur Avatar",
+      t: "creature", f: "gold", pt: "7/6", kw: "Vigilance, trample, haste",
+      rules: "Vigilance, trample, haste. Whenever Gishath deals combat damage to a player, reveal that many cards from the top of your library. Put any number of Dinosaur creature cards from among them onto the battlefield and the rest on the bottom of your library in a random order.",
+      art: "gishath-sun-s-avatar", artist: "Zack Stella" },
+    tags: ["Tribal", "Big creatures", "Snowball"],
+    blurb: "Dinosaurs. Gishath has haste, hits for seven, and turns those seven damage into seven cards off the top — every Dinosaur among them arriving for free.",
+    strategy: "Eight mana is a lot and Gishath is worth it, because he does not need a second turn: haste means the trigger happens the moment he lands, and seven cards deep into a deck that is half Dinosaurs is usually two or three free bodies. The deck's whole job before that is ramping to eight and surviving, so it runs more mana creatures than a Naya deck normally would. Once he connects, the game is not close.",
+    bars: { speed: 2, complexity: 2, interaction: 2, resilience: 2, pilot: 2 },
+    curve: null, signature: [], engine: "preview", swaps: 0, swapNote: null },
+
+  { id: "marchesa", name: "Marchesa, the Black Rose", short: "Marchesa",
+    ci: ["U", "B", "R"], guild: "Grixis", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Marchesa, the Black Rose", cost: "1UBR", tl: "Legendary Creature — Human Wizard",
+      t: "creature", f: "gold", pt: "3/3", kw: "Dethrone",
+      rules: "Dethrone. Other creatures you control have dethrone. Whenever a creature you control with a +1/+1 counter on it dies, return that card to the battlefield under your control at the beginning of the next end step.",
+      art: "marchesa-the-black-rose", artist: "Matt Stewart" },
+    tags: ["Sacrifice", "Counters", "Recursion"],
+    blurb: "Your creatures do not die, they leave and come back. Attack the player who is ahead, collect a counter, and every death from then on is a free recursion.",
+    strategy: "Dethrone puts a counter on anything that attacks the life leader, and Marchesa's third line turns every creature carrying a counter into a permanent fixture. That makes sacrifice outlets into engines and combat into a free roll: trade anything, get it back at end of turn, keep the enter-the-battlefield trigger you got on the way in. It is the most politically active deck here — dethrone literally reads 'attack whoever is winning', and a table quickly learns not to be.",
+    bars: { speed: 3, complexity: 4, interaction: 3, resilience: 4, pilot: 4 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "prossh", name: "Prossh, Skyraider of Kher", short: "Prossh",
+    ci: ["B", "R", "G"], guild: "Jund", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Prossh, Skyraider of Kher", cost: "3BRG", tl: "Legendary Creature — Dragon",
+      t: "creature", f: "gold", pt: "5/5", kw: "Flying",
+      rules: "When you cast this spell, create X 0/1 red Kobold creature tokens named Kobolds of Kher Keep, where X is the amount of mana spent to cast it. Flying. Sacrifice another creature: Prossh gets +1/+0 until end of turn.",
+      art: "prossh-skyraider-of-kher", artist: "Todd Lockwood" },
+    tags: ["Tokens", "Sacrifice", "Combo"],
+    blurb: "Casting Prossh makes six bodies. Eating them makes him lethal. Every commander tax you pay makes the deck better, which is a sentence no other deck can say.",
+    strategy: "Prossh is the rare commander who wants to be re-cast: X is the mana spent, so the second cast makes eight Kobolds and the third makes ten. Those tokens are food for every sacrifice payoff in Jund and for Prossh himself, who can eat six bodies and swing for eleven in the air out of nowhere. The line to watch for is the one where a free sacrifice outlet and a token doubler make the Kobold count arbitrarily large — this deck's ceiling is a genuine combo kill, not just a big attack.",
+    bars: { speed: 3, complexity: 3, interaction: 2, resilience: 3, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "yuriko", name: "Yuriko, the Tiger's Shadow", short: "Yuriko",
+    ci: ["U", "B"], guild: "Dimir", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Yuriko, the Tiger's Shadow", cost: "1UB", tl: "Legendary Creature — Human Ninja",
+      t: "creature", f: "gold", pt: "1/3",
+      rules: "Commander ninjutsu {U}{B}. Whenever a Ninja you control deals combat damage to a player, reveal the top card of your library and put that card into your hand. Each opponent loses life equal to that card's mana value.",
+      art: "yuriko-the-tiger-s-shadow", artist: "Yongjae Choi" },
+    tags: ["Evasion", "Ninjas", "Drain"],
+    blurb: "Attack with something nobody can block, swap it for Yuriko, flip an expensive card off the top and drain the whole table for its mana value.",
+    strategy: "Commander ninjutsu means Yuriko does not have to be cast — a one-mana unblockable creature attacks, and she replaces it already attacking for two black mana. The trigger hits every opponent, so the deck is built upside down: expensive cards you never intend to cast are the best cards in it, because the flip drains for their mana value. It is the fastest deck in this catalogue and by far the most hated, which is a fair trade for a 1/3.",
+    bars: { speed: 4, complexity: 4, interaction: 3, resilience: 2, pilot: 4 },
+    curve: null, signature: [], engine: "preview", swaps: 0, swapNote: null },
+
+  { id: "meren", name: "Meren of Clan Nel Toth", short: "Meren",
+    ci: ["B", "G"], guild: "Golgari", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Meren of Clan Nel Toth", cost: "2BG", tl: "Legendary Creature — Human Shaman",
+      t: "creature", f: "gold", pt: "3/4",
+      rules: "Whenever another creature you control dies, you get an experience counter. At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.",
+      art: "meren-of-clan-nel-toth", artist: "Mark Winters" },
+    tags: ["Sacrifice", "Graveyard", "Value"],
+    blurb: "Death is a resource with a receipt. Every creature that dies grows an experience counter that never goes away, and every end step brings something back.",
+    strategy: "Experience counters survive Meren dying, which is the detail that makes the deck resilient in a way most graveyard decks are not — killing the commander does not reset the engine, it delays it. Early on the end-step trigger returns things to hand; by the time you have five counters it is returning them straight to the battlefield, for free, every turn. Feed it cheap creatures with death triggers and a free sacrifice outlet, and it becomes very hard to interact with.",
+    bars: { speed: 2, complexity: 3, interaction: 3, resilience: 4, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "emmara", name: "Emmara, Soul of the Accord", short: "Emmara",
+    ci: ["W", "G"], guild: "Selesnya", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Emmara, Soul of the Accord", cost: "GW", tl: "Legendary Creature — Elf Cleric",
+      t: "creature", f: "gold", pt: "2/2",
+      rules: "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+      art: "emmara-soul-of-the-accord", artist: "Mark Winters" },
+    tags: ["Tokens", "Go wide", "Lifegain"],
+    blurb: "A two-mana commander that makes a lifelinking body every time she taps — and a deck full of reasons to tap her that have nothing to do with attacking.",
+    strategy: "Emmara reads 'becomes tapped', not 'attacks', which is the entire deck: convoke, crew, and any tap ability turns her into a token generator that never has to leave the safety of your side of the board. From there it is the most straightforward plan in the catalogue — go wide, then play an anthem. It is the deck to hand somebody who has never played Commander before, because every card does what it says and none of the decisions are traps.",
+    bars: { speed: 3, complexity: 1, interaction: 2, resilience: 3, pilot: 1 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "rakdos-riots", name: "Rakdos, Lord of Riots", short: "Rakdos",
+    ci: ["B", "R"], guild: "Rakdos", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Rakdos, Lord of Riots", cost: "BBRR", tl: "Legendary Creature — Demon",
+      t: "creature", f: "gold", pt: "6/6", kw: "Flying, trample",
+      rules: "You can't cast Rakdos, Lord of Riots unless an opponent lost life this turn. Flying, trample. Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.",
+      art: "rakdos-lord-of-riots", artist: "Yigit Koroglu" },
+    tags: ["Big creatures", "Burn", "Cost reduction"],
+    blurb: "Deal damage first, then cast everything. One burn spell to the face turns a hand of eight-drops into a hand of free spells.",
+    strategy: "The restriction is real — you cannot cast Rakdos at all until somebody has lost life — so the deck opens with cheap reach and pingers whose only job is to unlock him. After that the discount is per point of life lost across all opponents, which in a four-player pod is enormous: a three-damage sweep is nine mana off the next creature. It is a deck that does nothing for five turns and then empties its hand in one, and the skill is entirely in choosing which turn that is.",
+    bars: { speed: 3, complexity: 3, interaction: 3, resilience: 2, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "neyith", name: "Neyith of the Dire Hunt", short: "Neyith",
+    ci: ["R", "G"], guild: "Gruul", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Neyith of the Dire Hunt", cost: "2GG", tl: "Legendary Creature — Human Warrior",
+      t: "creature", f: "gold", pt: "3/3",
+      rules: "Whenever one or more creatures you control fight or become blocked, draw a card. At the beginning of combat on your turn, you may pay {2}{R/G}. If you do, double target creature's power until end of turn. That creature must be blocked this combat if able.",
+      art: "neyith-of-the-dire-hunt", artist: "Magali Villeneuve" },
+    tags: ["Fight", "Combat", "Card draw"],
+    blurb: "Green removal is a fight spell, and Gruul does not normally draw cards. Neyith fixes both: every fight and every block is a card.",
+    strategy: "The lure half of Neyith's text is the one that wins games — doubling a trampler's power and forcing it to be blocked is removal, damage and a card in one activation. The rest of the deck is fight effects, which are simultaneously the colour's removal and this commander's draw engine, so the deck never faces the usual Gruul choice between interacting and keeping cards. Straightforward, aggressive, and much better at grinding than red-green usually gets to be.",
+    bars: { speed: 3, complexity: 2, interaction: 4, resilience: 2, pilot: 2 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "sram", name: "Sram, Senior Edificer", short: "Sram",
+    ci: ["W"], guild: "Mono-white", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Sram, Senior Edificer", cost: "1W", tl: "Legendary Creature — Dwarf Advisor",
+      t: "creature", f: "W", pt: "2/2",
+      rules: "Whenever you cast an Aura, Equipment, or Vehicle spell, draw a card.",
+      art: "sram-senior-edificer", artist: "Chris Rahn" },
+    tags: ["Voltron", "Equipment", "Card draw"],
+    blurb: "One creature, wearing everything. Sram costs two, replaces every Aura and Equipment you cast, and mono-white's job is to make sure the target cannot be answered.",
+    strategy: "Voltron decks lose to a single removal spell and win when they do not, so this one spends its slots on protection rather than on more Equipment. Sram's draw trigger is what makes that affordable: suiting up a creature normally costs you cards, and here it does not cost you any. Commander damage is twenty-one, which a well-equipped creature reaches in three swings — the deck is a race between your protection and the table's removal, and it is a fair one.",
+    bars: { speed: 3, complexity: 2, interaction: 2, resilience: 1, pilot: 2 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "talrand", name: "Talrand, Sky Summoner", short: "Talrand",
+    ci: ["U"], guild: "Mono-blue", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Talrand, Sky Summoner", cost: "2UU", tl: "Legendary Creature — Merfolk Wizard",
+      t: "creature", f: "U", pt: "2/2",
+      rules: "Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with flying.",
+      art: "talrand-sky-summoner", artist: "Svetlin Velinov" },
+    tags: ["Spells", "Control", "Flyers"],
+    blurb: "A control deck with a clock. Every counterspell and every cantrip leaves a 2/2 flyer behind, so saying no to the table also builds the board that beats it.",
+    strategy: "Mono-blue's classic problem is that it can stop everything and kill nothing. Talrand is the answer, and he does not ask you to change a single card in the deck: keep countering, keep drawing, and the Drakes accumulate by themselves. Four Drakes is a twenty-turn clock that flies over almost everything the pod can build. The deck's difficulty is entirely in knowing which of three opponents' spells is the one worth the counter.",
+    bars: { speed: 2, complexity: 3, interaction: 4, resilience: 3, pilot: 3 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "syr-konrad", name: "Syr Konrad, the Grim", short: "Konrad",
+    ci: ["B"], guild: "Mono-black", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Syr Konrad, the Grim", cost: "3BB", tl: "Legendary Creature — Human Knight",
+      t: "creature", f: "B", pt: "5/4",
+      rules: "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent. {1}{B}: Each player mills a card.",
+      art: "syr-konrad-the-grim", artist: "Anna Steinbauer" },
+    tags: ["Mill", "Drain", "Graveyard"],
+    blurb: "Three separate triggers, all of them common, all of them hitting every opponent. Konrad turns any graveyard on the table — including theirs — into damage.",
+    strategy: "Read the trigger carefully: any creature dying anywhere, any creature card being milled or discarded by anyone, and any creature leaving your own graveyard. In a four-player game those events happen constantly without you doing anything. His own activated ability mills every player, so he is his own engine — with enough mana the ability alone deals damage in a loop. The deck wins by attrition against three opponents at once, which is a thing very few commanders can honestly claim.",
+    bars: { speed: 2, complexity: 2, interaction: 3, resilience: 3, pilot: 2 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "krenko", name: "Krenko, Mob Boss", short: "Krenko",
+    ci: ["R"], guild: "Mono-red", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Krenko, Mob Boss", cost: "2RR", tl: "Legendary Creature — Goblin Warrior",
+      t: "creature", f: "R", pt: "3/3",
+      rules: "{T}: Create X 1/1 red Goblin creature tokens, where X is the number of Goblins you control.",
+      art: "krenko-mob-boss", artist: "Lie Setiawan" },
+    tags: ["Tokens", "Go wide", "Aggro"],
+    blurb: "Goblins, doubling. Tap Krenko for as many Goblins as you have Goblins, untap him somehow, and do it again — the numbers stop being reasonable on the second activation.",
+    strategy: "Krenko doubles your Goblin count every time he taps, which means the deck's real cards are the ones that untap him and the ones that give him haste. Two activations is usually twelve or more bodies, and mono-red is full of ways to turn a board that wide into damage without attacking at all — Purphoros deals two per token the moment it enters. It is the least subtle deck in the catalogue, it folds completely to one board wipe, and it will absolutely kill a table that ignores it for two turns.",
+    bars: { speed: 4, complexity: 1, interaction: 1, resilience: 1, pilot: 1 },
+    curve: null,
+    signature: [
+      { n: "Purphoros, God of the Forge", art: "purphoros-god-of-the-forge", why: "Two damage per Goblin, without ever attacking." },
+      { n: "Skirk Prospector", art: "skirk-prospector", why: "Turns the swarm into the mana that makes more of it." },
+      { n: "Impact Tremors", art: "impact-tremors", why: "Twelve tokens is twelve damage, spread across the table." },
+    ],
+    engine: "playable", swaps: 0, swapNote: null },
+
+  { id: "ezuri", name: "Ezuri, Renegade Leader", short: "Ezuri",
+    ci: ["G"], guild: "Mono-green", cards: 100, lands: null, source: "precon",
+    cmd: { n: "Ezuri, Renegade Leader", cost: "1GG", tl: "Legendary Creature — Elf Warrior",
+      t: "creature", f: "G", pt: "2/2",
+      rules: "{G}: Regenerate another target Elf. {2}{G}{G}{G}: Elf creatures you control get +3/+3 and gain trample until end of turn.",
+      art: "ezuri-renegade-leader", artist: "Victor Adame Minguez" },
+    tags: ["Tribal", "Go wide", "Overrun"],
+    blurb: "Elves make mana, mana makes more Elves, and Ezuri turns the whole board into a lethal attack for six — repeatably, in one turn, more than once.",
+    strategy: "Half the creatures here tap for mana, so the deck's mana curve is a lie: a board of six Elves produces enough to cast three more and still activate Ezuri. The overrun is what makes it a kill rather than a board — plus three and trample across eight bodies ends a player, and there is nothing stopping you activating it twice. It is fast, it is resilient thanks to the regenerate ability, and a single sweeper still undoes the whole thing.",
+    bars: { speed: 4, complexity: 2, interaction: 1, resilience: 2, pilot: 2 },
+    curve: null, signature: [], engine: "playable", swaps: 0, swapNote: null },
+];
+
+const CUSTOM = {
+  placeholder: "https://moxfield.com/decks/...",
+  hint: "Paste a public Moxfield deck link.",
+  fake: {
+    id: "custom-vorel", name: "Vorel of the Hull Clade", short: "Vorel",
+    ci: ["G", "U"], guild: "Simic", cards: 100, lands: 36, source: "yours",
+    cmd: { n: "Vorel of the Hull Clade", cost: "1GU", tl: "Legendary Creature — Human Merfolk",
+      t: "creature", f: "gold", pt: "1/4",
+      rules: "{1}{G}{U}, {T}: Double the number of each kind of counter on target artifact, creature, or land you control.",
+      art: "vorel-of-the-hull-clade", artist: "Mike Bierek" },
+    tags: ["Counters", "Ramp", "Combo"],
+    blurb: "Imported from Moxfield. Simic +1/+1 counters, doubled.",
+    strategy: "Imported decks have no editorial write-up — this is whatever you built.",
+    bars: { speed: 2, complexity: 4, interaction: 2, resilience: 2, pilot: 4 },
+    curve: [8, 15, 16, 12, 6, 4, 3],
+    signature: [], engine: "partial", unsupported: 12, swaps: 0, swapNote: null,
+  },
+  errors: {
+    badUrl: "That is not a Moxfield deck link.",
+    private: "That deck is private. Set it to public and try again.",
+  },
+};
+
+const POD = {
+  code: "GYRE-8412",
+  link: "snapkeep.app/j/GYRE-8412",
+  guests: [{ name: "Priya", deckId: "edgar" }, { name: "Marco", deckId: "krenko" }],
+  joinMs: 1200,
+  readyMs: 2600,
+};
+
+const ART_NATIVE = { w: 626, h: 457 };
+
+/* Primitives (shared with the other four flow mockups) ------------------- */
+
+const root = document.getElementById("root");
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const artUrl = (slug) => "../art/" + slug + ".jpg";
+
+function pips(cost) {
+  if (!cost) return "";
+  const out = []; let num = "";
+  for (const ch of String(cost)) {
+    if (ch >= "0" && ch <= "9") { num += ch; continue; }
+    if (num) { out.push(`<i class="pip pip--C">${num}</i>`); num = ""; }
+    out.push(`<i class="pip pip--${ch}">${ch}</i>`);
+  }
+  if (num) out.push(`<i class="pip pip--C">${num}</i>`);
+  return out.join("");
+}
+const ciPips = (ci) => ci.map((c) => `<i class="pip pip--${c}">${c}</i>`).join("");
+
+function bar(label, value, tiny) {
+  let segs = "";
+  for (let i = 1; i <= 4; i += 1) segs += `<i class="bar__seg${i <= value ? " bar__seg--on" : ""}"></i>`;
+  return `<div class="bar${tiny ? " bar--tiny" : ""}"><span class="bar__label">${esc(label)}</span><span class="bar__track">${segs}</span></div>`;
+}
+const bars = (b) => BAR_LABELS.map(([k, l]) => bar(l, b[k])).join("");
+const tierOf = (id) => DIFFICULTY.find((d) => d.id === id) || DIFFICULTY[1];
+const subtitle = (d) => (d.cmd.n === d.name ? `${d.guild} · ${d.tags[0].toLowerCase()}` : d.cmd.n);
+
+/** The capability list, written out. The ladder is a promise about behaviour,
+ *  so the seat states the behaviour rather than an adjective. */
+const capList = (caps) => `<div class="caps">${CAPS.map((c) => `
+  <div class="cap${caps.includes(c.id) ? " cap--on" : ""}"><i class="cap__lamp"></i>${esc(c.n)}</div>`).join("")}</div>`;
+
+function face(c) {
+  const media = c.art ? `<img class="face__art" src="${artUrl(c.art)}" alt="">` : `<div class="face__art face__art--none"></div>`;
+  return `<div class="face f-${c.f || "C"}">
+    ${media}
+    <div class="face__head">
+      <div class="face__title"><span class="face__name">${esc(c.n)}</span><span class="face__cost">${pips(c.cost)}</span></div>
+      <div class="face__type">${esc(c.tl)}</div>
+    </div>
+    <div class="face__foot">
+      ${c.rules ? `<p class="face__rules">${esc(c.rules)}</p>` : ""}
+      <div class="face__base"><span class="face__kw">${esc(c.kw || "")}</span>${c.pt ? `<span class="face__pt tabular">${c.pt}</span>` : ""}</div>
+    </div>
+  </div>`;
+}
+
+function curve(values) {
+  if (!values) return `<div class="curve__none">No deck list in the repo for this one yet — a curve is a count of a list, and inventing one would be the only lie on this screen.</div>`;
+  const max = Math.max(...values);
+  const label = (i) => `${i + 1}${i === 6 ? "+" : ""}`;
+  const cols = values.map((v, i) => `<span class="curve__bar" style="height:${Math.round((v / max) * 100)}%" title="${v} cards at ${label(i)} mana"></span>`).join("");
+  const axis = values.map((v, i) => `<span class="curve__n tabular">${label(i)}</span>`).join("");
+  return `<div class="curve"><div class="curve__cols">${cols}</div><div class="curve__axis">${axis}</div></div>`;
+}
+
+function engineBadge(deck) {
+  if (deck.engine === "preview") return `<span class="badge">Preview</span>`;
+  if (deck.engine === "partial") return `<span class="badge badge--partial">${deck.unsupported} unsupported</span>`;
+  return "";
+}
+
+/* State ------------------------------------------------------------------ */
+
+const state = {
+  route: "home",
+  joinCode: "",
+  // Four seats, index 0 is always you. `empty` is a legal state: a two- or
+  // three-player pod is a pod.
+  seats: [
+    { kind: "you", deckId: "aesi", ready: false },
+    { kind: "empty" }, { kind: "empty" }, { kind: "empty" },
+  ],
+  fillCpu: true,
+  difficulty: "apprentice",
+  cat: false,          // catalogue overlay open
+  catFor: 0,           // which seat the catalogue is choosing for
+  open: null,          // dossier deck id
+  invite: false,
+  q: "", colours: [], src: "all", sort: "name",
+  imp: { status: "idle", url: "", msg: "" },
+  custom: null,
+  starting: false,
+  copied: null,
+};
+
+const allDecks = () => (state.custom ? DECKS.concat([state.custom]) : DECKS.slice());
+const deckById = (id) => allDecks().find((d) => d.id === id) || null;
+const myDeck = () => deckById(state.seats[0].deckId);
+
+/* Seats ------------------------------------------------------------------ */
+
+let joinToken = 0;
+
+const opponents = () => state.seats.slice(1);
+const filled = () => state.seats.filter((s) => s.kind !== "empty");
+const podSize = () => filled().length;
+const openSeats = () => state.seats.filter((s) => s.kind === "open").length;
+const roomLive = () => state.seats.some((s) => s.kind === "open" || s.kind === "human");
+
+/** Is this seat committed? CPUs are ready by construction; people are not. */
+function seatReady(s) {
+  if (s.kind === "empty") return false;
+  if (s.kind === "cpu") return true;
+  if (s.kind === "open") return state.fillCpu;   // a CPU will backfill it
+  return !!s.ready;
+}
+const allReady = () => filled().every(seatReady);
+const canStart = () => {
+  const d = myDeck();
+  return !!d && d.engine !== "preview" && podSize() >= 2 && allReady() && state.seats[0].ready;
+};
+
+const seatTier = (i) => tierOf(state.seats[i].tier || state.difficulty);
+
+/** Put something in the first empty chair, or in chair `i` if given. */
+function firstEmpty() {
+  for (let i = 1; i < state.seats.length; i += 1) if (state.seats[i].kind === "empty") return i;
+  return -1;
+}
+
+function addCpu(i) {
+  const at = i == null ? firstEmpty() : i;
+  if (at < 1) return;
+  state.seats[at] = { kind: "cpu", tier: state.difficulty };
+}
+
+/** Open a chair to a player. Runs the canned join: somebody arrives, then locks
+ *  their deck in. There is no network in a mockup and there never will be. */
+function openChair(i) {
+  const at = i == null ? firstEmpty() : i;
+  if (at < 1) return;
+  state.seats[at] = { kind: "open" };
+  state.invite = true;
+  const guest = POD.guests[(at - 1) % POD.guests.length];
+  const token = ++joinToken;
+  setTimeout(() => {
+    if (token !== joinToken || state.seats[at].kind !== "open") return;
+    state.seats[at] = { kind: "human", name: guest.name, deckId: guest.deckId, ready: false };
+    render();
+    setTimeout(() => {
+      if (token !== joinToken || state.seats[at].kind !== "human") return;
+      state.seats[at].ready = true;
+      render();
+    }, POD.readyMs - POD.joinMs);
+  }, POD.joinMs);
+}
+
+/** What a seat is holding, or null when it is not knowable yet.
+ *
+ *  CPU opponents cycle through the other decks, exactly as NewGameScreen.tsx
+ *  :44-46 really does -- so the seats report behaviour rather than invent it.
+ *  Preview decks are excluded: a deck the engine cannot deal cannot be dealt to
+ *  an opponent either. So are imported decks -- yours is yours.
+ *
+ *  A HUMAN's deck is sealed until they lock in. Reading a list before the game
+ *  is scouting, and scouting before mulligans is what a lobby hides. */
+function seatDeck(i) {
+  const s = state.seats[i];
+  if (s.kind === "empty" || s.kind === "open") return null;
+  if (s.kind === "you") return myDeck();
+  if (s.kind === "human") return s.ready ? deckById(s.deckId) : null;
+  if (s.deckId) return deckById(s.deckId);
+  const taken = new Set([
+    state.seats[0].deckId,
+    ...state.seats.filter((x) => x.kind === "human" && x.ready).map((x) => x.deckId),
+    ...state.seats.filter((x) => x.kind === "cpu" && x.deckId).map((x) => x.deckId),
+  ]);
+  const live = DECKS.filter((d) => d.engine !== "preview");
+  const pool = live.filter((d) => !taken.has(d.id));
+  const chosen = pool.length ? pool : live;
+  return chosen[(i * 7) % chosen.length];
+}
+
+function seatLabel(i) {
+  const s = state.seats[i];
+  if (s.kind === "you") return { title: "You", sub: s.ready ? "Locked in" : "Choosing" };
+  if (s.kind === "open") return { title: "Open chair", sub: "Waiting for a player" };
+  if (s.kind === "human") return { title: s.name, sub: s.ready ? "Locked in" : "Choosing a deck…" };
+  const t = seatTier(i);
+  return { title: t.n, sub: t.tag };
+}
+
+/* The catalogue ---------------------------------------------------------- */
+
+function visibleDecks() {
+  const q = state.q.trim().toLowerCase();
+  let list = allDecks().filter((d) => {
+    if (state.src !== "all" && d.source !== state.src) return false;
+    if (state.colours.length && !state.colours.every((c) => d.ci.includes(c))) return false;
+    if (!q) return true;
+    return (d.name + " " + d.cmd.n + " " + d.guild + " " + d.tags.join(" ")).toLowerCase().includes(q);
+  });
+  const s = SORTS.find((x) => x.id === state.sort);
+  list = list.slice().sort((a, b) => {
+    if (state.sort === "name") return a.name.localeCompare(b.name);
+    const d = b.bars[state.sort] - a.bars[state.sort];
+    return (s && s.invert ? -d : d) || a.name.localeCompare(b.name);
+  });
+  return list;
+}
+
+/* Views ------------------------------------------------------------------ */
+
+function home() {
+  const showcase = ["atraxa", "krenko", "muldrotha", "edgar", "yuriko", "aesi"];
+  const wash = deckById("the-ur-dragon") || DECKS[4];
+  return `<div class="door" data-testid="home">
+    <div class="door__wash" style="background-image:url('${artUrl(wash.cmd.art)}')"></div>
+    <div class="door__veil"></div>
+
+    <header class="door__top">
+      <span class="brand">
+        <span class="brand__mark">Snap Keep</span>
+        <span class="brand__sub">Commander, against the engine</span>
+      </span>
+      <span class="door__spacer"></span>
+      <span class="door__ver">Flow 01 · Front Door</span>
+    </header>
+
+    <main class="door__mid">
+      <div class="hero">
+        <h1 class="hero__mark">Snap Keep</h1>
+        <div class="hero__rule"></div>
+        <p class="hero__line">Four seats, one table. Fill them with the engine, with friends, or with both — then lock in and shuffle.</p>
+        <div class="hero__acts">
+          <button class="big" data-act="create" data-testid="create-pod">Create a pod</button>
+          <span class="or">or</span>
+          <span class="join">
+            <input class="join__in" id="code" type="text" value="${esc(state.joinCode)}"
+                   placeholder="Pod code" spellcheck="false" maxlength="9" aria-label="Pod code">
+            <button class="join__go" data-act="join" data-testid="join-pod">Join</button>
+          </span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="door__bot">
+      <div class="shelf">
+        <div class="shelf__row">
+          ${showcase.map((id) => {
+            const d = deckById(id);
+            return `<span class="shelf__t"><img src="${artUrl(d.cmd.art)}" alt=""></span>`;
+          }).join("")}
+        </div>
+        <div class="shelf__cap">
+          <b class="tabular">${DECKS.length}</b> decks in the catalogue
+          <span>·</span>
+          <button class="link" data-act="cat-open" data-for="0">Browse them</button>
+          <span>·</span>
+          <span>or import your own from Moxfield</span>
+        </div>
+      </div>
+    </footer>
+  </div>`;
+}
+
+function seatView(i) {
+  const s = state.seats[i];
+  const d = seatDeck(i);
+  // Seat 3 is the far chair and sits highest; 2 and 4 flank it and sit lower.
+  const arc = i !== 2 ? " seat--arc" : "";
+
+  if (s.kind === "empty") {
+    const n = podSize();   // opponents after this chair is filled
+    return `<div class="chair${i !== 2 ? " chair--arc" : ""}">
+      <span class="chair__plus">+</span>
+      <span class="chair__t">Empty chair</span>
+      <span class="chair__s">A pod seats four. Fill it either way.</span>
+      <span class="chair__acts">
+        <button class="btn btn--wide" data-act="add-cpu" data-i="${i}" data-testid="opponents-${n}">Add a CPU</button>
+        <button class="btn btn--wide" data-act="open-chair" data-i="${i}">Invite a player</button>
+      </span>
+    </div>`;
+  }
+
+  const portrait = d
+    ? `<img class="seat__art" src="${artUrl(d.cmd.art)}" alt="">`
+    : `<div class="seat__art seat__art--none"></div>
+       <span class="seat__lock">${s.kind === "human" ? "Sealed until they lock in" : "Waiting for a player"}</span>`;
+
+  const deckBlock = d
+    ? `<div class="seat__deckn">${esc(d.name)}</div>
+       <div class="seat__meta">${ciPips(d.ci)}<span class="count tabular">${d.cards}</span>${engineBadge(d)}</div>`
+    : s.kind === "human"
+      ? `<div class="seat__deckn seat__deckn--sealed">Deck sealed</div>
+         <div class="seat__meta"><span class="count">Readable once they lock in</span></div>`
+      : `<div class="seat__deckn seat__deckn--sealed">No deck yet</div>
+         <div class="seat__meta"><span class="count">Pod ${POD.code}</span></div>`;
+
+  const body = s.kind === "cpu"
+    ? (() => {
+        const t = seatTier(i);
+        return `<div class="seat__who"><span class="seat__n">${esc(t.n)}</span><span class="seat__tag">${esc(t.tag)}</span></div>
+          <p class="seat__line">${esc(t.line)}</p>${capList(t.caps)}`;
+      })()
+    : s.kind === "open"
+      ? `<div class="seat__who"><span class="seat__n">Open chair</span></div>
+         <p class="seat__line">Anyone with the code can take this seat. Until somebody does, a CPU fills it if you let it.</p>`
+      : `<div class="seat__who"><span class="seat__n">${esc(s.name)}</span><span class="seat__tag">${s.ready ? "locked in" : "still choosing"}</span></div>
+         <p class="seat__line">${s.ready
+            ? "Locked in. Their list is readable now — before this, it was not."
+            : "Joined and picking a deck. Their list stays sealed until they lock it in, so nobody can scout the pod."}</p>`;
+
+  const foot = s.kind === "cpu"
+    ? `<button class="btn" data-act="tier" data-i="${i}" data-dir="-1" title="Easier">◂</button>
+       <button class="btn" data-act="tier" data-i="${i}" data-dir="1">Tougher ▸</button>
+       <button class="btn" data-act="open-chair" data-i="${i}" title="Open this chair to a player">Invite</button>`
+    : s.kind === "open"
+      ? `<button class="btn btn--wide" data-act="add-cpu" data-i="${i}">Put a CPU here instead</button>`
+      : `<button class="btn btn--wide" data-act="dossier" data-id="${s.ready ? s.deckId : ""}" ${s.ready ? "" : "disabled"}>Read their deck</button>`;
+
+  return `<section class="seat seat--${s.kind}${arc}${seatReady(s) && s.kind !== "cpu" ? " seat--ready" : ""}">
+    <div class="seat__top">
+      ${portrait}
+      <div class="seat__scrim"></div>
+      <span class="seat__no">Seat ${i + 1} · ${s.kind === "cpu" ? "CPU" : s.kind === "open" ? "open" : "player"}</span>
+      ${s.kind === "human" && s.ready ? `<span class="seat__stamp">Locked in</span>` : ""}
+      <button class="seat__x" data-act="clear" data-i="${i}" title="Empty this chair">✕</button>
+    </div>
+    <div class="seat__deck">${deckBlock}</div>
+    <div class="seat__body">${body}</div>
+    <div class="seat__foot">${foot}</div>
+  </section>`;
+}
+
+/** The readiness strip. Four segments, one per chair, and Start is this
+ *  completing. An empty chair is a dim segment, not a missing one -- the pod is
+ *  four seats whether or not you fill them. */
+function readiness() {
+  const segs = state.seats.map((s, i) => {
+    const lab = seatLabel(i);
+    if (s.kind === "empty") return `<i class="ready__seg ready__seg--none" title="Seat ${i + 1} · empty"></i>`;
+    if (seatReady(s)) return `<i class="ready__seg ready__seg--on" title="${esc(lab.title)} · ready"></i>`;
+    return `<i class="ready__seg ready__seg--wait" title="${esc(lab.title)} · ${esc(lab.sub)}"></i>`;
+  }).join("");
+  const done = filled().filter(seatReady).length;
+  return `<div class="ready">
+    <div class="ready__l">Pod readiness <span class="ready__n tabular">${done} of ${podSize()}</span></div>
+    <div class="ready__track">${segs}</div>
+  </div>`;
+}
+
+function why() {
+  const d = myDeck();
+  if (!d) return "Pick a deck to take your seat.";
+  if (d.engine === "preview") return "This deck has no list in the engine yet, so it cannot be dealt.";
+  if (podSize() < 2) return "A pod needs at least one opponent. Add a CPU or invite somebody.";
+  if (!state.seats[0].ready) return "Your seat is not locked in yet.";
+  const waiting = state.seats
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => s.kind !== "empty" && !seatReady(s))
+    .map(({ i }) => seatLabel(i).title);
+  if (waiting.length) return `Waiting on ${waiting.join(" and ")}.`;
+  if (openSeats()) return `${openSeats()} chair${openSeats() > 1 ? "s" : ""} still open — a CPU will fill ${openSeats() > 1 ? "them" : "it"}.`;
+  return `${podSize()} seats, everybody in. Deal them.`;
+}
+
+function mine() {
+  const d = myDeck();
+  const locked = state.seats[0].ready;
+  return `<div class="mine">
+    <div class="mine__seat${locked ? " mine__seat--locked" : ""}">
+      ${d ? `<img class="mine__art" src="${artUrl(d.cmd.art)}" alt="">` : `<span class="mine__art seat__art--none"></span>`}
+      <div style="min-width:0">
+        <div class="mine__l">Seat 1 · you${locked ? " · locked in" : ""}</div>
+        <div class="mine__n">${d ? esc(d.name) : "No deck"}</div>
+        <div class="mine__meta">${d ? ciPips(d.ci) : ""}<span class="count tabular">${d ? d.cards : 0}</span>${d ? engineBadge(d) : ""}</div>
+      </div>
+    </div>
+    <button class="btn" data-act="cat-open" data-for="0" ${locked ? "disabled" : ""}>Change deck</button>
+    <button class="btn" data-act="dossier" data-id="${state.seats[0].deckId}">Deck details</button>
+    <button class="lock${locked ? " lock--on" : ""}" data-act="lock" data-testid="lock-in" ${!d || d.engine === "preview" ? "disabled" : ""}>
+      ${locked ? "Unlock my seat" : "Lock in my seat"}
+    </button>
+    <span class="mine__spacer"></span>
+    ${readiness()}
+    <p class="ready__why">${esc(why())}</p>
+    <button class="play" data-act="start" data-testid="start-game" ${canStart() && !state.starting ? "" : "disabled"}>
+      ${state.starting ? "Shuffling…" : "Start the game"}
+    </button>
+  </div>`;
+}
+
+function pod() {
+  return `<div class="pod" data-testid="new-game">
+    <header class="head">
+      <span class="brand">
+        <span class="brand__mark">Snap Keep</span>
+        <span class="brand__sub">Pod lobby</span>
+      </span>
+      <span class="head__spacer"></span>
+      ${roomLive() ? `<span class="codechip">
+        <span class="codechip__l">Pod</span>
+        <b class="codechip__v tabular">${POD.code}</b>
+        <button class="btn" data-act="copy" data-what="code">${state.copied === "code" ? "Copied" : "Copy"}</button>
+      </span>` : ""}
+      <button class="btn" data-act="invite">Invite a player</button>
+      <button class="ghost" data-act="leave">Leave the pod</button>
+    </header>
+
+    <div class="table">
+      <div class="table__label">
+        Across the table
+        <span class="table__hint">Every seat sets its own difficulty — a pod can be one Apprentice and one Archmage.</span>
+      </div>
+      <div class="felt">
+        <div class="felt__ring"></div>
+        <div class="chairs">${[1, 2, 3].map(seatView).join("")}</div>
+      </div>
+    </div>
+
+    ${mine()}
+  </div>`;
+}
+
+function catalogue() {
+  if (!state.cat) return "";
+  const list = visibleDecks();
+  const forSeat = state.catFor;
+  const chosen = forSeat === 0 ? state.seats[0].deckId : (state.seats[forSeat] || {}).deckId;
+  const { status, msg } = state.imp;
+  let note = `<span class="imp__note">${esc(CUSTOM.hint)}</span>`;
+  if (status === "fetching") note = `<span class="imp__note imp__note--busy">Reading the list…</span>`;
+  if (status === "error") note = `<span class="imp__note imp__note--err">${esc(msg)}</span>`;
+  if (status === "ready") note = `<span class="imp__note">Imported. ${CUSTOM.fake.unsupported} cards are not in the engine yet and were left out.</span>`;
+
+  const tile = (d) => `<div class="tile${d.id === chosen ? " tile--on" : ""}" data-testid="deck-${d.id}">
+    <div class="tile__top">
+      <img class="tile__art" src="${artUrl(d.cmd.art)}" alt="">
+      <div class="tile__scrim"></div>
+      <span class="tile__src">${d.source === "yours" ? "Yours" : "Precon"}</span>
+      ${d.id === chosen ? `<span class="tile__tick">✓</span>` : ""}
+    </div>
+    <div class="tile__main">
+      <div class="tile__n">${esc(d.name)}</div>
+      <div class="tile__s">${esc(subtitle(d))}</div>
+      <div class="tile__meta">${ciPips(d.ci)}<span class="count tabular">${d.cards}</span>${engineBadge(d)}</div>
+    </div>
+    <div class="tile__bars">
+      ${bar("Speed", d.bars.speed, true)}${bar("Complexity", d.bars.complexity, true)}${bar("Demands", d.bars.pilot, true)}
+    </div>
+    <div class="tile__foot">
+      <button class="btn" data-act="pick" data-id="${d.id}" ${d.engine === "preview" ? "disabled" : ""}>
+        ${d.engine === "preview" ? "Not dealable" : d.id === chosen ? "Selected" : "Take it"}
+      </button>
+      <button class="tile__more" data-act="dossier" data-id="${d.id}">details</button>
+    </div>
+  </div>`;
+
+  return `<div class="veil" data-act="cat-close"></div>
+  <section class="cat" role="dialog" aria-modal="true" aria-label="Deck catalogue" data-testid="deck-catalog">
+    <div class="cat__head">
+      <span class="cat__t">The catalogue</span>
+      <span class="cat__for">${forSeat === 0 ? "Choosing your deck" : `Choosing for seat ${forSeat + 1}`}</span>
+      <button class="cat__x" data-act="cat-close" aria-label="Close">✕</button>
+    </div>
+
+    <div class="filters">
+      <label class="search">
+        <span class="search__g">⌕</span>
+        <input class="search__i" id="q" type="text" value="${esc(state.q)}" placeholder="Search decks, commanders, archetypes" spellcheck="false" aria-label="Search decks">
+      </label>
+      <span class="fgroup">
+        <span class="fgroup__l">Colours</span>
+        ${COLOURS.map(([c, n]) => `<button class="cbtn cbtn--${c}${state.colours.includes(c) ? " cbtn--on" : ""}" data-act="colour" data-c="${c}" title="${n}" aria-pressed="${state.colours.includes(c)}">${c}</button>`).join("")}
+        ${state.colours.length ? `<button class="link" data-act="colour-clear">clear</button>` : ""}
+      </span>
+      <span class="seg">
+        ${[["all", "All"], ["precon", "Precons"], ["yours", "Yours"]].map(([id, n]) =>
+          `<button class="seg__b${state.src === id ? " seg__b--on" : ""}" data-act="src" data-v="${id}">${n}</button>`).join("")}
+      </span>
+      <select class="sel" data-act="sort" aria-label="Sort decks">
+        ${SORTS.map((s) => `<option value="${s.id}"${state.sort === s.id ? " selected" : ""}>Sort: ${s.n}</option>`).join("")}
+      </select>
+      <span class="filters__spacer"></span>
+      <span class="filters__n tabular">${list.length} of ${allDecks().length}</span>
+    </div>
+
+    <div class="cat__body">
+      ${list.length
+        ? `<div class="grid">${list.map(tile).join("")}</div>`
+        : `<div class="empty">Nothing matches that.<br>Clear a colour or two — the filter is an AND, so three colours means decks that play all three.</div>`}
+    </div>
+
+    <div class="cat__foot">
+      <span class="imp">
+        <span class="imp__l">Import</span>
+        <input class="imp__in" id="mox" type="text" value="${esc(state.imp.url)}" placeholder="${esc(CUSTOM.placeholder)}" spellcheck="false" aria-label="Moxfield deck link">
+        <button class="btn" data-act="import">Fetch</button>
+      </span>
+      ${note}
+      <button class="btn" data-act="cat-close">Done</button>
+    </div>
+  </section>`;
+}
+
+function dossier() {
+  if (!state.open) return "";
+  const d = deckById(state.open);
+  if (!d) return "";
+  const sigs = d.signature.length
+    ? `<div class="dos__sigs">${d.signature.map((s) => `<div class="sig">
+        <img class="sig__art" src="${artUrl(s.art)}" alt="">
+        <div><div class="sig__n">${esc(s.n)}</div><div class="sig__why">${esc(s.why)}</div></div>
+      </div>`).join("")}</div>`
+    : `<p class="dos__p">No editorial notes for this one. Picking three cards to call defining would mean picking them out of a list this repo has not built yet.</p>`;
+  const honesty = d.engine === "preview"
+    ? `<div class="note">Preview. This commander needs a rules feature the engine does not implement, so the deck cannot be dealt. It is in the catalogue because the catalogue has to be able to show it first.</div>`
+    : d.engine === "partial"
+      ? `<div class="note">${d.unsupported} of the imported cards use rules the engine does not implement and were dropped from the list.</div>`
+      : d.swapNote
+        ? `<div class="note">${esc(d.swapNote)}</div>`
+        : `<div class="note">Real card, real oracle text, real art. The ratings and the write-up are editorial; the deck list itself arrives with the roadmap's All Card Support work.</div>`;
+
+  return `<div class="veil" style="z-index:450" data-act="close"></div>
+  <aside class="over" role="dialog" aria-modal="true" aria-label="${esc(d.name)}">
+    <div class="over__head">
+      <span class="over__n">${esc(d.name)}</span>
+      ${ciPips(d.ci)}
+      <span class="count tabular">${d.cards} cards</span>
+      ${engineBadge(d)}
+      <button class="over__x" data-act="close" aria-label="Close">✕</button>
+    </div>
+    <div class="over__body">
+      <div class="dos__top">
+        <div class="dos__card">
+          ${face(d.cmd)}
+          <div class="dos__artist">Art: ${esc(d.cmd.artist)}</div>
+        </div>
+        <div style="min-width:0">
+          <h3 class="dos__h">The deck</h3>
+          <p class="dos__p">${esc(d.blurb)}</p>
+          <h3 class="dos__h">Playstyle</h3>
+          <div class="dos__tags">${d.tags.map((t) => `<span class="chip">${esc(t)}</span>`).join("")}</div>
+          <div class="dos__bars">${bars(d.bars)}</div>
+        </div>
+      </div>
+      <h3 class="dos__h">How it plays</h3>
+      <p class="dos__p">${esc(d.strategy)}</p>
+      <h3 class="dos__h">Cards that define it</h3>
+      ${sigs}
+      <h3 class="dos__h">Mana curve</h3>
+      ${curve(d.curve)}
+      ${honesty}
+    </div>
+    <div class="over__foot">
+      <button class="play" data-act="pick-close" data-id="${d.id}" ${d.engine === "preview" ? "disabled" : ""}>Take this deck</button>
+      <button class="ghost" data-act="close">Close</button>
+    </div>
+  </aside>`;
+}
+
+function invite() {
+  if (!state.invite) return "";
+  const open = openSeats();
+  return `<div class="veil" style="z-index:465" data-act="invite-close"></div>
+  <section class="inv" role="dialog" aria-modal="true" aria-label="Invite a player">
+    <div class="inv__head">
+      <span class="inv__t">Invite a player</span>
+      <button class="inv__x" data-act="invite-close" aria-label="Close">✕</button>
+    </div>
+    <div class="inv__body">
+      <div>
+        <div class="inv__l">Pod code</div>
+        <div class="inv__code">
+          <b class="inv__codev tabular">${POD.code}</b>
+          <button class="btn" data-act="copy" data-what="code">${state.copied === "code" ? "Copied" : "Copy"}</button>
+        </div>
+      </div>
+      <div>
+        <div class="inv__l">Or send the link</div>
+        <div class="inv__code">
+          <span class="inv__linkv">${esc(POD.link)}</span>
+          <button class="btn" data-act="copy" data-what="link">${state.copied === "link" ? "Copied" : "Copy"}</button>
+        </div>
+      </div>
+      <p class="inv__note">${open
+        ? `${open} chair${open > 1 ? "s are" : " is"} open and holding this code. Whoever arrives picks their own deck, and their list stays sealed until they lock in.`
+        : "No chair is open yet. Open one and it will hold this code until somebody takes it."}</p>
+    </div>
+    <div class="inv__foot">
+      ${open
+        ? `<button class="btn btn--wide" data-act="invite-close">Back to the pod</button>`
+        : `<button class="btn btn--wide btn--live" data-act="open-chair">Open a chair</button>`}
+    </div>
+  </section>`;
+}
+
+function render() {
+  root.innerHTML = state.route === "home"
+    ? home() + catalogue() + dossier()
+    : pod() + catalogue() + dossier() + invite();
+}
+
+/* Behaviour -------------------------------------------------------------- */
+
+root.addEventListener("input", (e) => {
+  const id = e.target.id;
+  if (id === "mox") { state.imp.url = e.target.value; return; }
+  if (id === "code") { state.joinCode = e.target.value.toUpperCase(); return; }
+  if (id === "q") {
+    state.q = e.target.value;
+    render();
+    const box = document.getElementById("q");
+    if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+  }
+});
+
+root.addEventListener("change", (e) => {
+  if (e.target.dataset.act === "sort") { state.sort = e.target.value; render(); }
+});
+
+function runImport() {
+  const url = state.imp.url.trim();
+  if (!/^https?:\/\/(www\.)?moxfield\.com\/decks\/\S+/i.test(url)) {
+    state.imp = { status: "error", url, msg: CUSTOM.errors.badUrl };
+    render();
+    return;
+  }
+  state.imp = { status: "fetching", url, msg: "" };
+  render();
+  setTimeout(() => {   // canned; there is no network here
+    state.custom = CUSTOM.fake;
+    state.src = "yours";
+    if (!state.seats[0].ready) state.seats[0].deckId = CUSTOM.fake.id;
+    state.imp = { status: "ready", url, msg: "" };
+    render();
+  }, 700);
+}
+
+function pick(id) {
+  const d = deckById(id);
+  if (!d || d.engine === "preview") return;
+  const i = state.catFor;
+  if (i === 0) { if (!state.seats[0].ready) state.seats[0].deckId = id; }
+  else if (state.seats[i] && state.seats[i].kind === "cpu") state.seats[i].deckId = id;
+}
+
+root.addEventListener("click", (e) => {
+  const hit = e.target.closest("[data-act]");
+  if (!hit) return;
+  const act = hit.dataset.act;
+  const i = hit.dataset.i != null ? Number(hit.dataset.i) : null;
+
+  switch (act) {
+    case "create":
+      state.route = "lobby";
+      break;
+    case "join":
+      state.route = "lobby";
+      // Joining a pod that already has people in it: the scripted guests are
+      // already seated, and you are the one who has to choose.
+      state.seats[1] = { kind: "human", name: POD.guests[0].name, deckId: POD.guests[0].deckId, ready: true };
+      state.seats[2] = { kind: "cpu", tier: "duelist" };
+      break;
+    case "leave":
+      state.route = "home";
+      joinToken += 1;
+      state.seats = [{ kind: "you", deckId: state.seats[0].deckId, ready: false }, { kind: "empty" }, { kind: "empty" }, { kind: "empty" }];
+      state.invite = false;
+      break;
+
+    case "add-cpu": addCpu(i); break;
+    case "open-chair": openChair(i); break;
+    case "clear":
+      joinToken += 1;
+      state.seats[i] = { kind: "empty" };
+      break;
+    case "tier": {
+      const dir = Number(hit.dataset.dir);
+      const at = DIFFICULTY.findIndex((t) => t.id === (state.seats[i].tier || state.difficulty));
+      state.seats[i].tier = DIFFICULTY[Math.min(DIFFICULTY.length - 1, Math.max(0, at + dir))].id;
+      break;
+    }
+
+    case "cat-open":
+      state.cat = true;
+      state.catFor = Number(hit.dataset.for || 0);
+      if (state.route === "home") state.route = "home";
+      break;
+    case "cat-close": state.cat = false; break;
+    case "pick": pick(hit.dataset.id); break;
+    case "pick-close": pick(hit.dataset.id); state.open = null; state.cat = false; break;
+    case "dossier":
+      if (!hit.dataset.id) return;
+      e.stopPropagation();
+      state.open = hit.dataset.id;
+      break;
+    case "close": state.open = null; break;
+
+    case "colour": {
+      const c = hit.dataset.c;
+      state.colours = state.colours.includes(c) ? state.colours.filter((x) => x !== c) : state.colours.concat([c]);
+      break;
+    }
+    case "colour-clear": state.colours = []; break;
+    case "src": state.src = hit.dataset.v; break;
+    case "import": runImport(); return;
+
+    case "lock": state.seats[0].ready = !state.seats[0].ready; break;
+    case "fill": state.fillCpu = !state.fillCpu; break;
+    case "invite": state.invite = true; break;
+    case "invite-close": state.invite = false; break;
+    case "copy":
+      state.copied = hit.dataset.what;
+      setTimeout(() => { state.copied = null; render(); }, 1400);
+      break;
+
+    case "start":
+      state.starting = true;
+      render();
+      setTimeout(() => { state.starting = false; render(); }, 1700);
+      return;
+
+    default: return;
+  }
+  render();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (state.open) { state.open = null; render(); return; }
+    if (state.invite) { state.invite = false; render(); return; }
+    if (state.cat) { state.cat = false; render(); return; }
+  }
+  if (e.key === "Enter" && e.target.id === "code") { state.route = "lobby"; render(); return; }
+  if ((e.key === "g" || e.key === "G") && e.target.tagName !== "INPUT") {
+    document.documentElement.classList.toggle("grey");
+  }
+});
+
+render();
+</script>
+</body>
+</html>

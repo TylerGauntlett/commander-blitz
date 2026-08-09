@@ -11,6 +11,12 @@
     "scryfall_id": "673c21f8-02b6-4ac4-b2fc-df065b4ac662",
     "set": "dsc"
   },
+  "Atraxa, Praetors' Voice": {
+    "artist": "Victor Adame Minguez",
+    "file": "atraxa-praetors-voice.jpg",
+    "scryfall_id": "d0d33d52-3d28-4635-b985-51e126289259",
+    "set": "2xm"
+  },
   "Avenger of Zendikar": {
     "artist": "Zoltan Boros & Gabor Szikszai",
     "file": "avenger-of-zendikar.jpg",
@@ -29,6 +35,24 @@
     "scryfall_id": "b5275d76-2947-4219-be21-614c7421614a",
     "set": "soc"
   },
+  "Chulane, Teller of Tales": {
+    "artist": "Victor Adame Minguez",
+    "file": "chulane-teller-of-tales.jpg",
+    "scryfall_id": "d1499a4b-1af1-4913-8e26-57d0707264db",
+    "set": "mkc"
+  },
+  "Deepglow Skate": {
+    "artist": "Jason Kang",
+    "file": "deepglow-skate.jpg",
+    "scryfall_id": "6fb36f7b-6d31-413d-8392-ae4f8ca3c0c4",
+    "set": "eoc"
+  },
+  "Doubling Season": {
+    "artist": "Chuck Lukacs",
+    "file": "doubling-season.jpg",
+    "scryfall_id": "f2c4f80e-84a0-463b-82c3-5c6503809351",
+    "set": "fdn"
+  },
   "Edgar Markov": {
     "artist": "Volkan Ba\u01f5a",
     "file": "edgar-markov.jpg",
@@ -40,6 +64,12 @@
     "file": "elvish-visionary.jpg",
     "scryfall_id": "6d2f4a37-453f-4a2c-bfba-2d1227394c90",
     "set": "hoc"
+  },
+  "Emmara, Soul of the Accord": {
+    "artist": "Mark Winters",
+    "file": "emmara-soul-of-the-accord.jpg",
+    "scryfall_id": "41b930ee-e16b-4612-87de-c03ecc6ff6db",
+    "set": "grn"
   },
   "Empyrean Eagle": {
     "artist": "Jason A. Engle",
@@ -58,6 +88,12 @@
     "file": "explosive-vegetation.jpg",
     "scryfall_id": "8de3fdf8-d55e-4ffc-8f8b-6314d4d467ce",
     "set": "dsc"
+  },
+  "Ezuri, Renegade Leader": {
+    "artist": "Victor Adame Minguez",
+    "file": "ezuri-renegade-leader.jpg",
+    "scryfall_id": "8a448dbf-08a1-4145-a4b2-0265cc9f2e53",
+    "set": "ddu"
   },
   "Falkenrath Noble": {
     "artist": "Slawomir Maniak",
@@ -83,6 +119,12 @@
     "scryfall_id": "dafeafa0-b937-4387-8626-449a810486b4",
     "set": "c19"
   },
+  "Gishath, Sun's Avatar": {
+    "artist": "Zack Stella",
+    "file": "gishath-sun-s-avatar.jpg",
+    "scryfall_id": "bc4a65de-23b5-48f0-b8b7-94608eaced3e",
+    "set": "lci"
+  },
   "Goblin Bombardment": {
     "artist": "Dave Kendall",
     "file": "goblin-bombardment.jpg",
@@ -94,6 +136,12 @@
     "file": "gyre-sage.jpg",
     "scryfall_id": "be573ae7-967a-4b98-9058-ec3ff82ff63f",
     "set": "moc"
+  },
+  "Impact Tremors": {
+    "artist": "Lake Hurwitz",
+    "file": "impact-tremors.jpg",
+    "scryfall_id": "d0b7cecf-b51b-4d30-b7e9-cd7976271e07",
+    "set": "fdn"
   },
   "Island": {
     "artist": "Bastien Grivet",
@@ -107,11 +155,35 @@
     "scryfall_id": "1e3b82a7-ebef-4190-9f50-40b992ba89c9",
     "set": "c20"
   },
+  "Kaalia of the Vast": {
+    "artist": "Justyna Dura",
+    "file": "kaalia-of-the-vast.jpg",
+    "scryfall_id": "e71c8c39-3fbb-4a42-9cf6-b3224f5a56fc",
+    "set": "mh3"
+  },
+  "Krenko, Mob Boss": {
+    "artist": "Lie Setiawan",
+    "file": "krenko-mob-boss.jpg",
+    "scryfall_id": "824b2d73-2151-4e5e-9f05-8f63e2bdcaa9",
+    "set": "fdn"
+  },
+  "Kykar, Wind's Fury": {
+    "artist": "G-host Lee",
+    "file": "kykar-wind-s-fury.jpg",
+    "scryfall_id": "fdb034c8-bae0-4f66-98f1-1b3cdc072f17",
+    "set": "cmm"
+  },
   "Legion Lieutenant": {
     "artist": "Zezhou Chen",
     "file": "legion-lieutenant.jpg",
     "scryfall_id": "85c6bd7d-537a-42fe-9c68-742bdf2e7025",
     "set": "lcc"
+  },
+  "Marchesa, the Black Rose": {
+    "artist": "Matt Stewart",
+    "file": "marchesa-the-black-rose.jpg",
+    "scryfall_id": "3242a9f0-2ba3-4852-ac8f-366772ac1c62",
+    "set": "2x2"
   },
   "Mardu Ascendancy": {
     "artist": "Jason Chan",
@@ -125,11 +197,29 @@
     "scryfall_id": "23426221-30a8-4be2-9c70-f0eb022edad7",
     "set": "ktk"
   },
+  "Meren of Clan Nel Toth": {
+    "artist": "Mark Winters",
+    "file": "meren-of-clan-nel-toth.jpg",
+    "scryfall_id": "508b1442-bf2c-4ad6-9bcf-bd894e081ab6",
+    "set": "tdc"
+  },
   "Mountain": {
     "artist": "Bastien Grivet",
     "file": "mountain.jpg",
     "scryfall_id": "2a844b96-6616-4c39-8f4f-5d14a3b2bd55",
     "set": "trk"
+  },
+  "Muldrotha, the Gravetide": {
+    "artist": "Jason Rainville",
+    "file": "muldrotha-the-gravetide.jpg",
+    "scryfall_id": "705b4d97-2f50-47f7-9053-d748f4337553",
+    "set": "ecc"
+  },
+  "Neyith of the Dire Hunt": {
+    "artist": "Magali Villeneuve",
+    "file": "neyith-of-the-dire-hunt.jpg",
+    "scryfall_id": "0c1eed0f-9692-44c0-b1ad-afa691165d52",
+    "set": "jmp"
   },
   "Nimble Mongoose": {
     "artist": "Kev Walker",
@@ -137,11 +227,47 @@
     "scryfall_id": "8a6374ad-71be-422e-bd76-4f08fbf43048",
     "set": "mh1"
   },
+  "Omnath, Locus of Creation": {
+    "artist": "Chris Rahn",
+    "file": "omnath-locus-of-creation.jpg",
+    "scryfall_id": "4e4fb50c-a81f-44d3-93c5-fa9a0b37f617",
+    "set": "znr"
+  },
+  "Prossh, Skyraider of Kher": {
+    "artist": "Todd Lockwood",
+    "file": "prossh-skyraider-of-kher.jpg",
+    "scryfall_id": "889c1a0f-7df2-4497-8058-04358173d7e8",
+    "set": "a25"
+  },
+  "Purphoros, God of the Forge": {
+    "artist": "Eric Deschamps",
+    "file": "purphoros-god-of-the-forge.jpg",
+    "scryfall_id": "4736a2c4-c89c-48db-a104-6303e7e2eee8",
+    "set": "cmm"
+  },
+  "Rakdos, Lord of Riots": {
+    "artist": "Yigit Koroglu",
+    "file": "rakdos-lord-of-riots.jpg",
+    "scryfall_id": "3d0d5a41-8251-437c-a4a0-3b712281ebb0",
+    "set": "dsc"
+  },
   "Rampaging Baloths": {
     "artist": "Steve Prescott",
     "file": "rampaging-baloths.jpg",
     "scryfall_id": "84aa18de-6acc-46cc-8e28-3046790a6751",
     "set": "eoc"
+  },
+  "Ramunap Excavator": {
+    "artist": "Mark Behm",
+    "file": "ramunap-excavator.jpg",
+    "scryfall_id": "3f8a0a0e-81f7-40a2-b393-bdc1423549f6",
+    "set": "otc"
+  },
+  "Sakura-Tribe Elder": {
+    "artist": "Anastasia Ovchinnikova",
+    "file": "sakura-tribe-elder.jpg",
+    "scryfall_id": "7a8b1c49-8594-426d-b585-41140235bb0e",
+    "set": "soc"
   },
   "Sanctum Seeker": {
     "artist": "Volkan Ba\u01f5a",
@@ -155,17 +281,47 @@
     "scryfall_id": "b4b47b80-69ed-44b0-afa0-ca90206dc16d",
     "set": "tdm"
   },
+  "Skirk Prospector": {
+    "artist": "Slawomir Maniak",
+    "file": "skirk-prospector.jpg",
+    "scryfall_id": "7bc508b3-8b38-4cf0-89a7-a2cb247ed083",
+    "set": "dmr"
+  },
   "Sol Ring": {
     "artist": "Myles Wohl",
     "file": "sol-ring.jpg",
     "scryfall_id": "91fdb56b-54d5-4272-8319-505ff987fe9b",
     "set": "msc"
   },
+  "Sram, Senior Edificer": {
+    "artist": "Chris Rahn",
+    "file": "sram-senior-edificer.jpg",
+    "scryfall_id": "8fbd18ce-0ac3-4b52-9cd0-0af7e0244207",
+    "set": "soc"
+  },
+  "Syr Konrad, the Grim": {
+    "artist": "Anna Steinbauer",
+    "file": "syr-konrad-the-grim.jpg",
+    "scryfall_id": "443a4eac-f972-4027-aed4-552d4edc2ce1",
+    "set": "dsc"
+  },
+  "Talrand, Sky Summoner": {
+    "artist": "Svetlin Velinov",
+    "file": "talrand-sky-summoner.jpg",
+    "scryfall_id": "1be3ed47-072e-481a-b3d9-dc232ac4b24f",
+    "set": "otc"
+  },
   "Tatyova, Benthic Druid": {
     "artist": "Mathias Kollros",
     "file": "tatyova-benthic-druid.jpg",
     "scryfall_id": "eabc978a-0666-472d-bdc6-d4b29d29eca4",
     "set": "fdn"
+  },
+  "The Ur-Dragon": {
+    "artist": "Jaime Jones",
+    "file": "the-ur-dragon.jpg",
+    "scryfall_id": "10d42b35-844f-4a64-9981-c6118d45e826",
+    "set": "cmm"
   },
   "Thornwood Falls": {
     "artist": "Alexander Ostrowski",
@@ -185,17 +341,35 @@
     "scryfall_id": "82c8cac8-29ce-43cc-bdb4-428c614d8545",
     "set": "lcc"
   },
+  "Vorinclex, Monstrous Raider": {
+    "artist": "Daarken",
+    "file": "vorinclex-monstrous-raider.jpg",
+    "scryfall_id": "92613468-205e-488b-930d-11908477e9f8",
+    "set": "khm"
+  },
   "Watcher of the Spheres": {
     "artist": "G-host Lee",
     "file": "watcher-of-the-spheres.jpg",
     "scryfall_id": "354b9ea4-3d55-48cc-b426-c46b1d1bb397",
     "set": "m21"
   },
+  "World Shaper": {
+    "artist": "Raymond Swanland",
+    "file": "world-shaper.jpg",
+    "scryfall_id": "cc765da4-4bca-4250-80e4-05575d6fa98c",
+    "set": "otc"
+  },
   "Yavimaya Elder": {
     "artist": "Matt Cavotta",
     "file": "yavimaya-elder.jpg",
     "scryfall_id": "27dacbde-a646-418c-b569-4a4f11c9faae",
     "set": "dsc"
+  },
+  "Yuriko, the Tiger's Shadow": {
+    "artist": "Yongjae Choi",
+    "file": "yuriko-the-tiger-s-shadow.jpg",
+    "scryfall_id": "fe9be3e0-076c-4703-9750-2a6b0a178bc9",
+    "set": "cmm"
   },
   "Zendikar's Roil": {
     "artist": "Sam Burley",

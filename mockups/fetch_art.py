@@ -107,6 +107,63 @@ MENU_CARDS = [
 ]
 
 
+# The deck catalogue in mockups/flow/.
+#
+# The menu round showed four precons, which is the size the repo ships. The flow
+# round has to show the catalogue AFTER roadmap.md's "All Card Support" lands,
+# because a browse-and-filter surface is only a design problem above about a
+# dozen decks -- below that it is a list and there is nothing to decide.
+#
+# Twenty real commanders, chosen for colour spread rather than power: the colour
+# identity filter is the one filter a Commander player actually reaches for, so
+# it needs a mono, a pair, a wedge and a five-colour deck to bite on.
+FLOW_COMMANDERS = [
+    # Five colours, four colours
+    "The Ur-Dragon",
+    "Atraxa, Praetors' Voice",
+    "Omnath, Locus of Creation",
+    # Three colours
+    "Kaalia of the Vast",
+    "Muldrotha, the Gravetide",
+    "Chulane, Teller of Tales",
+    "Kykar, Wind's Fury",
+    "Gishath, Sun's Avatar",
+    "Marchesa, the Black Rose",
+    "Prossh, Skyraider of Kher",
+    # Two colours
+    "Yuriko, the Tiger's Shadow",
+    "Meren of Clan Nel Toth",
+    "Emmara, Soul of the Accord",
+    "Rakdos, Lord of Riots",
+    "Neyith of the Dire Hunt",
+    # Mono
+    "Sram, Senior Edificer",
+    "Talrand, Sky Summoner",
+    "Syr Konrad, the Grim",
+    "Krenko, Mob Boss",
+    "Ezuri, Renegade Leader",
+]
+
+# Signature cards for three of the twenty, so the dossier's full form is
+# demonstrable on a catalogue deck and not only on the four the menu round wrote
+# by hand. The other seventeen carry commander art, ratings and a blurb, and
+# their "cards that define it" section says so rather than inventing three.
+FLOW_SIGNATURES = [
+    # Atraxa -- proliferate and counters.
+    "Doubling Season",
+    "Deepglow Skate",
+    "Vorinclex, Monstrous Raider",
+    # Muldrotha -- graveyard as a second hand.
+    "World Shaper",
+    "Ramunap Excavator",
+    "Sakura-Tribe Elder",
+    # Krenko -- goblins, wide and fast.
+    "Purphoros, God of the Forge",
+    "Skirk Prospector",
+    "Impact Tremors",
+]
+
+
 def slugify(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
@@ -160,7 +217,8 @@ def main() -> None:
     if MANIFEST.exists():
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    wanted = [(name, False) for name in CARDS + MENU_CARDS] + [(name, True) for name in TOKENS]
+    named = CARDS + MENU_CARDS + FLOW_COMMANDERS + FLOW_SIGNATURES
+    wanted = [(name, False) for name in named] + [(name, True) for name in TOKENS]
 
     for name, token in wanted:
         key = f"token:{name}" if token else name

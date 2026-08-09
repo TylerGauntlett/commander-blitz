@@ -156,41 +156,48 @@ test("lands sit nearest the player who controls them, on both sides of the table
 });
 
 /**
- * The board holds still while the game is played on it.
+ * The viewer's own board holds still as it is played on.
  *
- * It did not. Empty lanes collapsed to a strip and opponents dropped theirs
- * altogether, so the first creature of the game shoved the land row down by a
- * whole card and killing it shoved the row back up -- and the same thing
- * happening on an *opponent's* mat grew the opponents row and pushed the
- * viewer's entire board down the screen on somebody else's turn. The orb's mana
- * row did it a third time, several times a turn, as mana was tapped and spent.
+ * It did not. An empty lane collapsed to a 30px strip, so playing your first
+ * creature shoved your land row down by a whole card and killing it shoved the
+ * row back up -- under the cursor, mid-decision, on the one mat that owns every
+ * drop target. The orb's mana row did the same thing a second time, several
+ * times a turn, as mana was tapped and spent.
  *
- * Every lane is now always rendered at a full card's height and the mana row
- * has a reserved slot, so a permanent entering or leaving moves nothing. The
- * budget below is for sub-pixel rounding, not for a row of anything: a single
- * regression here is worth tens of pixels, so nothing subtle can hide under it.
+ * The viewer's three lanes are now always rendered at a full card's height and
+ * the mana row has a reserved slot, so a permanent of the viewer's own entering
+ * or leaving moves nothing.
+ *
+ * This measures *relative* positions inside the mat, not absolute screen
+ * coordinates, and the distinction is the whole point. An opponent's mat is
+ * still content-sized -- a compact mat has no width to spare for an empty lane
+ * (see PlayerMat) -- so the row above can still translate the viewer's board
+ * down the screen. What must never change again is the distance between the
+ * viewer's own bands, because that is the gap a card jumps across.
  */
-test("the board does not move as permanents enter and leave play", async ({ page }) => {
+test("the viewer's bands do not move as permanents enter and leave play", async ({ page }) => {
   test.setTimeout(180_000);
   await page.setViewportSize({ width: 1600, height: 950 });
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await waitForOurTurn(page);
 
-  /** Where each band starts, which is what a player's eye is anchored to. */
-  const anchors = () =>
+  /** Each band's offset from the top of the viewer's own mat. */
+  const offsets = () =>
     page.evaluate(() => {
-      const top = (selector: string) => {
-        const node = document.querySelector(selector);
-        return node ? node.getBoundingClientRect().top : Number.NaN;
+      const mat = document.querySelector(".play__mine .mat");
+      const from = mat?.getBoundingClientRect().top ?? Number.NaN;
+      const off = (selector: string) => {
+        const node = document.querySelector(`.play__mine ${selector}`);
+        return node ? node.getBoundingClientRect().top - from : Number.NaN;
       };
       return {
-        creatures: top('.play__mine [data-testid$="-Creatures"]'),
-        lands: top('.play__mine [data-testid$="-Lands"]'),
-        opponent: top(".play__opponents .mat"),
+        creatures: off('[data-testid$="-Creatures"]'),
+        globals: off('[data-testid$="-Artifacts-Enchantments"]'),
+        lands: off('[data-testid$="-Lands"]'),
       };
     });
 
-  const samples = [await anchors()];
+  const samples = [await offsets()];
   for (let i = 0; i < 20; i += 1) {
     await takeAction(page, ["play_land", "cast", "pass"]);
     if (
@@ -200,16 +207,19 @@ test("the board does not move as permanents enter and leave play", async ({ page
         .catch(() => false)
     )
       break;
-    samples.push(await anchors());
+    samples.push(await offsets());
   }
 
-  for (const key of ["creatures", "lands", "opponent"] as const) {
+  for (const key of ["creatures", "globals", "lands"] as const) {
     const seen = samples.map((s) => s[key]).filter((n) => !Number.isNaN(n));
     const drift = Math.max(...seen) - Math.min(...seen);
+    // The budget is for sub-pixel rounding, not for a row of anything: the
+    // regression this guards against is worth a whole card height, so nothing
+    // subtle can hide underneath it.
     expect(
       drift,
-      `${key} moved ${Math.round(drift)}px over a game; the board is jumping again`,
-    ).toBeLessThan(12);
+      `the ${key} band moved ${Math.round(drift)}px within the mat; the board is jumping again`,
+    ).toBeLessThan(6);
   }
 });
 
