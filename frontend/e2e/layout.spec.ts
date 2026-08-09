@@ -14,7 +14,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { startGame, takeAction, waitForOurTurn } from "./helpers";
+import { isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 /** The two shapes the board is actually played at. */
 const VIEWPORTS = [
@@ -169,16 +169,21 @@ test("lands sit nearest the player who controls them, on both sides of the table
  * or leaving moves nothing.
  *
  * This measures *relative* positions inside the mat, not absolute screen
- * coordinates, and the distinction is the whole point. An opponent's mat is
- * still content-sized -- a compact mat has no width to spare for an empty lane
- * (see PlayerMat) -- so the row above can still translate the viewer's board
- * down the screen. What must never change again is the distance between the
- * viewer's own bands, because that is the gap a card jumps across.
+ * coordinates, and the distinction is the whole point. What must never change
+ * again is the distance between the viewer's own bands, because that is the gap a
+ * card jumps across.
+ *
+ * **The zoom is pinned here, deliberately.** Progressive zoom re-solves the card
+ * size as the board fills, which moves the bands on purpose -- so with it live this
+ * assertion would have to be loosened past the point of catching a collapsing lane,
+ * which is the bug it exists for. Pinned, it still guards that bug exactly as
+ * written. The zoom's own obligations are asserted separately below: it must never
+ * push a lane under the hand, and it must never leave the legibility band.
  */
 test("the viewer's bands do not move as permanents enter and leave play", async ({ page }) => {
   test.setTimeout(180_000);
   await page.setViewportSize({ width: 1600, height: 950 });
-  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7, zoomLock: true });
   await waitForOurTurn(page);
 
   /** Each band's offset from the top of the viewer's own mat. */
@@ -239,4 +244,164 @@ test("a taller viewport gets bigger cards than a shorter one", async ({ page }) 
   const short = await read(1600, 800);
   const tall = await read(2560, 1278);
   expect(tall).toBeGreaterThan(short);
+});
+
+/* Progressive zoom ------------------------------------------------------
+ *
+ * The card size is solved against the space the board actually has, rather than
+ * fixed at one ratio for the whole game (`logic/zoomFit.ts`,
+ * `state/useZoomFit.ts`). Three properties matter, and only measurement notices any
+ * of them: it has to *respond*, it has to stay inside the size band the card face
+ * is legible in, and it must never buy space it does not have.
+ */
+
+/** The bounds from `logic/cardSize.ts`. Below the floor a card stops being readable. */
+const MIN_CARD_W = 52;
+const MAX_CARD_W = 150;
+
+/** `--card-w` as resolved on a lane, which is the size cards actually render at. */
+function laneCardWidths(page: import("@playwright/test").Page) {
+  return page.evaluate(() => {
+    const of = (selector: string) => {
+      const node = document.querySelector(selector);
+      if (!node) return null;
+      const raw = getComputedStyle(node).getPropertyValue("--card-w");
+      const parsed = Number.parseFloat(raw);
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+    return { mine: of(".play__mine .lane"), pod: of(".play__opponents .lane") };
+  });
+}
+
+test("the zoom uses the room a big display has, instead of one size for every screen", async ({
+  page,
+}) => {
+  // The regression this catches is the feature being quietly pinned: every other
+  // test here passes with `useZoomFit` returning its constants.
+  await page.setViewportSize({ width: 2560, height: 1278 });
+  await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+  await waitForOurTurn(page);
+
+  // A 2560x1278 display has ~580px of lane budget against ~475px of content, and
+  // spending it is the entire point of the feature. It should reach the ceiling.
+  const zoom = Number(await page.getByTestId("table").getAttribute("data-zoom-board"));
+  expect(zoom, "the board is not growing on a display with room to spare").toBeGreaterThan(1.2);
+
+  // Polled, because `--card-w` is transitioned (`--t-zoom`) while the attribute
+  // above changes instantly -- reading the variable once races the tween and lands
+  // on whatever intermediate value the frame happened to hold.
+  await expect
+    .poll(async () => (await laneCardWidths(page)).mine, { timeout: 5_000 })
+    .toBeGreaterThan(MAX_CARD_W - 1);
+});
+
+test("no card ever leaves the size band its face is legible in", async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 1600, height: 950 });
+  await startGame(page, { deck: "aesi", opponents: 3, seed: 7 });
+  await waitForOurTurn(page);
+
+  // A pod is the case that pushes the floor: three mats share the row, and their
+  // cards are the smallest anything renders at. `e2e/greyscale.spec.ts` is what
+  // established that the type glyph survives down there; this is what stops the
+  // solver going below the size that was checked.
+  for (let i = 0; i < 16; i += 1) {
+    const { mine, pod } = await laneCardWidths(page);
+    for (const [name, width] of [
+      ["the viewer's", mine],
+      ["an opponent's", pod],
+    ] as const) {
+      if (width === null) continue;
+      expect(
+        width,
+        `${name} card shrank to ${width}px, past the legibility floor`,
+      ).toBeGreaterThanOrEqual(MIN_CARD_W - 1);
+      expect(
+        width,
+        `${name} card grew to ${width}px, wider than the preview rail's own card`,
+      ).toBeLessThanOrEqual(MAX_CARD_W + 1);
+    }
+    if (await isOver(page)) break;
+    await takeAction(page, ["play_land", "cast", "pass"]);
+  }
+});
+
+/**
+ * The obligation the zoom takes on by being allowed to grow at all.
+ *
+ * This is the same measurement as "the last lane never runs under the hand" at the
+ * top of this file, but sampled at *every* action with the zoom live -- which makes
+ * it strictly the stronger test. Growing the cards to fill the space is only safe if
+ * it never overshoots, and a solver reading a stale or wrong budget overshoots
+ * silently: the board still renders, it just hides its own last row.
+ */
+test("the zoom never grows the board under the hand", async ({ page }) => {
+  test.setTimeout(180_000);
+  for (const viewport of VIEWPORTS) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+    await waitForOurTurn(page);
+
+    for (let i = 0; i < 12; i += 1) {
+      const spill = await page.evaluate(() => {
+        const foot = document.querySelector(".table__foot");
+        const mine = document.querySelector(".play__mine");
+        const lanes = [...document.querySelectorAll(".play__mine .lane")];
+        if (!foot || !mine || lanes.length === 0) return null;
+        return {
+          // Clamp to the scroll container: a lane below `.play__mine`'s own bottom
+          // edge is scrolled out of view, not sitting under the hand.
+          laneBottom: Math.min(
+            lanes[lanes.length - 1].getBoundingClientRect().bottom,
+            mine.getBoundingClientRect().bottom,
+          ),
+          footTop: foot.getBoundingClientRect().top,
+        };
+      });
+      if (spill) {
+        expect(
+          spill.laneBottom,
+          `${viewport.name}: the zoom grew the board under the hand at action ${i}`,
+        ).toBeLessThanOrEqual(spill.footTop + 1);
+      }
+      if (await isOver(page)) break;
+      await takeAction(page, ["play_land", "cast", "pass"]);
+    }
+  }
+});
+
+/**
+ * The limit `docs/roadmap.md` used to record, as an assertion.
+ *
+ * An opponent's mat was content-sized, so a pod board growing translated the
+ * viewer's whole board down the screen -- every drop target with it. Their lanes now
+ * live in a fixed box (`--pod-lanes-h`) and scroll inside it, so their board filling
+ * moves nothing. This is also what makes the viewer's own solve well-posed: the
+ * opponent row's height has to be a function of the viewport alone.
+ */
+test("an opponent's board filling up does not move the viewer's board", async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 1600, height: 950 });
+  await startGame(page, { deck: "aesi", opponents: 3, seed: 7 });
+  await waitForOurTurn(page);
+
+  const topOfMine = () =>
+    page.evaluate(() => {
+      const mine = document.querySelector(".play__mine");
+      return mine ? mine.getBoundingClientRect().top : Number.NaN;
+    });
+
+  const samples = [await topOfMine()];
+  for (let i = 0; i < 20; i += 1) {
+    await takeAction(page, ["play_land", "cast", "pass"]);
+    if (await isOver(page)) break;
+    samples.push(await topOfMine());
+  }
+
+  const seen = samples.filter((n) => !Number.isNaN(n));
+  const drift = Math.max(...seen) - Math.min(...seen);
+  expect(
+    drift,
+    `the viewer's board moved ${Math.round(drift)}px as the opponents played; the pod row is content-sized again`,
+  ).toBeLessThan(6);
 });

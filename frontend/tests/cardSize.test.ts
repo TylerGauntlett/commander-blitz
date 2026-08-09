@@ -11,6 +11,8 @@ import { describe, expect, it } from "vitest";
 import {
   CARD_SCALE,
   FALLBACK_BASE,
+  MAX_CARD_W,
+  MIN_CARD_W,
   cardWidthPx,
   cardWidthVar,
   opponentCardScale,
@@ -86,5 +88,48 @@ describe("cardWidthVar", () => {
 
   it("rounds away float noise", () => {
     expect(cardWidthVar(1 / 3)).toBe("calc(var(--card-w-base) * 0.333)");
+  });
+
+  /**
+   * The rule that keeps progressive zoom honest.
+   *
+   * A zone hands the same coefficient to CSS (as a `calc()`) and to JavaScript (as
+   * a number), because the hand fan positions its slots absolutely and `CardStack`
+   * measures its own container. If those two ever disagreed about the zoom the
+   * cards would render at one size and be laid out at another -- so assert that
+   * the number and the emitted coefficient are the same thing.
+   */
+  it("agrees with cardWidthPx about what a scale means", () => {
+    for (const scale of [0.5, 0.58, 1, 1.4, 1.732, 2.27]) {
+      const emitted = cardWidthVar(scale);
+      const coefficient = Number.parseFloat(
+        (emitted.match(/\*\s*([\d.]+)\s*\)/) as RegExpMatchArray)[1],
+      );
+      expect(cardWidthPx(FALLBACK_BASE, scale)).toBeCloseTo(FALLBACK_BASE * coefficient, 0);
+    }
+  });
+});
+
+describe("the legibility bounds the zoom works inside", () => {
+  it("never shrinks below the smallest size the suite has checked", () => {
+    // e2e/greyscale.spec.ts reads the type glyph and type line off a
+    // three-opponent pod, whose cards are this wide at a 950px-tall viewport.
+    const smallestChecked = cardWidthPx(87.4, opponentCardScale(3));
+    expect(MIN_CARD_W).toBeGreaterThanOrEqual(smallestChecked);
+    expect(MIN_CARD_W).toBeLessThan(smallestChecked + 2);
+  });
+
+  it("never grows past the preview rail's own card", () => {
+    // `.face--big` pins the preview to 150px. A board card wider than that would
+    // set its type larger than the panel whose job is to be the readable copy.
+    expect(MAX_CARD_W).toBe(150);
+  });
+
+  it("leaves today's playtested sizes inside the band", () => {
+    for (const scale of [opponentCardScale(3), CARD_SCALE.own, CARD_SCALE.hand]) {
+      const px = cardWidthPx(87.4, scale);
+      expect(px).toBeGreaterThanOrEqual(MIN_CARD_W - 2);
+      expect(px).toBeLessThanOrEqual(MAX_CARD_W);
+    }
   });
 });

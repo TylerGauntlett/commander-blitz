@@ -27,9 +27,9 @@ The board is themed against `mockups/05-planar-art.html`. Where the two still di
 frontend/src/
 ├── api/         client.ts, types.ts        - fetch wrapper and DTO mirrors
 ├── state/       uiStore.ts (zustand), useGame.ts (react-query), narration.ts,
-│                useImages.ts, useCardBase.ts
+│                useImages.ts, useCardBase.ts, useZoomFit.ts
 ├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events,
-│                cardArt, cardSize, zones
+│                cardArt, cardSize, cardStackGeometry, zoomFit, zones
 ├── motion/      springs.ts                 - every transition in the app
 ├── styles/      cards.css, board.css, ui.css  (+ src/theme.css for tokens)
 └── components/
@@ -55,7 +55,8 @@ A ribbon across the top, three columns, and the hand along the foot.
 - **Middle** — opponents on a row that sizes to its content, then your own mat. Each
   mat's first column is that player's info panel (`PlayerOrb`): their commander,
   their life dial, their mana, their zone piles. The board itself is two *bands*
-  — see below.
+  — see below. Card size is **solved against the space each area actually has**
+  rather than fixed: see "How big a card is" below.
 - **Right rail** — the card preview, then **combat**, then the tool strip. Combat
   moved here from a full-width banner under the board: the decision now sits
   directly under the card you are reading rather than as far from it as the
@@ -108,12 +109,60 @@ reserved slot (`.orb__manaslot`) rather than appearing and vanishing with the ma
 than assumed. Three opponents leave each compact mat about 158px of lane width
 against a 51px card, so the front band's 2:1 split gives creatures room for one card
 per row: an always-present, usually-empty global lane wrapped an opponent's creatures
-onto a second row, grew the opponents row by 20px and pushed the viewer's board down
-the screen — the opposite of the intent. Their mats are therefore still
-content-sized, and an opponent's first artifact can still translate your board
-vertically. What cannot change is the spacing *within* your own mat, which is the gap
-a card actually jumps across, and `e2e/layout.spec.ts` fails the run if any of your
+onto a second row and pushed the viewer's board down the screen — the opposite of the
+intent. That is now purely a width argument: their *lanes* have a fixed height
+(`--pod-lanes-h`) and scroll inside it, so hiding an empty one no longer moves
+anything. What cannot change is the spacing *within* your own mat, which is the gap a
+card actually jumps across, and `e2e/layout.spec.ts` fails the run if any of your
 bands drifts more than a few pixels of rounding relative to your mat over a game.
+
+## How big a card is
+
+Two layers, and they answer different questions.
+
+**`logic/cardSize.ts` — proportion.** One fluid `--card-w-base` in `theme.css`, and
+every zone is a *ratio* of it (`CARD_SCALE`). This replaced nine hard-coded pixel
+constants written straight into inline `--card-w` styles, which is why a 2560px
+display used to show exactly the same small cards a 1366px one did: an inline style
+beats a `clamp()` on `:root`. **Never emit a px literal into `--card-w`** — that is
+what `cardWidthVar` is for, and `tests/cardSize.test.ts` fails if it stops emitting a
+`calc()`.
+
+**`logic/zoomFit.ts` + `state/useZoomFit.ts` — absolute size.** The board, the pod and
+the hand each get the largest card whose *wrapped rows still fit the space they
+actually have*. The solver shelf-packs real footprints (a tapped permanent is
+landscape; a stack of basics is one box; a host carries its auras), so it is exact
+rather than an estimate. `CARD_SCALE.own`, `CARD_SCALE.hand` and `opponentCardScale`
+are still here but they are now **ceilings the solve may not exceed**, not sizes.
+
+Three things about it are worth knowing before touching it:
+
+- **A fit solver reads the layout and then changes it**, so only measurements that
+  cannot move are allowed as inputs: lane *width* (grid tracks, hence
+  `scrollbar-gutter: stable`), never lane *height*. The hand solves before the board
+  because `.table__foot` is an `auto` row taking its height out of the board's, and
+  the pod's lane box is pinned so `.play`'s `fit-content(58%)` row cannot depend on
+  the pod card size it is being used to solve. `useZoomFit`'s header has the full
+  argument.
+- **The board height is not monotone in card width.** A tapped permanent is shorter
+  but wider, so growing the cards can push a tall card onto the next row and leave a
+  short row behind, making a lane *shorter*. The solver scans downward rather than
+  bisecting for exactly this reason; `tests/zoomFit.test.ts` pins the counter-example
+  so nobody re-optimises it into a binary search.
+- **The orb columns, not the cards, own the vertical space.** At 1600×950 your
+  `.mat__side` is 330px against 299px of lanes, and the compact orb is 297px — 627 of
+  the 649px play area is furniture, and the mana row grows as lands are played. That
+  is why the zoom gains 36% at 2560×1278 and about 2% at 1600×950. Making that column
+  fluid is the change that would unlock the common viewport; see `docs/roadmap.md`.
+
+Zoom changes animate off one `--card-w` transition. `--card-w` is a registered
+`@property` of type `<length>`, so interpolating it re-resolves every declaration that
+reads it — the card box, the border, all five `--fs-*`, `--pip`, both lane
+`min-height`s. Nothing had to be rewritten as a `calc()` to become animatable.
+
+`e2e` can pin the whole system with `startGame(page, { zoomLock: true })`, which is
+also the path jsdom takes, so component tests render the geometry they were written
+against.
 
 Auras and Equipment are not loose cards. `attachmentsFor` pulls anything with an
 `attached_to` on the same mat out of the lanes, and `CardStack` draws it tucked under

@@ -21,12 +21,32 @@ export async function setInstant(page: Page): Promise<void> {
   });
 }
 
+/**
+ * Pin the card zoom to the sizes that shipped before it existed.
+ *
+ * Progressive zoom re-solves the card size against the space available, so a spec
+ * asserting that the board *holds still* is asserting against a feature whose job
+ * is to move it. Pinning lets those specs keep measuring exactly what they were
+ * written to measure, rather than being loosened until they no longer catch the bug
+ * they exist for.
+ *
+ * A window flag, not a persisted preference: `localStorage` would survive into a
+ * real player's browser and silently disable the feature with nothing to point at.
+ * `?zoom=lock` is honoured too, for eyeballing before-and-after by hand.
+ */
+export async function lockZoom(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    (window as { __AUTOMTG_ZOOM_LOCK?: boolean }).__AUTOMTG_ZOOM_LOCK = true;
+  });
+}
+
 /** Start a game and wait for the table. */
 export async function startGame(
   page: Page,
-  options: { deck?: string; opponents?: number; seed?: number } = {},
+  options: { deck?: string; opponents?: number; seed?: number; zoomLock?: boolean } = {},
 ): Promise<void> {
   await setInstant(page);
+  if (options.zoomLock) await lockZoom(page);
   await page.goto("/");
   await page.getByTestId("new-game").waitFor();
 

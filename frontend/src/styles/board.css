@@ -85,9 +85,18 @@
   padding-bottom: 4px;
 }
 
+/* The viewer's own board. Scrolls when the mat outgrows the row, which on a short
+   viewport it does from the first turn -- the orb column alone is taller than this
+   row at 700px.
+
+   `scrollbar-gutter` for the same reason as the pod mats: this element's width is
+   what `state/useZoomFit.ts` derives the lane widths from, and a scrollbar coming
+   and going would move that width and with it the solved card size. Reserving the
+   gutter costs ~10px of lane width permanently and buys a stable measurement. */
 .play__mine {
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 /* Mats ----------------------------------------------------------------- */
@@ -455,10 +464,23 @@
    `background-attachment: local` the two white-to-transparent covers scroll
    with the content while the shadows stay fixed, so a shadow is visible exactly
    when there is more content past that edge. Pure CSS, no scroll listener, and
-   nothing to keep in sync with the DOM. */
+   nothing to keep in sync with the DOM.
+
+   `height` is a *fixed* box now rather than whatever the content wanted. That is
+   what stops an opponent's board growing from translating the viewer's board down
+   the screen -- `docs/roadmap.md`'s recorded limit -- and it is what makes the
+   opponent row's height a function of the viewport alone, so the pod card size can
+   be solved against it without solving against itself. See `--pod-lanes-h`.
+
+   `scrollbar-gutter` reserves the gutter whether or not it scrolls. Without it,
+   the scrollbar appearing changes the lane's *width*, which changes how many cards
+   fit per row, which changes the solved card size -- a small oscillation, but a
+   real one, and the solver reads this width. */
 .mat--compact .mat__lanes {
+  height: var(--pod-lanes-h);
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   background:
     linear-gradient(rgb(13 12 28 / 0) 30%, rgb(13 12 28 / 0)) top / 100% 24px no-repeat local,
     linear-gradient(rgb(13 12 28 / 0), rgb(13 12 28 / 0) 70%) bottom / 100% 24px no-repeat
@@ -820,6 +842,17 @@
 
 /* Lanes ---------------------------------------------------------------- */
 
+/*
+ * `--card-w` is transitioned, and that one declaration is the whole zoom animation
+ * for everything inside a lane.
+ *
+ * `--card-w` is a registered `<length>` (see theme.css), so it interpolates as a
+ * real value rather than as a token stream -- and every declaration that reads it
+ * re-resolves per frame. So this single transition carries the card's box, its
+ * `--card-r`, its `max(2px, ...)` border, all five `--fs-*` type sizes, `--pip`,
+ * and both of the `min-height`s below. Nothing had to be rewritten as a `calc()`
+ * against a separately-animated variable to get it.
+ */
 .lane {
   display: grid;
   grid-template-columns: 74px minmax(0, 1fr);
@@ -829,7 +862,8 @@
   padding: 4px 6px;
   border: 1px dashed transparent;
   border-radius: 8px;
-  transition: background var(--t-base) ease, border-color var(--t-base) ease;
+  transition: background var(--t-base) ease, border-color var(--t-base) ease, --card-w
+    var(--t-zoom) ease;
 }
 
 /*
@@ -1405,6 +1439,9 @@
   min-height: calc(var(--card-w) * 1.4 + 44px);
   padding-top: 14px;
   padding-bottom: 14px;
+  /* As on `.lane`: the hand's own card size is solved separately from the board's
+     (see state/useZoomFit.ts), so it carries its own transition on the same clock. */
+  transition: --card-w var(--t-zoom) ease;
 }
 
 .hand__rail {
@@ -1412,10 +1449,21 @@
   height: calc(var(--card-w) * 1.4);
 }
 
+/*
+ * `left` is the slot's pitch along the arc, and it transitions.
+ *
+ * The pitch is a function of the card width and the number of cards, so it moves
+ * when the zoom moves and when a card is drawn or played. `left` is set from
+ * `HandFan`'s inline style while `motion` drives `transform` for the hover lift and
+ * the neighbour push -- two different properties, so a plain CSS transition here
+ * cannot fight the springs, and the pitch did not have to be rebuilt as a `calc()`
+ * to become animatable. Absolutely positioned, so nothing reflows either.
+ */
 .hand__slot {
   position: absolute;
   top: 0;
   transform-origin: 50% 120%;
+  transition: left var(--t-zoom) ease;
 }
 
 .hand__empty {

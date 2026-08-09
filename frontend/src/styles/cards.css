@@ -1019,9 +1019,29 @@
 
 /* Stacks --------------------------------------------------------------- */
 
+/*
+ * A stack's container, whose size `CardStack` sets in JavaScript.
+ *
+ * **`width` and `height` are transitioned, and `CardStack`'s header says they must
+ * never animate. Both are right; they are about different events.** That warning
+ * is about the *hover fan*: opening a stack used to animate its width, and because
+ * this is an in-flow flex item that reflowed the lane, grew the mat and slid the
+ * board out from under the pointer -- mid-drag, which made picking a blocker out of
+ * a stack impossible. Fanning still does not touch the container: it only moves its
+ * children with transforms, which is what that fix was.
+ *
+ * These two properties now change for exactly one other reason -- the card width
+ * moved, because the zoom re-solved. That reflows the lane by definition, the same
+ * way a permanent entering play does, and it cannot land mid-drag: the zoom
+ * recomputes on a game-state change or a resize, and a drag causes neither until it
+ * has ended. Leaving it un-transitioned would mean the container snapping to its new
+ * size while the cards inside it tweened, so the count badge and the ply peek would
+ * visibly detach from the cards for a quarter of a second.
+ */
 .cardstack {
   position: relative;
   flex: 0 0 auto;
+  transition: width var(--t-zoom) ease, height var(--t-zoom) ease;
 }
 
 .cardstack__slot {
