@@ -1,4 +1,10 @@
 {
+  "aang_and_katara": {
+    "artist": "Brian Yuen",
+    "bytes": 37451,
+    "file": "aang_and_katara.jpg",
+    "scryfall_id": "f333ea01-124f-4125-87ab-609be40e774c"
+  },
   "absorb": {
     "artist": "Andrew Goldhawk",
     "bytes": 58507,
@@ -22,6 +28,18 @@
     "bytes": 64504,
     "file": "adventurer_s_inn.jpg",
     "scryfall_id": "f0da2ee1-986e-4cbf-92eb-d96fdb572ca5"
+  },
+  "aegis_turtle": {
+    "artist": "Milivoj \u0106eran",
+    "bytes": 61381,
+    "file": "aegis_turtle.jpg",
+    "scryfall_id": "c7f2014a-fbc9-447c-a440-e06d01066bb9"
+  },
+  "aerial_responder": {
+    "artist": "Raoul Vitale",
+    "bytes": 85106,
+    "file": "aerial_responder.jpg",
+    "scryfall_id": "b31adac8-9be2-426a-9be4-ef04265361d3"
   },
   "aesi_tyrant_of_gyre_strait": {
     "artist": "Viktor Titov",
@@ -47,6 +65,12 @@
     "file": "alloy_myr.jpg",
     "scryfall_id": "e8d2180b-f54c-47a9-9458-28e7a19e35ee"
   },
+  "alpine_grizzly": {
+    "artist": "John Severin Brassell",
+    "bytes": 101008,
+    "file": "alpine_grizzly.jpg",
+    "scryfall_id": "bafc6e90-d46e-409e-92c7-b3de361931b5"
+  },
   "alpine_meadow": {
     "artist": "Piotr Dura",
     "bytes": 81328,
@@ -65,11 +89,29 @@
     "file": "amulet_of_vigor.jpg",
     "scryfall_id": "0790fb8c-7ff3-4681-a2c0-f16642f4f94b"
   },
+  "ancient_amphitheater": {
+    "artist": "Rob Alexander",
+    "bytes": 71122,
+    "file": "ancient_amphitheater.jpg",
+    "scryfall_id": "ac1a0c88-dc72-459d-bcca-f37eb46cba92"
+  },
+  "ancient_brontodon": {
+    "artist": "Jakub Kasper",
+    "bytes": 77873,
+    "file": "ancient_brontodon.jpg",
+    "scryfall_id": "0a571223-1f43-4a47-a09c-a7ccb9edd298"
+  },
   "ancient_den": {
     "artist": "Rob Alexander",
     "bytes": 60409,
     "file": "ancient_den.jpg",
     "scryfall_id": "d9a7b0f6-97f9-4937-865c-e25c142c3ed7"
+  },
+  "ancient_tomb": {
+    "artist": "Meel Tamphanon",
+    "bytes": 57226,
+    "file": "ancient_tomb.jpg",
+    "scryfall_id": "2c8b3180-6e29-484a-95f1-3e75af2766d3"
   },
   "ancient_ziggurat": {
     "artist": "John Avon",
@@ -95,6 +137,12 @@
     "file": "angel_of_the_dire_hour.jpg",
     "scryfall_id": "b7ab81d4-aaf7-4c72-9651-5e1482126928"
   },
+  "angelic_wall": {
+    "artist": "Allen Williams",
+    "bytes": 59913,
+    "file": "angelic_wall.jpg",
+    "scryfall_id": "7fe8f88e-8a51-494b-a008-fbfe624f97f7"
+  },
   "ankle_biter": {
     "artist": "Monztre",
     "bytes": 57045,
@@ -106,6 +154,12 @@
     "bytes": 83812,
     "file": "anticipate.jpg",
     "scryfall_id": "46b6dfb2-ffe4-44fb-bfd9-df11bc3193df"
+  },
+  "apprentice_wizard": {
+    "artist": "Richard Kane Ferguson",
+    "bytes": 115049,
+    "file": "apprentice_wizard.jpg",
+    "scryfall_id": "e13026a8-7e3c-45b2-9838-080f14ae4b29"
   },
   "arboreal_grazer": {
     "artist": "Jason Rainville",
@@ -137,11 +191,35 @@
     "file": "arctic_treeline.jpg",
     "scryfall_id": "b20e3117-f1e4-4449-ae9d-0b66abfc717d"
   },
+  "arcum_s_astrolabe": {
+    "artist": "Igor Kieryluk",
+    "bytes": 100566,
+    "file": "arcum_s_astrolabe.jpg",
+    "scryfall_id": "8dcaa85c-c4f1-4a3a-8328-6fcf865299e0"
+  },
+  "ashcoat_bear": {
+    "artist": "Carl Critchlow",
+    "bytes": 74856,
+    "file": "ashcoat_bear.jpg",
+    "scryfall_id": "9b7a6ab5-8a8f-492c-8484-3089354ce8cf"
+  },
   "augury_owl": {
     "artist": "Jim Nelson",
     "bytes": 84519,
     "file": "augury_owl.jpg",
     "scryfall_id": "e25dd284-ccc5-423c-830d-d3d331212293"
+  },
+  "auntie_s_hovel": {
+    "artist": "Hari & Deepti",
+    "bytes": 62082,
+    "file": "auntie_s_hovel.jpg",
+    "scryfall_id": "c5585b62-b9dc-4a48-bf2a-a25d14dbd7a3"
+  },
+  "automated_artificer": {
+    "artist": "Izzy",
+    "bytes": 82066,
+    "file": "automated_artificer.jpg",
+    "scryfall_id": "b8c30ffb-b4f5-40b0-87b8-800a42bded2b"
   },
   "avacyn_s_pilgrim": {
     "artist": "Jana Schirmer & Johannes Voss",
@@ -179,6 +257,12 @@
     "file": "azorius_guildgate.jpg",
     "scryfall_id": "c11f10dc-0636-4a48-8294-11c0c84480fa"
   },
+  "azorius_signet": {
+    "artist": "Raoul Vitale",
+    "bytes": 67338,
+    "file": "azorius_signet.jpg",
+    "scryfall_id": "10f8b8fa-1d6e-4b5d-a871-914aa8b26ae6"
+  },
   "azusa_lost_but_seeking": {
     "artist": "Yoshitaka Amano",
     "bytes": 81636,
@@ -191,11 +275,23 @@
     "file": "badlands.jpg",
     "scryfall_id": "377cee38-e769-47b0-abd5-0f528600f36a"
   },
+  "balduvian_bears": {
+    "artist": "Quinton Hoover",
+    "bytes": 85291,
+    "file": "balduvian_bears.jpg",
+    "scryfall_id": "662dc886-ce6b-4db1-a806-cc0d4fc504f6"
+  },
   "baleful_strix": {
     "artist": "Martin Ontiveros",
     "bytes": 103640,
     "file": "baleful_strix.jpg",
     "scryfall_id": "eb385a33-0f92-4258-b582-de5a6bb4db2c"
+  },
+  "banehound": {
+    "artist": "YW Tang",
+    "bytes": 68719,
+    "file": "banehound.jpg",
+    "scryfall_id": "b9e03567-c95a-40b8-a75a-971076093f57"
   },
   "banishing_light": {
     "artist": "Joseph Meehan",
@@ -226,6 +322,12 @@
     "bytes": 118892,
     "file": "bayou.jpg",
     "scryfall_id": "e83d49c1-7d84-43f9-8548-5697603fefc0"
+  },
+  "bear_cub": {
+    "artist": "Ron Spencer",
+    "bytes": 72220,
+    "file": "bear_cub.jpg",
+    "scryfall_id": "d8662ebb-068b-41d2-b504-4b5854e4d4aa"
   },
   "beast_3_3_g": {
     "artist": "Thomas Chamberlain-Keen",
@@ -335,11 +437,29 @@
     "file": "blue_suns_zenith.jpg",
     "scryfall_id": "3cad77b5-94eb-4715-9fc1-75c45c28e83a"
   },
+  "bone_saw": {
+    "artist": "Pete Venters",
+    "bytes": 82534,
+    "file": "bone_saw.jpg",
+    "scryfall_id": "3011f0dd-fab4-453d-9956-b715a5f0ea02"
+  },
+  "bonesplitter": {
+    "artist": "Darrell Riche",
+    "bytes": 73723,
+    "file": "bonesplitter.jpg",
+    "scryfall_id": "690972a8-72df-4050-a353-16e45589167c"
+  },
   "boreal_druid": {
     "artist": "Dan Dos Santos",
     "bytes": 61872,
     "file": "boreal_druid.jpg",
     "scryfall_id": "f656c45c-60f8-4588-9f18-67e7a5e2ae05"
+  },
+  "boreal_shelf": {
+    "artist": "Heather Hudson",
+    "bytes": 60033,
+    "file": "boreal_shelf.jpg",
+    "scryfall_id": "3f2f8396-72ab-4387-9276-987836427107"
   },
   "boros_guildgate": {
     "artist": "Titus Lunter",
@@ -347,11 +467,29 @@
     "file": "boros_guildgate.jpg",
     "scryfall_id": "95940c4c-d600-4086-b5d8-fd84ce5cc2b5"
   },
+  "boros_signet": {
+    "artist": "Ron Spears",
+    "bytes": 48540,
+    "file": "boros_signet.jpg",
+    "scryfall_id": "03c9e279-861a-416b-99fb-68f752882ac2"
+  },
+  "brass_infiniscope": {
+    "artist": "Nino Vecia",
+    "bytes": 49816,
+    "file": "brass_infiniscope.jpg",
+    "scryfall_id": "549f89a5-1558-4ce5-a579-329e89eeb8aa"
+  },
   "breeding_pool": {
     "artist": "Cliff Nielsen",
     "bytes": 55356,
     "file": "breeding_pool.jpg",
     "scryfall_id": "63e4dc07-c742-41bd-8301-861637908fd1"
+  },
+  "bronze_walrus": {
+    "artist": "James Paick",
+    "bytes": 66706,
+    "file": "bronze_walrus.jpg",
+    "scryfall_id": "b2cfd2c0-2110-47f1-809e-487b9b0a1043"
   },
   "bygone_bishop": {
     "artist": "Jason A. Engle",
@@ -364,6 +502,12 @@
     "bytes": 65103,
     "file": "cabal_coffers.jpg",
     "scryfall_id": "0b1cbebd-9552-4628-bbb7-e235a812063e"
+  },
+  "caelorna_coral_tyrant": {
+    "artist": "Deruchenko Alexander",
+    "bytes": 86221,
+    "file": "caelorna_coral_tyrant.jpg",
+    "scryfall_id": "e8654e38-4230-4094-b815-778bfb5d06f2"
   },
   "callidus_assassin": {
     "artist": "Bryan Sola",
@@ -394,6 +538,12 @@
     "bytes": 53648,
     "file": "champion_of_dusk.jpg",
     "scryfall_id": "5fa1674a-86cc-4fdf-8671-860b2bf5043d"
+  },
+  "chaplain_s_blessing": {
+    "artist": "John Stanko",
+    "bytes": 56551,
+    "file": "chaplain_s_blessing.jpg",
+    "scryfall_id": "f70ea481-1751-4097-af41-2d13fe79e788"
   },
   "charcoal_diamond": {
     "artist": "Drew Tucker",
@@ -503,6 +653,18 @@
     "file": "contaminated_aquifer.jpg",
     "scryfall_id": "bf544abb-c338-4da4-bb77-eddd3aaacc9a"
   },
+  "contingency_plan": {
+    "artist": "Ryan Yee",
+    "bytes": 60459,
+    "file": "contingency_plan.jpg",
+    "scryfall_id": "40dc6986-202e-4f65-aee7-a631dda88ed0"
+  },
+  "copper_host_crusher": {
+    "artist": "Nicholas Gregory",
+    "bytes": 80334,
+    "file": "copper_host_crusher.jpg",
+    "scryfall_id": "af527344-9d88-4641-8f6d-0263a6797df3"
+  },
   "copper_myr": {
     "artist": "Alan Pollack",
     "bytes": 95735,
@@ -514,6 +676,18 @@
     "bytes": 62861,
     "file": "counterspell.jpg",
     "scryfall_id": "77d16cf5-d85a-44cf-aaac-c4134837cbe4"
+  },
+  "crimson_kobolds": {
+    "artist": "Anson Maddocks",
+    "bytes": 140507,
+    "file": "crimson_kobolds.jpg",
+    "scryfall_id": "13696657-aeef-4add-9a3b-8137fce01fe3"
+  },
+  "crookshank_kobolds": {
+    "artist": "Christopher Rush",
+    "bytes": 125167,
+    "file": "crookshank_kobolds.jpg",
+    "scryfall_id": "7af6b119-7db4-49dd-aaa4-044b8c133f13"
   },
   "crossroads_village": {
     "artist": "Hristo D. Chukov",
@@ -569,6 +743,18 @@
     "file": "darksteel_myr.jpg",
     "scryfall_id": "0f5712cf-c6a9-4a2e-90db-8ca17c621724"
   },
+  "darksteel_relic": {
+    "artist": "Daniel Ljunggren",
+    "bytes": 69934,
+    "file": "darksteel_relic.jpg",
+    "scryfall_id": "0fd8c918-62d9-41be-a3e1-32ddac71b7e7"
+  },
+  "darkwater_catacombs": {
+    "artist": "Jeremy Paillotin",
+    "bytes": 38848,
+    "file": "darkwater_catacombs.jpg",
+    "scryfall_id": "bcb5a670-7c8f-4b76-82c6-c89abffbb4bd"
+  },
   "day_of_judgment": {
     "artist": "N\u00e9stor Ossand\u00f3n Leal",
     "bytes": 58593,
@@ -586,6 +772,12 @@
     "bytes": 77345,
     "file": "deathbloom_gardener.jpg",
     "scryfall_id": "88dee3d1-0496-40ea-b208-7362a932f531"
+  },
+  "deathbloom_ritualist": {
+    "artist": "Taras Susak",
+    "bytes": 85546,
+    "file": "deathbloom_ritualist.jpg",
+    "scryfall_id": "45ff816d-1eb7-4985-90ec-f44802a696fc"
   },
   "deep_analysis": {
     "artist": "Michael MacRae",
@@ -605,6 +797,12 @@
     "file": "deputy_of_detention.jpg",
     "scryfall_id": "7e362055-78a1-48fa-a4ef-6cf7e0b21b14"
   },
+  "desolate_mire": {
+    "artist": "Rockey Chen",
+    "bytes": 51357,
+    "file": "desolate_mire.jpg",
+    "scryfall_id": "6a261c7d-38a4-4000-97b2-76e7ab9989c5"
+  },
   "dictate_of_erebos": {
     "artist": "Kathleen Neeley & AndWorld Design",
     "bytes": 101667,
@@ -616,6 +814,12 @@
     "bytes": 74544,
     "file": "dimir_guildgate.jpg",
     "scryfall_id": "f7678f13-d8d8-4932-88b6-c39dbad1188b"
+  },
+  "dimir_signet": {
+    "artist": "Greg Hildebrandt",
+    "bytes": 62089,
+    "file": "dimir_signet.jpg",
+    "scryfall_id": "6173d331-1dd9-47e0-bb9c-5655b179737f"
   },
   "disfigure": {
     "artist": "Svetlin Velinov",
@@ -707,6 +911,12 @@
     "file": "duskborne_skymarcher.jpg",
     "scryfall_id": "baa524bb-0ce7-4c30-93c3-ae15c3b05e92"
   },
+  "dwarven_trader": {
+    "artist": "Margaret Organ-Kean",
+    "bytes": 108047,
+    "file": "dwarven_trader.jpg",
+    "scryfall_id": "4db9aa47-f42b-41e9-948c-8b012c3809fb"
+  },
   "echoing_deeps": {
     "artist": "Sam Chivers",
     "bytes": 35243,
@@ -731,6 +941,12 @@
     "file": "elemental_2_2_g.jpg",
     "scryfall_id": "222b8394-20e7-4808-8eec-cb048f548055"
   },
+  "elfhame_palace": {
+    "artist": "Anthony S. Waters",
+    "bytes": 84042,
+    "file": "elfhame_palace.jpg",
+    "scryfall_id": "667bb9ad-b014-42f9-b0c8-132e0c3b4485"
+  },
   "elves_of_deep_shadow": {
     "artist": "Julie Bell",
     "bytes": 72855,
@@ -742,6 +958,12 @@
     "bytes": 75785,
     "file": "elvish_mystic.jpg",
     "scryfall_id": "08b9a296-3b76-4f8f-9d71-7c9af92bb3b4"
+  },
+  "elvish_pioneer": {
+    "artist": "Thomas M. Baxa",
+    "bytes": 104096,
+    "file": "elvish_pioneer.jpg",
+    "scryfall_id": "88244522-1cf3-40a6-9ff7-bb78f2151b60"
   },
   "elvish_visionary": {
     "artist": "Zuzanna Wu\u017cyk",
@@ -851,6 +1073,12 @@
     "file": "fellwar_stone.jpg",
     "scryfall_id": "3ef87948-0ad9-4757-a692-2262c8e24367"
   },
+  "ferrous_lake": {
+    "artist": "Grady Frederick",
+    "bytes": 45276,
+    "file": "ferrous_lake.jpg",
+    "scryfall_id": "92fa559c-a99b-4bc1-86c4-0c5eeeac9f4f"
+  },
   "fire_diamond": {
     "artist": "Gaboleps",
     "bytes": 75674,
@@ -887,6 +1115,12 @@
     "file": "forsaken_sanctuary.jpg",
     "scryfall_id": "f3e0b983-62e7-43fb-b5d5-402ea60a64d7"
   },
+  "fortified_rampart": {
+    "artist": "David Gaillet",
+    "bytes": 94157,
+    "file": "fortified_rampart.jpg",
+    "scryfall_id": "5095e2ab-a7f5-45bc-8b2f-31198ea27bba"
+  },
   "fortified_village": {
     "artist": "Pablo Mendoza",
     "bytes": 73547,
@@ -911,11 +1145,23 @@
     "file": "frontier_bivouac.jpg",
     "scryfall_id": "48810b27-0646-4ff9-9d4d-c6d09b2e0267"
   },
+  "frost_marsh": {
+    "artist": "Jim Pavelec",
+    "bytes": 68628,
+    "file": "frost_marsh.jpg",
+    "scryfall_id": "0eeefa91-5084-4671-ab82-b19807a9f617"
+  },
   "frostboil_snarl": {
     "artist": "Fariba Khamseh",
     "bytes": 66414,
     "file": "frostboil_snarl.jpg",
     "scryfall_id": "20a82ce4-da2b-4210-94f6-2778eca608e7"
+  },
+  "frozen_aether": {
+    "artist": "Dan Dos Santos",
+    "bytes": 79236,
+    "file": "frozen_aether.jpg",
+    "scryfall_id": "a1769da6-e38a-48dd-80c5-fb7863ba718e"
   },
   "furycalm_snarl": {
     "artist": "Pablo Mendoza",
@@ -935,11 +1181,23 @@
     "file": "gaea_s_cradle.jpg",
     "scryfall_id": "25b0b816-0583-44aa-9dc5-f3ff48993a51"
   },
+  "galewind_moose": {
+    "artist": "Valera Lutfullina",
+    "bytes": 64534,
+    "file": "galewind_moose.jpg",
+    "scryfall_id": "58706bd8-558a-43b9-9f1e-c1ff0044203b"
+  },
   "game_trail": {
     "artist": "Jonas De Ro",
     "bytes": 62057,
     "file": "game_trail.jpg",
     "scryfall_id": "4d62258f-135b-44ca-a27d-3c2267f408a5"
+  },
+  "garruk_s_gorehorn": {
+    "artist": "Svetlin Velinov",
+    "bytes": 73324,
+    "file": "garruk_s_gorehorn.jpg",
+    "scryfall_id": "3928bbce-87b7-4b28-9af4-20362935c909"
   },
   "garruks_packleader": {
     "artist": "Nils Hamm",
@@ -983,6 +1241,12 @@
     "file": "glacial_floodplain.jpg",
     "scryfall_id": "9de5fadd-4559-479f-b45d-abe792f0f6e5"
   },
+  "glacial_wall": {
+    "artist": "Craig Mullins",
+    "bytes": 59379,
+    "file": "glacial_wall.jpg",
+    "scryfall_id": "c059330e-1aef-4d22-b3c2-cd84cab5fe38"
+  },
   "go_for_the_throat": {
     "artist": "Kael Ngu",
     "bytes": 85484,
@@ -1025,11 +1289,23 @@
     "file": "golgari_guildgate.jpg",
     "scryfall_id": "127226e7-d51c-4a85-9195-9bbb375ffc31"
   },
+  "golgari_signet": {
+    "artist": "Raoul Vitale",
+    "bytes": 63037,
+    "file": "golgari_signet.jpg",
+    "scryfall_id": "95103b4c-d0c0-40fa-9ddd-c7416455ca0c"
+  },
   "gongaga_reactor_town": {
     "artist": "Le Vuong",
     "bytes": 62719,
     "file": "gongaga_reactor_town.jpg",
     "scryfall_id": "7beccfa6-3e4b-4460-954e-870cb39e462d"
+  },
+  "goobbue_gardener": {
+    "artist": "Janna Sophia",
+    "bytes": 46901,
+    "file": "goobbue_gardener.jpg",
+    "scryfall_id": "b7c3544a-5dd5-423e-8a40-ac4803db8adc"
   },
   "grave_titan": {
     "artist": "Nils Hamm",
@@ -1055,6 +1331,12 @@
     "file": "great_furnace.jpg",
     "scryfall_id": "74c5bb44-d72c-4c1a-a38f-86b4a8f49ae1"
   },
+  "grizzly_bears": {
+    "artist": "D. J. Cleland-Hura",
+    "bytes": 99360,
+    "file": "grizzly_bears.jpg",
+    "scryfall_id": "409f9b88-f03e-40b6-9883-68c14c37c0de"
+  },
   "growth_spiral": {
     "artist": "Andrew Mar",
     "bytes": 65487,
@@ -1066,6 +1348,12 @@
     "bytes": 77305,
     "file": "gruul_guildgate.jpg",
     "scryfall_id": "397805e8-f7c2-4b13-9454-5d526a429c88"
+  },
+  "gruul_signet": {
+    "artist": "Efrem Palacios",
+    "bytes": 71954,
+    "file": "gruul_signet.jpg",
+    "scryfall_id": "1e71ad66-28ae-4cd6-ac71-d8710e9ea9cd"
   },
   "guadosalam_farplane_gateway": {
     "artist": "Vaigintas Pakenis",
@@ -1079,11 +1367,29 @@
     "file": "guardian_project.jpg",
     "scryfall_id": "e2f6e910-ed11-439a-bd07-76a12ca1862a"
   },
+  "guidelight_optimizer": {
+    "artist": "Mirko Failoni",
+    "bytes": 57533,
+    "file": "guidelight_optimizer.jpg",
+    "scryfall_id": "e9fc07dd-05b1-49ed-a3ee-46c31b8e0a3d"
+  },
+  "gurmag_swiftwing": {
+    "artist": "Jeff Simpson",
+    "bytes": 31500,
+    "file": "gurmag_swiftwing.jpg",
+    "scryfall_id": "6e068e80-ab5d-41b8-add9-bd49905e4992"
+  },
   "guul_draz_vampire": {
     "artist": "Steve Argyle",
     "bytes": 64278,
     "file": "guul_draz_vampire.jpg",
     "scryfall_id": "f3c92575-1c97-48bf-801b-22f34040cf9a"
+  },
+  "gyre_engineer": {
+    "artist": "Anthony Palumbo",
+    "bytes": 70462,
+    "file": "gyre_engineer.jpg",
+    "scryfall_id": "26dd6a1d-4dcb-4392-9856-c0e4140efbd7"
   },
   "gyre_sage": {
     "artist": "Touge369",
@@ -1151,6 +1457,12 @@
     "file": "helpful_hunter.jpg",
     "scryfall_id": "0a09344c-e869-4a8e-9be6-a29f1a5b6df6"
   },
+  "heroic_intervention": {
+    "artist": "Bob Layton",
+    "bytes": 95269,
+    "file": "heroic_intervention.jpg",
+    "scryfall_id": "12edbdcc-085f-48c8-9605-3c7e3fe63bc7"
+  },
   "heros_downfall": {
     "artist": "Zoltan Boros",
     "bytes": 62810,
@@ -1168,6 +1480,12 @@
     "bytes": 64966,
     "file": "highland_lake.jpg",
     "scryfall_id": "46bb20af-a326-4a42-94d3-cb1990300e0f"
+  },
+  "hired_poisoner": {
+    "artist": "Joe Slucher",
+    "bytes": 66883,
+    "file": "hired_poisoner.jpg",
+    "scryfall_id": "bf97e572-90d6-46fc-81c3-956a7ef88983"
   },
   "hordeling_outburst": {
     "artist": "Zoltan Boros",
@@ -1193,6 +1511,12 @@
     "file": "hovermyr.jpg",
     "scryfall_id": "95e4e445-8333-4cb4-b4fb-80957fae0b97"
   },
+  "hullcarver": {
+    "artist": "Michal Ivan",
+    "bytes": 53475,
+    "file": "hullcarver.jpg",
+    "scryfall_id": "817b5b18-beb5-48c8-aa45-0515ff9ca5da"
+  },
   "human_1_1_w": {
     "artist": "David \u00c1lvarez",
     "bytes": 41384,
@@ -1211,6 +1535,12 @@
     "file": "idyllic_beachfront.jpg",
     "scryfall_id": "afe2ebec-0310-4b2f-ace4-fb293a1e4837"
   },
+  "illegitimate_business": {
+    "artist": "Mikl\u00f3s Ligeti",
+    "bytes": 43719,
+    "file": "illegitimate_business.jpg",
+    "scryfall_id": "71597acf-1ce6-46a8-b6c0-88755c8a377c"
+  },
   "ilysian_caryatid": {
     "artist": "Winona Nelson",
     "bytes": 63677,
@@ -1222,6 +1552,12 @@
     "bytes": 86952,
     "file": "impact_tremors.jpg",
     "scryfall_id": "df82f3d1-c7ee-4aa5-a14b-f090e4c6ce91"
+  },
+  "imposing_sovereign": {
+    "artist": "Scott M. Fischer",
+    "bytes": 78327,
+    "file": "imposing_sovereign.jpg",
+    "scryfall_id": "0f672328-3361-498e-a9f4-2d8e69a8b072"
   },
   "increasing_devotion": {
     "artist": "Daniel Ljunggren",
@@ -1259,6 +1595,12 @@
     "file": "intangible_virtue.jpg",
     "scryfall_id": "716d82a1-fb5d-4607-b1fa-e8e9edd4dd77"
   },
+  "iron_giant": {
+    "artist": "John Tyler Christopher",
+    "bytes": 49192,
+    "file": "iron_giant.jpg",
+    "scryfall_id": "e48cf6d5-4d32-4b66-80be-3495ecd3e906"
+  },
   "iron_myr": {
     "artist": "Alan Pollack",
     "bytes": 79107,
@@ -1294,6 +1636,12 @@
     "bytes": 88810,
     "file": "izzet_guildgate.jpg",
     "scryfall_id": "e0abeaf6-1ec9-4abb-a3a0-48afa475a946"
+  },
+  "izzet_signet": {
+    "artist": "Raoul Vitale",
+    "bytes": 54468,
+    "file": "izzet_signet.jpg",
+    "scryfall_id": "a39b4b15-cd3e-4d30-8de2-8e584524d018"
   },
   "jaces_ingenuity": {
     "artist": "Igor Kieryluk",
@@ -1331,11 +1679,23 @@
     "file": "kabira_crossroads.jpg",
     "scryfall_id": "7a78246d-4cbd-4b6c-bc3a-277f96db900b"
   },
+  "kalakscion_hunger_tyrant": {
+    "artist": "John Tedrick",
+    "bytes": 66063,
+    "file": "kalakscion_hunger_tyrant.jpg",
+    "scryfall_id": "1214fc6d-ae47-418d-88cc-58633ec2ac7a"
+  },
   "kalastria_highborn": {
     "artist": "D. Alexander Gregory",
     "bytes": 40032,
     "file": "kalastria_highborn.jpg",
     "scryfall_id": "a3a055ed-60b0-4d35-ad58-04f324b56d65"
+  },
+  "kalonian_tusker": {
+    "artist": "Svetlin Velinov",
+    "bytes": 84365,
+    "file": "kalonian_tusker.jpg",
+    "scryfall_id": "135946fc-fe67-401f-821d-d7145c63f030"
   },
   "karametra_s_acolyte": {
     "artist": "Chase Stone",
@@ -1355,17 +1715,41 @@
     "file": "kazandu_refuge.jpg",
     "scryfall_id": "304b4d37-53e1-44a3-a892-627439edaf6f"
   },
+  "kindly_customer": {
+    "artist": "Enishi",
+    "bytes": 55219,
+    "file": "kindly_customer.jpg",
+    "scryfall_id": "84332812-367a-4ac4-9be5-2adc57562c9d"
+  },
   "kinjalli_s_sunwing": {
     "artist": "Simon Dominic",
     "bytes": 73283,
     "file": "kinjalli_s_sunwing.jpg",
     "scryfall_id": "04421508-b5ac-4466-9f77-dfef478d3cc2"
   },
+  "kismet": {
+    "artist": "Kaja Foglio",
+    "bytes": 99988,
+    "file": "kismet.jpg",
+    "scryfall_id": "d18d53f6-4cec-4c91-a507-39038d300b00"
+  },
+  "kite_shield": {
+    "artist": "Jim Pavelec",
+    "bytes": 86220,
+    "file": "kite_shield.jpg",
+    "scryfall_id": "2ec00f45-7c40-4ceb-a8d1-c36ba5143f43"
+  },
   "knight_2_2_w_vigilance": {
     "artist": "Joshua Raphael",
     "bytes": 53827,
     "file": "knight_2_2_w_vigilance.jpg",
     "scryfall_id": "a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad"
+  },
+  "kobolds_of_kher_keep": {
+    "artist": "Julie Baroh",
+    "bytes": 128446,
+    "file": "kobolds_of_kher_keep.jpg",
+    "scryfall_id": "df0320d9-7c2a-456a-9159-1b4fae67bfb5"
   },
   "kodamas_reach": {
     "artist": "John Avon",
@@ -1378,6 +1762,12 @@
     "bytes": 71038,
     "file": "kor_cartographer.jpg",
     "scryfall_id": "4fb7a3ad-dfe8-4d6a-9f2c-2c0f1975ea99"
+  },
+  "kozilek_s_channeler": {
+    "artist": "Jason Felix",
+    "bytes": 94661,
+    "file": "kozilek_s_channeler.jpg",
+    "scryfall_id": "c550d179-32ec-4ad8-91c2-d79320a21cba"
   },
   "kraken_8_8_u": {
     "artist": "Dan Murayama Scott",
@@ -1409,11 +1799,23 @@
     "file": "leaden_myr.jpg",
     "scryfall_id": "3a709559-fec3-44f4-a2bf-3396989b9189"
   },
+  "leaf_gilder": {
+    "artist": "Quinton Hoover",
+    "bytes": 106109,
+    "file": "leaf_gilder.jpg",
+    "scryfall_id": "58b3bd44-3b01-4507-b9be-ab94601ea736"
+  },
   "leafkin_druid": {
     "artist": "Filip Burburan",
     "bytes": 71466,
     "file": "leafkin_druid.jpg",
     "scryfall_id": "ad86f40b-0d8d-4186-9a43-b0f0f2542280"
+  },
+  "leatherback_baloth": {
+    "artist": "Dave Kendall",
+    "bytes": 77745,
+    "file": "leatherback_baloth.jpg",
+    "scryfall_id": "b6d8a662-cff3-4664-9591-568847609669"
   },
   "legion_lieutenant": {
     "artist": "Zezhou Chen",
@@ -1438,6 +1840,12 @@
     "bytes": 60901,
     "file": "llanowar_elves.jpg",
     "scryfall_id": "ee1a40dc-30dc-4dda-9001-aa7fb0b43bb3"
+  },
+  "llanowar_tribe": {
+    "artist": "Scott Murphy",
+    "bytes": 71330,
+    "file": "llanowar_tribe.jpg",
+    "scryfall_id": "c53d8be8-8a16-4d2d-b0cf-dae5c8e7af89"
   },
   "llanowar_visionary": {
     "artist": "Cristi Balanescu",
@@ -1577,6 +1985,12 @@
     "file": "mirage_mesa.jpg",
     "scryfall_id": "c3d2e816-c06d-4c5d-98fe-c350d8cfab27"
   },
+  "mishra_s_workshop": {
+    "artist": "Kaja Foglio",
+    "bytes": 92348,
+    "file": "mishra_s_workshop.jpg",
+    "scryfall_id": "135de5c7-6ac9-4b68-8f1a-97f120a4b125"
+  },
   "mistvault_bridge": {
     "artist": "Mathias Kollros",
     "bytes": 66339,
@@ -1606,6 +2020,12 @@
     "bytes": 89034,
     "file": "moss_viper.jpg",
     "scryfall_id": "a4d35ec4-0e0d-4611-8ad9-39d2c8a2ad6e"
+  },
+  "mossfire_valley": {
+    "artist": "Eddie Mendoza",
+    "bytes": 69598,
+    "file": "mossfire_valley.jpg",
+    "scryfall_id": "de5279fc-2532-4e66-bc44-ca395e106ab0"
   },
   "mountain": {
     "artist": "Bastien Grivet",
@@ -1637,6 +2057,12 @@
     "file": "mystic_monastery.jpg",
     "scryfall_id": "bc23343a-3a01-4975-8430-17bf15fa639d"
   },
+  "nantuko_elder": {
+    "artist": "Daren Bader",
+    "bytes": 75038,
+    "file": "nantuko_elder.jpg",
+    "scryfall_id": "52b4cb03-0226-469f-9654-f76085929175"
+  },
   "naturalize": {
     "artist": "Daniel Ljunggren",
     "bytes": 68821,
@@ -1661,11 +2087,23 @@
     "file": "negate.jpg",
     "scryfall_id": "52d58fe4-6070-4022-9cd7-c35a11b44525"
   },
+  "new_benalia": {
+    "artist": "Richard Wright",
+    "bytes": 57935,
+    "file": "new_benalia.jpg",
+    "scryfall_id": "315e4c91-5b2a-45e8-b6b1-baf08ae6e2fc"
+  },
   "nights_whisper": {
     "artist": "Miranda Meeks",
     "bytes": 44399,
     "file": "nights_whisper.jpg",
     "scryfall_id": "e8399c2e-ecc8-41c9-a690-a0eeafb27f77"
+  },
+  "nightveil_predator": {
+    "artist": "Darek Zabrocki",
+    "bytes": 49009,
+    "file": "nightveil_predator.jpg",
+    "scryfall_id": "72efc1ee-3583-4814-beaa-bbee709275e6"
   },
   "nimble_mongoose": {
     "artist": "Kev Walker",
@@ -1691,17 +2129,47 @@
     "file": "noxious_newt.jpg",
     "scryfall_id": "3a028306-c5d7-4f8f-b6f4-0d103fd47000"
   },
+  "oaken_siren": {
+    "artist": "Lars Grant-West",
+    "bytes": 48666,
+    "file": "oaken_siren.jpg",
+    "scryfall_id": "d7731ef5-da74-4436-8ee7-01c065cbefae"
+  },
+  "oasis_gardener": {
+    "artist": "Kristina Carroll",
+    "bytes": 52591,
+    "file": "oasis_gardener.jpg",
+    "scryfall_id": "ee0dc663-4bfb-46d4-af79-d0143c799487"
+  },
+  "obelisk_of_grixis": {
+    "artist": "Nils Hamm",
+    "bytes": 83699,
+    "file": "obelisk_of_grixis.jpg",
+    "scryfall_id": "1bf29333-2fe4-4bd3-855b-8eef8d14c5d6"
+  },
   "oblivion_ring": {
     "artist": "Wayne England",
     "bytes": 66256,
     "file": "oblivion_ring.jpg",
     "scryfall_id": "33330c04-4e61-4993-ba26-d2316d1e845c"
   },
+  "omen_hawker": {
+    "artist": "Josh Hass",
+    "bytes": 88661,
+    "file": "omen_hawker.jpg",
+    "scryfall_id": "d0749c3c-e3f7-4c96-8c5b-4fd2401544c4"
+  },
   "omenspeaker": {
     "artist": "Dallas Williams",
     "bytes": 66943,
     "file": "omenspeaker.jpg",
     "scryfall_id": "1b635abe-ad7e-44b8-b3fe-6e365db87c29"
+  },
+  "opaline_unicorn": {
+    "artist": "Christine Choi",
+    "bytes": 69874,
+    "file": "opaline_unicorn.jpg",
+    "scryfall_id": "160d39b0-76c5-4218-97e5-5903f781dafc"
   },
   "opt": {
     "artist": "BLUMOO",
@@ -1733,6 +2201,24 @@
     "file": "orzhov_guildgate.jpg",
     "scryfall_id": "8ab96220-44e1-4c1d-8fb5-1fd44d8bdd8d"
   },
+  "orzhov_signet": {
+    "artist": "Greg Hildebrandt",
+    "bytes": 66895,
+    "file": "orzhov_signet.jpg",
+    "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
+  },
+  "overflowing_basin": {
+    "artist": "Sarah Finnigan",
+    "bytes": 60053,
+    "file": "overflowing_basin.jpg",
+    "scryfall_id": "6357d665-2b28-4747-ab43-b90176d78d42"
+  },
+  "overflowing_insight": {
+    "artist": "Lucas Graciano",
+    "bytes": 55731,
+    "file": "overflowing_insight.jpg",
+    "scryfall_id": "00a0c686-f19d-41da-b46e-5cc99aac1ce8"
+  },
   "overgrown_battlement": {
     "artist": "Franz Vohwinkel",
     "bytes": 91728,
@@ -1744,6 +2230,12 @@
     "bytes": 59012,
     "file": "overgrown_tomb.jpg",
     "scryfall_id": "ad7e18e2-c033-4b6c-86e8-d0e5cc824cfd"
+  },
+  "palladium_myr": {
+    "artist": "Alan Pollack",
+    "bytes": 40791,
+    "file": "palladium_myr.jpg",
+    "scryfall_id": "f7c6aba3-38c3-45d1-83e1-40829eb07862"
   },
   "path_of_ancestry": {
     "artist": "Alayna Danner",
@@ -1895,6 +2387,12 @@
     "file": "rakdos_guildgate.jpg",
     "scryfall_id": "55909c50-8065-481d-b3df-00b0d6ef1ee8"
   },
+  "rakdos_signet": {
+    "artist": "Martina Pilcerova",
+    "bytes": 72244,
+    "file": "rakdos_signet.jpg",
+    "scryfall_id": "01cc9536-f710-4c47-9e3f-d7e83cc888f2"
+  },
   "rakish_heir": {
     "artist": "Winona Nelson",
     "bytes": 59788,
@@ -1979,6 +2477,12 @@
     "file": "rimewood_falls.jpg",
     "scryfall_id": "55db3506-8aca-4feb-960d-011d735963d1"
   },
+  "riptide_turtle": {
+    "artist": "Brian Valeza",
+    "bytes": 76757,
+    "file": "riptide_turtle.jpg",
+    "scryfall_id": "cc4ba296-950c-4e39-ab5e-06be07e4a190"
+  },
   "river_of_tears": {
     "artist": "Chris J. Anderson",
     "bytes": 50082,
@@ -1991,11 +2495,23 @@
     "file": "roiling_regrowth.jpg",
     "scryfall_id": "2c446dbb-b883-47e9-aab3-ac921ff218f8"
   },
+  "root_maze": {
+    "artist": "Rebecca Guay",
+    "bytes": 114944,
+    "file": "root_maze.jpg",
+    "scryfall_id": "727c757a-2ae5-45fd-9832-646a355a5710"
+  },
   "rugged_highlands": {
     "artist": "Florian de Gesincourt",
     "bytes": 44613,
     "file": "rugged_highlands.jpg",
     "scryfall_id": "73b7484f-923c-46c5-95bf-c2c6706c0d48"
+  },
+  "runeclaw_bear": {
+    "artist": "Jesper Ejsing",
+    "bytes": 101762,
+    "file": "runeclaw_bear.jpg",
+    "scryfall_id": "558f5534-3a21-4f8d-89e1-c972dc018f35"
   },
   "rustvale_bridge": {
     "artist": "Craig J Spearing",
@@ -2026,6 +2542,12 @@
     "bytes": 55382,
     "file": "sakura_tribe_elder.jpg",
     "scryfall_id": "7a8b1c49-8594-426d-b585-41140235bb0e"
+  },
+  "salt_marsh": {
+    "artist": "Jerry Tiritilli",
+    "bytes": 75606,
+    "file": "salt_marsh.jpg",
+    "scryfall_id": "a25b7167-468e-4515-8dbf-52a9a4d11287"
   },
   "sanctum_seeker": {
     "artist": "Volkan Ba\u01f5a",
@@ -2075,6 +2597,12 @@
     "file": "savannah.jpg",
     "scryfall_id": "a6714aba-7576-41b8-9f6b-5303f5b69689"
   },
+  "savannah_lions": {
+    "artist": "Winona Nelson",
+    "bytes": 58333,
+    "file": "savannah_lions.jpg",
+    "scryfall_id": "9c9ac1bc-cdf3-4fa6-8319-a7ea164e9e47"
+  },
   "scaled_nurturer": {
     "artist": "Diego Andrade",
     "bytes": 125196,
@@ -2092,6 +2620,12 @@
     "bytes": 67590,
     "file": "scoured_barrens.jpg",
     "scryfall_id": "ac52be0c-49f4-4956-820e-bdd7d2744d2f"
+  },
+  "scouting_hawk": {
+    "artist": "Ilse Gort",
+    "bytes": 73099,
+    "file": "scouting_hawk.jpg",
+    "scryfall_id": "bce2209e-7a5c-4394-876c-e0f68cfba9ca"
   },
   "scrubland": {
     "artist": "Jesper Myrfors",
@@ -2123,6 +2657,12 @@
     "file": "secure_the_wastes.jpg",
     "scryfall_id": "44f0da2e-3513-4891-bea2-27dd138064b3"
   },
+  "sedge_scorpion": {
+    "artist": "John Stanko",
+    "bytes": 82554,
+    "file": "sedge_scorpion.jpg",
+    "scryfall_id": "9864f811-db2e-4d6d-ad59-a491a790bdd4"
+  },
   "segovian_angel": {
     "artist": "Simon Dominic",
     "bytes": 87177,
@@ -2141,6 +2681,12 @@
     "file": "selesnya_guildgate.jpg",
     "scryfall_id": "69ea39da-93c8-4806-8f93-10f71fb8c62e"
   },
+  "selesnya_signet": {
+    "artist": "Raoul Vitale",
+    "bytes": 61115,
+    "file": "selesnya_signet.jpg",
+    "scryfall_id": "dc137850-df52-400c-95e2-45bf25a3e62c"
+  },
   "sengir_vampire": {
     "artist": "Jeff Easley",
     "bytes": 68132,
@@ -2158,6 +2704,12 @@
     "bytes": 83939,
     "file": "serra_s_sanctum.jpg",
     "scryfall_id": "f7a18130-dbaa-4657-a885-3a96a985935a"
+  },
+  "shadowblood_ridge": {
+    "artist": "Ramza Psyru",
+    "bytes": 37076,
+    "file": "shadowblood_ridge.jpg",
+    "scryfall_id": "4d02658c-bbe8-4673-8b44-0b24e0155a85"
   },
   "shadowy_backstreet": {
     "artist": "Sergey Glushakov",
@@ -2182,6 +2734,12 @@
     "bytes": 66890,
     "file": "shrike_force.jpg",
     "scryfall_id": "306fec2c-d8b7-4f4b-8f58-10e3b9f3158f"
+  },
+  "shuko": {
+    "artist": "Greg Hildebrandt",
+    "bytes": 62639,
+    "file": "shuko.jpg",
+    "scryfall_id": "a88ed77e-5eae-4282-8f19-75dc8437f83d"
   },
   "silver_myr": {
     "artist": "Kev Walker",
@@ -2213,17 +2771,52 @@
     "file": "simic_guildgate.jpg",
     "scryfall_id": "4485d30c-7471-474f-b2b4-cfa2c2144d89"
   },
+  "simic_signet": {
+    "artist": "Mike Sass",
+    "file": "simic_signet.jpg",
+    "scryfall_id": "bf222c78-f12e-4857-93da-fade99c740b8"
+  },
   "simic_sky_swallower": {
     "artist": "rk post",
     "bytes": 86682,
     "file": "simic_sky_swallower.jpg",
     "scryfall_id": "f791b7fa-3d12-409d-b017-cb9fd8b71af7"
   },
+  "sin_spira_s_punishment": {
+    "artist": "John Tedrick",
+    "bytes": 58375,
+    "file": "sin_spira_s_punishment.jpg",
+    "scryfall_id": "075dd582-61b7-45e9-9dcf-0b544b733e61"
+  },
+  "sisay_s_ring": {
+    "artist": "Donato Giancola",
+    "bytes": 97534,
+    "file": "sisay_s_ring.jpg",
+    "scryfall_id": "20c0e608-0208-408a-b473-1e54caa96cea"
+  },
   "sky_diamond": {
     "artist": "Lindsey Look",
     "bytes": 70139,
     "file": "sky_diamond.jpg",
     "scryfall_id": "1ee51c34-0e2e-4c91-8de8-7d5f4633b567"
+  },
+  "skyclave_cleric_skyclave_basilica": {
+    "artist": "Johannes Voss",
+    "bytes": 97745,
+    "file": "skyclave_cleric_skyclave_basilica.jpg",
+    "scryfall_id": "014027c4-7f9d-4096-b308-ea4be574c0d4"
+  },
+  "skycloud_expanse": {
+    "artist": "Rob Alexander",
+    "bytes": 31041,
+    "file": "skycloud_expanse.jpg",
+    "scryfall_id": "03f8c846-d80c-49a4-a562-e817cd0c6096"
+  },
+  "skyhunter_skirmisher": {
+    "artist": "Greg Staples",
+    "bytes": 100272,
+    "file": "skyhunter_skirmisher.jpg",
+    "scryfall_id": "cdafa18f-5d41-4289-8a79-8c5ece2d6d79"
   },
   "skyknight_vanguard": {
     "artist": "Bayard Wu",
@@ -2254,6 +2847,12 @@
     "bytes": 57490,
     "file": "slagwoods_bridge.jpg",
     "scryfall_id": "39a60957-eaee-4154-824f-148dba07161a"
+  },
+  "slagwurm_armor": {
+    "artist": "Justin Sweet",
+    "bytes": 78644,
+    "file": "slagwurm_armor.jpg",
+    "scryfall_id": "684a6e3f-909a-4ca0-a6aa-7354b9476df2"
   },
   "smokebraider": {
     "artist": "Anthony S. Waters",
@@ -2297,6 +2896,12 @@
     "file": "somberwald_sage.jpg",
     "scryfall_id": "76c27566-a1a0-4a45-a5ed-34da78388667"
   },
+  "space_marine_scout": {
+    "artist": "Games Workshop",
+    "bytes": 65670,
+    "file": "space_marine_scout.jpg",
+    "scryfall_id": "1d7c6801-2c75-435c-a16b-a30b8c3a6be2"
+  },
   "sphinx_of_magosi": {
     "artist": "James Ryman",
     "bytes": 92137,
@@ -2327,6 +2932,12 @@
     "file": "steam_vents.jpg",
     "scryfall_id": "a83903c7-fd51-4526-aed2-359e946fea36"
   },
+  "steel_wall": {
+    "artist": "David Day",
+    "bytes": 81034,
+    "file": "steel_wall.jpg",
+    "scryfall_id": "bac8df83-12c2-4543-b264-4f2d007fbf58"
+  },
   "stomping_ground": {
     "artist": "Arthur Haas",
     "bytes": 78537,
@@ -2338,6 +2949,12 @@
     "bytes": 62085,
     "file": "stone_quarry.jpg",
     "scryfall_id": "16e66e29-ef63-4faa-b60f-8a128800e093"
+  },
+  "stoneskin": {
+    "artist": "Jake Murray",
+    "bytes": 71765,
+    "file": "stoneskin.jpg",
+    "scryfall_id": "16b9fdaa-9da9-48ff-b271-e6a41aabf073"
   },
   "stromkirk_captain": {
     "artist": "Jana Schirmer & Johannes Voss",
@@ -2375,11 +2992,23 @@
     "file": "sunblast_angel.jpg",
     "scryfall_id": "382ba321-3d57-43f8-a827-e8298a8e8f5b"
   },
+  "sungrass_prairie": {
+    "artist": "Pablo Mendoza",
+    "bytes": 93238,
+    "file": "sungrass_prairie.jpg",
+    "scryfall_id": "62c1b56d-8d48-41aa-8bc9-276b984b0836"
+  },
   "sunlit_marsh": {
     "artist": "Marc Simonetti",
     "bytes": 66738,
     "file": "sunlit_marsh.jpg",
     "scryfall_id": "fa447616-db24-4729-bf66-7f72aba0272d"
+  },
+  "sunscorched_divide": {
+    "artist": "Sarah Finnigan",
+    "bytes": 50073,
+    "file": "sunscorched_divide.jpg",
+    "scryfall_id": "eae999f9-9c58-4609-8ade-aca0acf07519"
   },
   "swamp": {
     "artist": "Leon Tukker",
@@ -2393,11 +3022,23 @@
     "file": "swiftblade_vindicator.jpg",
     "scryfall_id": "f94618ec-000c-4371-b925-05ff82bfe221"
   },
+  "swiftfoot_boots": {
+    "artist": "Svetlin Velinov",
+    "bytes": 75263,
+    "file": "swiftfoot_boots.jpg",
+    "scryfall_id": "03f7e9fc-8e59-45c1-90fc-1d04d929b292"
+  },
   "swiftwater_cliffs": {
     "artist": "Mark Poole",
     "bytes": 48115,
     "file": "swiftwater_cliffs.jpg",
     "scryfall_id": "949bf6bb-1e97-48a3-8547-0a780664c275"
+  },
+  "swooping_lookout": {
+    "artist": "Mike Franchina",
+    "bytes": 80398,
+    "file": "swooping_lookout.jpg",
+    "scryfall_id": "b62c740d-260d-4dfa-b6b3-9a1527538f89"
   },
   "swords_to_plowshares": {
     "artist": "ConcernedApe",
@@ -2422,6 +3063,12 @@
     "bytes": 102147,
     "file": "taiga.jpg",
     "scryfall_id": "79cc2242-6064-4c90-a46b-0e59144bc04a"
+  },
+  "tajuru_blightblade": {
+    "artist": "Dmitry Burmak",
+    "bytes": 88531,
+    "file": "tajuru_blightblade.jpg",
+    "scryfall_id": "7f3d6020-6767-406c-bf28-6b3e9ae72f50"
   },
   "tangled_islet": {
     "artist": "Randy Gallegos",
@@ -2501,6 +3148,12 @@
     "file": "temple_of_silence.jpg",
     "scryfall_id": "f7d3770f-cde6-4e29-8cbf-fe841634a5d7"
   },
+  "temple_of_the_false_god": {
+    "artist": "Brian Sn\u00f5ddy",
+    "bytes": 68227,
+    "file": "temple_of_the_false_god.jpg",
+    "scryfall_id": "1024f555-e0d7-48ac-b86e-c87290eac832"
+  },
   "temple_of_triumph": {
     "artist": "Piotr Dura",
     "bytes": 56512,
@@ -2518,6 +3171,12 @@
     "bytes": 42646,
     "file": "terramorphic_expanse.jpg",
     "scryfall_id": "719704eb-04b2-4e2f-9954-50f77dd9bf08"
+  },
+  "terrian_world_tyrant": {
+    "artist": "Nicholas Gregory",
+    "bytes": 50863,
+    "file": "terrian_world_tyrant.jpg",
+    "scryfall_id": "b44255cf-5264-4ead-9de0-20cc0f7cac6f"
   },
   "thalia_heretic_cathar": {
     "artist": "Rian Gonzales",
@@ -2548,6 +3207,12 @@
     "bytes": 70252,
     "file": "thragtusk.jpg",
     "scryfall_id": "beda7acd-e970-4222-9577-5133765d6052"
+  },
+  "thran_dynamo": {
+    "artist": "Tyler Walpole",
+    "bytes": 47878,
+    "file": "thran_dynamo.jpg",
+    "scryfall_id": "873d52a8-f10e-4116-8511-bf63aeb2e413"
   },
   "three_tree_rootweaver": {
     "artist": "Chris Seaman",
@@ -2591,6 +3256,18 @@
     "file": "thundering_falls.jpg",
     "scryfall_id": "17260fff-b239-4af4-9306-3236ae3fa5a5"
   },
+  "timber_gorge": {
+    "artist": "Cliff Childs",
+    "bytes": 53811,
+    "file": "timber_gorge.jpg",
+    "scryfall_id": "dd47ccf1-500c-4553-9f25-d8a192a65c4e"
+  },
+  "timeless_lotus": {
+    "artist": "Lindsey Look",
+    "bytes": 60371,
+    "file": "timeless_lotus.jpg",
+    "scryfall_id": "0fbbab5f-657a-4e6a-8bdd-69f11547fe25"
+  },
   "timely_hordemate": {
     "artist": "Steve Prescott",
     "bytes": 100551,
@@ -2620,6 +3297,12 @@
     "bytes": 83121,
     "file": "treasure_token.jpg",
     "scryfall_id": "c6e096bb-ad9e-4a8b-8b42-26852fa32c1d"
+  },
+  "tree_monkey": {
+    "artist": "John Matson",
+    "bytes": 67448,
+    "file": "tree_monkey.jpg",
+    "scryfall_id": "4724d00a-b93b-43fd-9c86-56f127db450b"
   },
   "tree_of_tales": {
     "artist": "John Avon",
@@ -2674,6 +3357,30 @@
     "bytes": 118882,
     "file": "underground_sea.jpg",
     "scryfall_id": "068bb15a-fc2d-42a2-859b-837b946d23c0"
+  },
+  "unhallowed_phalanx": {
+    "artist": "Nicholas Gregory",
+    "bytes": 55129,
+    "file": "unhallowed_phalanx.jpg",
+    "scryfall_id": "7331542f-5a5f-40b1-87c0-3a2a1df79e84"
+  },
+  "ur_golem_s_eye": {
+    "artist": "Heather Hudson",
+    "bytes": 83864,
+    "file": "ur_golem_s_eye.jpg",
+    "scryfall_id": "7a2ea921-8ef9-4a31-b484-73375e828d34"
+  },
+  "urborg_elf": {
+    "artist": "Bob Petillo",
+    "bytes": 90610,
+    "file": "urborg_elf.jpg",
+    "scryfall_id": "1d8521bf-d026-4d26-831e-a2f253307c93"
+  },
+  "urborg_volcano": {
+    "artist": "Tony Szczudlo",
+    "bytes": 66738,
+    "file": "urborg_volcano.jpg",
+    "scryfall_id": "24f9ca82-296a-458c-8707-2e4681c69bf9"
   },
   "urza_s_mine": {
     "artist": "Brian Sn\u00f5ddy",
@@ -2825,6 +3532,12 @@
     "file": "vineglimmer_snarl.jpg",
     "scryfall_id": "445bd162-b523-45f4-83d0-ffc702fc1fac"
   },
+  "viridescent_bog": {
+    "artist": "Piotr Dura",
+    "bytes": 48836,
+    "file": "viridescent_bog.jpg",
+    "scryfall_id": "54d852fc-0f3a-4791-a147-b21ca6964763"
+  },
   "viridian_joiner": {
     "artist": "Daren Bader",
     "bytes": 75704,
@@ -2951,6 +3664,12 @@
     "file": "wooded_ridgeline.jpg",
     "scryfall_id": "672b6ef0-a21a-4bf0-9058-58d9a353ed57"
   },
+  "woodland_acolyte_mend_the_wilds": {
+    "artist": "Steve Prescott",
+    "bytes": 62676,
+    "file": "woodland_acolyte_mend_the_wilds.jpg",
+    "scryfall_id": "b9f10623-4783-4773-b9c8-a5a2bcfdb5d9"
+  },
   "woodland_chasm": {
     "artist": "Titus Lunter",
     "bytes": 71760,
@@ -2962,6 +3681,12 @@
     "bytes": 84212,
     "file": "woodland_stream.jpg",
     "scryfall_id": "77619840-963f-4ff7-9a42-b36e3d53646d"
+  },
+  "worn_powerstone": {
+    "artist": "Henry G. Higginbotham",
+    "bytes": 60108,
+    "file": "worn_powerstone.jpg",
+    "scryfall_id": "ace686ad-9e3f-41b3-b8eb-d1b6d45eb4e1"
   },
   "wrath_of_god": {
     "artist": "Willian Murai",

@@ -90,10 +90,63 @@ dual, a Signet. Those need no translation and are complete; leaving them to be
 regenerated as inert proxies for every deck was worth 6× the yield.
 
 **Engine mechanics** — the measured blockers, each unlocking hundreds of cards
-for one piece of work: Equip, Enchant (Auras), Cycling, Flashback, Crew, Kicker,
-Convoke, Ward. Not yet built; `--report` ranks them by how many cards they block.
+for one piece of work. `--report` ranks them by how many cards they hold up.
 
-**The agent** — the long tail, one work packet per card. Not yet built.
+*Auras and Equipment are done* — the largest block in the catalog at ~1,700
+cards, and most of the object model already existed (`attached_to`, the `attach`
+op, `CardDef.is_aura`, SBA unattachment). Two things were missing:
+
+- **An Aura enters attached to what its spell targeted.** It has to happen after
+  the permanent is placed, because `move_object` calls `reset_permanent_state` on
+  the way onto the battlefield and that clears `attached_to` — so an Aura
+  attaching itself with the `attach` op arrives enchanting nothing and is binned
+  by state-based actions a moment later.
+- **A static that reads "the thing I'm attached to"** — `{"attached": true}` in a
+  static's `affects`. Checked before `controller` and short-circuiting it,
+  because an Aura stapled to an opponent's creature still affects that creature.
+
+Equipment needed no new engine work at all: `Equip {2}` is a sorcery-speed
+activated ability whose effect is the existing `attach` op.
+
+Still outstanding: Cycling, Flashback, Crew, Kicker, Convoke, Ward, Prowess.
+
+**The agent** (`authoring/packet.py`) — the long tail, one self-contained work
+packet per card:
+
+```bash
+python scripts/author_cards.py --tier agent --limit 20   # hand out work
+# ...answers land in data/authoring/answers/<card_id>.json
+python scripts/author_cards.py --collect                 # verify, commit survivors
+```
+
+A packet is deliberately a **file format** rather than an API call, because the
+same packet has to serve a Claude Code session with a person watching *and* an
+unattended worker running 10,000 cards. Both read the same JSON and write the
+same `{"card": ..., "expectation": ...}`, so the API worker costs no rework once
+the session has proved the loop.
+
+It is self-contained — oracle text, what the free tiers already worked out, the
+sentences still outstanding, why the template tier gave up, the whole DSL
+vocabulary, and worked examples from cards already in the pool. Nothing assumes
+the reader has the repository open, because the API worker does not.
+
+### What the gates actually caught, authoring by hand
+
+Both of the first two answers were wrong, and both were mine:
+
+- **Swiftfoot Boots** — I asserted a creature would have haste. Equip is a
+  separate sorcery-speed activation the sandbox never performs, so nothing was
+  equipped. The card was right; the claim was not.
+- **Heroic Intervention** — I asserted 2 permanents would gain the keywords. It
+  is "*Permanents* you control", so the answer was 32.
+
+And chasing the second one found a **bug in the harness**: `drive` was walking
+the sandbox through combat and into the next turn, crossing the cleanup step —
+which wipes every until-end-of-turn effect. Every pump spell and keyword grant
+was being measured *after the thing it did had worn off*, so gate 5 passed them
+regardless of what they did. That is the exact failure this harness exists to
+catch, hiding inside the harness. `drive` now stops at priority, at combat, and
+at the turn boundary.
 
 ## Where the output lives
 

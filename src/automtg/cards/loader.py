@@ -60,6 +60,10 @@ STATIC_FILTER_KEYS = frozenset(
         "is_token",
         "attacking",
         "blocking",
+        # "Enchanted creature gets +2/+2".  Reads `attached_to`, which is board
+        # state rather than a derived characteristic, so it cannot depend on
+        # another static's output and belongs in this list rather than outside it.
+        "attached",
     }
 )
 

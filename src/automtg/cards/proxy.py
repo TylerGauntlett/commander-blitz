@@ -455,17 +455,7 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
             return [], [f"mana ability not generated; its cost is {prefix!r}"], set()
         extra_cost, _ = simplify_mana_cost(prefix.replace(",", "").replace(" ", ""), facts.color_identity)
 
-    if len(symbols) == 1:
-        effects: list[dict] = [{"op": "add_mana", "mana": f"{{{symbols[0]}}}"}]
-    else:
-        effects = [
-            {
-                "op": "choose_mode",
-                "modes": [
-                    {"effects": [{"op": "add_mana", "mana": f"{{{s}}}"}]} for s in symbols
-                ],
-            }
-        ]
+    effects, quantity_note = _mana_effects(line, symbols)
     cost: dict = {"tap": True}
     if extra_cost:
         cost["mana"] = extra_cost
@@ -481,13 +471,59 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
         "effects": effects,
     }
 
-    notes: list[str] = []
-    # `produced_mana` carries no quantity, so a Sol Ring generated here taps for
-    # one rather than two.  Worth saying out loud; it is the difference between
-    # a fast deck and a slow one.
-    if re.search(r"Add (\{[WUBRGC]\}\s*){2,}", facts.oracle_text):
-        notes.append("taps for one mana; the printed card adds more")
+    notes = [quantity_note] if quantity_note else []
     return [ability], notes, {line}
+
+
+#: ``{T}: Add {C}{C}.`` -- everything after "Add", which is where the *amount*
+#: lives.  ``produced_mana`` only lists which symbols a card can make, so reading
+#: it alone turns every Signet and Sol Ring into a one-mana rock.
+_ADD_CLAUSE = re.compile(r":\s*Add\s+(?P<what>[^.]+)", re.I)
+_FIXED_MANA = re.compile(r"^(?:\{[WUBRGC]\})+$")
+_ANY_COLOR = re.compile(r"^one mana of any (?:one )?color$", re.I)
+
+
+def _mana_effects(line: str, symbols: list[str]) -> tuple[list[dict], str | None]:
+    """What the ability adds, read from the printed clause where possible.
+
+    ``{T}: Add {C}{C}`` is two mana, and the difference between a Sol Ring that
+    taps for two and one that taps for one is the difference between a fast deck
+    and a slow one.  Falls back to one-of-each-symbol only when the clause is
+    something this cannot read.
+    """
+    match = _ADD_CLAUSE.search(line)
+    clause = " ".join(match.group("what").split()) if match else ""
+
+    # "Add {C}{C}" / "Add {G}{U}" -- a fixed payout, taken verbatim.
+    if _FIXED_MANA.match(clause.replace(" ", "")):
+        return [{"op": "add_mana", "mana": clause.replace(" ", "")}], None
+
+    # "Add {G} or {U}" -- a choice, one mana either way.
+    options = [p.strip() for p in re.split(r"\bor\b|,", clause) if p.strip()]
+    if options and all(_FIXED_MANA.match(o.replace(" ", "")) for o in options):
+        if len(options) == 1:
+            return [{"op": "add_mana", "mana": options[0].replace(" ", "")}], None
+        return [
+            {
+                "op": "choose_mode",
+                "modes": [
+                    {"effects": [{"op": "add_mana", "mana": o.replace(" ", "")}]}
+                    for o in options
+                ],
+            }
+        ], None
+
+    # "Add one mana of any color" -- a choice across whatever it can produce.
+    if _ANY_COLOR.match(clause) or len(symbols) > 1:
+        note = None if _ANY_COLOR.match(clause) else f"mana clause read loosely: {clause[:40]!r}"
+        return [
+            {
+                "op": "choose_mode",
+                "modes": [{"effects": [{"op": "add_mana", "mana": f"{{{s}}}"}]} for s in symbols],
+            }
+        ], note
+
+    return [{"op": "add_mana", "mana": f"{{{symbols[0]}}}"}], None
 
 
 def _find_mana_line(oracle_text: str) -> tuple[str | None, str]:

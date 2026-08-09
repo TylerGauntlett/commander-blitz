@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "heroic_intervention",
+    "name": "Heroic Intervention",
+    "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "hexproof",
+          "indestructible"
+        ],
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "granted": {
+      "keywords": [
+        "hexproof",
+        "indestructible"
+      ],
+      "count": 32
+    }
+  }
+}
