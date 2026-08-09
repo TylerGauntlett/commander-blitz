@@ -16,6 +16,7 @@ from .effects.conditions import evaluate
 from .effects.context import EffectContext
 from .enums import Zone
 from .events import EventType
+from .primitives import attach
 from .structs import StackItem, TargetRef, TriggerInstance
 from .targeting import filter_legal
 from .zones import move_object
@@ -158,6 +159,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.stack_id = None
     obj.cast_x = item.x
     _place_after_resolution(state, obj, card)
+    _attach_aura(state, obj, card, targets)
 
 
 def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
@@ -168,6 +170,28 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     """
     destination = Zone.BATTLEFIELD if card.is_permanent else Zone.GRAVEYARD
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+
+
+def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:
+    """An Aura enters attached to what its spell targeted.
+
+    It has to happen *after* the permanent is placed, not during its
+    ``spell_effects``: ``move_object`` calls ``reset_permanent_state`` on the way
+    onto the battlefield, and that clears ``attached_to``.  An Aura attaching
+    itself with the ``attach`` op would therefore arrive enchanting nothing and
+    be put into the graveyard by state-based actions a moment later.
+
+    The convention is that an Aura's *first object target* is what it enchants,
+    which is exactly how the card is written: "Enchant creature" is the targeting
+    clause of the spell.
+    """
+    if not card.is_aura or not obj.on_battlefield:
+        return
+    for spec in card.targets:
+        for ref in targets.get(spec.id) or []:
+            if ref.kind == "object" and ref.id in state.objects:
+                attach(state, obj.oid, ref.id)
+                return
 
 
 def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int], None]:

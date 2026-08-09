@@ -175,6 +175,24 @@ class TestCardsThatSurviveIntact:
 
     def test_a_simple_mana_rock(self):
         result, card = built(
+            name="Chromatic Lantern Test",
+            type_line="Artifact",
+            mana_cost="{3}",
+            oracle_text="{T}: Add one mana of any color.",
+            produced_mana=("W", "U", "B", "R", "G"),
+            color_identity="",
+        )
+        assert result.coverage == "full"
+        assert card.color_identity == frozenset()
+
+    def test_a_rock_whose_any_colour_clause_has_a_condition_is_partial(self):
+        """Arcane Signet makes a colour *in your commander's identity*.
+
+        The generated version makes any of five regardless, which is more
+        permissive than the printed card -- so it is reported as simplified
+        rather than claimed as complete.
+        """
+        result, _ = built(
             name="Arcane Signet",
             type_line="Artifact",
             mana_cost="{2}",
@@ -182,8 +200,7 @@ class TestCardsThatSurviveIntact:
             produced_mana=("W", "U", "B", "R", "G"),
             color_identity="",
         )
-        assert result.coverage == "full"
-        assert card.color_identity == frozenset()
+        assert result.coverage == "partial"
 
 
 # ----------------------------------------------------------------------
@@ -417,7 +434,9 @@ class TestLands:
         ability = next(a for a in card.abilities if a.is_mana_ability)
         assert ability.cost.tap is True
         assert str(ability.cost.mana) == "{1}"
-        assert result.coverage == "partial"
+        # And the payout is the printed {G}{U}, not one of either.
+        assert ability.mana_options == ((0, 1, 0, 0, 1, 0),)
+        assert result.coverage == "full"
 
     def test_a_mana_ability_with_a_cost_the_dsl_cannot_express_is_not_generated(self):
         # A bounce land's "return an Island you control to its owner's hand" has
@@ -482,10 +501,15 @@ class TestLands:
         )
         assert any(a.is_mana_ability for a in card.abilities)
 
-    def test_a_rock_that_taps_for_two_says_it_only_taps_for_one(self):
-        # `produced_mana` carries no quantity, so this is a real difference
-        # between a fast deck and a slow one.
-        result, _ = built(
+    def test_a_rock_taps_for_the_amount_it_prints(self):
+        """`{T}: Add {C}{C}` is two mana, and the amount is in the *text*.
+
+        `produced_mana` lists which symbols a card can make and never how many,
+        so reading it alone turns every Signet and Sol Ring into a one-mana rock
+        -- the difference between a fast deck and a slow one, applied silently to
+        every imported deck.
+        """
+        result, card = built(
             name="Sol Ring",
             type_line="Artifact",
             mana_cost="{1}",
@@ -493,7 +517,9 @@ class TestLands:
             produced_mana=("C",),
             color_identity="",
         )
-        assert any("taps for one mana" in n for n in result.notes)
+        ability = next(a for a in card.abilities if a.is_mana_ability)
+        assert ability.mana_options == ((0, 0, 0, 0, 0, 2),)
+        assert result.coverage == "full"
 
 
 # ----------------------------------------------------------------------

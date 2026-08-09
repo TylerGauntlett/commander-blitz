@@ -28,6 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from automtg.cards.authoring import packet as P
 from automtg.cards.authoring import templates as T
 from automtg.cards.authoring import verify as V
 from automtg.cards.authoring.queue import Entry, Queue, auto_cards_dir, build, wanted_names
@@ -134,6 +135,78 @@ def _attempt(entry: Entry, index, registry: CardRegistry, taken: set[str], tally
     return payload, result.expectation, result.used
 
 
+def write_packets(queue: Queue, limit: int) -> int:
+    """Hand out work for the cards no template can finish.
+
+    A packet per card, self-contained, on disk. The reader may be a session or an
+    unattended API worker; both read the same file and write the same answer, so
+    the second costs no rework once the first has proved the loop.
+    """
+    index = load_index()
+    registry = _hand_written()
+    written = 0
+    for entry in queue.next_batch(limit, retry_failed=True):
+        catalog = index.by_scryfall_id(entry.scryfall_id) or index.lookup(
+            entry.name, token=False
+        )
+        if catalog is None:
+            continue
+        packet = P.build_packet(catalog, registry, entry.reason or "not attempted")
+        P.write_packet(packet)
+        written += 1
+    return written
+
+
+def collect_answers(queue: Queue, *, dry_run: bool) -> dict[str, int]:
+    """Verify what came back, and commit only what passes.
+
+    An answer is trusted exactly as far as the six gates trust it, which is the
+    whole point: a model that misreads a card produces one that fails gate 5
+    rather than one that quietly does the wrong thing in somebody's game.
+    """
+    registry = _hand_written()
+    cards, expectations = _load_batch()
+    index = load_index()
+    by_name = {e.name: e for e in queue}
+
+    tally = {"accepted": 0, "rejected": 0}
+    for card_id, answer in P.read_answers().items():
+        payload = dict(answer["card"])
+        payload["id"] = card_id
+        payload["source"] = "auto"
+        expectation = answer.get("expectation") or {}
+
+        catalog = index.lookup(payload.get("name", ""), token=False)
+        oracle = catalog.oracle_text if catalog else payload.get("oracle_text", "")
+        verdict = V.verify(payload, expectation, registry, oracle_text=oracle)
+
+        entry = by_name.get(payload.get("name", ""))
+        if not verdict.ok:
+            print(f"  REJECT {card_id}: {verdict.failed_gate} -- {verdict.reason[:90]}")
+            if entry is not None:
+                entry.status = "failed"
+                entry.gate = verdict.failed_gate
+                entry.reason = verdict.reason
+            tally["rejected"] += 1
+            continue
+
+        print(f"  accept {card_id}")
+        if not dry_run:
+            cards[card_id] = payload
+            expectations[card_id] = expectation
+        if entry is not None:
+            entry.status = "done"
+            entry.source = "agent"
+            entry.gate = None
+            entry.reason = ""
+        tally["accepted"] += 1
+
+    if not dry_run and tally["accepted"]:
+        _write_batch(cards, expectations)
+        queue.save()
+    return tally
+
+
 def report(queue: Queue) -> None:
     registry = default_registry().registry
     index = load_index()
@@ -159,7 +232,16 @@ def report(queue: Queue) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--tier", choices=["templates"], help="which generator to run")
+    parser.add_argument(
+        "--tier",
+        choices=["templates", "agent"],
+        help="templates: translate deterministically. agent: write work packets for the tail",
+    )
+    parser.add_argument(
+        "--collect",
+        action="store_true",
+        help="verify the answers written back, and commit the ones that pass",
+    )
     parser.add_argument("--limit", type=int, default=200, help="how many cards to attempt")
     parser.add_argument("--dry-run", action="store_true", help="report, write nothing")
     parser.add_argument("--retry", action="store_true", help="re-attempt cards that failed")
@@ -174,8 +256,23 @@ def main() -> int:
     queue = build(limit=args.refresh)
     queue.refresh(load_index(), default_registry().registry, wanted=wanted_names())
 
+    if args.collect:
+        tally = collect_answers(queue, dry_run=args.dry_run)
+        print(f"accepted {tally['accepted']}  |  rejected {tally['rejected']}")
+        return 0
+
     if args.report or not args.tier:
         report(queue)
+        return 0
+
+    if args.tier == "agent":
+        written = write_packets(queue, args.limit)
+        print(f"wrote {written} packet(s) to {P.packets_dir()}")
+        print(
+            "Answer each as "
+            f"{P.answers_dir()}/<card_id>.json containing "
+            '{"card": {...}, "expectation": {...}}, then re-run with --collect.'
+        )
         return 0
 
     tally = run_templates(queue, args.limit, dry_run=args.dry_run, retry=args.retry)

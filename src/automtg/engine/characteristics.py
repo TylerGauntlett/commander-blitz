@@ -198,6 +198,13 @@ def _matches(
     if selector.get("self_only") and obj.oid != source.oid:
         return False
 
+    # "Enchanted creature gets +2/+2", "Equipped creature has flying".  Checked
+    # before `controller`, and short-circuits it: an Aura stapled to an
+    # opponent's creature still buffs (or shrinks) that creature, and the default
+    # `controller: "you"` would quietly stop it.
+    if selector.get("attached"):
+        return obj.oid == source.attached_to
+
     controller = selector.get("controller", "you")
     if controller == "you" and obj.controller != source.controller:
         return False

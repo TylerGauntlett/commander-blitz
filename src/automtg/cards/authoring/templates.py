@@ -131,6 +131,30 @@ SENTENCES: list[Sentence] = [
     (re.compile(rf"^each opponent mills {N} cards?$", re.I), _mill),
 ]
 
+#: ``Enchanted creature gets +2/+2`` / ``Equipped creature gets +1/+0``.  The
+#: single most common thing an Aura or Equipment says, and between them they are
+#: ~1,700 cards -- the largest block in the catalog.
+_ATTACHED_BUFF = re.compile(
+    r"^(?:enchanted|equipped) (?:creature|permanent) gets "
+    r"(?P<p>[+-]\d+)/(?P<t>[+-]\d+)$",
+    re.I,
+)
+
+#: ``Enchant creature``.  Not an ability at all -- it is the spell's targeting
+#: clause, and the engine attaches the Aura to what it targeted on resolution.
+_ENCHANT = re.compile(r"^enchant (?P<what>creature|permanent|land|artifact)$", re.I)
+
+#: ``Equip {2}``.  A sorcery-speed activated ability that re-attaches.
+_EQUIP = re.compile(r"^equip (?P<cost>(?:\{[^}]+\})+)$", re.I)
+
+_ENCHANT_TYPES = {
+    "creature": ["Creature"],
+    "land": ["Land"],
+    "artifact": ["Artifact"],
+    "permanent": [],
+}
+
+
 #: Sentences that are a whole static ability rather than an effect.
 STATICS: list[tuple[re.Pattern[str], dict]] = [
     (
@@ -203,6 +227,7 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
 
     abilities: list[dict] = []
     spell_effects: list[dict] = []
+    targets: list[dict] = []
     expectation: dict = {}
     used: list[str] = []
     is_spell = not _is_permanent(proxy.model)
@@ -214,10 +239,12 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
                 card_id=proxy.card_id,
                 reason=f"no template for: {line[:90]}",
             )
-        kind, payload, translation, name = handled
+        kind, produced, translation, name = handled
         used.append(name)
-        if kind == "static" or kind == "trigger":
-            abilities.append(payload)
+        if kind in ("static", "trigger"):
+            abilities.append(produced)
+        elif kind == "enchant":
+            targets.append(produced)
         else:
             spell_effects.extend(translation.effects)
         _merge(expectation, translation.expect)
@@ -226,6 +253,15 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
     payload["abilities"] = [*payload.get("abilities", []), *abilities]
     if spell_effects:
         payload["spell_effects"] = [*payload.get("spell_effects", []), *spell_effects]
+    if targets:
+        payload["targets"] = [*payload.get("targets", []), *targets]
+    if targets and "Aura" not in payload.get("subtypes", []):
+        # "Enchant X" on something that is not an Aura means a mechanic this
+        # module does not model -- an Aura-like Equipment, a bestow creature.
+        # Attaching it would be a guess.
+        return TemplateResult(
+            card_id=proxy.card_id, reason="enchant clause on a non-Aura"
+        )
 
     try:
         model = CardModel.model_validate(payload)
@@ -243,6 +279,66 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
 def _translate_line(line: str, *, is_spell: bool):
     """``(kind, payload, translation, template_name)`` or ``None``."""
     bare = _bare(line)
+
+    enchant = _ENCHANT.match(bare)
+    if enchant:
+        # Not an ability: the Aura's spell targets what it will enchant, and
+        # `stack._attach_aura` attaches it once the permanent is on the
+        # battlefield. So this produces a *target spec*, and `translate` puts it
+        # on the card rather than in `abilities`.
+        types = _ENCHANT_TYPES[enchant.group("what").lower()]
+        selector: dict = {"zone": "battlefield"}
+        if types:
+            selector["types"] = types
+        return (
+            "enchant",
+            {"id": "enchanted", "kind": "permanent", "selector": selector, "count": 1},
+            Translation(effects=[], expect={"zone": "battlefield"}),
+            "enchant",
+        )
+
+    buff = _ATTACHED_BUFF.match(bare)
+    if buff:
+        return (
+            "static",
+            {
+                "kind": "static",
+                "text": line.strip(),
+                "effect": "buff",
+                "affects": {"attached": True},
+                "power": {"const": int(buff.group("p"))},
+                "toughness": {"const": int(buff.group("t"))},
+            },
+            Translation(effects=[], expect={"zone": "battlefield"}),
+            "attached:buff",
+        )
+
+    equip = _EQUIP.match(bare)
+    if equip:
+        return (
+            "static",  # placed among the abilities, same as a static
+            {
+                "kind": "activated",
+                "text": line.strip(),
+                "sorcery_speed_only": True,
+                "cost": {"mana": equip.group("cost")},
+                "targets": [
+                    {
+                        "id": "equip_target",
+                        "kind": "permanent",
+                        "selector": {
+                            "zone": "battlefield",
+                            "controller": "you",
+                            "types": ["Creature"],
+                        },
+                        "count": 1,
+                    }
+                ],
+                "effects": [{"op": "attach", "objects": {"target": "equip_target"}}],
+            },
+            Translation(effects=[], expect={"zone": "battlefield"}),
+            "equip",
+        )
 
     for pattern, ability in STATICS:
         if pattern.match(bare):

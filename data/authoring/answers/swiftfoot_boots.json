@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "swiftfoot_boots",
+    "name": "Swiftfoot Boots",
+    "oracle_text": "Equipped creature has hexproof and haste.\nEquip {1}",
+    "mana_cost": "{2}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Equipped creature has hexproof and haste.",
+        "effect": "grant_keyword",
+        "affects": {
+          "attached": true
+        },
+        "keywords": [
+          "hexproof",
+          "haste"
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {1}",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{1}"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

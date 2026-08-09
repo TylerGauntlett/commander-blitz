@@ -1,0 +1,222 @@
+"""The work packet: everything needed to implement one card, and nothing else.
+
+The templates handle the shapes common enough to be worth a rule. What is left is
+the long tail -- cards that need somebody to read the text and think. This module
+is the interface to that somebody, and it is deliberately a *file format* rather
+than an API call, because the same packet has to work for:
+
+* a Claude Code session, where a person is watching, and
+* an unattended worker calling the API on 10,000 cards.
+
+Both read the same JSON and write the same answer, so the second can be added
+later without changing anything the first proved.
+
+A packet is self-contained. Nothing in it assumes the reader has the repository
+open, has seen another card, or remembers what an op is -- because the API worker
+has none of that, and a session that has to go looking is a session that guesses.
+
+**The answer is a card *and* an expectation, always.** Gate 5 rejects a card
+nobody asserted anything about, so a packet that asked only for the card would be
+asking for work that cannot be accepted.
+"""
+
+from __future__ import annotations
+
+import json
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+
+from ..images import IndexEntry
+from ..proxy import CardFacts, build_proxy, facts_from_index
+from ..registry import CardRegistry, data_dir
+from .verify import EXPECTATION_KEYS
+
+
+def packets_dir() -> Path:
+    return data_dir() / "authoring" / "packets"
+
+
+def answers_dir() -> Path:
+    return data_dir() / "authoring" / "answers"
+
+
+@dataclass
+class Packet:
+    """One card's worth of work."""
+
+    card_id: str
+    name: str
+    type_line: str
+    mana_cost: str
+    power: str | None
+    toughness: str | None
+    colors: str
+    color_identity: str
+    oracle_text: str
+    #: What the free tiers already worked out -- keywords, mana ability,
+    #: enters-tapped. The answer should keep these and add to them.
+    starting_point: dict
+    #: The sentences still unaccounted for. Implementing these *exactly* is the
+    #: job; gate 3 rejects the card if any survive.
+    todo: list[str]
+    #: Why the template tier could not finish it, so the reader does not retrace
+    #: a path already known to be a dead end.
+    template_said: str
+    #: Cards already in the pool with a similar shape, as worked examples.
+    examples: list[dict] = field(default_factory=list)
+    #: The vocabulary. Copied in rather than referenced, because the API worker
+    #: cannot open docs/card-dsl.md.
+    reference: dict = field(default_factory=dict)
+
+    def to_json(self) -> str:
+        return json.dumps(asdict(self), indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+
+
+def reference() -> dict:
+    """The DSL, small enough to travel with every packet."""
+    from automtg.engine.effects import known_ops
+    from automtg.engine.enums import CardType, Keyword, Supertype
+    from automtg.engine.triggers import TRIGGER_EVENTS
+
+    from ..loader import STATIC_FILTER_KEYS
+
+    return {
+        "ops": sorted(known_ops()),
+        "keywords": sorted(k.value for k in Keyword),
+        "types": sorted(t.value for t in CardType),
+        "supertypes": sorted(s.value for s in Supertype),
+        "trigger_events": sorted(TRIGGER_EVENTS),
+        "static_effects": [
+            "buff",
+            "grant_keyword",
+            "set_pt",
+            "add_subtype",
+            "extra_land_drops",
+        ],
+        "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        "expectation_keys": list(EXPECTATION_KEYS),
+        "notes": [
+            "A card either uses vocabulary in these lists or it fails to load.",
+            "An ability's `text` must be the printed sentence it implements: the"
+            " residual gate asks each ability which line it claims, and anything"
+            " unclaimed means the card is only half implemented.",
+            "An instant or sorcery puts its effects in `spell_effects`; a"
+            " permanent puts them in `abilities`.",
+            "A static ability's filter may only read printed characteristics.",
+            "`snapshot` is how a card reads a value after its target has left --"
+            " there is no general last-known-information system.",
+            "A mana ability may contain only `add_mana`, or one `choose_mode`"
+            " whose modes each contain only `add_mana`.",
+            "The expectation is checked in a sandbox: player 0 at 40 life with a"
+            " deep mana base, two creatures, and an opponent holding a creature,"
+            " a flier, an artifact and an enchantment. The card under test is the"
+            " only card in hand.",
+        ],
+    }
+
+
+def examples_for(card: CardFacts, registry: CardRegistry, limit: int = 3) -> list[dict]:
+    """Cards already in the pool that look like this one.
+
+    Worked examples beat prose: the fastest way to show how a trigger is written
+    is a card that already has one. Chosen by shared type and by whether they
+    carry the kind of ability this card is going to need.
+    """
+    from ..schema import CardModel
+
+    wanted_types = set(card.type_line.replace("—", " ").split())
+    scored: list[tuple[int, dict]] = []
+    for existing in registry:
+        if existing.is_token or not existing.oracle_text:
+            continue
+        score = len(wanted_types & set(existing.types))
+        if any(a.is_triggered for a in existing.abilities) and "When" in card.oracle_text:
+            score += 2
+        if any(a.is_activated and not a.is_mana_ability for a in existing.abilities) and (
+            ":" in card.oracle_text
+        ):
+            score += 2
+        if any(a.is_static for a in existing.abilities) and " get " in card.oracle_text:
+            score += 2
+        if score <= 0:
+            continue
+        try:
+            payload = CardModel.model_validate(_as_payload(existing)).model_dump(
+                exclude_defaults=True, exclude_none=True
+            )
+        except Exception:  # pragma: no cover -- an example is a nicety, not a gate
+            continue
+        scored.append((score, payload))
+    scored.sort(key=lambda pair: (-pair[0], pair[1]["id"]))
+    return [payload for _, payload in scored[:limit]]
+
+
+def _as_payload(card) -> dict:
+    """A compiled card back into the JSON shape a packet shows."""
+    return {
+        "id": card.id,
+        "name": card.name,
+        "oracle_text": card.oracle_text,
+        "mana_cost": str(card.mana_cost) or None,
+        "types": sorted(card.types),
+        "subtypes": sorted(card.subtypes),
+        "power": card.power,
+        "toughness": card.toughness,
+        "abilities": [dict(a.raw) for a in card.abilities if getattr(a, "raw", None)],
+    }
+
+
+def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) -> Packet:
+    facts = facts_from_index(entry)
+    proxy = build_proxy(facts)
+    starting_point: dict = {}
+    todo: list[str] = []
+    if proxy.model is not None:
+        starting_point = proxy.model.model_dump(exclude_defaults=True, exclude_none=True)
+        for note in proxy.notes:
+            if note.startswith("rules text not implemented:"):
+                todo = [p.strip() for p in note.split(":", 1)[1].split(" / ") if p.strip()]
+
+    return Packet(
+        card_id=proxy.card_id,
+        name=entry.name,
+        type_line=entry.type_line,
+        mana_cost=entry.mana_cost,
+        power=entry.power,
+        toughness=entry.toughness,
+        colors=entry.colors,
+        color_identity=entry.color_identity,
+        oracle_text=entry.oracle_text,
+        starting_point=starting_point,
+        todo=todo or [entry.oracle_text],
+        template_said=template_said,
+        examples=examples_for(facts, registry),
+        reference=reference(),
+    )
+
+
+def write_packet(packet: Packet) -> Path:
+    packets_dir().mkdir(parents=True, exist_ok=True)
+    path = packets_dir() / f"{packet.card_id}.json"
+    path.write_text(packet.to_json(), encoding="utf-8", newline="")
+    return path
+
+
+def read_answers() -> dict[str, dict]:
+    """Every answer written so far, keyed by card id.
+
+    An answer is ``{"card": {...}, "expectation": {...}}``. Both halves are
+    required -- see the module docstring.
+    """
+    out: dict[str, dict] = {}
+    if not answers_dir().exists():
+        return out
+    for path in sorted(answers_dir().glob("*.json")):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        card = payload.get("card")
+        if isinstance(card, dict) and card.get("id"):
+            out[card["id"]] = payload
+    return out

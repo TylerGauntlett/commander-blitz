@@ -1,0 +1,212 @@
+{
+  "card_id": "reliquary_tower",
+  "color_identity": "",
+  "colors": "",
+  "examples": [
+    {
+      "id": "evolving_wilds",
+      "mana_cost": "{0}",
+      "name": "Evolving Wilds",
+      "oracle_text": "{T}, Sacrifice Evolving Wilds: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "id": "terramorphic_expanse",
+      "mana_cost": "{0}",
+      "name": "Terramorphic Expanse",
+      "oracle_text": "{T}, Sacrifice Terramorphic Expanse: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "id": "adanto_vanguard",
+      "mana_cost": "{1}{W}",
+      "name": "Adanto Vanguard",
+      "oracle_text": "Pay 4 life: Adanto Vanguard gains indestructible until end of turn.",
+      "power": 1,
+      "subtypes": [
+        "Soldier",
+        "Vampire"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    }
+  ],
+  "mana_cost": "",
+  "name": "Reliquary Tower",
+  "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
+  "power": null,
+  "reference": {
+    "expectation_keys": [
+      "life",
+      "hand_size",
+      "library_size",
+      "graveyard_size",
+      "counters",
+      "tokens",
+      "battlefield_count",
+      "opponent_battlefield_count",
+      "zone"
+    ],
+    "keywords": [
+      "deathtouch",
+      "defender",
+      "double_strike",
+      "first_strike",
+      "flash",
+      "flying",
+      "haste",
+      "hexproof",
+      "indestructible",
+      "lifelink",
+      "menace",
+      "reach",
+      "trample",
+      "vigilance"
+    ],
+    "notes": [
+      "A card either uses vocabulary in these lists or it fails to load.",
+      "An ability's `text` must be the printed sentence it implements: the residual gate asks each ability which line it claims, and anything unclaimed means the card is only half implemented.",
+      "An instant or sorcery puts its effects in `spell_effects`; a permanent puts them in `abilities`.",
+      "A static ability's filter may only read printed characteristics.",
+      "`snapshot` is how a card reads a value after its target has left -- there is no general last-known-information system.",
+      "A mana ability may contain only `add_mana`, or one `choose_mode` whose modes each contain only `add_mana`.",
+      "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
+    ],
+    "ops": [
+      "add_counters",
+      "add_mana",
+      "add_mana_per",
+      "attach",
+      "choose_mode",
+      "counter",
+      "create_token",
+      "damage",
+      "destroy",
+      "discard",
+      "draw",
+      "exile",
+      "extra_land_drop",
+      "for_each",
+      "gain_life",
+      "grant_keyword",
+      "if",
+      "lose_life",
+      "may",
+      "mill",
+      "noop",
+      "pump",
+      "put_on_top",
+      "put_onto_battlefield",
+      "remove_counters",
+      "repeat",
+      "return_from_graveyard",
+      "return_to_hand",
+      "reveal",
+      "sacrifice",
+      "scry",
+      "search_library",
+      "set_pt",
+      "shuffle",
+      "snapshot",
+      "surveil",
+      "tap",
+      "untap"
+    ],
+    "static_effects": [
+      "buff",
+      "grant_keyword",
+      "set_pt",
+      "add_subtype",
+      "extra_land_drops"
+    ],
+    "static_filter_keys": [
+      "attached",
+      "attacking",
+      "blocking",
+      "colors",
+      "controller",
+      "exclude_self",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "not_types",
+      "self_only",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "types"
+    ],
+    "supertypes": [
+      "Basic",
+      "Legendary",
+      "Snow"
+    ],
+    "trigger_events": [
+      "attacks",
+      "begin_combat",
+      "blocks",
+      "counter_placed",
+      "creature_dies",
+      "deals_combat_damage_to_player",
+      "dies",
+      "draw",
+      "draw_step",
+      "end_step",
+      "land_played",
+      "leaves_battlefield",
+      "permanent_enters",
+      "self_enters",
+      "spell_cast",
+      "upkeep",
+      "you_gain_life"
+    ],
+    "types": [
+      "Artifact",
+      "Battle",
+      "Creature",
+      "Enchantment",
+      "Instant",
+      "Land",
+      "Planeswalker",
+      "Sorcery"
+    ]
+  },
+  "starting_point": {
+    "abilities": [
+      {
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "mana": "{C}",
+            "op": "add_mana"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {C}."
+      }
+    ],
+    "color_identity": [],
+    "colors": [],
+    "id": "reliquary_tower",
+    "name": "Reliquary Tower",
+    "oracle_text": "You have no maximum hand size.\n{T}: Add {C}.",
+    "types": [
+      "Land"
+    ]
+  },
+  "template_said": "no template for: You have no maximum hand size",
+  "todo": [
+    "You have no maximum hand size"
+  ],
+  "toughness": null,
+  "type_line": "Land"
+}

@@ -1,0 +1,195 @@
+{
+  "card_id": "swiftfoot_boots",
+  "color_identity": "",
+  "colors": "",
+  "examples": [
+    {
+      "id": "commanders_sphere",
+      "mana_cost": "{3}",
+      "name": "Commander's Sphere",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity. Sacrifice Commander's Sphere: Draw a card.",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "id": "mind_stone",
+      "mana_cost": "{2}",
+      "name": "Mind Stone",
+      "oracle_text": "{T}: Add {C}. {1}, {T}, Sacrifice Mind Stone: Draw a card.",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "id": "wayfarers_bauble",
+      "mana_cost": "{1}",
+      "name": "Wayfarer's Bauble",
+      "oracle_text": "{2}, {T}, Sacrifice Wayfarer's Bauble: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "types": [
+        "Artifact"
+      ]
+    }
+  ],
+  "mana_cost": "{2}",
+  "name": "Swiftfoot Boots",
+  "oracle_text": "Equipped creature has hexproof and haste. (It can't be the target of spells or abilities your opponents control. It can attack and {T} no matter when it came under your control.)\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+  "power": null,
+  "reference": {
+    "expectation_keys": [
+      "life",
+      "hand_size",
+      "library_size",
+      "graveyard_size",
+      "counters",
+      "tokens",
+      "battlefield_count",
+      "opponent_battlefield_count",
+      "zone"
+    ],
+    "keywords": [
+      "deathtouch",
+      "defender",
+      "double_strike",
+      "first_strike",
+      "flash",
+      "flying",
+      "haste",
+      "hexproof",
+      "indestructible",
+      "lifelink",
+      "menace",
+      "reach",
+      "trample",
+      "vigilance"
+    ],
+    "notes": [
+      "A card either uses vocabulary in these lists or it fails to load.",
+      "An ability's `text` must be the printed sentence it implements: the residual gate asks each ability which line it claims, and anything unclaimed means the card is only half implemented.",
+      "An instant or sorcery puts its effects in `spell_effects`; a permanent puts them in `abilities`.",
+      "A static ability's filter may only read printed characteristics.",
+      "`snapshot` is how a card reads a value after its target has left -- there is no general last-known-information system.",
+      "A mana ability may contain only `add_mana`, or one `choose_mode` whose modes each contain only `add_mana`.",
+      "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
+    ],
+    "ops": [
+      "add_counters",
+      "add_mana",
+      "add_mana_per",
+      "attach",
+      "choose_mode",
+      "counter",
+      "create_token",
+      "damage",
+      "destroy",
+      "discard",
+      "draw",
+      "exile",
+      "extra_land_drop",
+      "for_each",
+      "gain_life",
+      "grant_keyword",
+      "if",
+      "lose_life",
+      "may",
+      "mill",
+      "noop",
+      "pump",
+      "put_on_top",
+      "put_onto_battlefield",
+      "remove_counters",
+      "repeat",
+      "return_from_graveyard",
+      "return_to_hand",
+      "reveal",
+      "sacrifice",
+      "scry",
+      "search_library",
+      "set_pt",
+      "shuffle",
+      "snapshot",
+      "surveil",
+      "tap",
+      "untap"
+    ],
+    "static_effects": [
+      "buff",
+      "grant_keyword",
+      "set_pt",
+      "add_subtype",
+      "extra_land_drops"
+    ],
+    "static_filter_keys": [
+      "attached",
+      "attacking",
+      "blocking",
+      "colors",
+      "controller",
+      "exclude_self",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "not_types",
+      "self_only",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "types"
+    ],
+    "supertypes": [
+      "Basic",
+      "Legendary",
+      "Snow"
+    ],
+    "trigger_events": [
+      "attacks",
+      "begin_combat",
+      "blocks",
+      "counter_placed",
+      "creature_dies",
+      "deals_combat_damage_to_player",
+      "dies",
+      "draw",
+      "draw_step",
+      "end_step",
+      "land_played",
+      "leaves_battlefield",
+      "permanent_enters",
+      "self_enters",
+      "spell_cast",
+      "upkeep",
+      "you_gain_life"
+    ],
+    "types": [
+      "Artifact",
+      "Battle",
+      "Creature",
+      "Enchantment",
+      "Instant",
+      "Land",
+      "Planeswalker",
+      "Sorcery"
+    ]
+  },
+  "starting_point": {
+    "color_identity": [],
+    "colors": [],
+    "id": "swiftfoot_boots",
+    "mana_cost": "{2}",
+    "name": "Swiftfoot Boots",
+    "oracle_text": "Equipped creature has hexproof and haste. (It can't be the target of spells or abilities your opponents control. It can attack and {T} no matter when it came under your control.)\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+    "subtypes": [
+      "Equipment"
+    ],
+    "types": [
+      "Artifact"
+    ]
+  },
+  "template_said": "no template for: Equipped creature has hexproof and haste",
+  "todo": [
+    "Equipped creature has hexproof and haste",
+    "Equip {1}"
+  ],
+  "toughness": null,
+  "type_line": "Artifact — Equipment"
+}

@@ -134,14 +134,39 @@ def add_dummy_spell(game: Game) -> None:
 
 
 def drive(game: Game, limit: int = 60) -> None:
-    """Answer every decision with a real choice until the game settles."""
+    """Answer every decision with a real choice until the card has finished.
+
+    **Stops at the turn boundary.** Letting the sandbox roll into the next turn
+    crosses the cleanup step, which wipes every until-end-of-turn effect -- so a
+    pump spell or a keyword grant would be measured after the thing it did had
+    already worn off, and gate 5 would quietly pass whatever the card actually
+    did. That is the exact failure this harness exists to catch, hidden inside
+    the harness itself.
+    """
+    turn = game.state.turn
     for _ in range(limit):
-        decision = game.pending()
-        if decision is None or game.over:
+        if game.over or game.state.turn != turn:
             return
-        if decision.kind is DecisionKind.PRIORITY:
+        decision = game.pending()
+        if decision is None:
+            return
+        # Priority means the card has finished resolving. Combat means the turn
+        # has moved on to something that is not this card -- and answering it is
+        # what used to march the sandbox into the next turn.
+        if decision.kind in _NOT_OUR_BUSINESS:
             return
         game.apply(_answer(game, decision))
+
+
+#: Decisions that mean the card under test is done with. Answering these walks
+#: the game forward through cleanup, which wipes until-end-of-turn effects.
+_NOT_OUR_BUSINESS = frozenset(
+    {
+        DecisionKind.PRIORITY,
+        DecisionKind.DECLARE_ATTACKERS,
+        DecisionKind.DECLARE_BLOCKERS,
+    }
+)
 
 
 def _answer(game: Game, decision: PendingDecision):
@@ -191,6 +216,7 @@ EXPECTATION_KEYS = (
     "battlefield_count",
     "opponent_battlefield_count",
     "zone",
+    "granted",
 )
 
 
@@ -237,6 +263,22 @@ def check_expectation(game: Game, card_id: str, oid: int, expectation: dict) -> 
         )
     if "zone" in expectation:
         compare("the card's zone", state.objects[oid].zone.value, expectation["zone"])
+
+    if "granted" in expectation:
+        # "Permanents you control gain hexproof", "Equipped creature has haste".
+        # Without this, a card whose whole job is granting a keyword had nothing
+        # countable to assert and fell back to "it resolved" -- a gate that
+        # passes whatever the card actually did.
+        from automtg.engine.characteristics import chars
+
+        wanted = set(expectation["granted"].get("keywords", []))
+        how_many = expectation["granted"].get("count", 1)
+        got = sum(
+            1
+            for obj in state.battlefield_objects(0)
+            if wanted <= {str(k) for k in chars(state, obj.oid).keywords}
+        )
+        compare(f"permanents of yours with {sorted(wanted)}", got, how_many)
 
     return problems
 
@@ -429,6 +471,13 @@ def _covered(card: CardDef, line: str) -> bool:
     """
     stripped = line.strip().rstrip(".")
     if not stripped:
+        return True
+
+    # "Enchant creature" is not an ability -- it is the spell's targeting clause,
+    # and it is implemented by the card's `targets` plus the engine attaching the
+    # Aura on resolution. Asking for an ability to claim it would make every Aura
+    # unauthorable.
+    if stripped.lower().startswith("enchant ") and card.targets:
         return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")

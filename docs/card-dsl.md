@@ -310,3 +310,47 @@ down one card at a time:
 
 It is now a first-class card with the full test suite behind it, and every deck
 that references that id picks up the real rules on the next import.
+
+## Auras and Equipment
+
+An Aura's "Enchant creature" line is not an ability — it is the spell's
+targeting clause, so it is written as a `target` and the engine attaches the
+permanent to what it targeted once it is on the battlefield:
+
+```jsonc
+{
+  "id": "pacifism", "name": "Pacifism", "mana_cost": "{1}{W}",
+  "types": ["Enchantment"], "subtypes": ["Aura"],
+  "targets": [
+    { "id": "t1", "kind": "permanent",
+      "selector": { "zone": "battlefield", "types": ["Creature"] }, "count": 1 }
+  ],
+  "abilities": [
+    { "kind": "static", "text": "Enchanted creature gets -2/-0.",
+      "effect": "buff", "affects": { "attached": true },
+      "power": { "const": -2 }, "toughness": { "const": 0 } }
+  ]
+}
+```
+
+`{"attached": true}` means "the permanent this is attached to". It is checked
+before `controller` and short-circuits it, because an Aura on an opponent's
+creature still affects that creature and the default `controller: "you"` would
+quietly stop it.
+
+Equipment needs nothing new — `Equip {2}` is an ordinary sorcery-speed activated
+ability whose effect is `attach`:
+
+```jsonc
+{ "kind": "activated", "text": "Equip {1}", "sorcery_speed_only": true,
+  "cost": { "mana": "{1}" },
+  "targets": [ { "id": "t1", "kind": "permanent",
+    "selector": { "zone": "battlefield", "controller": "you", "types": ["Creature"] },
+    "count": 1 } ],
+  "effects": [ { "op": "attach", "objects": { "target": "t1" } } ] }
+```
+
+Attaching during an Aura's `spell_effects` does **not** work, and the failure is
+silent: `move_object` calls `reset_permanent_state` on the way onto the
+battlefield, which clears `attached_to`, so the Aura arrives enchanting nothing
+and state-based actions put it in the graveyard.
