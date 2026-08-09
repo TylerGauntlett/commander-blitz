@@ -131,6 +131,12 @@ class CardModel(BaseModel):
     replacements: list[ReplacementModel] = Field(default_factory=list)
     abilities: list[AbilityModel] = Field(default_factory=list)
     is_token: bool = False
+    #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
+    #: ``automtg.cards.authoring`` did, and it only got here by clearing the six
+    #: gates in ``authoring/verify.py`` -- including one that casts it and checks
+    #: the board.  Provenance rather than rules: the loader ignores it, and it
+    #: exists so a diff shows at a glance which cards a machine wrote.
+    source: str = ""
 
     @field_validator("id")
     @classmethod

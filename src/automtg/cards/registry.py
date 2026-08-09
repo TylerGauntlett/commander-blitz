@@ -26,6 +26,23 @@ def data_dir() -> Path:
     return Path(override) if override else DEFAULT_DATA_DIR
 
 
+def authored_card_paths(base: Path | None = None) -> list[Path]:
+    """Every hand-written card file, then every machine-authored one.
+
+    ``auto/`` holds cards written by ``automtg.cards.authoring`` -- generated,
+    but only after clearing the six gates in ``authoring/verify.py``, so they are
+    *authored* in the sense that matters: their behaviour was demonstrated. They
+    are committed and playable everywhere, unlike the inert proxies in
+    ``data/generated/``.
+
+    Hand-written first so ``CardRegistry.by_name``'s first-wins resolution
+    prefers a card a person wrote.  A duplicate id is still a load error, which
+    the verifier's registry gate exists to prevent reaching here.
+    """
+    root = Path(base) if base else data_dir() / "cards"
+    return sorted(root.glob("*.cards.json")) + sorted((root / "auto").glob("*.cards.json"))
+
+
 def generated_dir() -> Path:
     """Where imported decks and their generated cards land.
 
@@ -87,10 +104,24 @@ class CardRegistry:
         validate_token_references(cards)
         return cls(cards)
 
+    def extended_with(self, paths: Iterable[Path]) -> CardRegistry:
+        """This pool plus any card in ``paths`` it does not already have.
+
+        Unlike :meth:`from_paths`, a clash is not an error -- the incumbent wins
+        and the newcomer is dropped. Used for the generated proxy pool, where a
+        collision means the card has since been properly implemented.
+        """
+        cards = dict(self._cards)
+        for path in paths:
+            for card in load_card_file(path):
+                cards.setdefault(card.id, card)
+        validate_token_references(cards)
+        return CardRegistry(cards)
+
     @classmethod
     def from_dir(cls, directory: Path | None = None) -> CardRegistry:
         base = Path(directory) if directory else data_dir() / "cards"
-        paths = sorted(base.glob("*.cards.json"))
+        paths = authored_card_paths(base)
         if not paths:
             raise DslError(f"no card files found in {base}")
         return cls.from_paths(paths)
@@ -226,15 +257,26 @@ def load_game_data(*, include_generated: bool = False) -> GameData:
     to a hand-written card whenever one exists and a generated proxy can never
     shadow ``forest``.
     """
-    paths = sorted((data_dir() / "cards").glob("*.cards.json"))
+    paths = authored_card_paths()
     if not paths:
         raise DslError(f"no card files found in {data_dir() / 'cards'}")
     deck_dirs = [data_dir() / "decks"]
-    if include_generated:
-        paths += sorted((generated_dir() / "cards").glob("*.cards.json"))
-        deck_dirs.append(generated_dir() / "decks")
 
     registry = CardRegistry.from_paths(paths)
+    if include_generated:
+        # Proxies whose card has since been *authored* are dropped rather than
+        # merged. A proxy exists only because nobody had written that card yet;
+        # once somebody has, the real one wins and the stale copy is obsolete.
+        #
+        # This is not a tidiness question. `from_paths` raises on a duplicate id,
+        # so without the skip the server stops booting the first time the card
+        # pipeline implements something that is already sitting in somebody's
+        # imported deck -- and the deck goes on referencing the id either way, so
+        # it silently picks up the real rules. Which is the point.
+        registry = registry.extended_with(
+            sorted((generated_dir() / "cards").glob("*.cards.json"))
+        )
+        deck_dirs.append(generated_dir() / "decks")
     decks: dict[str, DeckList] = {}
     for directory in deck_dirs:
         for deck_id, deck in load_decks(directory).items():
