@@ -36,14 +36,32 @@ const ARC = 2.6;
 const HOVER_LIFT = -46;
 const NEIGHBOUR_PUSH = 26;
 /**
- * Ceiling on the arc's droop.
+ * How far the outermost card sits below the middle one.
  *
- * The outer cards sit lower than the middle ones, by the square of their
- * distance from centre. Unbounded, a twelve-card hand drops its end cards 42px
- * and pushes them through the bottom of the viewport -- the same clipping the
- * `--hand-scale` rule was added to prevent, arriving by a different route.
+ * Unbounded, a twelve-card hand drops its end cards 42px and pushes them through
+ * the bottom of the viewport -- the same clipping `--hand-scale` was added to
+ * prevent, arriving by a different route.
  */
 const MAX_DROOP = 12;
+
+/**
+ * The arc, as a fraction of the hand's own half-width.
+ *
+ * This was `min(MAX_DROOP, distance ** 2 * 1.4)`, which is a parabola only until
+ * it hits the ceiling -- and it hits it at |distance| >= 2.93, so from the fourth
+ * card outwards *every* card sat at exactly 12. A seven-card hand curved; a
+ * fifteen-card hand was flat across its outer two-thirds while `rotate` kept
+ * growing, so the end cards were steeply tilted and no lower than their
+ * neighbours, which reads as them riding up rather than fanning down.
+ *
+ * Normalising by `mid` keeps the shape a real parabola at any size: the
+ * outermost card always droops exactly `MAX_DROOP` and everything between it and
+ * the centre is on the curve.
+ */
+function droop(distance: number, mid: number): number {
+  if (mid <= 0) return 0;
+  return MAX_DROOP * (distance / mid) ** 2;
+}
 
 interface Props {
   cards: CardView[];
@@ -111,22 +129,21 @@ export function HandFan({
                   Math.max(0, NEIGHBOUR_PUSH - Math.abs(index - hovered) * 8);
 
             return (
-              <motion.div
+              /*
+               * The slot holds still and the card inside it moves.
+               *
+               * Both used to be one element: it carried the transform *and* the
+               * pointer handlers, so raising the hovered card by 46px moved its
+               * hit box out from under the cursor -- `mouseleave` fired, the card
+               * settled back down under the cursor, `mouseenter` fired, and the
+               * card jittered for as long as you rested near its edge. The slot is
+               * a fixed rectangle now, extended upward by the lift so the pointer
+               * stays inside it for the whole rise; only `.hand__lift` transforms.
+               */
+              <div
                 className="hand__slot"
                 key={card.oid}
                 style={{ left: index * step, zIndex: isHovered ? 50 : index }}
-                initial={{ opacity: 0, y: 90, scale: 0.8 }}
-                animate={{
-                  opacity: 1,
-                  x: push,
-                  y: isHovered
-                    ? HOVER_LIFT
-                    : Math.min(MAX_DROOP, Math.abs(distance) ** 2 * 1.4),
-                  rotate: isHovered ? 0 : distance * ARC,
-                  scale: isHovered ? 1.14 : 1,
-                }}
-                exit={{ opacity: 0, y: -40, scale: 0.8, transition: settle }}
-                transition={bouncy}
                 onMouseEnter={() => {
                   setHovered(index);
                   hover(card.oid);
@@ -136,18 +153,32 @@ export function HandFan({
                   hover(null);
                 }}
               >
-                <Card
-                  card={card}
-                  variant="board"
-                  lift={false}
-                  draggable={!disabled}
-                  playable={playableOids.has(card.oid)}
-                  selected={selectedOid === card.oid}
-                  dimmed={!disabled && !playableOids.has(card.oid)}
-                  onActivate={disabled ? undefined : onActivate}
-                  onDropOn={onDropOn}
-                />
-              </motion.div>
+                <motion.div
+                  className="hand__lift"
+                  initial={{ opacity: 0, y: 90, scale: 0.8 }}
+                  animate={{
+                    opacity: 1,
+                    x: push,
+                    y: isHovered ? HOVER_LIFT : droop(distance, mid),
+                    rotate: isHovered ? 0 : distance * ARC,
+                    scale: isHovered ? 1.14 : 1,
+                  }}
+                  exit={{ opacity: 0, y: -40, scale: 0.8, transition: settle }}
+                  transition={bouncy}
+                >
+                  <Card
+                    card={card}
+                    variant="board"
+                    lift={false}
+                    draggable={!disabled}
+                    playable={playableOids.has(card.oid)}
+                    selected={selectedOid === card.oid}
+                    dimmed={!disabled && !playableOids.has(card.oid)}
+                    onActivate={disabled ? undefined : onActivate}
+                    onDropOn={onDropOn}
+                  />
+                </motion.div>
+              </div>
             );
           })}
         </AnimatePresence>

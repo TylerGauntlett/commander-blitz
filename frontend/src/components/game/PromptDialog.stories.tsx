@@ -12,6 +12,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
+import { settled } from "../../testing/asserts";
 import { expectUniqueActionIds } from "../../testing/asserts";
 import { action, gameView, pending } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
@@ -45,6 +46,37 @@ function submits(kind: string, label: string, id: string) {
 export const Mulligan: Story = {
   args: { state: scenarios.mulligan().state, actions: scenarios.mulligan().actions },
   play: submits("mulligan", "Keep", "a0-keep"),
+};
+
+/**
+ * An option, hovered.
+ *
+ * The options lift `y: -4` and scale 1.03, and they live in a scroll container.
+ * With only 4px of padding the lifted top edge -- and the focus ring outside it,
+ * which is what a keyboard user is following -- clipped against the container.
+ * Nothing about the button says so; it is the parent's `overflow-y` that cuts it.
+ */
+export const OptionOnHover: Story = {
+  args: { state: scenarios.mulligan().state, actions: scenarios.mulligan().actions },
+  parameters: { automtg: { mount: "screen", motion: "real" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    const option = canvasElement.querySelector(".opt") as HTMLElement;
+    const list = canvasElement.querySelector(".prompt__options") as HTMLElement;
+
+    await userEvent.hover(option);
+    await settled(option);
+
+    // Measured after the lift settles -- reading mid-spring measures a button
+    // that has not moved yet, which passes against the defect.
+    const lifted = option.getBoundingClientRect();
+    const scroller = list.getBoundingClientRect();
+    expect(
+      Math.round(lifted.top),
+      "the lifted option clips against the top of its scroll container",
+    ).toBeGreaterThanOrEqual(Math.round(scroller.top));
+  },
 };
 
 export const DiscardToHandSize: Story = {

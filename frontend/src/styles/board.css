@@ -1807,11 +1807,28 @@
  * cannot fight the springs, and the pitch did not have to be rebuilt as a `calc()`
  * to become animatable. Absolutely positioned, so nothing reflows either.
  */
+/*
+ * The slot is the hit box and it never moves.
+ *
+ * It is extended upward by the hover lift, and that padding is the whole fix for
+ * a jitter that had been there since the fan was written: when the slot itself
+ * carried the transform, raising a card by 46px took its box out from under the
+ * pointer, `mouseleave` fired, the card fell back under the pointer, and it
+ * oscillated for as long as you rested near an edge. `top: -46px` with matching
+ * padding keeps the rectangle where the cursor is while the card inside it
+ * rises. `pointer-events: none` on the padding is not wanted -- the padding *is*
+ * the catchment.
+ */
 .hand__slot {
   position: absolute;
-  top: 0;
-  transform-origin: 50% 120%;
+  top: -46px;
+  padding-top: 46px;
   transition: left var(--t-zoom) ease;
+}
+
+/* The half that moves. `transform-origin` lives here now, with the transform. */
+.hand__lift {
+  transform-origin: 50% 120%;
 }
 
 .hand__empty {

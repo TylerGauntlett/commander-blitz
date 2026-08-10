@@ -778,6 +778,19 @@
   padding: 4px;
 }
 
+/*
+ * Room for the lift, and for the ring around it.
+ *
+ * An option raises `y: -4` and scales 1.03 on hover, and this is a scroll
+ * container -- so at 4px of padding the lifted top edge cut against it, and the
+ * focus ring, which sits *outside* the border and is what a keyboard user is
+ * following, cut worse. Nothing about the button says so; it is the parent's
+ * `overflow-y` doing the cutting, which is why it is fixed here.
+ */
+.prompt__options {
+  padding: 12px 8px;
+}
+
 .opt {
   display: flex;
   flex-direction: column;
