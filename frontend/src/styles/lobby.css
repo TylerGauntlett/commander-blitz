@@ -1030,6 +1030,7 @@
    B desaturate to the same pale grey, which would make the two ends of the row
    indistinguishable in exactly the state you read it in most. */
 .cbtn {
+  --pip: 20px;
   width: 27px;
   height: 27px;
   border-radius: 999px;
@@ -1041,9 +1042,10 @@
   padding: 0;
 }
 
+/* Sized through `--pip`, which is how every other symbol in the app is sized,
+   rather than by overriding the width and height `.pip` derives from it. The
+   size is then something a `ManaSymbol` story reproduces with one variable. */
 .cbtn .pip {
-  width: 20px;
-  height: 20px;
   pointer-events: none;
   opacity: 0.42;
   transition: opacity 0.12s ease, filter 0.12s ease;
@@ -1341,7 +1343,11 @@
   border-top: 1px solid var(--edge);
 }
 
-.dos__foot .deal {
+/* The dossier's take button is the one thing on that screen you are there to
+   press, so it is bigger than the same button anywhere else. A modifier rather
+   than a `.dos__foot .deal` descendant rule: the size belongs to this instance
+   of the button, not to the footer that happens to contain it. */
+.deal--lg {
   padding: 11px 22px;
   font-size: 14px;
 }

@@ -279,7 +279,12 @@
   flex-wrap: wrap;
 }
 
+/* An attacker listed under the blocker that could stop it. The indent is the
+   nesting, so it belongs to this modifier rather than to a `.actgroup .act`
+   descendant rule -- `ActionPanel` renders the two together and always has. */
 .act--nested {
+  margin-left: 12px;
+  width: auto;
   font-size: 12px;
 }
 
@@ -319,13 +324,23 @@
   text-overflow: ellipsis;
 }
 
+/*
+ * The pips here are the board's size, not a card's, and there is nothing to do
+ * about it from this rule.
+ *
+ * This used to pin `--card-w: 120px` with a comment saying the pips size
+ * themselves off it. They do not: `--pip` is declared on `.acts__list`
+ * (cards.css) and, being unregistered, is substituted *where it is declared* --
+ * against whatever `--card-w` was in scope there, which is the `:root` value.
+ * Setting `--card-w` further down never re-derives it, so the declaration did
+ * nothing at all. Making the action list's pips their own size means declaring
+ * `--pip` on `.acts__list`, which is a visible change and a separate decision.
+ */
 .act__cost {
   display: flex;
   flex: 0 0 auto;
   gap: 1px;
   margin-left: auto;
-  /* The pips size themselves off --card-w; there is no card here, so pin it. */
-  --card-w: 120px;
 }
 
 .act__pt {
@@ -468,11 +483,6 @@
   font-style: italic;
 }
 
-.actgroup .act {
-  margin-left: 12px;
-  width: auto;
-}
-
 /* What the block would achieve, from logic/autoBlock.ts's ranking. Coloured by
    tier so the good ones are findable without reading four words on every row --
    and the tier is on the element as `data-tier`, so a test asserts the ranking
@@ -515,11 +525,13 @@
 /*
  * One line, and it must stay one line.
  *
- * The rail is `clamp(272px, 17.4vw, 352px)`, so at the narrow end there are
- * about 250px for six controls. When they wrapped, the second line pushed out of
- * the panel's box and the quit button rendered *over* the commit dock -- the
- * panel is `flex: 1 1 auto` in a column that is already full, so it cannot grow
- * to absorb a wrap. Everything below is sized to fit that budget.
+ * The rail is a fixed 304px column (`.table__body` in board.css), so after the
+ * panel's padding there are about 280px for six controls. When they wrapped, the
+ * second line pushed out of the panel's box and the quit button rendered *over*
+ * the commit dock -- the panel is `flex: 1 1 auto` in a column that is already
+ * full, so it cannot grow to absorb a wrap. Everything below is sized to fit that
+ * budget. (This said `clamp(272px, 17.4vw, 352px)` long after the rail stopped
+ * being fluid; the budget was being reasoned against a narrower rail than exists.)
  */
 .tools {
   display: flex;

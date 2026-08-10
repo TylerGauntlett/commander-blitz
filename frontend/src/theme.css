@@ -49,6 +49,26 @@
 }
 
 /*
+ * Registered because it is read further down the tree than it is written.
+ *
+ * `--seal-w` is declared on `.orb` alone, and the life dial that reads it is
+ * rendered by `CommandZone` -- which `PlayerOrb` hands the dial to, and which is
+ * perfectly capable of being drawn on its own. Unregistered, an undefined custom
+ * property makes every declaration using it invalid at computed-value time, so
+ * outside an orb the dial lost its `width`, its `font-size` and the `bottom` that
+ * stamps it over the plinth's art, all at once and all silently.
+ *
+ * The initial is the viewer's value at the size the suites run at (6.6vh of
+ * 950px). Inside an `.orb` the declaration still wins, so nothing about the app
+ * changes.
+ */
+@property --seal-w {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 62px;
+}
+
+/*
  * `--type-ring` and `--type-ring-w` were registered here for the same reason,
  * back when card type was an eight-step luminance ladder read off the rendered
  * board. The ladder went with the art-bleed redesign -- card type is no longer

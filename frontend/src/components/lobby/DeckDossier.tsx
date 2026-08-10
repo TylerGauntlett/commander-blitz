@@ -255,7 +255,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
           {canTake && (
             <button
               type="button"
-              className="deal"
+              className="deal deal--lg"
               data-testid="dossier-take"
               disabled={!deck}
               onClick={() => deck && onTake(deck.id)}
