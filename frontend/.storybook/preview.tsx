@@ -200,12 +200,8 @@ const withMotion: Decorator = (Story, context) => {
 const withMount: Decorator = (Story, context) => {
   const mount = (context.parameters.automtg as AutomtgParameters | undefined)?.mount;
   if (!mount) {
-    throw new Error(
-      `story "${context.title} / ${context.name}" declares no mount. Add ` +
-        "`parameters: { automtg: { mount: ... } }` naming where the app hangs this " +
-        "component -- see src/testing/mounts.tsx. `bare` is a valid answer, but it " +
-        "has to be an answer.",
-    );
+    // `bare` is a valid answer; it just has to be an answer. See mounts.tsx.
+    throw new Error(`story "${context.title} / ${context.name}" declares no mount`);
   }
   if (mount === "bare") {
     return (

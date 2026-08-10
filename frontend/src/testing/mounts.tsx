@@ -230,14 +230,13 @@ export type MountId = keyof typeof MOUNTS;
 export function Mounted({ mount, children }: { mount: MountId; children: ReactNode }) {
   const found: Mount | undefined = MOUNTS[mount];
   if (!found) {
-    throw new Error(
-      `unknown mount "${mount}". Add it to src/testing/mounts.tsx, naming the chain ` +
-        "the app actually renders -- do not reach for `bare`.",
-    );
+    throw new Error(`unknown mount "${mount}" -- add it to src/testing/mounts.tsx`);
   }
   return found.layers.reduceRight<ReactNode>(
-    (inner, layer) => (
-      <div className={layer.className} style={layer.style}>
+    (inner, layer, depth) => (
+      // Keyed by depth: the chain is fixed for a given mount, so the index is
+      // the identity here rather than a stand-in for one.
+      <div key={`${depth}-${layer.className}`} className={layer.className} style={layer.style}>
         {layer.fill ? <div className={layer.fill} aria-hidden="true" /> : null}
         {inner}
       </div>
