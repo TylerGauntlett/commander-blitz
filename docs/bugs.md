@@ -2,6 +2,57 @@
 
 ### Fixed
 
+- **Twenty-seven cards could never be activated at all.**
+  `costs.mana_sources` collects only `Cost.is_tap_only()` abilities, and
+  `legality._activate_actions` skipped *every* mana ability on the grounds the
+  solver would handle it. A mana ability with any other cost therefore had no
+  code path in the engine that could reach it: every Signet, Cabal Coffers,
+  Magus of the Coffers, Prophetic Prism, Arcum's Astrolabe, Apprentice Wizard,
+  the filter lands and the Vivid lands were permanents with dead text. Only
+  `arcane_signet` is tap-only, so the four precons were unaffected and no test
+  covered it; any imported Moxfield deck got inert rocks.
+  `costs.offerable_mana_ability` is now the complement of the solver's own test,
+  so the two cannot drift, and `legality` offers what the solver cannot use.
+
+- **The kicked cast was unreachable by any gesture.**
+  `legality._cast_options` emits unkicked first, and `Table.onBoardCard` took
+  the *first* action matching the clicked target. Clicking a creature with Into
+  the Roil selected therefore always cast it unkicked, silently spending the
+  player's kicker decision for them. It was reachable only as one more row in
+  the panel. Clicking now narrows the selection to every action that still
+  matches and lets the panel ask the rest (`uiStore.narrowTargeting`).
+
+- **X was never the player's choice.**
+  `legality._cast_variant` stamped `mana.max_affordable_x` onto the action, so a
+  Fireball was always cast for everything the board could pay. X is now a
+  `choose_x` decision raised before the cost is paid, and legality's ceiling is
+  only a gate on whether the spell appears.
+
+- **A taxed `{X}` commander vanished from the legal list.**
+  `max_affordable_x` was computed before commander tax and cost reduction were
+  folded into the generic, so it returned a maximum the subsequent
+  `solve_payment` then rejected — at every X including 0. It now takes
+  `extra_generic`.
+
+- **The foot rendered a second copy of every action id.**
+  `Table`'s `choice-list` drew a `data-action-id` button per remaining action
+  while `ActionPanel.playRows` drew the same ids, and `standDown` is only true
+  for `isModalDecision`. Two controls, one id — exactly what the panel's
+  invariant forbids. It escaped CI because no shipped card could reach the
+  branch (`action-panel.spec.ts` also scopes its check to `[data-action-kind]`,
+  which those buttons lacked) and manual mana reaches it immediately. The foot
+  now only ever says what the click is for.
+
+### Known, not fixed
+
+- **The RL policy has never seen an equip action.** `ai/action_space.py` caps
+  `ABIL_CAP = 2` and indexes `action.ability_index`, which counts *all*
+  abilities including statics and triggers. Twelve cards (eleven Equipment plus
+  `nezahal_primal_tide`) carry their activated ability at index 2 or higher, so
+  it is silently dropped into `ActionTable.dropped`. Pre-existing and unrelated
+  to variable costs; fixing it means indexing activated abilities separately,
+  which shifts the action space and invalidates trained checkpoints.
+
 - **Some cards appear several times in the action panel.**
   Six rows reading "Simic Charm / Instant / {G}{U}", and one Herd Heirloom ability listed
   twice. Nothing was duplicated: `legality._cast_variant` and `_activate_actions` emit one

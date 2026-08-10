@@ -63,6 +63,12 @@ class PlayerState:
     #: Overrides ``auto_pass``: stop at every window, the way MTGO's full control
     #: does.  A human who wants an opponent's end step back asks for this.
     full_control: bool = False
+    #: Offer this player's *tap-only* mana abilities as actions, so they choose
+    #: which land to tap and which colour a dual makes instead of the payment
+    #: solver deciding.  Off by default, which is what keeps the RL action space
+    #: and every golden test exactly as they were: see
+    #: `docs/rules-coverage.md`'s "Automatic mana payment" row.
+    manual_mana: bool = False
 
     def zone_list(self, zone: Zone) -> list[int]:
         """The ordered oid list for one of this player's zones."""

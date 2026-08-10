@@ -101,6 +101,30 @@ class TriggerSpec:
     not_cause: str | None = None
 
 
+def count_mode_specs(effects: Any) -> int:
+    """How many ``choose_mode`` ops appear anywhere in an effect tree.
+
+    Cast-time mode selection pre-answers *the* modal question a spell asks, and
+    that is only well defined when it asks exactly one.  Counting the whole tree
+    -- rather than trusting the first top-level op to be the only one -- makes
+    the rule mechanical instead of an argument about document order.
+    """
+    if isinstance(effects, Mapping):
+        total = 1 if effects.get("op") == "choose_mode" else 0
+        return total + sum(count_mode_specs(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return sum(count_mode_specs(item) for item in effects)
+    return 0
+
+
+def top_level_mode_spec(effects: Any) -> Mapping[str, Any] | None:
+    """The first ``choose_mode`` at the top level of ``effects``, if any."""
+    for spec in effects or ():
+        if isinstance(spec, Mapping) and spec.get("op") == "choose_mode":
+            return spec
+    return None
+
+
 @dataclass(frozen=True)
 class Ability:
     """An activated, triggered or static ability printed on a card."""
@@ -124,6 +148,19 @@ class Ability:
     effects: tuple[Mapping[str, Any], ...] = ()
     # static
     static: Mapping[str, Any] | None = None
+
+    @property
+    def cast_time_modes(self) -> Mapping[str, Any] | None:
+        """The ``choose_mode`` to ask about on activation, or ``None``.
+
+        Only for an *activated* ability, and only when the ability's whole
+        effect tree contains exactly one ``choose_mode`` at its top level. A
+        triggered ability has no activation to ask at, and a nested or repeated
+        one keeps asking as it resolves.
+        """
+        if not self.is_activated or count_mode_specs(self.effects) != 1:
+            return None
+        return top_level_mode_spec(self.effects)
 
     @property
     def is_activated(self) -> bool:
@@ -179,6 +216,20 @@ class CardDef:
     retrace: bool = False
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
+
+    @property
+    def cast_time_modes(self) -> Mapping[str, Any] | None:
+        """The ``choose_mode`` to ask about on cast, or ``None``.
+
+        Rule 601.2b puts mode selection at cast time.  Only honoured when the
+        spell's whole effect tree holds exactly one ``choose_mode`` and it sits
+        at the top level: a nested one ("choose one -- ... ; then choose one
+        --") is a second question that genuinely belongs to resolution, and
+        pre-answering it would bind the wrong one.
+        """
+        if count_mode_specs(self.spell_effects) != 1:
+            return None
+        return top_level_mode_spec(self.spell_effects)
 
     @property
     def retrace_cost(self) -> Cost:

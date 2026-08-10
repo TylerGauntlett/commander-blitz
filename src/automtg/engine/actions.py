@@ -34,6 +34,13 @@ class Action:
     #: display: "Into the Roil" and "Into the Roil (kicked)" are two different
     #: things to do with the same card and must not compare equal.
     kicked: bool = False
+    #: Which of a mana ability's ``mana_options`` this activation takes -- the
+    #: colour, for "Add one mana of any colour". Part of the identity: tapping
+    #: Commander's Sphere for {U} and for {R} are two different things to do.
+    #:
+    #: Deliberately not folded into ``choice``, which is the ordinal into a
+    #: :class:`PendingDecision`'s options and is read as such by the client.
+    mana_option: int | None = None
     label: str = field(default="", compare=False)
     #: ``label`` with the ``" -> target, target"`` suffix removed: what this
     #: action *is*, without which of its legal targets this copy aims at.  The
@@ -41,6 +48,11 @@ class Action:
     #: one row with six chips rather than six identical-looking rows.  Display
     #: -only, like ``label``.
     base_label: str = field(default="", compare=False)
+    #: What *this* copy says on its chip when the row is a group -- "{R}" for
+    #: one yield of "Add one mana of any colour".  Empty when the only thing
+    #: separating a row's actions is which target they aim at, which the client
+    #: already names from ``targets``.  Display-only, like ``label``.
+    option_label: str = field(default="", compare=False)
     #: Permanents the mana solver would tap to pay for this, for the UI's
     #: "what will this leave me with" preview.  Display-only, like ``label``:
     #: excluded from equality and from :meth:`key`, so an action reconstructed
@@ -58,8 +70,10 @@ class Action:
             choice=self.choice,
             x=self.x,
             kicked=self.kicked,
+            mana_option=self.mana_option,
             label=label,
             base_label=label if base_label is None else base_label,
+            option_label=self.option_label,
             pays=self.pays,
         )
 
@@ -73,6 +87,7 @@ class Action:
             -1 if self.choice is None else self.choice,
             self.x,
             self.kicked,
+            -1 if self.mana_option is None else self.mana_option,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -84,8 +99,10 @@ class Action:
             "choice": self.choice,
             "x": self.x,
             "kicked": self.kicked,
+            "mana_option": self.mana_option,
             "label": self.label,
             "base_label": self.base_label,
+            "option_label": self.option_label,
             "pays": list(self.pays),
         }
 
@@ -170,6 +187,7 @@ GENERATOR_DECISIONS = frozenset(
     {
         DecisionKind.CHOOSE_OBJECTS,
         DecisionKind.CHOOSE_MODE,
+        DecisionKind.CHOOSE_X,
         DecisionKind.MAY,
         DecisionKind.CHOOSE_PLAYER,
         DecisionKind.COMMANDER_ZONE_CHANGE,

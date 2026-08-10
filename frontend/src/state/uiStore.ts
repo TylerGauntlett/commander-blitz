@@ -122,6 +122,15 @@ interface UiState {
   select: (oid: number | null) => void;
   hover: (oid: number | null) => void;
   beginTargeting: (oid: number, actionIds: string[]) => void;
+  /**
+   * Narrow an in-flight selection to the actions still in play.
+   *
+   * Picking a target answers only *one* of the questions a click can be asking.
+   * Into the Roil aimed at a creature is still two actions -- kicked and not --
+   * and taking the first would silently spend the player's kicker decision for
+   * them. This keeps the selection open on what is left so the panel can ask.
+   */
+  narrowTargeting: (actionIds: string[]) => void;
   endTargeting: () => void;
 
   stageAttack: (attacker: number, defender: number) => void;
@@ -157,6 +166,7 @@ export const useUiStore = create<UiState>((set) => ({
   hover: (oid) => set({ hoveredOid: oid }),
 
   beginTargeting: (oid, actionIds) => set({ selectedOid: oid, targetingActionIds: actionIds }),
+  narrowTargeting: (actionIds) => set({ targetingActionIds: actionIds }),
   endTargeting: () => set({ targetingActionIds: [], selectedOid: null }),
 
   stageAttack: (attacker, defender) =>

@@ -126,7 +126,14 @@ class Game:
 
             self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:
-            self._run(self._activate(pid, action))
+            # A mana ability does not use the stack (rule 605.3a), so it takes a
+            # different path entirely: nothing to respond to, and the player
+            # keeps priority afterwards.
+            ability = state.card(action.source).abilities[action.ability_index]
+            if ability.is_mana_ability:
+                self._run(self._activate_mana(pid, action))
+            else:
+                self._run(self._activate(pid, action))
         else:  # pragma: no cover
             raise IllegalActionError(f"{action.kind} is not a priority action")
 
@@ -207,12 +214,24 @@ class Game:
         # and not separable from it: there is no state in which the spell is on
         # the stack having paid one half.
         cost = card.mana_cost.plus(card.kicker) if action.kicked else card.mana_cost
+
+        # How big is X? Asked here rather than settled in legality, because the
+        # answer is the player's: the action carries X = 0 and this is where it
+        # becomes a real number. The ceiling is computed with the same `extra`
+        # the payment below will use, so the largest offered X is always one the
+        # player can actually pay for.
+        x = yield from self._ask_x(pid, card.name, cost, extra, spell_purpose(card))
+
+        # Which mode, also before paying (rule 601.2b). Recorded on the stack
+        # item so `op_choose_mode` finds it already answered on resolution.
+        modes = yield from self._ask_modes(pid, card.name, card.cast_time_modes)
+
         ok = yield from pay(
             state,
             pid,
             Cost(mana=cost),
             None,
-            x=action.x,
+            x=x,
             extra_generic=extra,
             purpose=spell_purpose(card),
         )
@@ -232,7 +251,9 @@ class Game:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
 
-        item = stack.push_spell(state, oid, pid, action.targets, x=action.x, kicked=action.kicked)
+        item = stack.push_spell(
+            state, oid, pid, action.targets, x=x, kicked=action.kicked, modes=modes
+        )
         triggers.fire(
             state,
             EventType.SPELL_CAST,
@@ -251,12 +272,28 @@ class Game:
         card = state.card(oid)
         ability = card.abilities[action.ability_index]
 
-        ok = yield from pay(state, pid, ability.cost, oid, x=action.x)
+        x = 0
+        if ability.cost is not None and ability.cost.mana.x_count:
+            # The tapped source cannot help pay for itself, so the ceiling has
+            # to exclude it -- the same exclusion `costs.can_pay` and
+            # `costs.pay` make.
+            x = yield from self._ask_x(
+                pid,
+                card.name,
+                ability.cost.mana,
+                0,
+                None,
+                exclude_oid=oid if ability.cost.tap else None,
+            )
+
+        modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
+
+        ok = yield from pay(state, pid, ability.cost, oid, x=x)
         if not ok:  # pragma: no cover
             return
 
         item = stack.push_activated_ability(
-            state, oid, action.ability_index, pid, action.targets, x=action.x
+            state, oid, action.ability_index, pid, action.targets, x=x, modes=modes
         )
         state.emit(
             EventType.ABILITY_ACTIVATED,
@@ -264,6 +301,107 @@ class Game:
             source=oid,
             ability=action.ability_index,
             sid=item.sid,
+            card=card.id,
+        )
+
+    def _ask_x(
+        self,
+        pid: int,
+        name: str,
+        cost,
+        extra_generic: int,
+        purpose,
+        *,
+        exclude_oid: int | None = None,
+    ) -> Generator[Any, list[int], int]:
+        """How big is X, if this cost has one at all?
+
+        The ceiling is recomputed here rather than taken from the action,
+        because the board can have moved between legality offering the spell and
+        this running -- a mana ability activated in response, most obviously.
+        Using the same ``purpose`` and ``extra_generic`` the payment is about to
+        use is what guarantees the largest offered X is payable.
+        """
+        if not cost.x_count:
+            return 0
+        from .costs import mana_sources
+        from .effects.context import EffectContext, ask_x
+        from .mana import max_affordable_x
+
+        state = self.state
+        sources = mana_sources(state, pid, purpose=purpose)
+        if exclude_oid is not None:
+            sources = [s for s in sources if s.oid != exclude_oid]
+        ceiling = max_affordable_x(
+            cost, state.players[pid].mana_pool, sources, extra_generic=extra_generic
+        )
+        ctx = EffectContext(state=state, controller=pid, source_oid=None)
+        return (
+            yield from ask_x(
+                ctx, f"Choose X for {name}", ceiling, pid, per_point=cost.x_count
+            )
+        )
+
+    def _ask_modes(
+        self, pid: int, name: str, spec
+    ) -> Generator[Any, list[int], tuple[int, ...]]:
+        """Which mode, asked as the spell or ability is put on the stack.
+
+        ``spec`` is ``None`` for everything that is not a single top-level
+        ``choose_mode`` -- see :attr:`CardDef.cast_time_modes` -- and those keep
+        choosing as they resolve.
+
+        Returns the chosen indices for :attr:`StackItem.modes`. Note the
+        residual divergence from rule 601.2: targets are enumerated as part of
+        the *action*, so they are already fixed by the time this runs, which is
+        the reverse of the printed order. That is why the shared
+        ``optional: true`` target idiom in docs/card-dsl.md is still required.
+        """
+        if not spec:
+            return ()
+        from .effects.context import EffectContext, ask_mode
+        from .effects.values import evaluate_value
+
+        modes = list(spec.get("modes") or [])
+        if not modes:
+            return ()
+        ctx = EffectContext(state=self.state, controller=pid, source_oid=None, source_name=name)
+        count = evaluate_value(ctx, spec.get("count", 1))
+        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count))
+        return tuple(chosen)
+
+    def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
+        """Tap a permanent for mana by hand.
+
+        Deliberately *not* :meth:`_activate`: a mana ability never uses the
+        stack, so there is no :func:`stack.push_activated_ability` here and
+        nothing for an opponent to respond to. It reaches this method at all
+        only because the payment solver cannot use it -- see
+        :func:`costs.offerable_mana_ability`.
+
+        ``pay`` still runs, because these are exactly the mana abilities with a
+        cost worth paying: a Signet's `{1}`, a Vivid land's counter. It also
+        performs the `{T}`, which is why the ``tap`` below is
+        :func:`activate_mana_ability`'s and not a second one.
+        """
+        state = self.state
+        oid = action.source
+        card = state.card(oid)
+        ability = card.abilities[action.ability_index]
+
+        ok = yield from pay(state, pid, ability.cost, oid)
+        if not ok:  # pragma: no cover - legality already proved payability
+            return
+
+        from .costs import activate_mana_ability
+
+        activate_mana_ability(state, oid, action.ability_index, pid, action.mana_option or 0)
+        state.emit(
+            EventType.ABILITY_ACTIVATED,
+            player=pid,
+            source=oid,
+            ability=action.ability_index,
             card=card.id,
         )
 
@@ -391,6 +529,31 @@ class Game:
 ALWAYS_STOP_STEPS = frozenset({Step.DECLARE_BLOCKERS})
 
 
+def _only_pass_or_mana(state: GameState, options: list[Action], player) -> bool:
+    """Is passing the only thing this window can actually accomplish?
+
+    True for a bare ``[Pass]``, and equally for ``Pass`` plus any number of mana
+    activations -- adding mana is not a play, and nothing else here could spend
+    it. False for a player who opted into ``manual_mana``, who wants those
+    windows.
+    """
+    if player is not None and player.manual_mana:
+        return len(options) == 1 and options[0].kind is ActionKind.PASS
+    if not options:
+        return False
+    seen_pass = False
+    for action in options:
+        if action.kind is ActionKind.PASS:
+            seen_pass = True
+            continue
+        if action.kind is not ActionKind.ACTIVATE or action.source is None:
+            return False
+        ability = state.card(action.source).abilities[action.ability_index]
+        if not ability.is_mana_ability:
+            return False
+    return seen_pass
+
+
 def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     """Whether to pass this priority window without asking.
 
@@ -401,15 +564,27 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
     something is on the stack to respond to, it is your own sorcery-speed
     window, or blockers are declared and damage is next.
     """
-    if len(options) == 1 and options[0].kind is ActionKind.PASS:
+    pid = state.priority_player
+    player = state.players[pid] if pid is not None else None
+
+    if _only_pass_or_mana(state, options, player):
         # Nothing else is legal: offering this would waste a step for the agent
         # and a click for the human, regardless of policy.
+        #
+        # "Nothing else" counts mana abilities as nothing, because on their own
+        # they are: mana added to the pool empties at the end of the step and
+        # cannot be spent on anything -- there is, by construction, nothing else
+        # in this window to spend it on. Before non-tap-only mana abilities were
+        # offered at all (see `legality._activate_actions`) this test was simply
+        # `len(options) == 1`, and widening it is what keeps a board holding two
+        # Signets from stopping at all thirteen steps of every turn.
+        #
+        # A player who asked for `manual_mana` is excluded: floating mana on
+        # purpose is exactly what they turned it on for.
         return True
 
-    pid = state.priority_player
-    if pid is None:
+    if pid is None or player is None:
         return False
-    player = state.players[pid]
     if not player.auto_pass or player.full_control:
         return False
     if state.stack:

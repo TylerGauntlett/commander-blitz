@@ -238,6 +238,32 @@ export function useGame(session: GameSession | null) {
     onError: (error: Error) => setError(error.message),
   });
 
+  /**
+   * Tap your own lands, or hand it back to the solver.
+   *
+   * Not narrated, for the same reason as `setFullControl`: it changes nothing
+   * about the game, only which actions the engine offers.
+   */
+  const setManualMana = useMutation({
+    mutationFn: async (value: boolean) => {
+      if (!session) throw new Error("no game");
+      const current = queryClient.getQueryData<StateResponse>(key);
+      return api.setManualMana(
+        session.gameId,
+        seatOf(session),
+        current?.state.full_control ?? false,
+        value,
+      );
+    },
+    onSuccess: (response) => {
+      if (!session) return;
+      harvestNames(response.state, names.current);
+      queryClient.setQueryData(key, response);
+      setError(null);
+    },
+    onError: (error: Error) => setError(error.message),
+  });
+
   const pump = useMutation({
     mutationFn: async () => {
       if (!session) throw new Error("no game");
@@ -346,6 +372,7 @@ export function useGame(session: GameSession | null) {
     declare,
     undo,
     setFullControl,
+    setManualMana,
   };
 }
 

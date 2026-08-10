@@ -104,6 +104,7 @@ const DECISION_PROMPTS: Record<string, string> = {
   discard_to_hand_size: "Discard down to seven",
   choose_objects: "Choose",
   choose_mode: "Choose a mode",
+  choose_x: "Choose X",
   may: "Optional effect",
   choose_player: "Choose a player",
   commander_zone_change: "Commander zone change",

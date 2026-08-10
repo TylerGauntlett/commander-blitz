@@ -426,13 +426,33 @@ def max_affordable_x(
     pool: ManaPool | Sequence[int],
     sources: Sequence[ManaSource],
     cap: int = 20,
+    *,
+    extra_generic: int = 0,
 ) -> int:
-    """Largest ``X`` this player can pay for, or ``-1`` if even ``X=0`` is unaffordable."""
+    """Largest ``X`` this player can pay for, or ``-1`` if even ``X=0`` is unaffordable.
+
+    ``extra_generic`` is commander tax minus any cost reduction -- everything the
+    caller will add to the generic part before it actually pays.  Without it a
+    taxed ``{X}`` commander reports a maximum its own payment then cannot meet,
+    and the card vanishes from the legal list even at ``X = 0``.  Negative values
+    (a reduction) are clamped the same way :func:`costs.pay` clamps them.
+    """
+
+    def probe(x: int) -> bool:
+        req = cost.with_x(x)
+        if extra_generic:
+            req = Requirement(
+                colored=req.colored,
+                generic=max(0, req.generic + extra_generic),
+                hybrid=req.hybrid,
+            )
+        return solve_payment(req, pool, sources) is not None
+
     if cost.x_count <= 0:
-        return 0 if solve_payment(cost.with_x(0), pool, sources) else -1
+        return 0 if probe(0) else -1
     best = -1
     for x in range(cap + 1):
-        if solve_payment(cost.with_x(x), pool, sources) is None:
+        if not probe(x):
             break
         best = x
     return best

@@ -216,8 +216,15 @@ class TestLandfallAcrossZones:
             .build()
         )
         cast = action_for_card(game, ActionKind.CAST, "t_x_spell")
-        assert cast.x == 3
+        # The action no longer carries X: legality offers the spell at its floor
+        # and `game._cast` asks. See tests/unit/test_choose_x.py.
+        assert cast.x == 0
         game.apply(cast)
+        # `CHOOSE_X` is pending *before* the spell reaches the stack, so "the
+        # stack is empty" is already true here and would not wait for anything.
+        # `_default_answer` takes the maximum X, which is what legality used to
+        # pin -- so this still measures a Hydra cast for 3.
+        pass_until(game, lambda g: oids_of(g, "t_x_spell", 0))
         hydra = only_oid(game, "t_x_spell", 0)
         assert game.state.objects[hydra].counter(PLUS_ONE) == 3
         assert chars(game.state, hydra).power == 3

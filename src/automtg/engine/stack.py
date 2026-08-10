@@ -33,6 +33,7 @@ def push_spell(
     *,
     x: int = 0,
     kicked: bool = False,
+    modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
     obj = state.objects[oid]
@@ -55,6 +56,7 @@ def push_spell(
         targets=tuple(targets),
         x=x,
         kicked=kicked,
+        modes=modes,
         description=card.name,
     )
     obj.stack_id = item.sid
@@ -71,6 +73,7 @@ def push_activated_ability(
     targets: Sequence[TargetRef] = (),
     *,
     x: int = 0,
+    modes: tuple[int, ...] = (),
 ) -> StackItem:
     card = state.card(source_oid)
     ability = card.abilities[ability_index]
@@ -83,6 +86,7 @@ def push_activated_ability(
         ability_index=ability_index,
         targets=tuple(targets),
         x=x,
+        modes=modes,
         description=f"{card.name}: {ability.text or 'activated ability'}",
     )
     state.stack.append(item)
@@ -179,6 +183,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         bindings=dict(item.bindings),
         x=item.x,
         kicked=item.kicked,
+        modes=item.modes,
         source_name=card.name,
     )
     yield from execute(ctx, card.spell_effects)
@@ -249,6 +254,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         targets=targets,
         bindings=dict(item.bindings),
         x=item.x,
+        modes=item.modes,
         source_name=card.name,
     )
 

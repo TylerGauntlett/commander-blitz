@@ -25,7 +25,15 @@ import { bouncy, ease } from "../../motion/springs";
 import { StaticCard } from "./Card";
 
 /** Decisions that have their own richer surface elsewhere. */
-const HANDLED_ELSEWHERE = new Set(["priority", "declare_attackers", "declare_blockers"]);
+const HANDLED_ELSEWHERE = new Set([
+  "priority",
+  "declare_attackers",
+  "declare_blockers",
+  // The rail draws X as a stepper. This set is a *denylist*, so a new kind
+  // is modal by default and forgetting this line would silently move the
+  // question into the centre of the screen and stand the panel down.
+  "choose_x",
+]);
 
 /**
  * True when this dialog owns the current decision.

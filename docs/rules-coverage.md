@@ -40,6 +40,9 @@ not a rewrite.
 | **Retrace** | Casting from the graveyard by discarding a land |
 | **Suspend** | The special action, the upkeep tick, the free cast, and haste on what arrives |
 | **Splitting into piles** | Fact or Fiction: an opponent splits, the caster chooses |
+| **X costs** | The caster chooses X, as a `choose_x` decision raised before the cost is paid. Legality still computes the ceiling, but only to decide whether the spell is castable at all |
+| **Manual mana** | A seat may tap its own permanents and pick which colour a modal mana ability makes. Mana abilities never use the stack, so this keeps priority |
+| **Modal spells at cast time** | A single top-level `choose_mode` is answered as the spell or ability goes on the stack, and recorded on `StackItem.modes` |
 
 ## Simplified
 
@@ -48,10 +51,11 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | Simplification | What it means | Why |
 |---|---|---|
 | **No layers system** | Continuous effects apply in a fixed order; static filters read printed characteristics only, enforced at load time | The full layer system with timestamps and dependency analysis is a large subsystem that would change no outcome for any card in these decks |
-| **Automatic mana payment** | You cannot choose which land to tap. The solver picks, preferring to spend abundant colours so scarce ones stay open. A land doubled by Vorinclex doubles what it produced rather than offering a free choice of type, because a mana ability may never stop to ask | Removes an enormous branching factor for the RL agent and the worst tedium from the UI. `Action` reserves a `payment` field for a manual mode later |
+| **Automatic mana payment, by default** | The solver picks which land to tap, preferring to spend abundant colours so scarce ones stay open. A land doubled by Vorinclex doubles what it produced rather than offering a free choice of type, because a mana ability may never stop to ask. A seat can opt out with **manual mana** (`PlayerState.manual_mana`, the rail's Auto mana / Manual mana toggle), which offers every tap-only mana ability as an action and one action per colour a dual could make. Off for AI seats, so the RL action space is unchanged | Removes an enormous branching factor for the RL agent and the worst tedium from the UI, without making "tap this land for blue" impossible to say |
 | **Automatic damage assignment order** | Blockers are ordered by effective toughness ascending; the attacker is never asked | One more decision point per combat for a choice that is nearly always forced |
 | **Automatic trigger ordering** | Simultaneous triggers you control resolve in a fixed order rather than one you choose | Matters only for a handful of interactions, none of them in these decks |
-| **Modes chosen on resolution** | A modal spell picks its mode as it resolves, not as it is cast | Keeps the action space flat. Only observable when an opponent would respond differently per mode |
+| **Modes chosen before targets** | A modal spell now picks its mode as it is cast (rule 601.2b), but its *targets* are enumerated as part of the action, so they are chosen first — the reverse of the printed order. A **nested** `choose_mode`, and any `choose_mode` inside a **triggered** ability, still resolve late: neither has a single cast-time question to answer | Cast-time modes were the observable half — an opponent can now see the mode they are responding to. Target-before-mode is what the shared `optional: true` idiom in [card-dsl.md](card-dsl.md) exists to paper over, and closing it means moving target enumeration behind a decision |
+| **X capped for the policy** | A human is offered every X from 0 up to what the board can pay. The RL policy sees X ∈ 0..9, because `CHOICE_CAP` in `ai/action_space.py` is 10 and `IDX_CHOOSE` sits below `IDX_YES` in the index layout | Raising the cap shifts every index above it and invalidates trained checkpoints, for a ceiling that only bites above ten spare mana |
 | **Object identity survives zone changes** | The `oid` is preserved where the rules would create a new object; permanent state is reset instead | Simpler and equivalent for everything except effects that track "the new object" |
 | **Last-known information is explicit** | A card that needs a value after its target has left declares a `snapshot` op (see Swords to Plowshares) | A global LKI system for two cards is not worth it; the explicit form is also easier to read |
 | **Commander replacement is automatic** | A commander always returns to the command zone rather than being asked | It is what players choose in practice, and it keeps zone changes out of the decision system |

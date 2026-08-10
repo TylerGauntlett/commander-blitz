@@ -117,6 +117,7 @@ def player_view(state: GameState, seat: int) -> dict[str, Any]:
         # A viewer preference rather than game state, but the client has to be
         # able to render the toggle in the position the engine actually holds it.
         "full_control": state.players[seat].full_control,
+        "manual_mana": state.players[seat].manual_mana,
     }
 
 

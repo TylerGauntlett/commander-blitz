@@ -545,10 +545,12 @@ the printed card does not. Bounded at 100 iterations, like `repeat`.
 
 ## Modal spells with a target
 
-`choose_mode` picks its mode as the spell resolves (a
-[documented simplification](rules-coverage.md)), but a spell's *targets* are
-chosen when it is cast. Where the modes point at different things, that gap is
-closed by declaring one **optional** target that the modes that need it share:
+`choose_mode` picks its mode as the spell is **cast** (rule 601.2b), but a
+spell's *targets* are enumerated as part of the action, so they are chosen
+first — the reverse of the printed order, and a
+[documented simplification](rules-coverage.md). Where the modes point at
+different things, that gap is closed by declaring one **optional** target that
+the modes that need it share:
 
 ```jsonc
 "targets": [
@@ -569,10 +571,23 @@ closed by declaring one **optional** target that the modes that need it share:
 
 `optional: true` is what makes Simic Charm castable with no creature anywhere —
 its second mode needs no target, and without the flag the card would vanish from
-the hand's legal actions exactly when that mode is the one you want.
+the hand's legal actions exactly when that mode is the one you want. **Moving
+modes to cast time did not retire this idiom**: targets are still picked before
+modes, so the flag is as necessary as it ever was. The one new wrinkle is that a
+player can now choose a target-needing mode having declined the optional target,
+and it fizzles to nothing.
+
+Cast-time selection only applies when the card's whole effect tree holds
+**exactly one** `choose_mode` and it sits at the top level (`CardDef
+.cast_time_modes`). A nested one is a second question and keeps resolving late,
+as does any `choose_mode` inside a *triggered* ability — a trigger has no moment
+of casting to be asked at. Mana abilities are a third exception and a stricter
+one: their modes are compiled into `mana_options` and never reach the
+interpreter at all.
 
 Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
-wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern.
+wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern and
+`tests/unit/test_cast_time_modes.py` pins the timing.
 
 ## Creature-lands
 

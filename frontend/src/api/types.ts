@@ -202,6 +202,8 @@ export interface GameView {
   pending: PendingDecision | null;
   /** This seat stops at every priority window rather than only meaningful ones. */
   full_control: boolean;
+  /** This seat taps its own lands rather than letting the solver choose. */
+  manual_mana: boolean;
 }
 
 export interface LegalAction {
@@ -216,6 +218,12 @@ export interface LegalAction {
    * falls back to `label` for the kinds that never name a target.
    */
   base_label: string;
+  /**
+   * What this copy's chip says when a row groups several actions that differ by
+   * something other than their target — "{R}" for one yield of "Add one mana of
+   * any colour". Empty means "name it by its target", which is the usual case.
+   */
+  option_label: string;
   source_oid: number | null;
   ability_index: number | null;
   targets: { kind: string; id: number }[];

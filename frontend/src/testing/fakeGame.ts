@@ -91,6 +91,7 @@ export function fakeGame(overrides: FakeGameInput = {}): FakeGame {
     declare: idleMutation(),
     undo: idleMutation(),
     setFullControl: idleMutation(),
+    setManualMana: idleMutation(),
     ...overrides,
   } as FakeGame;
 }

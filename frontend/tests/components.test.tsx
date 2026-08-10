@@ -91,6 +91,7 @@ describe("ActionPanel", () => {
     busy: false,
     aiThinking: false,
     onToggleFullControl: noop,
+    onToggleManualMana: noop,
     standDown: false,
   };
 
@@ -316,6 +317,79 @@ describe("ActionPanel", () => {
     const state = gameView({ pending: pending({ player: 1 }) });
     render(<ActionPanel state={state} actions={[]} onAct={noop} {...base} />);
     expect(screen.getByTestId("prompt").textContent).toContain("Waiting for AI 1");
+  });
+
+  /*
+   * Choosing X is the one place the panel does *not* draw a button per legal
+   * action -- `ask_x` offers 0..max, which is up to 21 of them. The stepper is
+   * the deliberate exception recorded in the component's header doc, and what
+   * these pin is that it is an exception and not a hole: no id is duplicated,
+   * and there is always exactly one to press.
+   */
+  describe("choosing X", () => {
+    const xState = (maxX: number) =>
+      gameView({
+        pending: pending({
+          kind: "choose_x",
+          prompt: "Choose X for Fireball",
+          context: { purpose: "choose_x", max_x: maxX, per_point: 1 },
+          options: Array.from({ length: maxX + 1 }, (_, i) => ({
+            label: `X = ${i}`,
+            ref: null,
+            value: i,
+          })),
+        }),
+      });
+
+    const xActions = (maxX: number) =>
+      Array.from({ length: maxX + 1 }, (_, i) =>
+        action({ id: `a${i}-choose`, kind: "choose", label: `X = ${i}`, choice: i }),
+      );
+
+    it("draws a stepper instead of one button per value", () => {
+      render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={noop} {...base} />);
+      expect(screen.getByTestId("choose-x")).toBeTruthy();
+      // Seven legal actions, one control. That is the exception.
+      expect(renderedIds()).toHaveLength(1);
+    });
+
+    it("starts at zero", () => {
+      render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={noop} {...base} />);
+      expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("0");
+      expect(screen.getByTestId("commit").getAttribute("data-action-id")).toBe("a0-choose");
+    });
+
+    it("points the slab at whichever value is showing", () => {
+      render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={noop} {...base} />);
+      fireEvent.click(screen.getByTestId("choose-x-up"));
+      fireEvent.click(screen.getByTestId("choose-x-up"));
+      expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("2");
+      expect(screen.getByTestId("commit").getAttribute("data-action-id")).toBe("a2-choose");
+    });
+
+    it("submits the value that is showing", () => {
+      const onAct = vi.fn();
+      render(<ActionPanel state={xState(6)} actions={xActions(6)} onAct={onAct} {...base} />);
+      fireEvent.click(screen.getByTestId("choose-x-up"));
+      fireEvent.click(screen.getByTestId("commit"));
+      expect(onAct).toHaveBeenCalledWith("a1-choose");
+    });
+
+    it("cannot be stepped past either end", () => {
+      render(<ActionPanel state={xState(1)} actions={xActions(1)} onAct={noop} {...base} />);
+      expect(screen.getByTestId("choose-x-down").hasAttribute("disabled")).toBe(true);
+      fireEvent.click(screen.getByTestId("choose-x-up"));
+      expect(screen.getByTestId("choose-x").getAttribute("data-x")).toBe("1");
+      expect(screen.getByTestId("choose-x-up").hasAttribute("disabled")).toBe(true);
+    });
+
+    it("still offers X = 0 when that is the only value", () => {
+      // The engine skips a forced question, but the panel must not render a
+      // dead dock if one ever arrives -- `full-game.spec.ts` fails on zero
+      // buttons, not on too few.
+      render(<ActionPanel state={xState(0)} actions={xActions(0)} onAct={noop} {...base} />);
+      expect(renderedIds()).toEqual(["a0-choose"]);
+    });
   });
 });
 

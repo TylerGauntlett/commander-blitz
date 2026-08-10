@@ -77,6 +77,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
   const stagedBlocks = useUiStore((s) => s.stagedBlocks);
   const beginTargeting = useUiStore((s) => s.beginTargeting);
+  const narrowTargeting = useUiStore((s) => s.narrowTargeting);
   const endTargeting = useUiStore((s) => s.endTargeting);
   const select = useUiStore((s) => s.select);
   const stageAttack = useUiStore((s) => s.stageAttack);
@@ -113,6 +114,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const declareMutate = game.declare.mutate;
   const undoMutate = game.undo.mutate;
   const fullControlMutate = game.setFullControl.mutate;
+  const manualManaMutate = game.setManualMana.mutate;
 
   /**
    * Whether this gesture should be dropped, and the side effect of not dropping it.
@@ -175,17 +177,27 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     return set;
   }, [actions]);
 
-  /** The first available ability's label, by source oid, for the popover. */
+  /** What the popover says a permanent offers, by source oid. */
   const abilityLabels = useMemo(() => {
-    const byOid = new Map<number, string>();
+    // `base_label`, not `label`: the engine offers one action per legal
+    // target, so `label` here would name whichever target happened to be
+    // first and read as a promise the popover cannot keep.
+    const byOid = new Map<number, Set<string>>();
     for (const action of actions) {
       if (action.kind !== "activate" || action.source_oid === null) continue;
-      // `base_label`, not `label`: the engine offers one action per legal
-      // target, so `label` here would name whichever target happened to be
-      // first and read as a promise the popover cannot keep.
-      if (!byOid.has(action.source_oid)) byOid.set(action.source_oid, action.base_label);
+      const seen = byOid.get(action.source_oid) ?? new Set<string>();
+      seen.add(action.base_label);
+      byOid.set(action.source_oid, seen);
     }
-    return byOid;
+    // Naming the first of several was a promise the popover could not keep
+    // either: a permanent with a mana ability and a sacrifice ability would
+    // advertise only one of them. Count instead, and let the panel enumerate.
+    return new Map(
+      [...byOid].map(([oid, labels]) => [
+        oid,
+        labels.size === 1 ? [...labels][0] : `${labels.size} abilities`,
+      ]),
+    );
   }, [actions]);
 
   /** Every oid named by any legal action: never hide these inside a stack. */
@@ -235,6 +247,22 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     }
     return set;
   }, [targeting, decisionKind, selectedOid, actions]);
+
+  /**
+   * The target question is settled and only the *variant* question is left.
+   *
+   * True when every action still in the running names the same targets — so
+   * clicking the board again cannot narrow anything, and what remains is
+   * "kicked or not", which only the panel can ask. Also true for a selection
+   * of untargeted variants, where there was never a target to pick.
+   */
+  const targetChosen = useMemo(() => {
+    if (targeting.length < 2) return false;
+    const signature = (a: (typeof targeting)[number]) =>
+      a.targets.map((ref) => `${ref.kind}:${ref.id}`).join(",");
+    const first = signature(targeting[0]);
+    return targeting.every((a) => signature(a) === first);
+  }, [targeting]);
 
   /** Creatures that may still be declared, for the amber "click me" rim. */
   const combatCandidates = useMemo(() => {
@@ -313,12 +341,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       if (gateInput()) return;
 
       // 1. Finishing a targeted spell.
+      //
+      //    All the matches, not the first one. A target is only *one* of the
+      //    questions a selection can be asking: Into the Roil aimed at a
+      //    creature is still two actions, kicked and not, and `legality`
+      //    emits unkicked first -- so `.find` here silently spent the player's
+      //    kicker decision for them and made the kicked cast unreachable by
+      //    any gesture. Narrowing hands the leftover choice to the panel.
       if (targeting.length > 0 && targetableOids.has(card.oid)) {
-        const match = targeting.find((a) =>
+        const matches = targeting.filter((a) =>
           a.targets.some((ref) => ref.kind === "object" && ref.id === card.oid),
         );
-        if (match) {
-          act(match.id);
+        if (matches.length === 1) {
+          act(matches[0].id);
+          return;
+        }
+        if (matches.length > 1) {
+          narrowTargeting(matches.map((a) => a.id));
           return;
         }
       }
@@ -396,6 +435,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       unstageBlock,
       select,
       beginTargeting,
+      narrowTargeting,
     ],
   );
 
@@ -415,13 +455,24 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           return;
         }
       }
-      // Finish a spell that targets a player.
-      const match = targeting.find((a) =>
+      // Finish a spell that targets a player -- all the matches, for the
+      // reason `onBoardCard` step 1 gives.
+      const matches = targeting.filter((a) =>
         a.targets.some((ref) => ref.kind === "player" && ref.id === pid),
       );
-      if (match) act(match.id);
+      if (matches.length === 1) act(matches[0].id);
+      else if (matches.length > 1) narrowTargeting(matches.map((a) => a.id));
     },
-    [gateInput, decisionKind, selectedOid, actions, stageAttack, targeting, act],
+    [
+      gateInput,
+      decisionKind,
+      selectedOid,
+      actions,
+      stageAttack,
+      targeting,
+      act,
+      narrowTargeting,
+    ],
   );
 
   const onDeclare = useCallback(
@@ -709,6 +760,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             onUndo={() => undoMutate()}
             onQuit={onQuit}
             onToggleFullControl={(value) => fullControlMutate(value)}
+            onToggleManualMana={(value) => manualManaMutate(value)}
             narrating={narration.busy}
             onSkipNarration={narration.skip}
             busy={busy}
@@ -722,29 +774,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       </motion.div>
 
       <div className="table__foot">
-        {targeting.length > 0 && targetableOids.size === 0 && targetablePids.size === 0 && (
-          <div className="choices" data-testid="choice-list">
-            <span className="choices__label">Choose:</span>
-            {targeting.map((action) => (
-              <button
-                type="button"
-                key={action.id}
-                className="btn btn--ghost"
-                data-action-id={action.id}
-                onClick={() => act(action.id)}
-              >
-                {action.label}
-              </button>
-            ))}
-            <button type="button" className="btn btn--ghost" onClick={endTargeting}>
-              Cancel
-            </button>
-          </div>
-        )}
+        {/*
+          One hint, never a second copy of the actions.
 
-        {targeting.length > 0 && (targetableOids.size > 0 || targetablePids.size > 0) && (
-          <div className="choices" data-testid="targeting-hint">
-            <span className="choices__label">Pick a target</span>
+          This used to be two blocks, and the first rendered every remaining
+          action as a `data-action-id` button -- the same ids `ActionPanel`
+          renders from `playRows`, which does *not* stand down for targeting.
+          Two controls, one id: exactly what the panel's invariant forbids. It
+          escaped CI only because no shipped card could reach it, and manual
+          mana (Stage 2) reaches it immediately. The panel owns the choice; the
+          foot only ever says what the click is for.
+        */}
+        {targeting.length > 0 && (
+          <div
+            className="choices"
+            data-testid={targetChosen ? "variant-hint" : "targeting-hint"}
+          >
+            <span className="choices__label">
+              {targetChosen ? "Pick how, in the panel" : "Pick a target"}
+            </span>
             <button type="button" className="btn btn--ghost" onClick={endTargeting}>
               Cancel (Esc)
             </button>
