@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "savai_triome",
+    "name": "Savai Triome",
+    "oracle_text": "({T}: Add {R}, {W}, or {B}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+    "types": ["Land"],
+    "subtypes": ["Mountain", "Plains", "Swamp"],
+    "colors": [],
+    "color_identity": ["B", "R", "W"],
+    "replacements": [{ "event": "self_enters_tapped" }],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "({T}: Add {R}, {W}, or {B}.)",
+        "is_mana_ability": true,
+        "cost": { "tap": true },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              { "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+              { "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+              { "effects": [{ "op": "add_mana", "mana": "{B}" }] }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Cycling {3} ({3}, Discard this card: Draw a card.)",
+        "active_zones": ["hand"],
+        "cost": { "mana": "{3}", "discard_self": true },
+        "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 0 }
+  }
+}

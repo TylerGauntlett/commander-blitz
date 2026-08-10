@@ -1346,6 +1346,16 @@
       "0": 1
     }
   },
+  "reconnaissance_mission": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "reliquary_tower": {
     "zone": "battlefield"
   },
@@ -1416,6 +1426,13 @@
     "zone": "battlefield"
   },
   "savage_lands": {
+    "zone": "battlefield"
+  },
+  "savai_triome": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "savannah": {

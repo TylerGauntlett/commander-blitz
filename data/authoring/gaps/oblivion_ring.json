@@ -5,6 +5,13 @@
   "blocked_sentences": [
     "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control."
   ],
+  "see_also": ["data/authoring/gaps/angel_of_sanctions.json"],
+  "partially_expressible": {
+    "expressible_sentences": [
+      "When this enchantment enters, exile another target nonland permanent."
+    ],
+    "note": "Sentence one is fully sayable today - a `self_enters` trigger targeting `{\"zone\": \"battlefield\", \"not_types\": [\"Land\"], \"exclude_self\": true}` with an `exile` op. It is deliberately NOT written as an answer: on its own it is unconditional permanent exile, a strictly better card than the printed one, and the residual gate would reject it for leaving the second printed line unclaimed. `data/cards/isperia.cards.json` carries exactly that half-implementation for `banishing_light` (its ability text drops the 'until this enchantment leaves the battlefield' clause) - that is a pre-gate legacy entry to repair once this capability lands, not a pattern to copy."
+  },
   "needs": [
     {
       "capability": "exile_until_leaves",

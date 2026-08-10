@@ -1698,34 +1698,7 @@
         }
       ]
     },
-    {
-      "id": "reconnaissance_mission",
-      "name": "Reconnaissance Mission",
-      "oracle_text": "Whenever a creature you control deals combat damage to a player, you may draw a card.\nCycling {2} ({2}, Discard this card: Draw a card.)",
-      "mana_cost": "{2}{U}{U}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever a creature you control deals combat damage to a player, you may draw a card.",
-          "trigger": {
-            "event": "deals_combat_damage_to_player",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
+    
     {
       "id": "bident_of_thassa",
       "name": "Bident of Thassa",
