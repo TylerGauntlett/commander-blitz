@@ -40,6 +40,22 @@ def answers_dir() -> Path:
     return data_dir() / "authoring" / "answers"
 
 
+def gaps_dir() -> Path:
+    """Where a card that the DSL *cannot say* is recorded.
+
+    The other half of answering a packet, and the more valuable half in bulk. A
+    reader who cannot express a card must not approximate it -- gate 3 would
+    reject the result anyway, and a card quietly missing a clause is the failure
+    this whole package exists to prevent. Naming the missing capability instead
+    turns one refusal into a measurement, and a thousand refusals into a ranked
+    roadmap (``scripts/report_gaps.py``).
+
+    One file per card rather than one shared report, for the same reason packets
+    and answers are: a hundred workers write concurrently and must never contend.
+    """
+    return data_dir() / "authoring" / "gaps"
+
+
 @dataclass
 class Packet:
     """One card's worth of work."""

@@ -3,6 +3,7 @@
     python scripts/author_cards.py --report              what is playable, and what is blocking the rest
     python scripts/author_cards.py --tier templates      translate everything the templates can
     python scripts/author_cards.py --tier templates --limit 200 --dry-run
+    python scripts/author_cards.py --tier agent --card "Rhystic Study"
 
 The engine plays a few hundred of ~32,000 cards; everything else imports as an
 inert proxy. This is the loop that closes that gap without anybody hand-writing
@@ -11,6 +12,10 @@ inert proxy. This is the loop that closes that gap without anybody hand-writing
 Order is the most consequential thing here, so it is not alphabetical: cards from
 a deck somebody actually imported come first, then EDHREC rank. See
 ``automtg.cards.authoring.queue``.
+
+``--card`` overrides that order for one named card, which is a different job with
+the same machinery: somebody needs *this* card now, for a deck or a test, and
+does not want it to wait behind eleven thousand more popular ones.
 
 **Nothing is written that has not demonstrated its behaviour.** Every candidate
 runs the six gates in ``automtg.cards.authoring.verify`` -- including one that
@@ -76,14 +81,66 @@ def _atomic(path: Path, payload: object) -> None:
     temp.replace(path)
 
 
-def run_templates(queue: Queue, limit: int, *, dry_run: bool, retry: bool) -> dict[str, int]:
+def select(queue: Queue, names: list[str] | None, limit: int, *, retry: bool) -> list[Entry] | None:
+    """Which cards this run is about: the queue's own order, or ones named.
+
+    A named card is *added* to the queue when it is not already there, rather
+    than handled off to the side, so its verdict is recorded in the same place as
+    everything else -- a card asked for by name and rejected is exactly as much a
+    part of the roadmap as one that came up by rank.
+
+    Returns ``None`` when a name does not resolve, having already said so: a typo
+    that silently authored nothing would look identical to a card the templates
+    could not finish.
+    """
+    if not names:
+        return queue.next_batch(limit, retry_failed=retry)
+
+    index = load_index()
+    # A hand-written card is never in the queue -- ``refresh`` skips everything
+    # the engine already plays -- so "not in the queue" cannot be read as "not
+    # implemented", or asking for Sol Ring by name would hand out work to
+    # reimplement it.
+    playable = {card.name.lower() for card in default_registry().registry}
+    batch: list[Entry] = []
+    missing = False
+    for name in names:
+        entry = next((e for e in queue if e.name.lower() == name.lower()), None)
+        if entry is None:
+            found = index.lookup(name, token=False)
+            if found is None:
+                missing = True
+                _suggest(index, name)
+                continue
+            entry = Entry(
+                name=found.name,
+                scryfall_id=found.scryfall_id,
+                edhrec_rank=found.edhrec_rank,
+            )
+            if found.name.lower() not in playable:
+                queue.entries[found.name] = entry
+        if entry.status == "done" or entry.name.lower() in playable:
+            print(f"{entry.name}: already playable, nothing to do")
+            continue
+        batch.append(entry)
+    return None if missing else batch
+
+
+def _suggest(index, name: str) -> None:
+    """A name that did not resolve, with the near misses the catalog does have."""
+    _, near = index.search(name, limit=5)
+    hint = "; did you mean: " + ", ".join(e.name for e in near) if near else ""
+    print(f"no card named {name!r} in the catalog{hint}", file=sys.stderr)
+
+
+def run_templates(queue: Queue, batch: list[Entry], *, dry_run: bool) -> dict[str, int]:
     index = load_index()
     registry = _hand_written()
     cards, expectations = _load_batch()
     taken = set(registry.ids()) | set(cards)
 
     tally = {"written": 0, "no_template": 0, "rejected": 0, "skipped": 0}
-    for entry in queue.next_batch(limit, retry_failed=retry):
+    for entry in batch:
         result = _attempt(entry, index, registry, taken, tally)
         if result is None:
             continue
@@ -135,7 +192,7 @@ def _attempt(entry: Entry, index, registry: CardRegistry, taken: set[str], tally
     return payload, result.expectation, result.used
 
 
-def write_packets(queue: Queue, limit: int) -> int:
+def write_packets(batch: list[Entry]) -> int:
     """Hand out work for the cards no template can finish.
 
     A packet per card, self-contained, on disk. The reader may be a session or an
@@ -145,7 +202,7 @@ def write_packets(queue: Queue, limit: int) -> int:
     index = load_index()
     registry = _hand_written()
     written = 0
-    for entry in queue.next_batch(limit, retry_failed=True):
+    for entry in batch:
         catalog = index.by_scryfall_id(entry.scryfall_id) or index.lookup(
             entry.name, token=False
         )
@@ -242,6 +299,12 @@ def main() -> int:
         action="store_true",
         help="verify the answers written back, and commit the ones that pass",
     )
+    parser.add_argument(
+        "--card",
+        action="append",
+        metavar="NAME",
+        help="work on this card by name instead of taking the queue's order; repeatable",
+    )
     parser.add_argument("--limit", type=int, default=200, help="how many cards to attempt")
     parser.add_argument("--dry-run", action="store_true", help="report, write nothing")
     parser.add_argument("--retry", action="store_true", help="re-attempt cards that failed")
@@ -265,17 +328,34 @@ def main() -> int:
         report(queue)
         return 0
 
+    # A named card is worth retrying even when a previous run rejected it: the
+    # ask is "I need this one now", not "do whatever is next".
+    batch = select(queue, args.card, args.limit, retry=args.retry or bool(args.card))
+    if batch is None:
+        return 2
+    if not batch:
+        return 0
+
     if args.tier == "agent":
-        written = write_packets(queue, args.limit)
+        if args.dry_run:
+            for entry in batch:
+                print(f"would write a packet for {entry.name}")
+            return 0
+        written = write_packets(batch)
+        queue.save()
         print(f"wrote {written} packet(s) to {P.packets_dir()}")
         print(
             "Answer each as "
             f"{P.answers_dir()}/<card_id>.json containing "
             '{"card": {...}, "expectation": {...}}, then re-run with --collect.'
         )
+        print(
+            "A card the DSL cannot express gets "
+            f"{P.gaps_dir()}/<card_id>.json instead -- see scripts/report_gaps.py."
+        )
         return 0
 
-    tally = run_templates(queue, args.limit, dry_run=args.dry_run, retry=args.retry)
+    tally = run_templates(queue, batch, dry_run=args.dry_run)
     verb = "would write" if args.dry_run else "wrote"
     print(
         f"{verb} {tally['written']}  |  no template {tally['no_template']}  "

@@ -62,9 +62,6 @@
   --pane-bg:rgba(20,19,40,.6); --pane-well:rgba(13,12,28,.78);
   --pane-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 26px rgba(0,0,0,.45);
 
-  --mana-W:#fffbd5; --mana-U:#aae0fa; --mana-B:#cbc2bf; --mana-R:#f9aa8f;
-  --mana-G:#9bd3ab; --mana-C:#d5d5d5; --mana-ink:#1a1a1a;
-
   --danger:#ff5c5c; --gold:#ffd479; --live:#5ce08a;
   --text:#e6e3f5; --text-dim:#a09bc4; --text-faint:#6b6690;
 
@@ -302,12 +299,16 @@ button { cursor:pointer; background:none; border:0; }
 .search__g { color:var(--text-faint); font-size:12px; }
 .fgroup { display:flex; align-items:center; gap:7px; }
 .fgroup__l { font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
-.cbtn { width:26px; height:26px; border-radius:999px; display:grid; place-items:center; border:1px solid var(--edge-hi); background:rgba(9,8,20,.5); font-size:11px; font-weight:800; color:var(--text-faint); }
-.cbtn:hover { border-color:var(--text-dim); color:var(--text-dim); }
-.cbtn--on { color:var(--mana-ink); border-color:transparent; box-shadow:inset 0 -1px 1px rgba(0,0,0,.25); }
-.cbtn--on.cbtn--W { background:var(--mana-W); } .cbtn--on.cbtn--U { background:var(--mana-U); }
-.cbtn--on.cbtn--B { background:var(--mana-B); } .cbtn--on.cbtn--R { background:var(--mana-R); }
-.cbtn--on.cbtn--G { background:var(--mana-G); }
+/* The colour filter is the real Scryfall symbol, not a letter on a disc -- the
+   symbol already IS a coloured disc, so the button draws no disc of its own and
+   only rings the ones that are on. Off is dimmed rather than greyscaled: W and B
+   desaturate to the same pale grey, which would make the two ends of the row
+   indistinguishable in exactly the state you read it in most. */
+.cbtn { width:27px; height:27px; border-radius:999px; display:grid; place-items:center; border:1px solid transparent; background:none; padding:0; }
+.cbtn .pip { width:20px; height:20px; pointer-events:none; opacity:.42; transition:opacity .12s ease, filter .12s ease; }
+.cbtn:hover .pip { opacity:.8; }
+.cbtn--on { border-color:rgba(255,212,121,.6); box-shadow:0 0 0 2px rgba(255,212,121,.13); }
+.cbtn--on .pip, .cbtn--on:hover .pip { opacity:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
 .seg { display:flex; border:1px solid var(--edge); border-radius:8px; overflow:hidden; }
 .seg__b { padding:7px 13px; font-size:11.5px; font-weight:650; color:var(--text-faint); border-right:1px solid var(--edge); }
 .seg__b:last-child { border-right:0; }
@@ -324,8 +325,18 @@ button { cursor:pointer; background:none; border:0; }
    whole grammar. The face is the real card component at 0.28x of native art. */
 .rack { --card-w:clamp(122px, 15vh, 168px); display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:18px 14px; }
 .pick { display:grid; justify-items:center; gap:8px; min-width:0; text-align:center; position:relative; }
+/* The card is the control. A "Take it" button under a card that is already the
+   size and shape of a thing you pick up was a second target for the first
+   target's job, so the button is gone and the face takes the click. role/tabindex
+   rather than a real <button>, because a <button> may not contain the divs a card
+   face is made of; the keydown handler at the foot of the script supplies Enter
+   and Space in exchange. */
 .pick__card { position:relative; border-radius:calc(var(--card-w) * .055); transition:transform .12s ease; }
-.pick:hover .pick__card { transform:translateY(-4px); }
+.pick__card[data-act] { cursor:pointer; }
+.pick__card[data-act]:hover { transform:translateY(-4px); }
+.pick__card[data-act]:focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
+/* Preview decks are not dealable, so their card is inert and reads as inert. */
+.pick--off .pick__card { cursor:default; filter:saturate(.45) brightness(.72); }
 /* box-shadow rather than an inset:-5px pseudo-element: a ring drawn outside the
    card would widen the slot and paint over the next one. */
 .pick--on .pick__card::after {
@@ -342,9 +353,16 @@ button { cursor:pointer; background:none; border:0; }
 .pick__s { font-size:10px; color:var(--text-faint); }
 .pick__meta { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; }
 .pick__bars { display:grid; gap:3px; width:100%; }
-.pick__acts { display:flex; align-items:center; justify-content:center; gap:8px; }
-.pick__more { font-size:10.5px; color:var(--text-faint); text-decoration:underline; text-underline-offset:2px; }
-.pick__more:hover { color:var(--text); }
+/* "details" was an underlined word competing with the deck's own name two lines
+   above it. As a glyph it sits in the meta row with the pips and the badges,
+   which costs the grid a whole row less and stops it reading as a second title. */
+.pick__more {
+  width:17px; height:17px; flex:0 0 auto; border-radius:999px; display:grid; place-items:center;
+  border:1px solid var(--edge-hi); background:rgba(9,8,20,.5);
+  font-size:10px; font-weight:800; font-style:italic; line-height:1; color:var(--text-faint);
+}
+.pick__more:hover { border-color:var(--gold); color:var(--gold); }
+.pick__more:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 
 .empty { padding:52px 20px; text-align:center; color:var(--text-faint); font-size:13px; line-height:1.6; }
 
@@ -1426,22 +1444,26 @@ function catalogue() {
   if (status === "error") note = `<span class="imp__note imp__note--err">${esc(msg)}</span>`;
   if (status === "ready") note = `<span class="imp__note">Imported. ${CUSTOM.fake.unsupported} cards are not in the engine yet and were left out.</span>`;
 
-  const pick = (d) => `<div class="pick${d.id === chosen ? " pick--on" : ""}" data-testid="deck-${d.id}">
-    <div class="pick__card">
+  // The card IS the control -- see the .pick__card comment in the stylesheet.
+  // A preview deck cannot be dealt, so its card carries no data-act and is not
+  // in the tab order; the PREVIEW badge below it is what says why.
+  const pick = (d) => {
+    const off = d.engine === "preview";
+    const on = d.id === chosen;
+    const label = off ? `${d.name} — preview only, not dealable yet`
+      : on ? `${d.name} — selected` : `Take ${d.name}`;
+    return `<div class="pick${on ? " pick--on" : ""}${off ? " pick--off" : ""}" data-testid="deck-${d.id}">
+    <div class="pick__card"${off ? ` aria-disabled="true" title="Not dealable yet"`
+        : ` role="button" tabindex="0" data-act="pick" data-id="${d.id}"`} aria-label="${esc(label)}">
       ${face(d.cmd)}
-      ${d.id === chosen ? `<span class="pick__tick">✓</span>` : ""}
+      ${on ? `<span class="pick__tick">✓</span>` : ""}
     </div>
     <div class="pick__n">${esc(d.name)}</div>
     <div class="pick__s">${esc(subtitle(d))}</div>
-    <div class="pick__meta">${ciPips(d.ci)}<span class="badge badge--src">${d.source === "yours" ? "Yours" : "Precon"}</span>${engineBadge(d)}</div>
+    <div class="pick__meta">${ciPips(d.ci)}<span class="badge badge--src">${d.source === "yours" ? "Yours" : "Precon"}</span>${engineBadge(d)}<button class="pick__more" data-act="dossier" data-id="${d.id}" title="Deck details" aria-label="Details for ${esc(d.name)}">i</button></div>
     <div class="pick__bars">${bar("Speed", d.bars.speed, true)}${bar("Complex", d.bars.complexity, true)}${bar("Demands", d.bars.pilot, true)}</div>
-    <div class="pick__acts">
-      <button class="btn" data-act="pick" data-id="${d.id}" ${d.engine === "preview" ? "disabled" : ""}>
-        ${d.engine === "preview" ? "Not dealable" : d.id === chosen ? "Selected" : "Take it"}
-      </button>
-      <button class="pick__more" data-act="dossier" data-id="${d.id}">details</button>
-    </div>
   </div>`;
+  };
 
   return `<section class="cat" role="dialog" aria-modal="true" aria-label="Deck catalogue" data-testid="deck-catalog">
     <div class="cat__head">
@@ -1457,7 +1479,7 @@ function catalogue() {
       </label>
       <span class="fgroup">
         <span class="fgroup__l">Colours</span>
-        ${COLOURS.map(([c, n]) => `<button class="cbtn cbtn--${c}${state.colours.includes(c) ? " cbtn--on" : ""}" data-act="colour" data-c="${c}" title="${n}" aria-pressed="${state.colours.includes(c)}">${c}</button>`).join("")}
+        ${COLOURS.map(([c, n]) => `<button class="cbtn${state.colours.includes(c) ? " cbtn--on" : ""}" data-act="colour" data-c="${c}" title="${n}" aria-label="${n}" aria-pressed="${state.colours.includes(c)}">${sym(c)}</button>`).join("")}
         ${state.colours.length ? `<button class="link" data-act="colour-clear">clear</button>` : ""}
       </span>
       <span class="seg">
@@ -1705,6 +1727,12 @@ document.addEventListener("keydown", (e) => {
     if (state.cat) { state.cat = false; render(); return; }
   }
   if (e.key === "Enter" && e.target.id === "code") { state.route = "lobby"; render(); return; }
+  // Anything wearing role="button" is a div, so it gets Enter and Space here
+  // rather than from the browser. Space also scrolls, hence preventDefault.
+  if ((e.key === "Enter" || e.key === " ") && e.target.getAttribute?.("role") === "button") {
+    e.preventDefault();
+    e.target.click();
+  }
 });
 
 render();

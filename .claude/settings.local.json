@@ -11,7 +11,12 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__resize_page",
-      "Bash(python -)"
+      "Bash(python -)",
+      "Bash(python scripts/author_cards.py:*)",
+      "Bash(python scripts/report_gaps.py:*)",
+      "Bash(python scripts/validate_decks.py:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -m ruff check:*)"
     ]
   }
 }

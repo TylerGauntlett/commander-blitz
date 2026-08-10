@@ -35,7 +35,9 @@ C:\Users\tyler\.claude\plans\cpu-improvements-majestic-storm.md
 - The mockup also allow for an entirely new deck selection and import process
 - The mockups also have a significant number of  sample precons but no new precons need to be added apart from the 4 that exist right now
 
-##
+### Task
+- Impelment the new pod creation flow, adding multiplayer support
+- Ensure significant unit and integration test coverage for this new backend support as it is highly complex with roubustness required for the lobby to work at all
 
 ---
 
