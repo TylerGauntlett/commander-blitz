@@ -41,7 +41,11 @@ class TargetRef:
 class TempEffect:
     """A continuous effect that lasts until end of turn.
 
-    ``kind`` is ``"pump"`` (power/toughness modification) or ``"keyword"``.
+    ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``, or
+    ``"lock_abilities"`` ("its activated abilities can't be activated this
+    turn").  The lock is not a keyword because it is not a characteristic: it is
+    a permission, read by legality and by the mana solver rather than by
+    ``chars``, and showing it in a card's keyword list would be a lie.
     """
 
     kind: str
@@ -74,6 +78,10 @@ class StackItem:
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()
+    #: Whether the kicker cost was paid as this spell was cast.  Decided at cast
+    #: time and read on resolution, because that is the only place it can be
+    #: known: nothing about the object afterwards records what was paid for it.
+    kicked: bool = False
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""
@@ -93,6 +101,7 @@ class StackItem:
             "ability_index": self.ability_index,
             "targets": [t.to_dict() for t in self.targets],
             "x": self.x,
+            "kicked": self.kicked,
             "description": self.description,
         }
 
@@ -106,6 +115,28 @@ class TriggerInstance:
     controller: int
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""
+
+
+@dataclass
+class DelayedTrigger:
+    """An effect scheduled to happen at a later step.
+
+    "At the beginning of the next end step, return it to the battlefield." The
+    engine's ordinary triggers all fire *from* an event that has just happened;
+    this is the other shape -- an effect that has already resolved arranging for
+    something to happen later, with no object left to hang a trigger on.
+
+    ``turn`` is the turn it was created on, so "the *next* upkeep" is not this
+    one when the card is cast during an upkeep.
+    """
+
+    step: str
+    controller: int
+    effects: tuple[dict[str, Any], ...] = ()
+    bindings: dict[str, Any] = field(default_factory=dict)
+    source_oid: int | None = None
+    description: str = ""
+    turn: int = 0
 
 
 @dataclass

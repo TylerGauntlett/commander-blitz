@@ -54,6 +54,9 @@
   "ancient_brontodon": {
     "zone": "battlefield"
   },
+  "ancient_greenwarden": {
+    "zone": "battlefield"
+  },
   "ancient_tomb": {
     "zone": "battlefield"
   },
@@ -75,6 +78,9 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arcane_denial": {
+    "zone": "graveyard"
+  },
   "arcane_flight": {
     "zone": [
       "battlefield",
@@ -94,6 +100,13 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "arixmethes_slumbering_isle": {
+    "counters": {
+      "amount": 5,
+      "kind": "slumber"
+    },
+    "zone": "battlefield"
   },
   "asha_s_favor": {
     "zone": [
@@ -265,6 +278,9 @@
   "cobbled_wings": {
     "zone": "battlefield"
   },
+  "coiling_oracle": {
+    "zone": "battlefield"
+  },
   "commercial_district": {
     "zone": "battlefield"
   },
@@ -285,6 +301,9 @@
   "copper_myr": {
     "zone": "battlefield"
   },
+  "coral_atoll": {
+    "zone": "battlefield"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },
@@ -292,6 +311,9 @@
     "zone": "battlefield"
   },
   "crumbling_necropolis": {
+    "zone": "battlefield"
+  },
+  "cultivator_colossus": {
     "zone": "battlefield"
   },
   "curate": {
@@ -484,6 +506,9 @@
   "geothermal_bog": {
     "zone": "battlefield"
   },
+  "ghalta_primal_hunger": {
+    "zone": "battlefield"
+  },
   "gigantosaurus": {
     "zone": "battlefield"
   },
@@ -661,6 +686,12 @@
   "insomnia_crown_city": {
     "zone": "battlefield"
   },
+  "into_the_roil": {
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "ior_ruin_expedition": {
     "zone": "battlefield"
   },
@@ -689,6 +720,9 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "jungle_basin": {
+    "zone": "battlefield"
   },
   "jungle_hollow": {
     "life": {
@@ -743,6 +777,9 @@
     "zone": "battlefield"
   },
   "kobolds_of_kher_keep": {
+    "zone": "battlefield"
+  },
+  "koma_cosmos_serpent": {
     "zone": "battlefield"
   },
   "kor_cartographer": {
@@ -870,6 +907,12 @@
   "moss_viper": {
     "zone": "battlefield"
   },
+  "mossborn_hydra": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    }
+  },
   "mossfire_valley": {
     "zone": "battlefield"
   },
@@ -889,6 +932,9 @@
     "zone": "battlefield"
   },
   "new_benalia": {
+    "zone": "battlefield"
+  },
+  "nezahal_primal_tide": {
     "zone": "battlefield"
   },
   "nightveil_predator": {
@@ -1165,6 +1211,9 @@
   "shineshadow_snarl": {
     "zone": "battlefield"
   },
+  "shipbreaker_kraken": {
+    "zone": "battlefield"
+  },
   "shivan_oasis": {
     "zone": "battlefield"
   },
@@ -1185,6 +1234,13 @@
   },
   "silverbluff_bridge": {
     "zone": "battlefield"
+  },
+  "simic_charm": {
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
+    },
+    "zone": "graveyard"
   },
   "simic_guildgate": {
     "zone": "battlefield"
@@ -1487,10 +1543,16 @@
     "zone": "battlefield"
   },
   "vivid_creek": {
-    "zone": "battlefield"
+    "counters": {
+      "amount": 2,
+      "kind": "charge"
+    }
   },
   "vivid_grove": {
-    "zone": "battlefield"
+    "counters": {
+      "amount": 2,
+      "kind": "charge"
+    }
   },
   "volatile_fjord": {
     "zone": "battlefield"

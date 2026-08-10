@@ -6,11 +6,13 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..enums import Zone
+from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
     attach,
     create_token,
     grant_keyword,
+    lock_abilities,
     pump,
     remove_counters,
     tap_permanent,
@@ -146,6 +148,64 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid in oids:
         for keyword in keywords:
             grant_keyword(ctx.state, oid, str(keyword), source=ctx.source_oid)
+
+
+@register("monstrosity")
+def op_monstrosity(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Monstrosity N": counters and a one-way flag, in that order.
+
+    The flag is the mechanic. Without it the ability is a repeatable pump, and
+    the "when this becomes monstrous" trigger that usually accompanies it would
+    fire every time rather than once.
+    """
+    from ..events import EventType
+    from ..triggers import fire
+
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    oid = ctx.source_oid
+    obj = ctx.state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield or obj.monstrous:
+        return
+    add_counters(ctx.state, oid, PLUS_ONE, amount, source=oid)
+    obj.monstrous = True
+    ctx.state.bump_chars()
+    fire(
+        ctx.state,
+        EventType.BECAME_MONSTROUS,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        card=obj.def_id,
+        amount=amount,
+    )
+
+
+@register("freeze")
+def op_freeze(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…don't untap during their controllers' untap steps for as long as you
+    control this creature."
+
+    Recorded on the frozen permanent as the *oid of the source*, rather than as
+    a flag with a lifetime of its own: the hold has to end when the source does,
+    and pointing at it is the only way the untap step can tell.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Freeze")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.frozen_by = ctx.source_oid
+
+
+@register("lock_abilities")
+def op_lock_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Its activated abilities can't be activated this turn."
+
+    Separate from `tap`, which usually accompanies it, because the two are
+    different halves of the sentence and a card may want only one.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Lock")
+    for oid in oids:
+        lock_abilities(ctx.state, oid, source=ctx.source_oid)
 
 
 @register("set_pt")

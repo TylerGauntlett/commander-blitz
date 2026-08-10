@@ -1,0 +1,78 @@
+{
+  "card": {
+    "id": "shipbreaker_kraken",
+    "name": "Shipbreaker Kraken",
+    "oracle_text": "{6}{U}{U}: Monstrosity 4. (If this creature isn't monstrous, put four +1/+1 counters on it and it becomes monstrous.)\nWhen this creature becomes monstrous, tap up to four target creatures. Those creatures don't untap during their controllers' untap steps for as long as you control this creature.",
+    "mana_cost": "{4}{U}{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Kraken"
+    ],
+    "power": 6,
+    "toughness": 6,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{6}{U}{U}: Monstrosity 4.",
+        "cost": {
+          "mana": "{6}{U}{U}"
+        },
+        "effects": [
+          {
+            "op": "monstrosity",
+            "amount": {
+              "const": 4
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature becomes monstrous, tap up to four target creatures. Those creatures don't untap during their controllers' untap steps for as long as you control this creature.",
+        "trigger": {
+          "event": "becomes_monstrous",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ]
+            },
+            "count": 4,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "op": "tap",
+            "objects": {
+              "target": "t1"
+            }
+          },
+          {
+            "op": "freeze",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

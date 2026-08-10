@@ -40,6 +40,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     "begin_combat": EventType.BEGIN_COMBAT,
     "end_step": EventType.END_STEP,
     "you_gain_life": EventType.LIFE_GAINED,
+    "becomes_monstrous": EventType.BECAME_MONSTROUS,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     "draw": EventType.DRAW,
@@ -59,6 +60,7 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "deals_combat_damage_to_player",
         "counter_placed",
         "land_played",
+        "becomes_monstrous",
     }
 )
 
@@ -83,6 +85,7 @@ def fire(
 
 def collect(state: GameState, event: GameEvent) -> None:
     """Scan for triggered abilities matching ``event`` and queue them."""
+    doubled = _land_trigger_doublers(state, event)
     for obj, ability in _candidate_abilities(state, event):
         spec = ability.trigger
         if spec is None:
@@ -90,6 +93,35 @@ def collect(state: GameState, event: GameEvent) -> None:
         if not _matches(state, obj, spec, event):
             continue
         _queue(state, obj, ability, event)
+        if obj.controller in doubled:
+            # Ancient Greenwarden: "that ability triggers an additional time".
+            # Queued twice rather than resolved twice, because the two copies are
+            # separate abilities on the stack and anything in between -- another
+            # landfall trigger, a response -- goes between them.
+            _queue(state, obj, ability, event)
+
+
+def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]:
+    """Players whose triggers this event should fire twice for.
+
+    Only lands entering, which is what the one card that does this says. A
+    general "double every trigger" would be a different and much larger claim.
+    """
+    if event.type is not EventType.ENTERS_BATTLEFIELD:
+        return frozenset()
+    entered = state.objects.get(event.data.get("oid"))
+    if entered is None or "Land" not in state.card_of(entered).types:
+        return frozenset()
+
+    out: set[int] = set()
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        for ability in state.card_of(obj).abilities:
+            if ability.is_static and (ability.static or {}).get("effect") == "double_land_triggers":
+                out.add(obj.controller)
+    return frozenset(out)
 
 
 def _candidate_abilities(state: GameState, event: GameEvent):

@@ -101,6 +101,9 @@
     "id": "vivid_creek"
   },
   "expectation": {
-    "zone": "battlefield"
+    "counters": {
+      "kind": "charge",
+      "amount": 2
+    }
   }
 }

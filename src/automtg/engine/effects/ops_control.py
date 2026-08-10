@@ -22,12 +22,39 @@ def op_if(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("may")
 def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
-    """An optional effect -- "you may draw a card"."""
+    """An optional effect -- "you may draw a card".
+
+    ``else`` is what turns it into "sacrifice it **unless** you return an
+    untapped Island you control": declining is not always free, and without a
+    branch for the refusal those cards read as pure upside.
+
+    ``repeat`` is "…if you do, draw a card and **repeat this process**": ask
+    again after each yes, and stop at the first no.  It is a loop rather than a
+    ``repeat`` op with a count because the number of iterations is not knowable
+    up front -- Cultivator Colossus draws into the lands it is putting down --
+    and because a counted version would let a player decline and then accept,
+    which the printed card does not.
+
+    ``condition`` gates the question itself: with nothing to do, the card does
+    not ask, which is what stops the loop when the hand runs dry.
+    """
     players = select_players(ctx, spec.get("player", "you"))
     chooser = players[0] if players else ctx.controller
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
-    if (yield from ask_yes_no(ctx, prompt, chooser)):
+    condition = spec.get("condition")
+
+    if not evaluate(ctx, condition):
+        yield from execute(ctx, spec.get("else") or [])
+        return
+
+    # The same guard `repeat` uses: one pathological board must not hang a game.
+    for _ in range(100):
+        if not (yield from ask_yes_no(ctx, prompt, chooser)):
+            yield from execute(ctx, spec.get("else") or [])
+            return
         yield from execute(ctx, spec.get("effects") or [])
+        if not spec.get("repeat") or not evaluate(ctx, condition):
+            return
 
 
 @register("choose_mode")
@@ -106,3 +133,31 @@ def op_snapshot(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_noop(ctx: EffectContext, spec: Mapping[str, Any]):
     """Explicitly do nothing.  Useful as an ``else`` branch."""
     return
+
+
+@register("delay")
+def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Arrange for effects to happen at a later step.
+
+    "At the beginning of the next end step, return it to the battlefield." The
+    ordinary triggers all fire *from* an event that just happened; this is the
+    other shape -- an effect that has already resolved scheduling something for
+    later, with no object left to hang a trigger on.
+
+    The bindings are captured *now*, which is the point: by the time it fires,
+    the object it was about may be in another zone or gone.
+    """
+    from ..structs import DelayedTrigger
+
+    state = ctx.state
+    state.delayed_triggers.append(
+        DelayedTrigger(
+            step=str(spec.get("step", "end_step")),
+            controller=ctx.controller,
+            effects=tuple(spec.get("effects") or []),
+            bindings=dict(ctx.bindings),
+            source_oid=ctx.source_oid,
+            description=str(spec.get("text") or ctx.source_name),
+            turn=state.turn,
+        )
+    )

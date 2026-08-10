@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "ancient_greenwarden",
+    "name": "Ancient Greenwarden",
+    "oracle_text": "Reach (This creature can block creatures with flying.)\nYou may play lands from your graveyard.\nIf a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+    "mana_cost": "{4}{G}{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elemental"
+    ],
+    "power": 5,
+    "toughness": 7,
+    "keywords": [
+      "reach"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You may play lands from your graveyard.",
+        "effect": "play_lands_from_graveyard",
+        "affects_player": "you"
+      },
+      {
+        "kind": "static",
+        "text": "If a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+        "effect": "double_land_triggers",
+        "affects_player": "you"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

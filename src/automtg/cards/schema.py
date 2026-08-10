@@ -96,6 +96,9 @@ class AbilityModel(BaseModel):
     subtypes: list[str] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
+    #: A static's "as long as..." clause.  Only counters on the static's own
+    #: source may be read -- see ``characteristics._static_active``.
+    condition: dict[str, Any] | None = None
 
 
 class ReplacementModel(BaseModel):
@@ -133,6 +136,15 @@ class CardModel(BaseModel):
     is_token: bool = False
     #: "This spell can't be countered."
     uncounterable: bool = False
+    #: "Kicker {1}{U}" -- an additional cost that may be paid as the spell is
+    #: cast.  What being kicked then *does* is an ordinary ``if`` on the
+    #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
+    kicker: str | None = None
+    #: "This spell costs {X} less to cast, where X is the total power of
+    #: creatures you control."  Reduces the *generic* part of the cost only,
+    #: never below zero and never the coloured pips -- which is what the rules
+    #: say and also the only thing the payment solver could honour.
+    cost_reduction: dict[str, Any] | None = None
     #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
     #: ``automtg.cards.authoring`` did, and it only got here by clearing the six
     #: gates in ``authoring/verify.py`` -- including one that casts it and checks

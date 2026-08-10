@@ -76,6 +76,11 @@ def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
 
 def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     """The tap-only mana abilities of one untapped permanent."""
+    # A mana ability is an activated ability, so "its activated abilities can't
+    # be activated this turn" stops it here as well as in `legality`. Filtered in
+    # this one helper because both entry points above go through it.
+    if obj.abilities_locked:
+        return []
     card = state.card_of(obj)
     c = chars(state, oid)
     is_creature = "Creature" in c.types
@@ -169,7 +174,7 @@ def can_pay_mana(
 ) -> bool:
     req = cost.with_x(x)
     if extra_generic:
-        req = Requirement(colored=req.colored, generic=req.generic + extra_generic)
+        req = Requirement(colored=req.colored, generic=max(0, req.generic + extra_generic))
     return (
         solve_payment(req, state.players[pid].mana_pool, mana_sources(state, pid)) is not None
     )
@@ -287,7 +292,10 @@ def pay(
     # cannot strand the payment.
     req = cost.mana.with_x(x)
     if extra_generic:
-        req = Requirement(colored=req.colored, generic=req.generic + extra_generic)
+        # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
+        # and "costs {X} less" never reaches through the generic part into the
+        # coloured pips however large X gets.
+        req = Requirement(colored=req.colored, generic=max(0, req.generic + extra_generic))
     if req.total and not pay_mana(
         state, pid, req, exclude_oid=source_oid if cost.tap else None
     ):
@@ -384,6 +392,46 @@ def commander_cost(state: GameState, oid: int) -> int:
     if obj is None:
         return 0
     return 2 * state.players[obj.owner].commander_tax.get(oid, 0)
+
+
+def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+    """How much less this card costs its controller right now.
+
+    Generic only, and never below zero: "costs {X} less" does not touch coloured
+    pips, which is both what the rules say and the only thing the payment solver
+    could act on.  Read from the board rather than stored, because it changes
+    every time a creature arrives -- Ghalta is a 12-drop or a 2-drop depending on
+    what is already in play.
+    """
+    spec = card.cost_reduction
+    if not spec:
+        return 0
+    if "count" in spec:
+        return sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
+    if "total_power" in spec:
+        return sum(
+            max(0, chars(state, oid).power)
+            for oid in _reduction_matches(state, pid, spec["total_power"])
+        )
+    return 0
+
+
+def _reduction_matches(state: GameState, pid: int, filt: Any):
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        controller = filt.get("controller", "you")
+        if controller == "you" and obj.controller != pid:
+            continue
+        if controller == "opponent" and obj.controller == pid:
+            continue
+        c = chars(state, oid)
+        if (want := filt.get("types")) and not set(want).issubset(c.types):
+            continue
+        if (want := filt.get("subtypes")) and not set(want) & set(c.subtypes):
+            continue
+        yield oid
 
 
 def zone_of(state: GameState, oid: int) -> Zone:

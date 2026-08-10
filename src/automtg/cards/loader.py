@@ -28,6 +28,7 @@ from automtg.engine.enums import AbilityKind, CardType, Color, Keyword, Supertyp
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
 from automtg.engine.triggers import TRIGGER_EVENTS
+from automtg.engine.turn import DELAY_STEPS
 
 from .schema import AbilityModel, CardModel, DeckModel, TargetModel
 
@@ -43,12 +44,20 @@ STATIC_EFFECTS = frozenset(
         "grant_keyword",
         "set_pt",
         "add_subtype",
+        # "As long as Arixmethes has a slumber counter on it, it's a land."
+        # Replaces the printed types rather than adding to them, which is the
+        # whole point: the parenthetical says "it's not a creature".
+        "set_types",
         "extra_land_drops",
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
+        # Ancient Greenwarden.  A fact about the *player*, like the two above:
+        # it is read by `triggers.collect` rather than by the characteristics
+        # pipeline, and there is no object for it to attach to.
+        "double_land_triggers",
     }
 )
 
@@ -137,6 +146,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             raise DslError(f"{where}: unknown keyword {k!r} (implemented: {sorted(KNOWN_KEYWORDS)})")
 
     mana_cost = ManaCost.parse(model.mana_cost)
+    kicker = ManaCost.parse(model.kicker) if model.kicker else None
+    if kicker is not None:
+        if kicker.x_count:
+            raise DslError(f"{where}: a kicker cost with X is not implemented")
+        if kicker.mana_value() == 0:
+            raise DslError(f"{where}: kicker {model.kicker!r} costs nothing")
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
@@ -149,6 +164,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     abilities = tuple(
         _compile_ability(a, i, where) for i, a in enumerate(model.abilities)
     )
+
+    if model.cost_reduction is not None:
+        _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
+
+    # Kicker is two halves that only mean anything together: the extra cost, and
+    # an `if` that reads it.  Half a kicker is the failure this pass exists to
+    # catch -- a spell that charges more and does the same thing, or one whose
+    # kicked clause can never fire, and nothing on the board would say so.
+    reads_kicked = _mentions_kicked(model)
+    if reads_kicked and kicker is None:
+        raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")
+    if kicker is not None and not reads_kicked:
+        raise DslError(f"{where}: has a 'kicker' cost that no effect reads via 'kicked'")
 
     colors = (
         frozenset(model.colors)
@@ -189,6 +217,26 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
         uncounterable=model.uncounterable,
+        kicker=kicker,
+        cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
+    )
+
+
+def _mentions_kicked(model: CardModel) -> bool:
+    """Does anything on this card read ``{"kicked": ...}``?"""
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return "kicked" in node or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if walk(model.spell_effects):
+        return True
+    return any(
+        walk(a.effects) or walk(a.trigger.condition if a.trigger else None)
+        for a in model.abilities
     )
 
 
@@ -239,10 +287,19 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"{where}: 'defending' only means anything on an 'attacks' trigger, "
                 f"not on {model.trigger.event!r}"
             )
+        # `self_enters` and `permanent_enters` are the same engine event, and
+        # what separates them is `source: "self"`. Omitting it on `self_enters`
+        # therefore produced a card that fired on *every* permanent entering --
+        # silently, and only visibly wrong once a second permanent showed up.
+        # The name can only mean one thing, so the loader makes it mean it.
+        source = model.trigger.source
+        if model.trigger.event == "self_enters":
+            source = "self"
+
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
-            source=model.trigger.source,
+            source=source,
             filter=dict(model.trigger.filter) if model.trigger.filter else None,
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
             defending=model.trigger.defending,
@@ -295,6 +352,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         "no_hand_limit",
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
+        "double_land_triggers",
     ):
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -310,7 +368,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
 
+    if model.effect == "set_types" and not model.types:
+        raise DslError(f"{where}: set_types needs the types it sets")
+    _validate_static_condition(model.condition, f"{where}.condition")
+
     static: dict[str, Any] = {"effect": model.effect}
+    if model.condition is not None:
+        static["condition"] = dict(model.condition)
     if model.affects is not None:
         static["affects"] = dict(model.affects)
     if model.affects_player is not None:
@@ -327,6 +391,52 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["types"] = list(model.types)
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
+
+
+#: Ways a card may say how much less it costs.  ``count`` is "{1} less for each
+#: X"; ``total_power`` is Ghalta's "the total power of creatures you control".
+COST_REDUCTION_KEYS = frozenset({"count", "total_power"})
+
+
+def _validate_cost_reduction(spec: Any, where: str) -> None:
+    if not isinstance(spec, Mapping) or len(spec) != 1:
+        raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
+    key = next(iter(spec))
+    if key not in COST_REDUCTION_KEYS:
+        raise DslError(f"{where}: unknown reduction {key!r} (implemented: {sorted(COST_REDUCTION_KEYS)})")
+    unknown = set(spec[key]) - STATIC_FILTER_KEYS
+    if unknown:
+        # Same restriction as a static filter, for the same reason: this is
+        # evaluated while deciding what is castable, before anything is on the
+        # stack, so it may only read printed characteristics of the board.
+        raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+
+
+#: Comparisons a static's "as long as..." clause may use.
+STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
+
+
+def _validate_static_condition(condition: Any, where: str) -> None:
+    """A static may only ask about counters on its own source.
+
+    Much smaller than the ``if``-effect condition language, and for the same
+    reason ``affects`` filters are: anything that reads a *derived*
+    characteristic would let one static depend on another's output, and the
+    fixed-order pipeline has no way to resolve that.
+    """
+    if condition is None:
+        return
+    if not isinstance(condition, Mapping) or set(condition) != {"counters"}:
+        raise DslError(f"{where}: a static condition may only be {{'counters': ...}}")
+    spec = condition["counters"]
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}.counters: must be an object")
+    unknown = set(spec) - {"counter", "amount", "op"}
+    if unknown:
+        raise DslError(f"{where}.counters: unsupported keys {sorted(unknown)}")
+    op = str(spec.get("op", ">="))
+    if op not in STATIC_CONDITION_OPS:
+        raise DslError(f"{where}.counters: unknown comparison {op!r}")
 
 
 def _validate_static_value(value: Any, where: str) -> None:
@@ -423,6 +533,17 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:
         raise DslError(f"{where}: add_mana needs 'mana'")
+    if op == "delay":
+        # A misspelled step would schedule something that never comes due -- a
+        # card that reads "at the beginning of the next upkeep, draw a card" and
+        # silently draws nothing, which is exactly what this pass exists to stop.
+        step = str(effect.get("step", "end_step"))
+        if step not in DELAY_STEPS:
+            raise DslError(
+                f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
+            )
+        if not effect.get("effects"):
+            raise DslError(f"{where}: delay needs 'effects' to schedule")
 
     for key in ("then", "else", "effects"):
         if key in effect:

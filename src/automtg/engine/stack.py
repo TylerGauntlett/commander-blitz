@@ -32,6 +32,7 @@ def push_spell(
     targets: Sequence[TargetRef] = (),
     *,
     x: int = 0,
+    kicked: bool = False,
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
     obj = state.objects[oid]
@@ -53,6 +54,7 @@ def push_spell(
         oid=oid,
         targets=tuple(targets),
         x=x,
+        kicked=kicked,
         description=card.name,
     )
     obj.stack_id = item.sid
@@ -151,6 +153,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         targets=targets,
         bindings=dict(item.bindings),
         x=item.x,
+        kicked=item.kicked,
         source_name=card.name,
     )
     yield from execute(ctx, card.spell_effects)

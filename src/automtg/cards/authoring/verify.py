@@ -126,9 +126,17 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     return builder.build(advance=False)
 
 
-def add_dummy_spell(game: Game) -> None:
-    """Put a spell on the stack so a counterspell has something to target."""
-    obj = new_object(game.state, "t_bear", owner=1, zone=Zone.HAND)
+def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
+    """Put a spell on the stack so a counterspell has something to target.
+
+    Picked from the pool by role, like the board props: naming a test-only card
+    here tied the authoring pipeline to fixtures that are not shipped, and every
+    counterspell then failed with "unknown card id".
+    """
+    picks = _props(registry, ("creature",))
+    if not picks:
+        return
+    obj = new_object(game.state, picks[0], owner=1, zone=Zone.HAND)
     game.state.players[1].hand.append(obj.oid)
     push_spell(game.state, obj.oid, 1)
 
@@ -189,9 +197,17 @@ def _answer(game: Game, decision: PendingDecision):
     return actions[0]
 
 
-def find_play(game: Game, card_id: str):
+def find_play(game: Game, card_id: str, *, kicked: bool = False):
+    """The action that plays this card, optionally the kicked way.
+
+    A kicker card is offered twice, and the two are different cards in every way
+    that matters -- so which one is being asked for has to be said out loud
+    rather than settled by whichever legality happens to list first.
+    """
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
+            continue
+        if action.kind is ActionKind.CAST and action.kicked != kicked:
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
@@ -217,10 +233,19 @@ EXPECTATION_KEYS = (
     "opponent_battlefield_count",
     "zone",
     "granted",
+    "target_pt_delta",
 )
 
 
-def check_expectation(game: Game, card_id: str, oid: int, expectation: dict) -> list[str]:
+def check_expectation(
+    game: Game,
+    card_id: str,
+    oid: int,
+    expectation: dict,
+    *,
+    target_pt_before: tuple[int, int] | None = None,
+    target_oid: int | None = None,
+) -> list[str]:
     """Every way the position disagrees with what the card was supposed to do."""
     state = game.state
     problems: list[str] = []
@@ -273,6 +298,26 @@ def check_expectation(game: Game, card_id: str, oid: int, expectation: dict) -> 
                 problems.append(f"the card's zone is {actual}, expected one of {wanted_zone}")
         else:
             compare("the card's zone", actual, wanted_zone)
+
+    if "target_pt_delta" in expectation:
+        # "+3/+3 until end of turn" is the single most common thing a card does
+        # that no count on the board can see. Measured as a *delta* on the
+        # spell's own target, because the sandbox's props come from whatever pool
+        # the caller hands it and their printed P/T is not knowable here -- and
+        # because the delta is exactly the number printed on the card.
+        wanted = expectation["target_pt_delta"]
+        if target_oid is None or target_pt_before is None:
+            problems.append("target_pt_delta was asserted but the spell targeted nothing")
+        else:
+            from automtg.engine.characteristics import chars
+
+            now = chars(state, target_oid)
+            compare("target power delta", now.power - target_pt_before[0], wanted.get("power", 0))
+            compare(
+                "target toughness delta",
+                now.toughness - target_pt_before[1],
+                wanted.get("toughness", 0),
+            )
 
     if "granted" in expectation:
         # "Permanents you control gain hexproof", "Equipped creature has haste".
@@ -405,7 +450,7 @@ def verify(
 
 def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     """Cast it and assert only that it went where cards of its kind go."""
-    game, oid = _cast(registry, card)
+    game, oid, _, _ = _cast(registry, card)
     obj = game.state.objects.get(oid)
     if obj is None:
         return [f"{card.id} vanished entirely"]
@@ -424,24 +469,53 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
 
 
 def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) -> list[str]:
-    game, oid = _cast(registry, card)
-    return check_expectation(game, card.id, oid, expectation)
+    # A kicker card is measured *kicked*. Kicked is the strictly larger claim --
+    # it does everything the unkicked spell does and more -- so asserting it
+    # covers both halves of the printed text, whereas asserting the cheap mode
+    # would let "if this spell was kicked, draw a card" ship doing nothing.
+    # Gate 4 still casts it unkicked, so neither line goes unexercised.
+    game, oid, target_oid, before = _cast(registry, card, kicked=card.kicker is not None)
+    return check_expectation(
+        game,
+        card.id,
+        oid,
+        expectation,
+        target_oid=target_oid,
+        target_pt_before=before,
+    )
 
 
-def _cast(registry: CardRegistry, card: CardDef) -> tuple[Game, int]:
+def _cast(
+    registry: CardRegistry, card: CardDef, *, kicked: bool = False
+) -> tuple[Game, int, int | None, tuple[int, int] | None]:
+    """Cast the card in the sandbox and let it finish.
+
+    Returns the game, the card's own oid, and the first object it targeted along
+    with that object's P/T *before* the spell -- the only moment the "before"
+    half of a pump can be read.
+    """
     game = build_sandbox(registry, card.id)
     if any(spec.kind == "spell" for spec in card.targets):
-        add_dummy_spell(game)
+        add_dummy_spell(game, registry)
     game._advance()
 
-    action = find_play(game, card.id)
+    action = find_play(game, card.id, kicked=kicked)
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
         raise AutoMtgError(f"{card.id} is not playable in the sandbox; offered: {offered}")
     oid = action.source
+
+    target_oid = next((ref.id for ref in action.targets if ref.kind == "object"), None)
+    before: tuple[int, int] | None = None
+    if target_oid is not None and target_oid in game.state.objects:
+        from automtg.engine.characteristics import chars
+
+        was = chars(game.state, target_oid)
+        before = (was.power, was.toughness)
+
     game.apply(action)
     drive(game)
-    return game, oid
+    return game, oid, target_oid, before
 
 
 # ----------------------------------------------------------------------
@@ -485,6 +559,7 @@ def _covered(card: CardDef, line: str) -> bool:
     who mislabels a line fails gate 5 anyway, where the board is the witness.
     """
     stripped = line.strip().rstrip(".")
+    lowered = line.lower()
     if not stripped:
         return True
 
@@ -499,11 +574,28 @@ def _covered(card: CardDef, line: str) -> bool:
     # ability: a spell is on the stack, where abilities do not reach it.
     if card.uncounterable and "can't be countered" in stripped.lower():
         return True
+
+    # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
+    # ordinary `if`, so no ability carries this line either.
+    if card.kicker is not None and stripped.lower().startswith("kicker "):
+        return True
+
+    # "This spell costs {X} less to cast" is a property of the card read while
+    # deciding what is castable -- there is no ability, because a spell on the
+    # stack has already been paid for.
+    if card.cost_reduction is not None and "costs" in lowered and "less to cast" in lowered:
+        return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if claimed and (claimed == stripped or claimed in line or stripped in claimed):
             return True
+    # A replacement effect implements its own printed sentence: "enters tapped",
+    # "enters with two charge counters on it". There is no ability to carry the
+    # text, so the claim is matched on the replacement's event instead.
     for replacement in card.replacements:
-        if replacement.get("event") == "self_enters_tapped" and "tapped" in line.lower():
+        event = replacement.get("event")
+        if event == "self_enters_tapped" and "tapped" in lowered:
+            return True
+        if event == "self_enters_with_counters" and "counter" in lowered and "enters" in lowered:
             return True
     return False

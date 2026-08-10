@@ -19,13 +19,19 @@ not a rewrite.
 | **Mana** | Cost parsing, mana pools emptying per step, automatic payment with a backtracking solver, `X` costs |
 | **Combat** | Attacker/blocker declaration, evasion, damage assignment order, simultaneous damage, first and double strike as separate sub-steps |
 | **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, indestructible, flash |
-| **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution |
+| **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution. Delayed triggers ("at the beginning of the next end step, …") via the `delay` op |
 | **Command zone** | Abilities that work from the command zone (Edgar Markov's eminence), commander tax, commander damage, the zone-change replacement |
-| **Static abilities** | Anthems, keyword grants, P/T setting, subtype grants, extra land drops |
+| **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions on counters, and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers |
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
 | **Costs** | Mana, tap, untap, sacrifice, discard, pay life, remove counters, exile from graveyard |
+| **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads |
+| **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
+| **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
+| **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
+| **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants |
+| **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
 
 ## Simplified
 
@@ -45,6 +51,7 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | **Target options capped at 12** | A spell offers at most 12 target combinations | Only bites on very wide boards; without it a single "target creature" can flood the action space |
 | **Turn cap** | 30 turns per player (60 in a duel, 120 in a pod), then a draw | Self-play must terminate. Draws are counted and reported |
 | **Trigger loop guard** | More than 200 triggers in one step raises `RulesLoopError`, scored as a draw | One pathological board must not abort a 10,000-game run |
+| **Delayed triggers resolve off the stack** | "At the beginning of the next upkeep, draw a card" runs as the step begins rather than being put on the stack | Same trade as modes and trigger ordering: only observable when somebody would respond differently to the delayed half than to the spell that scheduled it |
 
 ## Imported cards, which are simplified further
 
@@ -74,15 +81,16 @@ Planeswalkers · battles · sagas · modal double-faced cards · split and adven
 transforming cards · companions · partners · vehicles
 
 **Costs and casting**
-Alternative costs · cost reduction · hybrid, phyrexian and snow mana · convoke and
-similar · flashback and other graveyard casting · suspend · overload · kicker
+Alternative costs · hybrid, phyrexian and snow mana · convoke and similar ·
+flashback, retrace and other graveyard casting · suspend · overload ·
+mana restricted to a kind of spell
 
 **Effects**
 Copy effects (including token copies) · gaining control of a permanent · protection ·
 damage prevention or redirection · regeneration · shroud and ward · "unless that player
-pays" · reading or playing from the top of the library · general replacement effects
-(only four are whitelisted: enters tapped, enters with counters, the commander zone
-change, and tokens ceasing to exist)
+pays" · granting an activated or triggered ability to another permanent · splitting
+cards into piles · general replacement effects (only four are whitelisted: enters
+tapped, enters with counters, the commander zone change, and tokens ceasing to exist)
 
 **Combat**
 Attacking planeswalkers or battles · banding · "must be blocked" · manual damage

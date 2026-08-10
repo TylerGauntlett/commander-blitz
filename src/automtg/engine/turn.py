@@ -54,6 +54,53 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
     elif step is Step.CLEANUP:
         yield from _cleanup_step(state)
 
+    yield from _run_delayed(state)
+
+
+#: Which ``delay`` step names map to which step.  A small whitelist rather than
+#: a free-form name, so a typo in a card file fails at load time like every other
+#: piece of DSL vocabulary.
+DELAY_STEPS = {
+    "upkeep": Step.UPKEEP,
+    "draw_step": Step.DRAW,
+    "begin_combat": Step.BEGIN_COMBAT,
+    "end_step": Step.END_STEP,
+}
+
+
+def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
+    """Resolve anything scheduled for the step just entered.
+
+    Resolved directly rather than put on the stack. That is a divergence -- a
+    delayed trigger is a real triggered ability and should be respondable -- and
+    it is the same trade `docs/rules-coverage.md` records for modes and trigger
+    ordering: it is only observable when somebody would respond differently to
+    the delayed half than to the spell that scheduled it.
+
+    Fired by *step name*, and a trigger scheduled during a step therefore waits
+    for that step's next occurrence: `begin_step` for the current step has
+    already run by the time any effect resolves.
+    """
+    from .effects import execute
+    from .effects.context import EffectContext
+
+    if not state.delayed_triggers:
+        return
+    due = [d for d in state.delayed_triggers if DELAY_STEPS.get(d.step) is state.step]
+    if not due:
+        return
+    state.delayed_triggers = [d for d in state.delayed_triggers if d not in due]
+    for delayed in due:
+        ctx = EffectContext(
+            state=state,
+            controller=delayed.controller,
+            source_oid=delayed.source_oid,
+            targets={},
+            bindings=dict(delayed.bindings),
+            source_name=delayed.description,
+        )
+        yield from execute(ctx, list(delayed.effects))
+
 
 def _untap_step(state: GameState) -> None:
     player = state.players[state.active_idx]

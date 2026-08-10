@@ -113,6 +113,43 @@ class TestVocabularyIsChecked:
         with pytest.raises(DslError, match="unknown trigger event"):
             compile_card(model)
 
+    def test_self_enters_is_restricted_to_the_card_itself(self):
+        """`self_enters` and `permanent_enters` are the same engine event.
+
+        What separates them is `source: "self"`, so omitting it produced a card
+        that fired on *every* permanent entering -- silently, and invisible until
+        a second permanent showed up. The name can only mean one thing, so the
+        loader makes it mean it rather than trusting each card file to remember.
+        """
+        model = CardModel.model_validate(
+            self._card(
+                abilities=[
+                    {
+                        "kind": "triggered",
+                        "trigger": {"event": "self_enters"},
+                        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+                    }
+                ]
+            )
+        )
+        card = compile_card(model)
+        assert card.abilities[0].trigger.source == "self"
+
+    def test_permanent_enters_is_left_alone(self):
+        model = CardModel.model_validate(
+            self._card(
+                abilities=[
+                    {
+                        "kind": "triggered",
+                        "trigger": {"event": "permanent_enters"},
+                        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+                    }
+                ]
+            )
+        )
+        card = compile_card(model)
+        assert card.abilities[0].trigger.source is None
+
     def test_target_reference_must_be_declared(self):
         model = CardModel.model_validate(
             self._card(

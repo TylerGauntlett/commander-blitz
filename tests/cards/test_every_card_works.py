@@ -180,6 +180,8 @@ class TestActivatedAbilities:
             oid = new_object(game.state, card_id, owner=0, zone=Zone.BATTLEFIELD).oid
             game.state.battlefield.append(oid)
             _pay_the_counters(game, oid, ability)
+            _provide_the_sacrifice(game, registry, ability)
+            _stock_the_hand(game, ability)
             for other in game.state.battlefield:
                 game.state.objects[other].entered_turn = 0
             game.state.bump_chars()
@@ -219,6 +221,52 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     kind = str(spec.get("counter", PLUS_ONE))
     amount = int(spec.get("amount", 1))
     game.state.objects[oid].counters[kind] = amount
+
+
+def _provide_the_sacrifice(game: Game, registry, ability) -> None:
+    """Put something on the board that the ability's sacrifice cost accepts.
+
+    Same reasoning as `_pay_the_counters`: the sandbox's job is to make "could
+    not pay for it" impossible, so that "not activatable" only ever means the
+    ability is broken. Koma's ability costs *another Serpent*, and the generic
+    board has none -- which reported a working card as unusable.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "sacrifice", None) if cost else None
+    if not spec:
+        return
+    subtypes = {str(s) for s in spec.get("subtypes") or []}
+    types = {str(t) for t in spec.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    game.state.battlefield.append(fodder.oid)
+
+
+def _stock_the_hand(game: Game, ability) -> None:
+    """Give the player the cards a discard cost wants to throw away.
+
+    Third of the same family as `_pay_the_counters` and `_provide_the_sacrifice`:
+    the sandbox's job is that "not activatable" only ever means the ability is
+    broken. Nezahal's blink costs three cards and the board arrives with an
+    empty hand.
+    """
+    cost = ability.cost
+    needed = int(getattr(cost, "discard", 0) or 0) if cost else 0
+    hand = game.state.players[0].hand
+    while len(hand) < needed:
+        card = new_object(game.state, "forest", owner=0, zone=Zone.HAND)
+        hand.append(card.oid)
 
 
 class TestManaAbilities:

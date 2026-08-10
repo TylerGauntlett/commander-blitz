@@ -208,23 +208,57 @@ def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
 def _cast_options(
     state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int
 ) -> list[Action]:
-    from .costs import mana_sources
+    """Every distinct way to cast this card right now.
+
+    Kicker makes that plural for one card: paying the extra cost and not paying
+    it are two different actions with the same source, offered side by side, and
+    the player picks.  Unkicked is listed first so the cheap line stays the
+    obvious one.
+    """
+    exclude_sid = state.objects[oid].stack_id
+    tuples = enumerate_target_tuples(
+        state, pid, card.targets, oid, exclude_sid=exclude_sid
+    )
+    if not tuples:
+        return []
+
+    out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
+    if card.kicker is not None:
+        out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True)
+    return out
+
+
+def _cast_variant(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    tuples,
+    *,
+    extra_generic: int,
+    kicked: bool,
+) -> list[Action]:
+    from .costs import cost_reduction, mana_sources
 
     sources = mana_sources(state, pid)
     pool = state.players[pid].mana_pool
 
+    cost = card.mana_cost.plus(card.kicker) if kicked else card.mana_cost
+    discount = cost_reduction(state, pid, card)
+
     x = 0
-    if card.mana_cost.x_count:
-        x = max_affordable_x(card.mana_cost, pool, sources)
+    if cost.x_count:
+        x = max_affordable_x(cost, pool, sources)
         if x < 0:
             return []
 
     # Solve rather than merely test: the solution names the permanents that
     # would tap, which is what lets the client show a hovered spell eating into
     # the mana row.  `can_pay_mana` would run the same solver and discard it.
-    req = card.mana_cost.with_x(x)
-    if extra_generic:
-        req = Requirement(colored=req.colored, generic=req.generic + extra_generic)
+    req = cost.with_x(x)
+    generic = max(0, req.generic + extra_generic - discount)
+    if generic != req.generic:
+        req = Requirement(colored=req.colored, generic=generic)
     payment = solve_payment(req, pool, sources)
     if payment is None:
         return []
@@ -233,14 +267,9 @@ def _cast_options(
     # says nothing about the pool.
     pays = tuple(dict.fromkeys(tap[0] for tap in payment.taps))
 
-    exclude_sid = state.objects[oid].stack_id
-    tuples = enumerate_target_tuples(
-        state, pid, card.targets, oid, exclude_sid=exclude_sid
-    )
-    if not tuples:
-        return []
-
     label_base = f"Cast {card.name}"
+    if kicked:
+        label_base += " (kicked)"
     if extra_generic:
         label_base += f" (+{extra_generic})"
     out = []
@@ -254,6 +283,7 @@ def _cast_options(
                 source=oid,
                 targets=targets,
                 x=x,
+                kicked=kicked,
                 label=label,
                 pays=pays,
             )
@@ -303,6 +333,9 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
+    from .costs import cost_reduction
+
+    discount = cost_reduction(state, pid, card)
     x = 0
     if card.mana_cost.x_count:
         from .costs import mana_sources
@@ -312,7 +345,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         )
         if x < 0:
             return "mana"
-    if not can_pay_mana(state, pid, card.mana_cost, x=x):
+    if not can_pay_mana(state, pid, card.mana_cost, x=x, extra_generic=-discount):
         return "mana"
 
     exclude_sid = state.objects[oid].stack_id
@@ -327,7 +360,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
     out: list[Action] = []
     for oid in state.battlefield:
         obj = state.objects.get(oid)
-        if obj is None or obj.controller != pid:
+        if obj is None or obj.controller != pid or obj.abilities_locked:
             continue
         card = state.card_of(obj)
         for ability in card.abilities:

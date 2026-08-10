@@ -67,13 +67,21 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
     """Every object matching ``selector``, before ``count``/``chooser`` narrowing."""
     if selector is None:
         return []
-    if "target" in selector:
-        return ctx.target_oids(str(selector["target"]))
-    if "binding" in selector:
-        value = ctx.bindings.get(str(selector["binding"]))
-        if isinstance(value, dict):
-            value = value.get("oid")
-        return [int(value)] if value is not None else []
+    # `target` and `binding` name a pool directly rather than searching a zone.
+    # On their own they are the whole selector; combined with other keys they are
+    # the *source* and the rest still filters, which is what lets a card ask "is
+    # the card I just bound a land?" without a condition language of its own.
+    if "target" in selector or "binding" in selector:
+        if "target" in selector:
+            seeded = ctx.target_oids(str(selector["target"]))
+        else:
+            value = ctx.bindings.get(str(selector["binding"]))
+            if isinstance(value, dict):
+                value = value.get("oid")
+            seeded = [int(value)] if value is not None else []
+        if set(selector) <= {"target", "binding"}:
+            return seeded
+        return [oid for oid in seeded if matches(ctx, oid, selector)]
 
     state = ctx.state
     zone_name = selector.get("zone", "battlefield")
