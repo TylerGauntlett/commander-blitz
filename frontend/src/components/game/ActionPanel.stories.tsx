@@ -17,7 +17,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
-import { expectUniqueActionIds, renderedActionIds } from "../../testing/asserts";
+import { APP_BOX } from "../../testing/appGeometry";
+import {
+  expectMountedLike,
+  expectUniqueActionIds,
+  renderedActionIds,
+  settled,
+} from "../../testing/asserts";
 import { pending } from "../../testing/fixtures";
 import type { Scenario } from "../../testing/scenarios";
 import * as scenarios from "../../testing/scenarios";
@@ -125,6 +131,63 @@ export const ClickingATargetChip: Story = {
     await canvas.findByTestId("action-panel");
     await userEvent.click(await canvas.findByText("Wall of Roots"));
     expect(args.onAct).toHaveBeenCalledWith("a-charm-993");
+  },
+};
+
+/**
+ * The commit slab, hovered.
+ *
+ * It is `width: 100%` of the rail, so it may lift but must not scale -- 1.02 of
+ * a full-width element is 2% wider than the column holding it, and the button
+ * grew out over the rail's edge every time the pointer crossed it. Measured
+ * against the rail rather than against a number, so the assertion survives the
+ * rail changing width.
+ */
+export const CommitSlabOnHover: Story = {
+  args: from(scenarios.earlyBoard()),
+  // Real motion, because the scale *is* the bug: with `reducedMotion` on, the
+  // transform never applies and this assertion passed against the defect.
+  parameters: { automtg: { mount: "railRightUnderPreview", motion: "real" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const slab = await canvas.findByTestId("commit");
+    const rail = canvasElement.querySelector(".rail") as HTMLElement;
+
+    await userEvent.hover(slab);
+
+    /*
+     * Wait for the lift to *land*, then assert once.
+     *
+     * Two traps here, and this story fell into both. Wrapping the bounds check in
+     * `waitFor` retries until it passes, and "inside the rail" is true at t=0 --
+     * so it went green on the first poll, against the bug. And waiting for a
+     * transform to merely exist returns on the spring's first frame, which reads
+     * `matrix(1.0008, ...)` on its way to 1.02. Only a settled transform is worth
+     * measuring.
+     */
+    await settled(slab);
+
+    const button = slab.getBoundingClientRect();
+    const column = rail.getBoundingClientRect();
+    expect(
+      Math.round(button.left),
+      "the commit slab grew out past the left of its rail",
+    ).toBeGreaterThanOrEqual(Math.round(column.left) - 1);
+    expect(
+      Math.round(button.right),
+      "the commit slab grew out past the right of its rail",
+    ).toBeLessThanOrEqual(Math.round(column.right) + 1);
+  },
+};
+
+/** The rail is a fixed column, and the panel is what fills it. */
+export const FillsTheRail: Story = {
+  args: from(scenarios.earlyBoard()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("action-panel");
+    const rail = canvasElement.querySelector(".rail") as HTMLElement;
+    expectMountedLike(rail, { width: APP_BOX.railRight });
   },
 };
 
