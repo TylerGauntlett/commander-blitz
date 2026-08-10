@@ -24,6 +24,7 @@ separately:
 - [adr/0004-incremental-combat.md](adr/0004-incremental-combat.md) — declaring attackers one at a time
 - [adr/0005-no-state-cloning.md](adr/0005-no-state-cloning.md) — replay instead of snapshots
 - [adr/0006-no-colour-accessibility-requirement.md](adr/0006-no-colour-accessibility-requirement.md) — colour accessibility is out of scope
+- [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md) — how multiplayer clients hear about each other, without sockets
 
 ## If you are here to...
 

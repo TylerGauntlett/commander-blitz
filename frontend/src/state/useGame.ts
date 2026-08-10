@@ -4,13 +4,24 @@
  * The engine is authoritative, so there is no optimistic update anywhere: every
  * mutation returns the new state and we simply replace what we hold.
  *
- * The one piece of real machinery is the AI pump. Every mutation is sent with
- * `ai_steps=1`, so the server hands control back after a single opponent
- * decision instead of playing all their turns and returning the finished
- * position. When a response comes back with no legal actions and the game is
- * not over, the opponents still owe decisions: we wait for the narration queue
- * to drain, then pump once more. That loop is what turns "the board suddenly
- * looks different" into "I watched them do it".
+ * There are two pieces of real machinery, and which one runs depends on *who*
+ * we are waiting for.
+ *
+ * **An AI seat: the pump.** Every mutation is sent with `ai_steps=1`, so the
+ * server hands control back after a single opponent decision instead of playing
+ * all their turns and returning the finished position. When a response comes
+ * back with no legal actions and the game is not over, the opponents still owe
+ * decisions: we wait for the narration queue to drain, then pump once more.
+ * That loop is what turns "the board suddenly looks different" into "I watched
+ * them do it".
+ *
+ * **Another human: the long poll.** There is nothing to pump -- the server is
+ * not going to move that seat, a person is. So we ask for the state with the
+ * version we last saw and the request blocks until it changes. Pumping here
+ * would be a busy-wait against a human's thinking time.
+ *
+ * `human_seats` in the response is what tells the two apart. The engine does not
+ * model it (a seat is a seat to it); the session does.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,7 +35,14 @@ import { useUiStore } from "./uiStore";
 
 export interface GameSession {
   gameId: string;
-  seat: number;
+  /**
+   * Null means "ask my token".
+   *
+   * A client arriving from a pod does not know its table seat: the lobby's four
+   * chairs are compacted down to the players actually in the game, so lobby
+   * seat 2 can be table seat 1. The first state response carries `your_seat`.
+   */
+  seat: number | null;
 }
 
 /** Give up pumping after this many consecutive no-progress advances. */
@@ -32,6 +50,15 @@ const STALL_LIMIT = 24;
 
 /** Breathing room between AI decisions, on top of the narration hold. */
 const PUMP_DELAY_MS = 60;
+
+/**
+ * How long one long poll may block, in seconds. Matches the server's ceiling.
+ *
+ * A poll that finds nothing comes back with a 200 and the same version, and the
+ * effect below simply issues another -- so this is the *latency* of noticing a
+ * server that restarted, not of noticing a move.
+ */
+const POLL_SECONDS = 25;
 
 /**
  * `staleTime: Infinity` because the deck list was fixed for the life of the
@@ -67,6 +94,17 @@ function harvestNames(state: GameView, into: Map<string, string>): void {
     for (const card of player.exile) add(card.card_id, card.name);
     for (const card of player.command) add(card.card_id, card.name);
   }
+}
+
+/**
+ * The seat to act as.
+ *
+ * `POST` bodies carry an explicit seat, so a session that has not yet learned
+ * its own falls back to 0 -- which is right for every single-player caller and
+ * is corrected the moment the first state response lands.
+ */
+function seatOf(session: GameSession): number {
+  return session.seat ?? 0;
 }
 
 export function useGame(session: GameSession | null) {
@@ -111,7 +149,7 @@ export function useGame(session: GameSession | null) {
       queryClient.setQueryData(key, response);
       setLog((previous) => [...previous, ...response.events]);
       narration.push(
-        beatsFor(response.events, playerNames(response.state), lookup, session.seat),
+        beatsFor(response.events, playerNames(response.state), lookup, response.your_seat),
       );
       // Keep a half-built declaration alive across responses that are not the
       // declaration itself -- the AI pump lands here too, and wiping the staged
@@ -119,7 +157,7 @@ export function useGame(session: GameSession | null) {
       const pending = response.state.pending;
       const stillDeclaring =
         pending !== null &&
-        pending.player === session.seat &&
+        pending.player === response.your_seat &&
         (pending.kind === "declare_attackers" || pending.kind === "declare_blockers");
       if (!stillDeclaring) clearStaging();
       setError(null);
@@ -140,7 +178,7 @@ export function useGame(session: GameSession | null) {
   const act = useMutation({
     mutationFn: async (actionId: string) => {
       if (!session) throw new Error("no game");
-      return api.applyAction(session.gameId, session.seat, actionId, 1);
+      return api.applyAction(session.gameId, seatOf(session), actionId, 1);
     },
     onSuccess: humanAbsorb,
     onError: (error: Error) => setError(error.message),
@@ -152,7 +190,7 @@ export function useGame(session: GameSession | null) {
       pairs: [number, number][];
     }) => {
       if (!session) throw new Error("no game");
-      return api.declare(session.gameId, session.seat, input.kind, input.pairs, 1);
+      return api.declare(session.gameId, seatOf(session), input.kind, input.pairs, 1);
     },
     onSuccess: humanAbsorb,
     onError: (error: Error) => setError(error.message),
@@ -161,7 +199,7 @@ export function useGame(session: GameSession | null) {
   const undo = useMutation({
     mutationFn: async () => {
       if (!session) throw new Error("no game");
-      return api.undo(session.gameId, session.seat);
+      return api.undo(session.gameId, seatOf(session));
     },
     onSuccess: (response) => {
       if (!session) return;
@@ -189,7 +227,7 @@ export function useGame(session: GameSession | null) {
   const setFullControl = useMutation({
     mutationFn: async (value: boolean) => {
       if (!session) throw new Error("no game");
-      return api.setFullControl(session.gameId, session.seat, value);
+      return api.setFullControl(session.gameId, seatOf(session), value);
     },
     onSuccess: (response) => {
       if (!session) return;
@@ -203,7 +241,7 @@ export function useGame(session: GameSession | null) {
   const pump = useMutation({
     mutationFn: async () => {
       if (!session) throw new Error("no game");
-      return api.advance(session.gameId, session.seat, 1);
+      return api.advance(session.gameId, seatOf(session), 1);
     },
     onSuccess: (response) => {
       // No events and still nothing for the human to do means the engine did
@@ -225,17 +263,26 @@ export function useGame(session: GameSession | null) {
   const data = query.data ?? null;
   const state = data?.state ?? null;
   const actions = useMemo(() => data?.actions ?? [], [data]);
+  /** Resolved by the server from our token when the session did not know it. */
+  const yourSeat = data?.your_seat ?? session?.seat ?? null;
+  const humanSeats = useMemo(() => data?.human_seats ?? [], [data]);
 
-  /**
-   * True when the opponents still owe decisions: no actions for us, the game is
-   * live, and somebody is on the clock.
-   */
-  const aiThinking =
+  /** Whoever is on the clock, when it is not us and there is nothing to do. */
+  const waitingOn =
     state !== null &&
     !state.game_over &&
     state.pending !== null &&
-    state.pending.player !== state.seat &&
-    actions.length === 0;
+    yourSeat !== null &&
+    state.pending.player !== yourSeat &&
+    actions.length === 0
+      ? state.pending.player
+      : null;
+
+  /** An AI seat: pump it forward a decision at a time so its turn is watchable. */
+  const aiThinking = waitingOn !== null && !humanSeats.includes(waitingOn);
+
+  /** Another person: there is nothing to pump. Block until they move. */
+  const waitingForPlayer = waitingOn !== null && humanSeats.includes(waitingOn);
 
   const busy = act.isPending || declare.isPending || undo.isPending || pump.isPending;
 
@@ -249,14 +296,46 @@ export function useGame(session: GameSession | null) {
     return () => clearTimeout(timer);
   }, [session, aiThinking, stalled, busy, narration.busy, pumpMutate]);
 
+  // The long poll. One request in flight at a time, re-issued the moment it
+  // lands -- a timed-out poll is a 200 with the same version, which is
+  // indistinguishable from a slow one.
+  const version = data?.version ?? 0;
+  useEffect(() => {
+    if (!session || !waitingForPlayer || yourSeat === null) return;
+    if (busy || narration.busy) return;
+    let live = true;
+    void (async () => {
+      try {
+        const response = await api.state(
+          session.gameId,
+          yourSeat,
+          // The events we already hold; the server sends only what is new.
+          undefined,
+          version,
+          POLL_SECONDS,
+        );
+        if (live && response.version > version) absorb(response);
+      } catch (caught) {
+        if (live) setError((caught as Error).message);
+      }
+    })();
+    return () => {
+      live = false;
+    };
+  }, [session, waitingForPlayer, yourSeat, version, busy, narration.busy, absorb, setError]);
+
   return {
     state,
     actions,
     events: log,
     isLoading: query.isLoading,
     error: query.error as Error | null,
-    /** Somebody else is deciding and we are watching it play out. */
+    /** The seat this client is playing, once the server has told us. */
+    yourSeat,
+    /** An AI is deciding and we are watching it play out. */
     aiThinking,
+    /** Another person is deciding. Nothing to animate; we are simply waiting. */
+    waitingForPlayer,
     /** The pump gave up: the game is not progressing. */
     stalled,
     /** Any request in flight. */

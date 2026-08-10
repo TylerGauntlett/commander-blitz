@@ -1,8 +1,11 @@
 import type {
   CardView,
+  DeckSummary,
   GameView,
   LegalAction,
   PlayerView,
+  PodSeatView,
+  PodView,
   StackItemView,
 } from "../src/api/types";
 
@@ -130,6 +133,68 @@ export function action(overrides: Partial<LegalAction> = {}): LegalAction {
     choice: null,
     x: 0,
     pays: [],
+    ...overrides,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* Pods                                                                */
+/* ------------------------------------------------------------------ */
+
+export function deckSummary(overrides: Partial<DeckSummary> = {}): DeckSummary {
+  return {
+    id: "aesi",
+    name: "Aesi, Tyrant of Gyre Strait",
+    commanders: ["aesi_tyrant_of_gyre_strait"],
+    commander_names: ["Aesi, Tyrant of Gyre Strait"],
+    color_identity: ["G", "U"],
+    card_count: 100,
+    notes: "Simic ramp and landfall.",
+    source: "precon",
+    playable: 100,
+    simplified: 0,
+    tags: ["Ramp", "Landfall"],
+    ...overrides,
+  };
+}
+
+export function podSeat(overrides: Partial<PodSeatView> = {}): PodSeatView {
+  return {
+    index: 0,
+    kind: "empty",
+    name: null,
+    deck: null,
+    locked: false,
+    ready: false,
+    is_you: false,
+    is_host: false,
+    agent: null,
+    ...overrides,
+  };
+}
+
+/**
+ * A pod, with any seats you name and empty chairs after them.
+ *
+ * Seat indices are rewritten to their position, because a fixture whose seat 2
+ * says `index: 0` produces bugs in the *test* rather than in the code.
+ */
+export function podView(
+  seats: Partial<PodSeatView>[] = [],
+  overrides: Partial<PodView> = {},
+): PodView {
+  const filled = seats.map((seat, index) => podSeat({ ...seat, index }));
+  while (filled.length < 4) filled.push(podSeat({ index: filled.length }));
+  const you = filled.find((seat) => seat.is_you) ?? null;
+  return {
+    code: "GYRE-8412",
+    version: 3,
+    status: "open",
+    seats: filled,
+    your_seat: you ? you.index : null,
+    you_are_host: you ? you.is_host : false,
+    game_id: null,
+    invite_link: "/?join=GYRE-8412",
     ...overrides,
   };
 }

@@ -6,6 +6,7 @@ import "./theme.css";
 import "./styles/cards.css";
 import "./styles/board.css";
 import "./styles/ui.css";
+import "./styles/lobby.css";
 
 // The engine is authoritative and every mutation returns fresh state, so there
 // is nothing to refetch in the background.

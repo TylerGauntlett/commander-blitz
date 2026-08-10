@@ -1,0 +1,130 @@
+"""Turning a :class:`~automtg.cards.registry.DeckList` into what a client shows.
+
+Two renderings, split by cost.  ``deck_summary`` backs every deck tile in the
+catalogue and every seat in a pod, so it is fetched dozens of times and stays
+light.  ``deck_detail`` adds the dossier's essays, curve and swap note and is
+fetched one deck at a time.
+
+Its own module because the lobby needs a deck summary just as much as the deck
+routes do, and a pod importing a private helper out of ``routes`` would be the
+wrong direction of dependency.
+"""
+
+from __future__ import annotations
+
+import json
+
+from automtg.cards.registry import DeckList, GameData
+
+from .art import ArtStore
+from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, SignatureCardDTO
+
+#: Mana values 1..6 then "7 or more".  A 0-drop is folded into the first bucket:
+#: it is a real card the deck can cast on turn one, and a column of its own for
+#: the two free artifacts in the format would be almost always empty.
+CURVE_BUCKETS = 7
+
+
+def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
+    coverage = coverage_map()
+    simplified = sum(
+        qty
+        for card_id, qty in (*deck.cards, *((c, 1) for c in deck.commanders))
+        if coverage.get(card_id) == "partial"
+    )
+    return DeckSummary(
+        id=deck.id,
+        name=deck.name,
+        commanders=list(deck.commanders),
+        commander_names=[data.registry.get(c).name for c in deck.commanders],
+        color_identity=sorted(deck.color_identity),
+        card_count=deck.total_cards(),
+        notes=deck.notes,
+        source=deck.source,
+        playable=deck.total_cards() - simplified,
+        simplified=simplified,
+        tags=list(deck.tags),
+    )
+
+
+def deck_detail(deck: DeckList, data: GameData, art: ArtStore) -> DeckDetail:
+    """The summary plus everything the dossier shows.
+
+    The curve, the land count and the swap count are *derived from the list*
+    rather than authored, so they cannot drift away from the deck they describe.
+    """
+    summary = deck_summary(deck, data)
+    curve = [0] * CURVE_BUCKETS
+    lands = 0
+    for card_id, qty in deck.cards:
+        card = data.registry.get(card_id)
+        if "Land" in card.type_line:
+            lands += qty
+            continue
+        curve[min(max(card.mana_value, 1), CURVE_BUCKETS) - 1] += qty
+
+    swaps = list(deck.substitutions)
+    return DeckDetail(
+        **summary.model_dump(),
+        ratings=None if deck.ratings is None else DeckRatingsDTO(**deck.ratings),
+        strategy=deck.strategy,
+        signature=[
+            SignatureCardDTO(
+                card_id=row["card_id"],
+                name=data.registry.get(row["card_id"]).name,
+                why=row["why"],
+                art_url=art.url_for(row["card_id"]),
+            )
+            for row in deck.signature
+            if row["card_id"] in data.registry
+        ],
+        curve=curve,
+        lands=lands,
+        swaps=len(swaps),
+        swap_note=swap_note(swaps, data),
+    )
+
+
+def swap_note(swaps: list[dict], data: GameData) -> str:
+    """One sentence naming what the engine could not run.
+
+    Assembled here rather than authored per deck so it stays true when a card
+    the DSL could not express becomes expressible and the substitution is
+    deleted from the deck file.
+    """
+    if not swaps:
+        return ""
+    names = []
+    for row in swaps:
+        slot = row.get("slot", "")
+        card = data.registry.get(slot) if slot in data.registry else None
+        names.append(card.name if card is not None else slot.replace("_", " ").title())
+    if len(names) == 1:
+        return (
+            f"1 card swapped for an engine-supported equivalent -- {names[0]} needs "
+            "a rules feature the engine does not implement yet."
+        )
+    listed = ", ".join(names[:-1]) + f" and {names[-1]}"
+    return (
+        f"{len(names)} cards swapped for engine-supported equivalents -- {listed} "
+        "each need a rules feature the engine does not implement yet."
+    )
+
+
+def coverage_map() -> dict[str, str]:
+    """``card_id -> coverage`` for generated cards.
+
+    Read per request rather than cached: an import writes it, and a stale map
+    would report the deck somebody just imported as fully playable.  The file is
+    a few KB and absent entirely on a machine that has never imported.
+    """
+    from automtg.cards.importer import coverage_path
+
+    path = coverage_path()
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):  # pragma: no cover
+        return {}
+    return {k: v.get("coverage", "partial") for k, v in raw.items()}

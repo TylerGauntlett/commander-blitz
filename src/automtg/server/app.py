@@ -10,6 +10,8 @@ from automtg.cards.images import load_index
 from automtg.cards.registry import GameData, server_registry
 
 from .art import build_store
+from .lobby import PodRegistry
+from .pod_routes import router as pod_router
 from .routes import art_router, router
 from .sessions import SessionRegistry
 
@@ -21,6 +23,19 @@ LOCAL_ORIGINS = [
     "http://127.0.0.1:4173",
 ]
 
+#: Pods are played across a room, so the client is served to the other players'
+#: machines and its origin is a LAN address nobody can enumerate in advance.
+#: A regex over the private ranges rather than ``*``: this stays an app you can
+#: only reach from a network you are already on.
+LAN_ORIGIN_RE = (
+    r"^http://("
+    r"localhost|127\.0\.0\.1"
+    r"|10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    r"|192\.168\.\d{1,3}\.\d{1,3}"
+    r"|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}"
+    r")(:\d+)?$"
+)
+
 
 def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) -> FastAPI:
     app = FastAPI(
@@ -31,6 +46,7 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
     app.add_middleware(
         CORSMiddleware,
         allow_origins=LOCAL_ORIGINS,
+        allow_origin_regex=LAN_ORIGIN_RE,
         allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -41,6 +57,10 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
     pinned = data is not None
     game_data = data if pinned else server_registry()
     app.state.sessions = SessionRegistry(game_data)
+    # Handed the session registry rather than the GameData: a pod must read
+    # decks through `sessions.data` so an imported deck shows up in the lobby
+    # the moment `reload()` rebinds it.
+    app.state.pods = PodRegistry(app.state.sessions)
 
     # Both are optional. A fresh clone that has not run the build script must
     # still deal a game -- it simply renders text frames, which is what the
@@ -74,6 +94,7 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
     app.state.reload = reload
 
     app.include_router(router)
+    app.include_router(pod_router)
     app.include_router(art_router)
 
     @app.get("/health")
@@ -86,6 +107,7 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
             "cards": len(registry.data.registry),
             "decks": sorted(registry.data.decks),
             "games": len(registry),
+            "pods": len(app.state.pods),
             # Which bulk dump the committed index came from, so "is our art
             # stale" is answerable without opening the database.
             # `rows` last so the live count wins over the build-time note.

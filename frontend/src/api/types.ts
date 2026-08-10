@@ -226,6 +226,23 @@ export interface StateResponse {
   actions: LegalAction[];
   events: GameEvent[];
   event_cursor: number;
+  /** The session's mutation counter. Fed back as `?since_version=` to long-poll. */
+  version: number;
+  /**
+   * The seat this view is for. Echoed back because a client arriving from a pod
+   * does not know it: the lobby's four chairs compact down to the players who
+   * are actually in the game, so lobby seat 2 can be table seat 1.
+   */
+  your_seat: number;
+  /**
+   * Which seats are people.
+   *
+   * The engine does not model this -- a seat is a seat to it -- but the
+   * client's behaviour turns on it: waiting for an AI means pumping it forward
+   * a decision at a time, waiting for a human means long-polling until they
+   * move.
+   */
+  human_seats: number[];
 }
 
 export interface GameCreated {
@@ -233,6 +250,7 @@ export interface GameCreated {
   your_seat: number;
   state: GameView;
   actions: LegalAction[];
+  version: number;
 }
 
 export interface DeckSummary {
@@ -249,6 +267,8 @@ export interface DeckSummary {
   playable: number;
   /** Cards whose non-keyword rules text does nothing. */
   simplified: number;
+  /** Editorial. Empty for an imported deck, which the catalogue draws honestly. */
+  tags: string[];
 }
 
 /**
@@ -321,3 +341,80 @@ export interface ImagesResponse {
   art_base: string;
   images: Record<string, { card_id: string; art: string | null; artist: string | null } | null>;
 }
+
+/* ------------------------------------------------------------------ */
+/* Decks: the dossier's half                                           */
+/* ------------------------------------------------------------------ */
+
+/** Five 1-4 scales. Editorial: an imported deck has none of this. */
+export interface DeckRatings {
+  speed: number;
+  complexity: number;
+  interaction: number;
+  resilience: number;
+  pilot: number;
+}
+
+export interface SignatureCard {
+  card_id: string;
+  name: string;
+  why: string;
+  art_url: string | null;
+}
+
+/** `GET /api/decks/{id}` -- everything the dossier shows. */
+export interface DeckDetail extends DeckSummary {
+  ratings: DeckRatings | null;
+  strategy: string;
+  signature: SignatureCard[];
+  /** Seven buckets: mana values 1..6 and 7+, non-lands only. */
+  curve: number[];
+  lands: number;
+  swaps: number;
+  swap_note: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pods: the pre-game lobby                                            */
+/* ------------------------------------------------------------------ */
+
+export type PodSeatKind = "empty" | "cpu" | "open" | "human";
+export type PodStatus = "open" | "starting" | "in_game" | "closed";
+
+export interface PodSeatView {
+  index: number;
+  kind: PodSeatKind;
+  name: string | null;
+  /**
+   * Null until this seat locks in -- the lobby's hidden-information rule, and
+   * the reason a face-down card is one picture for three different facts.
+   */
+  deck: DeckSummary | null;
+  locked: boolean;
+  ready: boolean;
+  is_you: boolean;
+  is_host: boolean;
+  /** CPU seats only. */
+  agent: string | null;
+}
+
+export interface PodView {
+  code: string;
+  /** Monotonic. Fed back as `?since=` to long-poll for somebody else's move. */
+  version: number;
+  status: PodStatus;
+  seats: PodSeatView[];
+  your_seat: number | null;
+  you_are_host: boolean;
+  /** Set the moment the host deals; how every client finds the table. */
+  game_id: string | null;
+  invite_link: string;
+}
+
+/** Returned exactly once, at create or join. The token is never in a PodView. */
+export interface PodCredentials {
+  player_token: string;
+  pod: PodView;
+}
+
+export type SeatAdminAction = "add_cpu" | "open_chair" | "clear" | "set_deck" | "set_agent";

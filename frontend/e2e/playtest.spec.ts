@@ -1,5 +1,12 @@
 import { test } from "@playwright/test";
-import { actionsOfKind, enabledActionButtons, isOver, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  enabledActionButtons,
+  isOver,
+  pickDeck,
+  startGame,
+  waitForOurTurn,
+} from "./helpers";
 
 /**
  * Not an assertion suite -- a camera.
@@ -29,15 +36,22 @@ test.describe("playtest capture", () => {
       window.localStorage.setItem("automtg.speed", "fast");
     });
 
-    // Menu first, with its entrance animation finished.
+    // The front door first, with its entrance animation finished.
     await page.goto("/");
-    await page.getByTestId("new-game").waitFor();
+    await page.getByTestId("home").waitFor();
     await page.waitForTimeout(900);
-    await shoot("menu");
+    await shoot("door");
 
-    await page.getByTestId("deck-aesi").click();
+    // Then the lobby, which is the screen this flow is actually about.
+    await page.getByTestId("create-pod").click();
+    await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
     await page.getByTestId("opponents-1").click();
+    await pickDeck(page, "aesi");
+    await page.waitForTimeout(600);
+    await shoot("lobby");
+
     await page.getByPlaceholder("random").fill("3");
+    await page.getByTestId("lock-in").click();
     await page.getByTestId("start-game").click();
     await page.getByTestId("table").waitFor({ timeout: 30_000 });
 
@@ -122,13 +136,7 @@ test.describe("playtest capture", () => {
     await page.addInitScript(() => {
       window.localStorage.setItem("automtg.speed", "instant");
     });
-    await page.goto("/");
-    await page.getByTestId("new-game").waitFor();
-    await page.getByTestId("deck-aesi").click();
-    await page.getByTestId("opponents-3").click();
-    await page.getByPlaceholder("random").fill("5");
-    await page.getByTestId("start-game").click();
-    await page.getByTestId("table").waitFor({ timeout: 30_000 });
+    await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });
 
     for (let i = 0; i < 90; i += 1) {
       await waitForOurTurn(page);

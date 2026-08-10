@@ -1,5 +1,4 @@
 # Backlog
-- Multiplayer online support using a basic system of rooms and room codes
 - Controller support for Windows with XBox controller
 
 # Features
@@ -40,6 +39,22 @@
 - Ensure significant unit and integration test coverage for this new backend support as it is highly complex with roubustness required for the lobby to work at all
 
 <local-plans>\support-online-pod-sequential-penguin.md
+
+Done. Two to four people, each in their own browser against one uvicorn process,
+create or join a pod by code, pick decks privately, lock in, and play a real
+Commander game together.
+
+The transport is **versioned long-polling** rather than sockets, which is a
+decision with consequences and so has its own record:
+`docs/adr/0007-versioned-long-polling.md`. Deck secrecy in the lobby is the same
+kind of contract `player_view` is for a game — `Pod.view_for` is the only way a
+pod reaches the wire — and the event log had to be filtered per seat to close a
+leak `player_view` never covered. Undo is refused outright in a multi-human game;
+it rebuilds the `Game` by replay and the other player is holding the events being
+rewound.
+
+Four new server suites, `test_pod_races.py` being the one that finds the mistakes
+in the other three. See `docs/api.md`, `docs/frontend.md` and `docs/testing.md`.
 
 ---
 

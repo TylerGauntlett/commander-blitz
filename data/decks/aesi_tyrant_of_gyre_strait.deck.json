@@ -112,5 +112,26 @@
       "replaced_with": "azusa_lost_but_seeking",
       "reason": "playing lands off the top of the library needs continuous zone-permission effects"
     }
+  ],
+  "tags": ["Ramp", "Landfall", "Card draw"],
+  "ratings": {"speed": 2, "complexity": 3, "interaction": 2, "resilience": 3, "pilot": 2},
+  "strategy": "The first four turns are spent almost entirely on mana: a dork, a rock, a land-search sorcery, a second land drop. Aesi lands on turn five or six and converts the whole plan into cards - every land after that draws one, and Aesi lets you play two. By turn eight the deck is drawing three or four cards a turn off lands alone, and the payoffs stop being incremental: Avenger of Zendikar turns a board of lands into a board of bodies, Rampaging Baloths turns each new land into a 4/4. It wins by having more of everything than the table and swinging with trample.",
+  "signature": [
+    {
+      "card_id": "tatyova_benthic_druid",
+      "why": "A second Aesi. Every land is a card and a life."
+    },
+    {
+      "card_id": "avenger_of_zendikar",
+      "why": "Turns thirty-seven lands into a board in one cast."
+    },
+    {
+      "card_id": "rampaging_baloths",
+      "why": "Every land after this one is a 4/4."
+    },
+    {
+      "card_id": "explosive_vegetation",
+      "why": "Two lands at once, and lands are the engine."
+    }
   ]
 }

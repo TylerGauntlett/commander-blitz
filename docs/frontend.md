@@ -307,6 +307,71 @@ Forest never hides behind a tapped one.
 bury a choice. Every member stays mounted even when hidden behind the top card —
 unmounting on hover would destroy each card's `layoutId` identity.
 
+## The lobby
+
+Three screens before the table, ported from `mockups/flow/02-face-up.html`:
+
+| File | What it is |
+|---|---|
+| `components/lobby/HomeScreen.tsx` | The front door. Two actions: create a pod, or join one with a code |
+| `components/lobby/PodLobby.tsx` | Four seats as a hand of cards, and the rail under them |
+| `components/lobby/PodSeat.tsx` | One seat: the card, the stamp, the plate, the per-kind actions |
+| `components/lobby/DeckCatalog.tsx` | Full-screen takeover: search, colour filter, source, sort, the import row |
+| `components/lobby/DeckDossier.tsx` | The right-hand overlay: ratings, strategy, signature cards, curve |
+| `components/lobby/InviteDialog.tsx` | The pod code and a link, each with its own copy confirmation |
+| `components/lobby/CardBack.tsx` | One picture for "you do not get to know this yet" |
+| `components/lobby/ReadyTrack.tsx` | Four segments, filling as each card turns face up |
+
+The mockup's central idea is that **setting up a game is not configuration, it is four
+people committing one after another** — so a commitment is drawn as a card turning over,
+and locking in is a wax stamp rather than a checkbox. The asymmetry is deliberate:
+`.lock--on` (unlock) is quieter than `.lock` (lock in), because committing should feel
+heavier than reconsidering when three other people are waiting on it.
+
+**A face-down card is one object for three different facts.** An empty chair, a player who
+has not chosen, and a player whose list is sealed are all "you do not get to know this
+yet". The menu round drew those as a dashed box, a hatch plate and an italic caption; one
+object says it better and says it once.
+
+**The card face is the real component.** `CommanderCard` adapts `GET /api/cards/{id}` into
+the `CardView` shape `CardFace` takes, so the commander you turn over in the lobby is the
+same object the table will put in your preview rail. The mockup carries its own port of
+`cards.css` because it has no components; `styles/lobby.css` deliberately does not.
+
+`logic/lobby.ts` holds the predicates, so they can be tested without a DOM. The pair worth
+being careful about is `canStart` and `whyNot`: they answer the same question, and a screen
+whose button and explanation disagree is worse than one with neither. `tests/lobby.test.ts`
+asserts on both together in every case.
+
+### Hearing about somebody else's move
+
+`state/usePod.ts` is a **self-rescheduling long poll**. It asks for the pod with the
+version it last saw; the server blocks until that number moves or ~25 s elapse; the moment
+the answer lands it asks again. A timed-out poll is a 200 with the same version, which is
+indistinguishable from a slow one. See
+[adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md).
+
+The same mechanism reaches the table. `useGame` now has two loops and picks between them
+by *who* it is waiting for, using `human_seats` from the state response:
+
+- **An AI seat** — the pump, unchanged. `?ai_steps=1` and one decision at a time, so its
+  turn is watchable.
+- **Another person** — `?since_version=`, and block. There is nothing to pump; the server
+  is not going to move that seat, a person is. Pumping here would be a busy-wait against
+  somebody's thinking time.
+
+### Identity
+
+A `player_token`, issued once at create or join, sent as `X-Player-Token`. `api/client.ts`
+attaches it in `request()`, so no call site had to change and none can forget.
+
+It lives in `sessionStorage` keyed by pod code. **Session, not local**, deliberately: two
+tabs on one machine are then two different players, which is exactly how this gets tested
+by hand — and how `e2e/pod.spec.ts` drives two browser contexts against one server.
+
+That is also the whole reconnect story. A refreshed tab hands the token back, the server
+returns the seat it already had, and nothing else happens.
+
 ## Watching the opponents
 
 `GameSession.drive_ai()` normally runs every AI seat until a human must decide, so one
@@ -326,8 +391,14 @@ is requested. A stall guard stops the loop if the engine ever fails to progress.
 ## State
 
 - **Server state** — react-query. The engine is authoritative and every mutation returns
-  the new state, so there are no optimistic updates. There is no background polling; the
-  only loop is the AI pump described above.
+  the new state, so there are no optimistic updates. There is still no *background
+  polling*: the two loops are the AI pump and the long poll above, and both only run while
+  the client is genuinely waiting for somebody.
+- **Routing** — a `useState<Route>` discriminated union in `App.tsx`: `home` → `lobby` →
+  `dealing` → `table`. Still no router. Back-button navigation between a lobby and a game
+  that are both *server* state cannot work — going "back" to a pod that has already dealt
+  is not a thing — and a URL that pretends otherwise is worse than no URL. The one
+  exception is `?join=CODE`, read once at boot, which an invite link carries.
 - **UI state** — zustand: selection, hover, targeting, staged combat, the open stack, the
   zone modal, animation speed, the error banner. None of it reaches the server except as
   an action id.
@@ -358,6 +429,7 @@ npm test                 # vitest: pure logic + components
 npm run build            # tsc --noEmit && vite build
 npm run lint             # biome check .
 npx playwright test      # end-to-end against the real engine
+npx playwright test e2e/pod.spec.ts   # two browser contexts, one server
 ```
 
 374 unit and component tests: lane assignment and band order, attachment resolution,
@@ -398,5 +470,6 @@ native `<dialog>` element, which needs an imperative `showModal()` and cannot be
 
 ## Not built
 
-WebSockets (the AI pump is enough for one local player), deck building,
-multiplayer over a network, and mobile layout.
+WebSockets — multiplayer uses versioned long-polling instead, and
+[adr/0007](adr/0007-versioned-long-polling.md) records why. Deck building, spectating a
+pod you are not in, chat, and mobile layout.

@@ -193,8 +193,11 @@ returning an index.
 
 - No layers system. See [rules-coverage.md](rules-coverage.md).
 - No state cloning, so no lookahead search in agents.
-- No WebSockets. A local single-user app polls on mutation; that removes a whole
-  class of reconnection state.
+- No WebSockets. Multiplayer uses **versioned long-polling** instead: every pod and
+  game session carries a monotonic version, and clients block on `?since=` until it
+  moves. That keeps every handler a sync `def` and removes the reconnection state
+  machine a socket layer would need. See
+  [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md).
 - No runtime network calls. Card rules are JSON in the repo; card art is
   downloaded once at build time and served from `data/art/` by this app, so a
   game renders with the network unplugged. See [card-catalog.md](card-catalog.md).

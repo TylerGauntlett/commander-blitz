@@ -128,6 +128,46 @@ to share a card is to share it.
 Test-only cards live in `tests/data/testing.cards.json` and are never loaded by a real
 game — the test registry adds them, the shipped registry does not.
 
+## How a deck describes itself
+
+The lobby's deck catalogue and dossier are fed from two halves, kept deliberately
+separate.
+
+**Authored**, in the deck file, and only for the four shipped decks:
+
+```json
+"tags": ["Ramp", "Landfall", "Card draw"],
+"ratings": {"speed": 2, "complexity": 3, "interaction": 2, "resilience": 3, "pilot": 2},
+"strategy": "The first four turns are spent almost entirely on mana: ...",
+"signature": [
+  { "card_id": "tatyova_benthic_druid", "why": "A second Aesi. Every land is a card and a life." }
+]
+```
+
+Nothing in a card list tells you a deck is hard to pilot, so these are editorial and
+hand-written. Every field is optional: `DeckModel` is `extra="forbid"`, so a *required*
+field here would have broken every deck file that predates it, and an imported deck has
+none of this and must still load. The catalogue draws that empty state honestly rather
+than inventing numbers.
+
+Editorial copy that nothing else reads is exactly the sort of thing that rots, so
+`tests/cards/test_deck_metadata.py` is the gate: every `signature` card must resolve in
+the registry **and actually be in the deck**, and every rating must be 1–4. A signature
+card renamed or cut fails there rather than rendering a blank frame six months later.
+
+**Derived**, at request time, from the list itself:
+
+| Field | From |
+|---|---|
+| `curve` | Seven buckets — mana values 1..6 and 7+ — of non-land cards, weighted by quantity. Lands are excluded; 37 of them would swamp the first bucket and tell you nothing |
+| `lands` | Entries whose type line includes `Land` |
+| `swaps`, `swap_note` | `substitutions`, above — already in every deck file and, until the dossier, never sent to the client |
+
+Derived rather than authored so they cannot drift: change the list and the numbers
+change with it. `GET /api/decks` returns the light summary the catalogue tiles need;
+`GET /api/decks/{id}` adds the dossier's half, so a screen showing 24 tiles does not
+pay for 24 strategy essays.
+
 ## Checking a deck
 
 ```bash

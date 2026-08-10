@@ -60,8 +60,9 @@ a card, never enough to decide legality.
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/health` | Version, card count, deck list, live game count |
-| `GET` | `/api/decks` | Deck summaries for the new-game dialog, with `source`/`playable`/`simplified` |
+| `GET` | `/health` | Version, card count, deck list, live game and pod counts |
+| `GET` | `/api/decks` | Deck summaries for the catalogue, with `source`/`playable`/`simplified`/`tags` |
+| `GET` | `/api/decks/{deck_id}` | One deck with the dossier's fields: `ratings`, `strategy`, `signature`, and the derived `curve`/`lands`/`swaps` |
 | `POST` | `/api/decks/import` | Import a public Moxfield deck. Body: `{url, dry_run?}` |
 | `DELETE` | `/api/decks/{deck_id}` | Remove an imported deck. `400` on a precon |
 | `GET` | `/api/cards/{card_id}` | Full card definition, for tooltips |
@@ -70,16 +71,23 @@ a card, never enough to decide legality.
 | `GET` | `/api/catalog?q=&colors=&types=&limit=` | Search the ~32,700-card Scryfall-derived catalog |
 | `GET` | `/api/catalog/{scryfall_id}` | One catalog card |
 | `POST` | `/api/games` | Create a game. Body: `{seats: [{deck_id, kind, agent, name}], seed?}` |
-| `GET` | `/api/games/{id}/state?seat=&since=` | The player view, legal actions, and new events |
+| `GET` | `/api/games/{id}/state?seat=&since=&since_version=&timeout=` | The player view, legal actions, and new events. Omit `seat` to be told yours by your token; pass `since_version` to long-poll |
 | `GET` | `/api/games/{id}/actions?seat=` | Just the legal actions |
 | `POST` | `/api/games/{id}/actions` | Apply one action id |
 | `POST` | `/api/games/{id}/declare` | Submit a whole attack or block at once |
 | `POST` | `/api/games/{id}/advance` | Let the AI seats act (rarely needed) |
 | `POST` | `/api/games/{id}/options` | Change a human seat's play settings (`full_control`) |
-| `POST` | `/api/games/{id}/undo` | Rewind past the last human action |
+| `POST` | `/api/games/{id}/undo` | Rewind past the last human action. `409 multiplayer_undo` with more than one human |
 | `GET` | `/api/games/{id}/events?since=` | Event slice for the log |
 | `GET` | `/api/games/{id}/debug` | Full state, hidden zones included. **Development only** |
 | `DELETE` | `/api/games/{id}` | Discard the session |
+| `POST` | `/api/pods` | Open a pod and take seat 0. Body: `{name, deck_id?, seed?}` -> `{player_token, pod}` |
+| `POST` | `/api/pods/{code}/join` | Take a chair. Passing your existing token is how reconnecting works |
+| `GET` | `/api/pods/{code}?since=&timeout=` | The pod, blocking until it changes. Token optional |
+| `PATCH` | `/api/pods/{code}/seat` | Your own chair: `{deck_id?, locked?}` |
+| `PATCH` | `/api/pods/{code}/seats/{i}` | A chair that is not yours. Host only. `{action, deck_id?, agent?}` |
+| `POST` | `/api/pods/{code}/start` | Deal the pod. Host only |
+| `POST` | `/api/pods/{code}/leave` | Give up your chair |
 
 Errors: `400` for an illegal or out-of-turn action, `404` for an unknown game or card.
 
@@ -101,6 +109,17 @@ break the first time somebody reworded it. Codes and statuses are tabulated in
 
 Three tests hold this line, including one that asserts the `/debug` endpoint — the
 deliberate exception — really does reveal what the player view hides.
+
+**The event log is filtered too**, by `event_log_for(state, seat)`. `player_view` hid
+the hands, but the log ran alongside it unredacted, and a `draw` fires with the object
+id of the card drawn. An opaque id is not a card name today — but the client
+accumulates every id it has ever seen, so an id drawn now and played later is
+retroactively identified, and the hand was never really hidden.
+
+So for `draw`, `discard` and `mill` by another seat, the id is dropped. The event
+itself stays, with its type and its `player`, so "Priya drew a card" still narrates: a
+client that silently received a shorter list than its neighbour would have no way to
+tell that from a bug.
 
 ## Combat
 
@@ -148,10 +167,81 @@ Each tape entry records the seat's `full_control` setting at the time, because t
 setting decides which priority windows exist: replaying an old Pass under a newer
 setting could find it illegal.
 
+## Pods, tokens, and who is allowed to see what
+
+A pod is the pre-game lobby: a code somebody can read down a phone line, four chairs,
+and a version counter. `POST /api/pods` returns a **`player_token` exactly once** — it
+is the only thing that proves a later request is the same person, and it never appears
+in any pod view, for anybody. Clients send it as `X-Player-Token`.
+
+A header rather than a cookie, deliberately: CORS here is `allow_credentials=False`, so
+a cookie would not be sent cross-origin from the Vite dev server at all.
+
+**Deck secrecy is the lobby's hidden-information rule**, and `Pod.view_for(player_id)`
+is the only way a pod reaches the wire, exactly as `player_view` is for a game. For
+every seat that is not the viewer's own, `deck` is `null` until that seat locks in. A
+CPU is always fully visible — the host chose its deck. No token, and no other player's
+`player_id`, appears in any view.
+
+`POST /pods/{code}/start` compacts the four chairs down to the seats that are actually
+filled and hands them to `SessionRegistry.create`, so a pod holding
+`[you, empty, cpu, empty]` becomes a **two-player game, not a four-player game with two
+dead seats**. It also writes `session.tokens`, a `player_token -> seat` map — which is
+why `GET /state` with no `?seat=` can tell you which seat is yours.
+
+Pod errors carry a machine-readable code in the same shape deck import established:
+
+| code | status | means |
+|---|---|---|
+| `not_found` | 404 | no pod with that code |
+| `bad_token` | 401 | that token does not belong to this pod |
+| `not_host` | 403 | only the host can do that |
+| `not_your_seat` | 403 | that chair is somebody else's |
+| `pod_full` | 409 | somebody took the last chair first |
+| `already_started` | 409 | the pod dealt; `game_id` is in the detail, so you are routed to the table rather than bounced |
+| `not_ready` | 409 | a seat has not locked in, or you have not chosen a deck |
+| `unknown_deck` | 400 | no such deck |
+| `pod_closed` | 410 | everybody left |
+
+## Authorisation at the table
+
+`_authorise` runs in two regimes, chosen by whether the session has a token map.
+
+A session **dealt from a pod** has one, and then `X-Player-Token` must resolve to
+exactly the seat being asked about — otherwise anybody holding a `game_id` could read a
+rival's hand with `?seat=1`.
+
+A session created straight through `POST /api/games` has **no token map**, and keeps the
+bounds-check-only behaviour it has always had. That is not an oversight: the CLI,
+`scripts/smoke_http.py`, single-player and every existing test drive a game with no
+token at all, and requiring one would break all of them to protect a seat nobody else
+can reach. `tests/server/test_multiplayer_game.py` asserts both halves.
+
+`POST /undo` is refused outright in a multi-human session. Undo rebuilds the `Game` by
+replay, and a second player already holding the rewound events has no way to reconcile
+them.
+
+## Long-polling
+
+Every pod and every game session carries a monotonic `version`. Pass the one you last
+saw as `?since=` (pods) or `?since_version=` (games) and the request blocks until it
+moves or `timeout` (max 25 s) elapses.
+
+- **`since=0` returns immediately.** That is the first fetch.
+- **A timeout is not an error.** You get the current view with a 200 and re-poll. A
+  long poll is indistinguishable from a slow one, and a dropped connection costs at
+  most one round trip.
+
+Rationale and the alternatives in
+[adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md).
+
 ## Sessions
 
-In-memory, single process, no auth. This is a local application; there is no database
-and no user model. Restarting the server discards every game.
+In-memory, single process. This is a LAN application; there is no database and no user
+model, and a `player_token` is a per-pod bearer credential, not an account. Restarting
+the server discards every game and every pod. Idle players, abandoned pods and
+abandoned game sessions are swept opportunistically when somebody creates or joins a
+pod, so there is no reaper thread to shut down cleanly.
 
 ## Running it
 
@@ -159,6 +249,15 @@ and no user model. Restarting the server discards every game.
 uvicorn automtg.server.app:get_app --factory --reload
 ```
 
-CORS is open to the Vite dev server ports only. In development the Vite proxy forwards
-`/api` and `/health`, so the client uses same-origin relative URLs and needs no
+CORS is open to the Vite dev server ports plus any private-network origin
+(`10.x`, `192.168.x`, `172.16-31.x`), by regex rather than `*` — so this stays an app
+you can only reach from a network you are already on. In development the Vite proxy
+forwards `/api` and `/health`, so the client uses same-origin relative URLs and needs no
 base-URL setting at all.
+
+To play across a room, bind both to the LAN:
+
+```bash
+uvicorn automtg.server.app:get_app --factory --host 0.0.0.0
+cd frontend && npm run dev -- --host
+```
