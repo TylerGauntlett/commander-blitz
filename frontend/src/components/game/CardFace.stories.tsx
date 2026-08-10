@@ -15,14 +15,40 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
 import type { CardView } from "../../api/types";
+import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
 import * as pool from "../../testing/cards";
 import { card } from "../../testing/fixtures";
+import type { CardVariant } from "./CardFace";
 import { CardFace } from "./CardFace";
 
+/** How wide the face's box is, per variant. */
+const SCALE: Record<CardVariant, number> = {
+  board: CARD_SCALE.own,
+  detail: CARD_SCALE.peek,
+  big: CARD_SCALE.preview,
+};
+
+/**
+ * Every story draws the face inside a card-shaped slot.
+ *
+ * `.face` is `width: 100%; height: 100%` and in the app always sits inside
+ * `.card`, which is `var(--card-w)` by 1.4 of it. Rendered bare it stretches to
+ * whatever holds it -- which still passes every assertion about what it says
+ * while looking nothing like a card, so the slot belongs in the story rather
+ * than being left out of it.
+ */
 const meta = {
   title: "Game/CardFace",
   component: CardFace,
   parameters: { automtg: { frame: "bare" } },
+  render: (args) => (
+    <div
+      className="card card--static"
+      style={{ ["--card-w" as string]: cardWidthVar(SCALE[args.variant ?? "board"]) }}
+    >
+      <CardFace {...args} />
+    </div>
+  ),
 } satisfies Meta<typeof CardFace>;
 
 export default meta;
@@ -63,11 +89,29 @@ export const Token: Story = { args: { card: pool.krakenToken() } };
 /* The colour ladder                                                   */
 /* ------------------------------------------------------------------ */
 
-function Grid({ cards }: { cards: CardView[] }) {
+/**
+ * A grid of faces at card proportions.
+ *
+ * `.face` is `width: 100%; height: 100%` -- it fills whatever holds it, and in
+ * the app that is always `.card`, which is `var(--card-w)` by 1.4 of it. A face
+ * dropped straight into a flex row instead stretches to the row and renders as a
+ * wide bar: still legible, still passing every content assertion, and nothing
+ * like a card. So the slot is part of the story.
+ */
+function Grid({ cards, variant }: { cards: CardView[]; variant?: CardVariant }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 12,
+        ["--card-w" as string]: cardWidthVar(CARD_SCALE.own),
+      }}
+    >
       {cards.map((c) => (
-        <CardFace key={c.oid} card={c} />
+        <div key={c.oid} className="card card--static">
+          <CardFace card={c} variant={variant} />
+        </div>
       ))}
     </div>
   );
