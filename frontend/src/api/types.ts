@@ -101,6 +101,15 @@ export interface PlayerView {
   commander_tax: Record<string, number>;
   /** Keyed by commander oid; the extra generic mana owed, already doubled. */
   commander_cost: Record<string, number>;
+  /**
+   * Keyed by the **player** who dealt it, not by their commander's oid.
+   *
+   * The odd one out: the two fields above are keyed by commander oid, and this
+   * one is not -- the engine writes `taken[src.controller]`
+   * (`engine/primitives.py`), because 21 damage is lethal per *opponent* and a
+   * partner pair's two commanders share one total. `PlayerOrb` reads it by pid
+   * to label the chips, and a fixture keyed by oid silently reports zero.
+   */
   commander_damage_taken: Record<string, number>;
   library_count: number;
   hand_count: number;
