@@ -526,12 +526,15 @@
  * One line, and it must stay one line.
  *
  * The rail is a fixed 304px column (`.table__body` in board.css), so after the
- * panel's padding there are about 280px for six controls. When they wrapped, the
+ * panel's padding there are about 280px for the tools. When they wrapped, the
  * second line pushed out of the panel's box and the quit button rendered *over*
  * the commit dock -- the panel is `flex: 1 1 auto` in a column that is already
- * full, so it cannot grow to absorb a wrap. Everything below is sized to fit that
- * budget. (This said `clamp(272px, 17.4vw, 352px)` long after the rail stopped
- * being fluid; the budget was being reasoned against a narrower rail than exists.)
+ * full, so it cannot grow to absorb a wrap.
+ *
+ * The speed selector used to sit here and take a third of that budget on its
+ * own, which is what pushed quit off the end. It is gone; see `uiStore.ts` for
+ * why a per-player animation speed was the wrong control to have in a game other
+ * people are waiting on.
  */
 .tools {
   display: flex;
@@ -584,29 +587,6 @@
   padding: 0 6px;
   font-size: 10.5px;
   text-overflow: ellipsis;
-}
-
-.speed {
-  display: flex;
-  flex: 0 0 auto;
-  margin-right: auto;
-  border: 1px solid var(--rail-line);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.speed__btn {
-  padding: 3px 7px;
-  border: 0;
-  background: var(--pane-well);
-  color: var(--text-faint);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.speed__btn--on {
-  background: var(--astral-hi);
-  color: #1b1533;
 }
 
 /* The inline targeting hint, above the hand. Not part of the panel: it belongs

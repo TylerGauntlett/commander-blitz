@@ -33,12 +33,20 @@ export const SPEED_MULTIPLIER: Record<Speed, number> = {
 };
 
 /**
- * Animation speed survives a reload.
+ * Playback speed, with no control on screen.
  *
- * It is a preference, not session state -- somebody who has decided they want
- * instant should not have to say so again every game. It also means the setting
- * can be chosen before the page loads, which is the only way to reach it while
- * a modal decision is on screen.
+ * There was a three-way selector in the action panel and it is gone. Two
+ * reasons, and the second is the real one. It took a third of the tool strip's
+ * width, which is a fixed 304px rail, and that is what pushed the quit button
+ * off the end. And in a multiplayer game it is a confusing thing to offer at
+ * all: it changes only *your* narration while everyone else plays at theirs, so
+ * "slower" does not mean the game slows down, it means you fall further behind a
+ * board that has already moved on.
+ *
+ * The value survives because narration still has to be paced, and it is still
+ * read from storage so `e2e/helpers.ts` can force `instant` and a run does not
+ * spend its time watching beats. There is simply no longer a way to set it from
+ * inside the game.
  */
 const SPEED_KEY = "automtg.speed";
 const MUTED_KEY = "automtg.muted";
@@ -51,14 +59,6 @@ function storedSpeed(): Speed {
     // Private mode, or no DOM at all under vitest. The default is fine.
   }
   return "fast";
-}
-
-function rememberSpeed(speed: Speed): void {
-  try {
-    localStorage.setItem(SPEED_KEY, speed);
-  } catch {
-    // Not being able to remember a preference is not worth an error.
-  }
 }
 
 /**
@@ -144,7 +144,6 @@ interface UiState {
   toggleLog: () => void;
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
-  setSpeed: (speed: Speed) => void;
   toggleMuted: () => void;
 }
 
@@ -201,10 +200,6 @@ export const useUiStore = create<UiState>((set) => ({
   setImages: (images) => set({ images }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),
-  setSpeed: (speed) => {
-    rememberSpeed(speed);
-    set({ speed });
-  },
   toggleMuted: () =>
     set((s) => {
       rememberMuted(!s.muted);

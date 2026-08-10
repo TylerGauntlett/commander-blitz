@@ -53,7 +53,7 @@ import { keywordLabel, manaPips, statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
-import { type Speed, useUiStore } from "../../state/uiStore";
+import { useUiStore } from "../../state/uiStore";
 import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
 
@@ -81,20 +81,6 @@ const TIER_LABEL: Record<BlockTier, string> = {
  * `isModalDecision`, and the panel stands its list down for them entirely.
  */
 const COMMIT_KINDS = ["keep", "yes", "pass"];
-
-const SPEEDS: Speed[] = ["cinematic", "fast", "instant"];
-
-const SPEED_LABELS: Record<Speed, string> = {
-  cinematic: "0.5x",
-  fast: "1x",
-  instant: "≫",
-};
-
-const SPEED_TITLES: Record<Speed, string> = {
-  cinematic: "Half speed — watch every beat",
-  fast: "Normal speed",
-  instant: "Skip narration entirely",
-};
 
 type Mode = "attack" | "block" | "play" | "chooseX";
 
@@ -142,8 +128,6 @@ export function ActionPanel({
   aiThinking,
   standDown,
 }: Props) {
-  const speed = useUiStore((s) => s.speed);
-  const setSpeed = useUiStore((s) => s.setSpeed);
   const muted = useUiStore((s) => s.muted);
   const toggleMuted = useUiStore((s) => s.toggleMuted);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
@@ -715,21 +699,6 @@ export function ActionPanel({
           available and almost never the thing you came here to press.
         */}
         <div className="tools">
-          <fieldset className="speed">
-            <legend className="visually-hidden">Animation speed</legend>
-            {SPEEDS.map((option) => (
-              <button
-                type="button"
-                key={option}
-                className={option === speed ? "speed__btn speed__btn--on" : "speed__btn"}
-                data-speed={option}
-                onClick={() => setSpeed(option)}
-                title={SPEED_TITLES[option]}
-              >
-                {SPEED_LABELS[option]}
-              </button>
-            ))}
-          </fieldset>
           {narrating && (
             <button type="button" className="tool" onClick={onSkipNarration} title="Skip ahead">
               ⏩

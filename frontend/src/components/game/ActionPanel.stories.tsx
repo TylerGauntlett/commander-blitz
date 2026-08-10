@@ -294,8 +294,8 @@ export const BlockMode: Story = {
  *
  * Zero action ids -- otherwise the mulligan buttons exist here *and* behind the
  * dialog's backdrop, unclickable and ambiguous to anything selecting by id. The
- * tools stay reachable, because the speed control is most wanted exactly when a
- * dialog is up.
+ * tools stay in the document regardless: quitting and the stops setting are
+ * wanted exactly when a dialog is up.
  */
 export const StandDown: Story = {
   args: { ...from(scenarios.mulligan()), standDown: true },
@@ -365,17 +365,6 @@ export const FullControlOn: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect((await canvas.findByTestId("full-control")).textContent).toBe("Full control");
-  },
-};
-
-/** Speed is a persisted preference, so the click has to reach the store. */
-export const SpeedToggle: Story = {
-  args: from(scenarios.earlyBoard()),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByTestId("action-panel");
-    await userEvent.click(await canvas.findByText("1x"));
-    expect(useUiStore.getState().speed).toBe("fast");
   },
 };
 

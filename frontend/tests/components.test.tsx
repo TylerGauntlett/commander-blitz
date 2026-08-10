@@ -245,7 +245,7 @@ describe("ActionPanel", () => {
       />,
     );
     expect(renderedIds()).toEqual([]);
-    // The tools stay reachable: the speed control is most wanted exactly when a
+    // The tools stay reachable: quitting is most wanted exactly when a
     // dialog is up.
     expect(screen.getByTestId("full-control")).toBeTruthy();
   });
