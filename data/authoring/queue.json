@@ -5842,12 +5842,12 @@
     },
     "Alena, Kessig Trapper": {
       "edhrec_rank": 7644,
-      "gate": "template",
+      "gate": null,
       "name": "Alena, Kessig Trapper",
-      "reason": "no template for: Partner",
+      "reason": "",
       "scryfall_id": "312a2a8d-2d84-4c4b-b2c4-cbc4e8300312",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Alert Heedbonder": {
@@ -12932,12 +12932,12 @@
     },
     "Arid Mesa": {
       "edhrec_rank": 56,
-      "gate": "template",
+      "gate": null,
       "name": "Arid Mesa",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Plains card, p",
+      "reason": "",
       "scryfall_id": "25ac5405-df7b-4097-914a-022cb18e20d4",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Arisen Gorgon": {
@@ -18732,12 +18732,12 @@
     },
     "Bad River": {
       "edhrec_rank": 6696,
-      "gate": "template",
+      "gate": null,
       "name": "Bad River",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for an Island or Swamp card, put it onto the",
+      "reason": "",
       "scryfall_id": "ca79caa8-9893-49be-bc39-f021adb28220",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Badgermole": {
@@ -20032,12 +20032,12 @@
     },
     "Bant Panorama": {
       "edhrec_rank": 4882,
-      "gate": "template",
+      "gate": null,
       "name": "Bant Panorama",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic Forest, Plains, or Island c",
+      "reason": "",
       "scryfall_id": "dc506497-4ecd-41d3-9042-f92f498251b0",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Bant Sojourners": {
@@ -27334,7 +27334,7 @@
       "edhrec_rank": 3020,
       "gate": "template",
       "name": "Blinkmoth Nexus",
-      "reason": "no template for: {1}: This land becomes a 1/1 Blinkmoth artifact creature with flying until end of turn. It",
+      "reason": "no template for: {1}, {T}: Target Blinkmoth creature gets +1/+1 until end of turn",
       "scryfall_id": "0dcf26d2-4fe0-41cf-8fb9-cb2c529b109b",
       "source": "",
       "status": "pending",
@@ -28842,12 +28842,12 @@
     },
     "Bloodstained Mire": {
       "edhrec_rank": 43,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodstained Mire",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Mountain card, pu",
+      "reason": "",
       "scryfall_id": "115400ae-a43b-4b3d-9ea0-be1e7224dea5",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Bloodstoke Howler": {
@@ -32264,7 +32264,7 @@
       "edhrec_rank": 1666,
       "gate": "template",
       "name": "Bountiful Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Forest, Island, or Mountain card",
+      "reason": "no template for: Cycling {G}{U}{R}",
       "scryfall_id": "b277752b-430a-4f09-8a98-b72f813dd52e",
       "source": "",
       "status": "pending",
@@ -41432,12 +41432,12 @@
     },
     "Cave of the Frost Dragon": {
       "edhrec_rank": 7799,
-      "gate": "template",
+      "gate": null,
       "name": "Cave of the Frost Dragon",
-      "reason": "no template for: {4}{W}: This land becomes a 3/4 white Dragon creature with flying until end of turn. It's ",
+      "reason": "",
       "scryfall_id": "bde28ceb-8b92-4a8c-8e35-5c9f72d20d52",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Cave-In": {
@@ -41732,12 +41732,12 @@
     },
     "Celestial Colonnade": {
       "edhrec_rank": 5592,
-      "gate": "template",
+      "gate": null,
       "name": "Celestial Colonnade",
-      "reason": "no template for: {3}{W}{U}: Until end of turn, this land becomes a 4/4 white and blue Elemental creature wi",
+      "reason": "",
       "scryfall_id": "19082885-8180-430c-9c7a-e1d77f31f726",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Celestial Convergence": {
@@ -52214,7 +52214,7 @@
       "edhrec_rank": 2252,
       "gate": "template",
       "name": "Contaminated Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Plains, Island, or Swamp card, p",
+      "reason": "no template for: Cycling {W}{U}{B}",
       "scryfall_id": "e2312c49-1627-47ad-8113-78a999a97d8d",
       "source": "",
       "status": "pending",
@@ -61972,12 +61972,12 @@
     },
     "Dawntreader Elk": {
       "edhrec_rank": 8719,
-      "gate": "template",
+      "gate": null,
       "name": "Dawntreader Elk",
-      "reason": "no template for: {G}, Sacrifice this creature: Search your library for a basic land card, put it onto the b",
+      "reason": "",
       "scryfall_id": "336d3fb6-7bd3-42eb-b3a8-f80908cab810",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Dawnwing Marshal": {
@@ -63814,7 +63814,7 @@
       "edhrec_rank": 2177,
       "gate": "template",
       "name": "Deceptive Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Plains, Swamp, or Forest card, p",
+      "reason": "no template for: Cycling {W}{B}{G}",
       "scryfall_id": "2ae6828e-ff19-45db-8b59-61616353491f",
       "source": "",
       "status": "pending",
@@ -73892,12 +73892,12 @@
     },
     "Dread Statuary": {
       "edhrec_rank": 11780,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Statuary",
-      "reason": "no template for: {4}: This land becomes a 4/2 Golem artifact creature until end of turn. It's still a land",
+      "reason": "",
       "scryfall_id": "6e54bace-7484-484e-987e-8d3a9a430ab9",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Dread Summons": {
@@ -85194,7 +85194,7 @@
       "edhrec_rank": 819,
       "gate": "template",
       "name": "Escape Tunnel",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battl",
+      "reason": "no template for: {T}, Sacrifice this land: Target creature with power 2 or less can't be blocked this turn",
       "scryfall_id": "5df90940-15ea-418c-8547-6c75d69ec6d3",
       "source": "",
       "status": "pending",
@@ -85392,12 +85392,12 @@
     },
     "Esper Panorama": {
       "edhrec_rank": 6086,
-      "gate": "template",
+      "gate": null,
       "name": "Esper Panorama",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic Plains, Island, or Swamp ca",
+      "reason": "",
       "scryfall_id": "b89070ab-4fe6-4919-b160-b32100fb4930",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Esper Sentinel": {
@@ -89222,12 +89222,12 @@
     },
     "Faerie Conclave": {
       "edhrec_rank": 4821,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Conclave",
-      "reason": "no template for: {1}{U}: This land becomes a 2/1 blue Faerie creature with flying until end of turn. It's s",
+      "reason": "",
       "scryfall_id": "b41920ea-a57c-41ec-a3bd-765abb902bc3",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Faerie Dreamthief": {
@@ -97572,12 +97572,12 @@
     },
     "Flood Plain": {
       "edhrec_rank": 5359,
-      "gate": "template",
+      "gate": null,
       "name": "Flood Plain",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a Plains or Island card, put it onto the",
+      "reason": "",
       "scryfall_id": "61fc0fba-c285-4fad-85a6-79fd7f3f9c35",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Flood of Recollection": {
@@ -97652,12 +97652,12 @@
     },
     "Flooded Strand": {
       "edhrec_rank": 39,
-      "gate": "template",
+      "gate": null,
       "name": "Flooded Strand",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Island card, put",
+      "reason": "",
       "scryfall_id": "431eca69-ba8c-47c8-a325-22a844f83e80",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Flooded Woodlands": {
@@ -98752,12 +98752,12 @@
     },
     "Font of Fertility": {
       "edhrec_rank": 6366,
-      "gate": "template",
+      "gate": null,
       "name": "Font of Fertility",
-      "reason": "no template for: {1}{G}, Sacrifice this enchantment: Search your library for a basic land card, put it onto",
+      "reason": "",
       "scryfall_id": "a8e85cd4-c116-42e2-a94b-2c04b06c4e2b",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Font of Fortunes": {
@@ -99152,12 +99152,12 @@
     },
     "Forbidding Watchtower": {
       "edhrec_rank": 10938,
-      "gate": "template",
+      "gate": null,
       "name": "Forbidding Watchtower",
-      "reason": "no template for: {1}{W}: This land becomes a 1/5 white Soldier creature until end of turn. It's still a lan",
+      "reason": "",
       "scryfall_id": "97b2c000-a4ee-4b7b-b42d-e538de6896df",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Force Away": {
@@ -99394,7 +99394,7 @@
       "edhrec_rank": 1681,
       "gate": "template",
       "name": "Foreboding Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Swamp, Forest, or Island card, p",
+      "reason": "no template for: Cycling {B}{G}{U}",
       "scryfall_id": "57fb0fa7-0c5c-4a75-9461-c51403c30282",
       "source": "",
       "status": "pending",
@@ -106752,12 +106752,12 @@
     },
     "Ghitu Encampment": {
       "edhrec_rank": 11898,
-      "gate": "template",
+      "gate": null,
       "name": "Ghitu Encampment",
-      "reason": "no template for: {1}{R}: This land becomes a 2/1 red Warrior creature with first strike until end of turn. ",
+      "reason": "",
       "scryfall_id": "896a02a6-5348-4f90-90b1-68aa61e84b73",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Ghitu Fire": {
@@ -108412,12 +108412,12 @@
     },
     "Gilanra, Caller of Wirewood": {
       "edhrec_rank": 8515,
-      "gate": "template",
+      "gate": null,
       "name": "Gilanra, Caller of Wirewood",
-      "reason": "no template for: Partner",
+      "reason": "",
       "scryfall_id": "745d297d-4bb4-40cf-bb9c-99dac04e5069",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Gild": {
@@ -115332,12 +115332,12 @@
     },
     "Grasslands": {
       "edhrec_rank": 4809,
-      "gate": "template",
+      "gate": null,
       "name": "Grasslands",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a Forest or Plains card, put it onto the",
+      "reason": "",
       "scryfall_id": "ecf52798-b2e0-4d0a-a41b-8927bfa60375",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Grateful Apparition": {
@@ -117792,12 +117792,12 @@
     },
     "Grixis Panorama": {
       "edhrec_rank": 5803,
-      "gate": "template",
+      "gate": null,
       "name": "Grixis Panorama",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic Island, Swamp, or Mountain ",
+      "reason": "",
       "scryfall_id": "e49dd5f0-1afa-4301-acdb-28424e2553b9",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Grixis Slavedriver": {
@@ -127222,12 +127222,12 @@
     },
     "Hissing Quagmire": {
       "edhrec_rank": 6761,
-      "gate": "template",
+      "gate": null,
       "name": "Hissing Quagmire",
-      "reason": "no template for: {1}{B}{G}: Until end of turn, this land becomes a 2/2 black and green Elemental creature w",
+      "reason": "",
       "scryfall_id": "a0948c7e-b3ca-422d-ba04-94b907042566",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Historian of Zhalfir": {
@@ -143072,12 +143072,12 @@
     },
     "Jund Panorama": {
       "edhrec_rank": 5034,
-      "gate": "template",
+      "gate": null,
       "name": "Jund Panorama",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic Swamp, Mountain, or Forest ",
+      "reason": "",
       "scryfall_id": "50d8346a-e0b5-41eb-be89-7d1eb0e84f28",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Jund Sojourners": {
@@ -151982,12 +151982,12 @@
     },
     "Kydele, Chosen of Kruphix": {
       "edhrec_rank": 12219,
-      "gate": "template",
+      "gate": null,
       "name": "Kydele, Chosen of Kruphix",
-      "reason": "no template for: Partner",
+      "reason": "",
       "scryfall_id": "86eee902-dc0b-48d0-a8db-7e6de89977ef",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Kykar, Wind's Fury": {
@@ -161302,12 +161302,12 @@
     },
     "Lumbering Falls": {
       "edhrec_rank": 4669,
-      "gate": "template",
+      "gate": null,
       "name": "Lumbering Falls",
-      "reason": "no template for: {2}{G}{U}: Until end of turn, this land becomes a 3/3 green and blue Elemental creature wi",
+      "reason": "",
       "scryfall_id": "6cb11668-a672-4c12-a15f-96930cc3bd3b",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Lumbering Laundry": {
@@ -166642,12 +166642,12 @@
     },
     "Marsh Flats": {
       "edhrec_rank": 52,
-      "gate": "template",
+      "gate": null,
       "name": "Marsh Flats",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Swamp card, put ",
+      "reason": "",
       "scryfall_id": "4e8397e6-d13a-4996-8fde-b8a9895de287",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Marsh Flitter": {
@@ -174952,12 +174952,12 @@
     },
     "Misty Rainforest": {
       "edhrec_rank": 41,
-      "gate": "template",
+      "gate": null,
       "name": "Misty Rainforest",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Island card, put",
+      "reason": "",
       "scryfall_id": "23d8e67a-5150-4782-98d1-da2ca79607ad",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Mite Overseer": {
@@ -178462,12 +178462,12 @@
     },
     "Mountain Valley": {
       "edhrec_rank": 3111,
-      "gate": "template",
+      "gate": null,
       "name": "Mountain Valley",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto t",
+      "reason": "",
       "scryfall_id": "3094800e-9994-47c3-9ebc-536bf5de13cd",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Mountain Yeti": {
@@ -179842,12 +179842,12 @@
     },
     "Mutavault": {
       "edhrec_rank": 1916,
-      "gate": "template",
+      "gate": null,
       "name": "Mutavault",
-      "reason": "no template for: {1}: This land becomes a 2/2 creature with all creature types until end of turn. It's stil",
+      "reason": "",
       "scryfall_id": "2ac4ada1-1b60-49ec-b187-0b2844d5704f",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Mutilate": {
@@ -182432,12 +182432,12 @@
     },
     "Naya Panorama": {
       "edhrec_rank": 4374,
-      "gate": "template",
+      "gate": null,
       "name": "Naya Panorama",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic Mountain, Forest, or Plains",
+      "reason": "",
       "scryfall_id": "6a546a28-8df5-4080-9f50-af86d84a066f",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Naya Sojourners": {
@@ -183142,12 +183142,12 @@
     },
     "Needle Spires": {
       "edhrec_rank": 5341,
-      "gate": "template",
+      "gate": null,
       "name": "Needle Spires",
-      "reason": "no template for: {2}{R}{W}: Until end of turn, this land becomes a 2/1 red and white Elemental creature wit",
+      "reason": "",
       "scryfall_id": "08fb8639-a0bb-4ad7-86b0-46116a078556",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Needle Storm": {
@@ -184232,12 +184232,12 @@
     },
     "Neverwinter Dryad": {
       "edhrec_rank": 12253,
-      "gate": "template",
+      "gate": null,
       "name": "Neverwinter Dryad",
-      "reason": "no template for: {2}, Sacrifice this creature: Search your library for a basic Forest card, put it onto the",
+      "reason": "",
       "scryfall_id": "01234d4c-ff3d-40a8-8404-9790d3ee3620",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Neverwinter Hydra": {
@@ -198094,7 +198094,7 @@
       "edhrec_rank": 2063,
       "gate": "template",
       "name": "Perilous Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Island, Mountain, or Plains card",
+      "reason": "no template for: Cycling {U}{R}{W}",
       "scryfall_id": "4b0bd07e-cf80-4d64-af29-f4cec6632b3e",
       "source": "",
       "status": "pending",
@@ -203052,12 +203052,12 @@
     },
     "Polluted Delta": {
       "edhrec_rank": 36,
-      "gate": "template",
+      "gate": null,
       "name": "Polluted Delta",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Swamp card, put",
+      "reason": "",
       "scryfall_id": "6e288374-2b71-4ace-b1d2-a19fee6cb4af",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Polluted Mire": {
@@ -205812,12 +205812,12 @@
     },
     "Prismatic Vista": {
       "edhrec_rank": 197,
-      "gate": "template",
+      "gate": null,
       "name": "Prismatic Vista",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it on",
+      "reason": "",
       "scryfall_id": "22b5b5ef-9b8d-4ace-86db-21ce00b29928",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Prismatic Ward": {
@@ -206522,12 +206522,12 @@
     },
     "Promising Vein": {
       "edhrec_rank": 3101,
-      "gate": "template",
+      "gate": null,
       "name": "Promising Vein",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the ",
+      "reason": "",
       "scryfall_id": "e9681a54-6413-4ff4-b6b1-ee4decb25bfa",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Prompto Argentum": {
@@ -219564,7 +219564,7 @@
       "edhrec_rank": 3916,
       "gate": "template",
       "name": "Restless Anchorage",
-      "reason": "no template for: {1}{W}{U}: Until end of turn, this land becomes a 2/3 white and blue Bird creature with fl",
+      "reason": "no template for: Whenever this land attacks, create a Map token",
       "scryfall_id": "0fc7725d-eb04-4778-8f5e-4c1239ed08b8",
       "source": "",
       "status": "pending",
@@ -219584,7 +219584,7 @@
       "edhrec_rank": 4462,
       "gate": "template",
       "name": "Restless Bivouac",
-      "reason": "no template for: {1}{R}{W}: This land becomes a 2/2 red and white Ox creature until end of turn. It's still",
+      "reason": "no template for: Whenever this land attacks, put a +1/+1 counter on target creature you control",
       "scryfall_id": "901796b2-c567-41e2-a87b-6147a966c9a8",
       "source": "",
       "status": "pending",
@@ -219614,7 +219614,7 @@
       "edhrec_rank": 3245,
       "gate": "template",
       "name": "Restless Cottage",
-      "reason": "no template for: {2}{B}{G}: This land becomes a 4/4 black and green Horror creature until end of turn. It's",
+      "reason": "no template for: Whenever this land attacks, create a Food token and exile up to one target card from a gra",
       "scryfall_id": "0dcb97ff-9356-4be7-8991-091f950c0b63",
       "source": "",
       "status": "pending",
@@ -219644,7 +219644,7 @@
       "edhrec_rank": 4465,
       "gate": "template",
       "name": "Restless Fortress",
-      "reason": "no template for: {2}{W}{B}: This land becomes a 1/4 white and black Nightmare creature until end of turn. I",
+      "reason": "no template for: Whenever this land attacks, defending player loses 2 life and you gain 2 life",
       "scryfall_id": "675213bb-28d7-460c-a4f3-950f5b9090af",
       "source": "",
       "status": "pending",
@@ -219654,7 +219654,7 @@
       "edhrec_rank": 5327,
       "gate": "template",
       "name": "Restless Prairie",
-      "reason": "no template for: {2}{G}{W}: This land becomes a 3/3 green and white Llama creature until end of turn. It's ",
+      "reason": "no template for: Whenever this land attacks, other creatures you control get +1/+1 until end of turn",
       "scryfall_id": "7802788a-8a40-40e7-9d33-58191d1d678a",
       "source": "",
       "status": "pending",
@@ -219664,7 +219664,7 @@
       "edhrec_rank": 3930,
       "gate": "template",
       "name": "Restless Reef",
-      "reason": "no template for: {2}{U}{B}: Until end of turn, this land becomes a 4/4 blue and black Shark creature with d",
+      "reason": "no template for: Whenever this land attacks, target player mills four cards",
       "scryfall_id": "8315e121-cf10-4442-91c0-036ca5bbc652",
       "source": "",
       "status": "pending",
@@ -219674,7 +219674,7 @@
       "edhrec_rank": 4502,
       "gate": "template",
       "name": "Restless Ridgeline",
-      "reason": "no template for: {2}{R}{G}: This land becomes a 3/4 red and green Dinosaur creature until end of turn. It's",
+      "reason": "no template for: Whenever this land attacks, another target attacking creature gets +2/+0 until end of turn",
       "scryfall_id": "2634eb9f-d797-4af4-90d3-7a39fae8300b",
       "source": "",
       "status": "pending",
@@ -219694,7 +219694,7 @@
       "edhrec_rank": 4994,
       "gate": "template",
       "name": "Restless Vents",
-      "reason": "no template for: {1}{B}{R}: Until end of turn, this land becomes a 2/3 black and red Insect creature with m",
+      "reason": "no template for: Whenever this land attacks, you may discard a card. If you do, draw a card",
       "scryfall_id": "9200f9b5-20fc-4ff0-97f7-ef22da5acb72",
       "source": "",
       "status": "pending",
@@ -219704,7 +219704,7 @@
       "edhrec_rank": 5533,
       "gate": "template",
       "name": "Restless Vinestalk",
-      "reason": "no template for: {3}{G}{U}: Until end of turn, this land becomes a 5/5 green and blue Plant creature with t",
+      "reason": "no template for: Whenever this land attacks, up to one other target creature has base power and toughness 3",
       "scryfall_id": "a710643a-b9dd-49bf-a375-d9986b05ed7a",
       "source": "",
       "status": "pending",
@@ -224482,12 +224482,12 @@
     },
     "Rocky Tar Pit": {
       "edhrec_rank": 3371,
-      "gate": "template",
+      "gate": null,
       "name": "Rocky Tar Pit",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a Swamp or Mountain card, put it onto th",
+      "reason": "",
       "scryfall_id": "2aa1f7c6-f888-4384-9626-f106571e164c",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Rod of Absorption": {
@@ -224552,12 +224552,12 @@
     },
     "Rograkh, Son of Rohgahh": {
       "edhrec_rank": 2346,
-      "gate": "template",
+      "gate": null,
       "name": "Rograkh, Son of Rohgahh",
-      "reason": "no template for: Partner",
+      "reason": "",
       "scryfall_id": "bb16341a-f793-4b0e-b4ef-3fc56aae3807",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Rogue Artificial Intelligence": {
@@ -232502,12 +232502,12 @@
     },
     "Scalding Tarn": {
       "edhrec_rank": 50,
-      "gate": "template",
+      "gate": null,
       "name": "Scalding Tarn",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Mountain card, ",
+      "reason": "",
       "scryfall_id": "17c6ba55-2470-4dde-a7fa-137a60716c96",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Scalding Tongs": {
@@ -236964,7 +236964,7 @@
       "edhrec_rank": 1872,
       "gate": "template",
       "name": "Seething Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Island, Swamp, or Mountain card,",
+      "reason": "no template for: Cycling {U}{B}{R}",
       "scryfall_id": "661fc907-7003-45c6-820c-9616e9a71c30",
       "source": "",
       "status": "pending",
@@ -240422,12 +240422,12 @@
     },
     "Shambling Vent": {
       "edhrec_rank": 5687,
-      "gate": "template",
+      "gate": null,
       "name": "Shambling Vent",
-      "reason": "no template for: {1}{W}{B}: Until end of turn, this land becomes a 2/3 white and black Elemental creature w",
+      "reason": "",
       "scryfall_id": "2fd26d73-0aa4-4169-9a6a-522a5a9519c7",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Shameless Charlatan": {
@@ -241034,7 +241034,7 @@
       "edhrec_rank": 1888,
       "gate": "template",
       "name": "Shattered Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Mountain, Plains, or Swamp card,",
+      "reason": "no template for: Cycling {R}{W}{B}",
       "scryfall_id": "b3da28c7-6e92-439d-a163-91682d4f11dc",
       "source": "",
       "status": "pending",
@@ -241494,7 +241494,7 @@
       "edhrec_rank": 2201,
       "gate": "template",
       "name": "Sheltering Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Mountain, Forest, or Plains card",
+      "reason": "no template for: Cycling {R}{G}{W}",
       "scryfall_id": "0fe070f4-8877-4280-b8fd-869f3ac34ab6",
       "source": "",
       "status": "pending",
@@ -242542,12 +242542,12 @@
     },
     "Shire Terrace": {
       "edhrec_rank": 2280,
-      "gate": "template",
+      "gate": null,
       "name": "Shire Terrace",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the ",
+      "reason": "",
       "scryfall_id": "5233144a-9e88-44a2-9ea9-88ecc116bcd6",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Shirei, Shizo's Caretaker": {
@@ -262482,12 +262482,12 @@
     },
     "Stirring Wildwood": {
       "edhrec_rank": 7264,
-      "gate": "template",
+      "gate": null,
       "name": "Stirring Wildwood",
-      "reason": "no template for: {1}{G}{W}: Until end of turn, this land becomes a 3/4 green and white Elemental creature w",
+      "reason": "",
       "scryfall_id": "02c54350-36ad-4d09-9e01-a5ffc7fef54c",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Stitch Together": {
@@ -288524,7 +288524,7 @@
       "edhrec_rank": 1991,
       "gate": "template",
       "name": "Tranquil Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Forest, Plains, or Island card, ",
+      "reason": "no template for: Cycling {G}{W}{U}",
       "scryfall_id": "113f48b9-a972-4e2c-af95-05ab078e01f2",
       "source": "",
       "status": "pending",
@@ -289602,12 +289602,12 @@
     },
     "Treetop Village": {
       "edhrec_rank": 5761,
-      "gate": "template",
+      "gate": null,
       "name": "Treetop Village",
-      "reason": "no template for: {1}{G}: This land becomes a 3/3 green Ape creature with trample until end of turn. It's st",
+      "reason": "",
       "scryfall_id": "bf5bc68e-8416-431d-8a5a-f9ebca24721a",
-      "source": "",
-      "status": "pending",
+      "source": "template:creature-land",
+      "status": "done",
       "wanted": false
     },
     "Trelane, Squire of Gothos": {
@@ -292434,7 +292434,7 @@
       "edhrec_rank": 1789,
       "gate": "template",
       "name": "Twisted Landscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic Swamp, Mountain, or Forest card,",
+      "reason": "no template for: Cycling {B}{R}{G}",
       "scryfall_id": "0d647d67-f963-43b4-ade8-6c90e91f65ac",
       "source": "",
       "status": "pending",
@@ -296942,12 +296942,12 @@
     },
     "Urza's Cave": {
       "edhrec_rank": 444,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Cave",
-      "reason": "no template for: {3}, {T}, Sacrifice this land: Search your library for a land card, put it onto the battle",
+      "reason": "",
       "scryfall_id": "926916ed-2f22-4ba9-9427-194886ad6c1e",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Urza's Chalice": {
@@ -300252,12 +300252,12 @@
     },
     "Verdant Catacombs": {
       "edhrec_rank": 47,
-      "gate": "template",
+      "gate": null,
       "name": "Verdant Catacombs",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Forest card, put ",
+      "reason": "",
       "scryfall_id": "94c229ea-90da-4aa0-bfda-b162fb3b5b8b",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Verdant Command": {
@@ -301442,12 +301442,12 @@
     },
     "Vibrant Cityscape": {
       "edhrec_rank": 1558,
-      "gate": "template",
+      "gate": null,
       "name": "Vibrant Cityscape",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battl",
+      "reason": "",
       "scryfall_id": "b5e7cdb4-7b4d-4c6c-b016-d6cd3f9a04f2",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Vibrant Outburst": {
@@ -308212,12 +308212,12 @@
     },
     "Warped Landscape": {
       "edhrec_rank": 7913,
-      "gate": "template",
+      "gate": null,
       "name": "Warped Landscape",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the ",
+      "reason": "",
       "scryfall_id": "2a212bd9-657d-4a43-a276-80805314b938",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Warped Physique": {
@@ -313292,12 +313292,12 @@
     },
     "Windswept Heath": {
       "edhrec_rank": 45,
-      "gate": "template",
+      "gate": null,
       "name": "Windswept Heath",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Plains card, put",
+      "reason": "",
       "scryfall_id": "2227b1ba-78be-47ab-8dad-13233f4d4dfc",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Windswift Slice": {
@@ -315312,12 +315312,12 @@
     },
     "Wooded Foothills": {
       "edhrec_rank": 46,
-      "gate": "template",
+      "gate": null,
       "name": "Wooded Foothills",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Forest card, p",
+      "reason": "",
       "scryfall_id": "3164be2f-28c9-4a33-bd70-d5089396538c",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland",
+      "status": "done",
       "wanted": false
     },
     "Wooded Ridgeline": {

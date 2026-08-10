@@ -67,6 +67,12 @@ class ImportReport:
     #: somebody wants to know their mana base is three lands short.
     lands: int = 0
     lands_producing_mana: int = 0
+    #: Lands with no mana ability *and* nothing else either.  The mana count
+    #: alone is not the question a player is asking: a properly implemented
+    #: fetchland has no mana ability and is a perfectly good land, so counting
+    #: mana abilities would report it as broken forever.  What matters is which
+    #: lands are on the board doing nothing at all.
+    lands_inert: int = 0
 
     @property
     def total(self) -> int:
@@ -309,7 +315,7 @@ def import_deck(
     if problems:
         raise ImportFailed("illegal", "; ".join(problems[:4]))
 
-    lands = producing = 0
+    lands = producing = inert = 0
     for entry in resolved:
         card = merged.get(entry.card_id)
         if not card.is_land:
@@ -317,6 +323,11 @@ def import_deck(
         lands += entry.qty
         if any(a.is_mana_ability for a in card.abilities):
             producing += entry.qty
+        elif not card.abilities:
+            # No mana and nothing else: an unimplemented fetchland or
+            # creature-land, which is the only case worth putting on the screen.
+            # A *real* fetchland also has no mana ability and is not inert.
+            inert += entry.qty
 
     report = ImportReport(
         deck_id=deck_model.id,
@@ -326,6 +337,7 @@ def import_deck(
         problems=list(deck.problems),
         lands=lands,
         lands_producing_mana=producing,
+        lands_inert=inert,
     )
     if dry_run:
         return report

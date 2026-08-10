@@ -121,6 +121,26 @@ work went — an Equipment that *grants* rather than buffs, and the very common
 abilities. Without those the all-or-nothing rule kept throwing the cards away
 even though the mechanic worked.
 
+*Fetchlands and creature-lands are done* — the two shapes behind the import
+report's "some of your lands do nothing" line. They came apart very differently:
+
+- **Fetchlands needed no engine work whatsoever.** `Cost` has always carried
+  `tap`, `pay_life` and `sacrifice`, and `search_library` has always taken a
+  selector, a `tapped` flag and shuffled on its own. What was missing was a
+  template that reads `<cost>: <effect>` at all — every template before this one
+  handled bare sentences. `_activation_cost` is deliberately strict: an
+  unrecognised clause fails the whole card, because a clause dropped silently
+  makes a *cheaper* land than the printed one.
+- **Creature-lands needed a new continuous effect**, `animate` — see
+  [card-dsl.md](card-dsl.md). `TempEffect` knew pumps and keywords but nothing
+  that changes a card's *type* for a turn.
+
+Both are anchored end-to-end on purpose, and what they refuse is as important as
+what they take: Fabled Passage's "Then if you control four or more lands, untap
+that land" and Raging Ravine's quoted `"Whenever this creature attacks…"` both
+fail, so those cards stay honestly unimplemented rather than quietly wrong. 46
+cards fell out of the top 12,000 for two sentence patterns.
+
 Three more keywords turned out to need no engine work at all:
 
 - **Devoid** is self-implementing — the catalog already reports the card as

@@ -43,11 +43,15 @@ class TempEffect:
 
     ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``,
     ``"lock_abilities"`` ("its activated abilities can't be activated this
-    turn"), or ``"ability"`` (a whole triggered or activated ability granted by
-    another permanent).  The lock is not a keyword because it is not a
-    characteristic: it is a permission, read by legality and by the mana solver
-    rather than by ``chars``, and showing it in a card's keyword list would be a
-    lie.
+    turn"), ``"ability"`` (a whole triggered or activated ability granted by
+    another permanent), or ``"animate"`` ("becomes a 4/4 creature until end of
+    turn").  The lock is not a keyword because it is not a characteristic: it is
+    a permission, read by legality and by the mana solver rather than by
+    ``chars``, and showing it in a card's keyword list would be a lie.
+
+    ``animate`` is the only kind that touches *base* characteristics, which is
+    why ``power``/``toughness`` mean something different for it than they do for
+    a pump: a pump's are a delta, an animation's are the value itself.
     """
 
     kind: str
@@ -58,6 +62,12 @@ class TempEffect:
     #: For ``kind == "ability"``: which of the source card's
     #: ``grantable_abilities`` was handed over.
     ability_index: int | None = None
+    #: For ``kind == "animate"``: what the permanent becomes.  Types and subtypes
+    #: are *added* -- "it's still a land" is the default rather than a special
+    #: case, because every printed animation says it.
+    types: tuple[str, ...] = ()
+    subtypes: tuple[str, ...] = ()
+    colors: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -66,6 +76,9 @@ class TempEffect:
             "toughness": self.toughness,
             "keyword": self.keyword,
             "source": self.source,
+            "types": list(self.types),
+            "subtypes": list(self.subtypes),
+            "colors": list(self.colors),
         }
 
 

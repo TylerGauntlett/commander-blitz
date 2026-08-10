@@ -198,6 +198,59 @@ _ENCHANT_TYPES = {
 }
 
 
+#: ``{T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or
+#: Plains card, put it onto the battlefield, then shuffle.``  A fetchland, and
+#: the reason an imported deck's land count lies: `proxy.py` will not generate a
+#: mana ability whose cost it cannot express, so the land arrives inert.  The
+#: whole cost *is* expressible -- `Cost` has carried `tap`, `pay_life` and
+#: `sacrifice` since before this module existed -- so all that was ever missing
+#: was somebody translating the sentence.
+#:
+#: Anchored at both ends on purpose.  Fabled Passage adds "Then if you control
+#: four or more lands, untap that land", which lands in the same residual line
+#: and must not be claimed; the anchor makes it fail the whole card instead.
+_FETCH = re.compile(
+    r"^search your library for (?P<what>.+?) cards?, "
+    r"put (?:it|them) onto the battlefield(?P<tapped> tapped)?, then shuffle$",
+    re.I,
+)
+
+#: ``Until end of turn, this land becomes a 4/4 white and blue Elemental creature
+#: with flying and vigilance. It's still a land.``  Both orderings of the
+#: until-end-of-turn clause are printed -- Celestial Colonnade leads with it,
+#: Faerie Conclave trails it -- so both are matched.
+_ANIMATE = re.compile(
+    r"^(?:until end of turn,\s+)?"
+    r"this \w+ becomes an? (?P<p>\d+)/(?P<t>\d+) ?(?P<mid>.*?)"
+    r"creature(?: with (?P<extra>.+?))?"
+    r"(?: until end of turn)?"
+    r"\. it(?:'s| is) still an? \w+$",
+    re.I,
+)
+
+#: ``{T}, Pay 1 life, Sacrifice this land: ...`` -- an activated ability's cost,
+#: split from its effect on the first colon that is not inside a quoted ability.
+_ACTIVATED = re.compile(r"^(?P<cost>[^:\"]+): (?P<effect>.+)$", re.S)
+
+_COST_MANA = re.compile(r"^(?:\{[^}]+\})+$")
+_COST_LIFE = re.compile(r"^pay (?P<n>\d+) life$", re.I)
+_COST_SACRIFICE_SELF = re.compile(r"^sacrifice this \w+$", re.I)
+
+#: The colour words an animation may name, in the order `Color` spells them.
+_COLOR_WORDS = {
+    "white": "W", "blue": "U", "black": "B", "red": "R", "green": "G",
+}
+
+#: Card types that may appear as an adjective inside an animation -- "a 1/1
+#: Phyrexian Blinkmoth **artifact** creature".
+_TYPE_WORDS = {"artifact": "Artifact", "enchantment": "Enchantment", "land": "Land"}
+
+#: "becomes a 2/2 creature with **all creature types**" -- Mutavault.  Not a
+#: keyword clause, which is why it is read before `_keywords_in` gets it and
+#: would otherwise reject the card.
+_ALL_CREATURE_TYPES = re.compile(r"^all creature types$", re.I)
+
+
 #: Sentences that are a whole static ability rather than an effect.
 STATICS: list[tuple[re.Pattern[str], dict]] = [
     (
@@ -499,6 +552,12 @@ def _translate_line(line: str, *, is_spell: bool):
             "equip",
         )
 
+    activated = _ACTIVATED.match(bare)
+    if activated:
+        produced = _activated_ability(line, activated)
+        if produced is not None:
+            return produced
+
     for pattern, ability in STATICS:
         if pattern.match(bare):
             return (
@@ -537,6 +596,186 @@ def _translate_line(line: str, *, is_spell: bool):
         # thing at the wrong time.
         return None
     return None
+
+
+def _activated_ability(line: str, activated: re.Match[str]):
+    """``<cost>: <effect>`` -- a fetchland or a creature-land, or ``None``.
+
+    Returned as kind ``"static"`` because `translate` uses that for "one dict
+    that belongs in `abilities`", which is what `equip` already does with its own
+    activated ability.
+    """
+    cost = _activation_cost(activated.group("cost"))
+    if cost is None:
+        return None
+    body = activated.group("effect").strip()
+
+    effects: list[dict] | None = None
+    name = ""
+
+    fetch = _FETCH.match(body)
+    if fetch:
+        selector = _search_selector(fetch.group("what"))
+        if selector is None:
+            return None
+        effects = [
+            {
+                "op": "search_library",
+                "player": "you",
+                "count": {"const": 1},
+                "destination": "battlefield",
+                "tapped": bool(fetch.group("tapped")),
+                "selector": selector,
+            }
+        ]
+        name = "fetchland"
+    else:
+        animation = _ANIMATE.match(body)
+        if animation:
+            effect = _animation(animation)
+            if effect is None:
+                return None
+            effects = [effect]
+            name = "creature-land"
+
+    if effects is None:
+        return None
+    return (
+        "static",
+        {
+            "kind": "activated",
+            "text": line.strip(),
+            "cost": cost,
+            "effects": effects,
+        },
+        Translation(effects=[], expect={}),
+        name,
+    )
+
+
+def _activation_cost(text: str) -> dict | None:
+    """``"{T}, Pay 1 life, Sacrifice this land"`` -> a ``CostModel`` payload.
+
+    ``None`` for anything with a clause this does not recognise, which is the
+    point: an unrecognised clause dropped silently would make a *cheaper* card
+    than the one printed, and `proxy.py` refuses to generate these abilities at
+    all for exactly that reason.  Only self-sacrifice is accepted -- "sacrifice
+    another creature" is a choice, and guessing which one is not this tier's job.
+    """
+    from ...engine.mana import ManaCost
+
+    cost: dict = {}
+    for raw in text.split(","):
+        clause = raw.strip()
+        if not clause:
+            return None
+        if clause.upper() == "{T}":
+            if cost.get("tap"):
+                return None
+            cost["tap"] = True
+        elif _COST_MANA.match(clause):
+            if "mana" in cost:
+                return None
+            try:
+                ManaCost.parse(clause)
+            except Exception:
+                # Phyrexian or snow. `ManaCost.parse` raises on those, and the
+                # exception would travel out through `CardRegistry.from_paths`
+                # and stop the whole registry loading at boot.
+                return None
+            cost["mana"] = clause
+        elif life := _COST_LIFE.match(clause):
+            cost["pay_life"] = int(life.group("n"))
+        elif _COST_SACRIFICE_SELF.match(clause):
+            cost["sacrifice"] = {"zone": "battlefield", "self_only": True}
+        else:
+            return None
+    return cost or None
+
+
+def _search_selector(what: str) -> dict | None:
+    """``"a basic Plains, Island, or Swamp"`` -> a selector over the library.
+
+    Subtypes are any-of in `selectors.matches`, which is exactly what "a Forest
+    **or** Plains card" means.  ``Land`` is only asserted when the text says
+    "land": "a Forest or Plains card" is already narrow enough, and a card that
+    fetches something that is not a land would be quietly changed by adding it.
+    """
+    words = re.split(r",|\bor\b|\band\b", what)
+    selector: dict = {}
+    subtypes: list[str] = []
+    for raw in words:
+        word = raw.strip()
+        if not word or word.lower() in ("a", "an"):
+            continue
+        word = re.sub(r"^(?:a|an) ", "", word, flags=re.I).strip()
+        if word.lower() == "basic":
+            selector["supertypes"] = ["Basic"]
+            continue
+        if word.lower().startswith("basic "):
+            selector["supertypes"] = ["Basic"]
+            word = word[len("basic "):].strip()
+        if word.lower() == "land":
+            selector["types"] = ["Land"]
+        elif word[:1].isupper() and word.isalpha():
+            subtypes.append(word)
+        else:
+            # "up to two", "another", a colour, anything else: not something
+            # this tier can turn into a selector without guessing.
+            return None
+    if subtypes:
+        selector["subtypes"] = subtypes
+    return selector or None
+
+
+def _animation(match: re.Match[str]) -> dict | None:
+    """The body of "becomes a 4/4 white and blue Elemental creature with X"."""
+    types = ["Creature"]
+    subtypes: list[str] = []
+    colors: list[str] = []
+
+    for raw in re.split(r"\band\b|\s+", match.group("mid") or ""):
+        word = raw.strip()
+        if not word:
+            continue
+        if word.lower() in _COLOR_WORDS:
+            colors.append(_COLOR_WORDS[word.lower()])
+        elif word.lower() in _TYPE_WORDS:
+            types.append(_TYPE_WORDS[word.lower()])
+        elif word[:1].isupper() and word.isalpha():
+            subtypes.append(word)
+        else:
+            return None
+
+    keywords: list[str] = []
+    extra = match.group("extra")
+    if extra:
+        if _ALL_CREATURE_TYPES.match(extra.strip()):
+            # Mutavault. A changeling clause, not a keyword clause -- and the
+            # engine's answer to changeling is the same closed subtype set.
+            subtypes.extend(CHANGELING_SUBTYPES)
+        else:
+            found = _keywords_in(extra)
+            if found is None:
+                # A granted triggered ability in quotes (Raging Ravine, Den of
+                # the Bugbear) or a keyword the engine does not implement.
+                return None
+            keywords = found
+
+    effect: dict = {
+        "op": "animate",
+        "power": {"const": int(match.group("p"))},
+        "toughness": {"const": int(match.group("t"))},
+        "types": types,
+        "objects": {"zone": "battlefield", "self_only": True},
+    }
+    if subtypes:
+        effect["subtypes"] = subtypes
+    if colors:
+        effect["colors"] = colors
+    if keywords:
+        effect["keywords"] = keywords
+    return effect
 
 
 def _keywords_in(text: str) -> list[str] | None:

@@ -622,6 +622,21 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:
         raise DslError(f"{where}: add_mana needs 'mana'")
+    if op == "animate":
+        # "Becomes a 4/4 creature" is the whole point, and an animation with no
+        # size would silently make a 0/0 that dies to state-based actions the
+        # moment it arrives.
+        if "power" not in effect or "toughness" not in effect:
+            raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        for t in effect.get("types", ()) or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
+        for k in effect.get("keywords", ()) or ():
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        for c in effect.get("colors", ()) or ():
+            if c not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown colour {c!r}")
     if op == "delay":
         # A misspelled step would schedule something that never comes due -- a
         # card that reads "at the beginning of the next upkeep, draw a card" and

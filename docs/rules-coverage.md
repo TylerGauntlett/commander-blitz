@@ -78,7 +78,7 @@ the card and shown at import; the full list is in
 | **One mana per activation** | Scryfall records *which* mana a permanent makes, not how much. A generated Sol Ring taps for one |
 | **Taplands are unconditional** | "Enters tapped unless…" enters tapped. Generating the upgrade would hand every imported deck a better mana base than it was built with |
 | **`*` power reads as 0** | The characteristic-defining ability behind it is not modelled |
-| **Some lands make no mana** | Fetchlands and creature-lands are inert permanents. The import report counts them, because a deck that looks like 37 lands and behaves like 34 explains nothing on the board |
+| **Some lands do nothing** | A land whose whole ability the generator cannot express — a bounce land's "return an Island you control" — arrives as an inert permanent. The import report counts those separately from the ones that simply make no mana, because a fetchland makes no mana *by design*. Fetchlands and creature-lands themselves are now [authored](card-authoring.md) rather than generated |
 
 ## Not implemented
 

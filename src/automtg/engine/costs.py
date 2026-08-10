@@ -261,7 +261,11 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.tapped:
             return False
-    if cost.pay_life and player.life <= cost.pay_life:
+    # 118.4: you may pay life down to exactly 0 -- losing is a state-based
+    # action afterwards, not a reason the cost was illegal.  `<=` would stop a
+    # fetchland being cracked at 1 life, which is precisely when somebody wants
+    # to.
+    if cost.pay_life and player.life < cost.pay_life:
         return False
     if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
         return False

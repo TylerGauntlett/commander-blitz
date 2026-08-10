@@ -243,6 +243,16 @@ class TestAnImportedDeck:
         assert body["lands"] > 0
         assert body["lands_producing_mana"] <= body["lands"]
 
+    def test_a_land_that_makes_no_mana_is_only_inert_if_it_does_nothing(self, client, payload):
+        """The two counts answer different questions, and only one is a warning.
+
+        A fetchland has no mana ability and never will -- that is what the card
+        says. Reporting it as a hole in the mana base would flag a working card
+        forever, so `lands_inert` counts abilities rather than mana.
+        """
+        body = do_import(client, payload).json()
+        assert body["lands_inert"] <= body["lands"] - body["lands_producing_mana"]
+
     def test_it_appears_in_the_deck_list_without_a_restart(self, client, payload):
         deck_id = do_import(client, payload).json()["deck"]["id"]
         decks = {d["id"]: d for d in client.get("/api/decks").json()}
@@ -272,9 +282,10 @@ class TestAnImportedDeck:
         dry = do_import(client, payload, dry_run=True).json()
         assert dry["lands"] > 0
         wet = do_import(client, payload).json()
-        assert (dry["lands"], dry["lands_producing_mana"]) == (
+        assert (dry["lands"], dry["lands_producing_mana"], dry["lands_inert"]) == (
             wet["lands"],
             wet["lands_producing_mana"],
+            wet["lands_inert"],
         )
 
     def test_re_importing_is_idempotent(self, client, payload, sandbox):
