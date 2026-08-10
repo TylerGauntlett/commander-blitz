@@ -18,6 +18,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
 import { expectUniqueActionIds, renderedActionIds } from "../../testing/asserts";
+import { pending } from "../../testing/fixtures";
 import type { Scenario } from "../../testing/scenarios";
 import * as scenarios from "../../testing/scenarios";
 import { ActionPanel } from "./ActionPanel";
@@ -264,7 +265,7 @@ export const Busy: Story = {
 export const WaitingForOpponent: Story = {
   args: (() => {
     const scenario = scenarios.earlyBoard();
-    scenario.state.pending = { ...scenario.state.pending!, player: 1 };
+    scenario.state.pending = pending({ player: 1 });
     return from({ ...scenario, actions: [] });
   })(),
   play: async ({ canvasElement }) => {

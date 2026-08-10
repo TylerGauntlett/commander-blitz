@@ -448,7 +448,10 @@ running.
 ## Testing
 
 ```bash
-npm test                 # vitest: pure logic + components
+npm test                 # vitest: pure logic + components, in jsdom
+npm run test:stories     # vitest: every story, in a real Chromium
+npm run test:all         # both projects
+npm run storybook        # the browsable version, port 6006
 npm run build            # tsc --noEmit && vite build
 npm run lint             # biome check .
 npx playwright test      # end-to-end against the real engine
@@ -465,7 +468,41 @@ has to cover.
 `tests/playerMat.test.tsx` carries more weight than most: the tucked-attachment path is
 real and unit-tested, but **neither shipped precon contains an Aura or an Equipment**, so
 no game and no e2e spec can currently reach it. Until the card catalogue grows (see
-[roadmap.md](roadmap.md), "All Card Support"), that file is its only coverage.
+[roadmap.md](roadmap.md), "All Card Support"), that file and
+`PlayerMat.stories.tsx`'s `WithAttachments` are its only coverage.
+
+### Storybook
+
+Every component in `game/`, `lobby/` and `menu/` has stories, and they run as tests in
+a real Chromium via `@storybook/addon-vitest` — a second vitest project alongside the
+jsdom one, so `npm test` still means what it always meant.
+
+The reason for a browser rather than jsdom is the reason most of this document exists:
+the board's measurements come out of the cascade. jsdom has no `ResizeObserver`, does
+not implement `@property`, and returns zeros from every `getBoundingClientRect`, so
+`CombatArrows`, `HandFan`'s slot arithmetic, `CardStack`'s fan and `FxLayer`'s anchors
+were previously reachable only by an e2e run against a live engine. A story reaches
+the same position from a fixture in milliseconds.
+
+The harness lives in `.storybook/preview.tsx` and handles four things once, each of
+which a component of this app needs before it renders honestly on its own: the global
+stylesheets exist, the zustand store is pristine, motion is held still
+(`reducedMotion="always"`, since `springs.ts`'s presets are passed explicitly and beat
+`MotionConfig`'s default), and the board has a height. That last one is subtle —
+Storybook's canvas root is `#storybook-root`, so `theme.css`'s height rule misses it and
+every card silently clamps to `MIN_CARD_W`. `Table.OpeningHand` asserts against exactly
+that, because a board of postage stamps passes every content assertion ever written.
+
+A story configures the harness through `parameters.automtg`: `ui` seeds the store,
+`query` pre-loads react-query so a lobby story paints its loaded state immediately,
+`frame` picks a full-height board or a bare box, `art` picks the card art, and
+`zoomLock` opts out of the pinned zoom for the two stories that exist to exercise the
+solver. Fixtures are in `src/testing/` — `fixtures.ts` for the DTOs, `cards.ts` for a
+real card pool, `scenarios.ts` for whole positions, `pods.ts` for lobby states, and
+`asserts.ts` for `expectUniqueActionIds`, which is the invariant most worth sharing.
+
+Card art defaults to a deterministic offline stub keyed off the card id. Switch the
+toolbar to "live" with uvicorn running to eyeball the board against real illustrations.
 
 The Playwright suite boots uvicorn and vite itself and plays the real UI:
 

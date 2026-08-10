@@ -12,15 +12,59 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
 | `tests/server/` | 269 | The HTTP API end to end: hidden information, image serving, the catalog, and the whole lobby |
-| `frontend/tests/` | 562 | The client's pure logic modules, the palette ladders, the card face and the lobby |
+| `frontend/tests/` | 568 | The client's pure logic modules, the palette ladders, the card face and the lobby |
+| `frontend/src/**/*.stories.tsx` | 246 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see |
 | `frontend/e2e/` | 103 | Playwright: full games, combat, stacking, card art, legibility, layout, and a two-browser pod |
 
-`scripts/verify.py` runs 12 stages in dependency order and stops at the first failure:
+`scripts/verify.py` runs 14 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
 160-game arena, **a real uvicorn process playing full games at 2 players, 4 players and
-one pod driven entirely through the lobby**, then the frontend build, lint and tests.
+one pod driven entirely through the lobby**, then the frontend build, lint and tests,
+the Storybook build, and the story interaction tests.
 
-Playwright is still invoked separately (`cd frontend && npx playwright test`).
+Playwright's own suite is still invoked separately (`cd frontend && npx playwright test`).
+
+## Where the four frontend suites divide
+
+They split by what they can *see*, which is the only line worth drawing:
+
+```
+tests/*.test.ts     pure logic, no DOM                      ms
+tests/*.test.tsx    DOM contract, no layout, no providers   ms
+*.stories.tsx       real browser + real CSS, no backend     seconds
+e2e/*.spec.ts       real browser + real uvicorn             minutes
+```
+
+jsdom is structurally blind to most of how this UI works, and the source says so:
+`useZoomFit.ts` notes that "jsdom has no `ResizeObserver` at all", `useCardBase.ts`
+that "jsdom returns `""` for a custom property it never resolved". The `@property`
+registrations in `theme.css` exist precisely so a real engine resolves `--card-w`
+to pixels. So `CombatArrows`, `HandFan`'s slot arithmetic, `CardStack`'s fan and
+`FxLayer`'s anchors had no coverage at all between "a unit test that cannot see
+them" and "an e2e run that needs a Python process".
+
+**The rule.** A `tests/*.test.tsx` file owns anything provable without layout: text,
+`data-*` attributes, the action-id invariant, callback wiring. A story owns anything
+needing the real cascade, real box geometry, or a gesture spanning components.
+Duplicate coverage on `ActionPanel` and `CardFace` is deliberate — the jsdom test is
+the fast guard, the story is the honest one.
+
+And the symmetrical warning: **do not port `e2e/` into stories.** Those assert against
+a real engine's legal-action list; a story asserts against a fixture and can only
+prove the client renders what it is given. Different questions, both worth asking.
+
+Stories need a browser binary that `npm install` does not fetch:
+
+```bash
+cd frontend && npx playwright install chromium   # one time
+npm run storybook       # the browsable version, port 6006
+npm run test:stories    # the same stories as tests
+npm run test:all        # both vitest projects
+```
+
+`verify.py` skips the story stage with a message when that binary is absent, the same
+way the whole frontend is skipped without `node_modules`. The Storybook *build* stage
+needs no browser and always runs.
 
 ## Card art has its own gates
 
