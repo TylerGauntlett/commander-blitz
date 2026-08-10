@@ -13,10 +13,40 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import { deckDetail } from "../../testing/fixtures";
+import { cardResponse, deckDetail } from "../../testing/fixtures";
 import { DeckDossier, ManaCurve, RatingBar } from "./DeckDossier";
 
-const precon = deckDetail();
+/*
+ * The commander's face is a *second* query.
+ *
+ * `DeckDossier` renders `<CommanderCard cardId={commander}>`, which fetches
+ * `["card", id]` on its own -- seeding only `["deck", id]` left the dossier
+ * sitting on its loading back forever, because the harness gives react-query no
+ * network and `retry: false`. The signature card's art is the same class of
+ * problem from the other direction: `art_url` pointed at `/art/....jpg`, which
+ * 404s with no engine running, so the one illustration on the screen was broken.
+ * Both are the story's fault, and both looked like the component's.
+ */
+const COMMANDER = "aesi_tyrant_of_gyre_strait";
+
+const precon = deckDetail({
+  signature: [
+    {
+      card_id: "tatyova_benthic_druid",
+      name: "Tatyova, Benthic Druid",
+      why: "A second Aesi.",
+      // Null rather than a path: the harness has no `/art`, and "this deck names
+      // no signature art" is a state the dossier already draws honestly.
+      art_url: null,
+    },
+  ],
+});
+
+/** Both queries a dossier makes, so it paints its loaded state on first frame. */
+const seeded = (deck: ReturnType<typeof deckDetail>) => [
+  [["deck", deck.id], deck],
+  [["card", COMMANDER], cardResponse({ id: COMMANDER })],
+];
 const imported = deckDetail({
   id: "mine",
   name: "Zada Storm",
@@ -44,7 +74,7 @@ type Story = StoryObj<typeof meta>;
 /** A fully authored precon: ratings, a write-up, signature cards. */
 export const Precon: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { query: [[["deck", precon.id], precon]] } },
+  parameters: { automtg: { query: seeded(precon) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("dossier-ratings");
@@ -61,7 +91,7 @@ export const Precon: Story = {
  */
 export const Imported: Story = {
   args: { deckId: imported.id },
-  parameters: { automtg: { query: [[["deck", imported.id], imported]] } },
+  parameters: { automtg: { query: seeded(imported) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("dossier-no-ratings");
@@ -77,7 +107,7 @@ export const NothingSwapped: Story = {
   args: { deckId: "clean" },
   parameters: {
     automtg: {
-      query: [[["deck", "clean"], deckDetail({ id: "clean", swaps: 0, swap_note: "" })]],
+      query: seeded(deckDetail({ id: "clean", swaps: 0, swap_note: "" })),
     },
   },
 };
@@ -85,7 +115,7 @@ export const NothingSwapped: Story = {
 /** Opened while browsing rather than from a seat: no take button. */
 export const CannotTake: Story = {
   args: { deckId: precon.id, canTake: false },
-  parameters: { automtg: { query: [[["deck", precon.id], precon]] } },
+  parameters: { automtg: { query: seeded(precon) } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("curve");

@@ -74,9 +74,15 @@ export const Untapped: Story = {
 /**
  * Every rim, side by side.
  *
- * Green is "a legal action would play this", blue is "something could target
- * it", amber is "staged for combat, not yet submitted", and dimmed is "nothing
- * can be done with this right now". They only work as a set.
+ * The whole vocabulary of "what is true about this card", and it only works as a
+ * set -- each rim is only legible against the others. Green is "a legal action
+ * would play this", blue "something could target it", amber "staged for combat,
+ * not sent yet", white "selected", dimmed "nothing to do with it right now".
+ *
+ * The last two come from the *card*, not from a prop: `Card` reads
+ * `card.attacking` and `card.blocking` and emits `.card--attacking` /
+ * `.card--blocking`, which is why they were missing here -- every other rim is a
+ * prop, so a set built by listing props left out the two that are not.
  */
 export const TheRims: Story = {
   render: () => (
@@ -86,8 +92,35 @@ export const TheRims: Story = {
       <Card card={pool.thragtusk({ oid: 3 })} staged />
       <Card card={pool.wallOfRoots({ oid: 4 })} selected />
       <Card card={pool.llanowarElves({ oid: 5 })} dimmed />
+      <Card card={pool.grizzlyBears({ oid: 6, attacking: true })} />
+      <Card card={pool.serraAngel({ oid: 7, blocking: true })} />
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findAllByText("Grizzly Bears");
+    expect(canvasElement.querySelectorAll(".card--attacking")).toHaveLength(1);
+    expect(canvasElement.querySelectorAll(".card--blocking")).toHaveLength(1);
+  },
+};
+
+/** In combat, from the engine's own view of the board. */
+export const Attacking: Story = {
+  args: { card: pool.thragtusk({ attacking: true }) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Thragtusk");
+    expect(canvasElement.querySelector(".card--attacking")).not.toBeNull();
+  },
+};
+
+export const Blocking: Story = {
+  args: { card: pool.wallOfRoots({ blocking: true }) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Wall of Roots");
+    expect(canvasElement.querySelector(".card--blocking")).not.toBeNull();
+  },
 };
 
 export const Playable: Story = { args: { playable: true } };

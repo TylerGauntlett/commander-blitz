@@ -88,9 +88,39 @@ export const Playable: Story = {
   },
 };
 
+/**
+ * The plinth is a cropped portrait, so the art is most of it.
+ *
+ * `.cmdplinth__frame` is `aspect-ratio: 2` and the art fills it absolutely, which
+ * is why this only reads correctly inside the orb: given the whole canvas the
+ * frame becomes a banner two screens wide and one deep, and the commander stops
+ * looking like a hero and starts looking like a masthead.
+ */
+export const WithArt: Story = {
+  args: { state: withCommanders() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Aesi/);
+    const art = canvasElement.querySelector("[data-art]");
+    expect(art?.getAttribute("data-art"), "the plinth drew no art").toBe("ready");
+  },
+};
+
+/** Loaded, and this commander has no printing: the plate, drawn on purpose. */
+export const NoArt: Story = {
+  args: { state: withCommanders() },
+  parameters: { automtg: { mount: "orbBody", art: "none" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Aesi/);
+    expect(canvasElement.querySelector("[data-art]")?.getAttribute("data-art")).toBe("none");
+  },
+};
+
 /** An opponent's plinth: reference only, sized to a 112px column. */
 export const Compact: Story = {
   args: { state: withCommanders(), compact: true },
+  parameters: { automtg: { mount: "orbBodyCompact" } },
 };
 
 /** Already on the battlefield, so the command zone is empty. */
