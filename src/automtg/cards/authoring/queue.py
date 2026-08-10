@@ -35,6 +35,16 @@ from ..registry import CardRegistry, data_dir
 #: ``unexpressible`` the DSL cannot say this at all -- needs engine work first
 Status = Literal["pending", "done", "failed", "unexpressible"]
 
+#: ``Entry.gate`` for a card that is in the pool and *plays*, but does not do
+#: everything it prints -- found by ``automtg.cards.authoring.fidelity`` and
+#: written by ``scripts/audit_cards.py --open-deficits``.
+#:
+#: It needs its own value because every other part of this package reads "in the
+#: registry" as "done": :meth:`Queue.refresh` never queues a card the engine
+#: already plays, and ``author_cards.select`` refuses one by name. Both are right
+#: about cards that are simply missing, and both were wrong about these.
+FIDELITY_GATE = "fidelity"
+
 
 def queue_path() -> Path:
     return data_dir() / "authoring" / "queue.json"
@@ -158,8 +168,16 @@ class Queue:
 
 
 def _priority(entry: Entry) -> tuple:
-    # Wanted first, then by rank, then by name so the order never wobbles.
+    # Fidelity deficits first, then wanted, then by rank, then by name so the
+    # order never wobbles.
+    #
+    # A fidelity entry outranks even a card somebody imported, because it is not
+    # a card that does nothing -- it is a card that is *already in a shipped
+    # deck*, already being played, and quietly doing less than it prints. A
+    # missing card announces itself the first time somebody counts on it; this
+    # kind never does.
     return (
+        0 if entry.gate == FIDELITY_GATE else 1,
         0 if entry.wanted else 1,
         entry.edhrec_rank if entry.edhrec_rank is not None else 10**9,
         entry.name,

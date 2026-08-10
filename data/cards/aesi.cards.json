@@ -4,7 +4,7 @@
     {
       "id": "aesi_tyrant_of_gyre_strait",
       "name": "Aesi, Tyrant of Gyre Strait",
-      "oracle_text": "Trample. Whenever you play a land, draw a card. You may play an additional land on each of your turns.",
+      "oracle_text": "You may play an additional land on each of your turns.\nLandfall — Whenever a land you control enters, you may draw a card.",
       "mana_cost": "{4}{G}{U}",
       "supertypes": ["Legendary"],
       "types": ["Creature"],
@@ -15,7 +15,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever you play a land, draw a card.",
+          "text": "Landfall — Whenever a land you control enters, you may draw a card.",
           "trigger": { "event": "land_played", "controller": "you" },
           "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
         },
@@ -32,7 +32,7 @@
     {
       "id": "simic_growth_chamber",
       "name": "Simic Growth Chamber",
-      "oracle_text": "Simic Growth Chamber enters tapped. When it enters, return a land you control to its owner's hand. {T}: Add {G}{U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {G}{U}.",
       "types": ["Land"],
       "color_identity": ["G", "U"],
       "replacements": [{ "event": "self_enters_tapped" }],
@@ -69,7 +69,7 @@
     {
       "id": "woodland_stream",
       "name": "Woodland Stream",
-      "oracle_text": "Woodland Stream enters tapped. {T}: Add {G} or {U}.",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {U}.",
       "types": ["Land"],
       "color_identity": ["G", "U"],
       "replacements": [{ "event": "self_enters_tapped" }],
@@ -95,7 +95,7 @@
     {
       "id": "thornwood_falls",
       "name": "Thornwood Falls",
-      "oracle_text": "Thornwood Falls enters tapped. When it enters, you gain 1 life. {T}: Add {G} or {U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {G} or {U}.",
       "types": ["Land"],
       "color_identity": ["G", "U"],
       "replacements": [{ "event": "self_enters_tapped" }],
@@ -127,7 +127,7 @@
     {
       "id": "temple_of_mystery",
       "name": "Temple of Mystery",
-      "oracle_text": "Temple of Mystery enters tapped. When it enters, scry 1. {T}: Add {G} or {U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{T}: Add {G} or {U}.",
       "types": ["Land"],
       "color_identity": ["G", "U"],
       "replacements": [{ "event": "self_enters_tapped" }],
@@ -159,13 +159,13 @@
     {
       "id": "terramorphic_expanse",
       "name": "Terramorphic Expanse",
-      "oracle_text": "{T}, Sacrifice Terramorphic Expanse: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
       "types": ["Land"],
       "color_identity": [],
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}, Sacrifice: Search for a basic land tapped.",
+          "text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
           "cost": {
             "tap": true,
             "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
@@ -186,13 +186,13 @@
     {
       "id": "evolving_wilds",
       "name": "Evolving Wilds",
-      "oracle_text": "{T}, Sacrifice Evolving Wilds: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
       "types": ["Land"],
       "color_identity": [],
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}, Sacrifice: Search for a basic land tapped.",
+          "text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
           "cost": {
             "tap": true,
             "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
@@ -271,7 +271,7 @@
     {
       "id": "gyre_sage",
       "name": "Gyre Sage",
-      "oracle_text": "{T}: Add {G}.",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\n{T}: Add {G} for each +1/+1 counter on this creature.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Druid"],
@@ -290,7 +290,7 @@
     {
       "id": "sakura_tribe_elder",
       "name": "Sakura-Tribe Elder",
-      "oracle_text": "Sacrifice Sakura-Tribe Elder: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "Sacrifice this creature: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
       "subtypes": ["Snake", "Shaman"],
@@ -299,7 +299,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "Sacrifice: Search for a basic land tapped.",
+          "text": "Sacrifice this creature: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
           "cost": {
             "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
           },
@@ -319,7 +319,7 @@
     {
       "id": "wood_elves",
       "name": "Wood Elves",
-      "oracle_text": "When Wood Elves enters, search your library for a Forest card, put it onto the battlefield, then shuffle.",
+      "oracle_text": "When this creature enters, search your library for a Forest card, put that card onto the battlefield, then shuffle.",
       "mana_cost": "{2}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Scout"],
@@ -328,7 +328,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, search for a Forest and put it onto the battlefield.",
+          "text": "When this creature enters, search your library for a Forest card, put that card onto the battlefield, then shuffle.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -345,7 +345,7 @@
     {
       "id": "farhaven_elf",
       "name": "Farhaven Elf",
-      "oracle_text": "When Farhaven Elf enters, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "When this creature enters, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
       "mana_cost": "{2}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Druid"],
@@ -354,7 +354,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, search for a basic land tapped.",
+          "text": "When this creature enters, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -372,7 +372,7 @@
     {
       "id": "solemn_simulacrum",
       "name": "Solemn Simulacrum",
-      "oracle_text": "When Solemn Simulacrum enters, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle. When Solemn Simulacrum dies, draw a card.",
+      "oracle_text": "When this creature enters, you may search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.\nWhen this creature dies, you may draw a card.",
       "mana_cost": "{4}",
       "types": ["Artifact", "Creature"],
       "subtypes": ["Golem"],
@@ -382,7 +382,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, search for a basic land tapped.",
+          "text": "When this creature enters, you may search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -397,7 +397,7 @@
         },
         {
           "kind": "triggered",
-          "text": "When this dies, draw a card.",
+          "text": "When this creature dies, you may draw a card.",
           "trigger": { "event": "dies", "source": "self" },
           "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
         }
@@ -406,7 +406,7 @@
     {
       "id": "yavimaya_elder",
       "name": "Yavimaya Elder",
-      "oracle_text": "When Yavimaya Elder dies, you may search your library for up to two basic land cards, reveal them, put them into your hand, then shuffle.",
+      "oracle_text": "When this creature dies, you may search your library for up to two basic land cards, reveal them, put them into your hand, then shuffle.\n{2}, Sacrifice this creature: Draw a card.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
       "subtypes": ["Human", "Druid"],
@@ -433,7 +433,7 @@
     {
       "id": "rampant_growth",
       "name": "Rampant Growth",
-      "oracle_text": "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
       "mana_cost": "{1}{G}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -450,7 +450,7 @@
     {
       "id": "cultivate",
       "name": "Cultivate",
-      "oracle_text": "Search your library for up to two basic land cards, reveal them, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "oracle_text": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
       "mana_cost": "{2}{G}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -475,7 +475,7 @@
     {
       "id": "kodamas_reach",
       "name": "Kodama's Reach",
-      "oracle_text": "Search your library for up to two basic land cards, reveal them, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "oracle_text": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
       "mana_cost": "{2}{G}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -533,7 +533,7 @@
     {
       "id": "harrow",
       "name": "Harrow",
-      "oracle_text": "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield, then shuffle.",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a land.\nSearch your library for up to two basic land cards, put them onto the battlefield, then shuffle.",
       "mana_cost": "{2}{G}",
       "types": ["Instant"],
       "spell_effects": [
@@ -560,7 +560,7 @@
     {
       "id": "tatyova_benthic_druid",
       "name": "Tatyova, Benthic Druid",
-      "oracle_text": "Whenever a land you control enters, draw a card and you gain 1 life.",
+      "oracle_text": "Landfall — Whenever a land you control enters, you gain 1 life and draw a card.",
       "mana_cost": "{3}{G}{U}",
       "supertypes": ["Legendary"],
       "types": ["Creature"],
@@ -570,7 +570,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Landfall - draw a card and gain 1 life.",
+          "text": "Landfall — Whenever a land you control enters, you gain 1 life and draw a card.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -586,7 +586,7 @@
     {
       "id": "rampaging_baloths",
       "name": "Rampaging Baloths",
-      "oracle_text": "Trample. Landfall - Whenever a land you control enters, you may create a 4/4 green Beast creature token.",
+      "oracle_text": "Trample\nLandfall — Whenever a land you control enters, create a 4/4 green Beast creature token.",
       "mana_cost": "{4}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Beast"],
@@ -596,7 +596,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Landfall - create a Beast token.",
+          "text": "Landfall — Whenever a land you control enters, create a 4/4 green Beast creature token.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -616,13 +616,13 @@
     {
       "id": "zendikars_roil",
       "name": "Zendikar's Roil",
-      "oracle_text": "Landfall - Whenever a land you control enters, create a 2/2 green Elemental creature token.",
+      "oracle_text": "Landfall — Whenever a land you control enters, create a 2/2 green Elemental creature token.",
       "mana_cost": "{4}{G}",
       "types": ["Enchantment"],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Landfall - create a 2/2 Elemental.",
+          "text": "Landfall — Whenever a land you control enters, create a 2/2 green Elemental creature token.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -642,7 +642,7 @@
     {
       "id": "tireless_provisioner",
       "name": "Tireless Provisioner",
-      "oracle_text": "Landfall - Whenever a land you control enters, create a Treasure token.",
+      "oracle_text": "Landfall — Whenever a land you control enters, create a Food token or a Treasure token. (Food is an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\" Treasure is an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
       "mana_cost": "{2}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Scout"],
@@ -651,7 +651,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Landfall - create a Treasure.",
+          "text": "Landfall — Whenever a land you control enters, create a Food token or a Treasure token. (Food is an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\" Treasure is an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -698,7 +698,7 @@
     {
       "id": "avenger_of_zendikar",
       "name": "Avenger of Zendikar",
-      "oracle_text": "When Avenger of Zendikar enters, create a 0/1 green Plant creature token for each land you control. Landfall - Whenever a land you control enters, put a +1/+1 counter on each Plant you control.",
+      "oracle_text": "When this creature enters, create a 0/1 green Plant creature token for each land you control.\nLandfall — Whenever a land you control enters, you may put a +1/+1 counter on each Plant creature you control.",
       "mana_cost": "{5}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Elemental"],
@@ -707,7 +707,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, create a Plant for each land you control.",
+          "text": "When this creature enters, create a 0/1 green Plant creature token for each land you control.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -722,7 +722,7 @@
         },
         {
           "kind": "triggered",
-          "text": "Landfall - put a +1/+1 counter on each Plant you control.",
+          "text": "Landfall — Whenever a land you control enters, you may put a +1/+1 counter on each Plant creature you control.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -770,13 +770,13 @@
     {
       "id": "guardian_project",
       "name": "Guardian Project",
-      "oracle_text": "Whenever a nontoken creature enters under your control, draw a card.",
+      "oracle_text": "Whenever a nontoken creature you control enters, if it doesn't have the same name as another creature you control or a creature card in your graveyard, draw a card.",
       "mana_cost": "{3}{G}",
       "types": ["Enchantment"],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a nontoken creature you control enters, draw a card.",
+          "text": "Whenever a nontoken creature you control enters, if it doesn't have the same name as another creature you control or a creature card in your graveyard, draw a card.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -796,7 +796,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever you play a land, draw a card.",
+          "text": "Whenever a player plays a land, that player draws a card.",
           "trigger": { "event": "land_played", "controller": "you" },
           "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
         }
@@ -821,7 +821,7 @@
     {
       "id": "preordain",
       "name": "Preordain",
-      "oracle_text": "Scry 2, then draw a card.",
+      "oracle_text": "Scry 2, then draw a card. (To scry 2, look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",
       "mana_cost": "{U}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -832,7 +832,7 @@
     {
       "id": "growth_spiral",
       "name": "Growth Spiral",
-      "oracle_text": "Draw a card. You may play an additional land this turn.",
+      "oracle_text": "Draw a card. You may put a land card from your hand onto the battlefield.",
       "mana_cost": "{G}{U}",
       "types": ["Instant"],
       "spell_effects": [
@@ -843,7 +843,7 @@
     {
       "id": "explore",
       "name": "Explore",
-      "oracle_text": "You may play an additional land this turn. Draw a card.",
+      "oracle_text": "You may play an additional land this turn.\nDraw a card.",
       "mana_cost": "{1}{G}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -959,7 +959,7 @@
     {
       "id": "acidic_slime",
       "name": "Acidic Slime",
-      "oracle_text": "Deathtouch. When Acidic Slime enters, destroy target artifact, enchantment, or land.",
+      "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhen this creature enters, destroy target artifact, enchantment, or land.",
       "mana_cost": "{3}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Ooze"],
@@ -969,7 +969,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, destroy target land.",
+          "text": "When this creature enters, destroy target artifact, enchantment, or land.",
           "trigger": { "event": "self_enters", "source": "self" },
           "targets": [
             {
@@ -987,7 +987,7 @@
     {
       "id": "reclamation_sage",
       "name": "Reclamation Sage",
-      "oracle_text": "When Reclamation Sage enters, you may destroy target artifact or enchantment.",
+      "oracle_text": "When this creature enters, you may destroy target artifact or enchantment.",
       "mana_cost": "{2}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Shaman"],
@@ -996,7 +996,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, destroy target artifact or enchantment.",
+          "text": "When this creature enters, you may destroy target artifact or enchantment.",
           "trigger": { "event": "self_enters", "source": "self" },
           "targets": [
             {
@@ -1018,7 +1018,7 @@
     {
       "id": "eternal_witness",
       "name": "Eternal Witness",
-      "oracle_text": "When Eternal Witness enters, return target card from your graveyard to your hand.",
+      "oracle_text": "When this creature enters, you may return target card from your graveyard to your hand.",
       "mana_cost": "{1}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Human", "Shaman"],
@@ -1027,7 +1027,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, return a card from your graveyard to your hand.",
+          "text": "When this creature enters, you may return target card from your graveyard to your hand.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -1047,7 +1047,7 @@
     {
       "id": "thragtusk",
       "name": "Thragtusk",
-      "oracle_text": "When Thragtusk enters, you gain 5 life. When Thragtusk leaves the battlefield, create a 3/3 green Beast creature token.",
+      "oracle_text": "When this creature enters, you gain 5 life.\nWhen this creature leaves the battlefield, create a 3/3 green Beast creature token.",
       "mana_cost": "{4}{G}",
       "types": ["Creature"],
       "subtypes": ["Beast"],
@@ -1056,13 +1056,13 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, gain 5 life.",
+          "text": "When this creature enters, you gain 5 life.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 5 } }]
         },
         {
           "kind": "triggered",
-          "text": "When this leaves the battlefield, create a 3/3 Beast.",
+          "text": "When this creature leaves the battlefield, create a 3/3 green Beast creature token.",
           "trigger": { "event": "leaves_battlefield", "source": "self" },
           "effects": [
             {
@@ -1078,7 +1078,7 @@
     {
       "id": "colossal_dreadmaw",
       "name": "Colossal Dreadmaw",
-      "oracle_text": "Trample",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
       "mana_cost": "{4}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Dinosaur"],
@@ -1089,7 +1089,7 @@
     {
       "id": "whiptongue_hydra",
       "name": "Whiptongue Hydra",
-      "oracle_text": "Reach",
+      "oracle_text": "Reach\nWhen this creature enters, destroy all creatures with flying. Put a +1/+1 counter on this creature for each creature destroyed this way.",
       "mana_cost": "{4}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Hydra"],
@@ -1111,7 +1111,7 @@
     {
       "id": "simic_sky_swallower",
       "name": "Simic Sky Swallower",
-      "oracle_text": "Flying, trample, hexproof",
+      "oracle_text": "Flying, trample\nShroud (This creature can't be the target of spells or abilities.)",
       "mana_cost": "{5}{G}{U}",
       "types": ["Creature"],
       "subtypes": ["Leviathan"],
@@ -1122,7 +1122,7 @@
     {
       "id": "nimble_mongoose",
       "name": "Nimble Mongoose",
-      "oracle_text": "Hexproof",
+      "oracle_text": "Shroud (This creature can't be the target of spells or abilities.)\nThreshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
       "mana_cost": "{G}",
       "types": ["Creature"],
       "subtypes": ["Mongoose"],
@@ -1133,7 +1133,7 @@
     {
       "id": "vorel_of_the_hull_clade",
       "name": "Vorel of the Hull Clade",
-      "oracle_text": "{1}{G}{U}, {T}: Put a +1/+1 counter on target creature you control.",
+      "oracle_text": "{G}{U}, {T}: Double the number of each kind of counter on target artifact, creature, or land.",
       "mana_cost": "{1}{G}{U}",
       "supertypes": ["Legendary"],
       "types": ["Creature"],
@@ -1143,7 +1143,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{1}{G}{U}, {T}: Put a +1/+1 counter on target creature you control.",
+          "text": "{G}{U}, {T}: Double the number of each kind of counter on target artifact, creature, or land.",
           "cost": { "mana": "{1}{G}{U}", "tap": true },
           "targets": [
             {
@@ -1248,7 +1248,7 @@
     {
       "id": "elvish_visionary",
       "name": "Elvish Visionary",
-      "oracle_text": "When Elvish Visionary enters, draw a card.",
+      "oracle_text": "When this creature enters, draw a card.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Shaman"],
@@ -1266,7 +1266,7 @@
     {
       "id": "sylvan_ranger",
       "name": "Sylvan Ranger",
-      "oracle_text": "When Sylvan Ranger enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+      "oracle_text": "When this creature enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
       "subtypes": ["Elf", "Scout"],
@@ -1275,7 +1275,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, search for a basic land and put it into your hand.",
+          "text": "When this creature enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
           "trigger": { "event": "self_enters", "source": "self" },
           "effects": [
             {
@@ -1308,7 +1308,7 @@
     {
       "id": "nissas_pilgrimage",
       "name": "Nissa's Pilgrimage",
-      "oracle_text": "Search your library for up to two Forest cards, put them onto the battlefield tapped, then shuffle.",
+      "oracle_text": "Search your library for up to two basic Forest cards, reveal those cards, and put one onto the battlefield tapped and the rest into your hand. Then shuffle.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
       "mana_cost": "{2}{G}",
       "types": ["Sorcery"],
       "spell_effects": [
@@ -1325,7 +1325,7 @@
     {
       "id": "krosan_tusker",
       "name": "Krosan Tusker",
-      "oracle_text": "A large boar.",
+      "oracle_text": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.)\nWhen you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)",
       "mana_cost": "{5}{G}{G}",
       "types": ["Creature"],
       "subtypes": ["Boar", "Beast"],
@@ -1335,7 +1335,7 @@
     {
       "id": "deep_analysis",
       "name": "Deep Analysis",
-      "oracle_text": "Target player draws two cards.",
+      "oracle_text": "Target player draws two cards.\nFlashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
       "mana_cost": "{3}{U}",
       "types": ["Sorcery"],
       "spell_effects": [{ "op": "draw", "player": "you", "amount": { "const": 2 } }]
@@ -1343,7 +1343,7 @@
     {
       "id": "mulldrifter",
       "name": "Mulldrifter",
-      "oracle_text": "Flying. When Mulldrifter enters, draw two cards.",
+      "oracle_text": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
       "mana_cost": "{4}{U}",
       "types": ["Creature"],
       "subtypes": ["Elemental"],
@@ -1362,7 +1362,7 @@
     {
       "id": "garruks_packleader",
       "name": "Garruk's Packleader",
-      "oracle_text": "Whenever another creature with power 3 or greater enters under your control, draw a card.",
+      "oracle_text": "Whenever another creature you control with power 3 or greater enters, you may draw a card.",
       "mana_cost": "{4}{G}",
       "types": ["Creature"],
       "subtypes": ["Beast"],
@@ -1371,7 +1371,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever another creature with power 3 or greater you control enters, draw a card.",
+          "text": "Whenever another creature you control with power 3 or greater enters, you may draw a card.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",

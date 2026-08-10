@@ -212,19 +212,37 @@ button { cursor:pointer; background:none; border:0; }
 }
 
 .slot { position:relative; z-index:2; display:grid; justify-items:center; gap:11px; width:var(--card-w); min-width:0; }
+/* min-height, because your own seat carries no ✕ and the row would otherwise be
+   two pixels shorter than its neighbours -- enough to knock every plate in the
+   row out of alignment with yours. */
+.slot__head { display:flex; align-items:center; justify-content:center; gap:5px; max-width:100%; min-height:16px; }
 .slot__no { font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
 .slot__no--you { color:var(--gold); }
-.slot__card { position:relative; }
-/* The remove control lives in the plate, not on the card. Two earlier placements
-   were wrong for two different reasons: hanging it off the corner widened the
-   slot and painted over the next one (the "escape" failure the menu round
-   documents), and tucking it inside the card covered the mana cost. A card face
-   is a card face; controls belong under it. */
+/* A seat's card opens its dossier, the same bargain the catalogue strikes: the
+   card is the biggest thing in the slot, so it should not need a button beneath
+   it to be worth aiming at. Only a face-up card takes the click -- there is
+   nothing to read behind a card back. */
+.slot__card { position:relative; transition:transform .12s ease; }
+.slot__card[data-act] { cursor:pointer; }
+.slot__card[data-act]:hover { transform:translateY(-4px); }
+.slot__card[data-act]:focus-visible { outline:2px solid var(--gold); outline-offset:5px; border-radius:calc(var(--card-w) * .05); }
+/* The remove control lives in the slot's own header, not on the card and no
+   longer in the plate. Two earlier placements were wrong for two different
+   reasons: hanging it off the corner widened the slot and painted over the next
+   one (the "escape" failure the menu round documents), and tucking it inside the
+   card covered the mana cost. The plate was right about where but wrong about
+   weight -- a bordered box gave emptying a seat the same voice as the action you
+   came to the plate for. Up here it is a mark beside the seat's own number,
+   quiet until the slot is under the cursor, and it never shares a row with a
+   primary button again. */
 .slot__x {
-  width:30px; padding:8px 0; border:1px solid var(--edge-hi); border-radius:8px;
-  color:var(--text-faint); font-size:12px; line-height:1; flex:none;
+  width:16px; height:16px; flex:none; border:0; border-radius:999px; padding:0;
+  display:grid; place-items:center; background:none;
+  color:var(--text-faint); font-size:9px; line-height:1; opacity:.4;
+  transition:opacity .12s ease, color .12s ease;
 }
-.slot__x:hover { border-color:var(--danger); color:var(--danger); }
+.slot:hover .slot__x, .slot__x:focus-visible { opacity:1; }
+.slot__x:hover { color:var(--danger); background:rgba(255,92,92,.12); }
 
 .plate { width:100%; min-width:0; display:grid; gap:7px; text-align:center; }
 .plate__who { display:flex; align-items:baseline; justify-content:center; gap:7px; min-width:0; }
@@ -353,16 +371,6 @@ button { cursor:pointer; background:none; border:0; }
 .pick__s { font-size:10px; color:var(--text-faint); }
 .pick__meta { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; }
 .pick__bars { display:grid; gap:3px; width:100%; }
-/* "details" was an underlined word competing with the deck's own name two lines
-   above it. As a glyph it sits in the meta row with the pips and the badges,
-   which costs the grid a whole row less and stops it reading as a second title. */
-.pick__more {
-  width:17px; height:17px; flex:0 0 auto; border-radius:999px; display:grid; place-items:center;
-  border:1px solid var(--edge-hi); background:rgba(9,8,20,.5);
-  font-size:10px; font-weight:800; font-style:italic; line-height:1; color:var(--text-faint);
-}
-.pick__more:hover { border-color:var(--gold); color:var(--gold); }
-.pick__more:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 
 .empty { padding:52px 20px; text-align:center; color:var(--text-faint); font-size:13px; line-height:1.6; }
 
@@ -448,6 +456,20 @@ button { cursor:pointer; background:none; border:0; }
 .pip--inline { width:1.05em; height:1.05em; margin:0 .04em; vertical-align:-.14em; filter:none; }
 /* Colour-identity rows live outside a .face, which is where --pip is scoped. */
 .plate__meta, .pick__meta, .over__head { --pip:14px; }
+
+/* The details affordance, everywhere one is offered. It was the word "details"
+   under a catalogue card and a full-width "Details" button on a seat plate --
+   both of which competed with the deck's own name for the eye, and the second of
+   which sat next to the button you actually came to press. As a glyph it rides in
+   whichever meta row already holds the pips and the badges, costing its block a
+   whole row, and it doubles as the hint that the card above it is clickable. */
+.ibtn {
+  width:17px; height:17px; flex:0 0 auto; border-radius:999px; display:grid; place-items:center;
+  border:1px solid var(--edge-hi); background:rgba(9,8,20,.5);
+  font-size:10px; font-weight:800; font-style:italic; line-height:1; color:var(--text-faint);
+}
+.ibtn:hover { border-color:var(--gold); color:var(--gold); }
+.ibtn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 
 .chip { padding:3px 8px; border:1px solid var(--edge-hi); border-radius:999px; font-size:10px; font-weight:650; color:var(--text-dim); background:rgba(9,8,20,.5); }
 .count { font-size:10.5px; color:var(--text-faint); }
@@ -1292,7 +1314,7 @@ function slot(i) {
   if (s.kind === "empty") {
     const n = podSize();
     return `<div class="slot">
-      <span class="slot__no">Seat ${i + 1}</span>
+      <div class="slot__head"><span class="slot__no">Seat ${i + 1}</span></div>
       <div class="slot__card">${cardBack("Empty seat", "empty")}</div>
       <div class="plate">
         <div class="plate__who"><span class="plate__n">No one yet</span></div>
@@ -1318,38 +1340,49 @@ function slot(i) {
   const stamp = d && seatReady(s)
     ? `<span class="stamp${you ? "" : " stamp--them"}">Locked in</span>` : "";
 
+  // Whose deck you may read: your own, a CPU's, and another player's once they
+  // have locked in. That single fact drives the card's clickability, the `i` in
+  // the meta row and the dossier's own "for this seat" behaviour, so it is
+  // decided once here rather than three times below.
+  const readable = !!d && (you || s.kind === "cpu" || s.ready);
+  const forSeat = you || s.kind === "cpu" ? ` data-for="${i}"` : "";
+  const info = readable
+    ? `<button class="ibtn" data-act="dossier" data-id="${d.id}"${forSeat} title="Deck details" aria-label="Deck details for ${esc(lab.title)}">i</button>`
+    : "";
+
   const deckLine = d
     ? `<div class="plate__deck">${esc(d.name)}</div>
-       <div class="plate__meta">${ciPips(d.ci)}${engineBadge(d)}</div>`
+       <div class="plate__meta">${ciPips(d.ci)}${engineBadge(d)}${info}</div>`
     : `<div class="plate__deck plate__deck--sealed">${s.kind === "open" ? `Pod ${POD.code}` : "Deck sealed"}</div>
        <div class="plate__meta"><span class="count">${s.kind === "open" ? "Anyone with the code" : "Readable once they lock in"}</span></div>`;
 
-  let acts;
+  // What is left in the acts row is only ever what you came to the plate to do.
+  // Reading a deck moved onto the card and into the meta row; emptying the seat
+  // moved up into the header. A seat belonging to another player now has no acts
+  // row at all, which is right -- there is nothing about it for you to change.
+  let acts = "";
   if (you) {
-    acts = `<button class="btn" data-act="cat-open" data-for="0" ${s.ready ? "disabled" : ""}>Change deck</button>
-            <button class="btn" data-act="dossier" data-id="${s.deckId}" data-for="0">Details</button>`;
+    acts = `<button class="btn btn--wide" data-act="cat-open" data-for="0" ${s.ready ? "disabled" : ""}>Change deck</button>`;
   } else if (s.kind === "cpu") {
-    // A CPU seat's card is the one other card on the table you are allowed to
-    // turn over, so it gets the same pair of controls your own seat gets.
-    acts = `<button class="btn" data-act="cat-open" data-for="${i}">Change deck</button>
-            <button class="btn" data-act="dossier" data-id="${d ? d.id : ""}" data-for="${i}">Details</button>`;
+    acts = `<button class="btn btn--wide" data-act="cat-open" data-for="${i}">Change deck</button>`;
   } else if (s.kind === "open") {
     acts = `<button class="btn" data-act="invite">Share the code</button>
             <button class="btn" data-act="add-cpu" data-i="${i}">CPU instead</button>`;
-  } else {
-    acts = `<button class="btn" data-act="dossier" data-id="${s.ready ? s.deckId : ""}" ${s.ready ? "" : "disabled"}>Read their deck</button>`;
   }
 
   return `<div class="slot">
-    <span class="slot__no${you ? " slot__no--you" : ""}">Seat ${i + 1} · ${you ? "you" : s.kind === "cpu" ? "CPU" : s.kind === "open" ? "open" : "player"}</span>
-    <div class="slot__card">
+    <div class="slot__head">
+      <span class="slot__no${you ? " slot__no--you" : ""}">Seat ${i + 1} · ${you ? "you" : s.kind === "cpu" ? "CPU" : s.kind === "open" ? "open" : "player"}</span>
+      ${you ? "" : `<button class="slot__x" data-act="clear" data-i="${i}" title="Empty this seat" aria-label="Empty seat ${i + 1}">✕</button>`}
+    </div>
+    <div class="slot__card"${readable ? ` role="button" tabindex="0" data-act="dossier" data-id="${d.id}"${forSeat} aria-label="Read ${esc(d.name)}"` : ""}>
       ${cardFace}
       ${stamp}
     </div>
     <div class="plate">
       <div class="plate__who"><span class="plate__n">${esc(lab.title)}</span><span class="plate__tag">${esc(lab.sub)}</span></div>
       ${deckLine}
-      <div class="plate__acts">${acts}${you ? "" : `<button class="slot__x" data-act="clear" data-i="${i}" title="Empty this seat">✕</button>`}</div>
+      ${acts ? `<div class="plate__acts">${acts}</div>` : ""}
     </div>
   </div>`;
 }
@@ -1460,7 +1493,7 @@ function catalogue() {
     </div>
     <div class="pick__n">${esc(d.name)}</div>
     <div class="pick__s">${esc(subtitle(d))}</div>
-    <div class="pick__meta">${ciPips(d.ci)}<span class="badge badge--src">${d.source === "yours" ? "Yours" : "Precon"}</span>${engineBadge(d)}<button class="pick__more" data-act="dossier" data-id="${d.id}" title="Deck details" aria-label="Details for ${esc(d.name)}">i</button></div>
+    <div class="pick__meta">${ciPips(d.ci)}<span class="badge badge--src">${d.source === "yours" ? "Yours" : "Precon"}</span>${engineBadge(d)}<button class="ibtn" data-act="dossier" data-id="${d.id}" title="Deck details" aria-label="Details for ${esc(d.name)}">i</button></div>
     <div class="pick__bars">${bar("Speed", d.bars.speed, true)}${bar("Complex", d.bars.complexity, true)}${bar("Demands", d.bars.pilot, true)}</div>
   </div>`;
   };
@@ -1506,7 +1539,6 @@ function catalogue() {
         <button class="btn" data-act="import">Fetch</button>
       </span>
       ${note}
-      <button class="btn" data-act="cat-close">Done</button>
     </div>
   </section>`;
 }
@@ -1678,7 +1710,11 @@ root.addEventListener("click", (e) => {
 
     case "cat-open": state.cat = true; state.catFor = Number(hit.dataset.for || 0); break;
     case "cat-close": state.cat = false; break;
-    case "pick": pick(hit.dataset.id); break;
+    // Choosing a deck is the errand you opened the catalogue to run, so making
+    // the choice ends it. There is no longer a "pick but stay" case: leaving the
+    // rack open after a click asked you to notice a tick on a card you had just
+    // clicked and then find your own way out.
+    case "pick":
     case "pick-close": pick(hit.dataset.id); state.open = null; state.cat = false; break;
     case "dossier":
       if (!hit.dataset.id) return;

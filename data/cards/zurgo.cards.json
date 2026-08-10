@@ -237,7 +237,7 @@
     {
       "id": "increasing_devotion",
       "name": "Increasing Devotion",
-      "oracle_text": "Create five 1/1 white Human creature tokens.",
+      "oracle_text": "Create five 1/1 white Human creature tokens. If this spell was cast from a graveyard, create ten of those tokens instead.\nFlashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
       "mana_cost": "{3}{W}{W}",
       "types": [
         "Sorcery"
@@ -255,7 +255,7 @@
     {
       "id": "secure_the_wastes",
       "name": "Secure the Wastes",
-      "oracle_text": "Create X 1/1 white Soldier creature tokens.",
+      "oracle_text": "Create X 1/1 white Warrior creature tokens.",
       "mana_cost": "{X}{W}",
       "types": [
         "Instant"
@@ -273,7 +273,7 @@
     {
       "id": "grave_titan",
       "name": "Grave Titan",
-      "oracle_text": "Deathtouch\nWhen Grave Titan enters, create two 2/2 black Zombie creature tokens.\nWhenever Grave Titan attacks, create two 2/2 black Zombie creature tokens.",
+      "oracle_text": "Deathtouch\nWhenever this creature enters or attacks, create two 2/2 black Zombie creature tokens.",
       "mana_cost": "{4}{B}{B}",
       "types": [
         "Creature"
@@ -327,7 +327,7 @@
     {
       "id": "timely_hordemate",
       "name": "Timely Hordemate",
-      "oracle_text": "When Timely Hordemate enters, return target creature card with mana value 2 or less from your graveyard to the battlefield.",
+      "oracle_text": "Raid — When this creature enters, if you attacked this turn, return target creature card with mana value 2 or less from your graveyard to the battlefield.",
       "mana_cost": "{2}{W}",
       "types": [
         "Creature"
@@ -341,7 +341,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, return a creature with mana value 2 or less from your graveyard to the battlefield.",
+          "text": "Raid — When this creature enters, if you attacked this turn, return target creature card with mana value 2 or less from your graveyard to the battlefield.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -372,7 +372,7 @@
     {
       "id": "impact_tremors",
       "name": "Impact Tremors",
-      "oracle_text": "Whenever a creature you control enters, Impact Tremors deals 1 damage to each opponent.",
+      "oracle_text": "Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.",
       "mana_cost": "{1}{R}",
       "types": [
         "Enchantment"
@@ -380,7 +380,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a creature you control enters, deal 1 damage to each opponent.",
+          "text": "Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -449,7 +449,7 @@
     {
       "id": "bastion_of_remembrance",
       "name": "Bastion of Remembrance",
-      "oracle_text": "When Bastion of Remembrance enters, create a 1/1 white Human creature token.\nWhenever another creature you control dies, each opponent loses 1 life and you gain 1 life.",
+      "oracle_text": "When this enchantment enters, create a 1/1 white Human Soldier creature token.\nWhenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
       "mana_cost": "{2}{B}",
       "types": [
         "Enchantment"
@@ -472,47 +472,6 @@
             }
           ]
         },
-        {
-          "kind": "triggered",
-          "text": "Whenever another creature you control dies, each opponent loses 1 life and you gain 1 life.",
-          "trigger": {
-            "event": "creature_dies",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "lose_life",
-              "player": "each_opponent",
-              "amount": {
-                "const": 1
-              }
-            },
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "zulaport_cutthroat",
-      "name": "Zulaport Cutthroat",
-      "oracle_text": "Whenever Zulaport Cutthroat or another creature you control dies, each opponent loses 1 life and you gain 1 life.",
-      "mana_cost": "{1}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Human",
-        "Rogue"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "abilities": [
         {
           "kind": "triggered",
           "text": "Whenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
@@ -540,9 +499,50 @@
       ]
     },
     {
+      "id": "zulaport_cutthroat",
+      "name": "Zulaport Cutthroat",
+      "oracle_text": "Whenever this creature or another creature you control dies, each opponent loses 1 life and you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control dies, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "hellrider",
       "name": "Hellrider",
-      "oracle_text": "Haste\nWhenever a creature you control attacks, Hellrider deals 1 damage to the player it's attacking.",
+      "oracle_text": "Haste\nWhenever a creature you control attacks, this creature deals 1 damage to the player or planeswalker it's attacking.",
       "mana_cost": "{2}{R}{R}",
       "types": [
         "Creature"
@@ -558,7 +558,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a creature you control attacks, deal 1 damage to the defending player.",
+          "text": "Whenever a creature you control attacks, this creature deals 1 damage to the player or planeswalker it's attacking.",
           "trigger": {
             "event": "attacks",
             "controller": "you"
@@ -594,7 +594,7 @@
       "abilities": [
         {
           "kind": "static",
-          "text": "Other Warriors you control get +1/+0.",
+          "text": "Other Warrior creatures you control get +1/+0.",
           "effect": "buff",
           "affects": {
             "controller": "you",
@@ -615,7 +615,7 @@
     {
       "id": "mardu_hateblade",
       "name": "Mardu Hateblade",
-      "oracle_text": "{B}: Mardu Hateblade gains deathtouch until end of turn.",
+      "oracle_text": "{B}: This creature gains deathtouch until end of turn. (Any amount of damage it deals to a creature is enough to destroy it.)",
       "mana_cost": "{W}",
       "types": [
         "Creature"
@@ -651,7 +651,7 @@
     {
       "id": "mardu_woe_reaper",
       "name": "Mardu Woe-Reaper",
-      "oracle_text": "When Mardu Woe-Reaper enters, you may exile target card from a graveyard. If a creature card was exiled this way, you gain 1 life.",
+      "oracle_text": "Whenever this creature or another Warrior you control enters, you may exile target creature card from a graveyard. If you do, you gain 1 life.",
       "mana_cost": "{W}",
       "types": [
         "Creature"
@@ -666,7 +666,7 @@
     {
       "id": "marauding_maulhorn",
       "name": "Marauding Maulhorn",
-      "oracle_text": "Marauding Maulhorn attacks each combat if able.",
+      "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
       "mana_cost": "{2}{R}",
       "types": [
         "Creature"
@@ -680,7 +680,7 @@
     {
       "id": "dictate_of_erebos",
       "name": "Dictate of Erebos",
-      "oracle_text": "Whenever a creature you control dies, each opponent sacrifices a creature.",
+      "oracle_text": "Flash\nWhenever a creature you control dies, each opponent sacrifices a creature of their choice.",
       "mana_cost": "{3}{B}{B}",
       "types": [
         "Enchantment"

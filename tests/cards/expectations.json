@@ -1,38 +1,706 @@
 {
-  "_comment": "Per-card outcome assertions for tests/cards/test_every_card_works.py. The sandbox is described in that file: player 0 starts at 40 life with 30 lands and 2 other permanents, an empty hand once the card under test is played, and player 1 at 40 life. Cards listed here must produce exactly this result; cards not listed only have to play and resolve without error.",
-
-  "thragtusk": { "life": { "0": 45 } },
-  "vampire_sovereign": { "life": { "0": 42, "1": 38 } },
-  "bishop_of_the_bloodstained": { "life": { "1": 39 } },
-  "champion_of_dusk": { "life": { "0": 39 }, "hand_size": { "0": 1 } },
-  "dusk_legion_zealot": { "life": { "0": 39 }, "hand_size": { "0": 1 } },
-
-  "divination": { "hand_size": { "0": 2 } },
-  "harmonize": { "hand_size": { "0": 3 } },
-  "deep_analysis": { "hand_size": { "0": 2 } },
-  "mulldrifter": { "hand_size": { "0": 2 } },
-  "elvish_visionary": { "hand_size": { "0": 1 } },
-  "preordain": { "hand_size": { "0": 1 } },
-  "nights_whisper": { "life": { "0": 38 }, "hand_size": { "0": 2 } },
-  "read_the_bones": { "life": { "0": 38 }, "hand_size": { "0": 2 } },
-
-  "scoured_barrens": { "life": { "0": 41 } },
-  "bloodfell_caves": { "life": { "0": 41 } },
-  "wind_scarred_crag": { "life": { "0": 41 } },
-  "thornwood_falls": { "life": { "0": 41 } },
-
-  "rampant_growth": { "battlefield_count": 33 },
-  "nissas_pilgrimage": { "battlefield_count": 34 },
-  "explosive_vegetation": { "battlefield_count": 34 },
-  "skyshroud_claim": { "battlefield_count": 34 },
-  "cultivate": { "battlefield_count": 33, "hand_size": { "0": 1 } },
-  "kodamas_reach": { "battlefield_count": 33, "hand_size": { "0": 1 } },
-  "solemn_simulacrum": { "battlefield_count": 34 },
-  "wood_elves": { "battlefield_count": 34 },
-  "farhaven_elf": { "battlefield_count": 34 },
-  "sylvan_ranger": { "hand_size": { "0": 1 } },
-
-  "avenger_of_zendikar": { "tokens": { "id": "plant_0_1_g", "count": 30 } },
-  "hydra_broodmaster": { "tokens": { "id": "kraken_8_8_u", "count": 1 } },
-  "martyr_of_dusk": { "tokens": { "id": "vampire_1_1_b_lifelink", "count": 0 } }
+  "_comment": "Per-card outcome assertions, read by tests/cards/test_every_card_works.py and tests/cards/test_hand_written_cards.py. The sandbox is described in the former: player 0 starts at 40 life with 30 lands and 2 other permanents, an empty hand once the card under test is played, and player 1 at 40 life. Every hand-written card must appear here -- gate 5 refuses a card nobody has asserted anything about -- but a zone-only entry is the floor, not coverage: it says the card resolved to the right place and nothing about what it did. `python scripts/audit_cards.py` still reports those as unasserted. Replacing one with a real assertion is how a card actually gets verified; keys are automtg.cards.authoring.verify.EXPECTATION_KEYS.",
+  "absorb": {
+    "zone": "graveyard"
+  },
+  "acidic_slime": {
+    "zone": "battlefield"
+  },
+  "adanto_vanguard": {
+    "zone": "battlefield"
+  },
+  "aesi_tyrant_of_gyre_strait": {
+    "zone": "battlefield"
+  },
+  "aetherling_serpent": {
+    "zone": "battlefield"
+  },
+  "air_elemental": {
+    "zone": "battlefield"
+  },
+  "ancient_den": {
+    "zone": "battlefield"
+  },
+  "angel_of_despair": {
+    "zone": "battlefield"
+  },
+  "angel_of_sanctions": {
+    "zone": "battlefield"
+  },
+  "angel_of_the_dire_hour": {
+    "zone": "battlefield"
+  },
+  "anticipate": {
+    "zone": "graveyard"
+  },
+  "arcane_signet": {
+    "zone": "battlefield"
+  },
+  "archangel_of_thune": {
+    "zone": "battlefield"
+  },
+  "augury_owl": {
+    "zone": "battlefield"
+  },
+  "aven_fleetwing": {
+    "zone": "battlefield"
+  },
+  "avenger_of_zendikar": {
+    "tokens": {
+      "id": "plant_0_1_g",
+      "count": 30
+    }
+  },
+  "azorius_chancery": {
+    "zone": "battlefield"
+  },
+  "azorius_guildgate": {
+    "zone": "battlefield"
+  },
+  "azusa_lost_but_seeking": {
+    "zone": "battlefield"
+  },
+  "banishing_light": {
+    "zone": "battlefield"
+  },
+  "bastion_of_remembrance": {
+    "zone": "battlefield"
+  },
+  "beast_whisperer": {
+    "zone": "battlefield"
+  },
+  "beast_within": {
+    "zone": "graveyard"
+  },
+  "bident_of_thassa": {
+    "zone": "battlefield"
+  },
+  "bishop_of_rebirth": {
+    "zone": "battlefield"
+  },
+  "bishop_of_the_bloodstained": {
+    "life": {
+      "1": 39
+    }
+  },
+  "blood_artist": {
+    "zone": "battlefield"
+  },
+  "bloodfell_caves": {
+    "life": {
+      "0": 41
+    }
+  },
+  "bloodline_necromancer": {
+    "zone": "battlefield"
+  },
+  "bloodrite_invoker": {
+    "zone": "battlefield"
+  },
+  "bloodthrone_vampire": {
+    "zone": "battlefield"
+  },
+  "blue_suns_zenith": {
+    "zone": "graveyard"
+  },
+  "bygone_bishop": {
+    "zone": "battlefield"
+  },
+  "cancel": {
+    "zone": "graveyard"
+  },
+  "champion_of_dusk": {
+    "life": {
+      "0": 39
+    },
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "chief_of_the_edge": {
+    "zone": "battlefield"
+  },
+  "child_of_night": {
+    "zone": "battlefield"
+  },
+  "cloudkin_seer": {
+    "zone": "battlefield"
+  },
+  "coastal_tower": {
+    "zone": "battlefield"
+  },
+  "colossal_dreadmaw": {
+    "zone": "battlefield"
+  },
+  "command_tower": {
+    "zone": "battlefield"
+  },
+  "commanders_sphere": {
+    "zone": "battlefield"
+  },
+  "concentrate": {
+    "zone": "graveyard"
+  },
+  "consecrated_sphinx": {
+    "zone": "battlefield"
+  },
+  "counterspell": {
+    "zone": "graveyard"
+  },
+  "cruel_celebrant": {
+    "zone": "battlefield"
+  },
+  "cultivate": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "day_of_judgment": {
+    "zone": "graveyard"
+  },
+  "deep_analysis": {
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "deputy_of_detention": {
+    "zone": "battlefield"
+  },
+  "dictate_of_erebos": {
+    "zone": "battlefield"
+  },
+  "disfigure": {
+    "zone": "graveyard"
+  },
+  "dismiss": {
+    "zone": "graveyard"
+  },
+  "dissolve": {
+    "zone": "graveyard"
+  },
+  "divination": {
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "dragon_fodder": {
+    "zone": "graveyard"
+  },
+  "drana_liberator_of_malakir": {
+    "zone": "battlefield"
+  },
+  "dreadbore": {
+    "zone": "graveyard"
+  },
+  "dusk_legion_zealot": {
+    "life": {
+      "0": 39
+    },
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "duskborne_skymarcher": {
+    "zone": "battlefield"
+  },
+  "edgar_markov": {
+    "zone": "battlefield"
+  },
+  "elvish_mystic": {
+    "zone": "battlefield"
+  },
+  "elvish_visionary": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "emeria_angel": {
+    "zone": "battlefield"
+  },
+  "empyrean_eagle": {
+    "zone": "battlefield"
+  },
+  "epicure_of_blood": {
+    "zone": "battlefield"
+  },
+  "essence_scatter": {
+    "zone": "graveyard"
+  },
+  "eternal_witness": {
+    "zone": "battlefield"
+  },
+  "evacuation": {
+    "zone": "graveyard"
+  },
+  "evolving_wilds": {
+    "zone": "battlefield"
+  },
+  "exclude": {
+    "zone": "graveyard"
+  },
+  "exploration": {
+    "zone": "battlefield"
+  },
+  "explore": {
+    "zone": "graveyard"
+  },
+  "explosive_vegetation": {
+    "battlefield_count": 34
+  },
+  "falkenrath_noble": {
+    "zone": "battlefield"
+  },
+  "farhaven_elf": {
+    "battlefield_count": 34
+  },
+  "forest": {
+    "zone": "battlefield"
+  },
+  "fyndhorn_elves": {
+    "zone": "battlefield"
+  },
+  "garruks_packleader": {
+    "zone": "battlefield"
+  },
+  "gifted_aetherborn": {
+    "zone": "battlefield"
+  },
+  "go_for_the_throat": {
+    "zone": "graveyard"
+  },
+  "grave_titan": {
+    "zone": "battlefield"
+  },
+  "growth_spiral": {
+    "zone": "graveyard"
+  },
+  "guardian_project": {
+    "zone": "battlefield"
+  },
+  "guul_draz_vampire": {
+    "zone": "battlefield"
+  },
+  "gyre_sage": {
+    "zone": "battlefield"
+  },
+  "harmonize": {
+    "hand_size": {
+      "0": 3
+    }
+  },
+  "harrow": {
+    "zone": "graveyard"
+  },
+  "hellrider": {
+    "zone": "battlefield"
+  },
+  "heros_downfall": {
+    "zone": "graveyard"
+  },
+  "hordeling_outburst": {
+    "zone": "graveyard"
+  },
+  "horn_of_greed": {
+    "zone": "battlefield"
+  },
+  "hydra_broodmaster": {
+    "tokens": {
+      "id": "kraken_8_8_u",
+      "count": 1
+    }
+  },
+  "impact_tremors": {
+    "zone": "battlefield"
+  },
+  "increasing_devotion": {
+    "zone": "graveyard"
+  },
+  "indulgent_aristocrat": {
+    "zone": "battlefield"
+  },
+  "inspiration": {
+    "zone": "graveyard"
+  },
+  "intangible_virtue": {
+    "zone": "battlefield"
+  },
+  "island": {
+    "zone": "battlefield"
+  },
+  "isperia_supreme_judge": {
+    "zone": "battlefield"
+  },
+  "jaces_ingenuity": {
+    "zone": "graveyard"
+  },
+  "kalastria_highborn": {
+    "zone": "battlefield"
+  },
+  "kiora_growth_surge": {
+    "zone": "graveyard"
+  },
+  "kodamas_reach": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "kraken_hatchling_swarm": {
+    "zone": "graveyard"
+  },
+  "krenkos_command": {
+    "zone": "graveyard"
+  },
+  "krosan_tusker": {
+    "zone": "battlefield"
+  },
+  "legion_lieutenant": {
+    "zone": "battlefield"
+  },
+  "lightning_strike": {
+    "zone": "graveyard"
+  },
+  "llanowar_elves": {
+    "zone": "battlefield"
+  },
+  "loyal_drake": {
+    "zone": "battlefield"
+  },
+  "lyra_dawnbringer": {
+    "zone": "battlefield"
+  },
+  "man_o_war": {
+    "zone": "battlefield"
+  },
+  "marauding_maulhorn": {
+    "zone": "battlefield"
+  },
+  "mardu_hateblade": {
+    "zone": "battlefield"
+  },
+  "mardu_woe_reaper": {
+    "zone": "battlefield"
+  },
+  "markov_patrician": {
+    "zone": "battlefield"
+  },
+  "martyr_of_dusk": {
+    "tokens": {
+      "id": "vampire_1_1_b_lifelink",
+      "count": 0
+    }
+  },
+  "mavren_fein_dusk_apostle": {
+    "zone": "battlefield"
+  },
+  "meandering_river": {
+    "zone": "battlefield"
+  },
+  "mind_stone": {
+    "zone": "battlefield"
+  },
+  "mountain": {
+    "zone": "battlefield"
+  },
+  "mulldrifter": {
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "naturalize": {
+    "zone": "graveyard"
+  },
+  "necropolis_regent": {
+    "zone": "battlefield"
+  },
+  "negate": {
+    "zone": "graveyard"
+  },
+  "nights_whisper": {
+    "life": {
+      "0": 38
+    },
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "nimble_mongoose": {
+    "zone": "battlefield"
+  },
+  "nissas_pilgrimage": {
+    "battlefield_count": 34
+  },
+  "nomad_outpost": {
+    "zone": "battlefield"
+  },
+  "oblivion_ring": {
+    "zone": "battlefield"
+  },
+  "omenspeaker": {
+    "zone": "battlefield"
+  },
+  "opt": {
+    "zone": "graveyard"
+  },
+  "overrun_lite": {
+    "zone": "graveyard"
+  },
+  "path_to_exile": {
+    "zone": "graveyard"
+  },
+  "phyrexian_arena": {
+    "zone": "battlefield"
+  },
+  "plains": {
+    "zone": "battlefield"
+  },
+  "ponder": {
+    "zone": "graveyard"
+  },
+  "preordain": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "pulse_tracker": {
+    "zone": "battlefield"
+  },
+  "raise_the_alarm": {
+    "zone": "graveyard"
+  },
+  "rakish_heir": {
+    "zone": "battlefield"
+  },
+  "rampaging_baloths": {
+    "zone": "battlefield"
+  },
+  "rampant_growth": {
+    "battlefield_count": 33
+  },
+  "rapid_hybridization": {
+    "zone": "graveyard"
+  },
+  "read_the_bones": {
+    "life": {
+      "0": 38
+    },
+    "hand_size": {
+      "0": 2
+    }
+  },
+  "reclamation_sage": {
+    "zone": "battlefield"
+  },
+  "reconnaissance_mission": {
+    "zone": "battlefield"
+  },
+  "roiling_regrowth": {
+    "zone": "graveyard"
+  },
+  "sakura_tribe_elder": {
+    "zone": "battlefield"
+  },
+  "sanctum_seeker": {
+    "zone": "battlefield"
+  },
+  "sangromancer": {
+    "zone": "battlefield"
+  },
+  "sanguine_bond": {
+    "zone": "battlefield"
+  },
+  "savai_triome": {
+    "zone": "battlefield"
+  },
+  "scoured_barrens": {
+    "life": {
+      "0": 41
+    }
+  },
+  "seat_of_the_synod": {
+    "zone": "battlefield"
+  },
+  "secure_the_wastes": {
+    "zone": "graveyard"
+  },
+  "sengir_vampire": {
+    "zone": "battlefield"
+  },
+  "serra_angel": {
+    "zone": "battlefield"
+  },
+  "simic_growth_chamber": {
+    "zone": "battlefield"
+  },
+  "simic_sky_swallower": {
+    "zone": "battlefield"
+  },
+  "skyknight_vanguard": {
+    "zone": "battlefield"
+  },
+  "skymarcher_aspirant": {
+    "zone": "battlefield"
+  },
+  "skyshroud_claim": {
+    "battlefield_count": 34
+  },
+  "sol_ring": {
+    "zone": "battlefield"
+  },
+  "solemn_simulacrum": {
+    "battlefield_count": 34
+  },
+  "sphinx_of_magosi": {
+    "zone": "battlefield"
+  },
+  "sphinxs_revelation": {
+    "zone": "graveyard"
+  },
+  "stromkirk_captain": {
+    "zone": "battlefield"
+  },
+  "stromkirk_noble": {
+    "zone": "battlefield"
+  },
+  "sun_titan": {
+    "zone": "battlefield"
+  },
+  "sunblast_angel": {
+    "zone": "battlefield"
+  },
+  "swamp": {
+    "zone": "battlefield"
+  },
+  "swords_to_plowshares": {
+    "zone": "graveyard"
+  },
+  "sylvan_ranger": {
+    "hand_size": {
+      "0": 1
+    }
+  },
+  "tatyova_benthic_druid": {
+    "zone": "battlefield"
+  },
+  "temple_of_enlightenment": {
+    "zone": "battlefield"
+  },
+  "temple_of_mystery": {
+    "zone": "battlefield"
+  },
+  "terminate": {
+    "zone": "graveyard"
+  },
+  "terramorphic_expanse": {
+    "zone": "battlefield"
+  },
+  "thornwood_falls": {
+    "life": {
+      "0": 41
+    }
+  },
+  "thragtusk": {
+    "life": {
+      "0": 45
+    }
+  },
+  "timely_hordemate": {
+    "zone": "battlefield"
+  },
+  "tireless_provisioner": {
+    "zone": "battlefield"
+  },
+  "tranquil_cove": {
+    "zone": "battlefield"
+  },
+  "vampire_aristocrat": {
+    "zone": "battlefield"
+  },
+  "vampire_cutthroat": {
+    "zone": "battlefield"
+  },
+  "vampire_lacerator": {
+    "zone": "battlefield"
+  },
+  "vampire_neonate": {
+    "zone": "battlefield"
+  },
+  "vampire_nighthawk": {
+    "zone": "battlefield"
+  },
+  "vampire_of_the_dire_moon": {
+    "zone": "battlefield"
+  },
+  "vampire_sovereign": {
+    "life": {
+      "0": 42,
+      "1": 38
+    }
+  },
+  "vampiric_rites": {
+    "zone": "battlefield"
+  },
+  "vanquishers_banner": {
+    "zone": "battlefield"
+  },
+  "vicious_conquistador": {
+    "zone": "battlefield"
+  },
+  "vindicate": {
+    "zone": "graveyard"
+  },
+  "vorel_of_the_hull_clade": {
+    "zone": "battlefield"
+  },
+  "wall_of_omens": {
+    "zone": "battlefield"
+  },
+  "warden_of_evos_isle": {
+    "zone": "battlefield"
+  },
+  "watcher_of_the_spheres": {
+    "zone": "battlefield"
+  },
+  "wayfarers_bauble": {
+    "zone": "battlefield"
+  },
+  "whiptongue_hydra": {
+    "zone": "battlefield"
+  },
+  "wind_drake": {
+    "zone": "battlefield"
+  },
+  "wind_scarred_crag": {
+    "life": {
+      "0": 41
+    }
+  },
+  "windreader_sphinx": {
+    "zone": "battlefield"
+  },
+  "wood_elves": {
+    "battlefield_count": 34
+  },
+  "woodland_stream": {
+    "zone": "battlefield"
+  },
+  "wrath_of_god": {
+    "zone": "graveyard"
+  },
+  "yavimaya_elder": {
+    "zone": "battlefield"
+  },
+  "zealous_persecution": {
+    "zone": "graveyard"
+  },
+  "zendikars_roil": {
+    "zone": "battlefield"
+  },
+  "zulaport_cutthroat": {
+    "zone": "battlefield"
+  },
+  "zurgo_stormrender": {
+    "zone": "battlefield"
+  }
 }

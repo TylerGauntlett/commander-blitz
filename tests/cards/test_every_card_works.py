@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from automtg.cards.authoring.verify import check_expectation
 from automtg.cards.registry import CardRegistry
 from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
@@ -315,27 +316,17 @@ class TestManaAbilities:
 
 
 def _check_expectation(game: Game, card_id: str, oid: int, expectation: dict) -> None:
-    """Assert a per-card expectation from ``expectations.json``."""
-    state = game.state
-    if "life" in expectation:
-        for pid, value in expectation["life"].items():
-            assert state.players[int(pid)].life == value, (
-                f"{card_id}: player {pid} life is {state.players[int(pid)].life}, "
-                f"expected {value}"
-            )
-    if "hand_size" in expectation:
-        for pid, value in expectation["hand_size"].items():
-            assert len(state.players[int(pid)].hand) == value, (
-                f"{card_id}: player {pid} hand is {len(state.players[int(pid)].hand)}, "
-                f"expected {value}"
-            )
-    if "counters" in expectation:
-        kind, value = expectation["counters"]["kind"], expectation["counters"]["amount"]
-        assert state.objects[oid].counter(kind) == value
-    if "tokens" in expectation:
-        token_id, count = expectation["tokens"]["id"], expectation["tokens"]["count"]
-        made = [o for o in state.battlefield_objects(0) if state.objects[o.oid].def_id == token_id]
-        assert len(made) == count, f"{card_id}: expected {count} {token_id}, got {len(made)}"
-    if "battlefield_count" in expectation:
-        assert len(state.battlefield_objects(0)) == expectation["battlefield_count"]
+    """Assert a per-card expectation from ``expectations.json``.
+
+    Delegates to the authoring gate's own checker rather than keeping a second
+    copy. The two had already diverged: this file understood five of the eleven
+    keys in ``verify.EXPECTATION_KEYS``, so an expectation asserting `granted`,
+    `target_pt_delta`, `library_size`, `graveyard_size`, `zone` or
+    `opponent_battlefield_count` was read here as asserting *nothing* and passed
+    whatever the card did. The sandboxes were always meant to mirror each other
+    -- ``verify.MANA_BASE`` says so in a comment -- and sharing the checker is
+    how that stops being a comment.
+    """
+    problems = check_expectation(game, card_id, oid, expectation)
+    assert not problems, f"{card_id}: " + "; ".join(problems)
 
