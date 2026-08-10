@@ -238,9 +238,39 @@ time and generic never passes 16 — and `e2e/cycle3.spec.ts` fails the run if
 anything does, which is the signal that `fetch_symbols.py`'s `WANTED` has fallen
 behind.
 
-The player orb's mana row (`.mana-pip`) is deliberately *not* one of these. It
-shows mana you have rather than a cost you owe, and it hollows out to forecast a
-payment — a different idea that would be worse for borrowing the same mark.
+The player orb's mana panel used to be the exception — 9px discs coloured by
+`--mana-*`, on the argument that showing mana you *have* is a different idea from
+showing a cost you *owe* and would read worse for borrowing the same mark. That
+was wrong twice over: the mark a player recognises is the mark, whichever
+direction the mana is flowing, and it left one surface in the client still using
+the letter-on-a-disc the rest of it had abandoned.
+
+What the discs really bought was **repetition** — at 9px a mark per mana is cheap,
+and at symbol width ten untapped lands wrapped to three rows in a 190px column.
+So the panel counts instead of repeating: one chip per *kind* of mana, `4{G}
+2{U}`, which is also how a player says it out loud. `manaGroups` in `logic/mana.ts`
+does the collapsing; `manaRow` still produces a pip per mana underneath it,
+because the forecast is per-source.
+
+Two cases the count has to carry that a repeated mark carried for free:
+
+- **A choice of two** is the published hybrid — a land reading "Add {G} or {U}" is
+  one `{G/U}`, which is exactly "one mana, either colour". Three or more has no
+  printed mark and falls back to the five-way split disc (`.mana-grp__any`), not
+  to `pip--text`: reaching the text fallback means a symbol is *missing*, and
+  `e2e/cycle3.spec.ts` fails the run when anything does.
+- **The spend forecast** was pips hollowing out one by one. A chip shows what would
+  be left beside a faint `−n` for what goes, so `2 −2` answers "and what will that
+  leave me with" the way the hollow pips did. Which sources those are is still the
+  engine's solved payment and never arithmetic here.
+
+Both the mana panel and the commander-damage panel are **permanent**. They were
+conditional rows in `orb__body`'s `space-between` slack, so they floated in the
+middle of the column and re-spaced the whole interior each time one appeared or
+emptied — several times a turn. They sit on a plate with the zone piles in
+`.orb__foot` now, which puts all the slack in one gap under the plinth. An empty
+mana panel says `—`; a commander-damage chip exists for every other seat from turn
+one, at zero, carrying the seat and a meter of its progress toward 21.
 
 Text over an unknown illustration is the one thing here that can fail silently, so
 it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients

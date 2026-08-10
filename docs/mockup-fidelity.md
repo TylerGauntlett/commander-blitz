@@ -146,6 +146,27 @@ The mockup shows life as a plain numeral with a row of mana dots, and the zones 
 text chips (`Lib 84`, `Hand 4`, `GY 6`). The client uses a brass dial and stacked
 piles. Predates this sweep; `e2e/acceptance.spec.ts` asserts both.
 
+### Counted mana symbols on a plate, not a row of loose dots
+
+Every `mockups/orb/` direction draws mana as a row of small coloured discs sitting
+directly on the panel — as does `mockups/boards/`, and as the client did. Two
+things were wrong with porting that faithfully, and both were in `docs/roadmap.md`
+rather than in the mockups:
+
+The dots are not mana symbols. Every other surface in the client draws Scryfall's
+real ones, so the orb was the last place still using a mark nobody who plays the
+game recognises. It draws them too now — which forces the second change, because a
+real symbol is about twice a dot's width and a mark per mana wrapped to three rows
+in a 190px column. So the panel counts (`4{G} 2{U}`) where the mockup repeats.
+
+And the row floated. The mockups are 318px tall studies where a loose row lands
+where the composition wants it; the client's orb fills its column, and
+`orb__body`'s `space-between` stranded both the mana row and the commander-damage
+row in the slack between the plinth and the piles — re-spacing the interior every
+time either appeared or emptied. The client groups all three into `.orb__foot`, on
+plates, permanently. `e2e/orb.spec.ts` measures the result, since two more plates
+in that column is exactly the change that quietly breaks the 112px pod budget.
+
 ### `Auto-pass` keeps a word where the mockup uses a glyph
 
 The mockup's tool row is bare glyphs (`⏩ ↺ ✕`). Mute, skip, undo and quit follow

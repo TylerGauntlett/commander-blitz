@@ -456,7 +456,12 @@ test.describe("mana notation is drawn, not spelled", () => {
 
     expect(symbols.length, "no real mana symbols on screen at all").toBeGreaterThan(0);
     for (const symbol of symbols) {
-      expect(symbol.src).toBe(`/symbols/${symbol.code}.svg`);
+      // `{G/U}` lives in `G-U.svg`: a slash cannot be a filename on Windows, and
+      // `symbolFile` makes the substitution on the way out. Asserting the code
+      // verbatim passed only while no hybrid had ever rendered -- the orb's mana
+      // panel draws one for every dual land, so it would have failed on the
+      // first Simic source.
+      expect(symbol.src).toBe(`/symbols/${symbol.code.replace("/", "-")}.svg`);
       expect(symbol.decoded, `${symbol.src} did not decode`).toBe(true);
       expect(symbol.alt).toBe(`{${symbol.code}}`);
     }
@@ -472,7 +477,7 @@ test.describe("mana notation is drawn, not spelled", () => {
 });
 
 test.describe("the mana row answers what a spell costs", () => {
-  test("hovering a castable card hollows the pips it would tap", async ({ page }) => {
+  test("hovering a castable card marks the mana it would tap", async ({ page }) => {
     test.setTimeout(180_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
@@ -504,10 +509,22 @@ test.describe("the mana row answers what a spell costs", () => {
     expect(spending, "no playable card forecast a mana spend").toBeGreaterThan(0);
 
     // The forecast is the engine's solved payment, so it can never claim more
-    // mana than the row is showing.
-    const pips = await row.locator(".mana-pip").count();
-    expect(spending).toBeLessThanOrEqual(pips);
-    expect(await row.locator(".mana-pip--spent").count()).toBe(spending);
+    // mana than the row is showing. Summed across the counted chips rather than
+    // counted as elements: one chip stands for several mana and can be partly
+    // spent, so `data-spent` is the number and the chip is not.
+    const tally = await row.locator(".mana-grp").evaluateAll((nodes) =>
+      nodes.reduce(
+        (acc, n) => {
+          const el = n as HTMLElement;
+          acc.available += Number(el.dataset.count ?? "0");
+          acc.spent += Number(el.dataset.spent ?? "0");
+          return acc;
+        },
+        { available: 0, spent: 0 },
+      ),
+    );
+    expect(spending).toBeLessThanOrEqual(tally.available);
+    expect(tally.spent).toBe(spending);
 
     // And it goes away again, rather than sticking to the row.
     await page.getByTestId("phase-track").hover();

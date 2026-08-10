@@ -12,6 +12,7 @@
  */
 
 import type { CardView, LegalAction, ManaView, UnplayableReason } from "../api/types";
+import { pairSymbol } from "./manaSymbols";
 
 /** One renderable unit of mana. */
 export interface ManaPipView {
@@ -73,6 +74,96 @@ export function manaRow(mana: ManaView | undefined): ManaPipView[] {
   }
 
   return pips;
+}
+
+/** A run of identical mana, drawn as one symbol and a count. */
+export interface ManaGroupView {
+  key: string;
+  /** The class suffix that marks it: a WUBRG/C symbol, or "any". */
+  tone: string;
+  /** The symbol to draw, or null when no single published symbol fits. */
+  code: string | null;
+  /** What this group's mana can make. Length > 1 means the player chooses. */
+  symbols: string[];
+  /** How many mana are in the group. */
+  count: number;
+  /** Already in the pool rather than still in the ground. */
+  floating: boolean;
+  /** How many of them a hovered spell would tap. */
+  spent: number;
+}
+
+/**
+ * Collapse a pip row into one entry per kind of mana.
+ *
+ * A pip per mana was the honest rendering while a pip was a 9px dot. Drawn as
+ * the real symbol it is nearly twice as wide, and ten untapped lands wrapped the
+ * row to three lines inside a 190px column -- so the count moves into the mark
+ * instead, which is also how players say it out loud ("four green").
+ *
+ * Floating mana does not merge with land mana of the same colour. It is already
+ * made and it drains at end of step; land mana does not. Merging them would
+ * erase the one distinction the row was drawing a gold ring to make, so a pool
+ * {G} and an untapped Forest are two groups, floating first.
+ *
+ * Ambiguous sources group by their whole option set, so a Simic dual and a
+ * five-colour rock stay apart rather than both becoming "some colour".
+ */
+export function manaGroups(pips: ManaPipView[]): ManaGroupView[] {
+  const groups = new Map<string, ManaGroupView>();
+
+  for (const pip of pips) {
+    const key = `${pip.floating ? "pool" : "src"}:${pip.symbols.join("/")}`;
+    const group = groups.get(key);
+    if (group) {
+      group.count += 1;
+      if (pip.spent) group.spent += 1;
+      continue;
+    }
+    groups.set(key, {
+      key,
+      tone: pip.tone,
+      code: symbolFor(pip.symbols),
+      symbols: pip.symbols,
+      count: 1,
+      floating: pip.floating,
+      spent: pip.spent ? 1 : 0,
+    });
+  }
+
+  return [...groups.values()].sort(compareGroups);
+}
+
+/**
+ * The one mark that stands for `symbols`, or null if there is none.
+ *
+ * A choice of exactly two is a hybrid, which is published -- `{G/U}` says "one
+ * mana, either colour" better than any arrangement of two separate symbols
+ * could. Three or more has no printed mark and falls to the split disc; so does
+ * a pair Scryfall does not publish, which `pairSymbol` decides rather than this.
+ */
+function symbolFor(symbols: string[]): string | null {
+  if (symbols.length === 1) return symbols[0];
+  if (symbols.length === 2) return pairSymbol(symbols[0], symbols[1]);
+  return null;
+}
+
+/**
+ * Floating first, then WUBRG, then the ambiguous ones.
+ *
+ * Sorted rather than left in encounter order because the panel is read at a
+ * glance several times a turn: a group that moves when an unrelated land is
+ * tapped has to be re-found every time.
+ */
+function compareGroups(a: ManaGroupView, b: ManaGroupView): number {
+  if (a.floating !== b.floating) return a.floating ? -1 : 1;
+  // Ambiguous groups after every definite one, then widest choice last, then
+  // alphabetically -- any total order will do, as long as it is stable.
+  if (a.symbols.length !== b.symbols.length) return a.symbols.length - b.symbols.length;
+  if (a.symbols.length === 1) {
+    return SYMBOL_ORDER.indexOf(a.tone) - SYMBOL_ORDER.indexOf(b.tone);
+  }
+  return a.key.localeCompare(b.key);
 }
 
 /**

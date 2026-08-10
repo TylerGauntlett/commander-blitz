@@ -75,7 +75,20 @@ SYMBOLOGY = "https://api.scryfall.com/symbology"
 # symbology response and the filename. A `/` here matches nothing and fails
 # silently as "not in symbology".
 _COLORS = ["W", "U", "B", "R", "G"]
-_HYBRID = [f"{a}-{b}" for i, a in enumerate(_COLORS) for b in _COLORS[i + 1 :]]
+
+# The ten two-colour hybrids, in Scryfall's order -- which is *guild* order, not
+# WUBRG-adjacent order. Three of them run backwards against WUBRG: the printed
+# symbols are {R/W}, {G/W} and {G/U}, and there is no {W/R}, {W/G} or {U/G}.
+#
+# This list used to be generated as `a` before `b` in WUBRG order, which asked
+# symbology for those three non-existent codes, got "not in symbology --
+# skipped", and left seven of ten hybrids on disk. That is invisible until
+# something renders one: `ManaSymbol` claimed to know all ten, so a Selesnya or
+# Simic dual drew a broken <img> rather than falling back to anything.
+_HYBRID = [
+    "W-U", "W-B", "U-B", "U-R", "B-R",
+    "B-G", "R-G", "R-W", "G-W", "G-U",
+]
 _MONO_HYBRID = [f"2-{c}" for c in _COLORS]  # {2/W}: two generic, or one white
 _PHYREXIAN = [f"{c}-P" for c in [*_COLORS, "C"]]
 _COLORLESS_HYBRID = [f"C-{c}" for c in _COLORS]

@@ -34,19 +34,45 @@
  */
 
 import { motion, useAnimationControls } from "motion/react";
-import { useEffect, useRef } from "react";
+import { type CSSProperties, useEffect, useRef } from "react";
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { artUrl } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
-import { formatManaRow, manaRow, markSpent } from "../../logic/mana";
+import {
+  type ManaGroupView,
+  formatManaRow,
+  manaGroups,
+  manaRow,
+  markSpent,
+} from "../../logic/mana";
 import { commandersOf } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import { CommandZone } from "./CommandZone";
+import { ManaSymbol } from "./ManaSymbol";
 
 /** Commander damage becomes lethal here; warn well before it does. */
 const COMMANDER_LETHAL = 21;
+
+/**
+ * What a mana group says on hover, in the one form that fits every case.
+ *
+ * Spelled out rather than left to the numbers, because `2 -2` is compact enough
+ * to be worth a sentence somewhere: the chip is a forecast, and a forecast that
+ * cannot be read back in words is a puzzle.
+ */
+function groupTitle(group: ManaGroupView): string {
+  const what =
+    group.symbols.length > 1 ? `either ${group.symbols.join(" or ")}` : group.symbols[0];
+  const where = group.floating ? " in pool" : "";
+  if (group.spent > 0) {
+    return `${group.count} ${what}${where}; this spell taps ${group.spent}, leaving ${
+      group.count - group.spent
+    }`;
+  }
+  return `${group.count} ${what}${where}`;
+}
 
 const EMPTY: ReadonlySet<number> = new Set();
 
@@ -193,12 +219,22 @@ export function PlayerOrb({
     });
   }, [player.life, controls]);
 
-  const commanderDamage = Object.entries(player.commander_damage_taken).filter(
-    ([, amount]) => amount > 0,
-  );
+  /*
+   * Every other seat, in seating order -- not the seats that have already dealt
+   * commander damage.
+   *
+   * `commander_damage_taken` only carries seats that have connected, so building
+   * the row from its keys made the plate appear on the first hit. Reading it as a
+   * lookup against the seating instead means the chips are all there from turn
+   * one, at zero, and the panel never changes size.
+   */
+  const opponents = state.players
+    .filter((seat) => seat.pid !== player.pid)
+    .map((seat) => seat.pid);
 
   const pips = markSpent(manaRow(player.mana), spending ?? EMPTY);
   const spentCount = pips.filter((pip) => pip.spent).length;
+  const groups = manaGroups(pips);
 
   const classes = [
     "orb",
@@ -309,142 +345,197 @@ export function PlayerOrb({
 
         {player.has_lost && <div className="orb__loss">{lossReason(player.loss_reason)}</div>}
 
-        {commanderDamage.length > 0 && (
-          <div className="orb__cmd" title="Commander damage taken">
-            {/* The label was a `title` attribute, which is a fact you can only
-                find by hunting for it. Over art the chips need a scrim plate
-                anyway, and a plate has room for the word. */}
-            {!compact && <span className="orb__cmd-lab">Cmd dmg</span>}
-            {commanderDamage.map(([source, amount]) => (
-              <span
-                key={source}
-                className={amount >= COMMANDER_LETHAL - 6 ? "cmd-pip cmd-pip--warn" : "cmd-pip"}
-                title={`${amount} from ${names[Number(source)] ?? `P${source}`}`}
-              >
-                {amount}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/*
-          Available mana. The server sends it, nothing rendered it, and lands
-          tapped during auto-payment with no indication of what was spent -- so
-          the player had no running sense of what they could afford.
+          The panel's foot: three plates that are always there.
 
-          An ambiguous source ("Add {G} or {U}") is one split pip, not two solid
-          ones: two solid pips would claim a mana that does not exist.
+          Mana and commander damage used to be conditional rows sitting loose
+          between the plinth and the piles, and `orb__body` is `space-between` --
+          so they floated in the slack, and each time one appeared or emptied the
+          whole interior re-spaced itself. Grouping them with the piles puts all
+          the slack in one gap under the plinth and gives the column a foot that
+          holds still. It is also why neither plate is conditional any more: a
+          panel that says "no mana" costs one line and never moves anything,
+          which the reserved-height slot this replaces was an awkward way of
+          buying.
 
-          Hovering a castable card hollows out the pips it would spend, so the
-          row answers "and what will that leave me with" as well as "what do I
-          have". Which lands those are comes from the engine's solved payment,
-          never from arithmetic here -- see logic/mana.ts.
-
-          The row itself is still conditional -- an empty mana row would be a
-          control that says nothing -- but the *slot* around it is not. Mana
-          appears and empties several times a turn, and letting the orb grow and
-          shrink with it moved the mat, the opponents row, and with it the whole
-          board underneath the player's cursor. The slot keeps its line whether
-          or not there is anything to draw in it.
+          Commander tax is deliberately not here -- it rides on the plinth above,
+          beside the mana cost it modifies, which is the only arrangement in
+          which a surcharge means anything.
         */}
-        <div className="orb__manaslot">
-          {pips.length > 0 && (
-            <div
-              className="orb__mana"
-              data-testid={`mana-${player.pid}`}
-              data-mana={formatManaRow(pips)}
-              data-spending={spentCount}
-              title={
-                spentCount > 0
-                  ? `${pips.length} available; this spell taps ${spentCount}`
-                  : `${pips.length} available: ${formatManaRow(pips)}`
-              }
-            >
-              {pips.map((pip) => (
+        <div className="orb__foot">
+          {/*
+            Available mana. The server sends it, nothing rendered it, and lands
+            tapped during auto-payment with no indication of what was spent -- so
+            the player had no running sense of what they could afford.
+
+            One mark per *kind* of mana with a count, not one per mana. As a 9px
+            dot a pip per mana was honest and cheap; as the real symbol it is
+            twice as wide, and ten untapped lands wrapped the row to three lines
+            in a 190px column. Grouping is also how players say it out loud.
+
+            Hovering a castable card marks what it would take: the group shows
+            what you would have left and a faint `-n` for what goes. That is the
+            same question the hollowed-out pips answered -- "and what will that
+            leave me with" -- in the form a counted chip can answer it. Which
+            lands those are comes from the engine's solved payment, never from
+            arithmetic here; see logic/mana.ts.
+          */}
+          <div
+            className="orb__panel orb__mana"
+            data-testid={`mana-${player.pid}`}
+            data-mana={formatManaRow(pips)}
+            data-spending={spentCount}
+            title={
+              spentCount > 0
+                ? `${pips.length} available; this spell taps ${spentCount}`
+                : `${pips.length} available: ${formatManaRow(pips)}`
+            }
+          >
+            {!compact && <span className="orb__lab">Mana</span>}
+            {groups.length === 0 ? (
+              <span className="orb__none">—</span>
+            ) : (
+              groups.map((group) => (
                 <span
-                  key={pip.key}
+                  key={group.key}
                   className={[
-                    "mana-pip",
-                    `mana-pip--${pip.tone}`,
-                    pip.floating ? "mana-pip--floating" : "",
-                    pip.spent ? "mana-pip--spent" : "",
+                    "mana-grp",
+                    `mana-grp--${group.tone}`,
+                    group.floating ? "mana-grp--floating" : "",
+                    group.spent > 0 ? "mana-grp--spent" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
-                  title={
-                    pip.spent
-                      ? `${pip.symbols.join(" or ")} — this spell would tap it`
-                      : pip.symbols.length > 1
-                        ? `Either ${pip.symbols.join(" or ")}`
-                        : pip.floating
-                          ? `${pip.symbols[0]} in pool`
-                          : pip.symbols[0]
-                  }
-                />
-              ))}
-            </div>
-          )}
-        </div>
+                  data-tone={group.tone}
+                  data-count={group.count}
+                  data-spent={group.spent}
+                  title={groupTitle(group)}
+                >
+                  {/* No `pip--text` fallback here: a three-colour source has no
+                      published mark, and cycle3.spec.ts asserts that fallback
+                      never renders because reaching it means a symbol is
+                      missing. The split disc is the answer for "some colour",
+                      and it says the right thing besides -- the player picks
+                      when they tap it, and we must not pretend otherwise. */}
+                  {group.code === null ? (
+                    <span className="mana-grp__any" aria-hidden="true" />
+                  ) : (
+                    <ManaSymbol code={group.code} title={group.symbols.join(" or ")} />
+                  )}
+                  <span className="mana-grp__n tabular">{group.count - group.spent}</span>
+                  {group.spent > 0 && (
+                    <span className="mana-grp__spend tabular">−{group.spent}</span>
+                  )}
+                </span>
+              ))
+            )}
+          </div>
 
-        {/*
-          Commander tax used to live here as a `CMD +N` chip. It rides on the
-          plinth above now, beside the mana cost it modifies and directly over
-          the mana row -- which is the only arrangement in which a surcharge
-          means anything.
-        */}
-        {/*
-          Bottom-aligned, so the piles' heights read comparatively: a library
-          that has been drawn down to nothing is visibly a short stack next to a
-          graveyard that has grown, which is a thing you want to notice rather
-          than work out. `orb__body` spreads its rows, so this one lands on the
-          panel's bottom edge whatever height the column turns out to have.
-        */}
-        <div className="piles">
-          <ZonePile
-            pid={player.pid}
-            zone={null}
-            name="library"
-            kind="lib"
-            label="Lib"
-            count={player.library_count}
-            title="Cards in library"
-          />
-          <ZonePile
-            pid={player.pid}
-            zone="hand"
-            name="hand"
-            kind="lib"
-            label="Hand"
-            count={player.hand_count}
-            title={isViewer ? "Your hand" : "Hidden"}
-          />
-          <ZonePile
-            pid={player.pid}
-            zone="graveyard"
-            name="graveyard"
-            kind="gy"
-            label="GY"
-            count={player.graveyard.length}
-          />
-          {player.exile.length > 0 && (
+          {/*
+            Commander damage, for every other seat rather than only the ones that
+            have connected. Built from the seating rather than from the keys of
+            `commander_damage_taken`, so the plate reads `0` from turn one
+            instead of appearing the moment someone hits you -- which is both a
+            reflow and the worst possible moment to move the panel.
+
+            The chip carries who and how far. It was a bare number whose source
+            lived only in a `title`, which in a four-player pod is three
+            identical numbers and a hunt; and 21 is the number that matters, so
+            the meter under it is the fraction of 21 rather than decoration.
+          */}
+          <div className="orb__panel orb__cmd" data-testid={`cmddmg-${player.pid}`}>
+            {!compact && <span className="orb__lab">Cmd dmg</span>}
+            {opponents.map((pid) => {
+              const amount = player.commander_damage_taken[String(pid)] ?? 0;
+              return (
+                <span
+                  key={pid}
+                  className={[
+                    "cmd-pip",
+                    amount >= COMMANDER_LETHAL - 6 ? "cmd-pip--warn" : "",
+                    amount === 0 ? "cmd-pip--zero" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  data-from={pid}
+                  data-amount={amount}
+                  title={`${amount} of ${COMMANDER_LETHAL} commander damage from ${
+                    names[pid] ?? `Player ${pid}`
+                  }`}
+                >
+                  <span className="cmd-pip__head">
+                    {/* Seat number, not an initial: seats default to
+                        `Player {i}` (server/sessions.py), so every initial is
+                        "P". The name itself stays one hover away. */}
+                    <span className="cmd-pip__who">P{pid}</span>
+                    <span className="cmd-pip__n tabular">{amount}</span>
+                  </span>
+                  <span
+                    className="cmd-pip__meter"
+                    style={
+                      {
+                        "--fill": `${Math.min(amount / COMMANDER_LETHAL, 1) * 100}%`,
+                      } as CSSProperties
+                    }
+                  />
+                </span>
+              );
+            })}
+          </div>
+
+          {/*
+            Bottom-aligned, so the piles' heights read comparatively: a library
+            that has been drawn down to nothing is visibly a short stack next to
+            a graveyard that has grown, which is a thing you want to notice
+            rather than work out.
+          */}
+          <div className="piles">
             <ZonePile
               pid={player.pid}
-              zone="exile"
-              name="exile"
-              kind="ex"
-              label="Exile"
-              count={player.exile.length}
+              zone={null}
+              name="library"
+              kind="lib"
+              label="Lib"
+              count={player.library_count}
+              title="Cards in library"
             />
-          )}
-          <ZonePile
-            pid={player.pid}
-            zone="command"
-            name="command"
-            kind="cmd"
-            label="CMD"
-            count={player.command.length}
-            title="Command zone"
-          />
+            <ZonePile
+              pid={player.pid}
+              zone="hand"
+              name="hand"
+              kind="lib"
+              label="Hand"
+              count={player.hand_count}
+              title={isViewer ? "Your hand" : "Hidden"}
+            />
+            <ZonePile
+              pid={player.pid}
+              zone="graveyard"
+              name="graveyard"
+              kind="gy"
+              label="GY"
+              count={player.graveyard.length}
+            />
+            {player.exile.length > 0 && (
+              <ZonePile
+                pid={player.pid}
+                zone="exile"
+                name="exile"
+                kind="ex"
+                label="Exile"
+                count={player.exile.length}
+              />
+            )}
+            <ZonePile
+              pid={player.pid}
+              zone="command"
+              name="command"
+              kind="cmd"
+              label="CMD"
+              count={player.command.length}
+              title="Command zone"
+            />
+          </div>
         </div>
       </div>
     </motion.div>

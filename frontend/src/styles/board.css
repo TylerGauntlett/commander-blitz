@@ -783,12 +783,31 @@
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
 }
 
-/* Commander damage --------------------------------------------------------
+/* The panel's foot -------------------------------------------------------
  *
- * On a scrim plate, because a bare chip over art is the first thing to go
- * illegible -- and a plate has room for the word, which used to live only in a
- * `title` attribute nobody hunts for. */
-.orb__cmd {
+ * Mana, commander damage and the zone piles, as three plates that are always
+ * there. They were three independent rows, two of them conditional, spread
+ * through `orb__body`'s `space-between` slack -- so they floated in the middle of
+ * the panel and re-spaced it every time one of them appeared or emptied.
+ *
+ * Grouped, all the slack goes into one gap above the foot, and the foot lands on
+ * the panel's bottom edge whatever height the column turns out to have.
+ */
+.orb__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/*
+ * The scrim plate the foot's three panels share.
+ *
+ * The recipe was written out twice already, on the damage chips and on the piles,
+ * for a reason that applies to all three: these are low-contrast graphics and the
+ * wash underneath them is a picture. Once, now, so a fourth panel cannot arrive
+ * with a fifth alpha.
+ */
+.orb__panel {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -799,22 +818,89 @@
   background: rgb(9 8 20 / 0.55);
 }
 
-.orb__cmd-lab {
+/* A plate has room for the word, which used to live only in a `title` attribute
+   nobody hunts for. Full width so the chips below it centre as a row rather than
+   wrapping around the label. */
+.orb__lab {
+  flex: 0 0 100%;
   color: var(--text-faint);
   font-size: 7.5px;
   font-weight: 800;
   letter-spacing: 0.1em;
+  text-align: center;
   text-transform: uppercase;
 }
 
+/* "You have no mana" -- a line that says something, where a vanishing plate
+   would have said it by moving everything else. */
+.orb__none {
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+/* Commander damage ------------------------------------------------------- */
+
+/*
+ * One chip per opponent, present from turn one at zero.
+ *
+ * The chip was a bare number, which in a four-player pod is three identical
+ * numbers and no way to tell whose is whose without hovering each. It carries the
+ * seat and a meter now: 21 is the number that decides the game, so "13" wants to
+ * read as most of the way there rather than as a number to compare against a
+ * threshold you have to remember.
+ */
 .cmd-pip {
-  padding: 0 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 1px 4px 2px;
   border: 1px solid var(--rail-line);
   border-radius: 4px;
   background: var(--pane-well);
   color: var(--text-dim);
+}
+
+.cmd-pip__head {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.cmd-pip__who {
+  color: var(--text-faint);
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.cmd-pip__n {
   font-size: 11px;
   font-weight: 700;
+}
+
+/* The fraction of 21, as a length. Length reads with the hue taken away, which is
+   the same reason `--warn` below spends a border weight rather than only a red. */
+.cmd-pip__meter {
+  position: relative;
+  overflow: hidden;
+  height: 3px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.12);
+}
+
+.cmd-pip__meter::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill, 0%);
+  border-radius: 2px;
+  background: var(--danger);
+}
+
+/* Untouched. Dimmed so three seats at zero read as the background they are, and
+   the one seat that has hit you is what the eye lands on. */
+.cmd-pip--zero {
+  opacity: 0.45;
 }
 
 /* The heavier rule is not decoration. Red is the only thing separating this from
@@ -827,63 +913,55 @@
   color: #ffb3b3;
 }
 
-/* Mana row -------------------------------------------------------------- */
+/* Mana panel ------------------------------------------------------------ */
 
 /*
- * The line the mana row lives on, reserved whether or not it has anything in
- * it. Mana appears and empties several times a turn, and an orb that grows and
- * shrinks with it drags the mat, the opponents row and the whole board with it.
+ * The real symbols, counted rather than repeated.
  *
- * One line, not two. Fifteen-odd pips wrap and the orb does grow late in a
- * game, but that is once per game against once per tapped land, and this column
- * has no spare height to reserve against the rarer case -- the zone piles are
- * already the first thing to fall below the fold at 1600x950.
+ * These were 9px discs coloured by `--mana-*`: a mark nobody who plays the game
+ * recognises, and the last surface in the client still using one. At the real
+ * symbol's width a pip per mana wrapped to three rows on a ten-land board, so the
+ * count moved into the chip -- which is also how a player says it out loud.
+ *
+ * `--pip` is fixed here rather than derived from `--card-w`. Nothing in this
+ * column is a card, and the panel's job is to stay one line high whatever the
+ * board is doing.
  */
-.orb__manaslot {
-  display: flex;
-  align-items: center;
-  min-height: 11px;
-}
-
 .orb__mana {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  align-items: center;
-  min-height: 10px;
+  --pip: 13px;
+  gap: 3px 7px;
 }
 
-.mana-pip {
-  width: 9px;
-  height: 9px;
+.mana-grp {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.mana-grp__n {
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* What the hovered spell takes. The count beside it has already had this
+   subtracted, so the pair reads "you will have 2, losing 2" -- the same question
+   the hollowed-out pips answered before the chips were counted. */
+.mana-grp__spend {
+  color: var(--text-faint);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* A source that offers a choice of three or more, which has no published mark.
+   Split rather than solid, because the player picks the colour when they tap it
+   and we must not pretend otherwise. Two is a hybrid and gets the real symbol. */
+.mana-grp__any {
+  width: var(--pip, 13px);
+  height: var(--pip, 13px);
+  flex: 0 0 auto;
   border-radius: 50%;
   border: 1px solid rgb(0 0 0 / 0.45);
-  background: var(--mana-C);
-  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.35);
-}
-
-.mana-pip--W {
-  background: var(--mana-W);
-}
-.mana-pip--U {
-  background: var(--mana-U);
-}
-.mana-pip--B {
-  background: var(--mana-B);
-}
-.mana-pip--R {
-  background: var(--mana-R);
-}
-.mana-pip--G {
-  background: var(--mana-G);
-}
-.mana-pip--C {
-  background: var(--mana-C);
-}
-
-/* A source that offers a choice. Split rather than solid, because the player
-   picks the colour when they tap it and we must not pretend otherwise. */
-.mana-pip--any {
   background: conic-gradient(
     var(--mana-W) 0deg 72deg,
     var(--mana-U) 72deg 144deg,
@@ -891,20 +969,28 @@
     var(--mana-R) 216deg 288deg,
     var(--mana-G) 288deg 360deg
   );
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.35);
 }
 
-/* Already in the pool: made, spendable, and gone at end of step. */
-.mana-pip--floating {
-  box-shadow: 0 0 0 1px var(--gold), 0 0 6px rgb(255 212 121 / 0.5);
+/* Already in the pool: made, spendable, and gone at end of step.
+ *
+ * A `drop-shadow`, not a `box-shadow`. The symbol is a round `<img>` in a square
+ * box, so a box-shadow rings it with a gold rectangle; a drop-shadow follows the
+ * alpha. `filter` replaces rather than appends, so `.pip`'s own dark hairline has
+ * to be restated here or the symbol loses its edge against the art. */
+.mana-grp--floating .pip,
+.mana-grp--floating .mana-grp__any {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.55)) drop-shadow(0 0 3px var(--gold));
 }
 
-/* Hollowed out: the hovered spell would tap this source. Drawn as an outline
-   rather than a dimmed fill so it reads as "about to leave" rather than as
-   "unavailable" -- the mana is still there until the spell is actually cast. */
-.mana-pip--spent {
-  background: none;
-  box-shadow: inset 0 0 0 1.5px var(--text-faint);
-  opacity: 0.75;
+/* The hovered spell would tap this source's mana. Faded rather than removed: it
+   reads as "about to leave" rather than "unavailable", because the mana is still
+   there until the spell is actually cast. The `-n` numeral beside it carries the
+   same fact in type, so the forecast does not rest on a colour shift alone. */
+.mana-grp--spent .pip,
+.mana-grp--spent .mana-grp__any {
+  opacity: 0.35;
+  filter: grayscale(1);
 }
 
 /* Zone piles ------------------------------------------------------------
@@ -924,8 +1010,8 @@
   gap: 6px 5px;
   align-items: flex-end;
   justify-content: center;
-  /* On a plate, for the same reason the damage chips are: a leaf stack is a low
-     contrast graphic and the wash underneath it is a picture. */
+  /* On a plate, for the same reason the two panels above it are: a leaf stack is
+     a low contrast graphic and the wash underneath it is a picture. */
   padding: 5px 4px 4px;
   border-radius: 8px;
   background: rgb(9 8 20 / 0.55);
@@ -1020,6 +1106,52 @@
  * therefore the case that has to fit. */
 .orb--compact .orb__body {
   padding: 8px 5px;
+}
+
+/* The foot's two upper panels at pod width.
+ *
+ * The label goes first: it is the widest thing on either plate and the least
+ * load-bearing, and `.orb__cmd` already dropped it here before this. What is left
+ * has to fit 94px inside -- 112px less 10px of body padding and 8px of plate
+ * padding -- which for commander damage is three chips of about 26px plus two
+ * gaps, and for mana is four groups of a 10px symbol and a numeral.
+ *
+ * Both plates may wrap here, unlike the piles below them: a wrapped pile row
+ * stops reading as a row of comparable stacks, while a second line of mana chips
+ * is just a second line of mana chips. */
+.orb--compact .orb__lab {
+  display: none;
+}
+
+.orb--compact .orb__panel {
+  gap: 3px;
+  padding: 2px 3px;
+}
+
+.orb--compact .orb__mana {
+  --pip: 10px;
+  gap: 2px 4px;
+}
+
+.orb--compact .mana-grp__n {
+  font-size: 8.5px;
+}
+
+.orb--compact .mana-grp__spend {
+  font-size: 8px;
+}
+
+.orb--compact .cmd-pip {
+  padding: 0 2px 1px;
+}
+
+.orb--compact .cmd-pip__who {
+  font-size: 6.5px;
+  letter-spacing: 0;
+}
+
+.orb--compact .cmd-pip__n {
+  font-size: 9px;
 }
 
 .orb--compact .piles {

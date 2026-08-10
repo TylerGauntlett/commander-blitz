@@ -215,6 +215,18 @@
     "file": "G-P.svg",
     "symbol": "{G/P}"
   },
+  "G-U": {
+    "colors": ["U", "G"],
+    "english": "one green or blue mana",
+    "file": "G-U.svg",
+    "symbol": "{G/U}"
+  },
+  "G-W": {
+    "colors": ["W", "G"],
+    "english": "one green or white mana",
+    "file": "G-W.svg",
+    "symbol": "{G/W}"
+  },
   "Q": {
     "colors": [],
     "english": "untap this permanent",
@@ -238,6 +250,12 @@
     "english": "one red mana or two life",
     "file": "R-P.svg",
     "symbol": "{R/P}"
+  },
+  "R-W": {
+    "colors": ["W", "R"],
+    "english": "one red or white mana",
+    "file": "R-W.svg",
+    "symbol": "{R/W}"
   },
   "S": {
     "colors": [],

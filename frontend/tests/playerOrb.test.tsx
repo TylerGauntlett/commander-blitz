@@ -394,7 +394,7 @@ describe("the zone piles", () => {
 });
 
 describe("what the piles did not replace", () => {
-  it("still renders the mana row with its spent markings", () => {
+  it("still renders the mana panel with its spent markings", () => {
     // Neither mockup has this, and it is driven by the engine's own solved
     // payment -- losing it in a re-skin would be silent.
     const { container } = renderOrb({
@@ -403,19 +403,90 @@ describe("what the piles did not replace", () => {
         total: 2,
         sources: [
           { oid: 5, options: [["G"]], symbols: ["G"], amount: 1 },
-          // An ambiguous source is one split pip, not two solid ones -- two
-          // would claim a mana that does not exist.
+          // An ambiguous source is one mana of a choice, not two solid ones --
+          // two would claim a mana that does not exist. Grouped, that is one
+          // chip carrying a count of one, drawn as the {G/U} hybrid.
           { oid: 6, options: [["G"], ["U"]], symbols: ["G", "U"], amount: 1 },
         ],
       },
     });
-    const row = container.querySelector('[data-testid="mana-0"]');
-    expect(row).not.toBeNull();
-    expect(row?.querySelectorAll(".mana-pip").length).toBe(2);
+    const panel = container.querySelector('[data-testid="mana-0"]');
+    expect(panel).not.toBeNull();
+
+    const groups = [...(panel?.querySelectorAll(".mana-grp") ?? [])];
+    expect(groups.map((g) => g.getAttribute("data-tone"))).toEqual(["G", "any"]);
+    // Two kinds of mana, one of each -- the counts are what the pips used to be.
+    expect(groups.map((g) => g.getAttribute("data-count"))).toEqual(["1", "1"]);
+    expect(panel?.getAttribute("data-mana")).toBe("{G}{?}");
   });
 
-  it("hides the mana row entirely when there is none", () => {
+  it("keeps the panel when there is no mana rather than collapsing the orb", () => {
+    // It used to hide, inside a height-reserved slot that existed only to stop
+    // the panel resizing. The plate is permanent now and says so instead: mana
+    // empties several times a turn and the foot must not move when it does.
     const { container } = renderOrb({ mana: { sources: [], pool: {}, total: 0 } });
-    expect(container.querySelector('[data-testid="mana-0"]')).toBeNull();
+    const panel = container.querySelector('[data-testid="mana-0"]');
+    expect(panel).not.toBeNull();
+    expect(panel?.querySelectorAll(".mana-grp").length).toBe(0);
+    expect(panel?.querySelector(".orb__none")?.textContent).toBe("—");
+  });
+});
+
+describe("commander damage is tracked before it arrives", () => {
+  /** A four-seat pod, which is where three identical chips have to tell apart. */
+  function renderPod(taken: Record<string, number> = {}) {
+    const seat = player({ pid: 0, commander_damage_taken: taken });
+    return render(
+      <PlayerOrb
+        state={gameView({
+          players: [seat, player({ pid: 1 }), player({ pid: 2 }), player({ pid: 3 })],
+          seat: 0,
+        })}
+        player={seat}
+        isViewer
+        isActive
+        hasPriority
+        names={["You", "Jace", "Rakdos", "Karn"]}
+      />,
+    );
+  }
+
+  it("shows a chip for every other seat, at zero, from turn one", () => {
+    // Built from the seating, not from the keys of `commander_damage_taken` --
+    // which only carries seats that have connected, so the plate used to appear
+    // on the first hit and reflow the panel at the worst possible moment.
+    const { getByTestId } = renderPod();
+    const chips = [...getByTestId("cmddmg-0").querySelectorAll(".cmd-pip")];
+    expect(chips.map((c) => c.getAttribute("data-from"))).toEqual(["1", "2", "3"]);
+    expect(chips.map((c) => c.getAttribute("data-amount"))).toEqual(["0", "0", "0"]);
+    expect(chips.every((c) => c.className.includes("cmd-pip--zero"))).toBe(true);
+  });
+
+  it("names the seat on the chip rather than only in a tooltip", () => {
+    // Three bare numbers in a pod is a hunt. Seat number, not initial: seats
+    // default to `Player {i}` server-side, so every initial is "P".
+    const { getByTestId } = renderPod({ "2": 7 });
+    const chip = getByTestId("cmddmg-0").querySelector('.cmd-pip[data-from="2"]');
+    expect(chip?.querySelector(".cmd-pip__who")?.textContent).toBe("P2");
+    expect(chip?.querySelector(".cmd-pip__n")?.textContent).toBe("7");
+    expect(chip?.getAttribute("title")).toBe("7 of 21 commander damage from Rakdos");
+  });
+
+  it("warns well before 21, and fills the meter by the fraction of it", () => {
+    const { getByTestId } = renderPod({ "1": 15 });
+    const chip = getByTestId("cmddmg-0").querySelector('.cmd-pip[data-from="1"]');
+    expect(chip?.className).toContain("cmd-pip--warn");
+    expect(chip?.className).not.toContain("cmd-pip--zero");
+    // 15 of 21, as a length: the channel that survives greyscale.
+    const meter = chip?.querySelector<HTMLElement>(".cmd-pip__meter");
+    expect(meter?.style.getPropertyValue("--fill")).toBe(`${(15 / 21) * 100}%`);
+  });
+
+  it("never overfills the meter once damage passes lethal", () => {
+    const { getByTestId } = renderPod({ "1": 26 });
+    const meter = getByTestId("cmddmg-0").querySelector<HTMLElement>(
+      '.cmd-pip[data-from="1"] .cmd-pip__meter',
+    );
+    expect(meter?.style.getPropertyValue("--fill")).toBe("100%");
   });
 });
