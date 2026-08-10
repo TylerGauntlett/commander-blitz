@@ -137,3 +137,17 @@
   fired, so a landfall trigger counting drops this turn read a stale value; and
   `op_search_library` / `op_return_from_graveyard` never set `obj.controller`, so any
   cross-player put evaluated `controller: "you"` against the owner instead.
+
+### Open, deferred deliberately
+
+- **The mana row's pips are a hair smaller than every other pip.** `.pip` sizes from
+  `var(--pip, 14px)` and `.mana-grp__any` from `var(--pip, 13px)`, and `--pip` is
+  declared on `.face`, `.cmdslot`, `.acts__list` and `.deck__colors` — but *not* on
+  `.orb`. So the orb's mana row is the one place both fallbacks are live, and the two
+  elements in the same row disagree by a pixel.
+
+  Harmonising the fallbacks would hide it rather than fix it. The real answer is to
+  declare `--pip` on `.orb` and `.orb--compact` so the mana row sizes with the orb like
+  everything else inside it, which is a visible change to a surface that has been tuned,
+  so it wants its own pass. Found while auditing ancestor-dependent styling for the
+  Storybook mount work; see `docs/frontend.md` ("Mounts").

@@ -576,20 +576,65 @@ the same position from a fixture in milliseconds.
 
 The harness lives in `.storybook/preview.tsx` and handles four things once, each of
 which a component of this app needs before it renders honestly on its own: the global
-stylesheets exist, the zustand store is pristine, motion is held still
-(`reducedMotion="always"`, since `springs.ts`'s presets are passed explicitly and beat
-`MotionConfig`'s default), and the board has a height. That last one is subtle —
-Storybook's canvas root is `#storybook-root`, so `theme.css`'s height rule misses it and
-every card silently clamps to `MIN_CARD_W`. `Table.OpeningHand` asserts against exactly
-that, because a board of postage stamps passes every content assertion ever written.
+stylesheets exist, the zustand store is pristine, motion behaves, and — the one that
+matters most — the component is **where the app puts it**.
 
-A story configures the harness through `parameters.automtg`: `ui` seeds the store,
-`query` pre-loads react-query so a lobby story paints its loaded state immediately,
-`frame` picks a full-height board or a bare box, `art` picks the card art, and
-`zoomLock` opts out of the pinned zoom for the two stories that exist to exercise the
-solver. Fixtures are in `src/testing/` — `fixtures.ts` for the DTOs, `cards.ts` for a
-real card pool, `scenarios.ts` for whole positions, `pods.ts` for lobby states, and
-`asserts.ts` for `expectUniqueActionIds`, which is the invariant most worth sharing.
+### Mounts
+
+A story that draws a component bare, or in a generic full-height box, is not testing the
+component; it is testing a different design wearing the same class names. `PlayerOrb`
+declares no width at all, and in the game it is whatever `.mat__side`'s 190px grid column
+gives it — so full-bleed across a canvas it looked nothing like itself, and for a while
+twelve stories were like that.
+
+`src/testing/mounts.tsx` holds the app's own wrapper chains, by class name, so every size
+comes out of the app's stylesheets rather than being restated. **A layer may not state a
+size.** It may say exactly two things for itself:
+
+- **Grid placement.** Every layout container here is a grid whose tracks are filled by
+  siblings a story does not render, so a lone child auto-places into track 1.
+  `.table__body` is `232px | 1fr | 304px`, and a right rail that forgot `gridColumn: 3`
+  renders at 232px — silently, and looking entirely plausible. That trap is why this is a
+  file rather than a convention.
+- **A value the app sets from JavaScript.** `--card-w` on a lane is the only one, because
+  `Lane.tsx` writes it inline; the mount calls the same `cardWidthVar`.
+
+A third mechanism, `fill`, supplies an empty stand-in for a *sibling* whose box the
+component is sized against — the action panel's whole design is about the rail being short,
+and it is short because the card preview is above it.
+
+Declaring `mount` is mandatory and the decorator throws without one. `bare` and `screen`
+are valid answers; they just have to be answers, because a default is exactly how twelve
+stories ended up in the wrong place. `tests/imports.test.ts` fails the build if any story
+still carries the old `frame:` key, which `parameters` being loosely typed would otherwise
+let pass as a silent no-op.
+
+`src/testing/appGeometry.ts` holds the app's stated sizes — the 304px rail, the 190px mat
+column — each citing the rule it comes from, and `expectMountedLike` compares a rendered
+box against *those* rather than against the mount that produced it, which would be
+circular. Sizes derived from `vh` are asserted as relationships instead: the preview iframe
+is not the window, and `theme.css` has a media query keyed on viewport height.
+
+### Motion, twice
+
+The runner gets `reducedMotion="always"` and the browser gets the app's real springs, split
+by a flag set in `.storybook/vitest.setup.ts`. Holding motion still for both meant the hand
+fan's lift and every `layoutId` cross-fade simply did not happen when you opened Storybook
+to look at them, which is a visual suite that cannot show you the visuals.
+
+`parameters.automtg.motion: "real"` opts a story back in, and a few need it: a hover that
+*scales* is a transform, so `reducedMotion` removes the thing under test. That is not
+hypothetical — the story asserting the commit slab stays inside its rail passed against the
+bug, because the scale it was measuring had been configured away. Stories that run with
+real motion use `settled()` from `asserts.ts`, since waiting for a transform to merely
+exist returns on the spring's first frame.
+
+The rest of `parameters.automtg`: `ui` seeds the store, `query` pre-loads react-query so a
+lobby story paints its loaded state immediately, `art` picks the card art, `zoomLock` opts
+out of the pinned zoom for the two stories that exercise the solver. Fixtures are in
+`src/testing/` — `fixtures.ts` for the DTOs, `cards.ts` for a real card pool,
+`scenarios.ts` for whole positions, `pods.ts` for lobby states, and `asserts.ts` for
+`expectUniqueActionIds`, which is the invariant most worth sharing.
 
 Card art defaults to a deterministic offline stub keyed off the card id. Switch the
 toolbar to "live" with uvicorn running to eyeball the board against real illustrations.

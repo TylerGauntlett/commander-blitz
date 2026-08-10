@@ -45,6 +45,11 @@ describe("the production graph", () => {
     "testing/scenarios",
     "testing/art",
     "testing/asserts",
+    "testing/mounts",
+    "testing/appGeometry",
+    "testing/cards",
+    "testing/pods",
+    "testing/fakeGame",
     ".stories",
   ])("never imports %s", (module) => {
     const offenders = shipped.filter((path) => {
@@ -53,4 +58,29 @@ describe("the production graph", () => {
     });
     expect(offenders).toEqual([]);
   });
+});
+
+/**
+ * Every story says where it hangs.
+ *
+ * `parameters` is loosely typed at the call site, so a story left carrying the
+ * old `frame:` key would be a silent no-op -- it would inherit nothing, and
+ * `withMount` would throw at render rather than here. Cheaper to say it in a
+ * test, and it keeps the rename honest.
+ */
+describe("stories", () => {
+  const stories = sources(SRC).filter((path) => path.includes(".stories."));
+
+  it("has stories in it", () => {
+    expect(stories.length).toBeGreaterThan(20);
+  });
+
+  it.each(stories.map((path) => [path.slice(path.indexOf("components")), path]))(
+    "%s declares a mount and no stale frame",
+    (_label, path) => {
+      const text = readFileSync(path, "utf8");
+      expect(text.includes("frame:"), "`frame:` was renamed to `mount:`").toBe(false);
+      expect(text.includes("mount:"), "no story in this file names its mount").toBe(true);
+    },
+  );
 });
