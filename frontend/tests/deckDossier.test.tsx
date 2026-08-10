@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DeckDetail } from "../src/api/types";
 import { DeckDossier, ManaCurve, RatingBar } from "../src/components/lobby/DeckDossier";
 import { useUiStore } from "../src/state/uiStore";
-import { deckSummary } from "./fixtures";
+import { cardResponse, deckDetail as detail } from "./fixtures";
 
 afterEach(() => {
   cleanup();
@@ -22,27 +22,6 @@ afterEach(() => {
   // illustrator would be the sort of pass nobody trusts.
   useUiStore.setState({ images: null });
 });
-
-function detail(overrides: Partial<DeckDetail> = {}): DeckDetail {
-  return {
-    ...deckSummary(),
-    ratings: { speed: 2, complexity: 3, interaction: 2, resilience: 3, pilot: 2 },
-    strategy: "The first four turns are spent almost entirely on mana.",
-    signature: [
-      {
-        card_id: "tatyova_benthic_druid",
-        name: "Tatyova, Benthic Druid",
-        why: "A second Aesi.",
-        art_url: "/art/tatyova_benthic_druid.jpg",
-      },
-    ],
-    curve: [9, 13, 18, 7, 7, 3, 5],
-    lands: 37,
-    swaps: 5,
-    swap_note: "5 cards swapped for engine-supported equivalents -- Rhystic Study.",
-    ...overrides,
-  };
-}
 
 const fetchMock = vi.fn();
 
@@ -61,23 +40,10 @@ function draw(ui: ReactElement) {
 /** Serve `/api/decks/{id}`, and a bare card for the commander face. */
 function serve(deck: DeckDetail) {
   fetchMock.mockImplementation((url: string) => {
-    const body = url.includes("/decks/")
-      ? deck
-      : {
-          id: "aesi_tyrant_of_gyre_strait",
-          name: "Aesi, Tyrant of Gyre Strait",
-          type_line: "Legendary Creature — Serpent",
-          mana_cost: "{4}{G}{U}",
-          mana_value: 6,
-          oracle_text: "Trample.",
-          power: 5,
-          toughness: 5,
-          keywords: ["Trample"],
-          colors: ["G", "U"],
-          color_identity: ["G", "U"],
-          art_url: null,
-          artist: null,
-        };
+    // No art on the commander: this file is about the dossier's own content,
+    // and a face that resolved a picture would credit an artist these
+    // assertions did not ask for.
+    const body = url.includes("/decks/") ? deck : cardResponse({ art_url: null, artist: null });
     return Promise.resolve({
       ok: true,
       status: 200,
