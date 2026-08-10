@@ -743,23 +743,7 @@
         "flying"
       ]
     },
-    {
-      "id": "windreader_sphinx",
-      "name": "Windreader Sphinx",
-      "oracle_text": "Flying\nWhenever a creature with flying attacks, you may draw a card.",
-      "mana_cost": "{5}{U}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Sphinx"
-      ],
-      "power": 3,
-      "toughness": 7,
-      "keywords": [
-        "flying"
-      ]
-    },
+    
     {
       "id": "lyra_dawnbringer",
       "name": "Lyra Dawnbringer",
@@ -1044,23 +1028,7 @@
         "flying"
       ]
     },
-    {
-      "id": "loyal_drake",
-      "name": "Loyal Drake",
-      "oracle_text": "Flying\nLieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
-      "mana_cost": "{3}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Drake"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "flying"
-      ]
-    },
+    
     {
       "id": "angel_of_sanctions",
       "name": "Angel of Sanctions",

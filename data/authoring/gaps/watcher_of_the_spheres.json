@@ -1,0 +1,18 @@
+{
+  "card_id": "watcher_of_the_spheres",
+  "name": "Watcher of the Spheres",
+  "oracle_text": "Flying\nCreature spells with flying you cast cost {1} less to cast.\nWhenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
+  "blocked_sentences": [
+    "Creature spells with flying you cast cost {1} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "spell_cost_reduction",
+      "kind": "static_effect",
+      "what": "a static ability on a permanent that reduces the generic cost of OTHER spells its controller casts, scoped by a filter over the spell's own printed characteristics (here: types include Creature and keywords include flying) and by who is casting it - e.g. `{\"kind\": \"static\", \"effect\": \"spells_cost_less\", \"affects_spells\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"keywords\": [\"flying\"]}, \"amount\": {\"const\": 1}}`. Legality and payment must both read it by scanning the battlefield for such statics while deciding what is castable, the same generic-only, clamped-at-zero arithmetic `costs.cost_reduction` already does.",
+      "why_existing_wont_do": "The near miss is the card-level `cost_reduction` field, and it points the other way: `costs.cost_reduction(state, pid, card)` reads `card.cost_reduction` off the card BEING CAST and discounts that one card by counting permanents on the board (`{\"count\": filter}` / `{\"total_power\": filter}`). It is Ghalta - 'THIS spell costs {X} less' - and there is no form of it that reaches out to discount other spells, nor any filter position that reads the characteristics of the spell being cast rather than of battlefield permanents. Putting `cost_reduction` on Watcher of the Spheres would make Watcher itself cheaper, which is a different card. Nothing else covers it either: `STATIC_EFFECTS` in `cards/loader.py` holds only characteristic effects (buff, grant_keyword, set_pt, add_subtype, set_types, protection) and player-wide facts (extra_land_drops, no_hand_limit, play_lands_from_graveyard, play_lands_from_library_top, double_land_triggers, double_land_mana, freeze_opponent_lands) - none of which touch cost. The `replacements` whitelist is only `self_enters` / `self_enters_tapped` / `self_enters_with_counters`, so a cost-altering replacement cannot be written. A `spell_cast` triggered ability is too late by construction: the spell is already paid for and on the stack, and `mana_restriction` only filters which sources may pay, never how much is owed."
+    }
+  ],
+  "closest_existing": ["cost_reduction", "mana_restriction", "kicker", "spell_cast"],
+  "confidence": "high"
+}

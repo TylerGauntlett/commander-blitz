@@ -270,60 +270,7 @@
         }
       ]
     },
-    {
-      "id": "grave_titan",
-      "name": "Grave Titan",
-      "oracle_text": "Deathtouch\nWhenever this creature enters or attacks, create two 2/2 black Zombie creature tokens.",
-      "mana_cost": "{4}{B}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Giant"
-      ],
-      "power": 6,
-      "toughness": 6,
-      "keywords": [
-        "deathtouch"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When this enters, create two 2/2 black Zombies.",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "create_token",
-              "token": "zombie_2_2_b",
-              "amount": {
-                "const": 2
-              }
-            }
-          ]
-        },
-        {
-          "kind": "triggered",
-          "text": "Whenever this attacks, create two 2/2 black Zombies.",
-          "trigger": {
-            "event": "attacks",
-            "source": "self",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "create_token",
-              "token": "zombie_2_2_b",
-              "amount": {
-                "const": 2
-              }
-            }
-          ]
-        }
-      ]
-    },
+    
     {
       "id": "timely_hordemate",
       "name": "Timely Hordemate",
@@ -648,21 +595,7 @@
         }
       ]
     },
-    {
-      "id": "mardu_woe_reaper",
-      "name": "Mardu Woe-Reaper",
-      "oracle_text": "Whenever this creature or another Warrior you control enters, you may exile target creature card from a graveyard. If you do, you gain 1 life.",
-      "mana_cost": "{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Human",
-        "Warrior"
-      ],
-      "power": 2,
-      "toughness": 1
-    },
+    
     {
       "id": "marauding_maulhorn",
       "name": "Marauding Maulhorn",

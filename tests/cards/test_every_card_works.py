@@ -197,6 +197,7 @@ class TestActivatedAbilities:
                 game.state.objects[other].entered_turn = 0
             game.state.bump_chars()
             game._advance()
+            _provide_the_attacker(game, registry, ability)
 
             action = next(
                 (
@@ -310,6 +311,86 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
     obj.entered_turn = 0
     game.state.battlefield.append(obj.oid)
     game.state.bump_chars()
+
+
+def _provide_the_attacker(game: Game, registry, ability) -> None:
+    """Declare an attacker when the ability can only point at one.
+
+    Fifth of the same family as the four helpers above, and the only one that
+    has to move the *game* rather than stock the board: `attacking` is not a
+    field on an object, it is `combat.attacking(oid)`, so the sole way to
+    satisfy "target attacking Vampire" is to reach declare-attackers and
+    declare something. Duskborne Skymarcher is the witness -- its ability is
+    exactly right and was reported unusable here purely because the generic
+    board is never in combat.
+
+    The selector is read only to *choose* a candidate from the pool, the same
+    way `_provide_the_sacrifice` reads a sacrifice cost's `types` and
+    `subtypes`. Whether the result is a legal target stays
+    `enumerate_target_tuples`' answer, so no second copy of `matches` moves into
+    the tests.
+    """
+    wants = next((s for s in ability.targets if s.selector.get("attacking")), None)
+    if wants is None:
+        return
+
+    subtypes = {str(s) for s in wants.selector.get("subtypes") or []}
+    types = {str(t) for t in wants.selector.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and c.is_creature
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    attacker = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    attacker.entered_turn = 0
+    game.state.battlefield.append(attacker.oid)
+    game.state.bump_chars()
+
+    # Walk to declare-attackers by passing priority. `_answer` is deliberately
+    # not reused: it declines combat outright, which is the whole thing being
+    # undone here.
+    for _ in range(40):
+        decision = game.pending()
+        if decision is None or game.over:
+            return
+        if decision.kind is DecisionKind.DECLARE_ATTACKERS:
+            break
+        if decision.kind is not DecisionKind.PRIORITY:
+            return
+        passing = next(
+            (a for a in game.legal_actions() if a.kind is ActionKind.PASS), None
+        )
+        if passing is None:
+            return
+        game.apply(passing)
+    else:
+        return
+
+    add = next(
+        (
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ADD_ATTACKER and a.source == attacker.oid
+        ),
+        None,
+    )
+    if add is None:
+        return
+    game.apply(add)
+    finish = next(
+        (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION),
+        None,
+    )
+    if finish is not None:
+        game.apply(finish)
 
 
 class TestManaAbilities:

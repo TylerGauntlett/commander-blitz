@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "vampire_neonate",
+    "name": "Vampire Neonate",
+    "oracle_text": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
+    "mana_cost": "{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire"],
+    "power": 0,
+    "toughness": 3,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
+        "cost": { "mana": "{2}", "tap": true },
+        "effects": [
+          { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } },
+          { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

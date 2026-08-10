@@ -226,16 +226,7 @@
       "toughness": 1,
       "keywords": ["deathtouch", "lifelink"]
     },
-    {
-      "id": "vicious_conquistador",
-      "name": "Vicious Conquistador",
-      "oracle_text": "Whenever this creature attacks, each opponent loses 1 life.",
-      "mana_cost": "{B}",
-      "types": ["Creature"],
-      "subtypes": ["Vampire", "Soldier"],
-      "power": 1,
-      "toughness": 2
-    },
+    
     {
       "id": "guul_draz_vampire",
       "name": "Guul Draz Vampire",
@@ -256,17 +247,7 @@
       "power": 2,
       "toughness": 2
     },
-    {
-      "id": "duskborne_skymarcher",
-      "name": "Duskborne Skymarcher",
-      "oracle_text": "Flying\n{W}, {T}: Target attacking Vampire gets +1/+1 until end of turn.",
-      "mana_cost": "{W}",
-      "types": ["Creature"],
-      "subtypes": ["Vampire", "Soldier"],
-      "power": 1,
-      "toughness": 1,
-      "keywords": ["flying"]
-    },
+    
     {
       "id": "skymarcher_aspirant",
       "name": "Skymarcher Aspirant",
@@ -389,34 +370,7 @@
         }
       ]
     },
-    {
-      "id": "stromkirk_captain",
-      "name": "Stromkirk Captain",
-      "oracle_text": "First strike\nOther Vampire creatures you control get +1/+1 and have first strike.",
-      "mana_cost": "{R}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Vampire", "Soldier"],
-      "power": 2,
-      "toughness": 2,
-      "keywords": ["first_strike"],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Other Vampires you control get +1/+1.",
-          "effect": "buff",
-          "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
-          "power": { "const": 1 },
-          "toughness": { "const": 1 }
-        },
-        {
-          "kind": "static",
-          "text": "Other Vampires you control have first strike.",
-          "effect": "grant_keyword",
-          "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
-          "keywords": ["first_strike"]
-        }
-      ]
-    },
+    
     {
       "id": "indulgent_aristocrat",
       "name": "Indulgent Aristocrat",
@@ -627,16 +581,7 @@
       "toughness": 2,
       "keywords": ["lifelink"]
     },
-    {
-      "id": "bloodrite_invoker",
-      "name": "Bloodrite Invoker",
-      "oracle_text": "{8}: Target player loses 3 life and you gain 3 life.",
-      "mana_cost": "{3}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Vampire", "Cleric"],
-      "power": 3,
-      "toughness": 2
-    },
+    
     {
       "id": "rakish_heir",
       "name": "Rakish Heir",
@@ -1032,16 +977,7 @@
         }
       ]
     },
-    {
-      "id": "vampire_neonate",
-      "name": "Vampire Neonate",
-      "oracle_text": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
-      "mana_cost": "{1}{B}",
-      "types": ["Creature"],
-      "subtypes": ["Vampire"],
-      "power": 0,
-      "toughness": 3
-    },
+    
     {
       "id": "angel_of_despair",
       "name": "Angel of Despair",

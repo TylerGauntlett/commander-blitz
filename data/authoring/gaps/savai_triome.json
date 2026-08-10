@@ -1,0 +1,29 @@
+{
+  "card_id": "savai_triome",
+  "name": "Savai Triome",
+  "oracle_text": "({T}: Add {R}, {W}, or {B}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "blocked_sentences": [
+    "Cycling {3} ({3}, Discard this card: Draw a card.)"
+  ],
+  "needs": [
+    {
+      "capability": "cycling",
+      "kind": "cost",
+      "what": "an activated ability playable from the HAND whose cost discards its own source, then draws a card -- i.e. a `Cost` field meaning \"discard this card\" (self-discard), distinct from the existing generic `discard` count",
+      "why_existing_wont_do": "`Cost` (src/automtg/engine/carddef.py:37) carries `mana`, `tap`, `untap`, `sacrifice`, `discard`, `discard_selector`, `pay_life`, `remove_counters` and `exile_from_graveyard`. The closest is `discard` + `discard_selector`, but `costs._discard_pool` (costs.py:326) builds its pool from `state.players[pid].hand` with an `EffectContext` that carries no `source_oid`, so `{\"self_only\": true}` cannot pick out the card being cycled -- it would let the player discard any other card in hand and still cycle, which is a different and strictly better card. There is no self-discard cost."
+    },
+    {
+      "capability": "cycling",
+      "kind": "engine",
+      "what": "activated abilities must be offerable from a zone other than the battlefield (here: the hand), the way `retrace` widened casting to the graveyard",
+      "why_existing_wont_do": "`loader._compile_ability` (cards/loader.py:295) pins `active_zones` to `(Zone.BATTLEFIELD,)` and only reassigns it from `model.active_zones` inside the *triggered* branch (loader.py:360), so the schema's already-permitted `\"hand\"` value is silently discarded on an activated ability. `legality._activate_actions` (engine/legality.py:427) then iterates `state.battlefield` alone, so nothing in hand is ever offered. A land in hand is not on the battlefield, so even a correct self-discard cost would never be activatable."
+    }
+  ],
+  "closest_existing": [
+    "retrace",
+    "suspend",
+    "kicker"
+  ],
+  "confidence": "high",
+  "notes": "The other two printed lines are already expressible and are implemented in the hand-written pool: the `{T}: Add {R}, {W}, or {B}` mana ability as one `choose_mode` of `add_mana` modes, and \"This land enters tapped\" as a `self_enters_tapped` replacement. Per the brief a partly expressible card still goes here and no partial answer was written. `retrace` is the nearest precedent: a card-level field that widens *where* a card may be played from, whose additional cost reuses `Cost.discard_selector` -- cycling wants the same shape but from the hand, discarding the source itself, and resolving a draw rather than a cast."
+}

@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "duskborne_skymarcher",
+    "name": "Duskborne Skymarcher",
+    "oracle_text": "Flying\n{W}, {T}: Target attacking Vampire gets +1/+1 until end of turn.",
+    "mana_cost": "{W}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Cleric"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{W}, {T}: Target attacking Vampire gets +1/+1 until end of turn.",
+        "cost": { "mana": "{W}", "tap": true },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "types": ["Creature"],
+              "subtypes": ["Vampire"],
+              "attacking": true
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "pump",
+            "objects": { "target": "t1" },
+            "power": { "const": 1 },
+            "toughness": { "const": 1 }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 0 }
+  }
+}

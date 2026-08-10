@@ -94,9 +94,6 @@
   "bloodline_necromancer": {
     "zone": "battlefield"
   },
-  "bloodrite_invoker": {
-    "zone": "battlefield"
-  },
   "bloodthrone_vampire": {
     "zone": "battlefield"
   },
@@ -201,9 +198,6 @@
       "0": 1
     }
   },
-  "duskborne_skymarcher": {
-    "zone": "battlefield"
-  },
   "edgar_markov": {
     "zone": "battlefield"
   },
@@ -268,9 +262,6 @@
   },
   "go_for_the_throat": {
     "zone": "graveyard"
-  },
-  "grave_titan": {
-    "zone": "battlefield"
   },
   "growth_spiral": {
     "zone": "graveyard"
@@ -364,9 +355,6 @@
   "llanowar_elves": {
     "zone": "battlefield"
   },
-  "loyal_drake": {
-    "zone": "battlefield"
-  },
   "lyra_dawnbringer": {
     "zone": "battlefield"
   },
@@ -377,9 +365,6 @@
     "zone": "battlefield"
   },
   "mardu_hateblade": {
-    "zone": "battlefield"
-  },
-  "mardu_woe_reaper": {
     "zone": "battlefield"
   },
   "markov_patrician": {
@@ -427,9 +412,6 @@
   },
   "nimble_mongoose": {
     "zone": "battlefield"
-  },
-  "nissas_pilgrimage": {
-    "battlefield_count": 34
   },
   "nomad_outpost": {
     "zone": "battlefield"
@@ -557,9 +539,6 @@
   "sphinxs_revelation": {
     "zone": "graveyard"
   },
-  "stromkirk_captain": {
-    "zone": "battlefield"
-  },
   "stromkirk_noble": {
     "zone": "battlefield"
   },
@@ -623,9 +602,6 @@
   "vampire_lacerator": {
     "zone": "battlefield"
   },
-  "vampire_neonate": {
-    "zone": "battlefield"
-  },
   "vampire_nighthawk": {
     "zone": "battlefield"
   },
@@ -642,9 +618,6 @@
     "zone": "battlefield"
   },
   "vanquishers_banner": {
-    "zone": "battlefield"
-  },
-  "vicious_conquistador": {
     "zone": "battlefield"
   },
   "vindicate": {
@@ -665,9 +638,6 @@
   "wayfarers_bauble": {
     "zone": "battlefield"
   },
-  "whiptongue_hydra": {
-    "zone": "battlefield"
-  },
   "wind_drake": {
     "zone": "battlefield"
   },
@@ -675,9 +645,6 @@
     "life": {
       "0": 41
     }
-  },
-  "windreader_sphinx": {
-    "zone": "battlefield"
   },
   "wood_elves": {
     "battlefield_count": 34
@@ -687,9 +654,6 @@
   },
   "wrath_of_god": {
     "zone": "graveyard"
-  },
-  "yavimaya_elder": {
-    "zone": "battlefield"
   },
   "zealous_persecution": {
     "zone": "graveyard"

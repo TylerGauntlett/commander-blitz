@@ -1,0 +1,48 @@
+{
+  "card_id": "gyre_sage",
+  "name": "Gyre Sage",
+  "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\n{T}: Add {G} for each +1/+1 counter on this creature.",
+  "blocked_sentences": [
+    "{T}: Add {G} for each +1/+1 counter on this creature.",
+    "Scope: ONLY the mana ability is blocked. The evolve line is fully expressible today with vocabulary already in the packet's `reference` block, and I verified it working end to end in a real game -- see `expressible_today` below, which also records the one shape that looks right and silently is not, so nobody re-derives it. The card goes here rather than being written half because a partly-expressible card is a gap record by the brief, and because the mana ability is the whole reason Gyre Sage is played: a 0/2 that taps for exactly {G} no matter how large it has grown is a strictly worse card than the one printed. The version already in the hand-written pool (`data/cards/aesi.cards.json`, id `gyre_sage`) is exactly that: no evolve at all, and a flat `{\"op\": \"add_mana\", \"mana\": \"{G}\"}` mana ability. An answer would replace it wholesale, so the evolve half stays unimplemented until this is unblocked."
+  ],
+  "needs": [
+    {
+      "capability": "variable_mana_ability",
+      "kind": "engine",
+      "what": "A mana ability whose output is a value expression evaluated when it is activated, rather than a constant fixed at load time. Concretely: let a mana ability carry an amount alongside its `mana` symbol -- e.g. `{\"kind\": \"activated\", \"is_mana_ability\": true, \"cost\": {\"tap\": true}, \"effects\": [{\"op\": \"add_mana\", \"mana\": \"{G}\", \"amount\": {\"counters_on\": {\"counter\": \"+1/+1\", \"objects\": {\"self_only\": true}}}}]}` -- and teach the three places that read `Ability.mana_options` to ask the board instead of reading a tuple: `costs.activate_mana_ability` (which must multiply the unit tuple by the evaluated amount when it pays out), `costs._sources_of` / `costs.mana_produced` (so the payment solver counts the real number of {G} available, not one), and `costs.mana_availability` / `costs.produced_symbols` (so the client's mana row is not a lie). The count must be read at activation time and the value language already computes it: `{\"counters_on\": ...}` is in `VALUE_KEYS` (`engine/effects/values.py:44`, evaluated at lines 78-87) and reads live counters off the source. The same change unblocks every \"Add {C} for each ...\" card at once -- Gaea's Cradle, Cabal Coffers, Serra's Sanctum, Priest of Titania, Circle of Dreams Druid, Overgrown Battlement, Magus of the Coffers, Cloudpost and Kydele are all sitting in `data/cards/auto/templates.cards.json` today with a flat one-pip `add_mana`, i.e. approximated, so this is a correctness fix for nine shipped cards as well as an unblock for this one.",
+      "why_existing_wont_do": "A mana ability's output is a constant computed at load time and the effect interpreter is never run for it. `loader._sum_mana` (`cards/loader.py:576-588`) walks the ability's effects and raises `DslError` on anything that is not `add_mana`, folding the `mana` strings into one fixed 6-tuple; `loader._mana_options` (lines 564-573) stores those tuples on the `Ability`. `costs.activate_mana_ability` (`engine/costs.py:483-506`) then pays out `mana_produced(ability.mana_options[option_index])` and never touches `ability.effects` -- its own docstring says the mana \"comes straight from the ability's precomputed `mana_options` rather than from running its effects\", because a mana ability must never stop to ask anything. There is no value expression anywhere on that path, so no amount of counters can change what a mana ability produces. Three near misses, all checked: (1) `add_mana_per` is the closest op and is wrong twice over -- `loader._sum_mana` rejects it outright inside a mana ability (verified: `probe_a.abilities[0]: mana abilities may only contain 'add_mana' (or a single 'choose_mode' of them), got 'add_mana_per'`), and even where it is legal it counts OBJECTS, `len(resolve_pool(ctx, spec.get(\"per\")))` in `engine/effects/ops_mana.py:33`, so it can say \"for each Forest you control\" but has no way to ask how many counters sit on one permanent. (2) A `choose_mode` mana ability of `add_mana {G}`, `add_mana {G}{G}`, ... compiles to several fixed options and the payment solver picks whichever one it likes with nothing checking the counters -- a Gyre Sage that taps for six on an empty board, i.e. strictly better than printed. (3) Dropping `is_mana_ability` and building the amount out of `repeat` + `add_mana` numerically works but stops being a mana ability: `costs.solver_taps` and `costs.offerable_mana_ability` (`engine/costs.py:96-125`) both require the flag, so the ability would go on the stack, be invisible to the payment solver, and could never be activated during a payment -- which is the only thing this card's mana is for. `mana_restriction` is unrelated (it filters which sources may pay, never how much they make), and `cost_reduction` points at costs rather than production."
+    }
+  ],
+  "expressible_today": {
+    "note": "The evolve line needs NO new vocabulary. Recorded in full so this is not triaged again, and so whoever clears the mana ability can write the whole card in one pass.",
+    "ability": {
+      "kind": "triggered",
+      "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+      "trigger": {
+        "event": "permanent_enters",
+        "controller": "you",
+        "filter": { "types": ["Creature"] }
+      },
+      "effects": [
+        {
+          "op": "if",
+          "condition": {
+            "any": [
+              { "cmp": ">", "left": { "power_of": { "binding": "subject" } }, "right": { "power_of": { "self": true } } },
+              { "cmp": ">", "left": { "toughness_of": { "binding": "subject" } }, "right": { "toughness_of": { "self": true } } }
+            ]
+          },
+          "then": [
+            { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 }, "objects": { "self_only": true } }
+          ]
+        }
+      ]
+    },
+    "why_it_works": "`permanent_enters` binds the entering object's oid as `subject` (`engine/triggers.py:382-384`), and `stack.py:250-259` builds the resolving ability's `EffectContext` with `bindings=dict(item.bindings)`, so effects CAN read it. `values._characteristic` (`engine/effects/values.py:135-158`) accepts `{\"binding\": \"subject\"}` -- an int oid falls through to `_from_oid` -- and also `{\"self\": true}`, which reads `ctx.source_oid`. `_from_oid` goes through `chars(state, oid)`, the derived characteristics, so the comparison sees +1/+1 counters already accumulated on Gyre Sage and any anthem on the entering creature: it grows past 1, 2, 3 correctly rather than comparing printed values. Verified in a real game, not just at load: Gyre Sage on the battlefield, Colossal Dreadmaw (6/6) cast from hand, trigger resolved -> `{'+1/+1': 1}`.",
+    "the_shape_that_looks_right_and_is_not": "Putting that same comparison in the trigger's own `condition` -- the documented intervening-if slot -- LOADS CLEANLY AND MAKES THE ABILITY INERT. `triggers._matches` calls `evaluate_condition(state, spec.condition, controller=..., source=obj.oid)` (`engine/triggers.py:220-224`), and `evaluate_condition` (`engine/effects/conditions.py:87-96`) constructs a bare `EffectContext(state, controller, source_oid)` whose `bindings` defaults to an empty dict. `{\"binding\": \"subject\"}` therefore resolves to nothing, `power_of` returns 0, the comparison is false and the trigger never fires. Verified: the identical card with the condition on the trigger instead of in the effects ended with `{}` counters where the effect version had one. A trigger `condition` today can only ask questions about the source and the board, never about the object that triggered it -- worth fixing on its own (it is the difference between an intervening-if checked at trigger time per rule 603.4 and one checked only on resolution), but it is NOT what blocks this card, and filing it as such would be a false gap.",
+    "expectation_if_the_card_were_written": "`{\"zone\": \"battlefield\", \"battlefield_count\": 33}` -- nothing enters after the card under test in the verification sandbox, so the evolve trigger cannot fire there and a `counters` assertion would be dishonest; the mana ability is never activated by the harness either."
+  },
+  "closest_existing": ["add_mana_per", "counters_on", "choose_mode", "mana_restriction"],
+  "confidence": "high"
+}
