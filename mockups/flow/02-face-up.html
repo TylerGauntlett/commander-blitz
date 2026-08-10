@@ -35,11 +35,21 @@
 
    THE TRADE. It leans harder on one idea than any other direction here. If the
    metaphor does not land, nothing else on the screen is holding it up -- and it
-   spends its vertical budget on card faces, which means the persona copy under
-   a CPU seat is two lines where 01 gives it five. The pod is more beautiful and
-   slightly less informative.
+   spends its vertical budget on card faces, so the plate under a seat gets four
+   lines where 01 gives it eight. This direction answers that by putting the
+   information on the card instead of under it: the face is the shipped app's
+   preview-rail card, so the commander's full rules are readable at a glance and
+   the plate only has to say who is sitting there and what they are holding.
 
-   No build, no server, no network. Local ../art/ only.
+   WHAT IT DOES NOT OFFER, on purpose: a difficulty ladder. Four named personas
+   with a capability row apiece is configuration for behaviour the engine does
+   not have yet, and the README is already on the record that per-seat personas
+   are a promise the CPU work has to keep. What a CPU seat can honestly differ
+   in today is its deck, so that is what its plate lets you change. Diverges
+   from the other four here; see ../flow/README.md.
+
+   No build, no server, no network. Local ../art/*.jpg and ../cards/symbols/*.svg
+   only, both already on disk.
    ========================================================================== */
 
 /* Tokens ----------------------------------------------------------------- */
@@ -111,9 +121,12 @@ button { cursor:pointer; background:none; border:0; }
 .back--empty { border-style:dashed; border-color:var(--edge-hi); background:rgba(13,12,28,.45); }
 .back--empty .back__mark { color:var(--text-faint); }
 
-/* THE STAMP -- the idea. Locking in is the loudest object on the screen. */
+/* THE STAMP -- the idea. Locking in is the loudest object on the screen.
+   It rides in the art band rather than at the middle of the card: the head is
+   a 26% scrim and the foot grows upward with the rules, so dead centre is text
+   on a wordy commander like Zurgo and wax over a paragraph is not legible. */
 .stamp {
-  position:absolute; z-index:5; left:50%; top:52%; transform:translate(-50%,-50%) rotate(-13deg);
+  position:absolute; z-index:5; left:50%; top:38%; transform:translate(-50%,-50%) rotate(-13deg);
   padding:7px 16px; border:3px double var(--gold); border-radius:6px;
   background:rgba(11,10,22,.7);
   font-size:calc(var(--card-w) * .085); font-weight:800; letter-spacing:.2em; text-transform:uppercase;
@@ -223,11 +236,6 @@ button { cursor:pointer; background:none; border:0; }
 .plate__deck { font-size:11.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .plate__deck--sealed { color:var(--text-faint); font-style:italic; }
 .plate__meta { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; }
-.plate__lamps { display:flex; align-items:center; justify-content:center; gap:9px; }
-.lamp { display:flex; align-items:center; gap:4px; font-size:9px; color:var(--text-faint); }
-.lamp__d { width:7px; height:7px; border-radius:999px; border:1px solid var(--edge-hi); }
-.lamp--on { color:var(--text-dim); }
-.lamp--on .lamp__d { background:var(--gold); border-color:var(--gold); }
 .plate__acts { display:flex; justify-content:center; gap:5px; flex-wrap:wrap; }
 .plate__acts .btn { min-width:0; }
 
@@ -326,7 +334,10 @@ button { cursor:pointer; background:none; border:0; }
 }
 /* Also inside the card, for the same reason as .slot__x. */
 .pick__tick { position:absolute; z-index:4; top:6px; right:6px; width:22px; height:22px; border-radius:999px; display:grid; place-items:center; background:var(--gold); color:#1b0f05; font-size:11px; font-weight:800; box-shadow:0 1px 4px rgba(0,0,0,.6); }
-.pick__src { position:absolute; z-index:4; bottom:6px; left:6px; padding:2px 7px; border-radius:999px; background:rgba(11,10,22,.86); border:1px solid var(--edge-hi); font-size:8.5px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:var(--text-dim); }
+/* The source badge is in the meta row rather than pinned to the card's foot,
+   where it painted over the keyword line direction D puts there. A card face is
+   a card face; the catalogue's own chrome is what moves. */
+.badge--src { border-style:solid; border-color:var(--edge); }
 .pick__n { font-size:12px; font-weight:750; line-height:1.3; }
 .pick__s { font-size:10px; color:var(--text-faint); }
 .pick__meta { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; }
@@ -407,10 +418,18 @@ button { cursor:pointer; background:none; border:0; }
 .ghost { padding:9px 14px; border-radius:7px; color:var(--text-faint); font-size:13px; font-weight:500; }
 .ghost:hover { color:var(--text); }
 
-.pip { display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:16px; padding:0 4px; border-radius:999px; font-size:10px; font-weight:800; font-style:normal; color:var(--mana-ink); box-shadow:inset 0 -1px 1px rgba(0,0,0,.25); }
-.pip--W { background:var(--mana-W); } .pip--U { background:var(--mana-U); }
-.pip--B { background:var(--mana-B); } .pip--R { background:var(--mana-R); }
-.pip--G { background:var(--mana-G); } .pip--C { background:var(--mana-C); }
+/* The real mana symbols, as <img>. Scryfall ships them fully coloured, so there
+   is nothing to recolour -- which is just as well, because an <img> could not
+   be recoloured anyway. `--pip` is capped as well as floored: past ~180px a
+   cost row scaled purely off --card-w stops looking like a cost and starts
+   looking like a row of buttons. */
+.pip { display:inline-block; width:var(--pip,14px); height:var(--pip,14px); flex:0 0 auto; vertical-align:middle; filter:drop-shadow(0 1px 1px rgba(0,0,0,.55)); }
+/* Symbols inside a sentence rather than in a cost row. Sized in em so one rule
+   serves the card's rules box and an 11px plate label without either being told
+   what size it is. */
+.pip--inline { width:1.05em; height:1.05em; margin:0 .04em; vertical-align:-.14em; filter:none; }
+/* Colour-identity rows live outside a .face, which is where --pip is scoped. */
+.plate__meta, .pick__meta, .over__head { --pip:14px; }
 
 .chip { padding:3px 8px; border:1px solid var(--edge-hi); border-radius:999px; font-size:10px; font-weight:650; color:var(--text-dim); background:rgba(9,8,20,.5); }
 .count { font-size:10.5px; color:var(--text-faint); }
@@ -425,30 +444,133 @@ button { cursor:pointer; background:none; border:0; }
 .bar--tiny .bar__seg { width:10px; height:4px; }
 .bar__seg--on { background:var(--text-dim); border-color:var(--text-dim); }
 
+/* THE CARD FACE -- direction D, "Art Bleed", as shipped ---------------------
+   `../cards/index.html` prototyped five card faces and D is the one the client
+   actually implements, so this is a port of `frontend/src/styles/cards.css`
+   rather than a lookalike. Three things about it are load-bearing and this file
+   used to get all three wrong:
+
+   THE NAME AND THE COST ARE ON SEPARATE AXES. The head is a COLUMN -- name,
+   then the cost on a row of its own beneath it. That is the whole point of the
+   direction: a name can be as long as it likes and never meets its own mana
+   cost, which is what "Aesi, Tyrant of Gyre Strait" against {4}{G}{U} used to
+   do at every width. The old flex-row title with a `max-width:56%` cost was
+   managing that collision instead of removing it.
+
+   THE TYPE LINE LIVES IN THE FOOT, with the rules and the P/T. The head is the
+   name and the cost; everything you read after deciding to look at the card is
+   at the bottom. Art fills everything between them.
+
+   THE MANA SYMBOLS ARE THE REAL SYMBOLS. A letter on a coloured disc is a mark
+   nobody who plays the game recognises. These are Scryfall's, vendored into
+   `../cards/symbols/` by `../cards/fetch_symbols.py` -- same files the client
+   serves out of `frontend/public/symbols/`. */
+
 .face {
+  --pip:min(calc(var(--card-w) * .115), 21px);
+  --fs-nm:clamp(9px, calc(var(--card-w) * .085), 19px);
+  --fs-tp:clamp(8.5px, calc(var(--card-w) * .062), 12.5px);
+  --fs-tx:clamp(8.5px, calc(var(--card-w) * .053), 12.5px);
+  --fs-pt:clamp(10px, calc(var(--card-w) * .092), 21px);
   position:relative; width:var(--card-w); aspect-ratio:1 / 1.4; overflow:hidden;
   border-radius:var(--card-r); border:2px solid var(--fb);
   background:linear-gradient(160deg, var(--f-hi), var(--f-lo));
-  display:flex; flex-direction:column; justify-content:space-between;
+  display:flex; flex-direction:column;
   box-shadow:0 1px 2px rgba(0,0,0,.5), 0 6px 14px rgba(0,0,0,.35);
-  color:#fff; flex:none;
+  color:#fff; flex:none; font-size:var(--fs-tx);
 }
 .face__art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
 .face__art--none { background:repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 6px, transparent 6px 12px), #6b6152; }
-.face__head, .face__foot { position:relative; z-index:2; padding:6px 7px; }
-.face__head { background:linear-gradient(180deg, rgba(0,0,0,.82), rgba(0,0,0,.57) 55%, rgba(0,0,0,0)); }
-.face__foot { background:linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.71) 58%, rgba(0,0,0,0)); }
-.face__title { display:flex; align-items:flex-start; gap:5px; }
-/* min-width:0 and a wrapping cost row. Without them a six-pip cost like The
-   Ur-Dragon's pushes .face__head past the card at small --card-w, which the
-   card clips but which is still the escape failure the menu round documented. */
-.face__name { flex:1; min-width:0; font-size:11px; font-weight:750; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.85); overflow-wrap:anywhere; }
-.face__cost { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:2px; flex:none; max-width:56%; }
-.face__type { margin-top:3px; font-size:8.5px; color:rgba(255,255,255,.86); text-shadow:0 1px 2px rgba(0,0,0,.85); }
-.face__rules { margin:0 0 5px; font-size:8.5px; line-height:1.38; color:rgba(255,255,255,.92); text-shadow:0 1px 2px rgba(0,0,0,.85); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
-.face__base { display:flex; align-items:flex-end; gap:6px; }
-.face__kw { flex:1; font-size:8.5px; font-weight:700; color:rgba(255,255,255,.9); text-shadow:0 1px 2px rgba(0,0,0,.85); }
-.face__pt { font-size:12px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,.9); }
+.face__head {
+  position:relative; z-index:2; display:flex; flex:0 0 auto; flex-direction:column;
+  gap:calc(var(--card-w) * .016);
+  padding:calc(var(--card-w) * .05) calc(var(--card-w) * .055) calc(var(--card-w) * .085);
+  background:linear-gradient(180deg, rgba(0,0,0,.8), rgba(0,0,0,.565) 55%, rgba(0,0,0,0));
+}
+/* margin-top:auto -- pushed to the foot whatever the head above it weighs, so a
+   two-line name never squeezes the illustration between them. */
+.face__foot {
+  position:relative; z-index:2; display:flex; flex-direction:column;
+  gap:calc(var(--card-w) * .024); margin-top:auto; min-height:0;
+  padding:calc(var(--card-w) * .1) calc(var(--card-w) * .055) calc(var(--card-w) * .05);
+  background:linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.706) 58%, rgba(0,0,0,0));
+}
+.face__title { display:flex; align-items:flex-start; gap:calc(var(--card-w) * .03); font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,.85); }
+/* A name wraps rather than truncating -- two lines, then it gives up. */
+.face__name { flex:1; min-width:0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; font-size:var(--fs-nm); line-height:1.14; }
+.face__cost { display:flex; flex:0 0 auto; flex-wrap:wrap; align-items:center; gap:calc(var(--card-w) * .02); min-height:var(--pip); }
+.face__type { color:#e2ddcd; font-size:var(--fs-tp); font-weight:600; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,.85); }
+/* Short rules centre in the box they were given; `safe` keeps long text
+   starting at the top, where it would otherwise be clipped at both ends. */
+.face__rules { display:flex; flex:0 1 auto; flex-direction:column; justify-content:safe center; overflow:hidden; min-height:0; margin:0; color:#eae7dc; font-size:var(--fs-tx); line-height:1.34; white-space:pre-wrap; text-shadow:0 1px 2px rgba(0,0,0,.69); }
+.face__footer { display:flex; align-items:center; gap:5px; margin-top:auto; }
+/* Keywords only where there is no rules box -- otherwise the text says them. */
+.face__kw { flex:1; overflow:hidden; color:#a8d3b3; font-size:calc(var(--card-w) * .068); font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,.85); }
+.face__spacer { flex:1; }
+/* A dark lozenge, not a pale one: everything on this card is light-on-dark, and
+   a white chip in the corner was the last element pretending there was paper. */
+.face__pt { padding:.2em .44em; border-radius:calc(var(--card-w) * .026); background:rgba(12,12,16,.82); box-shadow:inset 0 0 0 1px rgba(255,255,255,.25); color:#f7f4ea; font-size:var(--fs-pt); line-height:1; font-weight:800; }
+
+/* THE ENLARGED CARD -- the shipped app's preview rail, ported ---------------
+   Lifted from frontend/src/styles/cards.css `.face--big`, the variant
+   CardPreview.tsx renders. The point is consistency in the direction that
+   matters: the commander you turn over in the lobby is the commander the game
+   will put in your preview panel, and until now they were two different
+   objects -- a thin scrim over the art here, a framed illustration with a solid
+   text box there.
+
+   Three things carry over on top of direction D's anatomy above. The head is a
+   BAND rather than a hairline, so the art is framed rather than merely written
+   on. The foot goes effectively SOLID behind the text instead of fading, which
+   is what makes rules readable over a bright crop -- Explosive Vegetation is
+   the case that decides it there and Emmara is the one here. And the rules box
+   is the part that GIVES: it takes whatever the head and the footer leave and
+   scrolls past that, which is the trade for a card that never changes size.
+
+   This is also the only variant that draws a rules box at all, exactly as the
+   client does: `board` faces render none, because at 122px it is six-pixel type
+   and the type line plus a keyword chip say more. The catalogue keeps the small
+   face; the seat row and the dossier take this one.
+
+   ONE DELIBERATE DEVIATION. The app's rail card is width-driven with
+   `height:100%` -- it is the one card on that screen not held to 1.4. Here the
+   aspect ratio stays, because a face-up seat and a face-down `.back` have to be
+   the same rectangle: the moment they are not, the row stops reading as a hand
+   and `.hand__felt` no longer lands under the cards' shoulders. So this takes
+   the preview's treatment and not its box.
+
+   The type scale is the app's absolute one expressed as ratios of --card-w, so
+   it lands on the rail's own numbers at the top of the lobby's clamp (296px,
+   against a rail measured at 286) and stays legible at the bottom. */
+
+.face--big {
+  --fs-nm:clamp(10px, calc(var(--card-w) * .047), 14px);
+  --fs-tp:clamp(8.5px, calc(var(--card-w) * .0385), 11.5px);
+  --fs-tx:clamp(8.5px, calc(var(--card-w) * .042), 12.5px);
+  --fs-pt:clamp(10px, calc(var(--card-w) * .0455), 14px);
+  justify-content:flex-start;
+}
+.face--big .face__head {
+  flex:0 0 auto; min-height:26%; gap:4px;
+  padding:calc(var(--card-w) * .031) calc(var(--card-w) * .038) calc(var(--card-w) * .077);
+}
+.face--big .face__title { gap:7px; font-weight:800; }
+.face--big .face__foot {
+  gap:2px;
+  padding:calc(var(--card-w) * .105) calc(var(--card-w) * .038) calc(var(--card-w) * .031);
+  background:linear-gradient(0deg, rgba(11,11,15,.96) 62%, rgba(11,11,15,.86) 78%, rgba(11,11,15,0));
+}
+/* The part that gives. Top-aligned, because here long text is the case that
+   matters rather than centring two words in a fixed box. */
+.face--big .face__rules { justify-content:flex-start; overflow-y:auto; padding:5px 0 6px; line-height:1.4; }
+/* The P/T slot is reserved whether or not there is a P/T in it, so a card
+   without one does not come out a row shorter than every creature. */
+.face--big .face__footer { flex:0 0 auto; min-height:26px; }
+.face--big .face__pt { padding:1px 8px; border-radius:5px; }
+/* The commander mark goes inside the name, not in a corner -- a corner tag
+   competes with the P/T for a corner it has already claimed. Every card in this
+   file is somebody's commander, so it is always on. */
+.crown { margin-right:.28em; color:#d8a63c; font-size:.92em; text-shadow:0 1px 2px rgba(0,0,0,.63); }
 
 .curve__cols { display:flex; align-items:flex-end; gap:4px; height:54px; }
 .curve__bar { flex:1; background:var(--text-faint); border-radius:2px 2px 0 0; min-height:2px; }
@@ -467,22 +589,11 @@ button { cursor:pointer; background:none; border:0; }
    <script src> does not load from file:// and every mockup opens standalone.
    =========================================================================== */
 
-const CAPS = [
-  { id: "combat", n: "Combat math" },
-  { id: "removal", n: "Removal & targeting" },
-  { id: "seq", n: "Mana & sequencing" },
-];
-
-const DIFFICULTY = [
-  { id: "goldfish", n: "Goldfish", tag: "Plays solitaire", caps: [], agent: "random",
-    line: "Takes legal actions at random. It will not block you, race you, or notice you exist." },
-  { id: "apprentice", n: "Apprentice", tag: "Knows the basics", caps: ["combat"], rec: true,
-    line: "Blocks when the trade is safe, attacks when the attack is free, and plays to its curve." },
-  { id: "duelist", n: "Duelist", tag: "Plays to win", caps: ["combat", "removal"], agent: "heuristic",
-    line: "Spends removal on your best threat, keeps a blocker home, and counts to lethal." },
-  { id: "archmage", n: "Archmage", tag: "Plays around you", caps: ["combat", "removal", "seq"],
-    line: "Sequences its mana, holds up interaction, and plays around the cards you left mana open for." },
-];
+/* No difficulty ladder. It was four personas and a ◂/▸ pair on every CPU plate,
+   configuring behaviour the engine does not have yet -- the README's own words
+   are that per-seat personas are "a promise the CPU work has to keep". What a
+   CPU seat is actually allowed to differ in is the deck it holds, so that is
+   the only thing its plate offers. */
 
 const BAR_LABELS = [
   ["speed", "Speed"], ["complexity", "Complexity"], ["interaction", "Interaction"],
@@ -873,18 +984,29 @@ const root = document.getElementById("root");
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const artUrl = (slug) => "../art/" + slug + ".jpg";
 
+/** A mana symbol, as an `<img>` rather than inline SVG: fetch() is blocked on
+ *  file:// and an image is not. The files are Scryfall's, vendored into
+ *  ../cards/symbols/ by ../cards/fetch_symbols.py -- the same set the client
+ *  serves out of frontend/public/symbols/. Hybrid notation is {R/G} on a card
+ *  and R-G.svg on disk. */
+const sym = (code, cls) => {
+  const c = String(code).toUpperCase();
+  return `<img class="pip${cls ? " " + cls : ""}" src="../cards/symbols/${c.replace("/", "-")}.svg" alt="{${c}}" title="{${c}}">`;
+};
+
+/** "4GU" -> {4}{G}{U}. A run of digits is one symbol, a letter is one symbol. */
 function pips(cost) {
   if (!cost) return "";
-  const out = []; let num = "";
-  for (const ch of String(cost)) {
-    if (ch >= "0" && ch <= "9") { num += ch; continue; }
-    if (num) { out.push(`<i class="pip pip--C">${num}</i>`); num = ""; }
-    out.push(`<i class="pip pip--${ch}">${ch}</i>`);
-  }
-  if (num) out.push(`<i class="pip pip--C">${num}</i>`);
-  return out.join("");
+  return (String(cost).match(/\d+|[A-Z]/g) || []).map((c) => sym(c)).join("");
 }
-const ciPips = (ci) => ci.map((c) => `<i class="pip pip--${c}">${c}</i>`).join("");
+const ciPips = (ci) => ci.map((c) => sym(c)).join("");
+
+/** Braced notation inside prose draws the same symbols: "{T}: Add {G}." */
+const symbolise = (text) => esc(text).replace(/\{([^}]+)\}/g, (m, c) => sym(c, "pip--inline"));
+
+/** Supertypes come off where the line has no room for them. The big face keeps
+ *  the full line; a 122px catalogue tile does not have it to spend. */
+const shortType = (tl) => tl.replace(/^(?:Legendary|Basic|Snow|Token)\s+/, "");
 
 function bar(label, value, tiny) {
   let segs = "";
@@ -892,25 +1014,45 @@ function bar(label, value, tiny) {
   return `<div class="bar${tiny ? " bar--tiny" : ""}"><span class="bar__label">${esc(label)}</span><span class="bar__track">${segs}</span></div>`;
 }
 const bars = (b) => BAR_LABELS.map(([k, l]) => bar(l, b[k])).join("");
-const tierOf = (id) => DIFFICULTY.find((d) => d.id === id) || DIFFICULTY[1];
 const subtitle = (d) => (d.cmd.n === d.name ? `${d.guild} · ${d.tags[0].toLowerCase()}` : d.cmd.n);
 
-/** The capability list, written out. The ladder is a promise about behaviour,
- *  so the seat states the behaviour rather than an adjective. */
-const capList = (caps) => `<div class="caps">${CAPS.map((c) => `
-  <div class="cap${caps.includes(c.id) ? " cap--on" : ""}"><i class="cap__lamp"></i>${esc(c.n)}</div>`).join("")}</div>`;
-
-function face(c) {
+/** A card, drawn as direction D draws it.
+ *
+ *  Head: the name, then the cost on a row of its own beneath it. Foot: the type
+ *  line, the rules, the P/T. Art fills everything in between. See the CSS for
+ *  why the name and the cost are on separate axes -- it is the direction.
+ *
+ *  Two variants, which is the client's split. `big` is the preview rail: full
+ *  type line and a rules box. The default is a board card: short type line, a
+ *  keyword line instead of rules, because at 122px a rules box is six-pixel
+ *  type and the keywords say more in the same space.
+ *
+ *  Every card in this file is somebody's commander, so the crown the client
+ *  puts inside a legendary's name is always on. The type glyph beside it is
+ *  deliberately not ported: twenty-four Legendary Creatures is the same mark
+ *  twenty-four times. */
+function face(c, variant) {
+  const big = variant === "big";
   const media = c.art ? `<img class="face__art" src="${artUrl(c.art)}" alt="">` : `<div class="face__art face__art--none"></div>`;
-  return `<div class="face f-${c.f || "C"}">
+  const cost = pips(c.cost);
+  const kw = !big && c.kw ? `<span class="face__kw">${esc(c.kw)}</span>` : `<span class="face__spacer"></span>`;
+  return `<div class="face f-${c.f || "C"}${big ? " face--big" : ""}">
     ${media}
     <div class="face__head">
-      <div class="face__title"><span class="face__name">${esc(c.n)}</span><span class="face__cost">${pips(c.cost)}</span></div>
-      <div class="face__type">${esc(c.tl)}</div>
+      <div class="face__title">
+        <span class="face__name"><span class="crown" title="Commander" aria-label="Commander">&#9819;</span>${esc(c.n)}</span>
+      </div>
+      ${cost ? `<div class="face__cost">${cost}</div>` : ""}
     </div>
     <div class="face__foot">
-      ${c.rules ? `<p class="face__rules">${esc(c.rules)}</p>` : ""}
-      <div class="face__base"><span class="face__kw">${esc(c.kw || "")}</span>${c.pt ? `<span class="face__pt tabular">${c.pt}</span>` : ""}</div>
+      <div class="face__type">${esc(big ? c.tl : shortType(c.tl))}</div>
+      ${big && c.rules
+        // The span is load-bearing. .face__rules is a flex column, so symbols
+        // placed straight into it become flex *items* -- each one stretches to
+        // the full width of the card and the rules box becomes a stack of
+        // coloured bars. One child; the pips stay inline inside it.
+        ? `<div class="face__rules"><span>${symbolise(c.rules)}</span></div>` : ""}
+      <div class="face__footer">${kw}${c.pt ? `<span class="face__pt tabular">${c.pt}</span>` : ""}</div>
     </div>
   </div>`;
 }
@@ -940,7 +1082,6 @@ const state = {
     { kind: "empty" }, { kind: "empty" }, { kind: "empty" },
   ],
   fillCpu: true,
-  difficulty: "apprentice",
   cat: false,
   catFor: 0,
   open: null,
@@ -977,7 +1118,9 @@ const canStart = () => {
   return !!d && d.engine !== "preview" && podSize() >= 2 && allReady() && state.seats[0].ready;
 };
 
-const seatTier = (i) => tierOf(state.seats[i].tier || state.difficulty);
+/* CPUs are numbered by their position among the engine seats, not by seat
+   index: the second CPU in a pod whose seat 2 is a human is still "CPU 2". */
+const cpuNumber = (i) => state.seats.slice(0, i + 1).filter((s) => s.kind === "cpu").length;
 
 function firstEmpty() {
   for (let i = 1; i < state.seats.length; i += 1) if (state.seats[i].kind === "empty") return i;
@@ -987,7 +1130,7 @@ function firstEmpty() {
 function addCpu(i) {
   const at = i == null ? firstEmpty() : i;
   if (at < 1) return;
-  state.seats[at] = { kind: "cpu", tier: state.difficulty };
+  state.seats[at] = { kind: "cpu", deckId: freeDeck(at) };
 }
 
 function openChair(i) {
@@ -1000,6 +1143,7 @@ function openChair(i) {
   setTimeout(() => {
     if (token !== joinToken || state.seats[at].kind !== "open") return;
     state.seats[at] = { kind: "human", name: guest.name, deckId: guest.deckId, ready: false };
+    dedupeCpuDecks();
     render();
     setTimeout(() => {
       if (token !== joinToken || state.seats[at].kind !== "human") return;
@@ -1009,21 +1153,40 @@ function openChair(i) {
   }, POD.joinMs);
 }
 
+/** A dealable deck nobody at the table is already holding.
+ *
+ *  Called once, when a seat is created. This used to be derived on every render
+ *  instead -- "the live decks nobody else has, indexed by seat number" -- which
+ *  read fine while no CPU's deck was ever set explicitly. The moment one is, it
+ *  is a bug: pinning seat 2's deck takes a card out of the pool the other seats
+ *  are indexing into, so seat 4's card turns itself over. A seat's deck is now
+ *  decided once and then belongs to that seat until somebody changes it. */
+function freeDeck(at) {
+  const taken = new Set(state.seats.map((s) => s.deckId).filter(Boolean));
+  const live = DECKS.filter((d) => d.engine !== "preview");
+  const pool = live.filter((d) => !taken.has(d.id));
+  const chosen = pool.length ? pool : live;
+  return chosen[(at * 7) % chosen.length].id;
+}
+
+/** Two seats holding the same commander is not a pod, and the arriving guest's
+ *  list is scripted while the CPU's was arbitrary -- so the CPU is the one that
+ *  moves. */
+function dedupeCpuDecks() {
+  state.seats.forEach((s, i) => {
+    if (s.kind !== "cpu") return;
+    if (state.seats.some((o, j) => j !== i && o.kind !== "cpu" && o.deckId === s.deckId)) {
+      s.deckId = freeDeck(i);
+    }
+  });
+}
+
 function seatDeck(i) {
   const s = state.seats[i];
   if (s.kind === "empty" || s.kind === "open") return null;
   if (s.kind === "you") return myDeck();
   if (s.kind === "human") return s.ready ? deckById(s.deckId) : null;
-  if (s.deckId) return deckById(s.deckId);
-  const taken = new Set([
-    state.seats[0].deckId,
-    ...state.seats.filter((x) => x.kind === "human" && x.ready).map((x) => x.deckId),
-    ...state.seats.filter((x) => x.kind === "cpu" && x.deckId).map((x) => x.deckId),
-  ]);
-  const live = DECKS.filter((d) => d.engine !== "preview");
-  const pool = live.filter((d) => !taken.has(d.id));
-  const chosen = pool.length ? pool : live;
-  return chosen[(i * 7) % chosen.length];
+  return deckById(s.deckId);
 }
 
 function seatLabel(i) {
@@ -1031,8 +1194,9 @@ function seatLabel(i) {
   if (s.kind === "you") return { title: "You", sub: s.ready ? "Locked in" : "Choosing" };
   if (s.kind === "open") return { title: "Open chair", sub: "Waiting for a player" };
   if (s.kind === "human") return { title: s.name, sub: s.ready ? "Locked in" : "Choosing a deck…" };
-  const t = seatTier(i);
-  return { title: t.n, sub: t.tag };
+  // A CPU is ready by construction, which is what the segment above it already
+  // says. There is nothing else true about it yet that is not its deck.
+  return { title: `CPU ${cpuNumber(i)}`, sub: "Ready" };
 }
 
 /* The catalogue ---------------------------------------------------------- */
@@ -1125,39 +1289,38 @@ function slot(i) {
 
   // Face-down covers three different facts with one picture, on purpose.
   const cardFace = d
-    ? face(d.cmd)
+    ? face(d.cmd, "big")
     : s.kind === "open"
       ? cardBack("Waiting for a player", "open")
       : cardBack("Sealed until they lock in");
 
-  const stamp = s.ready && s.kind !== "cpu"
+  // Every resolved seat wears the stamp, CPUs included -- a CPU is locked in by
+  // construction, and it was the one seat whose card said nothing about that.
+  // Only a face-up card can carry it: an open chair is a card back.
+  const stamp = d && seatReady(s)
     ? `<span class="stamp${you ? "" : " stamp--them"}">Locked in</span>` : "";
 
   const deckLine = d
     ? `<div class="plate__deck">${esc(d.name)}</div>
-       <div class="plate__meta">${ciPips(d.ci)}<span class="count tabular">${d.cards}</span>${engineBadge(d)}</div>`
+       <div class="plate__meta">${ciPips(d.ci)}${engineBadge(d)}</div>`
     : `<div class="plate__deck plate__deck--sealed">${s.kind === "open" ? `Pod ${POD.code}` : "Deck sealed"}</div>
        <div class="plate__meta"><span class="count">${s.kind === "open" ? "Anyone with the code" : "Readable once they lock in"}</span></div>`;
 
   let acts;
   if (you) {
     acts = `<button class="btn" data-act="cat-open" data-for="0" ${s.ready ? "disabled" : ""}>Change deck</button>
-            <button class="btn" data-act="dossier" data-id="${s.deckId}">Details</button>`;
+            <button class="btn" data-act="dossier" data-id="${s.deckId}" data-for="0">Details</button>`;
   } else if (s.kind === "cpu") {
-    acts = `<button class="btn" data-act="tier" data-i="${i}" data-dir="-1" title="Easier">◂</button>
-            <button class="btn" data-act="tier" data-i="${i}" data-dir="1">Tougher ▸</button>
-            <button class="btn" data-act="dossier" data-id="${d ? d.id : ""}">Deck</button>`;
+    // A CPU seat's card is the one other card on the table you are allowed to
+    // turn over, so it gets the same pair of controls your own seat gets.
+    acts = `<button class="btn" data-act="cat-open" data-for="${i}">Change deck</button>
+            <button class="btn" data-act="dossier" data-id="${d ? d.id : ""}" data-for="${i}">Details</button>`;
   } else if (s.kind === "open") {
     acts = `<button class="btn" data-act="invite">Share the code</button>
             <button class="btn" data-act="add-cpu" data-i="${i}">CPU instead</button>`;
   } else {
     acts = `<button class="btn" data-act="dossier" data-id="${s.ready ? s.deckId : ""}" ${s.ready ? "" : "disabled"}>Read their deck</button>`;
   }
-
-  // A CPU's lamps ride under its plate: the persona's promise, in three dots.
-  const lamps = s.kind === "cpu"
-    ? `<div class="plate__lamps">${CAPS.map((c) => `<span class="lamp${seatTier(i).caps.includes(c.id) ? " lamp--on" : ""}" title="${esc(c.n)}"><i class="lamp__d"></i>${esc(c.n.split(" ")[0])}</span>`).join("")}</div>`
-    : "";
 
   return `<div class="slot">
     <span class="slot__no${you ? " slot__no--you" : ""}">Seat ${i + 1} · ${you ? "you" : s.kind === "cpu" ? "CPU" : s.kind === "open" ? "open" : "player"}</span>
@@ -1168,7 +1331,6 @@ function slot(i) {
     <div class="plate">
       <div class="plate__who"><span class="plate__n">${esc(lab.title)}</span><span class="plate__tag">${esc(lab.sub)}</span></div>
       ${deckLine}
-      ${lamps}
       <div class="plate__acts">${acts}${you ? "" : `<button class="slot__x" data-act="clear" data-i="${i}" title="Empty this seat">✕</button>`}</div>
     </div>
   </div>`;
@@ -1252,7 +1414,12 @@ function catalogue() {
   if (!state.cat) return "";
   const list = visibleDecks();
   const forSeat = state.catFor;
-  const chosen = forSeat === 0 ? state.seats[0].deckId : (state.seats[forSeat] || {}).deckId;
+  // What the seat is *holding*, not what was explicitly assigned to it -- a CPU
+  // seat whose deck came from `seatDeck`'s auto-assignment has no `deckId`, and
+  // reading that field left the catalogue showing no selection for a seat with a
+  // card plainly face-up on the table.
+  const held = seatDeck(forSeat);
+  const chosen = held ? held.id : null;
   const { status, msg } = state.imp;
   let note = `<span class="imp__note">${esc(CUSTOM.hint)}</span>`;
   if (status === "fetching") note = `<span class="imp__note imp__note--busy">Reading the list…</span>`;
@@ -1262,12 +1429,11 @@ function catalogue() {
   const pick = (d) => `<div class="pick${d.id === chosen ? " pick--on" : ""}" data-testid="deck-${d.id}">
     <div class="pick__card">
       ${face(d.cmd)}
-      <span class="pick__src">${d.source === "yours" ? "Yours" : "Precon"}</span>
       ${d.id === chosen ? `<span class="pick__tick">✓</span>` : ""}
     </div>
     <div class="pick__n">${esc(d.name)}</div>
     <div class="pick__s">${esc(subtitle(d))}</div>
-    <div class="pick__meta">${ciPips(d.ci)}<span class="count tabular">${d.cards}</span>${engineBadge(d)}</div>
+    <div class="pick__meta">${ciPips(d.ci)}<span class="badge badge--src">${d.source === "yours" ? "Yours" : "Precon"}</span>${engineBadge(d)}</div>
     <div class="pick__bars">${bar("Speed", d.bars.speed, true)}${bar("Complex", d.bars.complexity, true)}${bar("Demands", d.bars.pilot, true)}</div>
     <div class="pick__acts">
       <button class="btn" data-act="pick" data-id="${d.id}" ${d.engine === "preview" ? "disabled" : ""}>
@@ -1280,7 +1446,7 @@ function catalogue() {
   return `<section class="cat" role="dialog" aria-modal="true" aria-label="Deck catalogue" data-testid="deck-catalog">
     <div class="cat__head">
       <span class="cat__t">Turn a card face up</span>
-      <span class="cat__for">${forSeat === 0 ? "Choosing your deck" : `Choosing for seat ${forSeat + 1}`}</span>
+      <span class="cat__for">${forSeat === 0 ? "Choosing your deck" : `Choosing for ${esc(seatLabel(forSeat).title)}`}</span>
       <button class="cat__x" data-act="cat-close" aria-label="Close">✕</button>
     </div>
 
@@ -1346,14 +1512,13 @@ function dossier() {
     <div class="over__head">
       <span class="over__n">${esc(d.name)}</span>
       ${ciPips(d.ci)}
-      <span class="count tabular">${d.cards} cards</span>
       ${engineBadge(d)}
       <button class="over__x" data-act="close" aria-label="Close">✕</button>
     </div>
     <div class="over__body">
       <div class="dos__top">
         <div class="dos__card">
-          ${face(d.cmd)}
+          ${face(d.cmd, "big")}
           <div class="dos__artist">Art: ${esc(d.cmd.artist)}</div>
         </div>
         <div style="min-width:0">
@@ -1476,7 +1641,7 @@ root.addEventListener("click", (e) => {
     case "join":
       state.route = "lobby";
       state.seats[1] = { kind: "human", name: POD.guests[0].name, deckId: POD.guests[0].deckId, ready: true };
-      state.seats[2] = { kind: "cpu", tier: "duelist" };
+      state.seats[2] = { kind: "cpu", deckId: freeDeck(2) };
       break;
     case "leave":
       state.route = "home";
@@ -1488,12 +1653,6 @@ root.addEventListener("click", (e) => {
     case "add-cpu": addCpu(i); break;
     case "open-chair": openChair(i); break;
     case "clear": joinToken += 1; state.seats[i] = { kind: "empty" }; break;
-    case "tier": {
-      const dir = Number(hit.dataset.dir);
-      const at = DIFFICULTY.findIndex((t) => t.id === (state.seats[i].tier || state.difficulty));
-      state.seats[i].tier = DIFFICULTY[Math.min(DIFFICULTY.length - 1, Math.max(0, at + dir))].id;
-      break;
-    }
 
     case "cat-open": state.cat = true; state.catFor = Number(hit.dataset.for || 0); break;
     case "cat-close": state.cat = false; break;
@@ -1502,6 +1661,10 @@ root.addEventListener("click", (e) => {
     case "dossier":
       if (!hit.dataset.id) return;
       e.stopPropagation();
+      // A dossier opened off a seat plate says which seat it is for, so its
+      // "Take this deck" lands on that seat rather than on whichever one the
+      // catalogue was last opened for.
+      if (hit.dataset.for != null) state.catFor = Number(hit.dataset.for);
       state.open = hit.dataset.id;
       break;
     case "close": state.open = null; break;
