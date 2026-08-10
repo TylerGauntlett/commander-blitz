@@ -23,6 +23,9 @@ frontend/dist/
 bun.lockb
 .vite/
 
+# Storybook
+frontend/storybook-static/
+
 # Playwright artifacts
 frontend/e2e-report/
 frontend/e2e-shots/

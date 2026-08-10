@@ -9,7 +9,8 @@
       "e2e-report",
       "e2e-shots",
       "playwright-report",
-      "test-results"
+      "test-results",
+      "storybook-static"
     ]
   },
   "formatter": {

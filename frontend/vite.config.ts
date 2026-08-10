@@ -1,3 +1,4 @@
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -27,9 +28,54 @@ export default defineConfig({
       "/art": { target: "http://127.0.0.1:8000", changeOrigin: true },
     },
   },
+  /*
+   * Two suites, split by what they can see.
+   *
+   * `unit` is the config this file has always had, nested one level: jsdom, no
+   * layout, milliseconds. `storybook` runs every story in a real Chromium, which
+   * is the only way to assert on a UI whose measurements come out of the
+   * cascade -- jsdom has no `ResizeObserver`, does not implement `@property`,
+   * and returns zeros from every `getBoundingClientRect`.
+   *
+   * `npm test` deliberately runs only `unit`, so the stage in `scripts/verify.py`
+   * keeps meaning what it always meant and the repo still works on a machine
+   * that has never downloaded a browser.
+   */
   test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["tests/**/*.test.{ts,tsx}"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          globals: true,
+          include: ["tests/**/*.test.{ts,tsx}"],
+        },
+      },
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: ".storybook" })],
+        test: {
+          name: "storybook",
+          // No setup file: since Storybook 10.3 the addon applies `preview.tsx`'s
+          // annotations itself, and calling `setProjectAnnotations` as well makes
+          // it skip its own provisioning -- which is one more way for the runner
+          // and the browser to disagree about what a story is.
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: "playwright",
+            instances: [{ browser: "chromium" }],
+            /*
+             * Fixed on purpose. The zoom solver reads `clientWidth`/
+             * `clientHeight`, so a canvas that varied with the machine would
+             * make `data-zoom-board` vary with it -- and the stories that
+             * assert on card geometry would pass or fail by monitor.
+             */
+            viewport: { width: 1600, height: 950 },
+          },
+        },
+      },
+    ],
   },
 });

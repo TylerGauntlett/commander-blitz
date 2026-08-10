@@ -1,0 +1,26 @@
+<style>
+  /*
+    `theme.css` sets `height: 100%` on `html, body, #root`. Storybook's canvas
+    root is `#storybook-root`, so without this the chain breaks at the last
+    link: `.table { height: 100% }` resolves against an auto-height parent,
+    `useZoomFit` measures a table 0px tall, and every card in every board story
+    clamps to the 52px floor.
+  */
+  #storybook-root {
+    height: 100%;
+  }
+
+  /*
+    Framer Motion animates in JS and is held still by `MotionConfig` in
+    preview.tsx. This catches the CSS half -- the keyframe animations in
+    `ui.css` -- which no amount of MotionConfig reaches.
+  */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+</style>
