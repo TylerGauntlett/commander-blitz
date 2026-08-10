@@ -43,6 +43,9 @@ function Board({ state }: { state: GameView }) {
             player={state.players[pid]}
             names={state.players.map((p) => p.name)}
             compact
+            // Their lands against their own edge, so the creature bands meet in
+            // the middle -- which is also where the arrows have to cross.
+            mirrored
             cardScale={opponentCardScale(opponents.length)}
             actionableOids={new Set()}
           />
@@ -52,7 +55,6 @@ function Board({ state }: { state: GameView }) {
         state={state}
         player={state.players[state.seat]}
         names={state.players.map((p) => p.name)}
-        mirrored
         cardScale={CARD_SCALE.own}
         actionableOids={new Set()}
       />
