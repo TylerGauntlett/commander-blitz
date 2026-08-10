@@ -12,6 +12,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import type { CardView, UnplayableReason } from "../../api/types";
 import { HAND_FAN_W } from "../../logic/zoomFit";
+import { settled } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { HandFan } from "./HandFan";
 
@@ -87,24 +88,103 @@ export const SevenCards: Story = {
 };
 
 /**
- * The arc itself: the outer cards droop below the middle ones.
+ * The arc: the outer cards sit lower than the middle ones, at any hand size.
  *
- * `y` is `distance ** 2 * 1.4`, so this is a parabola and the ends are lowest.
- * It survives `reducedMotion` because the value is applied rather than animated
- * -- which is worth knowing, since it means the harness does not flatten the
- * shape it is meant to be checking.
+ * Measured on `.hand__lift`, because the slot deliberately does not move -- it is
+ * the hit box, and holding it still is what stopped the hover jittering.
+ *
+ * Seven and fifteen, because the bug only showed at fifteen. The droop used to be
+ * `min(12, distance ** 2 * 1.4)`, which reaches its ceiling at |distance| >= 2.93
+ * -- so a seven-card hand curved and a fifteen-card hand was flat across its
+ * outer two-thirds while the rotation kept increasing, which reads as the end
+ * cards riding up.
  */
+function droops(root: HTMLElement): number[] {
+  /*
+   * Read from the transform matrix, not from `getBoundingClientRect`.
+   *
+   * The droop is a translate and the arc also *rotates* each card, and a rotated
+   * box's top edge sits higher than the card's -- its corners stick up. So the
+   * client rect mixes the two and the middle card, which has no rotation at all,
+   * measures lower than its tilted neighbours. `f` is the matrix's translateY,
+   * which is exactly the quantity `droop()` produces.
+   */
+  return [...root.querySelectorAll(".hand__lift")].map(
+    (s) => new DOMMatrix(getComputedStyle(s).transform).f,
+  );
+}
+
+/** Droop must increase from the middle outwards, with no flat run at the edge. */
+function expectParabola(root: HTMLElement, count: number) {
+  const ys = droops(root);
+  expect(ys).toHaveLength(count);
+  const left = ys.slice(0, Math.floor((count - 1) / 2) + 1);
+  for (let i = 1; i < left.length; i += 1) {
+    expect(
+      left[i],
+      `card ${i} droops as much as card ${i - 1}: the arc is flat here`,
+    ).toBeLessThan(left[i - 1]);
+  }
+  // And the outermost card is the full droop, so the curve uses its whole range
+  // rather than saturating early.
+  expect(Math.round(ys[0]), "the outer card is not at full droop").toBe(12);
+}
+
 export const TheArc: Story = {
   args: { cards: hand(7), playableOids: new Set() },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Forest");
-    const tops = [...canvasElement.querySelectorAll(".hand__slot")].map(
-      (s) => s.getBoundingClientRect().top,
+    expectParabola(canvasElement, 7);
+  },
+};
+
+/** The same curve, at more than twice the cards. */
+export const TheArcAtFifteen: Story = {
+  args: { cards: hand(15), playableOids: new Set() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findAllByText("Forest");
+    expectParabola(canvasElement, 15);
+  },
+};
+
+/**
+ * Hovering lifts the card and does not move the hit box.
+ *
+ * That separation *is* the fix for the jitter. When one element carried both the
+ * transform and the pointer handlers, raising the card 46px took its box out from
+ * under the cursor: `mouseleave` fired, the card settled back under the cursor,
+ * `mouseenter` fired, and it oscillated for as long as you rested near an edge.
+ *
+ * Asserted as the invariant rather than by trying to reproduce the flicker: the
+ * slot's rectangle must be identical before and after, and the card inside it
+ * must have moved. A test that chased the oscillation itself would be chasing a
+ * race.
+ */
+export const HoverDoesNotMoveTheHitBox: Story = {
+  args: { cards: hand(5), playableOids: new Set([100]) },
+  parameters: { automtg: { mount: "tableFoot", motion: "real" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Forest");
+    const slot = canvasElement.querySelectorAll<HTMLElement>(".hand__slot")[2];
+    const lift = slot.querySelector(".hand__lift") as HTMLElement;
+
+    const boxBefore = slot.getBoundingClientRect();
+    const cardBefore = lift.getBoundingClientRect().top;
+
+    await userEvent.hover(slot);
+    await settled(lift);
+
+    const boxAfter = slot.getBoundingClientRect();
+    expect(
+      Math.round(boxAfter.top),
+      "the hit box moved with the card, which is what made the hover jitter",
+    ).toBe(Math.round(boxBefore.top));
+    expect(lift.getBoundingClientRect().top, "the card did not lift at all").toBeLessThan(
+      cardBefore,
     );
-    const middle = tops[3];
-    expect(middle, "the fan is flat: the middle card should sit highest").toBeLessThan(tops[0]);
-    expect(middle).toBeLessThan(tops[6]);
   },
 };
 
