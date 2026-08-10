@@ -198,6 +198,11 @@ class PodView(BaseModel):
     #: Set the moment the host deals.  Every client polling the pod learns where
     #: the table is from the same response, which is how they arrive together.
     game_id: str | None = None
+    #: The pod's address in the client, relative: `/pods/GYRE-8412`.  Relative
+    #: because the server does not know what host the browser reached it on --
+    #: over a LAN that is a machine address it has no way to guess -- so an
+    #: absolute link it built would say `localhost` and work for one person.
+    #: The client resolves it against `window.location`.
     invite_link: str = ""
 
 

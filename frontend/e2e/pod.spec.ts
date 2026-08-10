@@ -45,6 +45,8 @@ async function host(page: Page, name: string): Promise<string> {
   await rename(page, name);
   const code = await page.getByTestId("pod-code-chip").textContent();
   expect(code).toMatch(/^[A-Z]+-\d{4}$/);
+  // The pod is an address, not a screen the app happens to be showing.
+  await expect(page).toHaveURL(new RegExp(`/pods/${code}$`));
   return code as string;
 }
 
@@ -236,6 +238,18 @@ test.describe("a pod with two people in it", () => {
     await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
     await guestPage.getByTestId("table").waitFor({ timeout: 60_000 });
 
+    // Both are at the game's own address, and neither can walk back into the
+    // lobby they came from. That is the promise the deal makes by *replacing*
+    // its history entry rather than pushing one: the pod is `in_game` and its
+    // lobby cannot be re-entered, so back goes to the front door instead of to
+    // a room that no longer exists.
+    await expect(hostPage).toHaveURL(/\/games\/[^/]+$/);
+    await expect(guestPage).toHaveURL(/\/games\/[^/]+$/);
+    await hostPage.goBack();
+    await expect(hostPage.getByTestId("new-game")).toHaveCount(0);
+    await hostPage.goForward();
+    await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
+
     // Each holds a hand, and neither can read the other's.
     for (const page of [hostPage, guestPage]) {
       await expect(page.locator(".hand .card").first()).toBeVisible({ timeout: 30_000 });
@@ -274,8 +288,9 @@ test.describe("a pod with two people in it", () => {
 
     // `sessionStorage` survives a reload of the same tab, which is the whole
     // reconnect story: the token comes back and the seat is still theirs.
-    await guestPage.goto(`/?join=${code}`);
-    await guestPage.getByTestId("join-pod").click();
+    // Nothing to click any more -- the pod's own address is enough, which is
+    // what the address existing is for.
+    await guestPage.goto(`/pods/${code}`);
     await guestPage.getByTestId("new-game").waitFor({ timeout: 15_000 });
 
     await expect(guestPage.getByTestId("seat-1")).toHaveAttribute("data-kind", "human");
@@ -297,11 +312,42 @@ test.describe("a pod with two people in it", () => {
     const guestPage = await open(guestContext);
 
     const code = await host(hostPage, "Tyler");
-    await guestPage.goto(`/?join=${code}`);
+    // The invite link now *is* the pod's address. On a browser holding no token
+    // for it there is no seat to open, so it lands at the door with the code
+    // already in the field -- one click from the pod rather than none, because
+    // taking a chair has to be something somebody did on purpose.
+    await guestPage.goto(`/pods/${code}`);
     await expect(guestPage.getByTestId("pod-code")).toHaveValue(code);
+    await expect(guestPage).toHaveURL(`/?join=${code}`);
 
     await hostContext.close();
     await guestContext.close();
+  });
+
+  test("the old query-param invite link still works", async ({ browser }) => {
+    // `/?join=CODE` is what every link shared before the pods got addresses.
+    // Nothing reissues those, so they keep working.
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+    const hostPage = await open(hostContext);
+    const guestPage = await open(guestContext);
+
+    const code = await host(hostPage, "Tyler");
+    await guestPage.goto(`/?join=${code}`);
+    await expect(guestPage.getByTestId("pod-code")).toHaveValue(code);
+    await guestPage.getByTestId("join-pod").click();
+    await guestPage.getByTestId("new-game").waitFor({ timeout: 15_000 });
+    await expect(guestPage).toHaveURL(new RegExp(`/pods/${code}$`));
+
+    await hostContext.close();
+    await guestContext.close();
+  });
+
+  test("the invite dialog offers the pod's own address", async ({ page }) => {
+    await setInstant(page);
+    const code = await host(page, "Tyler");
+    await page.getByTestId("invite").click();
+    await expect(page.getByTestId("invite-link")).toContainText(`/pods/${code}`);
   });
 
   test("a name typed on your own plate reaches the other browser", async ({ browser }) => {

@@ -322,7 +322,7 @@ class Pod:
                 your_seat=you,
                 you_are_host=self.is_host(player_id),
                 game_id=self.game_id,
-                invite_link=f"/?join={self.code}",
+                invite_link=f"/pods/{self.code}",
             )
 
     def _deck(self, deck_id: str | None) -> DeckSummary | None:

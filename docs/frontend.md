@@ -26,19 +26,30 @@ The board is themed against `mockups/05-planar-art.html`. Where the two still di
 ```
 frontend/src/
 ├── api/         client.ts, types.ts        - fetch wrapper and DTO mirrors
-├── state/       uiStore.ts (zustand), useGame.ts (react-query), narration.ts,
-│                useImages.ts, useCardBase.ts, useZoomFit.ts
+├── state/       uiStore.ts (zustand), useGame.ts (react-query), usePod.ts,
+│                usePodSession.ts, narration.ts, useImages.ts, useCardBase.ts,
+│                useZoomFit.ts
 ├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events,
-│                cardArt, cardSize, cardStackGeometry, zoomFit, zones
+│                cardArt, cardSize, cardStackGeometry, zoomFit, zones, routes
 ├── motion/      springs.ts                 - every transition in the app
+├── screens/     HomeRoute, PodRoute, GameRoute, DecksRoute, DeckDossierRoute,
+│                NotFound                   - one per address; App.tsx is the table
 ├── styles/      cards.css, board.css, ui.css  (+ src/theme.css for tokens)
 └── components/
     ├── game/    Table, PlayerMat, Lane, CardStack, Card, CardFace, HandFan,
     │            PlayerOrb, PhaseTrack, CombatPanel, CombatArrows, ActionBar,
     │            PromptDialog, StackPanel, CardPreview, FxLayer, EventTicker,
     │            ZonePeek, GameOverScreen
-    └── menu/    NewGameScreen
+    ├── lobby/   HomeScreen, PodLobby, PodSeat, DeckCatalog, DeckDossier,
+    │            InviteDialog, CommanderCard, CardBack, ReadyTrack
+    ├── screen/  Screen                     - the per-route motion wrapper
+    └── menu/    DeckImport
 ```
+
+Nothing under `components/` imports react-router. That is what keeps every
+presentational unit test able to render bare, with no providers around it — the
+wiring that needs a router is in `screens/`, and the wiring is what the routing
+tests are about.
 
 `logic/` holds every decision the client makes, as pure functions over the server's
 view. That is what the unit tests cover; components stay presentational.
@@ -417,14 +428,60 @@ is requested. A stall guard stops the loop if the engine ever fails to progress.
   the new state, so there are no optimistic updates. There is still no *background
   polling*: the two loops are the AI pump and the long poll above, and both only run while
   the client is genuinely waiting for somebody.
-- **Routing** — a `useState<Route>` discriminated union in `App.tsx`: `home` → `lobby` →
-  `dealing` → `table`. Still no router. Back-button navigation between a lobby and a game
-  that are both *server* state cannot work — going "back" to a pod that has already dealt
-  is not a thing — and a URL that pretends otherwise is worse than no URL. The one
-  exception is `?join=CODE`, read once at boot, which an invite link carries.
+- **Routing** — react-router v7, declarative. See [The URL](#the-url) below.
 - **UI state** — zustand: selection, hover, targeting, staged combat, the open stack, the
   zone modal, animation speed, the error banner. None of it reaches the server except as
   an action id.
+
+## The URL
+
+Every screen has an address, and they are shaped like the API resources behind them —
+`/pods/:code` beside `/api/pods/{code}` — so there is one naming rule here rather than
+two that disagree by an `s`.
+
+| Path | Screen |
+|---|---|
+| `/` | the front door. `?join=CODE` prefills the code field |
+| `/pods/:code` | the lobby, when this tab holds a token for that pod |
+| `/games/:gameId` | "Dealing…" until the seat resolves, then the table |
+| `/decks` | the catalogue, browsing for nobody |
+| `/decks/:deckId` | a dossier over it — a *nested* route, so the catalogue stays mounted and its filters survive |
+| anything else | a 404 screen. `/pod/GYRE-8412` is one letter from a real invite link, and a silent redirect home reads as "your invite was rejected" |
+
+`App.tsx` is the route table and nothing else; each screen's wiring lives in `screens/`.
+`logic/routes.ts` holds the path builders and `screenKey`, which is what `AnimatePresence`
+swaps on — it names the *screen*, not the path, which is why both `/decks` paths share one.
+
+**The URL carries the place; `sessionStorage` carries the identity.** A link gets pasted
+into a group chat, so arriving at one must not be what grants a seat. `usePodSession`
+derives a `PodSession` from the two: `/pods/CODE` plus a stored `automtg.pod.<CODE>`
+token. A tab with no token is redirected to `/?join=CODE`, the join flow that already
+existed — one click, not none.
+
+A table is keyed by game id but identity is keyed by pod code, so a second key,
+`automtg.game.<id>` → pod code, is written the moment a client learns the game id. That
+is what lets a reload at `/games/:id` find its own token. **Reloading at the table and
+coming back to your seat is new** — before, a refresh mid-game dropped you at the door.
+
+`setPlayerToken` is called during *render* in `usePodSession`, not in an effect. `usePod`
+and `useGame` fire their first request from an effect in a child, and a child's effect
+runs before its parent's — a token armed in an effect arrives one round trip late, so
+the opening request of every deep link would go out unauthenticated.
+
+**One-way transitions `replace` rather than push**: the deal, leaving a pod, quitting a
+table. This is the answer to the objection the no-router design was built on. A pod that
+has dealt is `in_game` and its lobby cannot be re-entered, so that history entry stops
+existing. After a full session the stack is `["/", "/games/G"]` — Back from the table
+lands on the front door, never on a dead lobby. Browsing pushes, because browsing is what
+Back is for.
+
+Back from a lobby to `/` leaves your chair held on the server, exactly as closing the tab
+does; returning to `/pods/CODE` recovers it. "Leave the pod" is still the way to free one.
+
+**Deep links need a host that rewrites unknown paths to `index.html`.** Vite does it in
+`dev` and `preview`; `create_app(serve_client=True)` — which is what `get_app()` uses —
+serves `frontend/dist` with a catch-all for a real deployment. Any other static host
+needs the rewrite configured or every address but `/` will 404.
 
 ## Two contract gotchas
 
