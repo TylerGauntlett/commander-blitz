@@ -156,8 +156,17 @@ Three more keywords turned out to need no engine work at all:
 - **Prowess** is a `spell_cast` trigger filtered to noncreature spells, which
   the DSL has always been able to say.
 
-Still outstanding: **Cycling** (71), **Crew** (74), **Flashback** (75),
-**Kicker**, **Convoke** (39), **Ward** (41), and **modal spells** (153).
+*Cycling is done* — 44 cards in one harvest, every cycling land in the catalog.
+It needed two things that only work together: `active_zones` honoured on an
+*activated* ability, so legality offers it from your hand, and a `discard_self`
+cost, because `discard: 1` lets the player pitch something else and keep the
+card. The loader now refuses one without the other — an ability activated from
+hand whose cost does not remove it from hand is an infinite engine. Typecycling
+and "when you cycle this card" are deliberately still refused; see
+[card-dsl.md](card-dsl.md).
+
+Still outstanding: **Crew** (74), **Flashback** (75), **Kicker**,
+**Convoke** (39), **Ward** (41), and **modal spells** (153).
 
 Modal is the one that looks cheap and is not. `choose_mode` exists, but modes are
 chosen *on resolution* while targets are chosen *at cast*, and a card whose first

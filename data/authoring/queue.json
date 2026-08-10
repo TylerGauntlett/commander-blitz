@@ -4154,7 +4154,7 @@
       "edhrec_rank": 4606,
       "gate": "template",
       "name": "Agonasaur Rex",
-      "reason": "no template for: Cycling {2}{G}",
+      "reason": "no template for: When you cycle this card, put two +1/+1 counters on up to one target creature or Vehicle. ",
       "scryfall_id": "328d60a4-af43-4a2e-98b5-1098478eeb02",
       "source": "",
       "status": "pending",
@@ -20752,12 +20752,12 @@
     },
     "Barren Moor": {
       "edhrec_rank": 1010,
-      "gate": "template",
+      "gate": null,
       "name": "Barren Moor",
-      "reason": "no template for: Cycling {B}",
+      "reason": "",
       "scryfall_id": "380eb7fd-bc79-4cad-9c2b-9b2b10761a72",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Barrensteppe Siege": {
@@ -26222,12 +26222,12 @@
     },
     "Blasted Landscape": {
       "edhrec_rank": 5273,
-      "gate": "template",
+      "gate": null,
       "name": "Blasted Landscape",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "eb6a101b-be36-4915-beba-64ed09165469",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Blaster Hulk": {
@@ -32302,12 +32302,12 @@
     },
     "Bountiful Landscape": {
       "edhrec_rank": 1666,
-      "gate": "template",
+      "gate": null,
       "name": "Bountiful Landscape",
-      "reason": "no template for: Cycling {G}{U}{R}",
+      "reason": "",
       "scryfall_id": "b277752b-430a-4f09-8a98-b72f813dd52e",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Bountiful Promenade": {
@@ -38872,12 +38872,12 @@
     },
     "Canyon Slough": {
       "edhrec_rank": 688,
-      "gate": "template",
+      "gate": null,
       "name": "Canyon Slough",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "587cc3ba-75c2-46a0-bd44-6f953fe1eb01",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Canyon Vaulter": {
@@ -49002,12 +49002,12 @@
     },
     "Coastal Peak": {
       "edhrec_rank": 6541,
-      "gate": "template",
+      "gate": null,
       "name": "Coastal Peak",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "d2a70a9d-2d9f-4afd-9393-8d6518936ee2",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Coastal Piracy": {
@@ -52262,12 +52262,12 @@
     },
     "Contaminated Landscape": {
       "edhrec_rank": 2252,
-      "gate": "template",
+      "gate": null,
       "name": "Contaminated Landscape",
-      "reason": "no template for: Cycling {W}{U}{B}",
+      "reason": "",
       "scryfall_id": "e2312c49-1627-47ad-8113-78a999a97d8d",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Contamination": {
@@ -63862,12 +63862,12 @@
     },
     "Deceptive Landscape": {
       "edhrec_rank": 2177,
-      "gate": "template",
+      "gate": null,
       "name": "Deceptive Landscape",
-      "reason": "no template for: Cycling {W}{B}{G}",
+      "reason": "",
       "scryfall_id": "2ae6828e-ff19-45db-8b59-61616353491f",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Decimate": {
@@ -66672,52 +66672,52 @@
     },
     "Desert of the Fervent": {
       "edhrec_rank": 2967,
-      "gate": "template",
+      "gate": null,
       "name": "Desert of the Fervent",
-      "reason": "no template for: Cycling {1}{R}",
+      "reason": "",
       "scryfall_id": "af1a1c41-2cdf-4ba9-83ad-989eb8717641",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Desert of the Glorified": {
       "edhrec_rank": 4359,
-      "gate": "template",
+      "gate": null,
       "name": "Desert of the Glorified",
-      "reason": "no template for: Cycling {1}{B}",
+      "reason": "",
       "scryfall_id": "5f28907a-491d-4d09-93cb-b5729696607d",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Desert of the Indomitable": {
       "edhrec_rank": 3498,
-      "gate": "template",
+      "gate": null,
       "name": "Desert of the Indomitable",
-      "reason": "no template for: Cycling {1}{G}",
+      "reason": "",
       "scryfall_id": "c8ff47b8-467b-4fdc-8ba1-3460301b1de7",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Desert of the Mindful": {
       "edhrec_rank": 3653,
-      "gate": "template",
+      "gate": null,
       "name": "Desert of the Mindful",
-      "reason": "no template for: Cycling {1}{U}",
+      "reason": "",
       "scryfall_id": "39a20c39-2254-4052-822f-eb5bbd501cdd",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Desert of the True": {
       "edhrec_rank": 3171,
-      "gate": "template",
+      "gate": null,
       "name": "Desert of the True",
-      "reason": "no template for: Cycling {1}{W}",
+      "reason": "",
       "scryfall_id": "e8513dd3-6e2b-42da-89c7-e35ab0c0c927",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Desert's Due": {
@@ -74862,12 +74862,12 @@
     },
     "Drifting Meadow": {
       "edhrec_rank": 4823,
-      "gate": "template",
+      "gate": null,
       "name": "Drifting Meadow",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "8cb024fa-2df1-4414-b0d7-6f700d152c51",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Drifting Shade": {
@@ -93312,12 +93312,12 @@
     },
     "Festering Thicket": {
       "edhrec_rank": 2039,
-      "gate": "template",
+      "gate": null,
       "name": "Festering Thicket",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "f71c87db-54ea-4611-8692-096d9714d854",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Festering Wound": {
@@ -93452,12 +93452,12 @@
     },
     "Fetid Pools": {
       "edhrec_rank": 855,
-      "gate": "template",
+      "gate": null,
       "name": "Fetid Pools",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "5fa4556f-2fdc-42e6-98cb-291cee2ca3ac",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Fettergeist": {
@@ -99462,12 +99462,12 @@
     },
     "Foreboding Landscape": {
       "edhrec_rank": 1681,
-      "gate": "template",
+      "gate": null,
       "name": "Foreboding Landscape",
-      "reason": "no template for: Cycling {B}{G}{U}",
+      "reason": "",
       "scryfall_id": "57fb0fa7-0c5c-4a75-9461-c51403c30282",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Foreboding Ruins": {
@@ -99792,12 +99792,12 @@
     },
     "Forgotten Cave": {
       "edhrec_rank": 832,
-      "gate": "template",
+      "gate": null,
       "name": "Forgotten Cave",
-      "reason": "no template for: Cycling {R}",
+      "reason": "",
       "scryfall_id": "bd75c360-931e-4bce-8e25-dd1d361efcc3",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Forgotten Creation": {
@@ -105624,7 +105624,7 @@
       "edhrec_rank": 6131,
       "gate": "template",
       "name": "Gempalm Incinerator",
-      "reason": "no template for: Cycling {1}{R}",
+      "reason": "no template for: When you cycle this card, you may have it deal X damage to target creature, where X is the",
       "scryfall_id": "0ac7667c-2526-4f4b-8886-2516d4a8fbae",
       "source": "",
       "status": "pending",
@@ -110372,12 +110372,12 @@
     },
     "Glittering Massif": {
       "edhrec_rank": 3314,
-      "gate": "template",
+      "gate": null,
       "name": "Glittering Massif",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "8943cd0a-cfa3-4795-82c1-c500e9a7269b",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Glittering Stockpile": {
@@ -134622,12 +134622,12 @@
     },
     "Indatha Triome": {
       "edhrec_rank": 473,
-      "gate": "template",
+      "gate": null,
       "name": "Indatha Triome",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "2b74bb81-fb9a-40e5-a941-e517430b52f5",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Indebted Samurai": {
@@ -139282,12 +139282,12 @@
     },
     "Irrigated Farmland": {
       "edhrec_rank": 813,
-      "gate": "template",
+      "gate": null,
       "name": "Irrigated Farmland",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "996b4484-a701-409a-822c-aa19be89a2c6",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Irrigation Ditch": {
@@ -141802,12 +141802,12 @@
     },
     "Jetmir's Garden": {
       "edhrec_rank": 358,
-      "gate": "template",
+      "gate": null,
       "name": "Jetmir's Garden",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "3f8f6f02-ca8e-457c-be21-26da4c812588",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Jetmir, Nexus of Revels": {
@@ -147142,12 +147142,12 @@
     },
     "Ketria Triome": {
       "edhrec_rank": 356,
-      "gate": "template",
+      "gate": null,
       "name": "Ketria Triome",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "e5b1b1dc-523c-4fce-baea-6f13971cc03b",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Key to the City": {
@@ -159512,12 +159512,12 @@
     },
     "Lonely Sandbar": {
       "edhrec_rank": 1131,
-      "gate": "template",
+      "gate": null,
       "name": "Lonely Sandbar",
-      "reason": "no template for: Cycling {U}",
+      "reason": "",
       "scryfall_id": "001908da-70cc-4a53-9372-eb75c0721442",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Lonesome Unicorn // Rider in Need": {
@@ -185834,7 +185834,7 @@
       "edhrec_rank": 6121,
       "gate": "template",
       "name": "Nimble Obstructionist",
-      "reason": "no template for: Cycling {2}{U}",
+      "reason": "no template for: When you cycle this card, counter target activated or triggered ability you don't control",
       "scryfall_id": "832426d7-be22-4092-b614-7fa417af03bd",
       "source": "",
       "status": "pending",
@@ -198282,12 +198282,12 @@
     },
     "Perilous Landscape": {
       "edhrec_rank": 2063,
-      "gate": "template",
+      "gate": null,
       "name": "Perilous Landscape",
-      "reason": "no template for: Cycling {U}{R}{W}",
+      "reason": "",
       "scryfall_id": "4b0bd07e-cf80-4d64-af29-f4cec6632b3e",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Perilous Myr": {
@@ -203252,12 +203252,12 @@
     },
     "Polluted Mire": {
       "edhrec_rank": 4127,
-      "gate": "template",
+      "gate": null,
       "name": "Polluted Mire",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "bb724bec-3509-4f5f-84c0-b1b54063d06f",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Pollywog Prodigy": {
@@ -211312,12 +211312,12 @@
     },
     "Raffine's Tower": {
       "edhrec_rank": 421,
-      "gate": "template",
+      "gate": null,
       "name": "Raffine's Tower",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "36bb77f3-8ec4-4b8a-a283-4126037f4d00",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Raffine, Scheming Seer": {
@@ -211992,12 +211992,12 @@
     },
     "Rain-Slicked Copse": {
       "edhrec_rank": 3636,
-      "gate": "template",
+      "gate": null,
       "name": "Rain-Slicked Copse",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "3f967dee-1c2e-423a-823b-9fc74e8053bc",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Rainbow Crow": {
@@ -214222,12 +214222,12 @@
     },
     "Raugrin Triome": {
       "edhrec_rank": 489,
-      "gate": "template",
+      "gate": null,
       "name": "Raugrin Triome",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "02138fbb-3962-4348-8d31-faaefba0b8b2",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Raul, Trouble Shooter": {
@@ -218352,12 +218352,12 @@
     },
     "Remote Isle": {
       "edhrec_rank": 4215,
-      "gate": "template",
+      "gate": null,
       "name": "Remote Isle",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "13bcbf2a-bc17-426b-8177-15c6eac1b66d",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Remove": {
@@ -233262,12 +233262,12 @@
     },
     "Scattered Groves": {
       "edhrec_rank": 995,
-      "gate": "template",
+      "gate": null,
       "name": "Scattered Groves",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "6bd38442-854d-43b1-a80c-9d841c3a304d",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Scattered Thoughts": {
@@ -236382,12 +236382,12 @@
     },
     "Secluded Steppe": {
       "edhrec_rank": 1436,
-      "gate": "template",
+      "gate": null,
       "name": "Secluded Steppe",
-      "reason": "no template for: Cycling {W}",
+      "reason": "",
       "scryfall_id": "aaa5bee9-3f6a-45b0-a282-6b23222e948f",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Second Breakfast": {
@@ -237172,12 +237172,12 @@
     },
     "Seething Landscape": {
       "edhrec_rank": 1872,
-      "gate": "template",
+      "gate": null,
       "name": "Seething Landscape",
-      "reason": "no template for: Cycling {U}{B}{R}",
+      "reason": "",
       "scryfall_id": "661fc907-7003-45c6-820c-9616e9a71c30",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Seething Pathblazer": {
@@ -241252,12 +241252,12 @@
     },
     "Shattered Landscape": {
       "edhrec_rank": 1888,
-      "gate": "template",
+      "gate": null,
       "name": "Shattered Landscape",
-      "reason": "no template for: Cycling {R}{W}{B}",
+      "reason": "",
       "scryfall_id": "b3da28c7-6e92-439d-a163-91682d4f11dc",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Shattered Perception": {
@@ -241662,12 +241662,12 @@
     },
     "Sheltered Thicket": {
       "edhrec_rank": 636,
-      "gate": "template",
+      "gate": null,
       "name": "Sheltered Thicket",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "8d2f3838-26b8-41ad-af75-75c269f79a2c",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Sheltered Valley": {
@@ -241712,12 +241712,12 @@
     },
     "Sheltering Landscape": {
       "edhrec_rank": 2201,
-      "gate": "template",
+      "gate": null,
       "name": "Sheltering Landscape",
-      "reason": "no template for: Cycling {R}{G}{W}",
+      "reason": "",
       "scryfall_id": "0fe070f4-8877-4280-b8fd-869f3ac34ab6",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Sheltering Light": {
@@ -250172,12 +250172,12 @@
     },
     "Slippery Karst": {
       "edhrec_rank": 5406,
-      "gate": "template",
+      "gate": null,
       "name": "Slippery Karst",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "c41073e8-01cc-4d19-acb5-caaf2861bc6a",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Slippery Scoundrel": {
@@ -251042,12 +251042,12 @@
     },
     "Smoldering Crater": {
       "edhrec_rank": 3756,
-      "gate": "template",
+      "gate": null,
       "name": "Smoldering Crater",
-      "reason": "no template for: Cycling {2}",
+      "reason": "",
       "scryfall_id": "cbf82db0-26b9-4b32-832b-18710d1010b3",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Smoldering Efreet": {
@@ -254812,12 +254812,12 @@
     },
     "Spara's Headquarters": {
       "edhrec_rank": 396,
-      "gate": "template",
+      "gate": null,
       "name": "Spara's Headquarters",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "0ddd6093-eb29-4a1a-a0af-debb86c9cadd",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Spare Dagger": {
@@ -285944,7 +285944,7 @@
       "edhrec_rank": 3130,
       "gate": "template",
       "name": "Titanoth Rex",
-      "reason": "no template for: Cycling {1}{G}",
+      "reason": "no template for: When you cycle this card, put a trample counter on target creature you control",
       "scryfall_id": "84d34815-a52b-4358-bb62-a6b2e9ab9f8c",
       "source": "",
       "status": "pending",
@@ -288792,12 +288792,12 @@
     },
     "Tranquil Landscape": {
       "edhrec_rank": 1991,
-      "gate": "template",
+      "gate": null,
       "name": "Tranquil Landscape",
-      "reason": "no template for: Cycling {G}{W}{U}",
+      "reason": "",
       "scryfall_id": "113f48b9-a972-4e2c-af95-05ab078e01f2",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Tranquil Path": {
@@ -288812,12 +288812,12 @@
     },
     "Tranquil Thicket": {
       "edhrec_rank": 1014,
-      "gate": "template",
+      "gate": null,
       "name": "Tranquil Thicket",
-      "reason": "no template for: Cycling {G}",
+      "reason": "",
       "scryfall_id": "7aed7d9d-d796-493e-98fd-c5b1a26621ed",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Tranquility": {
@@ -292702,12 +292702,12 @@
     },
     "Twisted Landscape": {
       "edhrec_rank": 1789,
-      "gate": "template",
+      "gate": null,
       "name": "Twisted Landscape",
-      "reason": "no template for: Cycling {B}{R}{G}",
+      "reason": "",
       "scryfall_id": "0d647d67-f963-43b4-ade8-6c90e91f65ac",
-      "source": "",
-      "status": "pending",
+      "source": "template:fetchland,cycling",
+      "status": "done",
       "wanted": false
     },
     "Twisted Reflection": {
@@ -317412,12 +317412,12 @@
     },
     "Xander's Lounge": {
       "edhrec_rank": 467,
-      "gate": "template",
+      "gate": null,
       "name": "Xander's Lounge",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "1d96f496-1fc1-4e66-878a-b0905e920cdc",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Xander's Pact": {
@@ -319082,12 +319082,12 @@
     },
     "Zagoth Triome": {
       "edhrec_rank": 406,
-      "gate": "template",
+      "gate": null,
       "name": "Zagoth Triome",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "cc520518-2063-4b57-a0d4-10cf62a7175e",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Zagras, Thief of Heartbeats": {
@@ -319952,12 +319952,12 @@
     },
     "Ziatora's Proving Ground": {
       "edhrec_rank": 521,
-      "gate": "template",
+      "gate": null,
       "name": "Ziatora's Proving Ground",
-      "reason": "no template for: Cycling {3}",
+      "reason": "",
       "scryfall_id": "307c4a30-a859-487c-b72d-f10eebcd01c4",
-      "source": "",
-      "status": "pending",
+      "source": "template:cycling",
+      "status": "done",
       "wanted": false
     },
     "Ziatora, the Incinerator": {

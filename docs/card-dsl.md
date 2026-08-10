@@ -816,6 +816,43 @@ Two decisions — a subset chosen by an opponent, then a yes/no from the caster 
 rather than "choose a pile", because the piles are not objects until the split is
 made.
 
+## Cycling
+
+The first ability the engine offers from a zone that is not the battlefield:
+
+```jsonc
+{ "kind": "activated",
+  "text": "Cycling {2} ({2}, Discard this card: Draw a card.)",
+  "active_zones": ["hand"],
+  "cost": { "mana": "{2}", "discard_self": true },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+Two halves, and neither works without the other.
+
+**`active_zones` on an activated ability.** The field always existed and was
+read only on the *triggered* branch, so `_compile_ability` pinned every
+activated ability to the battlefield and silently dropped the schema's own
+`"hand"`. `legality._activate_actions` walks your hand as well now — **yours
+only**, because the hand is hidden and offering from an opponent's would leak
+its contents into `legal_actions`.
+
+**`discard_self` on the cost.** Not `discard: 1`: that offers the whole hand and
+`ask_objects` lets the player pick, so a Krosan Tusker could be "cycled" by
+pitching a spare land and staying in hand — a strictly better card than the one
+printed. `discard_self` names *this* card and asks nothing.
+
+The pairing is also the safety property, and the loader enforces it: an
+activated ability whose `active_zones` reach outside the battlefield **must**
+have a cost that removes its source from that zone. Without that it is an
+infinite engine — a card in hand whose ability costs only mana could be
+activated forever without ever leaving.
+
+Only plain cycling. Typecycling (`Landcycling {1}{G}`) fetches instead of
+drawing and is a different ability, and "When you cycle this card…" needs a
+trigger event that does not exist — both fail the template rather than being
+turned into plain cyclers.
+
 ## Alternative ways to play a card
 
 Three now, each a card-level field rather than an ability, because the card does

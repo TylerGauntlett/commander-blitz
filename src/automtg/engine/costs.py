@@ -299,6 +299,14 @@ def can_pay(
         return False
     if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
         return False
+    if cost.discard_self:
+        # The card must be the payer's to throw away and still be in the zone it
+        # is activated from. Checked rather than assumed because legality offers
+        # the action and the board can move before `pay` runs -- a discard in
+        # response is the obvious way.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.owner != pid or source_oid not in state.players[pid].hand:
+            return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
     if cost.remove_counters is not None:
@@ -427,6 +435,12 @@ def pay(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
         discard_cards(state, pid, picked)
+
+    if cost.discard_self and source_oid is not None:
+        # No `ask_objects`: which card goes is not a choice, it is *this* card.
+        # That is the whole difference from `discard`, and asking would let the
+        # player cycle by pitching something else.
+        discard_cards(state, pid, [source_oid])
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)

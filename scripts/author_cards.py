@@ -157,6 +157,24 @@ def run_templates(queue: Queue, batch: list[Entry], *, dry_run: bool) -> dict[st
 
     tally = {"written": 0, "no_template": 0, "rejected": 0, "skipped": 0}
     for entry in batch:
+        # A fidelity entry is a card *already in the pool* doing less than it
+        # prints, and it is not this tier's to touch. Two ways it goes wrong,
+        # both of which cycling made reachable the moment a template could
+        # finish one of these cards:
+        #
+        # - `build_proxy` dedupes against ids already taken, so translating
+        #   Savai Triome mints `savai_triome_748e6a` and the pool ends up with
+        #   two of it. `CardRegistry.by_name` is first-wins, so the *incomplete*
+        #   incumbent goes on being the one dealt into games.
+        # - `_attempt` overwrites `entry.gate` with "template" on failure, which
+        #   erases the fidelity marking that is the only thing making the card
+        #   workable at all (see `select` and `queue._priority`).
+        #
+        # Repairing one means replacing the incumbent under its own id, which is
+        # what `--tier agent` plus `--collect --supersede` does.
+        if entry.gate == FIDELITY_GATE:
+            tally["skipped"] += 1
+            continue
         result = _attempt(entry, index, registry, taken, tally)
         if result is None:
             continue

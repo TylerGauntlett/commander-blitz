@@ -424,16 +424,39 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     return None
 
 
+def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
+    """Every object whose activated abilities this player might be offered.
+
+    The battlefield, plus this player's hand for cycling and its relatives.
+    `Ability.active_zones` is what decides per ability -- being *in* hand is not
+    the permission, saying so on the ability is -- so the hand is walked here
+    and filtered below rather than the two being conflated.
+
+    Only this player's hand: it is a hidden zone, and offering actions from an
+    opponent's would leak it into `legal_actions`.
+    """
+    pairs: list[tuple[int, Zone]] = [(oid, Zone.BATTLEFIELD) for oid in state.battlefield]
+    pairs += [(oid, Zone.HAND) for oid in state.players[pid].hand]
+    return pairs
+
+
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
     manual_mana = state.players[pid].manual_mana
-    for oid in state.battlefield:
+    for oid, zone in _activate_zones(state, pid):
         obj = state.objects.get(oid)
-        if obj is None or obj.controller != pid or obj.abilities_locked:
+        if obj is None or obj.abilities_locked:
+            continue
+        # A card in hand has no controller in the battlefield sense of the word;
+        # its owner is the one who may activate it.
+        whose = obj.controller if zone is Zone.BATTLEFIELD else obj.owner
+        if whose != pid:
             continue
         card = state.card_of(obj)
         for ability in card.abilities:
             if not ability.is_activated:
+                continue
+            if zone not in ability.active_zones:
                 continue
             if (
                 ability.is_mana_ability

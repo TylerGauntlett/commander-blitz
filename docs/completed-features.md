@@ -1,3 +1,61 @@
+## Cycling — the first ability played from outside the battlefield
+
+### Overview
+
+`/author-cards` filed three precon cards as blocked on cycling — Savai Triome,
+Reconnaissance Mission and Krosan Tusker — and the wider catalog had ~71 waiting
+on it. The gap records were unusually precise about why, and they were right:
+two separate things were missing, and either one alone is a broken card.
+
+**Activation from hand.** `Ability.active_zones` had existed all along and was
+read only inside the *triggered* branch of `loader._compile_ability`, so every
+activated ability was pinned to `(Zone.BATTLEFIELD,)` and the schema's own
+`"hand"` value was silently discarded. `legality._activate_actions` then walked
+`state.battlefield` alone. A land sitting in hand was never offered anything.
+
+**A cost that discards the card itself.** `Cost.discard` is the near-miss and is
+a different cost: `_discard_pool` returns the whole hand and `ask_objects` lets
+the player choose what goes. A Krosan Tusker could therefore be "cycled" by
+pitching a spare land and staying in hand — strictly better than the printed
+card, and invisible on screen. `Cost.discard_self` names *this* card and asks
+nothing.
+
+### The pairing is the safety property
+
+An ability activated from hand whose cost does not remove it from hand can be
+activated forever. Cycling pays for itself by leaving, which is exactly what
+makes it safe — so the loader refuses the combination outright rather than
+trusting each card file to be sensible:
+
+> an activated ability outside the battlefield needs a cost that removes its
+> source from that zone
+
+`discard: 1` deliberately does not satisfy it, for the reason above.
+
+### What it refuses
+
+Typecycling (`Landcycling {1}{G}`) fetches instead of drawing, and basic
+landcycling narrows what may be fetched — both are different abilities wearing a
+similar word. "When you cycle this card…" needs a trigger event the engine does
+not have. All three fail the template rather than being quietly turned into
+plain cyclers, so those cards stay honestly unimplemented. Krosan Tusker's gap
+record was narrowed to that trigger alone rather than retired.
+
+### Harvest
+
+44 cards in one `--tier templates` run, 0 rejected by a gate — every cycling
+land in the catalog, from the Triomes and the Ice Age cycling lands to the
+Amonkhet deserts.
+
+That run also surfaced a hazard the change had just armed: `run_templates` had
+no idea about *fidelity* entries — cards already in the pool doing less than
+they print — and translating one mints a duplicate under a deduped id
+(`savai_triome_748e6a`), which `CardRegistry.by_name` then loses to the
+incomplete incumbent. It also overwrote the `fidelity` gate that is the only
+thing making such a card workable. Those entries are now skipped by the template
+tier; repairing one means replacing it under its own id via `--tier agent` plus
+`--collect --supersede`.
+
 ## Variable cost cards — saying which one you meant
 
 ### Overview
