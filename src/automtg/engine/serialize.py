@@ -244,6 +244,36 @@ def event_log(state: GameState, since: int = 0) -> list[dict[str, Any]]:
     return [event.to_dict() for event in state.events[since:]]
 
 
+#: Events whose payload names a card that moved between two hidden zones, or
+#: into one.  Everything else in the log either concerns a public zone or
+#: carries only counts, so it is safe for every seat verbatim.
+_PRIVATE_EVENTS = frozenset({"draw", "discard", "mill"})
+
+
+def event_log_for(state: GameState, seat: int, since: int = 0) -> list[dict[str, Any]]:
+    """The event log as one seat is allowed to read it.
+
+    ``player_view`` already hides other players' hands, but the log runs
+    alongside it and is not filtered.  A ``draw`` fires with the object id of the
+    card drawn, and a client that accumulates every id it has ever seen can
+    identify that card retroactively the moment it is played -- so the hand was
+    never really hidden.
+
+    The event itself is kept, with its type and its ``player``, so "Priya drew a
+    card" still narrates; only the id is dropped.  Nothing is *removed* from the
+    log, because a client that silently receives a shorter list than its
+    neighbour has no way to tell that from a bug.
+    """
+    out: list[dict[str, Any]] = []
+    for event in state.events[since:]:
+        row = event.to_dict()
+        if row["type"] in _PRIVATE_EVENTS and row["player"] != seat:
+            row["source"] = None
+            row["data"] = {k: v for k, v in row["data"].items() if k != "oid"}
+        out.append(row)
+    return out
+
+
 def fingerprint(state: GameState) -> str:
     """A stable hash of the event log, for golden replay comparisons."""
     import hashlib

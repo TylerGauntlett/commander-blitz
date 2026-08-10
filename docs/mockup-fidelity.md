@@ -1,7 +1,8 @@
 # Mockup fidelity
 
-Where the running client and `mockups/05-planar-art.html` still differ, and which
-of those differences are bugs.
+Where the running client and the mockups still differ, and which of those
+differences are bugs. Two mockups are in scope: `mockups/05-planar-art.html` for
+the board, and `mockups/flow/02-face-up.html` for the lobby.
 
 The mockup is the design the client was themed against. It is not the
 specification: several differences below are deliberate, made after the mockup
@@ -31,22 +32,78 @@ so a naive overflow check passes through the exact failure it was written for.
 
 Do not "correct" these. Each is a decision made after the mockup.
 
-### The deck picker stays inline; there is no modal catalogue
+### ~~The deck picker stays inline; there is no modal catalogue~~ — reversed
 
-`mockups/flow/01-front-door.html` opens deck selection as a modal catalogue with
-search, colour-identity and source facets (`catalogue()` at :1386). The shipped
-screen keeps the flat grid it had and puts the Moxfield import box underneath it,
-so an imported deck arrives as one more tile.
+**This entry is closed, and the mockup's design shipped after all.** It used to
+read: the flat grid stays, because every deck tile carries
+`data-testid="deck-${id}"` and roughly fourteen spec files click one on the way
+in, so a modal puts a click and a wait in front of all of them for facets that
+are only worth anything once there are more decks than fit on a screen.
 
-The reason is a measurement, not a preference. Every deck tile carries
-`data-testid="deck-${id}"`, and `frontend/e2e/helpers.ts:33` clicks it on the way
-into roughly fourteen spec files — every smoke, layout, stacking and playtest
-case starts by picking a deck. A modal puts a click and a wait in front of all of
-them, for a facet UI that is only worth anything once there are more decks than
-fit on a screen. Two precons and however many you have imported is not that.
+The reasoning was sound and the conclusion expired. Multiplayer moved deck
+selection *into the pod*, where a row of four large cards owns the whole screen —
+so there is nowhere to put a catalogue except over the top of it. The full-screen
+takeover is not a preference any more; it is the honest consequence of the
+metaphor.
 
-Revisit when the deck list is routinely long. The facets in the mockup are the
-right design for that screen; this is a claim about *when*, not about *whether*.
+What the old entry was actually protecting was the test hooks, and those survived
+unchanged: `deck-${id}` is still a catalogue tile, `opponents-${n}` still adds the
+nth CPU, `start-game` still deals. `e2e/helpers.ts:startGame` was rewritten once
+and eleven of the thirteen spec files needed no edit at all. See "Two specs did
+need editing" below for the two that did.
+
+### The lobby's front door is not `01-front-door.html`
+
+The lobby ports `mockups/flow/02-face-up.html`, whose home screen is a fan of four
+card backs and two actions: create a pod, or join with a code. `01-front-door.html`
+is a different direction and is not what shipped. Nothing on the shipped door
+configures a game — deck, opponents, AI difficulty — because those are decisions
+you make *with* the people you are playing against, and there is no reason to make
+them before they arrive.
+
+### The seat rail keeps a seed field the mockup does not have
+
+`02-face-up.html`'s rail is lock-in, the ready track, the "why not" line and Deal.
+The shipped one adds a seed input, host-only, between the lock and the spacer.
+
+A reproducible game is the fastest way to re-examine something that went wrong,
+and `full-game.spec.ts`, `playtest.spec.ts` and several others are built on it
+(`getByPlaceholder("random")`). Host-only because a seed is a property of the
+game, not of a seat.
+
+### No difficulty ladder, and no persona per CPU seat
+
+Carried over from the mockup, which is explicit about it: four named personas with
+a capability row apiece is configuration for behaviour the engine does not have.
+What a CPU seat can honestly differ in today is its deck and its agent, so that is
+what its plate offers.
+
+### The catalogue has no `engine: "preview"` state
+
+The mockup's catalogue carries decks that cannot be dealt, badged `Preview`, with
+their cards inert and out of the tab order. There is no analogue here: every deck
+the server lists is playable, because the server lists exactly the decks it can
+build a game from. An imported deck maps onto the existing `simplified` count,
+which is what the mockup's `partial` badge meant.
+
+`guild` and `short` are dropped too. A guild name is derivable from
+`color_identity` in the client if it is ever wanted, and neither is worth a data
+field.
+
+### Two specs did need editing
+
+The claim was that rewriting `startGame` alone would cover it. Two of the thirteen
+spec files enter through `page.goto("/")` rather than the helper, so both needed a
+one-block change:
+
+- `deck-import.spec.ts` — the import row moved from the front door into the
+  catalogue's footer, so its `beforeEach` opens the catalogue first. Same
+  component, same `data-testid`s; only the box around it changed.
+- `playtest.spec.ts` — two inline setup flows, one of which now shoots the door
+  *and* the lobby rather than a single "menu".
+
+`layout.spec.ts` also calls `goto("/")`, but only to read a CSS custom property
+off `document.documentElement`, so it was unaffected.
 
 ### The card is a full-bleed illustration, and card type is no longer a colour
 
@@ -190,6 +247,20 @@ reasoning lives — read that before restoring anything card-shaped here.
 
 ---
 
+### The lobby's stylesheet renames four classes from the mockup
+
+`.hand`, `.rail`, `.over` and `.play` all already mean something in `board.css`
+or `ui.css`, and CSS is one global document. The lobby's are `.podhand`,
+`.podrail`, `.dos` and `.deal`.
+
+The lobby and the table are never on screen together, so nothing would visibly
+break today — which is exactly the argument for renaming rather than relying on
+it. A stylesheet that only works because two screens happen never to coexist is
+one import-order change away from a very confusing bug.
+
+`.btn` and `.tabular` are *not* redefined at all: `ui.css` and `theme.css` own
+them, and `lobby.css` adds only the `--wide` and `--live` modifiers.
+
 ## Open defects
 
 Ranked by severity. None of these block anything; they are the queue.
@@ -328,6 +399,27 @@ Ranked by severity. None of these block anything; they are the queue.
   1600×950.
 - **Why it matters**: purely density. It costs the lanes horizontal room they could
   use.
+
+### 10. Eliminating an opponent moves the viewer's whole board down — low
+
+- **What happens**: a dead player's orb grows a `.orb__loss` line. The opponent row
+  is `align-items: stretch`, so *every* mat grows to match and the viewer's board —
+  and every drop target on it — shifts down.
+- **Measured**: 19px at 1600×950 in a four-player pod. `.mat__side` goes 256 → 275;
+  `.mat__lanes` stays pinned at `--pod-lanes-h`, so the fixed-lane work is holding
+  and this is the *other* half of the mat.
+- **Why it is not defect #10's sibling**: `--pod-lanes-h` was the fix for "their
+  board filled up". This is a different trigger — a player was knocked out — and it
+  is at least arguable that the board *should* acknowledge that. What is not
+  arguable is that it should move the hand.
+- **Found by**: `e2e/layout.spec.ts`, "an opponent's board filling up does not move
+  the viewer's board", once the pod lobby changed which decks sit in which seats and
+  the 20-action window started reaching an elimination. That test now stops sampling
+  at the first `.orb__loss`, because its claim is about boards filling and not about
+  players dying — the narrowing is deliberate and this entry is the other half of it.
+- **Likely fix**: reserve the loss line's height whether or not a player has lost, as
+  `.face--big .face__footer` already does for the P/T slot, so the row's height stops
+  being a function of who is still alive.
 
 ---
 

@@ -8,17 +8,17 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 122 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 514 | Schema and vocabulary validation, deck legality, the every-card gate, and the card index + art resolution |
-| `tests/ai/` | 71 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 53 | The HTTP API end to end, including hidden information, image serving and the catalog |
-| `frontend/tests/` | 330 | The client's pure logic modules, the palette ladders, and the card face |
-| `frontend/e2e/` | 77 | Playwright: full games, combat, stacking, card art, legibility, layout |
+| `tests/unit/` | 395 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
+| `tests/server/` | 254 | The HTTP API end to end: hidden information, image serving, the catalog, and the whole lobby |
+| `frontend/tests/` | 467 | The client's pure logic modules, the palette ladders, the card face and the lobby |
+| `frontend/e2e/` | 98 | Playwright: full games, combat, stacking, card art, legibility, layout, and a two-browser pod |
 
 `scripts/verify.py` runs 12 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
-160-game arena, **a real uvicorn process playing full games at 2 and 4 players**, then
-the frontend build, lint and tests.
+160-game arena, **a real uvicorn process playing full games at 2 players, 4 players and
+one pod driven entirely through the lobby**, then the frontend build, lint and tests.
 
 Playwright is still invoked separately (`cd frontend && npx playwright test`).
 
@@ -68,6 +68,24 @@ before anything else does.
 **Hidden information stays hidden.** Three server tests assert that other players'
 hands come back as `null`, that no library is ever listed, and — the deliberate
 exception — that `/debug` really does reveal what the player view hides.
+
+Multiplayer added two more surfaces with the same shape, and each got the same class of
+test. `TestDeckSecrecy` (`tests/server/test_lobby.py`) holds the lobby's rule: another
+player's deck is invisible until they lock in, and no view ever carries a token or
+another player's id. `TestEventRedaction` (`tests/server/test_multiplayer_game.py`)
+holds the event log's: a `draw` by another seat carries no object id, but the event
+itself is still there, because a client that silently received a shorter list than its
+neighbour could not tell that from a bug.
+
+**Two people doing the same thing at once.** `tests/server/test_pod_races.py` is the
+file that finds the mistakes in the rest. Every handler is a sync `def`, so Starlette
+runs it in a thread pool and two guests claiming the last chair are genuinely
+concurrent. Each test fires N requests at one pod from N threads and asserts on the
+*set* of outcomes — four joins produce exactly one 201 and three 409s; two
+simultaneous deals produce exactly one 200, one 409 and one `GameSession`; a guest
+unlocking while the host deals never yields a game with an unready seat. Every
+`.result()` carries a timeout, because a deadlock is the failure mode the file exists
+to catch and a hung test that never reports is not a caught deadlock.
 
 ## Determinism
 
@@ -131,6 +149,7 @@ pytest tests/cards -q                     # the every-card gate
 pytest -m "not slow" -q                   # skip the training runs
 python scripts/validate_decks.py
 python scripts/run_arena.py --games 200 --pods 2,4 --max-draw-rate 0.2
-python scripts/smoke_http.py --players 4  # against a running server
+python scripts/smoke_http.py --players 4        # against a running server
+python scripts/smoke_http.py --pod --players 2 # the lobby, end to end, with tokens
 cd frontend && npm test && npm run build && npm run lint
 ```

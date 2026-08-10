@@ -311,5 +311,26 @@
     }
   ],
   "substitutions": [],
-  "notes": "Azorius fliers and control. Isperia turns every attack aimed at you into a card, so the deck is built to make attacking you the worst option on the table: cheap blockers, two wraths, and enough counterspells that the alpha strike never lands."
+  "notes": "Azorius fliers and control. Isperia turns every attack aimed at you into a card, so the deck is built to make attacking you the worst option on the table: cheap blockers, two wraths, and enough counterspells that the alpha strike never lands.",
+  "tags": ["Flyers", "Anthems", "Card draw"],
+  "ratings": {"speed": 2, "complexity": 2, "interaction": 3, "resilience": 3, "pilot": 2},
+  "strategy": "The deck goes wide in the air with cheap flyers and then makes them all bigger at once - Empyrean Eagle is one of several anthems that only read on things with flying. Isperia is the punishment half: once she is down, attacking you costs a card, so the pod's aggro deck goes and hits somebody else. It plays a longer, more defensive game than Edgar and wins in two or three swings from a board the ground cannot block.",
+  "signature": [
+    {
+      "card_id": "empyrean_eagle",
+      "why": "An anthem attached to a flyer - the deck's whole shape in one card."
+    },
+    {
+      "card_id": "watcher_of_the_spheres",
+      "why": "Makes the rest of the curve a mana cheaper."
+    },
+    {
+      "card_id": "reconnaissance_mission",
+      "why": "The air force stops trading and starts drawing."
+    },
+    {
+      "card_id": "consecrated_sphinx",
+      "why": "If it survives one rotation the game is already decided."
+    }
+  ]
 }

@@ -14,6 +14,12 @@
  * can be expanded to see exactly what changed, and the mana base gets its own
  * line because a deck that looks like 37 lands and behaves like 34 is the single
  * most confusing thing an import can produce.
+ *
+ * Two chromes, one machine. `panel` is the standalone block; `row` is the
+ * catalogue's footer strip, which is the same interaction in a different box.
+ * The four-state machine and `messageFor` are shared rather than reimplemented:
+ * the error mapping is the part of this component with real knowledge in it,
+ * and a second copy would be a second copy to get out of date.
  */
 
 import { motion } from "motion/react";
@@ -38,11 +44,13 @@ const COPY = {
 
 interface Props {
   onImported: (result: DeckImportResponse) => void;
+  /** `row` is the deck catalogue's footer strip; `panel` is the standalone block. */
+  variant?: "panel" | "row";
 }
 
 type Status = "idle" | "fetching" | "error" | "ready";
 
-export function DeckImport({ onImported }: Props) {
+export function DeckImport({ onImported, variant = "panel" }: Props) {
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -76,10 +84,18 @@ export function DeckImport({ onImported }: Props) {
   // work. What is worth a warning is a land with no abilities at all.
   const inertLands = result?.lands_inert ?? 0;
 
+  const row = variant === "row";
+
   return (
-    <section className="import" data-testid="deck-import">
-      <h2 className="import__title">Or bring your own</h2>
-      <p className="import__hint">Paste a public Moxfield deck link.</p>
+    <section className={row ? "import import--row" : "import"} data-testid="deck-import">
+      {row ? (
+        <span className="import__label">Import</span>
+      ) : (
+        <>
+          <h2 className="import__title">Or bring your own</h2>
+          <p className="import__hint">Paste a public Moxfield deck link.</p>
+        </>
+      )}
 
       <div className="import__row">
         <input
@@ -104,8 +120,15 @@ export function DeckImport({ onImported }: Props) {
           disabled={status === "fetching" || url.trim() === ""}
           data-testid="import-go"
         >
-          {status === "fetching" ? "Reading the list…" : "Import"}
+          {status === "fetching" ? "Reading the list…" : row ? "Fetch" : "Import"}
         </button>
+        {/* In the row the hint is beside the field rather than above it: the
+            footer is one line tall and a paragraph over it would double that. */}
+        {row && status === "idle" && (
+          <span className="import__hint import__hint--inline">
+            Paste a public Moxfield deck link.
+          </span>
+        )}
       </div>
 
       {status === "error" && error && (

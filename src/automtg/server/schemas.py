@@ -73,6 +73,9 @@ class GameCreatedResponse(BaseModel):
     your_seat: int
     state: dict[str, Any]
     actions: list[LegalActionDTO]
+    #: The session's mutation counter.  Feed it back as ``?since_version=`` to
+    #: long-poll for somebody else's move.
+    version: int = 1
 
 
 class StateResponse(BaseModel):
@@ -80,6 +83,17 @@ class StateResponse(BaseModel):
     actions: list[LegalActionDTO]
     events: list[dict[str, Any]] = Field(default_factory=list)
     event_cursor: int = 0
+    #: See :class:`GameCreatedResponse.version`.
+    version: int = 1
+    #: The seat this view is for.  Echoed back because a client arriving from a
+    #: pod does not know it: the lobby's four chairs are compacted down to the
+    #: players who are actually in the game, so lobby seat 2 is table seat 1.
+    your_seat: int = 0
+    #: Which seats are people.  The engine does not model this -- a seat is a
+    #: seat to it -- but the client's behaviour turns on it: waiting for an AI
+    #: means pumping it forward a decision at a time, and waiting for a human
+    #: means long-polling until they move.
+    human_seats: list[int] = Field(default_factory=list)
 
 
 class DeckSummary(BaseModel):
@@ -97,6 +111,136 @@ class DeckSummary(BaseModel):
     #: non-keyword text does nothing.  A precon is all playable by construction.
     playable: int = 0
     simplified: int = 0
+    #: Editorial, authored per deck.  Empty for an imported deck, and the client
+    #: draws that state rather than inventing a strategy paragraph.
+    tags: list[str] = Field(default_factory=list)
+
+
+class DeckRatingsDTO(BaseModel):
+    """Five 1-4 scales.  See ``DeckRatingsModel``."""
+
+    speed: int
+    complexity: int
+    interaction: int
+    resilience: int
+    pilot: int
+
+
+class SignatureCardDTO(BaseModel):
+    card_id: str
+    name: str
+    why: str
+    art_url: str | None = None
+
+
+class DeckDetail(DeckSummary):
+    """Everything the deck dossier shows.
+
+    Split from :class:`DeckSummary` because the catalogue renders every deck as a
+    tile and would otherwise pay for four strategy essays it is not showing.
+    """
+
+    ratings: DeckRatingsDTO | None = None
+    strategy: str = ""
+    signature: list[SignatureCardDTO] = Field(default_factory=list)
+    #: Seven buckets -- mana values 1..6 and 7+ -- of non-land cards, weighted by
+    #: quantity.  Lands are excluded: with 37 of them in a 100-card deck they
+    #: would dominate the first bucket and tell you nothing about the deck.
+    curve: list[int] = Field(default_factory=list)
+    lands: int = 0
+    #: Cards the deck could not run as printed.  Already recorded in every deck
+    #: file and, until now, never sent to the client.
+    swaps: int = 0
+    swap_note: str = ""
+
+
+# ----------------------------------------------------------------------
+# pods -- the pre-game lobby
+# ----------------------------------------------------------------------
+
+
+class PodSeatView(BaseModel):
+    """One of a pod's four chairs, as one viewer is allowed to see it."""
+
+    index: int
+    #: ``empty`` -- nobody, and not yet invited.
+    #: ``open``  -- a chair held for a human who has not arrived.
+    #: ``cpu``   -- an AI the host seated.
+    #: ``human`` -- somebody in the pod.
+    kind: Literal["empty", "cpu", "open", "human"]
+    name: str | None = None
+    #: ``None`` until this seat locks in.  The lobby's hidden-information rule,
+    #: and the reason a pod is rendered through ``Pod.view_for`` and nothing
+    #: else -- exactly as a game is rendered through ``player_view``.
+    deck: DeckSummary | None = None
+    locked: bool = False
+    ready: bool = False
+    is_you: bool = False
+    is_host: bool = False
+    #: CPU seats only.
+    agent: str | None = None
+
+
+class PodView(BaseModel):
+    code: str
+    #: Monotonic. Feed it back as ``?since=`` to long-poll for somebody else's
+    #: move; the server blocks until it moves or the poll times out.
+    version: int
+    status: Literal["open", "starting", "in_game", "closed"]
+    seats: list[PodSeatView]
+    your_seat: int | None = None
+    you_are_host: bool = False
+    #: Set the moment the host deals.  Every client polling the pod learns where
+    #: the table is from the same response, which is how they arrive together.
+    game_id: str | None = None
+    invite_link: str = ""
+
+
+class CreatePodRequest(BaseModel):
+    name: str = Field(default="You", max_length=24)
+    deck_id: str | None = None
+    seed: int | None = None
+
+
+class JoinPodRequest(BaseModel):
+    name: str = Field(default="Player", max_length=24)
+
+
+class PodCredentials(BaseModel):
+    """Returned exactly once, at create or join.  Never inside a ``PodView``."""
+
+    player_token: str
+    pod: PodView
+
+
+class SeatUpdateRequest(BaseModel):
+    """Your own seat: pick a deck, lock in, unlock.
+
+    Both fields are optional and independently applied, so "pick a deck" and
+    "lock in" are one request or two at the client's discretion.
+    """
+
+    deck_id: str | None = None
+    locked: bool | None = None
+
+
+class StartPodRequest(BaseModel):
+    """Dealing the pod.
+
+    The seed rides on the deal rather than on the pod, because that is when the
+    host actually types it -- a seed set at create time would be a number chosen
+    before anybody knows what game they are about to play.
+    """
+
+    seed: int | None = None
+
+
+class SeatAdminRequest(BaseModel):
+    """A seat that is not yours.  Host only."""
+
+    action: Literal["add_cpu", "open_chair", "clear", "set_deck", "set_agent"]
+    deck_id: str | None = None
+    agent: Literal["random", "heuristic", "policy"] | None = None
 
 
 class ImportDeckRequest(BaseModel):

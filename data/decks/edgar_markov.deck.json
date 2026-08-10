@@ -118,5 +118,26 @@
       "replaced_with": "dreadbore",
       "reason": "selectors cannot express \"artifact, creature, or planeswalker\" as a single target"
     }
+  ],
+  "tags": ["Aggro", "Tokens", "Drain"],
+  "ratings": {"speed": 4, "complexity": 2, "interaction": 3, "resilience": 2, "pilot": 2},
+  "strategy": "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast - every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Sanctum Seeker turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
+  "signature": [
+    {
+      "card_id": "sanctum_seeker",
+      "why": "Every attacking Vampire drains, whether or not it connects."
+    },
+    {
+      "card_id": "legion_lieutenant",
+      "why": "The lord that makes a board of 1/1 tokens lethal."
+    },
+    {
+      "card_id": "blood_artist",
+      "why": "Turns a board wipe into the winning turn."
+    },
+    {
+      "card_id": "falkenrath_noble",
+      "why": "A second Blood Artist, in the air."
+    }
   ]
 }

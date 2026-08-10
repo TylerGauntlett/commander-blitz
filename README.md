@@ -38,12 +38,28 @@ cd frontend && bun install && bun run dev     # or: npm install && npm run dev
 
 Then open <http://localhost:5173>. The Vite dev server proxies `/api` to the engine.
 
+### Playing over a LAN
+
+Two to four people on the same network share one engine process. Bind both servers to
+the network rather than to loopback — the dev server pins `127.0.0.1` by default:
+
+```bash
+.venv/Scripts/uvicorn automtg.server.app:get_app --factory --host 0.0.0.0
+cd frontend && npm run dev -- --host
+```
+
+Then everybody opens `http://<your-lan-ip>:5173`. One person creates a pod and reads
+out the code (`GYRE-8412`); the rest join with it, pick a deck, and lock in. CORS is
+open to private-network origins only, so this stays reachable from a network you are
+already on and nowhere else.
+
 ## What is in the box
 
 | | |
 |---|---|
 | **Decks** | Two Commander-legal 100-card decks: *Aesi, Tyrant of Gyre Strait* (Simic ramp/landfall) and *Edgar Markov* (Mardu vampire aggro). Every card in both decks is implemented and tested. |
 | **Rules** | Full turn structure, the stack, priority, triggered and static abilities, combat with ten keyword abilities, state-based actions, commander tax and commander damage, and N-player pods. |
+| **Multiplayer** | Two to four people, each in their own browser against one process. Create a pod, share the code, pick decks privately, lock in, play. See [docs/api.md](docs/api.md). |
 | **Card data** | Plain JSON in `data/cards/`. Card art is downloaded once at build time and served by this app -- no runtime network calls. See [docs/card-catalog.md](docs/card-catalog.md). |
 | **AI** | A random agent, a reflexive heuristic agent that beats it ~85% of the time, and a masked-PPO self-play trainer. |
 | **Verification** | `python scripts/verify.py` runs every gate end to end. |

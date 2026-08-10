@@ -139,6 +139,12 @@ class DeckList:
     substitutions: tuple[dict, ...] = ()
     notes: str = ""
     source: str = "precon"
+    #: Editorial metadata, authored per deck.  Empty for imported decks, which
+    #: is a state the catalogue renders rather than papering over.
+    tags: tuple[str, ...] = ()
+    ratings: dict | None = None
+    strategy: str = ""
+    signature: tuple[dict, ...] = ()
 
     def expanded(self) -> list[str]:
         """The 99 non-commander cards, one entry per physical card."""
@@ -164,6 +170,10 @@ class DeckList:
             substitutions=tuple(s.model_dump() for s in model.substitutions),
             notes=model.notes,
             source=model.source,
+            tags=tuple(model.tags),
+            ratings=None if model.ratings is None else model.ratings.model_dump(),
+            strategy=model.strategy,
+            signature=tuple(s.model_dump() for s in model.signature),
         )
 
 

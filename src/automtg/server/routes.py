@@ -8,7 +8,7 @@ the whole rules vocabulary can grow without touching the frontend.
 
 from __future__ import annotations
 
-import json
+import time
 
 from fastapi import APIRouter, Body, HTTPException, Query, Request
 from fastapi.responses import FileResponse
@@ -17,14 +17,16 @@ from automtg.cards import importer, moxfield
 from automtg.cards.images import CardIndex, IndexEntry
 from automtg.cards.registry import default_registry
 from automtg.engine.errors import IllegalActionError
-from automtg.engine.serialize import event_log, full_view, player_view
+from automtg.engine.serialize import event_log, event_log_for, full_view, player_view
 
 from .art import ArtStore
+from .deckinfo import deck_detail, deck_summary
 from .schemas import (
     ApplyActionRequest,
     CardResponse,
     CatalogCardDTO,
     CatalogResponse,
+    DeckDetail,
     DeckImportResponse,
     DeckSummary,
     DeclareRequest,
@@ -37,7 +39,7 @@ from .schemas import (
     OptionsRequest,
     StateResponse,
 )
-from .sessions import GameSession, SessionRegistry
+from .sessions import MAX_POLL_SECONDS, GameSession, SessionRegistry
 
 router = APIRouter(prefix="/api")
 
@@ -83,13 +85,17 @@ def _session(request: Request, game_id: str) -> GameSession:
 
 
 def _state_response(session: GameSession, seat: int, since: int = 0) -> StateResponse:
-    state = session.game.state
-    return StateResponse(
-        state=player_view(state, seat),
-        actions=session.actions_for(seat),
-        events=event_log(state, since),
-        event_cursor=len(state.events),
-    )
+    with session._lock:
+        state = session.game.state
+        return StateResponse(
+            state=player_view(state, seat),
+            actions=session.actions_for(seat),
+            events=event_log_for(state, seat, since),
+            event_cursor=len(state.events),
+            version=session.version,
+            your_seat=seat,
+            human_seats=session.human_seats,
+        )
 
 
 # ----------------------------------------------------------------------
@@ -97,50 +103,22 @@ def _state_response(session: GameSession, seat: int, since: int = 0) -> StateRes
 # ----------------------------------------------------------------------
 
 
-def _deck_summary(deck, data) -> DeckSummary:
-    coverage = _coverage_map()
-    simplified = sum(
-        qty
-        for card_id, qty in (*deck.cards, *((c, 1) for c in deck.commanders))
-        if coverage.get(card_id) == "partial"
-    )
-    return DeckSummary(
-        id=deck.id,
-        name=deck.name,
-        commanders=list(deck.commanders),
-        commander_names=[data.registry.get(c).name for c in deck.commanders],
-        color_identity=sorted(deck.color_identity),
-        card_count=deck.total_cards(),
-        notes=deck.notes,
-        source=deck.source,
-        playable=deck.total_cards() - simplified,
-        simplified=simplified,
-    )
-
-
-def _coverage_map() -> dict[str, str]:
-    """``card_id -> coverage`` for generated cards.
-
-    Read per request rather than cached: an import writes it, and a stale map
-    would report the deck somebody just imported as fully playable.  The file is
-    a few KB and absent entirely on a machine that has never imported.
-    """
-    from automtg.cards.importer import coverage_path
-
-    path = coverage_path()
-    if not path.exists():
-        return {}
-    try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):  # pragma: no cover
-        return {}
-    return {k: v.get("coverage", "partial") for k, v in raw.items()}
 
 
 @router.get("/decks", response_model=list[DeckSummary])
 def list_decks(request: Request) -> list[DeckSummary]:
     data = _registry(request).data
-    return [_deck_summary(deck, data) for deck in data.decks.values()]
+    return [deck_summary(deck, data) for deck in data.decks.values()]
+
+
+@router.get("/decks/{deck_id}", response_model=DeckDetail)
+def get_deck(request: Request, deck_id: str) -> DeckDetail:
+    """One deck, with the dossier's essays and derived numbers."""
+    data = _registry(request).data
+    deck = data.decks.get(deck_id)
+    if deck is None:
+        raise HTTPException(status_code=404, detail=f"no deck {deck_id}")
+    return deck_detail(deck, data, _art(request))
 
 
 @router.post("/decks/import", response_model=DeckImportResponse, status_code=201)
@@ -177,7 +155,7 @@ def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse
     data = _registry(request).data
     deck = data.decks.get(report.deck_id)
     summary = (
-        _deck_summary(deck, data)
+        deck_summary(deck, data)
         if deck is not None
         else DeckSummary(
             id=report.deck_id,
@@ -393,22 +371,44 @@ def new_game(request: Request, body: NewGameRequest) -> GameCreatedResponse:
         your_seat=seat,
         state=player_view(session.game.state, seat),
         actions=session.actions_for(seat),
+        version=session.version,
     )
 
 
 @router.get("/games/{game_id}/state", response_model=StateResponse)
 def get_state(
-    request: Request, game_id: str, seat: int = Query(0), since: int = Query(0)
+    request: Request,
+    game_id: str,
+    seat: int | None = Query(None, description="Omit to be told your seat by your token."),
+    since: int = Query(0, description="Event cursor -- events before this are omitted."),
+    since_version: int = Query(
+        0,
+        ge=0,
+        description="Block until the session's version passes this, or the poll ages out.",
+    ),
+    timeout: float = Query(MAX_POLL_SECONDS, ge=0, le=MAX_POLL_SECONDS),
 ) -> StateResponse:
+    """This seat's view of the game, optionally waiting for it to change.
+
+    ``since`` and ``since_version`` are different cursors and both are useful at
+    once: the first says which events you have already rendered, the second says
+    which *state* you have already seen.  With ``since_version`` omitted this is
+    the immediate read it has always been; with it, the request blocks until
+    another player moves, which is how a second human learns it is their turn
+    without polling in a loop.
+    """
     session = _session(request, game_id)
-    _check_seat(session, seat)
+    seat = _resolve_seat(request, session, seat)
+    _authorise(request, session, seat)
+    if since_version:
+        session.wait_for_change(since_version, timeout)
     return _state_response(session, seat, since)
 
 
 @router.get("/games/{game_id}/actions")
 def get_actions(request: Request, game_id: str, seat: int = Query(0)):
     session = _session(request, game_id)
-    _check_seat(session, seat)
+    _authorise(request, session, seat)
     return session.actions_for(seat)
 
 
@@ -431,7 +431,7 @@ def apply_action(
     ai_steps: int | None = _AI_STEPS,
 ) -> StateResponse:
     session = _session(request, game_id)
-    _check_seat(session, body.seat)
+    _authorise(request, session, body.seat)
     since = len(session.game.state.events)
     try:
         session.apply_action_id(body.seat, body.action_id, ai_steps=ai_steps)
@@ -448,7 +448,7 @@ def declare(
     ai_steps: int | None = _AI_STEPS,
 ) -> StateResponse:
     session = _session(request, game_id)
-    _check_seat(session, body.seat)
+    _authorise(request, session, body.seat)
     since = len(session.game.state.events)
     try:
         session.declare(body.seat, body.kind, body.pairs, ai_steps=ai_steps)
@@ -472,7 +472,7 @@ def advance(
     rather than arriving pre-collapsed.
     """
     session = _session(request, game_id)
-    _check_seat(session, seat)
+    _authorise(request, session, seat)
     since = len(session.game.state.events)
     session.drive_ai(ai_steps)
     return _state_response(session, seat, since)
@@ -487,7 +487,7 @@ def set_options(request: Request, game_id: str, body: OptionsRequest) -> StateRe
     than expecting the client to guess.
     """
     session = _session(request, game_id)
-    _check_seat(session, body.seat)
+    _authorise(request, session, body.seat)
     if body.seat not in session.human_seats:
         # An AI seat has no stops to configure -- it is offered every window
         # already, and pretending otherwise would silently do nothing.
@@ -499,8 +499,23 @@ def set_options(request: Request, game_id: str, body: OptionsRequest) -> StateRe
 
 @router.post("/games/{game_id}/undo", response_model=StateResponse)
 def undo(request: Request, game_id: str, seat: int = Body(0, embed=True)) -> StateResponse:
+    """Rewind this seat's last action.  Single-player only.
+
+    Undo rebuilds the ``Game`` by replaying the tape, which produces a new state
+    object with a shorter event log.  A second human is already holding the
+    events being rewound and has no way to reconcile them, so this refuses
+    rather than silently corrupting the other client's view.
+    """
     session = _session(request, game_id)
-    _check_seat(session, seat)
+    _authorise(request, session, seat)
+    if session.multiplayer:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "detail": "undo is not available with more than one player",
+                "code": "multiplayer_undo",
+            },
+        )
     if not session.undo():
         raise HTTPException(status_code=400, detail="nothing to undo")
     return _state_response(session, seat)
@@ -525,6 +540,44 @@ def delete_game(request: Request, game_id: str) -> None:
     _registry(request).delete(game_id)
 
 
-def _check_seat(session: GameSession, seat: int) -> None:
+def _resolve_seat(request: Request, session: GameSession, seat: int | None) -> int:
+    """Which seat is the caller asking about?
+
+    A pod compacts its four chairs down to the players who are actually in the
+    game, so the seat somebody had in the lobby is generally *not* the seat they
+    have at the table.  Rather than make the client work that out, an omitted
+    ``?seat=`` means "whichever seat my token holds" -- and falls back to 0 for
+    the single-player callers that never had a token.
+    """
+    if seat is not None:
+        return seat
+    from_token = session.seat_for_token(request.headers.get("X-Player-Token"))
+    return session.primary_seat if from_token is None else from_token
+
+
+def _authorise(request: Request, session: GameSession, seat: int) -> None:
+    """Is the caller allowed to act as this seat?
+
+    Two regimes, chosen by whether the session has a token map.
+
+    A session dealt from a pod has one, and then the ``X-Player-Token`` header
+    must resolve to exactly this seat -- otherwise anybody holding a ``game_id``
+    could read a rival's hand with ``?seat=1``.
+
+    A session created straight through ``POST /api/games`` has no token map, and
+    keeps the bounds-check-only behaviour it has always had.  That is not an
+    oversight: the CLI, ``scripts/smoke_http.py``, single-player and every
+    existing test drive a game with no token at all, and requiring one would
+    break all of them to protect a seat nobody else can reach.
+    """
     if not 0 <= seat < len(session.seats):
         raise HTTPException(status_code=400, detail=f"no seat {seat}")
+    if not session.tokens:
+        return
+    token = request.headers.get("X-Player-Token")
+    if session.seat_for_token(token) != seat:
+        raise HTTPException(
+            status_code=403,
+            detail={"detail": f"seat {seat} is not yours", "code": "not_your_seat"},
+        )
+    session.last_seen = time.monotonic()

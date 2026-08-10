@@ -7,6 +7,8 @@ far (which is how undo works: replay from the seed minus the last human action).
 
 from __future__ import annotations
 
+import threading
+import time
 import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -22,6 +24,11 @@ from .schemas import LegalActionDTO, SeatConfig
 
 #: How many AI decisions to resolve in one request before giving up.
 MAX_AI_STEPS = 20_000
+
+#: Longest a long-poll may block.  Comfortably under the 30 s that proxies and
+#: browsers treat as a dead connection, so a poll that finds nothing still
+#: returns a real response rather than being cut.
+MAX_POLL_SECONDS = 25.0
 
 
 @dataclass(frozen=True)
@@ -57,6 +64,24 @@ class GameSession:
     _action_ids: dict[str, Action] = field(default_factory=dict)
     #: seat -> "stop at every priority window".  Survives the rebuild in undo().
     full_control: dict[int, bool] = field(default_factory=dict)
+    #: ``player_token -> seat``.  Written by the lobby when it hands a pod off to
+    #: a game; empty for the CLI, the smoke script and single-player, which is
+    #: what keeps those callers on the old bounds-check-only authorisation.
+    tokens: dict[str, int] = field(default_factory=dict)
+    #: Bumped by every mutation.  Clients long-poll on ``?since_version=``.
+    version: int = 1
+    #: ``time.monotonic()`` of the last mutation or authenticated read.  Only
+    #: read by :meth:`SessionRegistry.sweep`.
+    last_seen: float = field(default_factory=time.monotonic)
+    #: Guards ``game``, ``tape`` and ``_action_ids``.  Starlette runs sync
+    #: handlers in a thread pool, so with two humans on one game these are
+    #: genuinely concurrent -- a ``_refresh_actions()`` can empty ``_action_ids``
+    #: underneath a reader.  Reentrant because the mutators nest (apply -> drive).
+    _lock: threading.RLock = field(default_factory=threading.RLock, repr=False)
+    _changed: threading.Condition = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._changed = threading.Condition(self._lock)
 
     # ------------------------------------------------------------------
 
@@ -69,7 +94,45 @@ class GameSession:
         humans = self.human_seats
         return humans[0] if humans else 0
 
+    @property
+    def multiplayer(self) -> bool:
+        """More than one person is watching this game."""
+        return len(self.human_seats) > 1
+
+    def seat_for_token(self, token: str | None) -> int | None:
+        return self.tokens.get(token) if token else None
+
+    # ------------------------------------------------------------------
+    # versioning
+    # ------------------------------------------------------------------
+
+    def _bump(self) -> None:
+        """Announce a change.  Callers hold ``_lock``."""
+        self.version += 1
+        self.last_seen = time.monotonic()
+        self._changed.notify_all()
+
+    def wait_for_change(self, since: int, timeout: float) -> int:
+        """Block until ``version`` passes ``since``, then return it.
+
+        A timeout is not an error: the caller returns the current state and the
+        client re-polls, so a long poll is indistinguishable from a slow one and
+        a dropped connection costs at most one round trip.
+        """
+        with self._lock:
+            if since <= 0:
+                return self.version
+            self._changed.wait_for(
+                lambda: self.version > since, timeout=min(timeout, MAX_POLL_SECONDS)
+            )
+            return self.version
+
     def start(self) -> None:
+        with self._lock:
+            self._start_locked()
+            self._bump()
+
+    def _start_locked(self) -> None:
         self.game = create_game(
             [seat.deck_id for seat in self.seats],
             data=self.data,
@@ -92,8 +155,10 @@ class GameSession:
 
     def set_full_control(self, seat: int, value: bool) -> None:
         """Stop at every priority window for this seat, or go back to smart stops."""
-        self.full_control[seat] = value
-        self.game.state.players[seat].full_control = value
+        with self._lock:
+            self.full_control[seat] = value
+            self.game.state.players[seat].full_control = value
+            self._bump()
 
     # ------------------------------------------------------------------
 
@@ -107,22 +172,24 @@ class GameSession:
         decision's worth of events at a time instead of three whole turns
         collapsed into a single response.
         """
-        mark = len(self.game.state.events)
-        budget = MAX_AI_STEPS if max_steps is None else max(0, max_steps)
-        for _ in range(budget):
-            if self.game.over:
-                break
-            decision = self.game.pending()
-            if decision is None or decision.player not in self.agents:
-                break
-            actions = self.game.legal_actions()
-            if not actions:
-                break
-            chosen = self.agents[decision.player].act(self.game, decision.player, actions)
-            self.game.apply(chosen)
-            self.tape.append(self._entry(chosen, decision.player, human=False))
-        self._refresh_actions()
-        return self.game.state.events[mark:]
+        with self._lock:
+            mark = len(self.game.state.events)
+            budget = MAX_AI_STEPS if max_steps is None else max(0, max_steps)
+            for _ in range(budget):
+                if self.game.over:
+                    break
+                decision = self.game.pending()
+                if decision is None or decision.player not in self.agents:
+                    break
+                actions = self.game.legal_actions()
+                if not actions:
+                    break
+                chosen = self.agents[decision.player].act(self.game, decision.player, actions)
+                self.game.apply(chosen)
+                self.tape.append(self._entry(chosen, decision.player, human=False))
+            self._refresh_actions()
+            self._bump()
+            return self.game.state.events[mark:]
 
     def _entry(self, action: Action, seat: int, *, human: bool) -> TapeEntry:
         return TapeEntry(action, seat, human, self.full_control.get(seat, False))
@@ -140,39 +207,43 @@ class GameSession:
 
     def actions_for(self, seat: int) -> list[LegalActionDTO]:
         """The legal actions, but only if it is this seat's decision."""
-        decision = self.game.pending()
-        if decision is None or decision.player != seat or self.game.over:
-            return []
-        return [
-            LegalActionDTO(
-                id=action_id,
-                kind=action.kind.value,
-                label=action.label or action.kind.value,
-                source_oid=action.source,
-                ability_index=action.ability_index,
-                targets=[t.to_dict() for t in action.targets],
-                choice=action.choice,
-                x=action.x,
-                pays=list(action.pays),
-            )
-            for action_id, action in self._action_ids.items()
-        ]
+        with self._lock:
+            decision = self.game.pending()
+            if decision is None or decision.player != seat or self.game.over:
+                return []
+            return [
+                LegalActionDTO(
+                    id=action_id,
+                    kind=action.kind.value,
+                    label=action.label or action.kind.value,
+                    source_oid=action.source,
+                    ability_index=action.ability_index,
+                    targets=[t.to_dict() for t in action.targets],
+                    choice=action.choice,
+                    x=action.x,
+                    pays=list(action.pays),
+                )
+                for action_id, action in self._action_ids.items()
+            ]
 
     def apply_action_id(self, seat: int, action_id: str, *, ai_steps: int | None = None) -> list:
-        decision = self.game.pending()
-        if decision is None:
-            raise IllegalActionError("the game is not waiting on a decision")
-        if decision.player != seat:
-            raise IllegalActionError(f"it is seat {decision.player}'s decision, not {seat}'s")
-        action = self._action_ids.get(action_id)
-        if action is None:
-            raise IllegalActionError(f"unknown action id {action_id!r}")
+        with self._lock:
+            decision = self.game.pending()
+            if decision is None:
+                raise IllegalActionError("the game is not waiting on a decision")
+            if decision.player != seat:
+                raise IllegalActionError(
+                    f"it is seat {decision.player}'s decision, not {seat}'s"
+                )
+            action = self._action_ids.get(action_id)
+            if action is None:
+                raise IllegalActionError(f"unknown action id {action_id!r}")
 
-        mark = len(self.game.state.events)
-        self.game.apply(action)
-        self.tape.append(self._entry(action, seat, human=True))
-        self.drive_ai(ai_steps)
-        return self.game.state.events[mark:]
+            mark = len(self.game.state.events)
+            self.game.apply(action)
+            self.tape.append(self._entry(action, seat, human=True))
+            self.drive_ai(ai_steps)
+            return self.game.state.events[mark:]
 
     def declare(
         self,
@@ -204,38 +275,43 @@ class GameSession:
                 f"{sorted(duplicates)} appears more than once in the declaration"
             )
 
-        mark = len(self.game.state.events)
-        want = ActionKind.ADD_ATTACKER if kind == "attackers" else ActionKind.ADD_BLOCKER
-        for pair in pairs:
-            source, target = int(pair[0]), int(pair[1])
-            ref = TargetRef.player(target) if kind == "attackers" else TargetRef.obj(target)
-            match = next(
+        with self._lock:
+            mark = len(self.game.state.events)
+            want = ActionKind.ADD_ATTACKER if kind == "attackers" else ActionKind.ADD_BLOCKER
+            for pair in pairs:
+                source, target = int(pair[0]), int(pair[1])
+                ref = (
+                    TargetRef.player(target) if kind == "attackers" else TargetRef.obj(target)
+                )
+                match = next(
+                    (
+                        a
+                        for a in legal_actions(self.game.state)
+                        if a.kind is want and a.source == source and a.targets == (ref,)
+                    ),
+                    None,
+                )
+                if match is None:
+                    raise IllegalActionError(f"{source} cannot be declared against {target}")
+                self.game.apply(match)
+                self.tape.append(self._entry(match, seat, human=True))
+
+            finish = next(
                 (
                     a
                     for a in legal_actions(self.game.state)
-                    if a.kind is want and a.source == source and a.targets == (ref,)
+                    if a.kind is ActionKind.FINISH_DECLARATION
                 ),
                 None,
             )
-            if match is None:
-                raise IllegalActionError(f"{source} cannot be declared against {target}")
-            self.game.apply(match)
-            self.tape.append(self._entry(match, seat, human=True))
-
-        finish = next(
-            (
-                a
-                for a in legal_actions(self.game.state)
-                if a.kind is ActionKind.FINISH_DECLARATION
-            ),
-            None,
-        )
-        if finish is None:
-            raise IllegalActionError("that declaration is not legal (menace, for example)")
-        self.game.apply(finish)
-        self.tape.append(self._entry(finish, seat, human=True))
-        self.drive_ai(ai_steps)
-        return self.game.state.events[mark:]
+            if finish is None:
+                raise IllegalActionError(
+                    "that declaration is not legal (menace, for example)"
+                )
+            self.game.apply(finish)
+            self.tape.append(self._entry(finish, seat, human=True))
+            self.drive_ai(ai_steps)
+            return self.game.state.events[mark:]
 
     def undo(self) -> bool:
         """Rewind to before the last human action by replaying the tape.
@@ -243,38 +319,51 @@ class GameSession:
         Replay rather than a state snapshot: the engine never clones state, so
         replay is the only representation that cannot silently miss a field.
         O(game length) is irrelevant at local-app scale.
-        """
-        cut = next(
-            (i for i in range(len(self.tape) - 1, -1, -1) if self.tape[i].human), None
-        )
-        if cut is None:
-            return False
 
-        history = self.tape[:cut]
-        self.tape = []
-        self.start()
-        # start() already replayed the opening AI moves and re-recorded them, so
-        # resume the tape from where it left off rather than re-applying them.
-        history = history[len(self.tape) :]
-        for entry in history:
-            if self.game.over or self.game.pending() is None:
-                break
-            # The stops setting decides which priority windows exist, so replay
-            # each action under the setting it was originally taken with.
-            if entry.seat in self.full_control:
-                self.game.state.players[entry.seat].full_control = entry.full_control
-            match = next(
-                (a for a in legal_actions(self.game.state) if a == entry.action), None
+        Single-human sessions only.  See :meth:`multiplayer` and the refusal in
+        ``POST /undo``: replay builds a *new* ``Game``, and a second player who
+        has already seen the rewound events has no way to reconcile.
+        """
+        with self._lock:
+            cut = next(
+                (i for i in range(len(self.tape) - 1, -1, -1) if self.tape[i].human), None
             )
-            if match is None:
-                # The replay diverged (it should not); stop rather than guess.
-                break
-            self.game.apply(match)
-            self.tape.append(TapeEntry(match, entry.seat, entry.human, entry.full_control))
-        for pid, value in self.full_control.items():
-            self.game.state.players[pid].full_control = value
-        self.drive_ai()
-        return True
+            if cut is None:
+                return False
+
+            history = self.tape[:cut]
+            self.tape = []
+            self._start_locked()
+            # start() already replayed the opening AI moves and re-recorded them,
+            # so resume the tape from where it left off rather than re-applying.
+            history = history[len(self.tape) :]
+            for entry in history:
+                if self.game.over or self.game.pending() is None:
+                    break
+                # The stops setting decides which priority windows exist, so
+                # replay each action under the setting it was originally taken
+                # with.
+                if entry.seat in self.full_control:
+                    self.game.state.players[entry.seat].full_control = entry.full_control
+                match = next(
+                    (a for a in legal_actions(self.game.state) if a == entry.action), None
+                )
+                if match is None:
+                    # The replay diverged (it should not); stop rather than guess.
+                    break
+                self.game.apply(match)
+                self.tape.append(
+                    TapeEntry(match, entry.seat, entry.human, entry.full_control)
+                )
+            for pid, value in self.full_control.items():
+                self.game.state.players[pid].full_control = value
+            self.drive_ai()
+            return True
+
+
+#: A game nobody has touched for this long is abandoned.  Two hours is longer
+#: than any real Commander game's *gap between actions*, not longer than a game.
+SESSION_TTL_SECONDS = 2 * 60 * 60
 
 
 class SessionRegistry:
@@ -283,9 +372,16 @@ class SessionRegistry:
     def __init__(self, data: GameData | None = None) -> None:
         self.data = data if data is not None else default_registry()
         self._sessions: dict[str, GameSession] = {}
+        #: ``_sessions`` is mutated from the request thread pool once pods exist.
+        self._lock = threading.RLock()
 
     def create(
-        self, seats: list[SeatConfig], *, seed: int | None = None, max_turns: int | None = None
+        self,
+        seats: list[SeatConfig],
+        *,
+        seed: int | None = None,
+        max_turns: int | None = None,
+        tokens: dict[str, int] | None = None,
     ) -> GameSession:
         game_id = uuid.uuid4().hex[:12]
         session = GameSession(
@@ -294,9 +390,11 @@ class SessionRegistry:
             seed=0 if seed is None else int(seed),
             data=self.data,
             max_turns=max_turns,
+            tokens=dict(tokens or {}),
         )
         session.start()
-        self._sessions[game_id] = session
+        with self._lock:
+            self._sessions[game_id] = session
         return session
 
     def get(self, game_id: str) -> GameSession:
@@ -306,7 +404,22 @@ class SessionRegistry:
             raise KeyError(game_id) from None
 
     def delete(self, game_id: str) -> None:
-        self._sessions.pop(game_id, None)
+        with self._lock:
+            self._sessions.pop(game_id, None)
+
+    def sweep(self, *, now: float | None = None, ttl: float = SESSION_TTL_SECONDS) -> int:
+        """Drop sessions nobody has touched in ``ttl`` seconds.
+
+        Single-player leaked one session per abandoned tab and nobody noticed.
+        A lobby invites four people to abandon the same process, so the pod
+        registry calls this opportunistically rather than adding a reaper thread.
+        """
+        cutoff = (time.monotonic() if now is None else now) - ttl
+        with self._lock:
+            dead = [gid for gid, s in self._sessions.items() if s.last_seen < cutoff]
+            for gid in dead:
+                del self._sessions[gid]
+        return len(dead)
 
     def __len__(self) -> int:
         return len(self._sessions)

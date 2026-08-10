@@ -204,6 +204,32 @@ class SubstitutionModel(BaseModel):
     reason: str
 
 
+class DeckRatingsModel(BaseModel):
+    """How a deck plays, on five 1-4 scales.
+
+    Editorial, not derived: nothing in a card list tells you a deck is hard to
+    pilot.  An imported deck simply has none of this, and the client draws that
+    state honestly rather than inventing numbers.
+    """
+
+    model_config = Strict
+
+    speed: int = Field(ge=1, le=4)
+    complexity: int = Field(ge=1, le=4)
+    interaction: int = Field(ge=1, le=4)
+    resilience: int = Field(ge=1, le=4)
+    pilot: int = Field(ge=1, le=4)
+
+
+class SignatureCardModel(BaseModel):
+    """A card the deck is *about*, and one line on why."""
+
+    model_config = Strict
+
+    card_id: str
+    why: str
+
+
 class DeckModel(BaseModel):
     """One 100-card Commander deck list."""
 
@@ -220,3 +246,11 @@ class DeckModel(BaseModel):
     #: valid untouched -- the model is ``extra="forbid"``, so a required field
     #: here would have broken every deck file in the repository.
     source: Literal["precon", "moxfield"] = "precon"
+
+    # -- editorial metadata, for the lobby's deck catalogue ----------------
+    # All optional and all defaulted, for the same ``extra="forbid"`` reason as
+    # ``source``: an imported deck has none of it and must still load.
+    tags: list[str] = Field(default_factory=list)
+    ratings: DeckRatingsModel | None = None
+    strategy: str = ""
+    signature: list[SignatureCardModel] = Field(default_factory=list)

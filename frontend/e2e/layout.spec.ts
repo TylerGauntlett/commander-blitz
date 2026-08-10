@@ -391,12 +391,23 @@ test("an opponent's board filling up does not move the viewer's board", async ({
       return mine ? mine.getBoundingClientRect().top : Number.NaN;
     });
 
+  // Sampling stops the moment somebody is eliminated. An orb gains a
+  // `.orb__loss` line when its player dies, which grows the whole row by ~19px
+  // -- and that is a different claim from the one this test makes. "Their board
+  // filled up" must not move anything; "a player was knocked out" plainly may,
+  // and pretending otherwise would either weaken this assertion or demand the
+  // loss line be drawn somewhere it does not belong. Recorded as an open defect
+  // in docs/mockup-fidelity.md so the question is not lost.
+  const eliminated = () => page.locator(".play__opponents .orb__loss").count();
+
   const samples = [await topOfMine()];
   for (let i = 0; i < 20; i += 1) {
     await takeAction(page, ["play_land", "cast", "pass"]);
     if (await isOver(page)) break;
+    if ((await eliminated()) > 0) break;
     samples.push(await topOfMine());
   }
+  expect(samples.length, "nobody got to play before somebody died").toBeGreaterThan(3);
 
   const seen = samples.filter((n) => !Number.isNaN(n));
   const drift = Math.max(...seen) - Math.min(...seen);

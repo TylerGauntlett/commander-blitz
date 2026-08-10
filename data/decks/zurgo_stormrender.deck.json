@@ -304,5 +304,26 @@
     }
   ],
   "substitutions": [],
-  "notes": "Mardu mobilize. Attacking makes a token, the token is meant to die, and Zurgo turns each death into a card or a point of drain. The aristocrats half of the list is shared with Edgar Markov - same colours, and a deck built to sacrifice its own creatures wants exactly those payoffs."
+  "notes": "Mardu mobilize. Attacking makes a token, the token is meant to die, and Zurgo turns each death into a card or a point of drain. The aristocrats half of the list is shared with Edgar Markov - same colours, and a deck built to sacrifice its own creatures wants exactly those payoffs.",
+  "tags": ["Tokens", "Attacking", "Sacrifice"],
+  "ratings": {"speed": 3, "complexity": 3, "interaction": 2, "resilience": 2, "pilot": 3},
+  "strategy": "Zurgo costs three and wants to attack immediately - mobilize means every attack is wider than the board looks, and the tokens are built to be sacrificed at end of turn anyway. The second half of his text is the engine: an attacking token that dies draws a card, and any other token that dies drains the table. So the deck is happy to trade tokens into blockers, and happier still to have a drain effect already down that turns a whole attack step into life loss. It plays like Edgar with a rate-limiter removed, at the cost of needing an attack every turn to do anything.",
+  "signature": [
+    {
+      "card_id": "bastion_of_remembrance",
+      "why": "Every token that dies is two life across the table."
+    },
+    {
+      "card_id": "zulaport_cutthroat",
+      "why": "The same drain, on a body the deck wants to sacrifice anyway."
+    },
+    {
+      "card_id": "hordeling_outburst",
+      "why": "Three bodies for three mana, and all of them are fuel."
+    },
+    {
+      "card_id": "impact_tremors",
+      "why": "Charges the table for making tokens, before they ever attack."
+    }
+  ]
 }

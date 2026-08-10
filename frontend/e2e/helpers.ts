@@ -40,7 +40,17 @@ export async function lockZoom(page: Page): Promise<void> {
   });
 }
 
-/** Start a game and wait for the table. */
+/**
+ * Open a pod, fill it, deal it, and wait for the table.
+ *
+ * Every spec but two enters here and nowhere else, which is why the lobby was
+ * built to keep the hooks the old setup screen had: `new-game` is the lobby,
+ * `deck-${id}` is a catalogue tile, `opponents-${n}` adds the nth CPU, and
+ * `start-game` deals. Rewriting this one function is what let the rest of the
+ * suite stay untouched.
+ *
+ * `opponents` counts CPU seats, so `opponents: 3` is a four-player pod.
+ */
 export async function startGame(
   page: Page,
   options: { deck?: string; opponents?: number; seed?: number; zoomLock?: boolean } = {},
@@ -48,16 +58,57 @@ export async function startGame(
   await setInstant(page);
   if (options.zoomLock) await lockZoom(page);
   await page.goto("/");
-  await page.getByTestId("new-game").waitFor();
 
-  if (options.deck) await page.getByTestId(`deck-${options.deck}`).click();
-  if (options.opponents) await page.getByTestId(`opponents-${options.opponents}`).click();
+  await page.getByTestId("create-pod").click();
+  await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+
+  // The nth click seats the nth CPU, and the button it lands on is numbered by
+  // the pod size it would produce -- so this is always the *first* empty chair.
+  for (let i = 1; i <= (options.opponents ?? 1); i += 1) {
+    await page.getByTestId(`opponents-${i}`).click();
+  }
+
+  await pickDeck(page, options.deck ?? "aesi");
+
   if (options.seed !== undefined) {
     await page.getByPlaceholder("random").fill(String(options.seed));
   }
 
+  await page.getByTestId("lock-in").click();
   await page.getByTestId("start-game").click();
   await page.getByTestId("table").waitFor({ timeout: 30_000 });
+}
+
+/** Open the deck catalogue for your own seat and take one. */
+export async function pickDeck(page: Page, deckId: string): Promise<void> {
+  await page.getByTestId("change-deck").click();
+  await page.getByTestId("deck-catalog").waitFor();
+  await page.getByTestId(`deck-${deckId}`).locator(".pick__card").click();
+  await expect(page.getByTestId("deck-catalog")).toBeHidden();
+}
+
+/** Open the catalogue from the front door, without joining a pod. */
+export async function browseDecks(page: Page): Promise<void> {
+  await page.goto("/");
+  await page.getByTestId("home").waitFor();
+  await page.getByRole("button", { name: "Browse them" }).click();
+  await page.getByTestId("deck-catalog").waitFor();
+}
+
+/**
+ * Open a pod and leave the catalogue open on your own seat.
+ *
+ * The path an import really takes: you are choosing a deck, and the deck you
+ * want is not in the list yet. Browsing from the door reaches the same
+ * catalogue but has no seat to select a deck *into*.
+ */
+export async function openCatalog(page: Page): Promise<void> {
+  await setInstant(page);
+  await page.goto("/");
+  await page.getByTestId("create-pod").click();
+  await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+  await page.getByTestId("change-deck").click();
+  await page.getByTestId("deck-catalog").waitFor();
 }
 
 /**

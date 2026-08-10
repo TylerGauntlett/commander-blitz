@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openCatalog } from "./helpers";
 
 /**
  * The Moxfield import, driven through the DOM.
@@ -25,6 +26,11 @@ const DECK = {
   source: "moxfield",
   playable: 26,
   simplified: 74,
+  // Sent on every real `DeckSummary`, and empty for an import -- nothing writes
+  // editorial tags for a deck it just read off Moxfield. Present here because a
+  // stub that omits a field the DTO always carries is a stub that tests a shape
+  // the server never sends.
+  tags: [],
 };
 
 const REPORT = {
@@ -65,8 +71,12 @@ async function stubImport(
 }
 
 test.describe("importing a Moxfield deck", () => {
+  // The import row moved out of the front door and into the deck catalogue's
+  // footer: the lobby's front door is two buttons and a code field now, and the
+  // place you pick a deck is the place you would add one. Same component, same
+  // hooks -- see the note at the top of `DeckImport`.
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await openCatalog(page);
     await expect(page.getByTestId("deck-import")).toBeVisible();
   });
 
@@ -166,7 +176,7 @@ test.describe("importing a Moxfield deck", () => {
     await expect(page.getByText(/rules text not implemented/)).toBeVisible();
   });
 
-  test("the imported deck joins the grid and is selected", async ({ page }) => {
+  test("the imported deck joins the rack and is taken", async ({ page }) => {
     await stubImport(page, { status: 201, body: REPORT });
     // The refetch after an import has to see the new deck.
     await page.route("**/api/decks", async (route) => {
@@ -175,16 +185,30 @@ test.describe("importing a Moxfield deck", () => {
       return route.fulfill({ json: [...decks, DECK] });
     });
 
+    // The import is stubbed, so the *server* has no such deck and the PATCH
+    // that takes it comes back 400. Watching the request is therefore the only
+    // way to see the intent -- and the intent is the thing worth asserting:
+    // somebody who pasted a link wants to play that deck rather than go and
+    // find it in the rack afterwards.
+    const taken = page.waitForRequest(
+      (request) =>
+        request.method() === "PATCH" &&
+        request.url().includes("/seat") &&
+        (request.postData() ?? "").includes(DECK.id),
+    );
+
     await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
     await page.getByTestId("import-go").click();
 
+    // The import row does not close the catalogue, so the tile is still on
+    // screen to assert against.
     const tile = page.getByTestId(`deck-${DECK.id}`);
     await expect(tile).toBeVisible();
-    // Selected, because somebody who pasted a link wants to play that deck.
-    await expect(tile).toHaveClass(/deck--on/);
     await expect(tile).toContainText("Yours");
     // The honesty requirement, on the tile itself and not only in the dialog.
     await expect(page.getByTestId(`deck-${DECK.id}-simplified`)).toContainText("74");
+
+    await taken;
   });
 
   test("a precon tile carries no simplified count", async ({ page }) => {

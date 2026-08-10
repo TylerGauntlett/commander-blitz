@@ -25,6 +25,15 @@ ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
 PY = sys.executable
 
+#: Every stage's output is decoded as UTF-8 with replacement.
+#:
+#: Without this Python uses the locale codec, which on Windows is cp1252 -- and
+#: `biome` prints box-drawing rules and `pytest` prints arrows. A stage that
+#: *failed* is exactly the one with output to decode, so the crash replaced the
+#: error message with a UnicodeDecodeError traceback: the gate reported a
+#: failure and hid what it was.
+DECODE = {"encoding": "utf-8", "errors": "replace"}
+
 
 class Stage:
     """One named check.
@@ -59,6 +68,7 @@ class Stage:
             capture_output=not verbose,
             text=True,
             shell=False,
+            **DECODE,
         )
         elapsed = time.time() - started
         output = "" if verbose else (result.stdout or "") + (result.stderr or "")
@@ -97,6 +107,7 @@ def running_server(port: int):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        **DECODE,
     )
     try:
         deadline = time.time() + 60
@@ -118,27 +129,36 @@ def running_server(port: int):
 
 
 def run_live_server_stage(verbose: bool) -> tuple[bool, float, str]:
-    """Play full games at both pod sizes against a real server."""
+    """Play full games at both pod sizes against a real server.
+
+    The third run drives the *lobby*: create a pod, join it twice, lock in, deal,
+    and play the whole game with each seat acting only through its own token.
+    ``TestClient`` covers the same flow, but this is the one that proves it works
+    across a real socket with real headers.
+    """
     started = time.time()
     port = free_port()
     output: list[str] = []
+    runs = [
+        ["--players", "2", "--seed", "2"],
+        ["--players", "4", "--seed", "4"],
+        ["--pod", "--players", "2", "--seed", "5"],
+    ]
     try:
         with running_server(port):
-            for players in (2, 4):
+            for run in runs:
                 result = subprocess.run(
                     [
                         PY,
                         "scripts/smoke_http.py",
                         "--url",
                         f"http://127.0.0.1:{port}",
-                        "--players",
-                        str(players),
-                        "--seed",
-                        str(players),
+                        *run,
                     ],
                     cwd=ROOT,
                     capture_output=not verbose,
                     text=True,
+                    **DECODE,
                 )
                 if not verbose:
                     output.append((result.stdout or "") + (result.stderr or ""))
@@ -185,7 +205,11 @@ def python_stages(quick: bool) -> list[Stage]:
             )
         )
     stages.append(
-        Stage("live server: full games at 2p and 4p", fn=run_live_server_stage, slow=True)
+        Stage(
+            "live server: full games at 2p, 4p and one pod",
+            fn=run_live_server_stage,
+            slow=True,
+        )
     )
     return stages
 

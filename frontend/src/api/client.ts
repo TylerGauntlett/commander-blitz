@@ -2,15 +2,40 @@
 
 import type {
   CardResponse,
+  DeckDetail,
   DeckImportResponse,
   DeckSummary,
   GameCreated,
   ImagesResponse,
+  PodCredentials,
+  PodView,
+  SeatAdminAction,
   SeatConfig,
   StateResponse,
 } from "./types";
 
 const BASE = "/api";
+
+/**
+ * The pod token, set once and sent on every request thereafter.
+ *
+ * A module-level slot rather than a parameter on every call: `request` already
+ * builds the headers in one place, so putting it here means no call site had to
+ * change and no future one can forget. It is scoped to the pod that issued it,
+ * so it is cleared on leaving.
+ *
+ * Not a cookie: CORS here is `allow_credentials=false` by design, so a cookie
+ * would not be sent cross-origin from the Vite dev server at all.
+ */
+let playerToken: string | null = null;
+
+export function setPlayerToken(token: string | null): void {
+  playerToken = token;
+}
+
+export function getPlayerToken(): string | null {
+  return playerToken;
+}
 
 /**
  * A failed request, with the server's machine-readable code when there is one.
@@ -22,23 +47,42 @@ const BASE = "/api";
 export class ApiError extends Error {
   readonly status: number;
   readonly code?: string;
+  /**
+   * The whole error detail object, when there was one.
+   *
+   * `already_started` carries a `game_id`: a player who reloads into a pod that
+   * has already dealt is not an error case to show, it is somebody who should
+   * be sent to the table. Throwing away the id would turn that into a dead end.
+   */
+  readonly detail?: Record<string, unknown>;
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(
+    status: number,
+    message: string,
+    code?: string,
+    detail?: Record<string, unknown>,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.detail = detail;
   }
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
     ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(playerToken ? { "X-Player-Token": playerToken } : {}),
+      ...init?.headers,
+    },
   });
   if (!response.ok) {
     let detail = response.statusText;
     let code: string | undefined;
+    let extra: Record<string, unknown> | undefined;
     try {
       const body = await response.json();
       // FastAPI wraps whatever the route raised. A plain string is the usual
@@ -48,11 +92,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       } else if (body.detail && typeof body.detail === "object") {
         detail = body.detail.detail ?? detail;
         code = body.detail.code;
+        extra = body.detail;
       }
     } catch {
       // Non-JSON error body; the status text is the best we have.
     }
-    throw new ApiError(response.status, `${response.status}: ${detail}`, code);
+    throw new ApiError(response.status, `${response.status}: ${detail}`, code, extra);
   }
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
@@ -85,6 +130,9 @@ export const api = {
 
   deleteDeck: (deckId: string) => request<void>(`/decks/${deckId}`, { method: "DELETE" }),
 
+  /** One deck with the dossier's essays, curve and swap note. */
+  deck: (deckId: string) => request<DeckDetail>(`/decks/${deckId}`),
+
   card: (cardId: string) => request<CardResponse>(`/cards/${cardId}`),
 
   /**
@@ -110,8 +158,27 @@ export const api = {
       body: JSON.stringify({ seats, seed }),
     }),
 
-  state: (gameId: string, seat: number, since = 0) =>
-    request<StateResponse>(`/games/${gameId}/state?seat=${seat}&since=${since}`),
+  /**
+   * This seat's view of the game.
+   *
+   * `seat` may be null: with a pod token the server resolves it, which is how a
+   * client that arrived from a lobby learns which table seat it got. With
+   * `sinceVersion` set the request blocks until somebody else moves -- that is
+   * how the second human hears about the first one's turn.
+   */
+  state: (
+    gameId: string,
+    seat: number | null,
+    since = 0,
+    sinceVersion?: number,
+    timeout?: number,
+  ) => {
+    const params = new URLSearchParams({ since: String(since) });
+    if (seat !== null) params.set("seat", String(seat));
+    if (sinceVersion !== undefined) params.set("since_version", String(sinceVersion));
+    if (timeout !== undefined) params.set("timeout", String(timeout));
+    return request<StateResponse>(`/games/${gameId}/state?${params}`);
+  },
 
   applyAction: (gameId: string, seat: number, actionId: string, aiSteps?: number) =>
     request<StateResponse>(`/games/${gameId}/actions${stepQuery(aiSteps)}`, {
@@ -162,4 +229,75 @@ export const api = {
     }),
 
   deleteGame: (gameId: string) => request<void>(`/games/${gameId}`, { method: "DELETE" }),
+
+  /* ---------------------------------------------------------------- */
+  /* Pods                                                              */
+  /* ---------------------------------------------------------------- */
+
+  /** Open a pod and take seat 0. The token comes back exactly once, here. */
+  createPod: (name: string, deckId?: string | null, seed?: number) =>
+    request<PodCredentials>("/pods", {
+      method: "POST",
+      body: JSON.stringify({ name, deck_id: deckId ?? null, seed: seed ?? null }),
+    }),
+
+  /**
+   * Take a chair in somebody else's pod.
+   *
+   * Sending a token you already hold returns the seat you had rather than a
+   * second one -- which is the whole reconnect story, since `request` attaches
+   * the stored token automatically.
+   */
+  joinPod: (code: string, name: string) =>
+    request<PodCredentials>(`/pods/${encodeURIComponent(code)}/join`, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+
+  /**
+   * The pod, optionally waiting for it to change.
+   *
+   * `sinceVersion` of 0 returns immediately -- the first fetch. Anything else
+   * blocks server-side until the version moves or the poll ages out, and a
+   * timed-out poll is a 200 with the current view, not an error.
+   */
+  pod: (code: string, sinceVersion = 0, timeout?: number) => {
+    const params = new URLSearchParams({ since: String(sinceVersion) });
+    if (timeout !== undefined) params.set("timeout", String(timeout));
+    return request<PodView>(`/pods/${encodeURIComponent(code)}?${params}`);
+  },
+
+  /** Your own chair: pick a deck, lock in, unlock. */
+  updateSeat: (code: string, body: { deck_id?: string; locked?: boolean }) =>
+    request<PodView>(`/pods/${encodeURIComponent(code)}/seat`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  /** A chair that is not yours. Host only, and never another player's. */
+  adminSeat: (
+    code: string,
+    index: number,
+    body: { action: SeatAdminAction; deck_id?: string; agent?: string },
+  ) =>
+    request<PodView>(`/pods/${encodeURIComponent(code)}/seats/${index}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  /**
+   * Deal the pod.
+   *
+   * The seed rides on the deal rather than on the pod: it is the moment the
+   * host actually types one, and a seed chosen at create time would be picked
+   * before anybody knows what game they are about to play.
+   */
+  startPod: (code: string, seed?: number) =>
+    request<PodView>(`/pods/${encodeURIComponent(code)}/start`, {
+      method: "POST",
+      body: JSON.stringify({ seed: seed ?? null }),
+    }),
+
+  leavePod: (code: string) =>
+    request<void>(`/pods/${encodeURIComponent(code)}/leave`, { method: "POST" }),
 };
