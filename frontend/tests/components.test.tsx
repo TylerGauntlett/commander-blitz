@@ -4,26 +4,11 @@ import type { PendingDecision } from "../src/api/types";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { CardFace } from "../src/components/game/CardFace";
 import { PromptDialog } from "../src/components/game/PromptDialog";
-import { action, card, gameView, player } from "./fixtures";
+import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
 
 const noop = () => undefined;
-
-function pending(overrides: Partial<PendingDecision> = {}): PendingDecision {
-  return {
-    kind: "priority",
-    player: 0,
-    prompt: "",
-    options: [],
-    min_count: 1,
-    max_count: 1,
-    selected: [],
-    allow_done: true,
-    context: {},
-    ...overrides,
-  };
-}
 
 describe("CardFace", () => {
   it("renders the name, type line and mana symbols", () => {
