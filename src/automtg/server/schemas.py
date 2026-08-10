@@ -126,8 +126,11 @@ class DeckImportResponse(BaseModel):
     simplified: int
     #: The mana base, called out on its own: a deck that looks like 37 lands and
     #: behaves like 34 is the most confusing thing an import can produce.
+    #: ``lands_inert`` rather than ``lands - lands_producing_mana`` is what the
+    #: screen warns about, because a fetchland makes no mana and is not broken.
     lands: int = 0
     lands_producing_mana: int = 0
+    lands_inert: int = 0
     cards: list[ImportedCardDTO] = Field(default_factory=list)
     problems: list[str] = Field(default_factory=list)
 

@@ -9,6 +9,7 @@ from ..enums import Zone
 from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
+    animate,
     attach,
     create_token,
     grant_ability,
@@ -192,6 +193,43 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid in oids:
         for keyword in keywords:
             grant_keyword(ctx.state, oid, str(keyword), source=ctx.source_oid)
+
+
+@register("animate")
+def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Becomes a 4/4 white and blue Elemental creature with vigilance until end
+    of turn. It's still a land."
+
+    One op for the whole sentence, keywords included, rather than an `animate`
+    beside a `grant_keyword`: the authoring verifier's residual gate asks each
+    *ability* which printed sentence it implements, and a creature-land's
+    animation is one sentence.  Splitting it would work and would read as two
+    claims on the same line.
+
+    Distinct from `set_pt`, which is a compensating pump over whatever the
+    permanent's power happens to be right now.  An animation names the base
+    value, so counters and anthems add to it instead of being cancelled by it.
+    """
+    power = evaluate_value(ctx, spec.get("power", 0))
+    toughness = evaluate_value(ctx, spec.get("toughness", 0))
+    types = [str(t) for t in spec.get("types", ("Creature",))]
+    subtypes = [str(t) for t in spec.get("subtypes", ())]
+    colors = [str(c) for c in spec.get("colors", ())]
+    keywords = [str(k) for k in spec.get("keywords", ())]
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Animate")
+    for oid in oids:
+        animate(
+            ctx.state,
+            oid,
+            power,
+            toughness,
+            types=types,
+            subtypes=subtypes,
+            colors=colors,
+            source=ctx.source_oid,
+        )
+        for keyword in keywords:
+            grant_keyword(ctx.state, oid, keyword, source=ctx.source_oid)
 
 
 @register("monstrosity")

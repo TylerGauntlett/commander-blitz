@@ -401,6 +401,51 @@
           },
           "effects": [
             {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add an amount of {R} equal to the greatest power among creatures you control that entered this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "alena_kessig_trapper",
+      "keywords": [
+        "first_strike",
+        "partner"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Alena, Kessig Trapper",
+      "oracle_text": "First strike\n{T}: Add an amount of {R} equal to the greatest power among creatures you control that entered this turn.\nPartner (You can have two commanders if both have partner.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -1399,6 +1444,48 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Mountain",
+                  "Plains"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Plains card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "arid_mesa",
+      "name": "Arid Mesa",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Plains card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -1803,6 +1890,52 @@
       "abilities": [
         {
           "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Island",
+                  "Swamp"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for an Island or Swamp card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bad_river",
+      "name": "Bad River",
+      "oracle_text": "This land enters tapped.\n{T}, Sacrifice this land: Search your library for an Island or Swamp card, put it onto the battlefield, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -1941,6 +2074,66 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest",
+                  "Plains",
+                  "Island"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic Forest, Plains, or Island card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bant_panorama",
+      "name": "Bant Panorama",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic Forest, Plains, or Island card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -2633,6 +2826,48 @@
         "Swamp",
         "Mountain"
       ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Swamp",
+                  "Mountain"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Mountain card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bloodstained_mire",
+      "name": "Bloodstained Mire",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Mountain card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
       "types": [
         "Land"
       ]
@@ -3516,6 +3751,162 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{W}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "W"
+              ],
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Dragon"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{W}: This land becomes a 3/4 white Dragon creature with flying until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "cave_of_the_frost_dragon",
+      "name": "Cave of the Frost Dragon",
+      "oracle_text": "If you control two or more other lands, this land enters tapped.\n{T}: Add {W}.\n{4}{W}: This land becomes a 3/4 white Dragon creature with flying until end of turn. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}{U}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "W",
+                "U"
+              ],
+              "keywords": [
+                "flying",
+                "vigilance"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}{U}: Until end of turn, this land becomes a 4/4 white and blue Elemental creature with flying and vigilance. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "celestial_colonnade",
+      "name": "Celestial Colonnade",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.\n{3}{W}{U}: Until end of turn, this land becomes a 4/4 white and blue Elemental creature with flying and vigilance. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -4989,6 +5380,59 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, Sacrifice this creature: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dawntreader_elk",
+      "mana_cost": "{1}{G}",
+      "name": "Dawntreader Elk",
+      "oracle_text": "{G}, Sacrifice this creature: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elk"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -5451,6 +5895,62 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "subtypes": [
+                "Golem"
+              ],
+              "toughness": {
+                "const": 2
+              },
+              "types": [
+                "Creature",
+                "Artifact"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}: This land becomes a 4/2 Golem artifact creature until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dread_statuary",
+      "name": "Dread Statuary",
+      "oracle_text": "{T}: Add {C}.\n{4}: This land becomes a 4/2 Golem artifact creature until end of turn. It's still a land.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -5953,6 +6453,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island",
+                  "Swamp"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "esper_panorama",
+      "name": "Esper Panorama",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -5976,6 +6536,74 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "U"
+              ],
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Faerie"
+              ],
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}: This land becomes a 2/1 blue Faerie creature with flying until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "faerie_conclave",
+      "name": "Faerie Conclave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{1}{U}: This land becomes a 2/1 blue Faerie creature with flying until end of turn. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -6233,6 +6861,142 @@
       "abilities": [
         {
           "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a Plains or Island card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "flood_plain",
+      "name": "Flood Plain",
+      "oracle_text": "This land enters tapped.\n{T}, Sacrifice this land: Search your library for a Plains or Island card, put it onto the battlefield, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Island card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "flooded_strand",
+      "name": "Flooded Strand",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Island card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}, Sacrifice this enchantment: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "font_of_fertility",
+      "mana_cost": "{G}",
+      "name": "Font of Fertility",
+      "oracle_text": "{1}{G}, Sacrifice this enchantment: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -6288,6 +7052,71 @@
       "id": "foot_headquarters",
       "name": "Foot Headquarters",
       "oracle_text": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {W} or {B}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "W"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "subtypes": [
+                "Soldier"
+              ],
+              "toughness": {
+                "const": 5
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: This land becomes a 1/5 white Soldier creature until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "forbidding_watchtower",
+      "name": "Forbidding Watchtower",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W}.\n{1}{W}: This land becomes a 1/5 white Soldier creature until end of turn. It's still a land.",
       "replacements": [
         {
           "event": "self_enters_tapped"
@@ -7155,6 +7984,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "R"
+              ],
+              "keywords": [
+                "first_strike"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Warrior"
+              ],
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}: This land becomes a 2/1 red Warrior creature with first strike until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "ghitu_encampment",
+      "name": "Ghitu Encampment",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R}.\n{1}{R}: This land becomes a 2/1 red Warrior creature with first strike until end of turn. It's still a land. (It deals combat damage before creatures without first strike.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -7170,6 +8067,50 @@
         "Dinosaur"
       ],
       "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}. When you spend this mana to cast a spell with mana value 6 or greater, draw a card."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "gilanra_caller_of_wirewood",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Gilanra, Caller of Wirewood",
+      "oracle_text": "{T}: Add {G}. When you spend this mana to cast a spell with mana value 6 or greater, draw a card.\nPartner (You can have two commanders if both have partner.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -7910,6 +8851,52 @@
       "abilities": [
         {
           "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest",
+                  "Plains"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a Forest or Plains card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "grasslands",
+      "name": "Grasslands",
+      "oracle_text": "This land enters tapped.\n{T}, Sacrifice this land: Search your library for a Forest or Plains card, put it onto the battlefield, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -8267,6 +9254,66 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Island",
+                  "Swamp",
+                  "Mountain"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "grixis_panorama",
+      "name": "Grixis Panorama",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -9274,6 +10321,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{G}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "B",
+                "G"
+              ],
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 2
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{G}: Until end of turn, this land becomes a 2/2 black and green Elemental creature with deathtouch. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "hissing_quagmire",
+      "name": "Hissing Quagmire",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B} or {G}.\n{1}{B}{G}: Until end of turn, this land becomes a 2/2 black and green Elemental creature with deathtouch. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -10220,6 +11354,66 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Swamp",
+                  "Mountain",
+                  "Forest"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "jund_panorama",
+      "name": "Jund Panorama",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -11317,6 +12511,52 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C} for each card you've drawn this turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kydele_chosen_of_kruphix",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{G}{U}",
+      "name": "Kydele, Chosen of Kruphix",
+      "oracle_text": "{T}: Add {C} for each card you've drawn this turn.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{U}",
               "op": "add_mana"
             }
@@ -11982,6 +13222,93 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{U}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "G",
+                "U"
+              ],
+              "keywords": [
+                "hexproof"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}{U}: Until end of turn, this land becomes a 3/3 green and blue Elemental creature with hexproof. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "lumbering_falls",
+      "name": "Lumbering Falls",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {U}.\n{2}{G}{U}: Until end of turn, this land becomes a 3/3 green and blue Elemental creature with hexproof. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -12520,6 +13847,48 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Swamp"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Swamp card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "marsh_flats",
+      "name": "Marsh Flats",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Swamp card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -12889,6 +14258,48 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest",
+                  "Island"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Island card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "misty_rainforest",
+      "name": "Misty Rainforest",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Island card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -13210,6 +14621,52 @@
       "abilities": [
         {
           "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Mountain",
+                  "Forest"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mountain_valley",
+      "name": "Mountain Valley",
+      "oracle_text": "This land enters tapped.\n{T}, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto the battlefield, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -13354,6 +14811,90 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Human",
+                "Soldier",
+                "Warrior",
+                "Wizard",
+                "Cleric",
+                "Rogue",
+                "Knight",
+                "Elf",
+                "Goblin",
+                "Zombie",
+                "Vampire",
+                "Spirit",
+                "Beast",
+                "Elemental",
+                "Dragon",
+                "Angel",
+                "Demon",
+                "Sphinx",
+                "Bird",
+                "Cat",
+                "Snake",
+                "Insect",
+                "Serpent",
+                "Giant",
+                "Orc",
+                "Merfolk",
+                "Druid",
+                "Shaman",
+                "Bear",
+                "Wall"
+              ],
+              "toughness": {
+                "const": 2
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}: This land becomes a 2/2 creature with all creature types until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mutavault",
+      "name": "Mutavault",
+      "oracle_text": "{T}: Add {C}.\n{1}: This land becomes a 2/2 creature with all creature types until end of turn. It's still a land.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -13453,6 +14994,66 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Mountain",
+                  "Forest",
+                  "Plains"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "naya_panorama",
+      "name": "Naya Panorama",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -13495,6 +15096,146 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}{W}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "R",
+                "W"
+              ],
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}{W}: Until end of turn, this land becomes a 2/1 red and white Elemental creature with double strike. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "needle_spires",
+      "name": "Needle Spires",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R} or {W}.\n{2}{R}{W}: Until end of turn, this land becomes a 2/1 red and white Elemental creature with double strike. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice this creature: Search your library for a basic Forest card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "neverwinter_dryad",
+      "mana_cost": "{G}",
+      "name": "Neverwinter Dryad",
+      "oracle_text": "{2}, Sacrifice this creature: Search your library for a basic Forest card, put it onto the battlefield tapped, then shuffle.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dryad"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -14721,6 +16462,48 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Island",
+                  "Swamp"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Swamp card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "polluted_delta",
+      "name": "Polluted Delta",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Swamp card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -14905,6 +16688,50 @@
       "abilities": [
         {
           "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "prismatic_vista",
+      "name": "Prismatic Vista",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -14955,6 +16782,67 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "promising_vein",
+      "name": "Promising Vein",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "subtypes": [
+        "Cave"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -15944,6 +17832,83 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Swamp",
+                  "Mountain"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a Swamp or Mountain card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "rocky_tar_pit",
+      "name": "Rocky Tar Pit",
+      "oracle_text": "This land enters tapped.\n{T}, Sacrifice this land: Search your library for a Swamp or Mountain card, put it onto the battlefield, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rograkh_son_of_rohgahh",
+      "keywords": [
+        "first_strike",
+        "menace",
+        "trample",
+        "partner"
+      ],
+      "mana_cost": "{0}",
+      "name": "Rograkh, Son of Rohgahh",
+      "oracle_text": "First strike, menace, trample\nPartner (You can have two commanders if both have partner.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Kobold",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -16538,6 +18503,48 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Island",
+                  "Mountain"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Mountain card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "scalding_tarn",
+      "name": "Scalding Tarn",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for an Island or Mountain card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -17290,6 +19297,93 @@
                 {
                   "effects": [
                     {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}{B}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "W",
+                "B"
+              ],
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}{B}: Until end of turn, this land becomes a 2/3 white and black Elemental creature with lifelink. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "shambling_vent",
+      "name": "Shambling Vent",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {B}.\n{1}{W}{B}: Until end of turn, this land becomes a 2/3 white and black Elemental creature with lifelink. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
                       "mana": "{U}",
                       "op": "add_mana"
                     }
@@ -17449,6 +19543,64 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shire_terrace",
+      "name": "Shire Terrace",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -18779,6 +20931,93 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}{W}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "G",
+                "W"
+              ],
+              "keywords": [
+                "reach"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}{W}: Until end of turn, this land becomes a 3/4 green and white Elemental creature with reach. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "stirring_wildwood",
+      "name": "Stirring Wildwood",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {W}.\n{1}{G}{W}: Until end of turn, this land becomes a 3/4 green and white Elemental creature with reach. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -21083,6 +23322,74 @@
           },
           "effects": [
             {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "G"
+              ],
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Ape"
+              ],
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}: This land becomes a 3/3 green Ape creature with trample until end of turn. It's still a land"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "treetop_village",
+      "name": "Treetop Village",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\n{1}{G}: This land becomes a 3/3 green Ape creature with trample until end of turn. It's still a land. (It can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -21841,6 +24148,65 @@
           ],
           "is_mana_ability": true,
           "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Sacrifice this land: Search your library for a land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "urza_s_cave",
+      "name": "Urza's Cave",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}, Sacrifice this land: Search your library for a land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "subtypes": [
+        "Urza's",
+        "Cave"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
           "text": "{T}: Add {C}. If you control an Urza's Power-Plant and an Urza's Tower, add {C}{C} instead."
         }
       ],
@@ -22100,6 +24466,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Swamp",
+                  "Forest"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Forest card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "verdant_catacombs",
+      "name": "Verdant Catacombs",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Swamp or Forest card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "vesuva",
@@ -22110,6 +24518,49 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "vibrant_cityscape",
+      "name": "Vibrant Cityscape",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
       "source": "auto",
       "types": [
         "Land"
@@ -22831,6 +25282,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "warped_landscape",
+      "name": "Warped Landscape",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "W"
@@ -22912,6 +25421,48 @@
       "abilities": [
         {
           "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest",
+                  "Plains"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Plains card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "windswept_heath",
+      "name": "Windswept Heath",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Forest or Plains card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -22959,6 +25510,48 @@
       "subtypes": [
         "Town"
       ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Mountain",
+                  "Forest"
+                ]
+              },
+              "tapped": false
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto the battlefield, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "wooded_foothills",
+      "name": "Wooded Foothills",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
       "types": [
         "Land"
       ]

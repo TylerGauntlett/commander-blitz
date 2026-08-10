@@ -54,7 +54,7 @@ silently producing a card that looks implemented and does nothing.
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` |
-| Modify | `pump` `grant_keyword` `set_pt` |
+| Modify | `pump` `grant_keyword` `set_pt` `animate` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` |
@@ -554,6 +554,38 @@ the hand's legal actions exactly when that mode is the one you want.
 
 Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
 wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern.
+
+## Creature-lands
+
+"Until end of turn, this land becomes a 4/4 white and blue Elemental creature
+with flying and vigilance. It's still a land."
+
+```jsonc
+{ "op": "animate",
+  "power": { "const": 4 }, "toughness": { "const": 4 },
+  "types": ["Creature"],            // added, never replacing what is printed
+  "subtypes": ["Elemental"],
+  "colors": ["W", "U"],
+  "keywords": ["flying", "vigilance"],
+  "objects": { "zone": "battlefield", "self_only": true } }
+```
+
+One op for the whole sentence, keywords included, because the residual gate asks
+each *ability* which printed line it implements and this is one line.
+
+**Not `set_pt`.** That op is a compensating pump over whatever the permanent's
+power happens to be at that moment; `animate` names the **base** value, so
+`+1/+1` counters and anthems add to it rather than being cancelled by it. In
+`characteristics._compute` the animation runs before every static, which is what
+makes that true.
+
+Nothing else is needed for the card to behave: `summoning_sick` is
+`entered_turn >= turn`, so a land that has been down since last turn attacks and
+one played this turn does not, and the mana solver reads derived types, so an
+animated land played this turn correctly stops making mana too.
+
+`{T}` is *not* part of the cost — a manland that is tapped for mana cannot then
+attack, and that falls out of the tap rather than being written down.
 
 ## Monstrosity, and holding creatures down
 

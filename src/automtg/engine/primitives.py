@@ -317,6 +317,47 @@ def pump(
     state.bump_chars()
 
 
+def animate(
+    state: GameState,
+    oid: int,
+    power: int,
+    toughness: int,
+    *,
+    types: Sequence[str] = ("Creature",),
+    subtypes: Sequence[str] = (),
+    colors: Sequence[str] = (),
+    source: int | None = None,
+) -> None:
+    """"It becomes a 4/4 Elemental creature until end of turn. It's still a land."
+
+    Stored as an until-end-of-turn effect like a pump, so the cleanup step
+    already knows to remove it -- but unlike a pump it replaces the *base* power
+    and toughness, which is what lets a +1/+1 counter and an anthem stack on top
+    of an animated land the way they do on any other creature.
+
+    Types and subtypes are added rather than replacing what is printed.  Every
+    card that says this also says "it's still a land", so the additive reading is
+    the ordinary case and there is nothing to opt into.
+    """
+    from .structs import TempEffect
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="animate",
+            power=power,
+            toughness=toughness,
+            types=tuple(types),
+            subtypes=tuple(subtypes),
+            colors=tuple(colors),
+            source=source,
+        )
+    )
+    state.bump_chars()
+
+
 def grant_keyword(state: GameState, oid: int, keyword: str, source: int | None = None) -> None:
     from .structs import TempEffect
 

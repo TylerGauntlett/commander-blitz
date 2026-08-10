@@ -36,6 +36,7 @@ const REPORT = {
   simplified: 74,
   lands: 37,
   lands_producing_mana: 34,
+  lands_inert: 3,
   cards: [
     {
       name: "Shelob, Child of Ungoliant",
@@ -145,9 +146,11 @@ test.describe("importing a Moxfield deck", () => {
     await expect(page.getByTestId("import-playable")).toHaveText("26 playable");
     await expect(page.getByTestId("import-simplified")).toHaveText("74 simplified");
 
-    // A deck that looks like 37 lands and behaves like 34 is the single most
-    // confusing thing an import can produce, so it gets its own line.
-    await expect(page.getByTestId("import-mana")).toContainText("3");
+    // A deck that looks like 37 lands and has 3 of them doing nothing at all is
+    // the single most confusing thing an import can produce, so it gets its own
+    // line. The count is `lands_inert`, not the mana gap: a fetchland makes no
+    // mana by design and is not what this warning is about.
+    await expect(page.getByTestId("import-mana")).toContainText("3 of them do nothing");
   });
 
   test("each simplified card can be expanded to see what changed", async ({ page }) => {

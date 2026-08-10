@@ -76,6 +76,21 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
 
+        # -1. animation -- "becomes a 4/4 creature until end of turn. It's still
+        #     a land."  It runs *before* everything else because it replaces the
+        #     printed base P/T rather than modifying it: put after the statics
+        #     and it would erase an anthem, put after the counters and it would
+        #     erase them too.  Here, everything below layers on top, which is
+        #     what the real layer system does with a 7b effect.
+        for temp in obj.until_eot:
+            if temp.kind != "animate":
+                continue
+            types.update(temp.types)
+            subtypes.update(temp.subtypes)
+            colors.update(temp.colors)
+            power = temp.power
+            toughness = temp.toughness
+
         # 0. type replacement -- "as long as it has a slumber counter, it's a
         #    land (it's not a creature)". Before the grants, so a card that both
         #    replaces and adds ends up with the addition.

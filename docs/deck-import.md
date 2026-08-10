@@ -78,6 +78,9 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   not a free tap. The rule is that **a generated card is never better than the
   printed one**, which is the same rule the conditional taplands follow, and
   getting it wrong silently hands the deck cheaper rocks and drawback-free duals.
+  This is a limit of the *generator*, not of the DSL: `Cost` has always carried
+  `tap`, `pay_life` and `sacrifice`, which is why the fix for fetchlands was to
+  author them rather than to loosen this rule.
 - **An ability a card grants to something else is not taken for itself.**
   Abundant Growth reads `Enchanted land has "{T}: Add one mana of any color."`
   and carries `produced_mana` for all five colours; lifting that would give the
@@ -86,9 +89,17 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   would quietly hand every imported deck a better mana base than it was built
   with.
 - **Variable power/toughness.** `*` reads as 0.
-- **Lands that produce nothing** — fetchlands, creature-lands — are inert. This
-  is the biggest playability risk in an import, so the report has a line for it:
-  *"37 lands, but 3 of them make no mana here."*
+- **Lands that produce nothing** are inert. This is the biggest playability risk
+  in an import, so the report has a line for it: *"37 lands, but 3 of them do
+  nothing here."* Note what it counts: **lands with no abilities at all**, not
+  lands with no mana ability. A fetchland makes no mana and is a perfectly good
+  land, so the mana gap would flag a working card forever.
+
+  Fetchlands and creature-lands used to be the whole of this number. They are now
+  [authored](card-authoring.md) — the templates tier translates both sentence
+  shapes — so an imported deck gets the real cards and the generator is never
+  asked. What is left is the genuinely unexpressible: a bounce land's "return an
+  Island you control to its owner's hand".
 
 Measured over the whole catalog: **32,827 rows, zero compile failures**, ~3.8%
 `full`, and 37 of the 1,081 mana-producing lands generate inert because their

@@ -199,6 +199,7 @@ def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse
         simplified=report.simplified,
         lands=report.lands,
         lands_producing_mana=report.lands_producing_mana,
+        lands_inert=report.lands_inert,
         cards=[
             ImportedCardDTO(
                 name=c.name, qty=c.qty, card_id=c.card_id,

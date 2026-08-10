@@ -278,6 +278,8 @@ export interface DeckImportResponse {
   /** Called out separately: a deck can look like 37 lands and behave like 34. */
   lands: number;
   lands_producing_mana: number;
+  /** Lands with no abilities at all. A fetchland makes no mana and is not one. */
+  lands_inert: number;
   cards: ImportedCard[];
   problems: string[];
 }

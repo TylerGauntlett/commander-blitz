@@ -71,7 +71,10 @@ export function DeckImport({ onImported }: Props) {
   };
 
   const simplified = result?.cards.filter((card) => card.origin === "partial") ?? [];
-  const manaGap = result ? result.lands - result.lands_producing_mana : 0;
+  // Not `lands - lands_producing_mana`: a fetchland makes no mana and is a
+  // perfectly good land, so that subtraction would keep flagging cards that
+  // work. What is worth a warning is a land with no abilities at all.
+  const inertLands = result?.lands_inert ?? 0;
 
   return (
     <section className="import" data-testid="deck-import">
@@ -133,11 +136,11 @@ export function DeckImport({ onImported }: Props) {
             <span data-testid="import-simplified">{result.simplified} simplified</span>
           </p>
 
-          {/* Only when it differs. "37 lands, 37 make mana" is noise. */}
-          {manaGap > 0 && (
+          {/* Only when it differs. "37 lands, none of them inert" is noise. */}
+          {inertLands > 0 && (
             <p className="import__mana" data-testid="import-mana">
-              {result.lands} lands, but {manaGap} of them make no mana here — fetchlands and
-              creature-lands are not modelled.
+              {result.lands} lands, but {inertLands} of them do nothing here — they are on the
+              board with the right name and cost, and no ability the engine can run.
             </p>
           )}
 
