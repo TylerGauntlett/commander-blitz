@@ -28,6 +28,8 @@ class CostModel(BaseModel):
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.
     discard_selector: dict[str, Any] | None = None
+    #: Cycling's "Discard this card": the source discards itself, no choice.
+    discard_self: bool = False
     pay_life: int = 0
     remove_counters: dict[str, Any] | None = None
     exile_from_graveyard: dict[str, Any] | None = None

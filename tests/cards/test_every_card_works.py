@@ -187,8 +187,15 @@ class TestActivatedAbilities:
 
         for ability in activated:
             game = build_sandbox(registry, card_id, in_hand=False)
-            oid = new_object(game.state, card_id, owner=0, zone=Zone.BATTLEFIELD).oid
-            game.state.battlefield.append(oid)
+            # Where the card has to *be* to activate this. Cycling is played
+            # from hand, so putting every card on the battlefield reported all
+            # 44 cycling lands as broken when they were only in the wrong place.
+            zone = _home_zone(ability)
+            oid = new_object(game.state, card_id, owner=0, zone=zone).oid
+            if zone is Zone.BATTLEFIELD:
+                game.state.battlefield.append(oid)
+            else:
+                game.state.players[0].hand.append(oid)
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
             _stock_the_hand(game, ability)
@@ -215,6 +222,18 @@ class TestActivatedAbilities:
             )
             game.apply(action)
             drive(game)
+
+
+def _home_zone(ability) -> Zone:
+    """The zone an activated ability is actually offered from.
+
+    The battlefield for almost everything, and it stays the default: an ability
+    that lists several zones is still exercised somewhere it works. Cycling is
+    the reason this is a question at all -- it is activated from hand, and the
+    engine only offers `Ability.active_zones`.
+    """
+    zones = ability.active_zones or (Zone.BATTLEFIELD,)
+    return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
 
 
 def _pay_the_counters(game: Game, oid: int, ability) -> None:

@@ -25,7 +25,8 @@ not a rewrite.
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
-| **Costs** | Mana, tap, untap, sacrifice, discard, pay life, remove counters, exile from graveyard |
+| **Costs** | Mana, tap, untap, sacrifice, discard, discard *this card*, pay life, remove counters, exile from graveyard |
+| **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself. Plain cycling only: typecycling fetches instead of drawing, and "when you cycle this card" needs a trigger event the engine does not have |
 | **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads |
 | **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
@@ -82,9 +83,10 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (cycling, flashback, evolve, threshold, ascend, investigate, shroud,
-skulk, intimidate — none of the 15 keywords in `engine/enums.py` covers them) are
-`/extend-dsl` jobs.
+waiting on (flashback, evolve, threshold, ascend, investigate, shroud, skulk,
+intimidate — none of the 15 keywords in `engine/enums.py` covers them) are
+`/extend-dsl` jobs. Cycling was one of them and now ships; the cards that print
+"when you cycle this card" still wait on the trigger event.
 
 ## Imported cards, which are simplified further
 

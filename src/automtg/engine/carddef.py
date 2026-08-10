@@ -44,6 +44,12 @@ class Cost:
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
+    #: Cycling's "**Discard this card**": the source discards *itself*, with no
+    #: choice about which card goes. Deliberately not ``discard: 1`` narrowed by
+    #: a selector -- ``_discard_pool`` offers the whole hand and ``ask_objects``
+    #: lets the player pick, so a Krosan Tusker could be "cycled" by pitching
+    #: something else and staying in hand.
+    discard_self: bool = False
     pay_life: int = 0
     remove_counters: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
@@ -56,6 +62,7 @@ class Cost:
             and not self.untap
             and self.sacrifice is None
             and self.discard == 0
+            and not self.discard_self
             and self.pay_life == 0
             and self.remove_counters is None
             and self.exile_from_graveyard is None
@@ -73,6 +80,8 @@ class Cost:
             parts.append("Sacrifice")
         if self.discard:
             parts.append(f"Discard {self.discard}")
+        if self.discard_self:
+            parts.append("Discard this card")
         if self.pay_life:
             parts.append(f"Pay {self.pay_life} life")
         if self.remove_counters:

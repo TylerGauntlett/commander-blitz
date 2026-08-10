@@ -311,6 +311,24 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     if kind is AbilityKind.ACTIVATED:
         if cost is None:
             raise DslError(f"{where}: activated abilities need a cost")
+        active_zones = tuple(Zone(z) for z in model.active_zones)
+        # Cycling is an ability you activate *from your hand*, so the zone list
+        # has to be read here as well as on the triggered branch -- it was
+        # pinned to the battlefield, which silently dropped the schema's own
+        # "hand" value.
+        #
+        # Anywhere but the battlefield, the cost must also *remove the source
+        # from that zone*, or the ability is an infinite engine: a card sitting
+        # in hand whose ability only costs mana could be activated again and
+        # again without ever leaving. Cycling pays for itself by discarding
+        # itself, which is exactly the property that makes it safe and is why
+        # the two arrived together.
+        if set(active_zones) - {Zone.BATTLEFIELD} and not cost.discard_self:
+            raise DslError(
+                f"{where}: an activated ability outside the battlefield needs a cost "
+                f"that removes its source from that zone (got {cost.describe()!r}); "
+                f"otherwise it can be activated repeatedly without ever leaving"
+            )
     else:
         if model.trigger is None:
             raise DslError(f"{where}: triggered abilities need a trigger")
@@ -553,6 +571,7 @@ def _compile_cost(model, where: str) -> Cost:
         sacrifice=dict(model.sacrifice) if model.sacrifice else None,
         discard=model.discard,
         discard_selector=dict(model.discard_selector) if model.discard_selector else None,
+        discard_self=model.discard_self,
         pay_life=model.pay_life,
         remove_counters=dict(model.remove_counters) if model.remove_counters else None,
         exile_from_graveyard=(

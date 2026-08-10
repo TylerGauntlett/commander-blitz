@@ -177,6 +177,17 @@ _CHANGELING = re.compile(r"^changeling$", re.I)
 #: ``Prowess`` -- a triggered ability spelled as a keyword.
 _PROWESS = re.compile(r"^prowess$", re.I)
 
+#: ``Cycling {2}`` -- an activated ability you play from your hand, whose cost
+#: discards the card itself.  `_bare` has already stripped the reminder text
+#: that spells the ability out, so only the keyword and its cost are left.
+#:
+#: Deliberately *only* plain cycling. Typecycling ("Landcycling {1}{G}") fetches
+#: instead of drawing and basic landcycling narrows what it may fetch, so both
+#: mean a different ability; and "When you cycle this card…" is a trigger the
+#: engine has no event for. All three fail this pattern and keep their cards
+#: honestly unimplemented rather than turning them into plain cyclers.
+_CYCLING = re.compile(r"^cycling (?P<cost>(?:\{[^}]+\})+)$", re.I)
+
 #: Every creature type a shipped card mentions.  A real Changeling is *all* of
 #: them, which is unbounded; this is the closed set the engine can actually be
 #: asked about, and anything outside it could not be selected for anyway.
@@ -408,6 +419,30 @@ def _translate_line(line: str, *, is_spell: bool):
             },
             Translation(effects=[], expect={}),
             "changeling",
+        )
+
+    if cycling := _CYCLING.match(bare):
+        from ...engine.mana import ManaCost
+
+        mana = cycling.group("cost")
+        try:
+            ManaCost.parse(mana)
+        except Exception:
+            # Phyrexian or snow in a cycling cost. `ManaCost.parse` raises on
+            # those, and the exception would travel out through
+            # `CardRegistry.from_paths` and stop the registry loading at boot.
+            return None
+        return (
+            "static",
+            {
+                "kind": "activated",
+                "text": line.strip(),
+                "active_zones": ["hand"],
+                "cost": {"mana": mana, "discard_self": True},
+                "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+            },
+            Translation(effects=[], expect={}),
+            "cycling",
         )
 
     if _PROWESS.match(bare):
