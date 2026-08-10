@@ -1,7 +1,7 @@
 /**
  * The whole board.
  *
- * This is the story that proves the harness. Every other component can look
+ * These are the stories that prove the harness. Every other component can look
  * plausible in a box; `Table` is the one whose correctness *is* its geometry --
  * the zoom solver measures three grid tracks, the hand fans against
  * `--card-w-base`, and the lanes band by distance from the player they belong
@@ -9,168 +9,22 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { fakeGame } from "../../testing/fakeGame";
-import { action, card, gameView, player } from "../../testing/fixtures";
+import { expect, fn, userEvent, within } from "storybook/test";
+import { expectCardsSized, expectUniqueActionIds } from "../../testing/asserts";
+import { fakeGame, idleMutation } from "../../testing/fakeGame";
+import type { Scenario } from "../../testing/scenarios";
+import * as scenarios from "../../testing/scenarios";
 import { Table } from "./Table";
 
-/** Seven cards, one land drop, nothing on the board yet. */
-function openingHand() {
-  const hand = [
-    card({
-      oid: 101,
-      zone: "hand",
-      card_id: "forest",
-      name: "Forest",
-      type_line: "Basic Land — Forest",
-      mana_cost: "",
-      mana_value: 0,
-      types: ["Land"],
-      supertypes: ["Basic"],
-      subtypes: ["Forest"],
-      produces: ["G"],
-      colors: [],
-      power: null,
-      toughness: null,
-    }),
-    card({
-      oid: 102,
-      zone: "hand",
-      card_id: "island",
-      name: "Island",
-      type_line: "Basic Land — Island",
-      mana_cost: "",
-      mana_value: 0,
-      types: ["Land"],
-      supertypes: ["Basic"],
-      subtypes: ["Island"],
-      produces: ["U"],
-      colors: [],
-      power: null,
-      toughness: null,
-    }),
-    card({
-      oid: 103,
-      zone: "hand",
-      card_id: "llanowar_elves",
-      name: "Llanowar Elves",
-      type_line: "Creature — Elf Druid",
-      mana_cost: "{G}",
-      mana_value: 1,
-      power: 1,
-      toughness: 1,
-      subtypes: ["Elf", "Druid"],
-    }),
-    card({
-      oid: 104,
-      zone: "hand",
-      card_id: "cultivate",
-      name: "Cultivate",
-      type_line: "Sorcery",
-      mana_cost: "{2}{G}",
-      mana_value: 3,
-      types: ["Sorcery"],
-      subtypes: [],
-      power: null,
-      toughness: null,
-      oracle_text: "Search your library for up to two basic land cards.",
-    }),
-    card({
-      oid: 105,
-      zone: "hand",
-      card_id: "counterspell",
-      name: "Counterspell",
-      type_line: "Instant",
-      mana_cost: "{U}{U}",
-      mana_value: 2,
-      types: ["Instant"],
-      subtypes: [],
-      colors: ["U"],
-      power: null,
-      toughness: null,
-      oracle_text: "Counter target spell.",
-    }),
-    card({
-      oid: 106,
-      zone: "hand",
-      card_id: "sol_ring",
-      name: "Sol Ring",
-      type_line: "Artifact",
-      mana_cost: "{1}",
-      mana_value: 1,
-      types: ["Artifact"],
-      subtypes: [],
-      colors: [],
-      power: null,
-      toughness: null,
-      produces: ["C"],
-    }),
-    card({
-      oid: 107,
-      zone: "hand",
-      card_id: "thragtusk",
-      name: "Thragtusk",
-      type_line: "Creature — Beast",
-      mana_cost: "{4}{G}",
-      mana_value: 5,
-      power: 5,
-      toughness: 3,
-      subtypes: ["Beast"],
-    }),
-  ];
-
-  const commander = card({
-    oid: 1,
-    zone: "command",
-    card_id: "aesi_tyrant_of_gyre_strait",
-    name: "Aesi, Tyrant of Gyre Strait",
-    type_line: "Legendary Creature — Serpent",
-    mana_cost: "{4}{G}{U}",
-    mana_value: 6,
-    colors: ["G", "U"],
-    power: 5,
-    toughness: 5,
-    subtypes: ["Serpent"],
-    supertypes: ["Legendary"],
-    is_commander: true,
-  });
-
-  const state = gameView({
-    players: [
-      player({ hand, hand_count: hand.length, library_count: 92, command: [commander] }),
-      player({
-        pid: 1,
-        name: "AI 1",
-        deck_id: "edgar",
-        hand: null,
-        hand_count: 7,
-        library_count: 92,
-        hand_reasons: null,
-      }),
-    ],
-  });
-
-  // The client never builds an action; it echoes an id back. So a story's action
-  // list has to be one the engine could plausibly have sent for this position.
-  const actions = [
-    action({ id: "a0-pass", kind: "pass", label: "Pass", base_label: "Pass" }),
-    action({
-      id: "a1-play_land",
-      kind: "play_land",
-      label: "Play Forest",
-      base_label: "Play Forest",
-      source_oid: 101,
-    }),
-    action({
-      id: "a2-play_land",
-      kind: "play_land",
-      label: "Play Island",
-      base_label: "Play Island",
-      source_oid: 102,
-    }),
-  ];
-
-  return { state, actions };
+/** A scenario, wired into the props `Table` takes. */
+function board(scenario: Scenario, game = {}) {
+  return {
+    session: { gameId: "story", seat: 0 },
+    state: scenario.state,
+    game: fakeGame({ state: scenario.state, actions: scenario.actions, ...game }),
+    onQuit: fn(),
+    onRematch: fn(),
+  };
 }
 
 const meta = {
@@ -182,16 +36,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const OpeningHand: Story = {
-  args: (() => {
-    const { state, actions } = openingHand();
-    return {
-      session: { gameId: "story", seat: 0 },
-      state,
-      game: fakeGame({ state, actions }),
-      onQuit: () => undefined,
-      onRematch: () => undefined,
-    };
-  })(),
+  args: board(scenarios.openingHand()),
 
   /*
    * The harness's own test.
@@ -211,17 +56,180 @@ export const OpeningHand: Story = {
     const base = Number.parseFloat(
       getComputedStyle(document.documentElement).getPropertyValue("--card-w-base"),
     );
-    expect(
-      base,
-      "--card-w-base must resolve to real pixels, not the clamp() text",
-    ).toBeGreaterThan(60);
+    expect(base, "--card-w-base must resolve to pixels, not the clamp() text").toBeGreaterThan(
+      60,
+    );
 
-    const hand = canvasElement.querySelectorAll(".hand .card");
-    expect(hand).toHaveLength(7);
-    const width = hand[0].getBoundingClientRect().width;
-    expect(
-      width,
-      "a card at the solver's 52px floor means the zoom measured nothing",
-    ).toBeGreaterThan(60);
+    expect(canvasElement.querySelectorAll(".hand .card")).toHaveLength(7);
+    expectCardsSized(canvasElement, ".hand .card");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+export const EarlyBoard: Story = {
+  args: board(scenarios.earlyBoard()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+export const DeclareAttackers: Story = {
+  args: board(scenarios.combatDeclareAttackers()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    // Three attackers x two defenders is six actions, and the panel must reach
+    // all of them without rendering any twice -- the case that only exists
+    // because there is more than one legal defender.
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+export const DeclareBlockers: Story = {
+  args: board(scenarios.combatDeclareBlockers()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+export const StackThreeDeep: Story = {
+  args: board(scenarios.stackThreeDeep()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByTestId("stack-panel");
+    // Top first: the counter and the trigger are above the creature spell.
+    expect(stack.textContent).toContain("Rhystic Study");
+  },
+};
+
+export const FourPlayerPod: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    // Three opponents plus the viewer, each with a life total on screen.
+    for (const pid of [0, 1, 2, 3]) {
+      expect(canvasElement.querySelector(`[data-testid="life-${pid}"]`)).not.toBeNull();
+    }
+  },
+};
+
+export const CrowdedBoard: Story = {
+  args: board(scenarios.crowdedBoard()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    // Twelve basics collapse into two counted piles rather than twelve cards.
+    const stacks = canvasElement.querySelectorAll("[data-stack-count]");
+    expect(stacks.length).toBeGreaterThan(0);
+  },
+};
+
+/**
+ * A modal owns the decision.
+ *
+ * The invariant with teeth: the dialog renders the ids and the panel stands
+ * down, so the mulligan buttons exist exactly once between them rather than
+ * once each.
+ */
+export const ModalDecision: Story = {
+  args: board(scenarios.mulligan()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    expect(dialog.dataset.decisionKind).toBe("mulligan");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+export const GameOver: Story = {
+  args: board(scenarios.gameOver(0)),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const over = await canvas.findByTestId("game-over");
+    expect(over.dataset.result).toBe("win");
+  },
+};
+
+export const Defeat: Story = {
+  args: board(scenarios.gameOver(1)),
+};
+
+/**
+ * A gesture reaching the server.
+ *
+ * The client never builds an action; it echoes an id back. This is that contract
+ * as a test: click the land in hand, and the exact id the engine sent is what
+ * goes out.
+ */
+export const PlayingALand: Story = {
+  args: (() => {
+    const scenario = scenarios.openingHand();
+    return board(scenario, { act: idleMutation(fn()) });
+  })(),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    // By id, not by label. A row for a card draws the *card* -- "Forest", with
+    // its type line -- and never the action's "Play Forest" text, which is the
+    // whole point of the grouped list. `data-action-id` is the contract.
+    const play = canvasElement.querySelector<HTMLElement>('[data-action-id="a1-play_land"]');
+    expect(play, "the panel never rendered the land action").not.toBeNull();
+    await userEvent.click(play as HTMLElement);
+    expect(args.game.act.mutate).toHaveBeenCalledWith("a1-play_land");
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* The zoom, deliberately unlocked                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The half of the zoom that pure tests cannot reach.
+ *
+ * `tests/zoomFit.test.ts` covers the solver as a function. What it cannot cover
+ * is the measuring: whether the three grid tracks report real sizes and whether
+ * the solved width is written back where the cards can see it. That needs a
+ * browser, and it needs the feature switched on -- every other story pins it,
+ * for the same reason `e2e/helpers.ts` does.
+ */
+export const ZoomCrowdedBoard: Story = {
+  args: board(scenarios.crowdedBoard()),
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const table = await canvas.findByTestId("table");
+    const zoom = Number.parseFloat(table.getAttribute("data-zoom-board") ?? "0");
+    expect(zoom, "the solver never reported a board scale").toBeGreaterThan(0);
+    expectCardsSized(canvasElement, ".lane .card");
+  },
+};
+
+export const ZoomFifteenCardHand: Story = {
+  args: (() => {
+    const scenario = scenarios.openingHand();
+    // Eight more cards than the fan was designed around, which is the crowded
+    // branch of `solveHandCardWidth`.
+    const hand = scenario.state.players[0].hand ?? [];
+    const crowded = Array.from({ length: 15 }, (_, i) => ({
+      ...hand[i % hand.length],
+      oid: 500 + i,
+    }));
+    scenario.state.players[0].hand = crowded;
+    scenario.state.players[0].hand_count = crowded.length;
+    return board(scenario);
+  })(),
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const table = await canvas.findByTestId("table");
+    expect(canvasElement.querySelectorAll(".hand .card")).toHaveLength(15);
+    const zoom = Number.parseFloat(table.getAttribute("data-zoom-hand") ?? "0");
+    expect(zoom, "the hand solver never reported a scale").toBeGreaterThan(0);
   },
 };
