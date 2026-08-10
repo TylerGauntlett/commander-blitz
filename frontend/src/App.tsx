@@ -84,20 +84,17 @@ export function App() {
     setRoute({ kind: "lobby", pod: adoptPod(code, token) });
   }, []);
 
-  const create = useCallback(
-    (name: string) => {
-      createPod.mutate(
-        { name },
-        { onSuccess: (made) => enter(made.pod.code, made.player_token) },
-      );
-    },
-    [createPod, enter],
-  );
+  const create = useCallback(() => {
+    // No name: the door does not ask for one and the server names the chair
+    // after its seat. You say who you are from the plate, once there is a
+    // table for it to mean anything to.
+    createPod.mutate({}, { onSuccess: (made) => enter(made.pod.code, made.player_token) });
+  }, [createPod, enter]);
 
   const join = useCallback(
-    (code: string, name: string) => {
+    (code: string) => {
       joinPod.mutate(
-        { code, name },
+        { code },
         {
           onSuccess: (joined) => enter(joined.pod.code, joined.player_token),
           onError: (caught) => {

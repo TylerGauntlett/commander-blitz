@@ -81,10 +81,10 @@ a card, never enough to decide legality.
 | `GET` | `/api/games/{id}/events?since=` | Event slice for the log |
 | `GET` | `/api/games/{id}/debug` | Full state, hidden zones included. **Development only** |
 | `DELETE` | `/api/games/{id}` | Discard the session |
-| `POST` | `/api/pods` | Open a pod and take seat 0. Body: `{name, deck_id?, seed?}` -> `{player_token, pod}` |
+| `POST` | `/api/pods` | Open a pod and take seat 0. Body: `{name?, deck_id?, seed?}` -> `{player_token, pod}` |
 | `POST` | `/api/pods/{code}/join` | Take a chair. Passing your existing token is how reconnecting works |
 | `GET` | `/api/pods/{code}?since=&timeout=` | The pod, blocking until it changes. Token optional |
-| `PATCH` | `/api/pods/{code}/seat` | Your own chair: `{deck_id?, locked?}` |
+| `PATCH` | `/api/pods/{code}/seat` | Your own chair: `{deck_id?, locked?, name?}` |
 | `PATCH` | `/api/pods/{code}/seats/{i}` | A chair that is not yours. Host only. `{action, deck_id?, agent?}` |
 | `POST` | `/api/pods/{code}/start` | Deal the pod. Host only |
 | `POST` | `/api/pods/{code}/leave` | Give up your chair |
@@ -183,6 +183,16 @@ every seat that is not the viewer's own, `deck` is `null` until that seat locks 
 CPU is always fully visible — the host chose its deck. No token, and no other player's
 `player_id`, appears in any view.
 
+**Names are optional everywhere and settled from the seat plate.** The front door
+asks for a code, not a name, so `POST /pods` and `/join` normally carry none and an
+unnamed chair is called `Player {n}` after its seat — not `"You"`, which is only true
+for one reader and would have the rest of the pod waiting on somebody called You.
+`PATCH /seat` takes a `name`, which is how the lobby renames. It is deliberately
+**not** gated on `locked`: the lock commits a *deck*, and making somebody unlock —
+which un-readies the pod for everybody else — to fix a typo would be a worse rule
+than the one it enforced. It *is* refused after the deal, by the same
+`_require_open` every other seat change goes through.
+
 `POST /pods/{code}/start` compacts the four chairs down to the seats that are actually
 filled and hands them to `SessionRegistry.create`, so a pod holding
 `[you, empty, cpu, empty]` becomes a **two-player game, not a four-player game with two
@@ -200,6 +210,7 @@ Pod errors carry a machine-readable code in the same shape deck import establish
 | `pod_full` | 409 | somebody took the last chair first |
 | `already_started` | 409 | the pod dealt; `game_id` is in the detail, so you are routed to the table rather than bounced |
 | `not_ready` | 409 | a seat has not locked in, or you have not chosen a deck |
+| `bad_name` | 400 | a name of nothing but whitespace |
 | `unknown_deck` | 400 | no such deck |
 | `pod_closed` | 410 | everybody left |
 

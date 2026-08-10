@@ -237,6 +237,19 @@ def frontend_stages(runner: str) -> list[Stage]:
     ]
 
 
+def readable(text: str) -> str:
+    """Whatever the console can actually print.
+
+    The decode side is handled by ``DECODE``; this is the *encode* side, and it
+    bites for the same reason. Windows attaches a cp1252 stdout, `biome` prints
+    box-drawing rules and a U+240D for every carriage return it objects to, and
+    `print` raises rather than dropping a glyph -- so the gate reported a failure
+    and then crashed instead of saying what it was.
+    """
+    encoding = sys.stdout.encoding or "utf-8"
+    return text.encode(encoding, errors="replace").decode(encoding, errors="replace")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--quick", action="store_true", help="skip the slow stages")
@@ -266,7 +279,7 @@ def main() -> int:
             continue
         print(f"FAIL ({elapsed:.1f}s)\n")
         if output:
-            print(output[-4000:])
+            print(readable(output[-4000:]))
         print(f"\nverification failed at: {stage.name}")
         return 1
 

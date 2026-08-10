@@ -336,6 +336,40 @@ class TestLockIn:
         assert exc.value.code == "unknown_deck"
 
 
+class TestNaming:
+    def test_a_rename_moves_both_records(self, pods):
+        """``PodSeat.name`` and ``PodPlayer.name`` are two fields, one fact.
+
+        ``view_for`` and the ``SeatConfig`` built at deal time read the seat's;
+        the player's is the identity record the seat was seeded from. Letting
+        them drift would leave the pod holding two answers to "who is this",
+        and nothing would ever reconcile them.
+        """
+        pod, (host,) = seated(pods, guests=0)
+        pods.update_seat(pod, host.player_id, name="Tyler")
+        assert pod.seats[0].name == "Tyler"
+        assert pod.players[host.player_id].name == "Tyler"
+
+    def test_an_unnamed_chair_is_numbered(self, pods):
+        pod, _host = pods.create()
+        assert pod.seats[0].name == "Player 1"
+        _, _guest = pods.join(pod.code)
+        assert pod.seats[1].name == "Player 2"
+
+    def test_a_name_of_nothing_but_space_is_refused(self, pods):
+        pod, (host,) = seated(pods, guests=0)
+        with pytest.raises(PodError) as exc:
+            pods.update_seat(pod, host.player_id, name="  	 ")
+        assert exc.value.code == "bad_name"
+
+    def test_a_long_name_is_cut_rather_than_refused(self, pods):
+        """Pydantic refuses one past the cap at the wire; anything that reaches
+        the registry directly -- a script, a future route -- is trimmed."""
+        pod, (host,) = seated(pods, guests=0)
+        pods.update_seat(pod, host.player_id, name="x" * 40)
+        assert len(pod.seats[0].name) == L.MAX_NAME_LENGTH
+
+
 class TestStart:
     def _ready_pod(self, pods, guests=1):
         pod, players = seated(pods, guests=guests)

@@ -44,6 +44,13 @@ export const MIN_CARD_W = 52;
  * Capping here also keeps every `--fs-*` clamp in its linear range: `--pip` first
  * hits its ceiling at about 182px and `--fs-tp` at 202px. The ceilings stay
  * unbound backstops, which is what `cards.css` says they are for.
+ *
+ * The pod lobby's card is wider than this -- up to 296px -- and renders its name
+ * at 13.9px against the rail's 13.5px. That does not break the hierarchy above,
+ * because the hierarchy is about *one screen*: the board and the preview rail
+ * share a viewport and compete for the same eye, while the lobby and the table
+ * are never on screen together. It is the same argument `docs/mockup-fidelity.md`
+ * makes for the lobby keeping its own `.podcard` box.
  */
 export const MAX_CARD_W = 150;
 

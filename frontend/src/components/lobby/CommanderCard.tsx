@@ -93,5 +93,19 @@ export function CommanderCard({ cardId, variant = "big", placeholder = "Loading"
   if (!cardId || !query.data) {
     return <CardBack mark={placeholder} tone="empty" testId="card-loading" />;
   }
-  return <StaticCard card={cardViewFor(query.data)} variant={variant} />;
+  /*
+    `podcard` is what `lobby.css` scopes the enlarged card's box on.
+
+    `cards.css`'s `.card--big` is the *preview rail's* card: width-driven with
+    `height: 100%`, and it only holds its shape because `.rail--right .preview`
+    gives it a fixed frame. The lobby has no such container, so the same rule
+    collapses to content sizing and a card ends up as tall as its own rules
+    text. `lobby.css` re-boxes it under this class.
+
+    Emitted unconditionally rather than passed per call site: this component is
+    the lobby's only door to `StaticCard`, so a class it always adds cannot be
+    forgotten -- and it matches nothing on `variant="board"`, which the deck
+    catalogue's rack uses and which is already correct.
+  */
+  return <StaticCard card={cardViewFor(query.data)} variant={variant} className="podcard" />;
 }

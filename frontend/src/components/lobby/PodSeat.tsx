@@ -14,8 +14,9 @@
  * meta row, not a full-width "Details" button competing with the deck's name.
  */
 
+import { useState } from "react";
 import type { PodSeatView, PodView } from "../../api/types";
-import { cpuNumber, firstEmpty, seatLabel } from "../../logic/lobby";
+import { MAX_NAME_LENGTH, cpuNumber, firstEmpty, seatLabel } from "../../logic/lobby";
 import { ManaSymbol } from "../game/ManaSymbol";
 import { CardBack } from "./CardBack";
 import { CommanderCard } from "./CommanderCard";
@@ -32,6 +33,65 @@ interface Props {
   onClear: (index: number) => void;
   onInvite: () => void;
   onDossier: (deckId: string, forSeat: number | null) => void;
+  /** Your own seat only. Renaming any other chair is refused by the server. */
+  onRename: (name: string) => void;
+}
+
+/**
+ * Your name, on your own plate.
+ *
+ * A local draft rather than a controlled read of `seat.name`: the pod
+ * re-renders on every long-poll return, and a field that reset itself mid-word
+ * would be unusable. Nobody else can change your name, so there is nothing for
+ * the draft to drift from.
+ *
+ * Committed on blur and on Enter. A PATCH per keystroke would bump the pod's
+ * version for every letter and wake three other browsers out of their long
+ * polls to be told you are still typing.
+ */
+function SeatName({
+  name,
+  disabled,
+  onRename,
+}: {
+  name: string | null;
+  disabled: boolean;
+  onRename: (name: string) => void;
+}) {
+  const [draft, setDraft] = useState(name ?? "");
+
+  const commit = () => {
+    const trimmed = draft.trim();
+    // An emptied field is a slip, not an instruction: the server refuses a
+    // blank name, and there would be nothing useful to show in its place.
+    if (!trimmed) {
+      setDraft(name ?? "");
+      return;
+    }
+    setDraft(trimmed);
+    if (trimmed !== name) onRename(trimmed);
+  };
+
+  return (
+    <input
+      className="plate__name"
+      data-testid="your-name"
+      aria-label="Your name at this table"
+      value={draft}
+      maxLength={MAX_NAME_LENGTH}
+      spellCheck={false}
+      placeholder="Your name"
+      disabled={disabled}
+      onChange={(event) => setDraft(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
 }
 
 export function PodSeat({
@@ -45,6 +105,7 @@ export function PodSeat({
   onClear,
   onInvite,
   onDossier,
+  onRename,
 }: Props) {
   const index = seat.index;
   const you = seat.is_you;
@@ -192,7 +253,14 @@ export function PodSeat({
 
       <div className="plate">
         <div className="plate__who">
-          <span className="plate__n">{label.title}</span>
+          {/* The one editable thing on any plate. `seatLabel` still says "You"
+              for your own chair, which is right for the ready track's tooltip
+              -- but here the question is what the *other* three people see. */}
+          {you ? (
+            <SeatName name={seat.name} disabled={disabled} onRename={onRename} />
+          ) : (
+            <span className="plate__n">{label.title}</span>
+          )}
           <span className="plate__tag">{label.sub}</span>
         </div>
 

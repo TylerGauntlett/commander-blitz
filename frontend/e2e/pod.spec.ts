@@ -25,11 +25,24 @@ async function open(context: BrowserContext): Promise<Page> {
   return page;
 }
 
+/**
+ * Say who you are, from your own seat plate.
+ *
+ * The front door has no name field: a name is something you say to a table,
+ * and at the door there is not one yet.
+ */
+async function rename(page: Page, who: string): Promise<void> {
+  const field = page.getByTestId("your-name");
+  await field.fill(who);
+  await field.press("Enter");
+  await expect(field).toHaveValue(who);
+}
+
 async function host(page: Page, name: string): Promise<string> {
   await page.goto("/");
-  await page.getByTestId("player-name").fill(name);
   await page.getByTestId("create-pod").click();
   await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+  await rename(page, name);
   const code = await page.getByTestId("pod-code-chip").textContent();
   expect(code).toMatch(/^[A-Z]+-\d{4}$/);
   return code as string;
@@ -37,10 +50,10 @@ async function host(page: Page, name: string): Promise<string> {
 
 async function join(page: Page, code: string, name: string): Promise<void> {
   await page.goto("/");
-  await page.getByTestId("player-name").fill(name);
   await page.getByTestId("pod-code").fill(code);
   await page.getByTestId("join-pod").click();
   await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+  await rename(page, name);
 }
 
 async function pick(page: Page, deckId: string): Promise<void> {
@@ -49,6 +62,74 @@ async function pick(page: Page, deckId: string): Promise<void> {
   await page.getByTestId(`deck-${deckId}`).locator(".pick__card").click();
   await expect(page.getByTestId("deck-catalog")).toBeHidden();
 }
+
+test.describe("the row of four is a hand", () => {
+  /**
+   * The test that was missing when this shipped.
+   *
+   * `cards.css`'s `.card--big` promises "every enlarged card is the same size,
+   * whatever is on it" -- but the promise is kept by the *container*, and the
+   * lobby had none, so each card came out as tall as its own rules text. A
+   * face-up seat and a face-down `.back` have to be the same rectangle or
+   * `.podhand__felt` stops landing under the cards' shoulders.
+   *
+   * Width alone passes even with the bug: `.slot` has a definite width. Height
+   * and top are the assertions that bite.
+   */
+  test("every seat is the same rectangle, face up or face down", async ({ page }) => {
+    await setInstant(page);
+    await page.goto("/");
+    await page.getByTestId("create-pod").click();
+    await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+    // Seat 1 becomes a CPU with a deck of its own, so two different card faces
+    // are up; seats 2 and 3 stay empty and are the `.back` control.
+    await page.getByTestId("opponents-1").click();
+    await pick(page, "aesi");
+    await expect(page.getByTestId("seat-1-deck")).toBeVisible();
+
+    const boxes = await page.locator(".slot__card").evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          w: Math.round(rect.width),
+          h: Math.round(rect.height),
+          top: Math.round(rect.top),
+        };
+      }),
+    );
+
+    expect(boxes).toHaveLength(4);
+    for (const box of boxes) {
+      expect(box.w).toBe(boxes[0].w);
+      expect(box.h).toBe(boxes[0].h);
+      expect(box.top).toBe(boxes[0].top);
+      expect(box.h / box.w).toBeCloseTo(1.4, 1);
+    }
+  });
+
+  test("the dossier's card leaves room for the prose beside it", async ({ page }) => {
+    await setInstant(page);
+    await page.goto("/");
+    await page.getByTestId("create-pod").click();
+    await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+    await pick(page, "zurgo");
+    await page.getByTestId("seat-0").locator(".slot__card").click();
+    await page.getByTestId("deck-dossier").waitFor();
+    await expect(page.getByText(/How it plays/i)).toBeVisible();
+
+    const overflow = await page
+      .locator(".dos__body")
+      .evaluate((node) => node.scrollWidth - node.clientWidth);
+    expect(overflow, "the dossier scrolls sideways").toBeLessThanOrEqual(1);
+
+    // The overflow check alone would also pass if the panel merely clipped.
+    // This is the fact the panel exists for: the prose column got the room.
+    const column = await page
+      .locator(".dos__col")
+      .evaluate((node) => node.getBoundingClientRect().width);
+    expect(column).toBeGreaterThan(300);
+  });
+});
 
 test.describe("a pod with two people in it", () => {
   test("the guest's deck stays face-down until they lock in", async ({ browser }) => {
@@ -64,7 +145,10 @@ test.describe("a pod with two people in it", () => {
     await expect(hostPage.getByTestId("seat-1")).toHaveAttribute("data-kind", "human", {
       timeout: 20_000,
     });
-    await expect(hostPage.getByTestId("seat-1").getByText("Priya")).toBeVisible();
+    await expect(hostPage.getByTestId("seat-1").getByText("Priya")).toBeVisible({
+      // Arrives on the rename's version bump, one poll after the join's.
+      timeout: 20_000,
+    });
 
     // The guest picks a deck. The host must not learn which.
     await pick(guestPage, "edgar");
@@ -196,6 +280,9 @@ test.describe("a pod with two people in it", () => {
 
     await expect(guestPage.getByTestId("seat-1")).toHaveAttribute("data-kind", "human");
     await expect(guestPage.getByTestId("seat-1-deck")).toHaveText("Edgar Markov");
+    // The rejoin short-circuits before the name is read, which used to be a
+    // silent surprise and is now a promise.
+    await expect(guestPage.getByTestId("your-name")).toHaveValue("Priya");
     // And the pod still holds two people, not three.
     await expect(hostPage.getByTestId("seat-2")).toHaveAttribute("data-kind", "empty");
 
@@ -212,6 +299,61 @@ test.describe("a pod with two people in it", () => {
     const code = await host(hostPage, "Tyler");
     await guestPage.goto(`/?join=${code}`);
     await expect(guestPage.getByTestId("pod-code")).toHaveValue(code);
+
+    await hostContext.close();
+    await guestContext.close();
+  });
+
+  test("a name typed on your own plate reaches the other browser", async ({ browser }) => {
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+    const hostPage = await open(hostContext);
+    const guestPage = await open(guestContext);
+
+    const code = await host(hostPage, "Tyler");
+    await join(guestPage, code, "Priya");
+
+    // What the *other* three people see. Your own plate shows the field.
+    await expect(guestPage.getByTestId("seat-0").getByText("Tyler")).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(hostPage.getByTestId("seat-1").getByText("Priya")).toBeVisible({
+      timeout: 20_000,
+    });
+
+    await hostContext.close();
+    await guestContext.close();
+  });
+
+  test("the front door does not ask for a name", async ({ page }) => {
+    // Pins the removal: the mockup's door is two actions and a code field, and
+    // this is the assertion that stops one creeping back in.
+    await setInstant(page);
+    await page.goto("/");
+    await page.getByTestId("home").waitFor();
+    await expect(page.getByTestId("player-name")).toHaveCount(0);
+  });
+
+  test("renaming still works after you have locked in", async ({ browser }) => {
+    // The deliberate non-gate. The lock is a commitment to a *deck*, and making
+    // somebody unlock -- which un-readies the pod for everybody -- to fix a typo
+    // in their own name would be a worse rule than the one it enforced.
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+    const hostPage = await open(hostContext);
+    const guestPage = await open(guestContext);
+
+    const code = await host(hostPage, "Tyler");
+    await join(guestPage, code, "Priya");
+    await pick(guestPage, "edgar");
+    await guestPage.getByTestId("lock-in").click();
+    await expect(guestPage.getByTestId("stamp-1")).toBeVisible();
+
+    await rename(guestPage, "Priya S");
+    await expect(guestPage.getByTestId("stamp-1")).toBeVisible();
+    await expect(hostPage.getByTestId("seat-1").getByText("Priya S")).toBeVisible({
+      timeout: 20_000,
+    });
 
     await hostContext.close();
     await guestContext.close();

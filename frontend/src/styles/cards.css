@@ -375,6 +375,14 @@
  * below it move as the pointer crossed the board. So the card fills a fixed
  * frame instead, and the rules box is the part that gives: it takes the slack
  * and scrolls when a card has more text than the frame can show.
+ *
+ * BUT THE FRAME IS THE CONTAINER'S, NOT THIS RULE'S. `width: 100%` and
+ * `height: auto` only hold a shape where something above supplies one -- here
+ * `.rail--right .preview { height: clamp(240px, 34vh, 420px) }` in `board.css`.
+ * Drop this card into a box with no definite height and it silently reverts to
+ * exactly the content sizing described above. The pod lobby did, and its seat
+ * cards came out at four different heights; `lobby.css` now re-boxes them under
+ * `.podcard`. Anywhere else this variant goes needs a frame of its own.
  */
 .card--big {
   flex: 1 1 auto;

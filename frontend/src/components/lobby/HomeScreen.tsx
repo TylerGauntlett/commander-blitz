@@ -6,6 +6,11 @@
  * because those are things you decide *with* the people you are playing against
  * and there is no reason to decide them before they arrive.
  *
+ * That included a name field, briefly. It is gone for the same reason and a
+ * sharper one: a name is something you say *to a table*, and there is no table
+ * here yet. It lives on your own seat plate now, where the people it is for can
+ * already see it.
+ *
  * The fan of four card backs is the pod before anybody has chosen anything,
  * which is what the whole flow is about.
  */
@@ -31,8 +36,8 @@ interface Props {
   /** Prefilled from `?join=CODE` when somebody followed an invite link. */
   initialCode?: string;
   deckCount: number;
-  onCreate: (name: string) => void;
-  onJoin: (code: string, name: string) => void;
+  onCreate: () => void;
+  onJoin: (code: string) => void;
   busy: boolean;
   error: Error | null;
   onBrowse: () => void;
@@ -51,13 +56,9 @@ export function HomeScreen({
   // at boot. A `useEffect` that pushed it into state later would arrive after
   // the field had already mounted empty -- and would fight anybody typing.
   const [code, setCode] = useState(() => normaliseCode(initialCode));
-  // Kept in the door rather than asked for later: the first thing everybody
-  // else in the pod sees is this name, and asking for it after they can already
-  // see your chair is the wrong order.
-  const [name, setName] = useState("");
 
   const join = () => {
-    if (looksLikeCode(code)) onJoin(normaliseCode(code), name.trim() || "Player");
+    if (looksLikeCode(code)) onJoin(normaliseCode(code));
   };
 
   return (
@@ -88,27 +89,13 @@ export function HomeScreen({
             engine or with friends, and deal when every card is up.
           </p>
 
-          <label className="who">
-            <span className="who__l">You are</span>
-            <input
-              className="who__in"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Your name"
-              maxLength={24}
-              spellCheck={false}
-              data-testid="player-name"
-              aria-label="Your name"
-            />
-          </label>
-
           <div className="hero__acts">
             <motion.button
               type="button"
               className="big"
               data-testid="create-pod"
               disabled={busy}
-              onClick={() => onCreate(name.trim() || "You")}
+              onClick={onCreate}
               whileHover={{ y: -3, scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               transition={bouncy}

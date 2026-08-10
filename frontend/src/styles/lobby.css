@@ -73,6 +73,75 @@
   color: var(--text-faint);
 }
 
+/* The lobby's enlarged card ----------------------------------------------
+ *
+ * `cards.css` has exactly one `.card--big` and it is built for the preview
+ * rail: a width-driven box with `height: 100%`, held to a fixed frame by
+ * `.rail--right .preview`'s `height: clamp(240px, 34vh, 420px)`. That rule's
+ * own comment promises "every enlarged card is the same size, whatever is on
+ * it" -- but the promise is kept by the *container*, and the lobby has none.
+ * So the same rule collapsed to content sizing: a seat's card was as tall as
+ * its own rules text, and the dossier's blew out the `auto` track beside it.
+ *
+ * `mockups/flow/02-face-up.html` calls this out by name and takes the other
+ * trade: "a face-up seat and a face-down `.back` have to be the same
+ * rectangle: the moment they are not, the row stops reading as a hand and
+ * `.hand__felt` no longer lands under the cards' shoulders". So the lobby's
+ * card takes the preview's *treatment* and `.card`'s own *box*.
+ *
+ * Scoped by the class `CommanderCard` puts on `StaticCard` rather than by a
+ * `.slot__card`/`.dos__card` descendant selector: this is a property of the
+ * lobby's card, not of the box it happens to land in.
+ */
+
+.card--big.podcard {
+  /* `.card`'s own box, restated. Not `aspect-ratio`, which computes the same
+     thing here and would be a second way of saying one fact. */
+  flex: 0 0 auto;
+  width: var(--card-w);
+  height: calc(var(--card-w) * 1.4);
+  min-height: 0;
+}
+
+/*
+ * The type scale, back to ratios.
+ *
+ * `.face--big` pins `--card-w: 150px` on the face *itself*, and no ancestor
+ * beats a declaration on the element -- which is also why `.dos__top`'s own
+ * `--card-w` reached nothing but the loading placeholder. The rail can afford
+ * that fiction because its box is not derived from `--card-w`; here the box
+ * *is* `--card-w`, so a 296px seat card was drawing its frame, its pips and
+ * its scrims at 150px.
+ *
+ * The ratios are the mockup's, and they are the rail's absolute numbers
+ * expressed as fractions of the top of `.podhand`'s clamp: 296 x .047 = 13.9
+ * against the rail's 13.5px name. So the row reads at the size the preview was
+ * tuned at, and stays legible at the bottom of the clamp where an absolute
+ * scale would be half again too big.
+ */
+.podcard .face--big {
+  --card-w: inherit;
+  --fs-nm: clamp(10px, calc(var(--card-w) * 0.047), 14px);
+  --fs-tp: clamp(8.5px, calc(var(--card-w) * 0.0385), 11.5px);
+  --fs-tx: clamp(8.5px, calc(var(--card-w) * 0.042), 12.5px);
+  --fs-pt: clamp(10px, calc(var(--card-w) * 0.0455), 14px);
+  --fs-chip: clamp(8.5px, calc(var(--card-w) * 0.0385), 11px);
+
+  /* The radius `.back` draws, so the two rectangles round alike. */
+  border-radius: var(--card-r);
+}
+
+/* `min-height: 26%` on the head starts working here rather than resolving to
+   zero against an indefinite parent height -- which is what made the top scrim
+   a hairline over a two-word name. */
+.podcard .face--big .face__head {
+  padding: calc(var(--card-w) * 0.031) calc(var(--card-w) * 0.038) calc(var(--card-w) * 0.077);
+}
+
+.podcard .face--big .face__foot {
+  padding: calc(var(--card-w) * 0.105) calc(var(--card-w) * 0.038) calc(var(--card-w) * 0.031);
+}
+
 /* The stamp -- the idea. Locking in is the loudest object on the screen.
    It rides in the art band rather than at the middle of the card: the head is a
    26% scrim and the foot grows upward with the rules, so dead centre is text on
@@ -220,37 +289,6 @@
   margin-top: 22px;
   flex-wrap: wrap;
   justify-content: center;
-}
-
-.who {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 22px;
-}
-
-.who__l {
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-
-.who__in {
-  width: 190px;
-  padding: 9px 12px;
-  border: 1px solid var(--edge);
-  border-radius: 9px;
-  background: rgb(8 7 18 / 0.72);
-  color: var(--text);
-  font: inherit;
-  font-size: 13px;
-}
-
-.who__in:focus {
-  outline: none;
-  border-color: var(--gold);
 }
 
 .big {
@@ -455,6 +493,13 @@
 .podhand {
   --card-w: clamp(152px, 25vh, 296px);
 
+  /* Re-derived here, not inherited. `--card-r` is declared in `theme.css`'s
+     `:root`, and a `var()` inside a custom property is substituted where it is
+     *declared* -- so the whole document rounds cards at the board's ~5px
+     however wide they are drawn. `.back` reads it and the face reads it, and
+     they have to agree or the row is four rectangles with two radii. */
+  --card-r: calc(var(--card-w) * 0.055);
+
   position: relative;
   min-height: 0;
   display: flex;
@@ -546,6 +591,13 @@
   border-radius: calc(var(--card-w) * 0.05);
 }
 
+/* A card that opens a dossier should say so under the pointer. `.card--static`
+   sets `cursor: default` on the child that fills the whole slot, so the pointer
+   set just above was never actually visible. */
+.slot__card[data-act] .card--static {
+  cursor: inherit;
+}
+
 /* The remove control lives in the slot's own header, not on the card and not in
    the plate. Hanging it off the corner widened the slot and painted over the
    next one; tucking it inside the card covered the mana cost; a bordered plate
@@ -602,6 +654,42 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Your own name is a field, not a label -- the only editable thing on any
+   plate. It shows no box until you point at it: a bordered input on one of four
+   otherwise identical seats makes your chair look like a form, and which chair
+   is yours is already said in gold by `.slot__no--you` above the card. */
+.plate__name {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  text-overflow: ellipsis;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.plate__name:hover:not(:disabled) {
+  border-color: var(--edge);
+}
+
+.plate__name:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: rgb(8 7 18 / 0.72);
+}
+
+.plate__name::placeholder {
+  font-weight: 600;
+  color: var(--text-faint);
 }
 
 .plate__tag {
@@ -1260,9 +1348,18 @@
 
 .dos__top {
   --card-w: clamp(150px, 22vh, 214px);
+  --card-r: calc(var(--card-w) * 0.055);
 
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  /* A definite track, where the mockup used `auto`. `auto` sizes on the card's
+     max-content contribution, and the mockup could afford that because its card
+     was a fixed `.face`. Ours is a component, and while it was content-sized its
+     contribution was the longest unbroken run of oracle text -- which squeezed
+     the `minmax(0, 1fr)` beside it to about twenty pixels and put a horizontal
+     scrollbar on the panel. The card is a known width; saying so removes the
+     intrinsic-sizing pass, and nothing dropped in this column can blow it out
+     again. */
+  grid-template-columns: var(--card-w) minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -1271,6 +1368,18 @@
   gap: 7px;
   justify-items: center;
   align-content: start;
+  min-width: 0;
+}
+
+/* Crediting the illustrator, the same line the preview rail carries and read
+   from the same map. `max-width` is load-bearing rather than cosmetic: without
+   it a long name is the widest thing in the column. */
+.dos__artist {
+  max-width: var(--card-w);
+  font-size: 9.5px;
+  line-height: 1.4;
+  color: var(--text-faint);
+  text-align: center;
 }
 
 .dos__col {
