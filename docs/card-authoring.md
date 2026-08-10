@@ -11,7 +11,13 @@ This is the loop that closes the gap without anybody hand-writing 32,000 files.
 python scripts/author_cards.py --report                 # coverage, and what is blocking the rest
 python scripts/author_cards.py --tier templates         # write everything the templates can
 python scripts/author_cards.py --tier templates --dry-run --limit 200
+python scripts/audit_cards.py                           # where the *hand-written* pool falls short
 ```
+
+The last one is the newest and the least obvious: the gap this page is about is
+not only between the engine and the 32,000 cards it has never seen. It is also
+inside the pool the engine already plays. See
+[Repairing a hand-written card](#repairing-a-hand-written-card).
 
 ## The thing that must not go wrong
 
@@ -248,3 +254,56 @@ card sitting in an imported deck, which is exactly what happened on
 Move the object into a file in `data/cards/`, delete it from `auto/`, delete its
 expectation. Do that when a card needs nuance the pipeline cannot express but a
 person can.
+
+A promoted card joins a pool that is now audited, so it has to record the printed
+text verbatim and give each ability the printed line it implements — see
+`docs/card-dsl.md`. `tests/cards/test_hand_written_cards.py` will run all six
+gates over it like any other.
+
+## Repairing a hand-written card
+
+The reverse direction, and the one the audit exists for.
+
+`data/cards/` predates this pipeline. Those cards never cleared a gate, and two
+of the six could not even be asked: while `oracle_text` was a human summary
+written *after* whatever was skipped, the residual gate compared a card to a
+description of itself. Krosan Tusker recorded `"A large boar."` and shipped with
+no cycling; Anticipate is implemented as Preordain.
+
+```bash
+python scripts/audit_cards.py                     # what falls short, and how
+python scripts/audit_cards.py --check-substitutions  # deck swaps now unnecessary
+```
+
+Two things had to change before such a card could be repaired at all, because
+**every other part of this package reads "in the registry" as "done"**:
+
+- `Queue.refresh` never queues a card the engine already plays, and
+  `author_cards.select` refuses one asked for by name. Both are right about cards
+  that are simply *missing*. `--open-deficits` writes a queue entry with
+  `gate="fidelity"`, which both now treat as workable — and `_priority` puts them
+  ahead of everything else, because a card quietly doing less than it prints in a
+  deck somebody is playing is worse than a card that does nothing and says so.
+- Gate 6 rejects any card whose id is already in the pool, so every answer for a
+  precon card came back `'krosan_tusker' is already in the pool`.
+  `--collect --supersede` stands that gate down for an answer that *replaces* an
+  incumbent, and deletes the incumbent from `data/cards/`. Deleting is not
+  optional: `authored_card_paths()` returns hand-written files before `auto/` and
+  `CardRegistry.by_name` is first-wins, so a corrected card left behind its
+  predecessor never reaches a game.
+
+```bash
+/author-cards "Adanto Vanguard"                   # packet, worker, answer
+python scripts/author_cards.py --collect --supersede
+python scripts/audit_cards.py --update-baseline   # the list only shrinks
+```
+
+`--supersede` is needed exactly once per card, for the handover: afterwards the
+card lives in `auto/` and an ordinary `--collect` re-verifies it like any other.
+It stays behind a flag so a routine run can never rewrite `data/cards/`.
+
+Most of what the audit finds is not a card-authoring job at all. The precon
+shortcuts cluster on mechanics the engine does not have — cycling, flashback,
+evolve, threshold, ascend, investigate, shroud, skulk, intimidate — so a worker
+will correctly refuse them and write a gap record, and they surface through
+`scripts/report_gaps.py` as `/extend-dsl` work.

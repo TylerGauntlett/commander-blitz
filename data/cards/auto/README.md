@@ -2,8 +2,13 @@
 
 Cards written by `automtg.cards.authoring` rather than by hand. They are
 **committed and first-class**: loaded by `default_registry()`, playable by the
-server, the trainer and the arena, and covered by the same gates as everything in
-`data/cards/`.
+server, the trainer and the arena.
+
+The gates below now run over `data/cards/` too — see
+`tests/cards/test_hand_written_cards.py`. That is new, and it was the wrong way
+round for a long time: the machine-written cards were the *only* ones anything
+checked, because a hand-written card's `oracle_text` was a summary of its own
+implementation and gate 3 had nothing independent to compare against.
 
 They are not the inert proxies in `data/generated/`. A proxy has the right name,
 art, cost and keywords with its rules text doing nothing. A card in here has
@@ -17,7 +22,7 @@ gates in `authoring/verify.py`:
 | residual | the printed text is *fully* represented, nothing left over |
 | playable | it can be cast in a sandbox and resolves to the right zone |
 | behaviour | a **non-empty** expectation that actually holds |
-| registry | the whole pool still loads, and it does not shadow a hand-written card |
+| registry | the whole pool still loads, and it does not shadow a hand-written card unless `--collect --supersede` says it is replacing one |
 
 Gate 5 is the one that matters. `compile_card` validates *vocabulary*, not
 *meaning* — a card can say "draw two cards" and gain life instead, and it will

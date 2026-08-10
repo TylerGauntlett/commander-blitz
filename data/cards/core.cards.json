@@ -81,14 +81,14 @@
     {
       "id": "wayfarers_bauble",
       "name": "Wayfarer's Bauble",
-      "oracle_text": "{2}, {T}, Sacrifice Wayfarer's Bauble: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
       "mana_cost": "{1}",
       "types": ["Artifact"],
       "color_identity": [],
       "abilities": [
         {
           "kind": "activated",
-          "text": "{2}, {T}, Sacrifice: Search for a basic land tapped.",
+          "text": "{2}, {T}, Sacrifice this artifact: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
           "cost": {
             "mana": "{2}",
             "tap": true,
@@ -110,7 +110,7 @@
     {
       "id": "mind_stone",
       "name": "Mind Stone",
-      "oracle_text": "{T}: Add {C}. {1}, {T}, Sacrifice Mind Stone: Draw a card.",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
       "mana_cost": "{2}",
       "types": ["Artifact"],
       "color_identity": [],
@@ -124,7 +124,7 @@
         },
         {
           "kind": "activated",
-          "text": "{1}, {T}, Sacrifice: Draw a card.",
+          "text": "{1}, {T}, Sacrifice this artifact: Draw a card.",
           "cost": {
             "mana": "{1}",
             "tap": true,
@@ -137,7 +137,7 @@
     {
       "id": "commanders_sphere",
       "name": "Commander's Sphere",
-      "oracle_text": "{T}: Add one mana of any color in your commander's color identity. Sacrifice Commander's Sphere: Draw a card.",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.\nSacrifice this artifact: Draw a card.",
       "mana_cost": "{3}",
       "types": ["Artifact"],
       "color_identity": [],
@@ -163,7 +163,7 @@
         },
         {
           "kind": "activated",
-          "text": "Sacrifice: Draw a card.",
+          "text": "Sacrifice this artifact: Draw a card.",
           "cost": {
             "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
           },

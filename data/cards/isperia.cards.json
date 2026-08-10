@@ -22,7 +22,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a creature attacks you, you may draw a card.",
+          "text": "Whenever a creature attacks you or a planeswalker you control, you may draw a card.",
           "trigger": {
             "event": "attacks",
             "controller": "any",
@@ -49,7 +49,7 @@
     {
       "id": "tranquil_cove",
       "name": "Tranquil Cove",
-      "oracle_text": "Tranquil Cove enters tapped. When it enters, you gain 1 life. {T}: Add {W} or {U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {W} or {U}.",
       "types": [
         "Land"
       ],
@@ -119,7 +119,7 @@
     {
       "id": "meandering_river",
       "name": "Meandering River",
-      "oracle_text": "Meandering River enters tapped. {T}: Add {W} or {U}.",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.",
       "types": [
         "Land"
       ],
@@ -172,7 +172,7 @@
     {
       "id": "azorius_guildgate",
       "name": "Azorius Guildgate",
-      "oracle_text": "Azorius Guildgate enters tapped. {T}: Add {W} or {U}.",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.",
       "types": [
         "Land"
       ],
@@ -225,7 +225,7 @@
     {
       "id": "coastal_tower",
       "name": "Coastal Tower",
-      "oracle_text": "Coastal Tower enters tapped. {T}: Add {W} or {U}.",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.",
       "types": [
         "Land"
       ],
@@ -278,7 +278,7 @@
     {
       "id": "temple_of_enlightenment",
       "name": "Temple of Enlightenment",
-      "oracle_text": "Temple of Enlightenment enters tapped. When it enters, scry 1. {T}: Add {W} or {U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{T}: Add {W} or {U}.",
       "types": [
         "Land"
       ],
@@ -404,7 +404,7 @@
     {
       "id": "azorius_chancery",
       "name": "Azorius Chancery",
-      "oracle_text": "Azorius Chancery enters tapped. When it enters, return a land you control to its owner's hand.\n{T}: Add {W}{U}.",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {W}{U}.",
       "types": [
         "Land"
       ],
@@ -459,7 +459,7 @@
     {
       "id": "wall_of_omens",
       "name": "Wall of Omens",
-      "oracle_text": "Defender\nWhen Wall of Omens enters, draw a card.",
+      "oracle_text": "Defender\nWhen this creature enters, draw a card.",
       "mana_cost": "{1}{W}",
       "types": [
         "Creature"
@@ -495,7 +495,7 @@
     {
       "id": "cloudkin_seer",
       "name": "Cloudkin Seer",
-      "oracle_text": "Flying\nWhen Cloudkin Seer enters, draw a card.",
+      "oracle_text": "Flying\nWhen this creature enters, draw a card.",
       "mana_cost": "{2}{U}",
       "types": [
         "Creature"
@@ -532,7 +532,7 @@
     {
       "id": "augury_owl",
       "name": "Augury Owl",
-      "oracle_text": "Flying\nWhen Augury Owl enters, scry 3.",
+      "oracle_text": "Flying\nWhen this creature enters, scry 3. (Look at the top three cards of your library, then put any number of them on the bottom and the rest on top in any order.)",
       "mana_cost": "{1}{U}",
       "types": [
         "Creature"
@@ -568,7 +568,7 @@
     {
       "id": "omenspeaker",
       "name": "Omenspeaker",
-      "oracle_text": "When Omenspeaker enters, scry 2.",
+      "oracle_text": "When this creature enters, scry 2. (Look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",
       "mana_cost": "{1}{U}",
       "types": [
         "Creature"
@@ -636,7 +636,7 @@
     {
       "id": "serra_angel",
       "name": "Serra Angel",
-      "oracle_text": "Flying, vigilance",
+      "oracle_text": "Flying\nVigilance (Attacking doesn't cause this creature to tap.)",
       "mana_cost": "{3}{W}{W}",
       "types": [
         "Creature"
@@ -654,7 +654,7 @@
     {
       "id": "aven_fleetwing",
       "name": "Aven Fleetwing",
-      "oracle_text": "Flying, hexproof",
+      "oracle_text": "Flying\nHexproof (This creature can't be the target of spells or abilities your opponents control.)",
       "mana_cost": "{3}{U}",
       "types": [
         "Creature"
@@ -673,7 +673,7 @@
     {
       "id": "warden_of_evos_isle",
       "name": "Warden of Evos Isle",
-      "oracle_text": "Flying\nWhen Warden of Evos Isle enters, draw a card.",
+      "oracle_text": "Flying\nCreature spells with flying you cast cost {1} less to cast.",
       "mana_cost": "{3}{U}",
       "types": [
         "Creature"
@@ -729,7 +729,7 @@
     {
       "id": "watcher_of_the_spheres",
       "name": "Watcher of the Spheres",
-      "oracle_text": "Flying",
+      "oracle_text": "Flying\nCreature spells with flying you cast cost {1} less to cast.\nWhenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
       "mana_cost": "{W}{U}",
       "types": [
         "Creature"
@@ -746,7 +746,7 @@
     {
       "id": "windreader_sphinx",
       "name": "Windreader Sphinx",
-      "oracle_text": "Flying",
+      "oracle_text": "Flying\nWhenever a creature with flying attacks, you may draw a card.",
       "mana_cost": "{5}{U}{U}",
       "types": [
         "Creature"
@@ -763,7 +763,7 @@
     {
       "id": "lyra_dawnbringer",
       "name": "Lyra Dawnbringer",
-      "oracle_text": "Flying, first strike, lifelink\nOther Angels you control get +1/+1 and have lifelink.",
+      "oracle_text": "Flying\nFirst strike (This creature deals combat damage before creatures without first strike.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nOther Angels you control get +1/+1 and have lifelink.",
       "mana_cost": "{3}{W}{W}",
       "types": [
         "Creature"
@@ -820,7 +820,7 @@
     {
       "id": "emeria_angel",
       "name": "Emeria Angel",
-      "oracle_text": "Flying\nWhenever a land you control enters, create a 1/1 white Bird creature token with flying.",
+      "oracle_text": "Flying\nLandfall — Whenever a land you control enters, you may create a 1/1 white Bird creature token with flying.",
       "mana_cost": "{2}{W}{W}",
       "types": [
         "Creature"
@@ -836,7 +836,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a land you control enters, create a 1/1 white Bird with flying.",
+          "text": "Landfall — Whenever a land you control enters, you may create a 1/1 white Bird creature token with flying.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -903,7 +903,7 @@
     {
       "id": "archangel_of_thune",
       "name": "Archangel of Thune",
-      "oracle_text": "Flying, lifelink\nWhenever you gain life, put a +1/+1 counter on each creature you control.",
+      "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nWhenever you gain life, put a +1/+1 counter on each creature you control.",
       "mana_cost": "{3}{W}{W}",
       "types": [
         "Creature"
@@ -948,7 +948,7 @@
     {
       "id": "sun_titan",
       "name": "Sun Titan",
-      "oracle_text": "When Sun Titan enters, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+      "oracle_text": "Vigilance\nWhenever this creature enters or attacks, you may return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
       "mana_cost": "{4}{W}{W}",
       "types": [
         "Creature"
@@ -961,7 +961,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, return a permanent with mana value 3 or less from your graveyard to the battlefield.",
+          "text": "Whenever this creature enters or attacks, you may return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -992,7 +992,7 @@
     {
       "id": "skyknight_vanguard",
       "name": "Skyknight Vanguard",
-      "oracle_text": "Whenever Skyknight Vanguard attacks, create a 1/1 white Soldier creature token that's tapped and attacking.",
+      "oracle_text": "Flying\nWhenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attacking.",
       "mana_cost": "{2}{W}",
       "types": [
         "Creature"
@@ -1006,7 +1006,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever this attacks, create a tapped and attacking 1/1 white Soldier.",
+          "text": "Whenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attacking.",
           "trigger": {
             "event": "attacks",
             "source": "self",
@@ -1029,7 +1029,7 @@
     {
       "id": "bygone_bishop",
       "name": "Bygone Bishop",
-      "oracle_text": "Flying",
+      "oracle_text": "Flying\nWhenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
       "mana_cost": "{2}{W}{W}",
       "types": [
         "Creature"
@@ -1047,7 +1047,7 @@
     {
       "id": "loyal_drake",
       "name": "Loyal Drake",
-      "oracle_text": "Flying",
+      "oracle_text": "Flying\nLieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
       "mana_cost": "{3}{U}",
       "types": [
         "Creature"
@@ -1064,7 +1064,7 @@
     {
       "id": "angel_of_sanctions",
       "name": "Angel of Sanctions",
-      "oracle_text": "Flying\nWhen Angel of Sanctions enters, exile target nonland permanent an opponent controls.",
+      "oracle_text": "Flying\nWhen this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.\nEmbalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)",
       "mana_cost": "{3}{W}{W}",
       "types": [
         "Creature"
@@ -1114,7 +1114,7 @@
     {
       "id": "sphinx_of_magosi",
       "name": "Sphinx of Magosi",
-      "oracle_text": "Flying\n{2}{U}: Draw a card, then put a +1/+1 counter on Sphinx of Magosi.",
+      "oracle_text": "Flying\n{2}{U}: Draw a card, then put a +1/+1 counter on this creature.",
       "mana_cost": "{3}{U}{U}",
       "types": [
         "Creature"
@@ -1160,7 +1160,7 @@
     {
       "id": "deputy_of_detention",
       "name": "Deputy of Detention",
-      "oracle_text": "When Deputy of Detention enters, exile target nonland permanent an opponent controls until Deputy of Detention leaves the battlefield.",
+      "oracle_text": "When this creature enters, exile target nonland permanent an opponent controls and all other nonland permanents that player controls with the same name as that permanent until this creature leaves the battlefield.",
       "mana_cost": "{1}{W}{U}",
       "types": [
         "Creature"
@@ -1375,7 +1375,7 @@
     {
       "id": "dissolve",
       "name": "Dissolve",
-      "oracle_text": "Counter target spell. Scry 1.",
+      "oracle_text": "Counter target spell. Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
       "mana_cost": "{1}{U}{U}",
       "types": [
         "Instant"
@@ -1405,7 +1405,7 @@
     {
       "id": "opt",
       "name": "Opt",
-      "oracle_text": "Scry 1. Draw a card.",
+      "oracle_text": "Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\nDraw a card.",
       "mana_cost": "{U}",
       "types": [
         "Instant"
@@ -1430,7 +1430,7 @@
     {
       "id": "ponder",
       "name": "Ponder",
-      "oracle_text": "Look at the top three cards of your library, then put them back in any order. You may shuffle. Draw a card.",
+      "oracle_text": "Look at the top three cards of your library, then put them back in any order. You may shuffle.\nDraw a card.",
       "mana_cost": "{U}",
       "types": [
         "Sorcery"
@@ -1455,7 +1455,7 @@
     {
       "id": "anticipate",
       "name": "Anticipate",
-      "oracle_text": "Scry 2, then draw a card.",
+      "oracle_text": "Look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order.",
       "mana_cost": "{1}{U}",
       "types": [
         "Instant"
@@ -1480,7 +1480,7 @@
     {
       "id": "blue_suns_zenith",
       "name": "Blue Sun's Zenith",
-      "oracle_text": "Target player draws X cards.",
+      "oracle_text": "Target player draws X cards. Shuffle this card into its owner's library.",
       "mana_cost": "{X}{U}{U}{U}",
       "types": [
         "Instant"
@@ -1523,7 +1523,7 @@
     {
       "id": "man_o_war",
       "name": "Man-o'-War",
-      "oracle_text": "When Man-o'-War enters, return target creature to its owner's hand.",
+      "oracle_text": "When this creature enters, return target creature to its owner's hand.",
       "mana_cost": "{2}{U}",
       "types": [
         "Creature"
@@ -1568,7 +1568,7 @@
     {
       "id": "angel_of_the_dire_hour",
       "name": "Angel of the Dire Hour",
-      "oracle_text": "Flash, flying\nWhen Angel of the Dire Hour enters, if it was cast, exile all attacking creatures.",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it from your hand, exile all attacking creatures.",
       "mana_cost": "{5}{W}{W}",
       "types": [
         "Creature"
@@ -1585,7 +1585,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, exile all attacking creatures.",
+          "text": "When this creature enters, if you cast it from your hand, exile all attacking creatures.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -1609,7 +1609,7 @@
     {
       "id": "sunblast_angel",
       "name": "Sunblast Angel",
-      "oracle_text": "Flying\nWhen Sunblast Angel enters, destroy all tapped creatures.",
+      "oracle_text": "Flying\nWhen this creature enters, destroy all tapped creatures.",
       "mana_cost": "{4}{W}{W}",
       "types": [
         "Creature"
@@ -1649,7 +1649,7 @@
     {
       "id": "banishing_light",
       "name": "Banishing Light",
-      "oracle_text": "When Banishing Light enters, exile target nonland permanent an opponent controls until Banishing Light leaves the battlefield.",
+      "oracle_text": "When this enchantment enters, exile target nonland permanent an opponent controls until this enchantment leaves the battlefield.",
       "mana_cost": "{2}{W}",
       "types": [
         "Enchantment"
@@ -1691,7 +1691,7 @@
     {
       "id": "oblivion_ring",
       "name": "Oblivion Ring",
-      "oracle_text": "When Oblivion Ring enters, exile another target nonland permanent.",
+      "oracle_text": "When this enchantment enters, exile another target nonland permanent.\nWhen this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
       "mana_cost": "{2}{W}",
       "types": [
         "Enchantment"
@@ -1699,7 +1699,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "text": "When this enchantment enters, exile another target nonland permanent.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -1733,7 +1733,7 @@
     {
       "id": "reconnaissance_mission",
       "name": "Reconnaissance Mission",
-      "oracle_text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, you may draw a card.\nCycling {2} ({2}, Discard this card: Draw a card.)",
       "mana_cost": "{2}{U}{U}",
       "types": [
         "Enchantment"
@@ -1741,7 +1741,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "text": "Whenever a creature you control deals combat damage to a player, you may draw a card.",
           "trigger": {
             "event": "deals_combat_damage_to_player",
             "controller": "you"
@@ -1761,7 +1761,7 @@
     {
       "id": "bident_of_thassa",
       "name": "Bident of Thassa",
-      "oracle_text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, you may draw a card.\n{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
       "mana_cost": "{2}{U}{U}",
       "supertypes": [
         "Legendary"
@@ -1773,7 +1773,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "text": "Whenever a creature you control deals combat damage to a player, you may draw a card.",
           "trigger": {
             "event": "deals_combat_damage_to_player",
             "controller": "you"
@@ -1793,7 +1793,7 @@
     {
       "id": "exclude",
       "name": "Exclude",
-      "oracle_text": "Counter target creature spell. Draw a card.",
+      "oracle_text": "Counter target creature spell.\nDraw a card.",
       "mana_cost": "{2}{U}",
       "types": [
         "Instant"

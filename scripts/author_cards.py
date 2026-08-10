@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -36,7 +37,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from automtg.cards.authoring import packet as P
 from automtg.cards.authoring import templates as T
 from automtg.cards.authoring import verify as V
-from automtg.cards.authoring.queue import Entry, Queue, auto_cards_dir, build, wanted_names
+from automtg.cards.authoring.queue import (
+    FIDELITY_GATE,
+    Entry,
+    Queue,
+    auto_cards_dir,
+    build,
+    wanted_names,
+)
 from automtg.cards.images import load_index
 from automtg.cards.proxy import facts_from_index
 from automtg.cards.registry import CardRegistry, data_dir, default_registry
@@ -119,6 +127,14 @@ def select(queue: Queue, names: list[str] | None, limit: int, *, retry: bool) ->
             )
             if found.name.lower() not in playable:
                 queue.entries[found.name] = entry
+        # Playable is not the same as correct, and this is the only place that
+        # knows the difference. `scripts/audit_cards.py --open-deficits` marks a
+        # card whose implementation does not cover everything it prints, and such
+        # a card has to be workable *because* it is in the pool: it is in a
+        # shipped deck, being played, quietly doing less than it says.
+        if entry.gate == FIDELITY_GATE and entry.status != "done":
+            batch.append(entry)
+            continue
         if entry.status == "done" or entry.name.lower() in playable:
             print(f"{entry.name}: already playable, nothing to do")
             continue
@@ -214,19 +230,102 @@ def write_packets(batch: list[Entry]) -> int:
     return written
 
 
-def collect_answers(queue: Queue, *, dry_run: bool) -> dict[str, int]:
+def _card_span(raw: str, card_id: str) -> tuple[int, int] | None:
+    """The exact character range of one card object inside a card file.
+
+    Found by brace matching rather than by reserializing the file.
+    ``data/cards/*.cards.json`` is hand-formatted -- arrays of scalars stay
+    inline, ``_comment`` headers carry prose -- and ``json.dumps`` would reflow
+    every card in the file, so deleting one card would land as a whole-file diff
+    with the actual deletion buried in it.
+    """
+    match = re.search(rf'"id":\s*"{re.escape(card_id)}"', raw)
+    if match is None:
+        return None
+    start = raw.rfind("{", 0, match.start())
+    if start < 0:
+        return None
+    depth = 0
+    in_string = False
+    escaped = False
+    for i in range(start, len(raw)):
+        char = raw[i]
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\":
+            escaped = True
+        elif char == '"':
+            in_string = not in_string
+        elif not in_string:
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return start, i + 1
+    return None
+
+
+def _drop_hand_written(card_ids: set[str]) -> int:
+    """Remove superseded cards from ``data/cards/*.cards.json``.
+
+    Not optional, and not cosmetic. ``registry.authored_card_paths`` returns the
+    hand-written files *before* ``auto/``, and ``CardRegistry.by_name`` is
+    first-wins, so a corrected card left sitting behind its predecessor never
+    reaches a game -- the run would report success and change nothing.
+    """
+    removed = 0
+    for path in sorted((data_dir() / "cards").glob("*.cards.json")):
+        raw = path.read_text(encoding="utf-8")
+        changed = False
+        for card_id in sorted(card_ids):
+            span = _card_span(raw, card_id)
+            if span is None:
+                continue
+            start, end = span
+            # Take the separating comma with the object, so the array stays
+            # valid whether the card was in the middle or last.
+            tail = re.match(r"\s*,", raw[end:])
+            if tail:
+                end += tail.end()
+            else:
+                head = re.search(r",\s*$", raw[:start])
+                if head:
+                    start = head.start()
+            raw = raw[:start] + raw[end:]
+            # The blank line the object used to sit on would otherwise survive.
+            raw = re.sub(r"\n[ \t]*\n([ \t]*[}\]])", r"\n\1", raw)
+            removed += 1
+            changed = True
+        if changed:
+            json.loads(raw)  # never leave a card file that does not parse
+            path.write_text(raw, encoding="utf-8", newline="")
+    return removed
+
+
+def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> dict[str, int]:
     """Verify what came back, and commit only what passes.
 
     An answer is trusted exactly as far as the six gates trust it, which is the
     whole point: a model that misreads a card produces one that fails gate 5
     rather than one that quietly does the wrong thing in somebody's game.
+
+    ``supersede`` allows an answer to *replace* a hand-written card of the same
+    id, which gate 6 otherwise refuses outright. That is the only way to repair
+    the cards ``scripts/audit_cards.py`` finds: they are already in the pool, so
+    every answer for one is rejected as a duplicate id. It stays behind a flag so
+    an ordinary ``--collect`` can never rewrite ``data/cards/`` by accident, and
+    the replacement is still verified against a pool with the incumbent removed.
     """
     registry = _hand_written()
     cards, expectations = _load_batch()
     index = load_index()
     by_name = {e.name: e for e in queue}
+    in_pool = set(registry.ids())
 
-    tally = {"accepted": 0, "rejected": 0}
+    tally = {"accepted": 0, "rejected": 0, "superseded": 0}
+    superseded: set[str] = set()
     for card_id, answer in P.read_answers().items():
         payload = dict(answer["card"])
         payload["id"] = card_id
@@ -235,7 +334,10 @@ def collect_answers(queue: Queue, *, dry_run: bool) -> dict[str, int]:
 
         catalog = index.lookup(payload.get("name", ""), token=False)
         oracle = catalog.oracle_text if catalog else payload.get("oracle_text", "")
-        verdict = V.verify(payload, expectation, registry, oracle_text=oracle)
+        replaces = supersede and card_id in in_pool
+        verdict = V.verify(
+            payload, expectation, registry, oracle_text=oracle, supersedes=replaces
+        )
 
         entry = by_name.get(payload.get("name", ""))
         if not verdict.ok:
@@ -247,10 +349,13 @@ def collect_answers(queue: Queue, *, dry_run: bool) -> dict[str, int]:
             tally["rejected"] += 1
             continue
 
-        print(f"  accept {card_id}")
+        print(f"  {'supersede' if replaces else 'accept'} {card_id}")
         if not dry_run:
             cards[card_id] = payload
             expectations[card_id] = expectation
+        if replaces:
+            superseded.add(card_id)
+            tally["superseded"] += 1
         if entry is not None:
             entry.status = "done"
             entry.source = "agent"
@@ -259,6 +364,8 @@ def collect_answers(queue: Queue, *, dry_run: bool) -> dict[str, int]:
         tally["accepted"] += 1
 
     if not dry_run and tally["accepted"]:
+        if superseded:
+            _drop_hand_written(superseded)
         _write_batch(cards, expectations)
         queue.save()
     return tally
@@ -279,6 +386,13 @@ def report(queue: Queue) -> None:
     print(f"queue               {len(queue):>7,}  {counts}")
     wanted = sum(1 for e in queue if e.wanted and e.status != "done")
     print(f"  in your decks     {wanted:>7,}  (worked on first)")
+    # Cards that *are* playable and do not do everything they print. They cannot
+    # show up under "blocking" below -- that counts failures, and these have not
+    # been attempted -- but they outrank everything else in `next_batch`, so
+    # leaving them off this summary would make the run order look arbitrary.
+    incomplete = sum(1 for e in queue if e.gate == FIDELITY_GATE and e.status != "done")
+    if incomplete:
+        print(f"  incomplete        {incomplete:>7,}  (playable but not correct; see audit_cards.py)")
 
     blockers = queue.failures_by_reason(top=15)
     if blockers:
@@ -305,6 +419,11 @@ def main() -> int:
         metavar="NAME",
         help="work on this card by name instead of taking the queue's order; repeatable",
     )
+    parser.add_argument(
+        "--supersede",
+        action="store_true",
+        help="with --collect: let an answer replace a hand-written card of the same id",
+    )
     parser.add_argument("--limit", type=int, default=200, help="how many cards to attempt")
     parser.add_argument("--dry-run", action="store_true", help="report, write nothing")
     parser.add_argument("--retry", action="store_true", help="re-attempt cards that failed")
@@ -320,8 +439,11 @@ def main() -> int:
     queue.refresh(load_index(), default_registry().registry, wanted=wanted_names())
 
     if args.collect:
-        tally = collect_answers(queue, dry_run=args.dry_run)
-        print(f"accepted {tally['accepted']}  |  rejected {tally['rejected']}")
+        tally = collect_answers(queue, dry_run=args.dry_run, supersede=args.supersede)
+        line = f"accepted {tally['accepted']}  |  rejected {tally['rejected']}"
+        if tally["superseded"]:
+            line += f"  |  superseded {tally['superseded']} hand-written card(s)"
+        print(line)
         return 0
 
     if args.report or not args.tier:

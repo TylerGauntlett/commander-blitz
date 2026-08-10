@@ -28,7 +28,7 @@ silently producing a card that looks implemented and does nothing.
 {
   "id": "snake_case_id",          // required, unique
   "name": "Display Name",         // required, unique among non-tokens
-  "oracle_text": "...",           // display only
+  "oracle_text": "...",           // the printed text, verbatim - see below
   "mana_cost": "{4}{G}{U}",       // omit for lands
   "supertypes": ["Legendary"],
   "types": ["Creature"],          // required
@@ -44,6 +44,25 @@ silently producing a card that looks implemented and does nothing.
   "is_token": false
 }
 ```
+
+### `oracle_text` is a contract, not a caption
+
+It used to be described here as "display only", and it was written that way: a
+human summary of what the card had been made to do. That quietly disabled the one
+gate that asks whether a card implements everything it prints, because the gate
+compares the implementation to `oracle_text` — and a summary written *after* the
+shortcut agrees with the shortcut. Krosan Tusker recorded `"A large boar."`, and
+against that text a vanilla 6/5 is a faithful implementation. It shipped for
+months with no cycling and nothing to notice.
+
+So `oracle_text` is now **the printed text, verbatim**, and each ability's `text`
+is **the printed line that ability implements** — that is what the residual gate
+matches on. Two checks keep it honest, both in
+`tests/cards/test_hand_written_cards.py`: one compares every card's `oracle_text`
+to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
+
+`python scripts/audit_cards.py` reports where the pool still falls short;
+`--fix-oracle` and `--fix-text` record the printing and re-point ability text.
 
 ## Effect ops
 

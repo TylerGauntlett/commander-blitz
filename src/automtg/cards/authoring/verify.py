@@ -29,6 +29,7 @@ expectation are authored together and rejected together.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -349,11 +350,17 @@ def verify(
     registry: CardRegistry,
     *,
     oracle_text: str | None = None,
+    supersedes: bool = False,
 ) -> Verdict:
     """Run every gate over one candidate.
 
     ``registry`` is the pool the card will join, minus the card itself; it
     supplies the sandbox's lands, dummy creatures and token definitions.
+
+    ``supersedes`` says this card is a *replacement* for one already in the pool
+    under the same id, so the duplicate-id gate should stand aside. Only
+    ``--collect --supersede`` passes it, and only after the caller has committed
+    to deleting the incumbent -- see ``scripts/author_cards.py``.
     """
     card_id = str(payload.get("id") or "<no id>")
     verdict = Verdict(card_id=card_id)
@@ -388,15 +395,20 @@ def verify(
     # Run before the sandbox because the sandbox needs a registry containing the
     # card, and a duplicate id or a dangling token reference would otherwise
     # surface as a confusing failure inside gate 4.
-    if card.id in registry:
+    if card.id in registry and not supersedes:
         # A dict merge would have *replaced* the existing card, so a machine
         # could silently overwrite a hand-written one and every deck referencing
         # that id would quietly change. `CardRegistry.from_paths` raises on this
         # at load time; the gate has to raise on it at authoring time.
+        #
+        # `supersedes` is the one way past this, and it is not a loophole: the
+        # replacement still has to clear all six gates, and it is measured
+        # against a pool with the incumbent *removed* below, so it cannot lean on
+        # the card it is replacing.
         verdict.failed_gate = "registry"
         verdict.reason = f"{card.id!r} is already in the pool"
         return verdict
-    existing = {c.id: c for c in registry}
+    existing = {c.id: c for c in registry if c.id != card.id}
     try:
         merged = CardRegistry({**existing, card.id: card})
         from ..loader import validate_token_references
@@ -529,8 +541,21 @@ def residual_text(card: CardDef, oracle_text: str) -> str:
     Reuses ``proxy``'s reader so "what is left over" means the same thing whether
     a proxy, a template or an agent produced the card -- one definition of done.
     """
-    from ..proxy import CardFacts, lift_keywords
+    from ..proxy import CardFacts
     from ..proxy import _residual as proxy_residual
+
+    facts = CardFacts(name=card.name, scryfall_id="", oracle_text=oracle_text)
+    return proxy_residual(facts, claimed_lines(card, oracle_text))
+
+
+def claimed_lines(card: CardDef, oracle_text: str) -> set[str]:
+    """The printed lines something on this card accounts for.
+
+    Split out from :func:`residual_text` so the fidelity audit can ask the
+    complementary question -- *which* lines are unclaimed -- without keeping a
+    second, drifting copy of the same bookkeeping.
+    """
+    from ..proxy import lift_keywords
 
     consumed: set[str] = set()
     _, keyword_lines = lift_keywords(oracle_text, tuple(str(k) for k in card.keywords))
@@ -545,9 +570,28 @@ def residual_text(card: CardDef, oracle_text: str) -> str:
         consumed |= set(oracle_text.split("\n"))
 
     consumed |= {line for line in oracle_text.split("\n") if _covered(card, line)}
+    return consumed
 
-    facts = CardFacts(name=card.name, scryfall_id="", oracle_text=oracle_text)
-    return proxy_residual(facts, consumed)
+
+#: How a card refers to itself.  Scryfall's current templating writes "this
+#: creature"/"this enchantment", the pool writes "this", and printings older than
+#: the 2024 templating update write the card's own name.  All three are the same
+#: word, and matching them literally makes a correct card look unimplemented:
+#: an ability reading "When this enters, draw a card" would fail to claim the
+#: printed line "When Elvish Visionary enters, draw a card".
+_SELF_REFERENCE = re.compile(
+    r"\bthis (?:creature|enchantment|artifact|permanent|land|spell|card)\b|\bthis\b",
+    re.IGNORECASE,
+)
+
+
+def fold_self_reference(text: str, name: str) -> str:
+    """Collapse every way a card names itself to one token, for comparison only."""
+    if name:
+        # Longest first, so the possessive is replaced before the bare name.
+        for form in sorted({f"{name}'s", name}, key=len, reverse=True):
+            text = re.sub(re.escape(form), "~", text, flags=re.IGNORECASE)
+    return _SELF_REFERENCE.sub("~", text)
 
 
 def _covered(card: CardDef, line: str) -> bool:
@@ -562,6 +606,7 @@ def _covered(card: CardDef, line: str) -> bool:
     lowered = line.lower()
     if not stripped:
         return True
+    folded_line = fold_self_reference(stripped, card.name)
 
     # "Enchant creature" is not an ability -- it is the spell's targeting clause,
     # and it is implemented by the card's `targets` plus the engine attaching the
@@ -587,7 +632,12 @@ def _covered(card: CardDef, line: str) -> bool:
         return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
-        if claimed and (claimed == stripped or claimed in line or stripped in claimed):
+        if not claimed:
+            continue
+        if claimed == stripped or claimed in line or stripped in claimed:
+            return True
+        folded = fold_self_reference(claimed, card.name)
+        if folded == folded_line or folded in folded_line or folded_line in folded:
             return True
     # A replacement effect implements its own printed sentence: "enters tapped",
     # "enters with two charge counters on it". There is no ability to carry the

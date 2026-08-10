@@ -61,6 +61,27 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | **Trigger loop guard** | More than 200 triggers in one step raises `RulesLoopError`, scored as a draw | One pathological board must not abort a 10,000-game run |
 | **Delayed triggers resolve off the stack** | "At the beginning of the next upkeep, draw a card" runs as the step begins rather than being put on the stack | Same trade as modes and trigger ordering: only observable when somebody would respond differently to the delayed half than to the spell that scheduled it |
 
+### Simplifications *inside* a hand-written card
+
+Everything above is a deliberate, engine-wide trade. There is a second kind that
+was never decided and never written down: individual precon cards that implement
+less than they print.
+
+`data/decks/*.deck.json` records `substitutions` — Scute Swarm swapped for
+Tireless Provisioner because copy effects did not exist. That mechanism only ever
+covered swapping one card for another. It has nothing to say about Tireless
+Provisioner itself dropping the Food-or-Treasure choice, Krosan Tusker shipping
+as a vanilla 6/5 with no cycling, or Anticipate being implemented as Preordain.
+
+Those cards predate the authoring pipeline and never cleared its gates. The
+current count is in `tests/cards/precon_deficits.json`, which is generated, and
+the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
+they are the cost of building the precons before the gates existed, measured for
+the first time. Repair one with `/author-cards <name>`; the mechanics they are
+waiting on (cycling, flashback, evolve, threshold, ascend, investigate, shroud,
+skulk, intimidate — none of the 15 keywords in `engine/enums.py` covers them) are
+`/extend-dsl` jobs.
+
 ## Imported cards, which are simplified further
 
 Everything above describes a **hand-written** card. A deck imported from Moxfield
@@ -118,9 +139,15 @@ None of the above is a promise in prose — it is checked:
   which fails `pytest`, not a game.
 - The "statics may not read statics" constraint is a load-time check on every static
   ability's filter.
-- `tests/cards/test_every_card_works.py` plays every one of the 128 shipped cards in a
-  rigged sandbox and asserts it resolves into the right zone, with per-card outcome
-  expectations for the interesting ones.
+- `tests/cards/test_every_card_works.py` plays every shipped card in a rigged sandbox
+  and asserts it resolves into the right zone, with per-card outcome expectations from
+  `tests/cards/expectations.json`.
+- `tests/cards/test_hand_written_cards.py` runs all six authoring gates over every
+  hand-written card, and separately checks that each card's `oracle_text` is what the
+  catalog says it prints — the check that stops a card from being verified against a
+  summary of itself. Cards that do not pass yet are listed, with reasons, in the
+  generated `tests/cards/precon_deficits.json`; that list can only shrink.
+- `tests/cards/test_auto_cards.py` does the same for every machine-authored card.
 - Deck legality, colour identity and singleton rules are tested per deck.
 
 If a card in this repo does not work, one of those tests fails.

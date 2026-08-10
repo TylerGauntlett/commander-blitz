@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "adanto_vanguard",
+    "name": "Adanto Vanguard",
+    "oracle_text": "As long as this creature is attacking, it gets +2/+0.\nPay 4 life: This creature gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Soldier"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as this creature is attacking, it gets +2/+0.",
+        "effect": "buff",
+        "affects": { "self_only": true, "attacking": true },
+        "power": { "const": 2 },
+        "toughness": { "const": 0 }
+      },
+      {
+        "kind": "activated",
+        "text": "Pay 4 life: This creature gains indestructible until end of turn.",
+        "cost": { "pay_life": 4 },
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "objects": { "zone": "battlefield", "self_only": true },
+            "keywords": ["indestructible"]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": { "zone": "battlefield" }
+}

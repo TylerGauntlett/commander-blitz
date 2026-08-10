@@ -1910,6 +1910,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Adanto Vanguard": {
+      "edhrec_rank": 16510,
+      "gate": null,
+      "name": "Adanto Vanguard",
+      "reason": "",
+      "scryfall_id": "0d0950bb-d68d-4774-910e-4a72aa59f7ad",
+      "source": "agent",
+      "status": "done",
+      "wanted": false
+    },
     "Adaptive Automaton": {
       "edhrec_rank": 1756,
       "gate": "template",
@@ -8566,6 +8576,16 @@
       "name": "Angel of Salvation",
       "reason": "",
       "scryfall_id": "9e71046b-1284-4d7f-93dd-a632c74d9cca",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Angel of Sanctions": {
+      "edhrec_rank": 8765,
+      "gate": "fidelity",
+      "name": "Angel of Sanctions",
+      "reason": "Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)",
+      "scryfall_id": "546b6ffc-44e3-4994-b84b-6282c6474a1a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -24310,6 +24330,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Bident of Thassa": {
+      "edhrec_rank": 420,
+      "gate": "fidelity",
+      "name": "Bident of Thassa",
+      "reason": "{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+      "scryfall_id": "60a9018a-24a9-4c25-89ca-4ac52a60fbf1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Bifur, Melodic Rider": {
       "edhrec_rank": 22588,
       "gate": null,
@@ -28716,6 +28746,16 @@
       "name": "Bloodrage Vampire",
       "reason": "",
       "scryfall_id": "692013da-b090-49d1-9c7a-ff5863d6ffd5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Bloodrite Invoker": {
+      "edhrec_rank": 26187,
+      "gate": "fidelity",
+      "name": "Bloodrite Invoker",
+      "reason": "{8}: Target player loses 3 life and you gain 3 life.",
+      "scryfall_id": "0b332d26-ca9a-458d-9dbc-41f1cf5c4c6a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -36866,6 +36906,16 @@
       "name": "By Invitation Only",
       "reason": "no template for: Choose a number between 0 and 13. Each player sacrifices that many creatures of their choi",
       "scryfall_id": "e50c5a3e-e81f-4bad-b015-e67dce4a24cc",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Bygone Bishop": {
+      "edhrec_rank": 7272,
+      "gate": "fidelity",
+      "name": "Bygone Bishop",
+      "reason": "Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "scryfall_id": "cf879fc7-9f84-40a7-a7be-9cc98a720af5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -64130,6 +64180,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Deep Analysis": {
+      "edhrec_rank": 1442,
+      "gate": "fidelity",
+      "name": "Deep Analysis",
+      "reason": "Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "scryfall_id": "1a297bae-f259-4fc7-b76a-285f972d69e3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Deep Forest Hermit": {
       "edhrec_rank": 3385,
       "gate": "template",
@@ -76566,6 +76626,16 @@
       "name": "Duskana, the Rage Mother",
       "reason": "no template for: When Duskana enters, draw a card for each creature you control with base power and toughne",
       "scryfall_id": "31fa9d47-43d6-44b5-ab86-fc94a83eac26",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Duskborne Skymarcher": {
+      "edhrec_rank": 18493,
+      "gate": "fidelity",
+      "name": "Duskborne Skymarcher",
+      "reason": "{W}, {T}: Target attacking Vampire gets +1/+1 until end of turn.",
+      "scryfall_id": "baa524bb-0ce7-4c30-93c3-ae15c3b05e92",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -115520,6 +115590,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Grave Titan": {
+      "edhrec_rank": 1389,
+      "gate": "fidelity",
+      "name": "Grave Titan",
+      "reason": "Whenever this creature enters or attacks, create two 2/2 black Zombie creature tokens.",
+      "scryfall_id": "3b4faa6e-5013-4c59-80f5-662a386672eb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Grave Upheaval": {
       "edhrec_rank": 14493,
       "gate": null,
@@ -119820,6 +119900,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Guul Draz Vampire": {
+      "edhrec_rank": 22408,
+      "gate": "fidelity",
+      "name": "Guul Draz Vampire",
+      "reason": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "scryfall_id": "f3c92575-1c97-48bf-801b-22f34040cf9a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Guy in the Chair": {
       "edhrec_rank": 11229,
       "gate": "template",
@@ -119938,6 +120028,16 @@
       "scryfall_id": "26dd6a1d-4dcb-4392-9856-c0e4140efbd7",
       "source": "template:proxy:complete",
       "status": "done",
+      "wanted": false
+    },
+    "Gyre Sage": {
+      "edhrec_rank": 829,
+      "gate": "fidelity",
+      "name": "Gyre Sage",
+      "reason": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+      "scryfall_id": "236c4e0d-1a54-4024-85ef-4d73028bfb87",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Gyruda, Doom of Depths": {
@@ -134376,6 +134476,16 @@
       "name": "Increasing Confusion",
       "reason": "no template for: Target player mills X cards. If this spell was cast from a graveyard, that player mills tw",
       "scryfall_id": "13f5bcdc-70bb-4d67-99e1-282f166ee4bf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Increasing Devotion": {
+      "edhrec_rank": 3292,
+      "gate": "fidelity",
+      "name": "Increasing Devotion",
+      "reason": "Flashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "scryfall_id": "400bbab4-4ecf-4875-b356-1164d3a29092",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -151350,6 +151460,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Krosan Tusker": {
+      "edhrec_rank": 10668,
+      "gate": "fidelity",
+      "name": "Krosan Tusker",
+      "reason": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.) / When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this…",
+      "scryfall_id": "e2a49801-9838-4487-9ec6-cf087e1bb053",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Krosan Verge": {
       "edhrec_rank": 947,
       "gate": "template",
@@ -160900,6 +161020,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Loyal Drake": {
+      "edhrec_rank": 5142,
+      "gate": "fidelity",
+      "name": "Loyal Drake",
+      "reason": "Lieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
+      "scryfall_id": "d827bb89-4e28-4b77-94c0-10f79ec9099a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Loyal Fire Sage": {
       "edhrec_rank": 15044,
       "gate": null,
@@ -165690,6 +165820,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Marauding Maulhorn": {
+      "edhrec_rank": 30863,
+      "gate": "fidelity",
+      "name": "Marauding Maulhorn",
+      "reason": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+      "scryfall_id": "b7d5e3dc-f307-4f91-a5ee-e7c5d03d8102",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Marauding Raptor": {
       "edhrec_rank": 2979,
       "gate": "template",
@@ -166186,6 +166326,16 @@
       "name": "Mardu Warshrieker",
       "reason": "",
       "scryfall_id": "2f4122e5-4c40-4598-b666-aeebf22d57b6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Mardu Woe-Reaper": {
+      "edhrec_rank": 16835,
+      "gate": "fidelity",
+      "name": "Mardu Woe-Reaper",
+      "reason": "Whenever this creature or another Warrior you control enters, you may exile target creature card from a graveyard. If you do, you gain 1 life.",
+      "scryfall_id": "0bf14a32-b97b-48c7-8395-d9c3626735c1",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -179120,6 +179270,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Mulldrifter": {
+      "edhrec_rank": 584,
+      "gate": "fidelity",
+      "name": "Mulldrifter",
+      "reason": "Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "scryfall_id": "ff990293-3e73-4c01-9b79-707339c8b28b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Multani's Acolyte": {
       "edhrec_rank": 22686,
       "gate": null,
@@ -185660,6 +185820,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Nimble Mongoose": {
+      "edhrec_rank": 26520,
+      "gate": "fidelity",
+      "name": "Nimble Mongoose",
+      "reason": "Shroud (This creature can't be the target of spells or abilities.) / Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
+      "scryfall_id": "b356bf24-0c6b-457e-b53e-263a0100f611",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Nimble Obstructionist": {
       "edhrec_rank": 6121,
       "gate": "template",
@@ -186056,6 +186226,16 @@
       "name": "Nissa's Judgment",
       "reason": "",
       "scryfall_id": "d10ff628-c0bd-4ed0-b927-3f2746aefa10",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Nissa's Pilgrimage": {
+      "edhrec_rank": 3368,
+      "gate": "fidelity",
+      "name": "Nissa's Pilgrimage",
+      "reason": "Spell mastery — If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
+      "scryfall_id": "ccf744d0-4349-4338-99aa-db0780c7296f",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -188856,6 +189036,16 @@
       "name": "Oblivion Crown",
       "reason": "no template for: Enchanted creature has \"Discard a card: This creature gets +1/+1 until end of turn.\"",
       "scryfall_id": "0cd5486b-c6f4-4cfc-9590-8ffc78b48b0a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Oblivion Ring": {
+      "edhrec_rank": 4908,
+      "gate": "fidelity",
+      "name": "Oblivion Ring",
+      "reason": "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "scryfall_id": "33330c04-4e61-4993-ba26-d2316d1e845c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -216300,6 +216490,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Reconnaissance Mission": {
+      "edhrec_rank": 882,
+      "gate": "fidelity",
+      "name": "Reconnaissance Mission",
+      "reason": "Cycling {2} ({2}, Discard this card: Draw a card.)",
+      "scryfall_id": "875dfbf5-9313-439b-b021-8b92d898baa4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Reconstruct History": {
       "edhrec_rank": 5684,
       "gate": "template",
@@ -232100,6 +232300,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Savai Triome": {
+      "edhrec_rank": 496,
+      "gate": "fidelity",
+      "name": "Savai Triome",
+      "reason": "Cycling {3} ({3}, Discard this card: Draw a card.)",
+      "scryfall_id": "748e6a61-9c1f-4225-9f04-e54002f63ac3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Savannah": {
       "edhrec_rank": 461,
       "gate": null,
@@ -237946,6 +238156,16 @@
       "name": "Sengir Nosferatu",
       "reason": "",
       "scryfall_id": "71dc9f1e-b889-402d-a5a1-fa0d7d493246",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sengir Vampire": {
+      "edhrec_rank": 18150,
+      "gate": "fidelity",
+      "name": "Sengir Vampire",
+      "reason": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+      "scryfall_id": "8801740a-c54d-4686-9b5e-fccd6d7699f5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -246010,6 +246230,16 @@
       "status": "done",
       "wanted": true
     },
+    "Simic Sky Swallower": {
+      "edhrec_rank": 8522,
+      "gate": "fidelity",
+      "name": "Simic Sky Swallower",
+      "reason": "Shroud (This creature can't be the target of spells or abilities.)",
+      "scryfall_id": "f791b7fa-3d12-409d-b017-cb9fd8b71af7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Simoon": {
       "edhrec_rank": 28550,
       "gate": null,
@@ -248546,6 +248776,16 @@
       "name": "Skymarch Bloodletter",
       "reason": "",
       "scryfall_id": "c4462a6b-9d96-43a2-bf9e-19cfa2d49c23",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Skymarcher Aspirant": {
+      "edhrec_rank": 19289,
+      "gate": "fidelity",
+      "name": "Skymarcher Aspirant",
+      "reason": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.) / This creature has flying as long as you have the city's blessing.",
+      "scryfall_id": "e5d3a158-659e-4d25-ae73-54b566521e8b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -265100,6 +265340,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Stromkirk Captain": {
+      "edhrec_rank": 2991,
+      "gate": "fidelity",
+      "name": "Stromkirk Captain",
+      "reason": "Other Vampire creatures you control get +1/+1 and have first strike.",
+      "scryfall_id": "50112fc8-82f7-438b-bd35-12b7b3182bdf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Stromkirk Condemned": {
       "edhrec_rank": 17451,
       "gate": null,
@@ -265116,6 +265366,16 @@
       "name": "Stromkirk Mentor",
       "reason": "",
       "scryfall_id": "aa90b7dc-fb90-411e-a762-06a800bae0cf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Stromkirk Noble": {
+      "edhrec_rank": 13287,
+      "gate": "fidelity",
+      "name": "Stromkirk Noble",
+      "reason": "This creature can't be blocked by Humans.",
+      "scryfall_id": "0f306c7e-cacc-4c26-a3f1-fad4f3ff7cf3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -285360,6 +285620,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Tireless Provisioner": {
+      "edhrec_rank": 185,
+      "gate": null,
+      "name": "Tireless Provisioner",
+      "reason": "",
+      "scryfall_id": "6d2e2e8d-8382-4d98-9e25-2dff1b1d0ff8",
+      "source": "",
+      "status": "done",
+      "wanted": false
+    },
     "Tireless Tracker": {
       "edhrec_rank": 638,
       "gate": "template",
@@ -298020,6 +298290,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Vampire Cutthroat": {
+      "edhrec_rank": 6728,
+      "gate": "fidelity",
+      "name": "Vampire Cutthroat",
+      "reason": "Skulk (This creature can't be blocked by creatures with greater power.)",
+      "scryfall_id": "954d53f3-ebbe-48e0-9e1a-7019d2b0740c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Vampire Envoy": {
       "edhrec_rank": 18657,
       "gate": null,
@@ -298066,6 +298346,26 @@
       "name": "Vampire Interloper",
       "reason": "",
       "scryfall_id": "ac01d4eb-10ec-4bda-aa9b-04c74dabfcaf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vampire Lacerator": {
+      "edhrec_rank": 21815,
+      "gate": "fidelity",
+      "name": "Vampire Lacerator",
+      "reason": "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
+      "scryfall_id": "f8b76f75-5151-4bbc-a792-4eacdf8ecf44",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vampire Neonate": {
+      "edhrec_rank": 15261,
+      "gate": "fidelity",
+      "name": "Vampire Neonate",
+      "reason": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
+      "scryfall_id": "86d64a1d-cda4-4c76-8d58-ccab5a6859a0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -298536,6 +298836,16 @@
       "name": "Vanquisher's Axe",
       "reason": "",
       "scryfall_id": "aef37244-deb9-464e-ab8c-4308369ae09b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vanquisher's Banner": {
+      "edhrec_rank": 369,
+      "gate": "fidelity",
+      "name": "Vanquisher's Banner",
+      "reason": "As this artifact enters, choose a creature type.",
+      "scryfall_id": "efa6944e-b5e2-4584-ae37-f5b59a8ec75e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -301496,6 +301806,16 @@
       "name": "Vicious Clown",
       "reason": "",
       "scryfall_id": "12649f73-9d29-4eed-bc89-cc0d1a8969e3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vicious Conquistador": {
+      "edhrec_rank": 8940,
+      "gate": "fidelity",
+      "name": "Vicious Conquistador",
+      "reason": "Whenever this creature attacks, each opponent loses 1 life.",
+      "scryfall_id": "29ea5874-becd-4c6b-9638-5c075b52079e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -305090,6 +305410,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Vorel of the Hull Clade": {
+      "edhrec_rank": 3159,
+      "gate": null,
+      "name": "Vorel of the Hull Clade",
+      "reason": "",
+      "scryfall_id": "82c8cac8-29ce-43cc-bdb4-428c614d8545",
+      "source": "",
+      "status": "done",
+      "wanted": false
+    },
     "Vorinclex // The Grand Evolution": {
       "edhrec_rank": 3201,
       "gate": "template",
@@ -307800,6 +308130,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Warden of Evos Isle": {
+      "edhrec_rank": 3804,
+      "gate": "fidelity",
+      "name": "Warden of Evos Isle",
+      "reason": "Creature spells with flying you cast cost {1} less to cast.",
+      "scryfall_id": "40d26ee1-5264-4f5a-ac01-8304888589aa",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Warden of Geometries": {
       "edhrec_rank": 13234,
       "gate": null,
@@ -308806,6 +309146,16 @@
       "name": "Watcher of the Roost",
       "reason": "",
       "scryfall_id": "a8684039-e4d9-4e48-9a41-7ccf4a795507",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Watcher of the Spheres": {
+      "edhrec_rank": 4342,
+      "gate": "fidelity",
+      "name": "Watcher of the Spheres",
+      "reason": "Creature spells with flying you cast cost {1} less to cast. / Whenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
+      "scryfall_id": "354b9ea4-3d55-48cc-b426-c46b1d1bb397",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -310956,6 +311306,16 @@
       "name": "Whiptongue Frog",
       "reason": "",
       "scryfall_id": "6fc17186-e786-46a3-9812-4a6e367e78b9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Whiptongue Hydra": {
+      "edhrec_rank": 7057,
+      "gate": "fidelity",
+      "name": "Whiptongue Hydra",
+      "reason": "When this creature enters, destroy all creatures with flying. Put a +1/+1 counter on this creature for each creature destroyed this way.",
+      "scryfall_id": "57cfa420-306d-4d2c-8e83-fa9b46f2aa27",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -313136,6 +313496,16 @@
       "name": "Winding Wurm",
       "reason": "",
       "scryfall_id": "ed75dc43-172c-4302-8807-23bfdd65baf4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Windreader Sphinx": {
+      "edhrec_rank": 7485,
+      "gate": "fidelity",
+      "name": "Windreader Sphinx",
+      "reason": "Whenever a creature with flying attacks, you may draw a card.",
+      "scryfall_id": "11fac13f-bb14-48d5-90c2-0b70b252287c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -317556,6 +317926,16 @@
       "name": "Yavimaya Dryad",
       "reason": "no template for: Forestwalk",
       "scryfall_id": "9807f9a8-a994-4fb2-ad33-3d80d9702bfe",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Yavimaya Elder": {
+      "edhrec_rank": 3463,
+      "gate": "fidelity",
+      "name": "Yavimaya Elder",
+      "reason": "{2}, Sacrifice this creature: Draw a card.",
+      "scryfall_id": "27dacbde-a646-418c-b569-4a4f11c9faae",
       "source": "",
       "status": "pending",
       "wanted": false

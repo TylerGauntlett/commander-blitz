@@ -39,6 +39,22 @@
 - Impelment the new pod creation flow, adding multiplayer support
 - Ensure significant unit and integration test coverage for this new backend support as it is highly complex with roubustness required for the lobby to work at all
 
+<local-plans>\support-online-pod-sequential-penguin.md
+
+---
+
+## Improve mana indicators
+
+### Overview
+- The mana indicators shown on the player orb do not use any actual MTG symbols
+- They feel floating the middle of the box
+
+### Task
+- Convert colored dots to proper icons
+- Add mana to its own panel like subdecks is
+
+<local-plans>\improve-mana-indicators-lucky-patterson.md
+
 ---
 
 ## Variable Cost Cards
@@ -51,5 +67,15 @@
 
 ### Task
 - Add support for users to decide how they want to activate a card/which efffect to trigger. Consider using the existing attacking/defending/play panel on the right
+
+## CI/CD to deply application
+
+### Overview
+- Using Github Actions, connect this repo with a cloud provider to enable continious delievery
+- Ever new commit to main should start the build/deploy process
+- A new droplet in digital ocean can be used to act as the server
+
+### Task
+- Build out CI/CD so all main branch commits produce a deployed version via Digital Ocean
 
 ---

@@ -107,6 +107,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attacking": true,
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "As long as this creature is attacking, it gets +2/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "pay_life": 4
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay 4 life: This creature gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "adanto_vanguard",
+      "mana_cost": "{1}{W}",
+      "name": "Adanto Vanguard",
+      "oracle_text": "As long as this creature is attacking, it gets +2/+0.\nPay 4 life: This creature gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
