@@ -12,7 +12,7 @@
  *
  * Drawn with `<img>` rather than inlined. Scryfall's symbols ship fully coloured,
  * so there is nothing to recolour through `currentColor` -- which is just as
- * well, because an `<img>` could not be recoloured anyway -- and 28 cached files
+ * well, because an `<img>` could not be recoloured anyway -- and 54 cached files
  * beat inlining the same path data into every pip on a board.
  *
  * The class names are unchanged from the disc this replaces (`pip`, `pip--inline`,
@@ -20,51 +20,13 @@
  * still a true fact about the symbol. `data-symbol` carries the code for the
  * tests that used to read the letter out of `textContent`, which an image does
  * not have.
- */
-
-/**
- * What `public/symbols/` actually contains, per `fetch_symbols.py`'s `WANTED`.
  *
- * Anything outside this renders as its own notation instead: a generic cost
- * above 16 is not a card this game can contain, and inventing a broken `<img>`
- * for one would be worse than showing text the player can at least look up --
- * the same call `symbolTokens` already makes.
- *
- * Hybrid and phyrexian are here now. They used to be excluded because the engine
- * rejects those costs at load time, but deck import changed that: `cards/proxy.py`
- * rewrites a hybrid *cost* into something the engine parses, and then displays
- * the card's real oracle text, which is full of `{W/U}` and `{G/P}` inside
- * activation costs.
+ * Which codes have artwork, and what file each one lives in, is
+ * `logic/manaSymbols.ts` -- the orb's mana panel asks the same questions from a
+ * module that cannot import a component.
  */
-const COLORS = ["W", "U", "B", "R", "G"];
 
-const KNOWN = new Set([
-  ...COLORS,
-  "C",
-  "X",
-  "T",
-  "Q",
-  "S",
-  "E",
-  ...Array.from({ length: 17 }, (_, n) => String(n)),
-  ...COLORS.flatMap((a, i) => COLORS.slice(i + 1).map((b) => `${a}/${b}`)),
-  ...COLORS.map((c) => `2/${c}`),
-  ...[...COLORS, "C"].map((c) => `${c}/P`),
-  ...COLORS.map((c) => `C/${c}`),
-]);
-
-export function hasSymbol(code: string): boolean {
-  return KNOWN.has(code);
-}
-
-/**
- * `{G/U}` is stored as `G-U.svg`: a slash cannot be a filename on Windows, and
- * `fetch_symbols.py`'s `key_for` already makes the same substitution on the way
- * in. The two have to agree or every hybrid pip is a broken image.
- */
-function fileFor(code: string): string {
-  return code.replace("/", "-");
-}
+import { hasSymbol, symbolFile } from "../../logic/manaSymbols";
 
 interface Props {
   /** The symbol's code without braces: `G`, `4`, `T`. */
@@ -96,7 +58,7 @@ export function ManaSymbol({ code, className, fallback, title }: Props) {
       className={classes}
       // Root-relative: the hand, the preview rail and the action panel all draw
       // these, and none of them know where they are in a URL.
-      src={`/symbols/${fileFor(code)}.svg`}
+      src={`/symbols/${symbolFile(code)}.svg`}
       alt={label}
       title={title ?? label}
       data-symbol={code}

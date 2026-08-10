@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 import type { ManaView } from "../src/api/types";
 import {
   formatManaRow,
+  manaGroups,
   manaRow,
   markSpent,
   sourcesSpentBy,
@@ -92,6 +93,103 @@ describe("manaRow", () => {
         expect(manaRow(mana({ sources, total }))).toHaveLength(total);
       }
     });
+  });
+});
+
+/**
+ * Collapsing the row into counted chips.
+ *
+ * The row is drawn with the real Scryfall symbols now, which are twice a dot's
+ * width, so a mark per mana wrapped to three lines on a ten-land board. Grouping
+ * has to lose the repetition without losing anything the row was saying: what is
+ * already in the pool, what is still undecided, and what a hovered spell takes.
+ */
+describe("manaGroups", () => {
+  it("is empty for a board with nothing untapped", () => {
+    expect(manaGroups([])).toEqual([]);
+  });
+
+  it("collapses identical lands into one chip with a count", () => {
+    const groups = manaGroups(manaRow(mana({ sources: [forest(1), forest(2)], total: 2 })));
+    expect(groups).toHaveLength(1);
+    expect(groups[0].tone).toBe("G");
+    expect(groups[0].count).toBe(2);
+    expect(groups[0].code).toBe("G");
+  });
+
+  it("keeps floating mana apart from land mana of the same colour", () => {
+    // The pool drains at end of step and the land does not. Merging them would
+    // erase the one distinction the gold ring is drawn to make.
+    const groups = manaGroups(
+      manaRow(mana({ pool: { G: 2 }, sources: [forest(1)], total: 3 })),
+    );
+    expect(groups).toHaveLength(2);
+    expect(groups.map((g) => g.floating)).toEqual([true, false]);
+    expect(groups.map((g) => g.count)).toEqual([2, 1]);
+  });
+
+  it("draws a two-colour choice as the published hybrid symbol", () => {
+    // `{G/U}` is exactly "one mana, either colour". The fixture holds the pair
+    // as U-then-G and Scryfall publishes it G-then-U, which is the reversal that
+    // has to be absorbed rather than assumed away.
+    const groups = manaGroups(manaRow(mana({ sources: [dual(1), dual(2)], total: 2 })));
+    expect(groups).toHaveLength(1);
+    expect(groups[0].tone).toBe("any");
+    expect(groups[0].code).toBe("G/U");
+    expect(groups[0].count).toBe(2);
+  });
+
+  it("has no symbol for a choice of three, which has no printed mark", () => {
+    const any = { oid: 1, options: [["W"], ["U"], ["B"]], symbols: ["W", "U", "B"], amount: 1 };
+    const groups = manaGroups(manaRow(mana({ sources: [any], total: 1 })));
+    expect(groups[0].code).toBeNull();
+    expect(groups[0].tone).toBe("any");
+  });
+
+  it("keeps two different choices apart rather than lumping them as 'some colour'", () => {
+    const wu = { oid: 2, options: [["W"], ["U"]], symbols: ["W", "U"], amount: 1 };
+    const groups = manaGroups(manaRow(mana({ sources: [dual(1), wu], total: 2 })));
+    expect(groups).toHaveLength(2);
+    expect(new Set(groups.map((g) => g.code))).toEqual(new Set(["G/U", "W/U"]));
+  });
+
+  it("orders floating first, then WUBRG, then the undecided", () => {
+    // Read at a glance several times a turn: a chip that moves when an unrelated
+    // land is tapped has to be re-found every time.
+    const row = manaRow(
+      mana({
+        pool: { R: 1 },
+        sources: [dual(1), forest(2), { oid: 3, options: [["W"]], symbols: ["W"], amount: 1 }],
+        total: 4,
+      }),
+    );
+    expect(manaGroups(row).map((g) => g.tone)).toEqual(["R", "W", "G", "any"]);
+  });
+
+  it("counts what a hovered spell would take without dropping it from the total", () => {
+    // The chip renders `count - spent` beside a faint `-spent`, so both numbers
+    // have to survive: the group still says how much mana exists.
+    const row = markSpent(
+      manaRow(mana({ sources: [forest(1), forest(2), forest(3)], total: 3 })),
+      new Set([1, 2]),
+    );
+    const [green] = manaGroups(row);
+    expect(green.count).toBe(3);
+    expect(green.spent).toBe(2);
+  });
+
+  it("never invents or loses mana: the counts always sum to the row", () => {
+    for (const sources of [
+      [forest(1)],
+      [dual(1)],
+      [bounce(1)],
+      [forest(1), dual(2), bounce(3)],
+      [forest(1), forest(2), dual(3), dual(4)],
+    ]) {
+      const total = sources.reduce((sum, s) => sum + s.amount, 0);
+      const row = manaRow(mana({ sources, total }));
+      expect(manaGroups(row).reduce((sum, g) => sum + g.count, 0)).toBe(total);
+    }
   });
 });
 

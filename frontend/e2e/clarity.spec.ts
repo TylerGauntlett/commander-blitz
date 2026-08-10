@@ -14,19 +14,22 @@ import { expect, test } from "@playwright/test";
 import { actionButtons, actionsOfKind, startGame, waitForOurTurn } from "./helpers";
 
 test.describe("mana is visible", () => {
-  test("the player orb shows a pip per available mana", async ({ page }) => {
+  test("the player orb counts every available mana in its panel", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
 
     const row = page.getByTestId("mana-0");
-    // Turn one, no lands down: there is nothing to show yet.
-    await expect(row).toBeHidden();
+    // The panel is permanent -- it says "no mana" rather than vanishing, because
+    // a plate that comes and goes re-spaces the whole orb several times a turn.
+    // Turn one, no lands down: there is nothing in it yet.
+    await expect(row).toBeVisible();
+    await expect(row.locator(".mana-grp")).toHaveCount(0);
 
-    // Play lands until some appear, then the pip count must match the row's
-    // own formatted summary -- the two are derived separately.
+    // Play lands until some appear, then the counted chips must add up to the
+    // row's own formatted summary -- the two are derived separately.
     for (let i = 0; i < 60; i += 1) {
-      if (await row.isVisible()) break;
+      if (await row.locator(".mana-grp").count()) break;
       const land = actionsOfKind(page, "play_land");
       const pass = actionsOfKind(page, "pass");
       if (await land.count()) await land.first().click();
@@ -34,11 +37,17 @@ test.describe("mana is visible", () => {
       await page.waitForTimeout(80);
     }
 
-    await expect(row).toBeVisible();
-    const pips = await row.locator(".mana-pip").count();
+    // One chip per *kind* of mana carrying a count, not one mark per mana: at
+    // the real symbol's width a mark each wrapped to three rows in this column.
+    const counts = await row
+      .locator(".mana-grp")
+      .evaluateAll((nodes) =>
+        nodes.map((n) => Number((n as HTMLElement).dataset.count ?? "0")),
+      );
+    const available = counts.reduce((sum, n) => sum + n, 0);
     const summary = (await row.getAttribute("data-mana")) ?? "";
-    expect(pips).toBeGreaterThan(0);
-    expect(summary.match(/\{/g) ?? []).toHaveLength(pips);
+    expect(available).toBeGreaterThan(0);
+    expect(summary.match(/\{/g) ?? []).toHaveLength(available);
   });
 });
 

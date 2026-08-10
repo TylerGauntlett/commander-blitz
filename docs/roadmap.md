@@ -55,6 +55,12 @@
 
 <local-plans>\improve-mana-indicators-lucky-patterson.md
 
+Done. Mana is Scryfall's real symbols, counted per kind (`4{G} 2{U}`) rather than
+one mark per mana, on a permanent plate. Commander damage came along, having the
+same two problems: its chips name the seat and meter their progress toward 21. Both
+plates joined the zone piles in `.orb__foot`, so nothing in the orb floats in the
+slack any more. See `docs/frontend.md` and `docs/mockup-fidelity.md`.
+
 ---
 
 ## Variable Cost Cards
