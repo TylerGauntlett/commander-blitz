@@ -39,6 +39,7 @@ _POD_STATUS = {
     "already_started": 409,
     "not_ready": 409,
     "unknown_deck": 400,
+    "bad_name": 400,
     "pod_closed": 410,
 }
 
@@ -154,11 +155,11 @@ def update_seat(
     body: SeatUpdateRequest,
     token: str | None = _TOKEN,
 ) -> PodView:
-    """Your own chair: pick a deck, lock in, unlock."""
+    """Your own chair: say who you are, pick a deck, lock in, unlock."""
     pod, player_id = _member(request, code, token)
     try:
         _pods(request).update_seat(
-            pod, player_id, deck_id=body.deck_id, locked=body.locked
+            pod, player_id, deck_id=body.deck_id, locked=body.locked, name=body.name
         )
     except PodError as exc:
         raise _http(exc) from None

@@ -40,6 +40,7 @@ function seatAt(pod: ReturnType<typeof podView>, index: number, props = {}) {
       onClear={noop}
       onInvite={noop}
       onDossier={noop}
+      onRename={noop}
       {...props}
     />,
   );
@@ -192,6 +193,60 @@ describe("a CPU seat", () => {
     const { container } = seatAt(pod, 1, { youAreHost: false });
     expect(screen.queryByTestId("cpu-deck-1")).toBeNull();
     expect(container.querySelector(".slot__x")).toBeNull();
+  });
+});
+
+describe("your own name", () => {
+  it("is a field on your own plate and a label on everybody else's", () => {
+    const pod = podView([
+      { ...me, name: "Tyler", deck: deckSummary() },
+      { kind: "human", name: "Priya", deck: deckSummary(), locked: true, ready: true },
+    ]);
+    seatAt(pod, 0);
+    expect(screen.getByTestId("your-name").getAttribute("value")).toBe("Tyler");
+    cleanup();
+
+    seatAt(pod, 1);
+    expect(screen.queryByTestId("your-name")).toBeNull();
+    expect(screen.getByText("Priya")).toBeTruthy();
+  });
+
+  it("commits the trimmed value on blur", () => {
+    const rename = vi.fn();
+    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
+    const field = screen.getByTestId("your-name");
+    fireEvent.change(field, { target: { value: "  Priya  " } });
+    fireEvent.blur(field);
+    expect(rename).toHaveBeenCalledWith("Priya");
+  });
+
+  it("commits on Enter", () => {
+    const rename = vi.fn();
+    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
+    const field = screen.getByTestId("your-name");
+    fireEvent.change(field, { target: { value: "Priya" } });
+    fireEvent.keyDown(field, { key: "Enter" });
+    fireEvent.blur(field);
+    expect(rename).toHaveBeenCalledWith("Priya");
+  });
+
+  it("says nothing when the name has not changed", () => {
+    // A PATCH per blur would bump the pod version and wake three other
+    // browsers out of their long polls to be told nothing happened.
+    const rename = vi.fn();
+    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
+    fireEvent.blur(screen.getByTestId("your-name"));
+    expect(rename).not.toHaveBeenCalled();
+  });
+
+  it("restores the stored name when the field is emptied", () => {
+    const rename = vi.fn();
+    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
+    const field = screen.getByTestId("your-name");
+    fireEvent.change(field, { target: { value: "   " } });
+    fireEvent.blur(field);
+    expect((field as HTMLInputElement).value).toBe("Tyler");
+    expect(rename).not.toHaveBeenCalled();
   });
 });
 

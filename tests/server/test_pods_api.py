@@ -257,6 +257,113 @@ class TestLockIn:
         assert seen["id"] == "edgar"
 
 
+class TestNaming:
+    """Who you are at this table, said from your own chair.
+
+    The front door does not ask -- it is two buttons and a code field -- so an
+    unnamed chair is named after its seat and you rename from the plate.
+    """
+
+    def test_an_unnamed_chair_is_named_after_its_seat(self, client):
+        """Not "You": a host who never renames would have the rest of the pod
+        reading "Waiting on You" about somebody else.
+
+        Posted raw rather than through the ``create``/``join`` helpers, which
+        both send a name -- this is the shape the *client* sends, which stopped
+        carrying one when the field moved off the front door.
+        """
+        opened = client.post("/api/pods", json={}).json()
+        code = opened["pod"]["code"]
+        assert opened["pod"]["seats"][0]["name"] == "Player 1"
+
+        joined = client.post(f"/api/pods/{code}/join", json={}).json()
+        assert joined["pod"]["seats"][1]["name"] == "Player 2"
+
+    def test_you_can_rename_your_own_seat(self, client):
+        code, host, _ = create(client)
+        view = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host)
+        ).json()
+        assert view["seats"][0]["name"] == "Tyler"
+
+    def test_the_rest_of_the_pod_sees_it(self, client):
+        code, host, _ = create(client)
+        guest, _ = join(client, code)
+        client.patch(f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host))
+        seen = client.get(f"/api/pods/{code}", headers=auth(guest)).json()
+        assert seen["seats"][0]["name"] == "Tyler"
+
+    def test_a_rename_moves_the_version(self, client):
+        """The whole multiplayer story is the long poll: a rename that did not
+        wake it would be invisible until some unrelated change came along."""
+        code, host, view = create(client)
+        after = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host)
+        ).json()
+        assert after["version"] > view["version"]
+
+    def test_whitespace_is_collapsed(self, client):
+        code, host, _ = create(client)
+        view = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "  Ty    ler  "}, headers=auth(host)
+        ).json()
+        assert view["seats"][0]["name"] == "Ty ler"
+
+    def test_a_blank_name_is_refused(self, client):
+        code, host, _ = create(client)
+        response = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "   "}, headers=auth(host)
+        )
+        assert response.status_code == 400
+        assert response.json()["detail"]["code"] == "bad_name"
+
+    def test_a_name_past_the_cap_is_refused(self, client):
+        code, host, _ = create(client)
+        response = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "x" * 25}, headers=auth(host)
+        )
+        assert response.status_code == 422
+
+    def test_renaming_leaves_the_deck_and_the_lock_alone(self, client):
+        """Not gated on `locked`: the lock commits a *deck*, and making somebody
+        unlock -- which un-readies the pod for everybody -- to fix a typo would
+        be a worse rule than the one it enforced."""
+        code, host, _ = create(client, deck_id="aesi")
+        client.patch(f"/api/pods/{code}/seat", json={"locked": True}, headers=auth(host))
+        view = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host)
+        ).json()
+        assert view["seats"][0]["locked"]
+        assert view["seats"][0]["deck"]["id"] == "aesi"
+        assert view["seats"][0]["name"] == "Tyler"
+
+    def test_renaming_after_the_deal_is_refused(self, client):
+        code, host, _ = ready_pod(client)
+        client.post(f"/api/pods/{code}/start", headers=auth(host))
+        response = client.patch(
+            f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host)
+        )
+        assert response.status_code == 409
+
+    def test_a_rename_reaches_the_table(self, client):
+        """The point of the field. `SeatConfig(name=seat.name)` at deal time is
+        what carries it into the game, and a rename that stopped at the lobby
+        would be a name nobody at the table ever sees."""
+        code, host, guest = ready_pod(client)
+        client.patch(f"/api/pods/{code}/seat", json={"name": "Tyler"}, headers=auth(host))
+        client.patch(f"/api/pods/{code}/seat", json={"name": "Priya"}, headers=auth(guest))
+        game_id = client.post(f"/api/pods/{code}/start", headers=auth(host)).json()["game_id"]
+
+        state = client.get(f"/api/games/{game_id}/state", headers=auth(host)).json()["state"]
+        assert [player["name"] for player in state["players"]] == ["Tyler", "Priya"]
+
+    def test_a_name_given_at_the_door_still_works(self, client):
+        """Nothing in the client sends one any more, but the field is still on
+        `CreatePodRequest` and `scripts/smoke_http.py` uses it."""
+        _, _, view = create(client, name="Scripted")
+        assert view["seats"][0]["name"] == "Scripted"
+
+
 class TestStart:
     def test_a_solo_pod_cannot_deal(self, client):
         code, host, _ = create(client, deck_id="aesi")

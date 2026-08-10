@@ -247,6 +247,59 @@ reasoning lives — read that before restoring anything card-shaped here.
 
 ---
 
+### The lobby's enlarged card keeps its 1.4 box; the preview rail's does not
+
+`cards.css` has one `.card--big`, built for the preview rail: width-driven with
+`height: 100%`, held to a fixed frame by `.rail--right .preview`. The mockup calls
+this out by name and takes the other trade:
+
+> ONE DELIBERATE DEVIATION. The app's rail card is width-driven with `height:100%`
+> — it is the one card on that screen not held to 1.4. Here the aspect ratio stays,
+> because a face-up seat and a face-down `.back` have to be the same rectangle: the
+> moment they are not, the row stops reading as a hand and `.hand__felt` no longer
+> lands under the cards' shoulders. So this takes the preview's treatment and not
+> its box.
+
+The first port dropped that block on the grounds that "the components already emit
+the `.face` rules". They do — but the mockup's `.face--big` was not a copy of the
+app's, it was a lobby-scoped re-derivation at a different size, and dropping it was
+the bug behind two of the three defects that came back from the first hands-on pass.
+`lobby.css` now carries it under `.podcard`, the class `CommanderCard` puts on every
+card it renders.
+
+The type scale comes back as ratios of `--card-w` for the same reason the mockup
+gives: they *are* the rail's absolute numbers expressed as fractions of the top of
+`.podhand`'s clamp (296 × .047 = 13.9 against the rail's 13.5px name), so the row
+reads at the size the preview was tuned at and stays legible at the bottom of the
+clamp, where an absolute scale would be half again too big.
+
+### The dossier's card column is a fixed track, not the mockup's `auto`
+
+The mockup writes `.dos__top { grid-template-columns: auto minmax(0, 1fr) }` and can
+afford it, because its card is a fixed-width `.face`. Ours is a component, and while
+it was content-sized its max-content contribution was the longest unbroken run of
+oracle text — which squeezed the prose column to about twenty pixels and put a
+horizontal scrollbar on the panel. The track is now `var(--card-w)`.
+
+The card is also larger than the mockup's: `clamp(150px, 22vh, 214px)` against the
+mockup's root `clamp(128px, 18vh, 176px)`. Below about 202px `--fs-tx` sits on its
+8.5px floor and the ratio scale stops doing anything; the 660px panel still leaves
+the prose column 394px; and the loading placeholder already renders at this size, so
+the panel does not resize when the card arrives.
+
+### The seat plate carries a name field the mockup has no counterpart for
+
+The mockup's plate renders the name as a plain span, and its front door asks for no
+name at all — its guests were scripted. The shipped app briefly had a "You are"
+field on the door; **removing it restores fidelity, and adding an editable name to
+your own plate deliberately breaks it.** A real pod needs somebody to be able to say
+who they are, and the door is the wrong place: a name is something you say to a
+table, and at the door there is not one yet.
+
+An unnamed chair is `Player {n}`, numbered by seat. Not `"You"` — that is only true
+for one reader, and a host who never renamed would have the rest of the pod reading
+"Waiting on You" about somebody else.
+
 ### The lobby's stylesheet renames four classes from the mockup
 
 `.hand`, `.rail`, `.over` and `.play` all already mean something in `board.css`
@@ -422,6 +475,31 @@ Ranked by severity. None of these block anything; they are the queue.
   being a function of who is still alive.
 
 ---
+
+## Closed in the lobby's first hands-on pass
+
+Three defects came back from actually opening a pod, and two of them were one bug.
+
+- **Seat cards were four different heights** — `.card--big` reverting to content
+  sizing with no container frame. `e2e/pod.spec.ts` now asserts all four
+  `.slot__card` boxes share width, **height and top**, and that `h / w ≈ 1.4`. Width
+  alone passed even with the bug, because `.slot` has a definite width; height is the
+  assertion that bites.
+- **The dossier's card blew out its grid**, same root cause plus the `auto` track.
+  Guarded by an assertion that `.dos__body` does not scroll sideways *and* that
+  `.dos__col` clears 300px — the overflow check alone would also pass if the panel
+  merely clipped.
+- **The name field was on the door.** Now on your own plate, with a server route that
+  did not exist (`PATCH /pods/{code}/seat` takes a `name`).
+
+Two things fell out while tracing them:
+
+- `.slot__card[data-act] { cursor: pointer }` had never once been visible:
+  `.card--static { cursor: default }` sits on the child that fills the slot.
+- `--card-r` is declared at `:root` and a `var()` inside a custom property is
+  substituted *where it is declared*, so the whole document rounded cards at the
+  board's ~5px however wide they were drawn. `.podhand` and `.dos__top` re-derive it,
+  which is what makes a `.back` and a face round alike.
 
 ## Closed in this pass
 

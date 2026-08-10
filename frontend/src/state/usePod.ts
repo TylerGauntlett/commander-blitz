@@ -150,7 +150,7 @@ export function usePod(session: PodSession | null) {
   );
 
   const updateSeat = useMutation({
-    mutationFn: (body: { deck_id?: string; locked?: boolean }) => {
+    mutationFn: (body: { deck_id?: string; locked?: boolean; name?: string }) => {
       if (!code) throw new Error("no pod");
       return api.updateSeat(code, body);
     },
@@ -206,7 +206,7 @@ export function usePod(session: PodSession | null) {
 
 export function useCreatePod() {
   return useMutation({
-    mutationFn: (input: { name: string; deckId?: string | null; seed?: number }) =>
+    mutationFn: (input: { name?: string; deckId?: string | null; seed?: number }) =>
       api.createPod(input.name, input.deckId, input.seed),
   });
 }
@@ -219,7 +219,7 @@ export function useCreatePod() {
  */
 export function useJoinPod() {
   return useMutation({
-    mutationFn: async (input: { code: string; name: string }) => {
+    mutationFn: async (input: { code: string; name?: string }) => {
       const existing = storedToken(input.code);
       setPlayerToken(existing);
       try {

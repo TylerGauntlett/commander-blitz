@@ -34,7 +34,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Literal
 
 from .deckinfo import deck_summary
-from .schemas import DeckSummary, PodSeatView, PodView, SeatConfig
+from .schemas import MAX_NAME_LENGTH, DeckSummary, PodSeatView, PodView, SeatConfig
 
 if TYPE_CHECKING:  # pragma: no cover
     from .sessions import GameSession, SessionRegistry
@@ -91,6 +91,21 @@ POD_WORDS = (
 )
 
 _CODE_RE = re.compile(r"^([A-Z]+)-?(\d{4,6})$")
+
+
+def default_name(seat: int) -> str:
+    """What an unnamed chair is called.
+
+    Numbered by seat rather than by role, because "You" is only true for one
+    reader: a host who never renames would otherwise have the rest of the pod
+    reading "Waiting on You" about somebody else.
+    """
+    return f"Player {seat + 1}"
+
+
+def clean_name(raw: str) -> str:
+    """Collapse whitespace and cap.  Returns "" if there is nothing left."""
+    return " ".join(raw.split())[:MAX_NAME_LENGTH]
 
 
 class PodError(Exception):
@@ -350,7 +365,11 @@ class PodRegistry:
     # -- lifecycle ---------------------------------------------------------
 
     def create(
-        self, *, host_name: str = "You", deck_id: str | None = None, seed: int | None = None
+        self,
+        *,
+        host_name: str | None = None,
+        deck_id: str | None = None,
+        seed: int | None = None,
     ) -> tuple[Pod, PodPlayer]:
         self.sweep()
         if deck_id is not None:
@@ -367,7 +386,7 @@ class PodRegistry:
         player = PodPlayer(
             player_id=host_id,
             token=secrets.token_urlsafe(24),
-            name=host_name or "You",
+            name=clean_name(host_name or "") or default_name(0),
             seat=0,
         )
         with pod._lock:
@@ -385,7 +404,7 @@ class PodRegistry:
         return pod
 
     def join(
-        self, code: str, *, name: str = "Player", token: str | None = None
+        self, code: str, *, name: str | None = None, token: str | None = None
     ) -> tuple[Pod, PodPlayer]:
         """Take a chair, or take back the one you already had.
 
@@ -413,7 +432,7 @@ class PodRegistry:
             player = PodPlayer(
                 player_id=player_id,
                 token=secrets.token_urlsafe(24),
-                name=name or "Player",
+                name=clean_name(name or "") or default_name(index),
                 seat=index,
             )
             pod.players[player_id] = player
@@ -461,8 +480,14 @@ class PodRegistry:
         *,
         deck_id: str | None = None,
         locked: bool | None = None,
+        name: str | None = None,
     ) -> None:
-        """Your own chair: pick a deck, lock in, unlock."""
+        """Your own chair: say who you are, pick a deck, lock in, unlock.
+
+        Renaming is not gated on ``locked`` -- the lock commits a *deck*, and
+        the pod is already refused outright once it has dealt, which is the
+        gate that matters.
+        """
         if deck_id is not None:
             self._known_deck(deck_id)
         with pod._lock:
@@ -471,6 +496,19 @@ class PodRegistry:
             if index is None:
                 raise PodError("not_your_seat", "you are not in this pod")
             seat = pod.seats[index]
+            if name is not None:
+                trimmed = clean_name(name)
+                if not trimmed:
+                    raise PodError("bad_name", "a seat needs a name")
+                seat.name = trimmed
+                # Two fields, one fact. ``view_for`` and the ``SeatConfig`` built
+                # at deal time both read ``seat.name``; ``PodPlayer.name`` is the
+                # identity record the seat was seeded from at join. Leaving it
+                # stale would leave the pod holding two answers to "who is this",
+                # and nothing would ever reconcile them.
+                player = pod.players.get(player_id)
+                if player is not None:
+                    player.name = trimmed
             if deck_id is not None:
                 seat.deck_id = deck_id
             if locked is not None:

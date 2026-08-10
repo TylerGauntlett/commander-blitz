@@ -11,9 +11,9 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/unit/` | 395 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
 | `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 254 | The HTTP API end to end: hidden information, image serving, the catalog, and the whole lobby |
-| `frontend/tests/` | 467 | The client's pure logic modules, the palette ladders, the card face and the lobby |
-| `frontend/e2e/` | 98 | Playwright: full games, combat, stacking, card art, legibility, layout, and a two-browser pod |
+| `tests/server/` | 269 | The HTTP API end to end: hidden information, image serving, the catalog, and the whole lobby |
+| `frontend/tests/` | 562 | The client's pure logic modules, the palette ladders, the card face and the lobby |
+| `frontend/e2e/` | 103 | Playwright: full games, combat, stacking, card art, legibility, layout, and a two-browser pod |
 
 `scripts/verify.py` runs 12 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
@@ -76,6 +76,16 @@ another player's id. `TestEventRedaction` (`tests/server/test_multiplayer_game.p
 holds the event log's: a `draw` by another seat carries no object id, but the event
 itself is still there, because a client that silently received a shorter list than its
 neighbour could not tell that from a bug.
+
+**Geometry, measured rather than looked at.** The lobby's row of four is a *hand*,
+and that is a claim about pixels: `e2e/pod.spec.ts` asserts all four `.slot__card`
+boxes share width, height and top, and that height over width is 1.4. It exists
+because the first version shipped with four different heights — `.card--big`'s
+"every enlarged card is the same size" is enforced by its container, and the lobby
+supplied none. Width alone would have passed even then, which is exactly the kind of
+half-assertion that lets a layout bug through. The dossier gets the same treatment:
+its panel must not scroll sideways *and* its prose column must clear 300px, because
+the overflow check alone would also pass if the panel merely clipped.
 
 **Two people doing the same thing at once.** `tests/server/test_pod_races.py` is the
 file that finds the mistakes in the rest. Every handler is a sync `def`, so Starlette

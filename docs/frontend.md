@@ -372,6 +372,29 @@ by hand — and how `e2e/pod.spec.ts` drives two browser contexts against one se
 That is also the whole reconnect story. A refreshed tab hands the token back, the server
 returns the seat it already had, and nothing else happens.
 
+Your *name* is a different thing and lives somewhere else: on your own seat plate, as
+the only editable field on any plate. The front door briefly asked for one and should
+not have — a name is something you say to a table, and at the door there is not one
+yet. `SeatName` in `PodSeat.tsx` keeps a local draft and commits on blur and Enter: the
+pod re-renders on every long-poll return, so a controlled field would reset itself
+mid-word, and a PATCH per keystroke would bump the pod's version for every letter and
+wake three other browsers out of their polls to be told you are still typing.
+
+### One card, two boxes
+
+`cards.css`'s `.card--big` is the **preview rail's** card — width-driven, `height:
+100%`, and it only holds a shape because `.rail--right .preview` gives it a fixed
+frame. The lobby has no such container, so the same rule collapses to content sizing
+and every seat card comes out as tall as its own rules text.
+
+So `CommanderCard` puts a `podcard` class on every card it renders, and `lobby.css`
+re-boxes it to `var(--card-w)` × 1.4 — `.card`'s own box. A face-up seat and a
+face-down `.back` have to be the same rectangle, or the row stops reading as a hand
+and `.podhand__felt` no longer lands under the cards' shoulders. The type scale comes
+back as ratios of `--card-w` at the same time, because `.face--big` pins `--card-w:
+150px` *on the face*, where no ancestor can beat it, and a 296px card was otherwise
+drawing 150px chrome. See `docs/mockup-fidelity.md`.
+
 ## Watching the opponents
 
 `GameSession.drive_ai()` normally runs every AI seat until a human must decide, so one

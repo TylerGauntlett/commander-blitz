@@ -13,9 +13,15 @@ import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DeckDetail } from "../src/api/types";
 import { DeckDossier, ManaCurve, RatingBar } from "../src/components/lobby/DeckDossier";
+import { useUiStore } from "../src/state/uiStore";
 import { deckSummary } from "./fixtures";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  // The image map is module state; a dossier that credited the previous test's
+  // illustrator would be the sort of pass nobody trusts.
+  useUiStore.setState({ images: null });
+});
 
 function detail(overrides: Partial<DeckDetail> = {}): DeckDetail {
   return {
@@ -192,6 +198,37 @@ describe("an imported deck, which has none of the editorial half", () => {
   it("names how many of its cards are inert", async () => {
     await open(imported);
     expect(screen.getByText(/12 of the imported cards/)).toBeTruthy();
+  });
+});
+
+describe("crediting the illustrator", () => {
+  it("names the artist once the image map has arrived", async () => {
+    useUiStore.setState({
+      images: {
+        aesi_tyrant_of_gyre_strait: {
+          card_id: "aesi_tyrant_of_gyre_strait",
+          art: "/art/aesi_tyrant_of_gyre_strait.jpg",
+          artist: "Viktor Titov",
+        },
+      },
+    });
+    await open(detail());
+    expect(screen.getByText("Art: Viktor Titov")).toBeTruthy();
+  });
+
+  it("says nothing at all rather than 'Art: null' when it does not know", async () => {
+    // Two ways of not knowing -- the map has not landed, or this server has no
+    // art. Neither is worth a placeholder, and both must not print the word.
+    await open(detail());
+    expect(screen.queryByText(/^Art:/)).toBeNull();
+  });
+
+  it("says nothing when the map has landed but this card has no printing", async () => {
+    useUiStore.setState({
+      images: { aesi_tyrant_of_gyre_strait: null },
+    });
+    await open(detail());
+    expect(screen.queryByText(/^Art:/)).toBeNull();
   });
 });
 

@@ -100,3 +100,29 @@ slack any more. See `docs/frontend.md` and `docs/mockup-fidelity.md`.
 - Build out CI/CD so all main branch commits produce a deployed version via Digital Ocean
 
 ---
+
+## Storybook coverage
+
+### Overview
+- The UI is growing complicated as the app is continuting to develop
+- All components are pure state machines, updating based on backend events
+- This makes component testing very easy via interactive tests in Storybook
+- This approach also ensures visual consistancy by treating the whole frontend as a series of design system components
+- Things like the action panel, phase tool bar, etc can have Storybook story interaction tests that verify the components function (and look) as expected
+
+### Task
+- Implement Storybook to test macro frontend UI components
+- Include coverage for all core features
+
+---
+
+## URL routing
+
+### Overview
+- The application currently functions as an SPA without any URL changes
+- This makes the application feel weird as it has to use things like query params to share rooms
+
+### Task
+- Using a React routing library, add proper support for page routing
+
+---

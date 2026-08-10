@@ -201,14 +201,23 @@ class PodView(BaseModel):
     invite_link: str = ""
 
 
+#: The longest a player may call themselves.  One number, because the door, the
+#: join and the seat plate are three ways into the same field.
+MAX_NAME_LENGTH = 24
+
+
 class CreatePodRequest(BaseModel):
-    name: str = Field(default="You", max_length=24)
+    #: Omitted by the client: the front door asks for a code, not a name, and
+    #: the lobby's own seat plate is where you say who you are.  ``None`` rather
+    #: than a literal default so the seat-numbered fallback in ``PodRegistry``
+    #: is the only place that decides what an unnamed chair is called.
+    name: str | None = Field(default=None, max_length=MAX_NAME_LENGTH)
     deck_id: str | None = None
     seed: int | None = None
 
 
 class JoinPodRequest(BaseModel):
-    name: str = Field(default="Player", max_length=24)
+    name: str | None = Field(default=None, max_length=MAX_NAME_LENGTH)
 
 
 class PodCredentials(BaseModel):
@@ -219,14 +228,19 @@ class PodCredentials(BaseModel):
 
 
 class SeatUpdateRequest(BaseModel):
-    """Your own seat: pick a deck, lock in, unlock.
+    """Your own seat: say who you are, pick a deck, lock in, unlock.
 
-    Both fields are optional and independently applied, so "pick a deck" and
+    Every field is optional and independently applied, so "pick a deck" and
     "lock in" are one request or two at the client's discretion.
     """
 
     deck_id: str | None = None
     locked: bool | None = None
+    #: What you want to be called at this table.  Deliberately *not* gated on
+    #: ``locked``: the lock is a commitment to a deck, and making somebody
+    #: unlock -- which un-readies the pod for everybody else -- to fix a typo in
+    #: their own name would be a worse rule than the one it enforced.
+    name: str | None = Field(default=None, max_length=MAX_NAME_LENGTH)
 
 
 class StartPodRequest(BaseModel):

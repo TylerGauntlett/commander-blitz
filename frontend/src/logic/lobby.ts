@@ -246,6 +246,12 @@ export function visibleDecks(
 /* ------------------------------------------------------------------ */
 
 /**
+ * The longest a player may call themselves. Mirrors `MAX_NAME_LENGTH` in
+ * `server/schemas.py`, which is the one that actually refuses.
+ */
+export const MAX_NAME_LENGTH = 24;
+
+/**
  * Make a code somebody typed match one the server issued.
  *
  * The server normalises too -- this is not the check, it is so the input shows

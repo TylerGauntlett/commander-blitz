@@ -10,6 +10,8 @@
 
 import { useEffect } from "react";
 import type { DeckRatings } from "../../api/types";
+import { artistOf } from "../../logic/cardArt";
+import { useUiStore } from "../../state/uiStore";
 import { useDeckDetail } from "../../state/usePod";
 import { ManaSymbol } from "../game/ManaSymbol";
 import { SymbolText } from "../game/SymbolText";
@@ -101,6 +103,14 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
   // a fresh property read every time and TypeScript will not carry the guard.
   const ratings = deck?.ratings ?? null;
 
+  // The same function and the same map the preview rail reads. Lifting
+  // `CommanderCard`'s own card query up here would give the lobby a second
+  // answer to "who drew this", which is the duplication that costs -- not the
+  // request, which react-query would dedupe anyway.
+  const images = useUiStore((state) => state.images);
+  const commander = deck?.commanders[0] ?? null;
+  const artist = commander ? artistOf(images, commander) : null;
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -140,7 +150,11 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
             <>
               <div className="dos__top">
                 <div className="dos__card">
-                  <CommanderCard cardId={deck.commanders[0] ?? null} variant="big" />
+                  <CommanderCard cardId={commander} variant="big" />
+                  {/* Absent while the image map is still loading, and absent
+                      forever on a server with no art. Both are "we do not
+                      know", and neither is worth a placeholder. */}
+                  {artist && <div className="dos__artist">Art: {artist}</div>}
                 </div>
                 <div className="dos__col">
                   <h3 className="dos__h">The deck</h3>

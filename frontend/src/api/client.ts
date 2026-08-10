@@ -234,11 +234,21 @@ export const api = {
   /* Pods                                                              */
   /* ---------------------------------------------------------------- */
 
-  /** Open a pod and take seat 0. The token comes back exactly once, here. */
-  createPod: (name: string, deckId?: string | null, seed?: number) =>
+  /**
+   * Open a pod and take seat 0. The token comes back exactly once, here.
+   *
+   * `name` is omitted rather than defaulted: the front door does not ask for
+   * one, and the server names an unnamed chair after its seat. A default here
+   * would be a second place that decides what to call you.
+   */
+  createPod: (name?: string, deckId?: string | null, seed?: number) =>
     request<PodCredentials>("/pods", {
       method: "POST",
-      body: JSON.stringify({ name, deck_id: deckId ?? null, seed: seed ?? null }),
+      body: JSON.stringify({
+        ...(name ? { name } : {}),
+        deck_id: deckId ?? null,
+        seed: seed ?? null,
+      }),
     }),
 
   /**
@@ -248,10 +258,10 @@ export const api = {
    * second one -- which is the whole reconnect story, since `request` attaches
    * the stored token automatically.
    */
-  joinPod: (code: string, name: string) =>
+  joinPod: (code: string, name?: string) =>
     request<PodCredentials>(`/pods/${encodeURIComponent(code)}/join`, {
       method: "POST",
-      body: JSON.stringify({ name }),
+      body: JSON.stringify(name ? { name } : {}),
     }),
 
   /**
@@ -267,8 +277,8 @@ export const api = {
     return request<PodView>(`/pods/${encodeURIComponent(code)}?${params}`);
   },
 
-  /** Your own chair: pick a deck, lock in, unlock. */
-  updateSeat: (code: string, body: { deck_id?: string; locked?: boolean }) =>
+  /** Your own chair: say who you are, pick a deck, lock in, unlock. */
+  updateSeat: (code: string, body: { deck_id?: string; locked?: boolean; name?: string }) =>
     request<PodView>(`/pods/${encodeURIComponent(code)}/seat`, {
       method: "PATCH",
       body: JSON.stringify(body),

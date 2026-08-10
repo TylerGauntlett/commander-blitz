@@ -31,7 +31,7 @@ interface Props {
   error: Error | null;
   seed: string;
   onSeedChange: (seed: string) => void;
-  onUpdateSeat: (body: { deck_id?: string; locked?: boolean }) => void;
+  onUpdateSeat: (body: { deck_id?: string; locked?: boolean; name?: string }) => void;
   onAdminSeat: (index: number, action: "add_cpu" | "open_chair" | "clear" | "set_deck") => void;
   onSetSeatDeck: (index: number, deckId: string) => void;
   onStart: () => void;
@@ -139,6 +139,7 @@ export function PodLobby({
               onClear={(index) => onAdminSeat(index, "clear")}
               onInvite={() => setInvite(true)}
               onDossier={(deckId, forSeat) => setDossier({ deckId, forSeat })}
+              onRename={(name) => onUpdateSeat({ name })}
             />
           ))}
         </div>
