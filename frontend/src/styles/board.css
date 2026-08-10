@@ -1322,23 +1322,10 @@
    around 460px with rules text -- and squeeze the panel into the remainder. It
    takes the slack it is given and no more: the panel is where the turn actually
    happens, and the card scrolls. */
-/*
- * A constant height, not a maximum.
- *
- * This is the fix for the panel below it jumping. Sized to its content, the
- * preview was a different height for every card -- a land has no P/T row and two
- * lines of rules where a creature has five -- and a different height again when
- * empty, so the action panel and the commit slab moved every time the pointer
- * crossed a card. Pointing at something to read it must not relocate the button
- * you were about to press.
- *
- * The value is bounded at both ends so it stays a sane share of the column: the
- * rail still has to fit the action panel's list and tools plus the commit dock,
- * and the panel is where the turn actually happens.
- */
+/* The preview takes the height it declares for itself and no more; the panel
+   below gets the rest. The height is on `.preview` -- see the note there. */
 .rail--right .preview {
   flex: 0 0 auto;
-  height: clamp(240px, 34vh, 420px);
 }
 
 .rail__title {
@@ -1471,9 +1458,33 @@
 
 /* A fixed frame. Everything inside is laid out to fill it exactly, so nothing
    below it ever moves -- see `.rail--right .preview` for the height itself. */
+/*
+ * A constant height, not a maximum.
+ *
+ * This is the fix for the panel below it jumping. Sized to its content, the
+ * preview was a different height for every card -- a land has no P/T row and two
+ * lines of rules where a creature has five -- and a different height again when
+ * empty, so the action panel and the commit slab moved every time the pointer
+ * crossed a card. Pointing at something to read it must not relocate the button
+ * you were about to press.
+ *
+ * The value is bounded at both ends so it stays a sane share of the column: the
+ * rail still has to fit the action panel's list and tools plus the commit dock,
+ * and the panel is where the turn actually happens.
+ *
+ * It lives here rather than on `.rail--right .preview`, which is where it was
+ * written, because the height is this panel's own contract -- the rail is only
+ * where the panel happens to hang. Stated on the rail, the whole frame collapsed
+ * anywhere else in four steps: content-sized `.preview` leaves `.preview__body`
+ * no slack, `.card--big` reverts to `height: auto`, `.face--big`'s `height: 100%`
+ * resolves against an indefinite parent, and `.face__head`'s `min-height: 26%`
+ * comes out at 0 -- so the top scrim, which is what keeps the name legible over
+ * the art, becomes a hairline.
+ */
 .preview {
   display: flex;
   flex-direction: column;
+  height: clamp(240px, 34vh, 420px);
   min-height: 0;
   overflow: hidden;
 }

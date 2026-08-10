@@ -10,7 +10,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { cardWidthPx } from "../../logic/cardSize";
 import { stackCards } from "../../logic/stacking";
 import * as pool from "../../testing/cards";
@@ -84,10 +84,15 @@ export const FansOnHover: Story = {
 
     const closed = new Set(lefts()).size;
     await userEvent.hover(cards[0]);
-    const open = new Set(lefts()).size;
 
-    expect(open, "the pile did not fan: every card is still at the same x").toBeGreaterThan(
-      closed,
+    // Waited for, because the fan is animated and the positions arrive a frame
+    // after the hover. Read synchronously this passed on a quiet machine and
+    // failed under load, which is the worst kind of green.
+    await waitFor(() =>
+      expect(
+        new Set(lefts()).size,
+        "the pile did not fan: every card is still at the same x",
+      ).toBeGreaterThan(closed),
     );
   },
 };
