@@ -12,7 +12,7 @@ from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import chars
+from .characteristics import chars, player_doubles_land_mana
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
 from .events import EventType
@@ -33,19 +33,38 @@ if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
 
-def mana_sources(state: GameState, pid: int) -> list[ManaSource]:
+def mana_sources(
+    state: GameState, pid: int, *, purpose: frozenset[str] | None = None
+) -> list[ManaSource]:
     """Every mana ability this player could activate right now.
 
     Only tap-only mana abilities are considered.  A mana ability with an extra
     cost (pay life, sacrifice) is left for the player to activate explicitly.
+
+    ``purpose`` describes what the mana would be spent on -- the lowercased card
+    types of the spell being cast.  Restricted sources ("spend this mana only to
+    cast a creature spell") are dropped unless the purpose matches, so the
+    solver never has to know restrictions exist.  ``None`` means "no particular
+    spell", and offers only unrestricted mana: an under-count rather than an
+    over-count, which is the safe direction for a number the AI reads.
     """
     out: list[ManaSource] = []
     for oid in state.battlefield:
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid or obj.tapped:
             continue
-        out.extend(_sources_of(state, oid, obj))
+        out.extend(
+            source
+            for source in _sources_of(state, oid, obj)
+            if source.restriction is None
+            or (purpose is not None and source.restriction in purpose)
+        )
     return out
+
+
+def spell_purpose(card: CardDef) -> frozenset[str]:
+    """What restricted mana would have to allow, to pay for this card."""
+    return frozenset(t.lower() for t in card.types)
 
 
 def available_mana(state: GameState, pid: int) -> int:
@@ -87,6 +106,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     if is_creature and obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
         return []
     is_land = "Land" in c.types
+    doubled = is_land and player_doubles_land_mana(state, obj.controller)
     out: list[ManaSource] = []
     for ability in card.abilities:
         if not ability.is_mana_ability or not ability.mana_options:
@@ -97,12 +117,37 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             ManaSource(
                 oid=oid,
                 ability_index=ability.index,
-                options=ability.mana_options,
+                options=(
+                    tuple(mana_produced(option, doubled=doubled) for option in ability.mana_options)
+                ),
                 is_land=is_land,
                 sort_key=(0 if is_land else 1, card.id, oid),
+                restriction=ability.mana_restriction,
             )
         )
     return out
+
+
+def mana_produced(option: Sequence[int], *, doubled: bool) -> tuple[int, ...]:
+    """What tapping for ``option`` actually yields.
+
+    Vorinclex's "whenever you tap a land for mana, add one mana of any type that
+    land produced" is not a trigger: a mana ability must never use the stack or
+    stop to ask, so it is folded in here instead.
+
+    This one helper is called from **both** ``_sources_of`` (so legality counts
+    the extra mana when deciding what is castable) and ``activate_mana_ability``
+    (so payment actually adds it).  The two must not be able to disagree -- a
+    spell offered on doubled mana and then paid for on single mana would strand
+    the payment mid-cast.
+
+    *Simplification*: a dual land doubles whatever it produced rather than
+    offering a free choice of type, because a mana ability cannot ask.  Recorded
+    in ``docs/rules-coverage.md`` alongside the other automatic-mana trades.
+    """
+    if not doubled:
+        return tuple(option)
+    return tuple(v * 2 for v in option)
 
 
 def produced_symbols(card: CardDef) -> list[str]:
@@ -170,13 +215,26 @@ def _option_symbols(option: Sequence[int]) -> list[str]:
 
 
 def can_pay_mana(
-    state: GameState, pid: int, cost: ManaCost, *, x: int = 0, extra_generic: int = 0
+    state: GameState,
+    pid: int,
+    cost: ManaCost,
+    *,
+    x: int = 0,
+    extra_generic: int = 0,
+    purpose: frozenset[str] | None = None,
 ) -> bool:
     req = cost.with_x(x)
     if extra_generic:
-        req = Requirement(colored=req.colored, generic=max(0, req.generic + extra_generic))
+        req = Requirement(
+            colored=req.colored,
+            generic=max(0, req.generic + extra_generic),
+            hybrid=req.hybrid,
+        )
     return (
-        solve_payment(req, state.players[pid].mana_pool, mana_sources(state, pid)) is not None
+        solve_payment(
+            req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose)
+        )
+        is not None
     )
 
 
@@ -205,7 +263,7 @@ def can_pay(
             return False
     if cost.pay_life and player.life <= cost.pay_life:
         return False
-    if cost.discard and len(player.hand) < cost.discard:
+    if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
         return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
@@ -229,6 +287,23 @@ def can_pay(
         if solve_payment(cost.mana.with_x(x), player.mana_pool, sources) is None:
             return False
     return True
+
+
+def _discard_pool(state: GameState, pid: int, cost: Cost) -> list[int]:
+    """Which cards in hand this cost is allowed to throw away.
+
+    The whole hand unless the cost narrows it -- "by discarding a **land**
+    card".  Kept as a pool rather than a count so `can_pay` and `pay` cannot
+    disagree about whether the cost is payable.
+    """
+    hand = list(state.players[pid].hand)
+    if cost.discard_selector is None:
+        return hand
+    from .effects.selectors import matches
+
+    spec = {**dict(cost.discard_selector), "zone": "hand"}
+    ctx = EffectContext(state=state, controller=pid)
+    return [oid for oid in hand if matches(ctx, oid, spec)]
 
 
 def _sacrifice_pool(
@@ -267,16 +342,20 @@ def pay(
     *,
     x: int = 0,
     extra_generic: int = 0,
+    purpose: frozenset[str] | None = None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
     Returns ``True`` on success.  Callers only invoke this after :func:`can_pay`,
     so a ``False`` return means the game state changed underneath them.
+
+    ``purpose`` is what the mana is being spent on, and must be the same value
+    legality used when it decided this was payable -- restricted mana is offered
+    or withheld by that alone.
     """
     if cost is None and not extra_generic:
         return True
     cost = cost or Cost()
-    player = state.players[pid]
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
 
     if cost.tap and source_oid is not None:
@@ -295,9 +374,13 @@ def pay(
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
         # coloured pips however large X gets.
-        req = Requirement(colored=req.colored, generic=max(0, req.generic + extra_generic))
+        req = Requirement(
+            colored=req.colored,
+            generic=max(0, req.generic + extra_generic),
+            hybrid=req.hybrid,
+        )
     if req.total and not pay_mana(
-        state, pid, req, exclude_oid=source_oid if cost.tap else None
+        state, pid, req, exclude_oid=source_oid if cost.tap else None, purpose=purpose
     ):
         return False
 
@@ -305,8 +388,9 @@ def pay(
         lose_life(state, pid, cost.pay_life, source=source_oid)
 
     if cost.discard:
+        pool = _discard_pool(state, pid, cost)
         picked = yield from ask_objects(
-            ctx, "Discard", list(player.hand), cost.discard, cost.discard, pid, "discard"
+            ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
         discard_cards(state, pid, picked)
 
@@ -340,11 +424,16 @@ def pay(
 
 
 def pay_mana(
-    state: GameState, pid: int, req: Requirement, *, exclude_oid: int | None = None
+    state: GameState,
+    pid: int,
+    req: Requirement,
+    *,
+    exclude_oid: int | None = None,
+    purpose: frozenset[str] | None = None,
 ) -> bool:
     """Tap sources and deduct ``req`` from the pool."""
     player = state.players[pid]
-    sources = mana_sources(state, pid)
+    sources = mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
         sources = [s for s in sources if s.oid != exclude_oid]
     payment = solve_payment(req, player.mana_pool, sources)
@@ -371,11 +460,35 @@ def activate_mana_ability(
     ability = card.abilities[ability_index]
     if ability.cost is not None and ability.cost.tap:
         tap_permanent(state, oid)
-    produced = ability.mana_options[option_index]
+
+    obj = state.objects.get(oid)
+    is_land = obj is not None and "Land" in chars(state, oid).types
+    doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
+    produced = mana_produced(ability.mana_options[option_index], doubled=doubled)
+
     state.players[pid].mana_pool.add_tuple(produced)
     state.emit(
         EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced)
     )
+    if is_land and obj is not None:
+        _lands_tapped_for_mana(state, obj)
+
+
+def _lands_tapped_for_mana(state: GameState, land: Any) -> None:
+    """Vorinclex's second half: an opponent's land does not untap next turn.
+
+    Applied here rather than as a triggered ability because tapping for mana
+    happens *inside* payment, where nothing can go on the stack -- the same
+    reason the doubling above is inline.  One-shot, so it is
+    ``skip_next_untap`` rather than the `frozen_by` lock, which lasts as long as
+    its source is on the battlefield: these are different lifetimes and using
+    either for the other would be wrong.
+    """
+    from .characteristics import players_freezing_opponent_lands
+
+    freezers = players_freezing_opponent_lands(state)
+    if any(pid != land.controller for pid in freezers):
+        land.skip_next_untap = True
 
 
 def land_drops_available(state: GameState, pid: int) -> int:

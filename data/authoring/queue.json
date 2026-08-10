@@ -89092,12 +89092,12 @@
     },
     "Fact or Fiction": {
       "edhrec_rank": 692,
-      "gate": "template",
+      "gate": null,
       "name": "Fact or Fiction",
-      "reason": "no template for: Reveal the top five cards of your library. An opponent separates those cards into two pile",
+      "reason": "",
       "scryfall_id": "fc8d66ed-8a01-41ce-805c-05333322c6f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Fade Away": {
@@ -116722,12 +116722,12 @@
     },
     "Greensleeves, Maro-Sorcerer": {
       "edhrec_rank": 2693,
-      "gate": "template",
+      "gate": null,
       "name": "Greensleeves, Maro-Sorcerer",
-      "reason": "no template for: Protection from planeswalkers and from Wizards",
+      "reason": "",
       "scryfall_id": "643b6832-0fa1-4ce8-bda8-00fe9810ffeb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Greenwarden of Murasa": {
@@ -125392,12 +125392,12 @@
     },
     "Herd Heirloom": {
       "edhrec_rank": 1200,
-      "gate": "template",
+      "gate": null,
       "name": "Herd Heirloom",
-      "reason": "no template for: {T}: Until end of turn, target creature you control with power 4 or greater gains trample ",
+      "reason": "",
       "scryfall_id": "5579a3ac-7fdb-4204-b44e-fe0174f78cfa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Herd Migration": {
@@ -149802,12 +149802,12 @@
     },
     "Kodama of the East Tree": {
       "edhrec_rank": 968,
-      "gate": "template",
+      "gate": null,
       "name": "Kodama of the East Tree",
-      "reason": "no template for: Whenever another permanent you control enters, if it wasn't put onto the battlefield with ",
+      "reason": "",
       "scryfall_id": "2ee1d489-0980-444e-8b07-107be791b76e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kodama of the North Tree": {
@@ -235032,12 +235032,12 @@
     },
     "Scute Swarm": {
       "edhrec_rank": 232,
-      "gate": "template",
+      "gate": null,
       "name": "Scute Swarm",
-      "reason": "no template for: Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. I",
+      "reason": "",
       "scryfall_id": "62c19f87-1bbc-4309-8781-4519db8b91a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Scuttlegator": {
@@ -235752,12 +235752,12 @@
     },
     "Search for Tomorrow": {
       "edhrec_rank": 1751,
-      "gate": "template",
+      "gate": null,
       "name": "Search for Tomorrow",
-      "reason": "no template for: Search your library for a basic land card, put it onto the battlefield, then shuffle",
+      "reason": "",
       "scryfall_id": "857818d8-454b-4c2c-8cf2-7aa9c2898b18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Search the City": {
@@ -258172,12 +258172,12 @@
     },
     "Spitting Image": {
       "edhrec_rank": 11208,
-      "gate": "template",
+      "gate": null,
       "name": "Spitting Image",
-      "reason": "no template for: Create a token that's a copy of target creature",
+      "reason": "",
       "scryfall_id": "d5f68c73-4794-4659-b494-edf89105beab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Spitting Sliver": {
@@ -305112,12 +305112,12 @@
     },
     "Vorinclex, Voice of Hunger": {
       "edhrec_rank": 1793,
-      "gate": "template",
+      "gate": null,
       "name": "Vorinclex, Voice of Hunger",
-      "reason": "no template for: Whenever you tap a land for mana, add one mana of any type that land produced",
+      "reason": "",
       "scryfall_id": "6aebcc3b-504e-40fc-b232-a2aa21a0521b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vorosh, the Hunter": {

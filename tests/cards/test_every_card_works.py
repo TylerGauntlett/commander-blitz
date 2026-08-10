@@ -182,6 +182,7 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
             _stock_the_hand(game, ability)
+            _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
                 game.state.objects[other].entered_turn = 0
             game.state.bump_chars()
@@ -267,6 +268,38 @@ def _stock_the_hand(game: Game, ability) -> None:
     while len(hand) < needed:
         card = new_object(game.state, "forest", owner=0, zone=Zone.HAND)
         hand.append(card.oid)
+
+
+def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
+    """Put something on the board the ability can legally point at.
+
+    Fourth of the same family as the three helpers above, and for the same
+    reason: "not activatable" must only ever mean the ability is broken. Herd
+    Heirloom targets a creature with power 4 or greater and the generic board
+    carries neither -- so the ability reported as unusable when it was only
+    unaimed.
+
+    Deliberately dumb: it adds the biggest creature in the pool rather than
+    solving the selector, because a helper clever enough to satisfy an arbitrary
+    filter would be a second implementation of `matches` living in the tests.
+    """
+    from automtg.engine.targeting import enumerate_target_tuples
+
+    if not ability.targets:
+        return
+    if enumerate_target_tuples(game.state, 0, ability.targets, oid):
+        return
+    biggest = max(
+        (c for c in registry if c.is_creature and not c.is_token),
+        key=lambda c: (c.power or 0, c.id),
+        default=None,
+    )
+    if biggest is None:
+        return
+    obj = new_object(game.state, biggest.id, owner=0, zone=Zone.BATTLEFIELD)
+    obj.entered_turn = 0
+    game.state.battlefield.append(obj.oid)
+    game.state.bump_chars()
 
 
 class TestManaAbilities:

@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from .carddef import TargetSpec
-from .characteristics import chars
+from .characteristics import chars, protected_from
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool
 from .enums import Keyword, Zone
@@ -57,13 +57,17 @@ def candidates(
         refs: list[TargetRef] = [
             TargetRef.obj(oid)
             for oid in resolve_pool(ctx, {**dict(spec.selector), "zone": "battlefield"})
-            if can_be_targeted(state, controller, oid)
+            if can_be_targeted(state, controller, oid, source_oid=source_oid)
         ]
         refs.extend(TargetRef.player(pid) for pid in state.alive())
         return refs
 
     pool = resolve_pool(ctx, spec.selector)
-    return [TargetRef.obj(oid) for oid in pool if can_be_targeted(state, controller, oid)]
+    return [
+        TargetRef.obj(oid)
+        for oid in pool
+        if can_be_targeted(state, controller, oid, source_oid=source_oid)
+    ]
 
 
 def _player_allowed(state: GameState, controller: int, pid: int, spec: TargetSpec) -> bool:
@@ -75,13 +79,22 @@ def _player_allowed(state: GameState, controller: int, pid: int, spec: TargetSpe
     return True
 
 
-def can_be_targeted(state: GameState, controller: int, oid: int) -> bool:
-    """Hexproof stops opponents (but not the controller) from targeting."""
+def can_be_targeted(
+    state: GameState, controller: int, oid: int, *, source_oid: int | None = None
+) -> bool:
+    """Hexproof stops opponents (but not the controller) from targeting.
+
+    Protection stops *anyone*, including the controller: "protection from
+    Wizards" means your own Wizard cannot target it either, which is the half of
+    protection that a hexproof-shaped implementation would silently get wrong.
+    """
     obj = state.objects.get(oid)
     if obj is None:
         return False
     if not obj.on_battlefield:
         return True
+    if protected_from(state, oid, source_oid):
+        return False
     if obj.controller == controller:
         return True
     return Keyword.HEXPROOF.value not in chars(state, oid).keywords
@@ -149,7 +162,7 @@ def still_legal(
     obj = state.objects.get(ref.id)
     if obj is None:
         return False
-    if not can_be_targeted(state, controller, ref.id):
+    if not can_be_targeted(state, controller, ref.id, source_oid=source_oid):
         return False
     if spec.kind == "card_in_graveyard":
         return obj.zone is Zone.GRAVEYARD

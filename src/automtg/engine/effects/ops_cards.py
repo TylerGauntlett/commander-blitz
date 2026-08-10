@@ -10,7 +10,7 @@ from ..events import EventType
 from ..primitives import discard_cards, draw_cards, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
-from .context import EffectContext, ask_objects
+from .context import EffectContext, ask_objects, ask_yes_no
 from .selectors import choose_objects, resolve_pool, select_players
 from .values import evaluate_value
 
@@ -187,6 +187,58 @@ def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
         for oid in to_bin:
             move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=pid, cause="surveil")
         ctx.state.emit("surveil", player=pid, looked=len(top), binned=len(to_bin))
+
+
+@register("two_piles")
+def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"An opponent separates those cards into two piles. Put one pile into your
+    hand and the other into your graveyard."
+
+    The only effect in the pool whose first decision belongs to somebody else,
+    and that is the whole card: the splitter wants both piles to be bad and the
+    chooser gets the better one. An implementation that let the caster do the
+    splitting would be a strictly better card.
+
+    Two decisions, deliberately: the opponent picks which cards form the first
+    pile, then the controller says whether to take it. Modelled as a subset plus
+    a yes/no rather than as "choose a pile", because the piles do not exist as
+    objects until the split is made.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    revealed = list(library[:amount])
+    if not revealed:
+        return
+
+    ctx.state.emit(
+        "reveal",
+        player=pid,
+        source=ctx.source_oid,
+        cards=[ctx.state.objects[o].def_id for o in revealed],
+    )
+
+    opponents = ctx.opponents()
+    splitter = opponents[0] if opponents else pid
+    first = yield from ask_objects(
+        ctx, "Separate into two piles", revealed, 0, len(revealed), splitter, "split_piles"
+    )
+    first_set = set(first)
+    second = [oid for oid in revealed if oid not in first_set]
+
+    take_first = yield from ask_yes_no(
+        ctx,
+        f"Take the pile of {len(first)}? (the other has {len(second)})",
+        pid,
+    )
+    taken, discarded = (first, second) if take_first else (second, first)
+
+    to_taken = DESTINATIONS[str(spec.get("to", "hand"))]
+    to_rest = DESTINATIONS[str(spec.get("other", "graveyard"))]
+    for oid in taken:
+        move_object(ctx.state, oid, to_taken, to_player=pid, cause="two_piles")
+    for oid in discarded:
+        move_object(ctx.state, oid, to_rest, to_player=pid, cause="two_piles")
 
 
 @register("put_on_top")

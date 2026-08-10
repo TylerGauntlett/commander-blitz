@@ -110,7 +110,7 @@ def move_object(
             )
 
     if to_zone is Zone.BATTLEFIELD:
-        _enter_battlefield(state, obj, card, forced_tapped=tapped)
+        _enter_battlefield(state, obj, card, forced_tapped=tapped, cause=cause)
 
     return obj
 
@@ -156,7 +156,12 @@ def _detach_all(state: GameState, oid: int) -> None:
 
 
 def _enter_battlefield(
-    state: GameState, obj: GameObject, card: CardDef, *, forced_tapped: bool = False
+    state: GameState,
+    obj: GameObject,
+    card: CardDef,
+    *,
+    forced_tapped: bool = False,
+    cause: str = "",
 ) -> None:
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
@@ -195,6 +200,11 @@ def _enter_battlefield(
         oid=obj.oid,
         card=card.id,
         was_creature="Creature" in card.types,
+        # How it got here.  Kodama of the East Tree reads "if it wasn't put onto
+        # the battlefield with this ability", and without the cause it has no
+        # way to tell its own output from anything else's -- it would trigger on
+        # the permanent it just put down, and again on that one's, forever.
+        cause=cause,
     )
 
 

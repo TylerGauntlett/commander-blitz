@@ -25,6 +25,9 @@ class CostModel(BaseModel):
     untap: bool = False
     sacrifice: dict[str, Any] | None = None
     discard: int = 0
+    #: Narrows what ``discard`` may throw away -- "discarding a land card".
+    #: A selector over the hand; omitted, any card will do.
+    discard_selector: dict[str, Any] | None = None
     pay_life: int = 0
     remove_counters: dict[str, Any] | None = None
     exile_from_graveyard: dict[str, Any] | None = None
@@ -56,6 +59,10 @@ class TriggerModel(BaseModel):
     #: whose creature is swinging, which is a different question -- "attacks you"
     #: needs this one.
     defending: Literal["you", "opponent", "any"] | None = None
+    #: "…if it wasn't put onto the battlefield with this ability."  Names the
+    #: ``cause`` this trigger refuses to fire on, which is how an ability that
+    #: puts permanents onto the battlefield avoids triggering on its own output.
+    not_cause: str | None = None
 
 
 class AbilityModel(BaseModel):
@@ -74,6 +81,8 @@ class AbilityModel(BaseModel):
     # activated
     cost: CostModel | None = None
     is_mana_ability: bool = False
+    #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
+    mana_restriction: str | None = None
     sorcery_speed_only: bool = False
 
     # triggered
@@ -99,6 +108,12 @@ class AbilityModel(BaseModel):
     #: A static's "as long as..." clause.  Only counters on the static's own
     #: source may be read -- see ``characteristics._static_active``.
     condition: dict[str, Any] | None = None
+    #: The qualities a ``protection`` static protects from.  Three lists rather
+    #: than one so the card file reads like the card: "protection from
+    #: planeswalkers and from Wizards" is a type and a subtype, not two nouns.
+    from_types: list[str] = Field(default_factory=list)
+    from_subtypes: list[str] = Field(default_factory=list)
+    from_colors: list[str] = Field(default_factory=list)
 
 
 class ReplacementModel(BaseModel):
@@ -133,6 +148,10 @@ class CardModel(BaseModel):
     spell_effects: list[dict[str, Any]] = Field(default_factory=list)
     replacements: list[ReplacementModel] = Field(default_factory=list)
     abilities: list[AbilityModel] = Field(default_factory=list)
+    #: Abilities this card grants to *another* permanent, referenced by index
+    #: from a ``grant_ability`` effect.  Separate from ``abilities`` because the
+    #: card itself does not have them.
+    grantable_abilities: list[AbilityModel] = Field(default_factory=list)
     is_token: bool = False
     #: "This spell can't be countered."
     uncounterable: bool = False
@@ -145,6 +164,14 @@ class CardModel(BaseModel):
     #: never below zero and never the coloured pips -- which is what the rules
     #: say and also the only thing the payment solver could honour.
     cost_reduction: dict[str, Any] | None = None
+    #: "Retrace -- you may cast this card from your graveyard by discarding a
+    #: land card in addition to paying its other costs."  A whole extra way to
+    #: cast the card, so it is a card-level field rather than an ability.
+    retrace: bool = False
+    #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
+    #: to play the card, so like ``retrace`` it is card-level rather than an
+    #: ability: the card has no suspend ability while it sits in your hand.
+    suspend: dict[str, Any] | None = None
     #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
     #: ``automtg.cards.authoring`` did, and it only got here by clearing the six
     #: gates in ``authoring/verify.py`` -- including one that casts it and checks

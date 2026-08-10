@@ -54,10 +54,19 @@ STATIC_EFFECTS = frozenset(
         "no_hand_limit",
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
+        # Parameterised, so it cannot be a keyword: "protection from Wizards"
+        # names a quality, and four separate rules (damage, enchant/equip,
+        # block, target) ask about it.
+        "protection",
         # Ancient Greenwarden.  A fact about the *player*, like the two above:
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
         "double_land_triggers",
+        # Vorinclex's two halves.  Both are read at the mana choke point rather
+        # than as triggers, because tapping for mana happens inside payment
+        # where nothing can go on the stack.
+        "double_land_mana",
+        "freeze_opponent_lands",
     }
 )
 
@@ -164,9 +173,38 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     abilities = tuple(
         _compile_ability(a, i, where) for i, a in enumerate(model.abilities)
     )
+    grantable = tuple(
+        _compile_ability(a, i, f"{where}.grantable")
+        for i, a in enumerate(model.grantable_abilities)
+    )
+    for ability in grantable:
+        if not ability.is_triggered:
+            # Only triggered abilities can be granted so far. A granted *static*
+            # would have to join the characteristics pipeline from an object
+            # that is not its source, and a granted *activated* one would need
+            # `Action` to carry where it came from before legality could offer
+            # it -- so it would be accepted here and then never appear, which is
+            # the exact "looks implemented, does nothing" failure this pass
+            # exists to refuse. Granting a keyword is what `grant_keyword` is
+            # for; `docs/rules-coverage.md` records the rest as not implemented.
+            raise DslError(
+                f"{where}: only triggered abilities can be granted, not {ability.kind.value}"
+            )
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
+
+    suspend = None
+    if model.suspend is not None:
+        unknown = set(model.suspend) - {"cost", "counters"}
+        if unknown:
+            raise DslError(f"{where}.suspend: unsupported keys {sorted(unknown)}")
+        counters = int(model.suspend.get("counters", 0))
+        if counters < 1:
+            # Suspend 0 would resolve on the upkeep it was suspended, which is
+            # not what any printed card says and would hide a typo.
+            raise DslError(f"{where}.suspend: 'counters' must be at least 1")
+        suspend = (ManaCost.parse(model.suspend.get("cost")), counters)
 
     # Kicker is two halves that only mean anything together: the extra cost, and
     # an `if` that reads it.  Half a kicker is the failure this pass exists to
@@ -214,11 +252,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         spell_effects=tuple(model.spell_effects),
         replacements=tuple(r.model_dump() for r in model.replacements),
         abilities=abilities,
+        grantable_abilities=grantable,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
         uncounterable=model.uncounterable,
         kicker=kicker,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
+        retrace=model.retrace,
+        suspend=suspend,
     )
 
 
@@ -296,6 +337,17 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         if model.trigger.event == "self_enters":
             source = "self"
 
+        if model.trigger.not_cause is not None and model.trigger.event not in (
+            "self_enters",
+            "permanent_enters",
+        ):
+            # Only zone changes carry a cause. Accepting it elsewhere would look
+            # like a guard and be one that never fires.
+            raise DslError(
+                f"{where}: 'not_cause' only means anything on an enters trigger, "
+                f"not on {model.trigger.event!r}"
+            )
+
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -303,6 +355,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             filter=dict(model.trigger.filter) if model.trigger.filter else None,
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
             defending=model.trigger.defending,
+            not_cause=model.trigger.not_cause,
         )
         active_zones = tuple(Zone(z) for z in model.active_zones)
 
@@ -313,6 +366,14 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
         mana_options = _mana_options(model.effects, where)
+    if model.mana_restriction is not None:
+        if not model.is_mana_ability:
+            raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
+        if model.mana_restriction.title() not in KNOWN_TYPES:
+            raise DslError(
+                f"{where}: unknown mana restriction {model.mana_restriction!r} "
+                f"(a card type, lowercased)"
+            )
 
     return Ability(
         kind=kind,
@@ -321,6 +382,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
+        mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         trigger=trigger,
         active_zones=active_zones,
@@ -353,6 +415,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
         "double_land_triggers",
+        "double_land_mana",
+        "freeze_opponent_lands",
     ):
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -370,6 +434,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
+
+    qualities = [*model.from_types, *model.from_subtypes, *model.from_colors]
+    if model.effect == "protection":
+        # A protection static that names nothing protects from nothing -- a card
+        # that looks implemented and is not, which is the one failure this pass
+        # exists to stop.
+        if not qualities:
+            raise DslError(f"{where}: protection needs from_types/from_subtypes/from_colors")
+        for t in model.from_types:
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown type {t!r} in from_types")
+        for c in model.from_colors:
+            if c not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown color {c!r} in from_colors")
+    elif qualities:
+        raise DslError(f"{where}: from_types/from_subtypes/from_colors need effect 'protection'")
+
     _validate_static_condition(model.condition, f"{where}.condition")
 
     static: dict[str, Any] = {"effect": model.effect}
@@ -389,6 +470,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["subtypes"] = list(model.subtypes)
     if model.types:
         static["types"] = list(model.types)
+    for field_name in ("from_types", "from_subtypes", "from_colors"):
+        value = getattr(model, field_name)
+        if value:
+            static[field_name] = list(value)
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
 
@@ -458,12 +543,16 @@ def _validate_static_value(value: Any, where: str) -> None:
 def _compile_cost(model, where: str) -> Cost:
     validate_selector(model.sacrifice, f"{where}.cost.sacrifice")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
+    validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    if model.discard_selector is not None and not model.discard:
+        raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
     return Cost(
         mana=ManaCost.parse(model.mana),
         tap=model.tap,
         untap=model.untap,
         sacrifice=dict(model.sacrifice) if model.sacrifice else None,
         discard=model.discard,
+        discard_selector=dict(model.discard_selector) if model.discard_selector else None,
         pay_life=model.pay_life,
         remove_counters=dict(model.remove_counters) if model.remove_counters else None,
         exile_from_graveyard=(

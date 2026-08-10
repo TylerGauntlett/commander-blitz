@@ -421,6 +421,12 @@
   "elvish_pioneer": {
     "zone": "battlefield"
   },
+  "fact_or_fiction": {
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
   "faerie_seer": {
     "zone": "battlefield"
   },
@@ -574,6 +580,9 @@
   "greataxe": {
     "zone": "battlefield"
   },
+  "greensleeves_maro_sorcerer": {
+    "zone": "battlefield"
+  },
   "greenweaver_druid": {
     "zone": "battlefield"
   },
@@ -626,6 +635,9 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "herd_heirloom": {
+    "zone": "battlefield"
   },
   "heroic_intervention": {
     "granted": {
@@ -777,6 +789,9 @@
     "zone": "battlefield"
   },
   "kobolds_of_kher_keep": {
+    "zone": "battlefield"
+  },
+  "kodama_of_the_east_tree": {
     "zone": "battlefield"
   },
   "koma_cosmos_serpent": {
@@ -1173,6 +1188,12 @@
   "scrubland": {
     "zone": "battlefield"
   },
+  "scute_swarm": {
+    "zone": "battlefield"
+  },
+  "search_for_tomorrow": {
+    "zone": "graveyard"
+  },
   "seaside_citadel": {
     "zone": "battlefield"
   },
@@ -1298,6 +1319,9 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "spitting_image": {
+    "zone": "graveyard"
   },
   "sporemound": {
     "zone": "battlefield"
@@ -1558,6 +1582,9 @@
     "zone": "battlefield"
   },
   "volcanic_island": {
+    "zone": "battlefield"
+  },
+  "vorinclex_voice_of_hunger": {
     "zone": "battlefield"
   },
   "vorstclaw": {

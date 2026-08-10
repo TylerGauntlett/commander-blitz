@@ -121,6 +121,10 @@ class Game:
             self._play_land(pid, action)
         elif action.kind is ActionKind.CAST:
             self._run(self._cast(pid, action))
+        elif action.kind is ActionKind.SUSPEND:
+            from . import suspend
+
+            self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:
             self._run(self._activate(pid, action))
         else:  # pragma: no cover
@@ -192,7 +196,7 @@ class Game:
         obj = state.objects[oid]
         card = state.card_of(obj)
         from_command = obj.zone is Zone.COMMAND
-        from .costs import commander_cost, cost_reduction
+        from .costs import commander_cost, cost_reduction, spell_purpose
 
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
@@ -203,9 +207,26 @@ class Game:
         # and not separable from it: there is no state in which the spell is on
         # the stack having paid one half.
         cost = card.mana_cost.plus(card.kicker) if action.kicked else card.mana_cost
-        ok = yield from pay(state, pid, Cost(mana=cost), None, x=action.x, extra_generic=extra)
+        ok = yield from pay(
+            state,
+            pid,
+            Cost(mana=cost),
+            None,
+            x=action.x,
+            extra_generic=extra,
+            purpose=spell_purpose(card),
+        )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+
+        # Retrace's discarded land is an *additional* cost, so it is paid before
+        # the spell goes on the stack -- and after the mana, which is the order
+        # rule 601.2g gives and the order that lets a land be discarded to a
+        # spell it just helped pay for.
+        if card.retrace and obj.zone is Zone.GRAVEYARD:
+            ok = yield from pay(state, pid, card.retrace_cost, None)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         if from_command:
             player = state.players[obj.owner]

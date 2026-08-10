@@ -42,6 +42,8 @@ class Cost:
     untap: bool = False
     sacrifice: Mapping[str, Any] | None = None
     discard: int = 0
+    #: "…by discarding a **land** card": narrows what ``discard`` may take.
+    discard_selector: Mapping[str, Any] | None = None
     pay_life: int = 0
     remove_counters: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
@@ -94,6 +96,9 @@ class TriggerSpec:
     #: substitute: in a pod, "whenever a creature attacks you" must not fire when
     #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``.
     defending: str | None = None
+    #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
+    #: behind "if it wasn't put onto the battlefield with this ability".
+    not_cause: str | None = None
 
 
 @dataclass(frozen=True)
@@ -107,6 +112,9 @@ class Ability:
     cost: Cost | None = None
     is_mana_ability: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
+    #: "Spend this mana only to cast a creature spell" -- the card type the mana
+    #: may pay for, lowercased.  ``None`` is ordinary mana.
+    mana_restriction: str | None = None
     sorcery_speed_only: bool = False
     # triggered
     trigger: TriggerSpec | None = None
@@ -150,6 +158,11 @@ class CardDef:
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     replacements: tuple[Mapping[str, Any], ...] = ()
     abilities: tuple[Ability, ...] = ()
+    #: Abilities this card can *hand to something else* -- the quoted text in
+    #: `gains trample and "Whenever this creature deals combat damage to a
+    #: player, draw a card"`.  Kept apart from `abilities` because the card does
+    #: not have them: they only exist on whatever it granted them to.
+    grantable_abilities: tuple[Ability, ...] = ()
     type_line: str = ""
     is_token: bool = False
     #: "This spell can't be countered."  A printed property of the card
@@ -162,6 +175,15 @@ class CardDef:
     kicker: ManaCost | None = None
     #: "This spell costs {X} less to cast."  See `costs.cost_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
+    #: Retrace: castable from the graveyard for its cost plus a discarded land.
+    retrace: bool = False
+    #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
+    suspend: tuple[ManaCost, int] | None = None
+
+    @property
+    def retrace_cost(self) -> Cost:
+        """The additional cost of casting this from the graveyard."""
+        return Cost(discard=1, discard_selector={"types": ["Land"]})
 
     # -- type predicates ----------------------------------------------------
 

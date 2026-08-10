@@ -50,11 +50,14 @@ class EventType:
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
     BECAME_MONSTROUS = "became_monstrous"
+    SUSPENDED = "suspended"
+    TIME_COUNTER_REMOVED = "time_counter_removed"
 
     # life and damage
     LIFE_GAINED = "life_gained"
     LIFE_LOST = "life_lost"
     DAMAGE_DEALT = "damage_dealt"
+    DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"
 
     # combat

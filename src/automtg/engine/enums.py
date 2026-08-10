@@ -145,9 +145,20 @@ class Keyword(str, Enum):
     HEXPROOF = "hexproof"
     INDESTRUCTIBLE = "indestructible"
     FLASH = "flash"
+    #: Deck construction only -- "you can have two commanders if both have
+    #: partner".  Listed here, and inert on purpose: the engine is handed a
+    #: finished deck, so there is no game rule to implement.  It exists so a
+    #: card carrying the word can say so instead of leaving the line unaccounted
+    #: for, which the authoring verifier's residual gate would rightly reject.
+    PARTNER = "partner"
 
 
 EVASION_KEYWORDS = frozenset({Keyword.FLYING, Keyword.MENACE})
+
+#: Keywords with no in-game effect, kept so a card can represent its own text.
+#: `docs/rules-coverage.md` names them; anything added here must genuinely do
+#: nothing during a game, or it belongs in the engine instead.
+INERT_KEYWORDS = frozenset({Keyword.PARTNER})
 
 
 class AbilityKind(str, Enum):
@@ -160,6 +171,10 @@ class ActionKind(str, Enum):
     PASS = "pass"
     PLAY_LAND = "play_land"
     CAST = "cast"
+    #: "Rather than cast this card from your hand, you may pay {G} and exile it
+    #: with two time counters on it."  A special action, not a cast: nothing
+    #: goes on the stack and nothing can respond to it.
+    SUSPEND = "suspend"
     ACTIVATE = "activate"
     ADD_ATTACKER = "add_attacker"
     ADD_BLOCKER = "add_blocker"

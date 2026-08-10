@@ -57,7 +57,8 @@ silently changed after everybody else has committed. The brief's central verb is
 
 ## What every file does
 
-Identical in all five, so the comparison is about layout and not capability:
+Identical in all five, so the comparison is about layout and not capability —
+with one exception, item 9, noted where it happens:
 
 1. Land on **home**; create a pod, or paste a code and join.
 2. Fill a chair two ways, offered together and never behind a mode switch —
@@ -71,7 +72,13 @@ Identical in all five, so the comparison is about layout and not capability:
 7. **Import from Moxfield**: paste garbage, get the error; paste a link, get the
    deck under *Yours*.
 8. **Lock in your seat**, and unlock again.
-9. Change a CPU seat's persona; empty a chair; leave the pod.
+9. Adjust a CPU seat; empty a chair; leave the pod. **The one divergence:** 01,
+   03, 04 and 05 adjust a CPU by moving it along the four-persona difficulty
+   ladder. **02 has no ladder** — it drops the personas as configuration for
+   behaviour the engine does not have yet (see the last bullet of *What porting
+   this costs*) and lets you change the CPU's **deck** instead, which is the
+   thing a seat can honestly differ in today. It is the one capability question
+   the five do not answer the same way, so it is worth deciding on its own.
 10. **Start**, which refuses until every seat is resolved *and* you are locked
     in, commits visibly, and does nothing else.
 
@@ -124,8 +131,13 @@ sealed are all "you do not get to know this yet", and one card back says it
 better than a dashed box, a hatch plate and an italic caption did.
 
 It leans harder on one idea than anything else here, and it spends its vertical
-budget on card faces — the persona copy under a CPU seat is two lines where 01
-gives it five. More beautiful, slightly less informative.
+budget on card faces, so the plate under a seat gets four lines where 01 gives it
+eight. Its answer is to put the information *on* the card rather than under it:
+the face here is the shipped app's preview-rail card
+([`cards.css`](../../frontend/src/styles/cards.css) `.face--big`, the variant
+`CardPreview.tsx` renders), so a commander's full rules are readable in the
+lobby and the plate only has to name who is sitting there and what they hold.
+That is also why it is the one file with no difficulty ladder — see item 9.
 
 ### 03 — Command Rail
 

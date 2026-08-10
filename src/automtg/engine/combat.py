@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .characteristics import chars
+from .characteristics import chars, protected_from
 from .enums import Keyword
 from .events import EventType
 from .primitives import damage_permanent, damage_player, tap_permanent
@@ -136,6 +136,12 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     if "Creature" not in bc.types:
         return False
     if blocker_oid in combat.blockers:
+        return False
+
+    # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked
+    # on the *attacker*, because it is the attacker that has the protection and
+    # the blocker that has the quality.
+    if protected_from(state, attacker_oid, blocker_oid):
         return False
 
     ac = chars(state, attacker_oid)

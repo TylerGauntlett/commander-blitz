@@ -89,6 +89,31 @@ def push_activated_ability(
     return item
 
 
+def ability_of(state: GameState, item_or_trig) -> Ability | None:
+    """The ability a stack item or pending trigger refers to.
+
+    A *granted* ability does not live on the card of the permanent that has it
+    -- it lives in the granter's ``grantable_abilities`` -- so the lookup has to
+    ask where it came from. One helper, because getting this wrong in one of the
+    two places would resolve the wrong ability entirely.
+    """
+    index = item_or_trig.ability_index
+    if index is None:
+        return None
+    granted_by = getattr(item_or_trig, "granted_by", None)
+    if granted_by is not None:
+        granter = state.objects.get(granted_by)
+        if granter is None:
+            return None
+        pool = state.card_of(granter).grantable_abilities
+    else:
+        source = state.objects.get(item_or_trig.source_oid)
+        if source is None:
+            return None
+        pool = state.card_of(source).abilities
+    return pool[index] if index < len(pool) else None
+
+
 def push_triggered_ability(state: GameState, trig: TriggerInstance) -> StackItem:
     obj = state.objects.get(trig.source_oid)
     def_id = obj.def_id if obj else "?"
@@ -102,11 +127,11 @@ def push_triggered_ability(state: GameState, trig: TriggerInstance) -> StackItem
         bindings=dict(trig.bindings),
         x=int(trig.bindings.get("x", 0) or 0),
         description=trig.description,
+        granted_by=trig.granted_by,
     )
     # A triggered ability with targets chooses them as it goes on the stack.
-    card = state.registry.get(def_id)
-    ability = card.abilities[trig.ability_index]
-    if ability.targets:
+    ability = ability_of(state, item)
+    if ability is not None and ability.targets:
         from .targeting import enumerate_target_tuples
 
         options = enumerate_target_tuples(
@@ -200,9 +225,9 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:
 def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int], None]:
     source = state.objects.get(item.source_oid) if item.source_oid is not None else None
     card = state.registry.get(item.def_id)
-    if item.ability_index is None or item.ability_index >= len(card.abilities):
+    ability = ability_of(state, item)
+    if ability is None:
         return
-    ability: Ability = card.abilities[item.ability_index]
 
     targets, any_legal = filter_legal(
         state, item.controller, ability.targets, item.targets, item.source_oid

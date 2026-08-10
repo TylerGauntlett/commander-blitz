@@ -41,11 +41,13 @@ class TargetRef:
 class TempEffect:
     """A continuous effect that lasts until end of turn.
 
-    ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``, or
+    ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``,
     ``"lock_abilities"`` ("its activated abilities can't be activated this
-    turn").  The lock is not a keyword because it is not a characteristic: it is
-    a permission, read by legality and by the mana solver rather than by
-    ``chars``, and showing it in a card's keyword list would be a lie.
+    turn"), or ``"ability"`` (a whole triggered or activated ability granted by
+    another permanent).  The lock is not a keyword because it is not a
+    characteristic: it is a permission, read by legality and by the mana solver
+    rather than by ``chars``, and showing it in a card's keyword list would be a
+    lie.
     """
 
     kind: str
@@ -53,6 +55,9 @@ class TempEffect:
     toughness: int = 0
     keyword: str | None = None
     source: int | None = None
+    #: For ``kind == "ability"``: which of the source card's
+    #: ``grantable_abilities`` was handed over.
+    ability_index: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -85,6 +90,8 @@ class StackItem:
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""
+    #: See `TriggerInstance.granted_by`.
+    granted_by: int | None = None
 
     @property
     def is_spell(self) -> bool:
@@ -115,6 +122,10 @@ class TriggerInstance:
     controller: int
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""
+    #: Set when this ability was *granted* -- the oid of the permanent whose
+    #: `grantable_abilities` it came from.  Resolution has to look there rather
+    #: than at the source's own abilities, which do not include it.
+    granted_by: int | None = None
 
 
 @dataclass
