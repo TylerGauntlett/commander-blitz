@@ -1,0 +1,30 @@
+{
+  "card_id": "rhystic_study",
+  "name": "Rhystic Study",
+  "oracle_text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+  "blocked_sentences": [
+    "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}."
+  ],
+  "needs": [
+    {
+      "capability": "unless_pays",
+      "kind": "decision",
+      "what": "an 'unless that player pays <cost>' wrapper on a triggered ability's effect: while the ability resolves, a player other than the ability's controller is offered an optional cost, and the wrapped effect happens only if they decline",
+      "why_existing_wont_do": "`may` is the only optional-effect op in reference and it asks the ability's own controller whether to apply the effect; it has no cost attached and cannot route the decision to the opponent whose spell triggered the ability, so the whole 'unless' branch would have to be dropped"
+    },
+    {
+      "capability": "unless_pays",
+      "kind": "cost",
+      "what": "a mana cost ({1}) payable during another player's ability resolution by a player who does not control that ability, with the payment outcome (paid / not paid) readable as a condition",
+      "why_existing_wont_do": "costs in reference are attached to activating or casting the object itself and are always paid by its controller; nothing lets a resolving trigger prompt a specific other player for mana, and `if` has no condition that can read whether such a payment happened"
+    },
+    {
+      "capability": "unless_pays",
+      "kind": "trigger_event",
+      "what": "`spell_cast` needs to expose the spell's controller both as a filter (only opponents' spells trigger it) and as a bound player reference the effect can point back at, so 'that player' means the caster rather than a fixed side",
+      "why_existing_wont_do": "`spell_cast` is listed as a trigger event but reference offers no filter vocabulary that scopes it to opponents, and no way to name the triggering spell's controller as the target of a later decision; `static_filter_keys.controller` applies to static abilities over permanents, not to the caster of a triggering spell"
+    }
+  ],
+  "closest_existing": ["may", "if", "spell_cast"],
+  "confidence": "high"
+}

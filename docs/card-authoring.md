@@ -163,9 +163,33 @@ packet per card:
 
 ```bash
 python scripts/author_cards.py --tier agent --limit 20   # hand out work
+python scripts/author_cards.py --tier agent --card "Rhystic Study"   # or one by name
 # ...answers land in data/authoring/answers/<card_id>.json
 python scripts/author_cards.py --collect                 # verify, commit survivors
 ```
+
+A reader that *cannot* express a card must not approximate it. It writes a **gap
+record** to `data/authoring/gaps/<card_id>.json` instead — the missing capability,
+named, with the reason the existing vocabulary falls short. `scripts/report_gaps.py`
+collapses those into [unsupported-cards.md](unsupported-cards.md), ranked by how
+many cards each one blocks. One refusal is an anecdote; seventy cards waiting on
+cycling is a build order.
+
+### Driving it
+
+Two Claude Code skills wrap this loop end to end (`.claude/skills/`):
+
+- **`/author-cards`** — runs the free template tier, hands the residual to one
+  concurrent worker per card, collects through the six gates, verifies and commits.
+  `/author-cards 100` for bulk, `/author-cards "Rhystic Study"` when a specific card
+  is needed now.
+- **`/extend-dsl`** — takes one capability off the gap report and builds it: the op
+  or continuous effect, its unit test, the docs, and any UI work. Then re-runs the
+  template tier to harvest the cards it unblocked.
+
+The division is the same one this document already draws. `/author-cards` never
+touches `src/automtg/engine/`; it measures what it cannot do and hands that to
+`/extend-dsl`.
 
 A packet is deliberately a **file format** rather than an API call, because the
 same packet has to serve a Claude Code session with a person watching *and* an
