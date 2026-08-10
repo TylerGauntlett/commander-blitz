@@ -123,3 +123,24 @@ export function expectMountedLike(
     ).toBeLessThanOrEqual(slack);
   }
 }
+
+/**
+ * Wait until an element's transform stops changing.
+ *
+ * For the handful of stories that run with real motion, "has it started" and
+ * "has it finished" are different questions and only the second is worth
+ * asserting against. Waiting for a transform to merely *exist* returns on the
+ * spring's first frame -- `matrix(1.0008, ...)` on its way to 1.02 -- so a story
+ * measuring a hovered box measured it before the hover had happened, and passed
+ * against the defect it was written for.
+ */
+export async function settled(el: HTMLElement, quietFrames = 3): Promise<void> {
+  let last = "";
+  let quiet = 0;
+  for (let i = 0; i < 180 && quiet < quietFrames; i += 1) {
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    const now = getComputedStyle(el).transform;
+    quiet = now === last ? quiet + 1 : 0;
+    last = now;
+  }
+}

@@ -52,6 +52,14 @@ export interface AutomtgParameters {
   art?: ArtMode;
   /** Entries pre-loaded into react-query, as `[queryKey, data]` pairs. */
   query?: [readonly unknown[], unknown][];
+  /**
+   * `real` lets this story animate under the runner too.
+   *
+   * The default holds motion still for tests and plays it in the browser. Opt in
+   * only when the animation *is* the thing under test -- a hover that scales, for
+   * instance, is a transform, and `reducedMotion` removes it.
+   */
+  motion?: "real" | "still";
   /** Let the progressive zoom actually measure. Off by default; see below. */
   zoomLock?: boolean;
 }
@@ -138,18 +146,40 @@ const withQueryClient: Decorator = (Story, context) => {
  * rather than `getBy*`. That rule is now load-bearing rather than belt and
  * braces -- `Card.Tapped` has to wait for its transform because Motion writes it
  * on the first frame, not during render.
+ *
+ * `motion: "real"` opts a story back in, and a handful genuinely need it: a
+ * hover that *scales* is a transform, so `reducedMotion` removes the very thing
+ * under test. `ActionPanel.CommitSlabOnHover` is the case that found this -- it
+ * asserted the slab stays inside its rail, and passed against the bug, because
+ * the scale it was measuring had been configured away. An assertion that cannot
+ * fail is worse than none.
  */
 const inTestRunner = (): boolean =>
   (window as Window & { __STORY_TEST__?: boolean }).__STORY_TEST__ === true;
 
-const withMotion: Decorator = (Story) =>
-  inTestRunner() ? (
+const withMotion: Decorator = (Story, context) => {
+  const real = (context.parameters.automtg as AutomtgParameters | undefined)?.motion === "real";
+  if (real) {
+    /*
+     * `never`, not "leave it alone". Headless Chromium reports
+     * `prefers-reduced-motion: reduce` and Motion's default is to honour it, so
+     * simply not wrapping would still leave the transforms switched off -- and a
+     * story that opted in to test an animation would silently test nothing.
+     */
+    return (
+      <MotionConfig reducedMotion="never">
+        <Story />
+      </MotionConfig>
+    );
+  }
+  return inTestRunner() ? (
     <MotionConfig reducedMotion="always" transition={{ duration: 0 }}>
       <Story />
     </MotionConfig>
   ) : (
     <Story />
   );
+};
 
 /**
  * The chain of wrappers the app would have around this component.

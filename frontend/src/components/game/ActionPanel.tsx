@@ -822,7 +822,7 @@ export function ActionPanel({
               data-action-kind={xAction.kind}
               disabled={disabled}
               onClick={() => onAct(xAction.id)}
-              whileHover={disabled ? undefined : { y: -2, scale: 1.02 }}
+              whileHover={disabled ? undefined : { y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={bouncy}
               data-testid="commit"
@@ -847,7 +847,7 @@ export function ActionPanel({
                 data-action-kind={finish.kind}
                 disabled={disabled}
                 onClick={() => onAct(finish.id)}
-                whileHover={disabled ? undefined : { y: -2, scale: 1.02 }}
+                whileHover={disabled ? undefined : { y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={bouncy}
                 data-testid="combat-skip"
@@ -863,7 +863,7 @@ export function ActionPanel({
                 className="btn btn--primary commit"
                 disabled={disabled || staged.length === 0}
                 onClick={() => onDeclare(mode === "attack" ? "attackers" : "blockers", staged)}
-                whileHover={{ y: -2, scale: 1.02 }}
+                whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={bouncy}
                 data-testid="combat-confirm"
@@ -926,7 +926,7 @@ export function ActionPanel({
               data-action-kind={commit.kind}
               disabled={disabled}
               onClick={() => onAct(commit.id)}
-              whileHover={disabled ? undefined : { y: -2, scale: 1.02 }}
+              whileHover={disabled ? undefined : { y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={bouncy}
               data-testid="commit"

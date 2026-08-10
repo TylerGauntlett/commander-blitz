@@ -634,6 +634,10 @@
   flex: 0 0 auto;
 }
 
+/* The slab is `width: 100%` of the rail, which is why it lifts on hover but does
+   not scale: a full-width element scaled to 1.02 is 2% wider than the column it
+   is in, so the button grew past its own panel and out over the rail's edge every
+   time the pointer crossed it. Anything else here can scale; this cannot. */
 .commit {
   display: flex;
   align-items: center;
