@@ -216492,12 +216492,12 @@
     },
     "Reconnaissance Mission": {
       "edhrec_rank": 882,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Reconnaissance Mission",
-      "reason": "Cycling {2} ({2}, Discard this card: Draw a card.)",
+      "reason": "",
       "scryfall_id": "875dfbf5-9313-439b-b021-8b92d898baa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reconstruct History": {
@@ -232302,12 +232302,12 @@
     },
     "Savai Triome": {
       "edhrec_rank": 496,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Savai Triome",
-      "reason": "Cycling {3} ({3}, Discard this card: Draw a card.)",
+      "reason": "",
       "scryfall_id": "748e6a61-9c1f-4225-9f04-e54002f63ac3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savannah": {

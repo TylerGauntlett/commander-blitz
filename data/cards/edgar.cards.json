@@ -79,34 +79,7 @@
         }
       ]
     },
-    {
-      "id": "savai_triome",
-      "name": "Savai Triome",
-      "oracle_text": "({T}: Add {R}, {W}, or {B}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
-      "types": ["Land"],
-      "subtypes": ["Plains", "Swamp", "Mountain"],
-      "color_identity": ["W", "B", "R"],
-      "replacements": [{ "event": "self_enters_tapped" }],
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{T}: Add {R}, {W}, or {B}.",
-          "is_mana_ability": true,
-          "cost": { "tap": true },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
-                { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
-                { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] }
-              ]
-            }
-          ]
-        }
-      ]
-    },
+    
     {
       "id": "scoured_barrens",
       "name": "Scoured Barrens",
