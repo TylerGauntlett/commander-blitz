@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>38 ops"]
+    ctx --> ops["op registry<br/>46 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -47,13 +47,13 @@ silently producing a card that looks implemented and does nothing.
 
 ## Effect ops
 
-42 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+46 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` |
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` |
+| Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` |
 | Modify | `pump` `grant_keyword` `set_pt` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -158,11 +158,26 @@ Anywhere a number is expected:
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
-    "defending": "you"               // `attacks` only: whom it is attacking
+    "defending": "you",              // `attacks` only: whom it is attacking
+    "not_cause": "kodama_of_the_east_tree"  // enters triggers only: a loop guard
   },
   "effects": [ ... ]
 }
 ```
+
+`not_cause` is "…**if it wasn't put onto the battlefield with this ability**".
+Zone changes carry a `cause`, and `put_onto_battlefield` can set its own, so an
+ability that puts permanents down can refuse to trigger on its own output.
+Checked on the trigger rather than as a condition because by the time the ability
+resolves the cause is no longer anywhere to be read. Without it Kodama of the
+East Tree triggers on the permanent it just put down, and again on that one's,
+until the loop guard kills the game.
+
+`self_enters` and `permanent_enters` are the *same* engine event, separated only
+by `source: "self"` — so the loader supplies it for `self_enters` rather than
+trusting each card file to remember. Omitting it once produced cards that fired
+on every permanent entering, silently, and invisibly until a second permanent
+showed up.
 
 `defending` is **not** a synonym for `controller`. `controller` says whose
 creature is swinging; `defending` says who is being swung at. "Whenever a
@@ -320,6 +335,37 @@ contain only `add_mana`. The loader enforces this, and it is why a dual land nev
 to ask which colour: the payment solver picks the mode, records the option index, and
 the engine adds exactly that mana without running the effect interpreter at all.
 
+### Hybrid costs
+
+`{W/U}` and `{2/W}` are parsed and paid properly. A hybrid pip is kept *apart*
+from the fixed `colored` pips, because it is not a fixed demand — folding
+`{G/U}` into a `{G}` would make it uncastable off Islands, which is the whole
+point of the symbol. Both colours count towards the card's colour identity, and
+`{2/W}` has mana value 2 while `{W/U}` has 1.
+
+Assignment is exhaustive rather than greedy, and shared by `satisfies` (can this
+be paid?) and `ManaPool.spend` (pay it). The choices interact: with one white and
+one blue, `{W/U}{W/U}` is payable only if the two pips take different symbols,
+and any "most plentiful first" rule gets that wrong. **Phyrexian** (`{W/P}`) is
+still rejected — it is a life payment, not a colour choice.
+
+### Restricted mana
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true, "mana_restriction": "creature",
+  "cost": { "tap": true }, "effects": [ ... ] }
+```
+
+"Spend this mana only to cast a creature spell." Enforced by *filtering sources*
+before the solver sees them, never by tagging the pool — which works only because
+mana here is tapped at the moment it is spent, so the question has an answer
+exactly when it is asked. The solver's inner loop never learns restrictions
+exist.
+
+Legality and payment must ask that question identically; both derive it from
+`costs.spell_purpose`. With no spell in mind, restricted mana is not counted at
+all: an under-count, which is the safe direction for a number the AI reads.
+
 ## Adding an op
 
 1. Write the function in the right `effects/ops_*.py` and decorate it with
@@ -402,7 +448,7 @@ and state-based actions put it in the graveyard.
 
 ## Player-wide statics
 
-Five static effects describe the *player* rather than a characteristic, so they
+Seven static effects describe the *player* rather than a characteristic, so they
 take `affects_player` instead of `affects`:
 
 ```jsonc
@@ -412,12 +458,27 @@ take `affects_player` instead of `affects`:
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
+{ "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
+{ "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 ```
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which
 queues the ability **twice** rather than resolving it twice — the two copies are
 separate abilities on the stack and anything in between still goes between them.
+
+The last two are Vorinclex's halves, and neither can be a triggered ability:
+tapping for mana happens *inside* payment, where nothing may go on the stack and
+nothing may stop to ask. Both are read at `costs.activate_mana_ability` instead.
+`double_land_mana` is also read by `_sources_of`, so legality counts the extra
+mana — a spell offered on doubled mana and then paid for on single mana would
+strand the payment mid-cast, which is why both go through one `mana_produced`
+helper.
+
+`freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
+untap step it skips. That is deliberately not the `frozen_by` lock used by
+`freeze`, which holds for as long as its source is on the battlefield: two
+different lifetimes, so two different fields.
 
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
@@ -611,6 +672,115 @@ The scheduled effects resolve directly rather than going on the stack. That is a
 divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
+
+## Token copies
+
+```jsonc
+{ "op": "copy_permanent", "objects": { "target": "t1" } }
+{ "op": "copy_permanent", "objects": { "self_only": true } }   // Scute Swarm
+```
+
+The object model already *is* a copy model: identity is `def_id` pointing at a
+`CardDef`, and `is_token` is a separate flag — so a token copy is a token whose
+`def_id` is the original's. That is not a shortcut. A copy copies the **printed
+card**, so the counters, damage and Auras piled onto the original are exactly
+what must not come with it.
+
+Unlike `create_token` it names no token id, so nothing has to be pre-declared and
+`validate_token_references` does not apply: what is being copied is only known
+while the spell resolves.
+
+## Protection
+
+Parameterised, so it is a static rather than a `Keyword`:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "self_only": true },
+  "from_types": ["Planeswalker"], "from_subtypes": ["Wizard"], "from_colors": ["B"] }
+```
+
+Four separate rules read it — **D**amage, **E**nchant/equip, **B**lock,
+**T**arget — and a card that implements one of the four looks identical to one
+that implements all four until the moment it matters.
+
+Protection is not hexproof with a filter: hexproof stops *opponents*, protection
+stops **everyone**, including the controller. Reusing the hexproof check would
+let you target your own protected creature.
+
+A `protection` static that names no quality is rejected at load time; it would
+load, look implemented, and protect from nothing.
+
+## Granting an ability
+
+The quoted half of `gains trample and "Whenever this creature deals combat damage
+to a player, draw a card"`. The granted ability is written on the granting card
+under `grantable_abilities` and referred to by index, so there is one definition
+of it rather than a copy:
+
+```jsonc
+"grantable_abilities": [
+  { "kind": "triggered", "trigger": { "event": "deals_combat_damage_to_player",
+                                      "source": "self" },
+    "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+],
+"effects": [ { "op": "grant_ability", "ability": 0, "objects": { "target": "t1" } } ]
+```
+
+It becomes the **recipient's** ability: "whenever *this creature* deals combat
+damage" means the creature, not the artifact that lent it. Until end of turn.
+
+Only **triggered** abilities may be granted, and the loader says so rather than
+accepting the others silently. A granted static has no place in the fixed-order
+characteristics pipeline, and a granted activated ability would need `Action` to
+carry where it came from before legality could offer it — so it would compile and
+then never appear.
+
+## Two piles
+
+```jsonc
+{ "op": "two_piles", "amount": { "const": 5 }, "to": "hand", "other": "graveyard" }
+```
+
+Fact or Fiction, and the only effect in the pool whose first decision belongs to
+**somebody else**. That tension is the card: the splitter wants both piles to be
+bad and the caster takes the better one, so an implementation where the caster
+splits is a strictly better spell than the one printed.
+
+Two decisions — a subset chosen by an opponent, then a yes/no from the caster —
+rather than "choose a pile", because the piles are not objects until the split is
+made.
+
+## Alternative ways to play a card
+
+Three now, each a card-level field rather than an ability, because the card does
+not have them where it is sitting:
+
+```jsonc
+"kicker": "{1}{U}"                          // pay more as you cast it
+"retrace": true                             // cast from the graveyard, discarding a land
+"suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
+```
+
+**Retrace** widens *where* a card may be cast from, the same way
+`play_lands_from_graveyard` widens where a land may be played from — legality
+scans the graveyard alongside the hand. The additional cost reuses
+`Cost.discard_selector`, which already existed for "discard a land card".
+
+**Suspend** is the odd one, and gets its own module
+([`engine/suspend.py`](../src/automtg/engine/suspend.py)) for three reasons:
+
+- *Suspending is not casting.* Nothing goes on the stack and nobody gets
+  priority, so it is `ActionKind.SUSPEND` rather than a variant of `CAST` — and
+  therefore cannot be countered.
+- *The ticking is a rule, not an ability.* A suspended card sits in exile with no
+  abilities of its own, so removing a time counter each upkeep belongs to the
+  game the way the untap step does. It is called from `turn.py`.
+- *The free cast is still a cast.* It uses the stack, it can be countered, and
+  its targets are chosen then — it simply costs nothing.
+
+A creature cast off suspend has haste, recorded on the object rather than in
+`until_eot`: it lasts as long as the permanent does, and it is the only reason
+suspend is ever better than waiting.
 
 ## "This spell can't be countered"
 

@@ -289,13 +289,11 @@ def _simplify_symbol(symbol: str, identity: str) -> str | None:
         left, _, right = sym.partition("/")
         if right == "P":  # phyrexian: paying life is not a mana payment here
             return f"{{{left}}}"
-        if left.isdigit():  # {2/W}: the generic half is the harder one anyway
-            return f"{{{left}}}"
-        # {W/U}: pick a half the deck can actually produce.
-        for half in (left, right):
-            if half in identity:
-                return f"{{{half}}}"
-        return f"{{{left}}}"
+        # Ordinary hybrid -- {W/U} and {2/W} -- is parsed and paid properly now,
+        # so it is left exactly as printed. Narrowing it to one half was always a
+        # loss of the card's real flexibility; it only ever happened because
+        # `parse` used to raise.
+        return None
     # Something unrecognised entirely.  One generic keeps the curve plausible
     # and keeps `parse` from raising.
     return "{1}"

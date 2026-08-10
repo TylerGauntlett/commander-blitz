@@ -5953,6 +5953,32 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fact_or_fiction",
+      "mana_cost": "{3}{U}",
+      "name": "Fact or Fiction",
+      "oracle_text": "Reveal the top five cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "op": "two_piles",
+          "other": "graveyard",
+          "to": "hand"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -8121,6 +8147,93 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_subtypes": [
+            "Wizard"
+          ],
+          "from_types": [
+            "Planeswalker"
+          ],
+          "kind": "static",
+          "text": "Protection from planeswalkers and from Wizards"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Greensleeves's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "badger_3_3_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "greensleeves_maro_sorcerer",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Greensleeves, Maro-Sorcerer",
+      "oracle_text": "Protection from planeswalkers and from Wizards\nGreensleeves's power and toughness are each equal to the number of lands you control.\nLandfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Sorcerer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -8851,6 +8964,147 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": "creature",
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "keyword": "trample",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Until end of turn, target creature you control with power 4 or greater gains trample and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "herd_heirloom",
+      "mana_cost": "{1}{G}",
+      "name": "Herd Heirloom",
+      "oracle_text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell.\n{T}: Until end of turn, target creature you control with power 4 or greater gains trample and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -10792,6 +11046,96 @@
         "Kobold"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "mana_value": {
+                    "op": "<=",
+                    "value": {
+                      "mana_value_of": {
+                        "binding": "subject"
+                      }
+                    }
+                  },
+                  "not_types": [
+                    "Instant",
+                    "Sorcery"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "cause": "kodama_of_the_east_tree",
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "mana_value": {
+                      "op": "<=",
+                      "value": {
+                        "mana_value_of": {
+                          "binding": "subject"
+                        }
+                      }
+                    },
+                    "not_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a permanent card with equal or lesser mana value from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another permanent you control enters, if it wasn't put onto the battlefield with this ability, you may put a permanent card with equal or lesser mana value from your hand onto the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true
+            },
+            "not_cause": "kodama_of_the_east_tree"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kodama_of_the_east_tree",
+      "keywords": [
+        "reach",
+        "partner"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Kodama of the East Tree",
+      "oracle_text": "Reach\nWhenever another permanent you control enters, if it wasn't put onto the battlefield with this ability, you may put a permanent card with equal or lesser mana value from your hand onto the battlefield.\nPartner (You can have two commanders if both have partner.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -16367,6 +16711,114 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                },
+                "right": {
+                  "const": 6
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "insect_1_1_g"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "copy_permanent"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "scute_swarm",
+      "mana_cost": "{2}{G}",
+      "name": "Scute Swarm",
+      "oracle_text": "Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "search_for_tomorrow",
+      "mana_cost": "{2}{G}",
+      "name": "Search for Tomorrow",
+      "oracle_text": "Search your library for a basic land card, put it onto the battlefield, then shuffle.\nSuspend 2—{G} (Rather than cast this card from your hand, you may pay {G} and exile it with two time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "suspend": {
+        "cost": "{G}",
+        "counters": 2
+      },
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -18165,6 +18617,46 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "spitting_image",
+      "mana_cost": "{4}{G/U}{G/U}",
+      "name": "Spitting Image",
+      "oracle_text": "Create a token that's a copy of target creature.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -22097,6 +22589,48 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "double_land_mana",
+          "kind": "static",
+          "text": "Whenever you tap a land for mana, add one mana of any type that land produced."
+        },
+        {
+          "affects_player": "opponent",
+          "effect": "freeze_opponent_lands",
+          "kind": "static",
+          "text": "Whenever an opponent taps a land for mana, that land doesn't untap during its controller's next untap step."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "vorinclex_voice_of_hunger",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{6}{G}{G}",
+      "name": "Vorinclex, Voice of Hunger",
+      "oracle_text": "Trample\nWhenever you tap a land for mana, add one mana of any type that land produced.\nWhenever an opponent taps a land for mana, that land doesn't untap during its controller's next untap step.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Praetor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

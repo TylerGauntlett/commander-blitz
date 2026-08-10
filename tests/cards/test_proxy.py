@@ -304,20 +304,24 @@ class TestKeywords:
 
 
 class TestManaCostSimplification:
-    """`ManaCost.parse` raises on these, and the raise is not local.
+    """`ManaCost.parse` raises on some symbols, and the raise is not local.
 
     It travels out through `compile_card` and `CardRegistry.from_paths`, so one
-    hybrid card in the generated pool would stop the whole registry loading at
-    boot.  Rewriting here is what keeps the DSL's "unknown vocabulary is a
+    unparsable card in the generated pool would stop the whole registry loading
+    at boot.  Rewriting here is what keeps the DSL's "unknown vocabulary is a
     load-time error" rule exactly as strict as it was.
+
+    Ordinary hybrid is no longer among them: `{W/U}` and `{2/W}` are parsed and
+    paid properly, so they are left exactly as printed.  Narrowing them to one
+    half was always a loss of the card's real flexibility.
     """
 
     @pytest.mark.parametrize(
         ("printed", "identity", "expected"),
         [
-            ("{W/U}", "WU", "{W}"),
-            ("{W/U}", "U", "{U}"),  # pick a half the deck can actually make
-            ("{2/W}", "W", "{2}"),  # same mana value, and the harder half
+            ("{W/U}", "WU", "{W/U}"),  # hybrid is kept
+            ("{W/U}", "U", "{W/U}"),
+            ("{2/W}", "W", "{2/W}"),
             ("{W/P}", "W", "{W}"),  # life is not a mana payment here
             ("{S}", "", "{1}"),
             ("{1}{G}", "G", "{1}{G}"),  # untouched
@@ -328,7 +332,7 @@ class TestManaCostSimplification:
         assert out == expected
         assert bool(notes) is (out != printed)
 
-    def test_a_hybrid_card_compiles_and_says_it_was_changed(self):
+    def test_a_hybrid_card_keeps_the_cost_it_was_printed_with(self):
         result, card = built(
             name="Boros Charm",
             type_line="Instant",
@@ -339,7 +343,8 @@ class TestManaCostSimplification:
         )
         assert card.mana_value == 2
         assert result.coverage == "partial"
-        assert sum("mana cost simplified" in n for n in result.notes) == 2
+        assert not [n for n in result.notes if "mana cost simplified" in n]
+        assert {c for c in card.colors} == {"R", "W"}
 
     def test_a_phyrexian_card_compiles(self):
         _, card = built(

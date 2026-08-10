@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "spitting_image",
+    "name": "Spitting Image",
+    "oracle_text": "Create a token that's a copy of target creature.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+    "mana_cost": "{4}{G/U}{G/U}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G",
+      "U"
+    ],
+    "color_identity": [
+      "G",
+      "U"
+    ],
+    "retrace": true,
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "copy_permanent",
+        "objects": {
+          "target": "t1"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard"
+  }
+}

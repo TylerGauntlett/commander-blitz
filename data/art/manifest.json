@@ -1258,6 +1258,12 @@
     "file": "explosive_vegetation.jpg",
     "scryfall_id": "ea73440b-a306-4425-84c0-5e18b6ec0516"
   },
+  "fact_or_fiction": {
+    "artist": "Carissa Susilo & Scott Okumura",
+    "bytes": 69583,
+    "file": "fact_or_fiction.jpg",
+    "scryfall_id": "fc8d66ed-8a01-41ce-805c-05333322c6f6"
+  },
   "faerie_seer": {
     "artist": "Eelis Kyttanen",
     "bytes": 53222,
@@ -1624,6 +1630,12 @@
     "file": "greataxe.jpg",
     "scryfall_id": "e840aef6-eec4-40dd-bbc4-6fd0b2b57805"
   },
+  "greensleeves_maro_sorcerer": {
+    "artist": "Jason Loik & Matthew Cohen",
+    "bytes": 55003,
+    "file": "greensleeves_maro_sorcerer.jpg",
+    "scryfall_id": "643b6832-0fa1-4ce8-bda8-00fe9810ffeb"
+  },
   "greenweaver_druid": {
     "artist": "Justin Sweet",
     "bytes": 84410,
@@ -1773,6 +1785,12 @@
     "bytes": 60447,
     "file": "helpful_hunter.jpg",
     "scryfall_id": "0a09344c-e869-4a8e-9be6-a29f1a5b6df6"
+  },
+  "herd_heirloom": {
+    "artist": "Allen Morris",
+    "bytes": 57897,
+    "file": "herd_heirloom.jpg",
+    "scryfall_id": "5579a3ac-7fdb-4204-b44e-fe0174f78cfa"
   },
   "heroic_intervention": {
     "artist": "Bob Layton",
@@ -2114,6 +2132,12 @@
     "bytes": 128446,
     "file": "kobolds_of_kher_keep.jpg",
     "scryfall_id": "df0320d9-7c2a-456a-9159-1b4fae67bfb5"
+  },
+  "kodama_of_the_east_tree": {
+    "artist": "Daarken",
+    "bytes": 60190,
+    "file": "kodama_of_the_east_tree.jpg",
+    "scryfall_id": "2ee1d489-0980-444e-8b07-107be791b76e"
   },
   "kodamas_reach": {
     "artist": "John Avon",
@@ -3188,6 +3212,18 @@
     "file": "scrubland.jpg",
     "scryfall_id": "649aa116-4bb5-4974-b8dc-38a8c627717a"
   },
+  "scute_swarm": {
+    "artist": "Jason Loik & Matthew Cohen",
+    "bytes": 91913,
+    "file": "scute_swarm.jpg",
+    "scryfall_id": "62c19f87-1bbc-4309-8781-4519db8b91a2"
+  },
+  "search_for_tomorrow": {
+    "artist": "Eddie Schillo",
+    "bytes": 27849,
+    "file": "search_for_tomorrow.jpg",
+    "scryfall_id": "857818d8-454b-4c2c-8cf2-7aa9c2898b18"
+  },
   "seaside_citadel": {
     "artist": "Volkan Ba\u01f5a",
     "bytes": 51543,
@@ -3510,6 +3546,12 @@
     "bytes": 89996,
     "file": "spirited_companion.jpg",
     "scryfall_id": "85c9b363-4883-4ce9-96cc-c786ab3f618a"
+  },
+  "spitting_image": {
+    "artist": "Jim Nelson",
+    "bytes": 90189,
+    "file": "spitting_image.jpg",
+    "scryfall_id": "d5f68c73-4794-4659-b494-edf89105beab"
   },
   "sporemound": {
     "artist": "Svetlin Velinov",
@@ -4240,6 +4282,12 @@
     "bytes": 70658,
     "file": "vorel_of_the_hull_clade.jpg",
     "scryfall_id": "82c8cac8-29ce-43cc-bdb4-428c614d8545"
+  },
+  "vorinclex_voice_of_hunger": {
+    "artist": "Nakamura8",
+    "bytes": 68478,
+    "file": "vorinclex_voice_of_hunger.jpg",
+    "scryfall_id": "6aebcc3b-504e-40fc-b232-a2aa21a0521b"
   },
   "vorstclaw": {
     "artist": "Lucas Graciano",

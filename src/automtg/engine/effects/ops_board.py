@@ -11,6 +11,7 @@ from ..primitives import (
     add_counters,
     attach,
     create_token,
+    grant_ability,
     grant_keyword,
     lock_abilities,
     pump,
@@ -21,7 +22,7 @@ from ..primitives import (
 from ..zones import destroy, exile, move_object, sacrifice
 from . import register
 from .context import EffectContext
-from .selectors import choose_objects
+from .selectors import choose_objects, resolve_pool
 from .values import evaluate_value
 
 
@@ -58,7 +59,16 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         controller = ctx.controller if spec.get("controller") == "you" else obj.owner
         obj.controller = controller
-        move_object(ctx.state, oid, Zone.BATTLEFIELD, tapped=tapped, cause="put_onto_battlefield")
+        # `cause` travels into the enters-the-battlefield event, so an ability
+        # that puts permanents down can name itself here and then refuse to
+        # trigger on its own output -- see `TriggerSpec.not_cause`.
+        move_object(
+            ctx.state,
+            oid,
+            Zone.BATTLEFIELD,
+            tapped=tapped,
+            cause=str(spec.get("cause") or "put_onto_battlefield"),
+        )
 
 
 @register("create_token")
@@ -75,6 +85,40 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=bool(spec.get("tapped")),
             attacking=attacking,
         )
+
+
+@register("copy_permanent")
+def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Create a token that's a copy of target creature."
+
+    The object model already *is* a copy model: an object's identity is its
+    ``def_id`` pointing at a `CardDef`, and `is_token` is a separate flag.  So a
+    token copy is a token whose ``def_id`` is the copied permanent's -- which is
+    also exactly right, because a copy copies the printed card and not the
+    counters, damage or Auras that have accumulated on it.
+
+    Unlike `create_token` this names no token id, so there is nothing for
+    `validate_token_references` to check and nothing to pre-declare: the thing
+    being copied is only known while the spell is resolving.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    oids = resolve_pool(ctx, spec.get("objects"))
+    if not oids:
+        return
+    controllers = _players(ctx, spec.get("controller", "you"))
+    for oid in oids:
+        source = ctx.state.objects.get(oid)
+        if source is None:
+            continue
+        for pid in controllers:
+            create_token(
+                ctx.state,
+                source.def_id,
+                pid,
+                amount,
+                tapped=bool(spec.get("tapped")),
+                attacking=_attack_target(ctx) if spec.get("attacking") else None,
+            )
 
 
 def _attack_target(ctx: EffectContext) -> int | None:
@@ -194,6 +238,38 @@ def op_freeze(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is not None and obj.on_battlefield:
             obj.frozen_by = ctx.source_oid
+
+
+@register("grant_ability")
+def op_grant_ability(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Give a permanent one of this card's ``grantable_abilities`` until EOT.
+
+    "…and 'Whenever this creature deals combat damage to a player, draw a
+    card'." The quoted ability is written out on the granting card and referred
+    to here by index, so there is one definition of it rather than a copy.
+    """
+    index = int(spec.get("ability", 0))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Grant an ability to")
+    if ctx.source_oid is None:
+        return
+    for oid in oids:
+        grant_ability(ctx.state, oid, index, ctx.source_oid)
+
+
+@register("skip_untap")
+def op_skip_untap(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"It doesn't untap during its controller's next untap step."
+
+    A *one-shot*, cleared by the untap step it skips -- which is what separates
+    it from `freeze`, where the hold lasts as long as its source is on the
+    battlefield. Using either for the other would be wrong in both directions,
+    so they are two ops over two fields rather than one with a flag.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Keep tapped")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.skip_next_untap = True
 
 
 @register("lock_abilities")

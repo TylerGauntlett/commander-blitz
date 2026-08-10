@@ -149,6 +149,14 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             continue
         seen.add(oid)
         yield from emit_from(obj, Zone.BATTLEFIELD)
+        # Abilities granted by something else. Yielded with `obj` as the source,
+        # so "whenever *this creature* deals combat damage" means the creature
+        # that was granted the ability, not the permanent that granted it.
+        from .primitives import granted_abilities
+
+        for _granter, ability in granted_abilities(state, oid):
+            if ability.is_triggered and ability.trigger is not None:
+                yield obj, ability
 
     for p in state.players:
         for zone in (Zone.COMMAND, Zone.GRAVEYARD, Zone.HAND, Zone.EXILE):
@@ -185,6 +193,12 @@ def _matches(
 
     # "creature_dies" is sugar for a dies trigger filtered to creatures.
     if spec.event == "creature_dies" and not event.data.get("was_creature", False):
+        return False
+
+    # "…if it wasn't put onto the battlefield with this ability." The loop guard,
+    # and it has to be checked here rather than as a condition, because by the
+    # time the ability resolves the cause is no longer anywhere to be read.
+    if spec.not_cause is not None and event.data.get("cause") == spec.not_cause:
         return False
 
     actor = _actor(state, spec.event, event, subject_oid)
@@ -334,6 +348,21 @@ def _compare(value: int, spec: Mapping[str, Any]) -> bool:
     return value == other
 
 
+def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> int | None:
+    """Which permanent granted ``obj`` this ability, if any.
+
+    Identity, not equality: two grants of the same ability are the same object
+    here, and that is fine -- resolution only needs somewhere to look the
+    definition up.
+    """
+    from .primitives import granted_abilities
+
+    for granter, granted in granted_abilities(state, obj.oid):
+        if granted is ability:
+            return granter.oid
+    return None
+
+
 def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent) -> None:
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:
@@ -365,6 +394,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
             controller=obj.controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
+            granted_by=_granter_of(state, obj, ability),
         )
     )
     state.emit(

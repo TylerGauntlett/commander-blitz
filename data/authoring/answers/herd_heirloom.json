@@ -1,0 +1,145 @@
+{
+  "card": {
+    "id": "herd_heirloom",
+    "name": "Herd Heirloom",
+    "oracle_text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell.\n{T}: Until end of turn, target creature you control with power 4 or greater gains trample and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell.",
+        "is_mana_ability": true,
+        "mana_restriction": "creature",
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "label": "W",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "U",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "B",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "R",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "G",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Until end of turn, target creature you control with power 4 or greater gains trample and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+        "cost": {
+          "tap": true
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              }
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "objects": {
+              "target": "t1"
+            },
+            "keyword": "trample"
+          },
+          {
+            "op": "grant_ability",
+            "ability": 0,
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals combat damage to a player, draw a card.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

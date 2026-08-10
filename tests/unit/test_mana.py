@@ -58,10 +58,61 @@ class TestParsing:
     def test_colors_property(self):
         assert {c.value for c in ManaCost.parse("{W}{B}{R}").colors} == {"W", "B", "R"}
 
-    @pytest.mark.parametrize("text", ["{G/U}", "{2/W}", "{G", "G}", "{S}", "{4}x"])
+    @pytest.mark.parametrize("text", ["{G", "G}", "{S}", "{4}x", "{W/P}"])
     def test_unsupported_symbols_raise(self, text: str):
         with pytest.raises(DslError):
             ManaCost.parse(text)
+
+
+class TestHybrid:
+    """``{G/U}`` is a choice; ``{2/W}`` is a choice with a price."""
+
+    def test_a_colour_choice_is_one_mana_and_two_colours(self):
+        cost = ManaCost.parse("{4}{G/U}{G/U}")
+        assert cost.mana_value() == 6
+        assert {c.value for c in cost.colors} == {"G", "U"}, "both halves count"
+        assert len(cost.hybrid) == 2
+
+    def test_the_two_over_one_form_costs_the_larger_half(self):
+        """``{2/W}`` has mana value 2, not 1 -- that is the printed rule."""
+        cost = ManaCost.parse("{2/W}{2/W}")
+        assert cost.mana_value() == 4
+
+    def test_pips_are_not_folded_into_colored(self):
+        """Kept apart because a hybrid pip is not a fixed demand.
+
+        If ``{G/U}`` were counted as a ``{G}``, a deck with only Islands could
+        not cast it -- the whole point of the symbol.
+        """
+        cost = ManaCost.parse("{G/U}")
+        assert not any(cost.colored)
+
+    @pytest.mark.parametrize(
+        ("cost", "have", "payable"),
+        [
+            ("{G/U}{G/U}", {"g": 1, "u": 1}, True),
+            ("{G/U}{G/U}", {"g": 2}, True),
+            ("{G/U}{G/U}", {"g": 1}, False),
+            ("{G/U}{G/U}", {"c": 2}, False),  # colourless is not either half
+            ("{2/W}", {"w": 1}, True),
+            ("{2/W}", {"c": 2}, True),  # the expensive way
+            ("{2/W}", {"c": 1}, False),
+            ("{1}{G/U}", {"g": 1, "c": 1}, True),
+        ],
+    )
+    def test_what_can_pay_for_it(self, cost: str, have: dict, payable: bool):
+        assert satisfies(amounts(**have), ManaCost.parse(cost).with_x(0)) is payable
+
+    def test_spending_takes_the_half_the_solver_relied_on(self):
+        """The interacting case, where a greedy deduction would go wrong.
+
+        ``{G}{G/U}`` off one Green and one Blue: the fixed pip must take the
+        Green, so the hybrid pip has to take the Blue. A rule that spent the
+        most plentiful symbol first would take Green twice and strand the cost.
+        """
+        pool = ManaPool(amounts(g=1, u=1))
+        pool.spend(ManaCost.parse("{G}{G/U}").with_x(0))
+        assert pool.total() == 0
 
     def test_production_parsing(self):
         assert parse_mana_production("{G}{U}") == amounts(g=1, u=1)

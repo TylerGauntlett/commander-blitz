@@ -3,7 +3,7 @@
 
 # Features
 
-## Systematic card support — in progress
+## Systematic card support — the deck finished
 
 ### Overview
 
@@ -20,7 +20,7 @@ Full design in [card-authoring.md](card-authoring.md).
 
 ### What shipped
 
-**Playable cards: 230 → 724.** Written by the pipeline, committed to
+**Playable cards: 230 → 732.** Written by the pipeline, committed to
 `data/cards/auto/`, re-verified on every test run.
 
 - **A verifier with six gates**, which is the centre of the design rather than
@@ -53,8 +53,8 @@ identical answer.
 ### The imported deck, card by card
 
 The headline metric for this work is the deck that started it
-(`moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw`). **72 distinct cards; 8 still
-inert.** Everything else plays.
+(`moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw`). It began at **41 of 100 cards
+doing nothing**. It is now at **zero**: all 72 distinct cards play.
 
 Each of the following was a *mechanic* rather than effort, and each shipped with
 its own unit tests and a `card-dsl.md` entry:
@@ -72,6 +72,15 @@ its own unit tests and a `card-dsl.md` entry:
 | `double_land_triggers` | Ancient Greenwarden |
 | `cost_reduction` | Ghalta |
 | Monstrosity and `freeze` | Shipbreaker Kraken |
+| Token copies (`copy_permanent`) | Scute Swarm, Spitting Image |
+| Protection, across damage / enchant / block / target | Greensleeves |
+| `not_cause` loop guard, and Partner as an inert keyword | Kodama of the East Tree |
+| `double_land_mana`, `freeze_opponent_lands`, `skip_next_untap` | Vorinclex |
+| Hybrid mana in the payment solver | Spitting Image |
+| Restricted mana and granted abilities | Herd Heirloom |
+| Retrace — casting from the graveyard | Spitting Image |
+| Suspend — a special action, an upkeep rule, and a free cast | Search for Tomorrow |
+| `two_piles` — the one decision an opponent makes | Fact or Fiction |
 
 One of those found a real bug rather than a gap: `self_enters` and
 `permanent_enters` are the same engine event, separated only by `source: "self"`,
@@ -79,26 +88,36 @@ so a card omitting it fired on *every* permanent entering. Every hand-written
 card had it; three new ones did not. The loader now supplies it, because the name
 can only mean one thing.
 
-### What is left
+### What the last eight cost
 
-Eight cards, and they need subsystems rather than card files:
+The three that reached into `mana.py` were the risk, and each was landed on its
+own with the 160-game arena run in between rather than all at once:
 
-- **Copy effects** — Scute Swarm, Spitting Image. A token that is a copy of
-  another creature has no card definition to point at.
-- **Protection** — Greensleeves. Needs targeting, damage and blocking to all ask.
-- **Suspend and retrace** — Search for Tomorrow, Spitting Image. Both are new
-  ways to cast a card from somewhere other than the hand.
-- **Granting an ability to another permanent** — Herd Heirloom, which also needs
-  mana restricted to a kind of spell.
-- **Splitting cards into piles** — Fact or Fiction, whose decision is an
-  opponent's.
-- **Triggering off tapping a land for mana** — Vorinclex, which is awkward while
-  mana payment is automatic and the player never names a land.
-- **Kodama of the East Tree**, whose trigger cares where a permanent came from.
+- **Hybrid mana** (625 catalog cards) is additive to `Requirement`, with the
+  no-hybrid fast path left exactly as it was — it runs in the solver's inner loop
+  on every priority window. Assignment is exhaustive and shared by `satisfies`
+  and `ManaPool.spend`, because with one white and one blue, `{W/U}{W/U}` is
+  payable only if the two pips take different symbols. The proxy stopped
+  narrowing hybrid costs as a result, so imported decks keep their real ones.
+- **Restricted mana** (162) never touches the solver at all: sources that may not
+  pay for this spell are filtered out before it runs. That works only because
+  mana here is tapped at the moment it is spent.
+- **Vorinclex's doubling** had to be computed in two places — `_sources_of` so
+  legality counts it, `activate_mana_ability` so payment adds it — and a
+  disagreement would strand a spell mid-cast. One `mana_produced` helper, called
+  from both, plus a test that casts an 8-drop off four doubled Forests.
 
-Across the whole catalog `--report` still ranks **Flashback** (75), **Crew** (74),
+Two things were deliberately **not** done, and fail loudly instead of silently:
+granting a *static* or *activated* ability (the loader rejects it rather than
+compiling something legality would never offer), and phyrexian mana (a life
+payment, not a colour choice).
+
+### What is left, beyond this deck
+
+Across the whole catalog `--report` ranks **Flashback** (234), **Crew** (74),
 **Cycling** (71), **Ward** (41) and **Convoke** (39) as the biggest remaining
-blocks by card count.
+blocks by card count. Flashback in particular is now nearly free: it is retrace's
+machinery — casting from the graveyard — with a different additional cost.
 
 ## All Card Support — done
 

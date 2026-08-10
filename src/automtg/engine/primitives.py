@@ -148,6 +148,21 @@ def damage_permanent(
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return 0
+    # Protection prevents the damage entirely -- so nothing is marked, no
+    # deathtouch is recorded, and the source's lifelink gains nothing, which is
+    # why this returns before all three rather than zeroing `amount` later.
+    from .characteristics import protected_from
+
+    if protected_from(state, oid, source_oid):
+        state.emit(
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            reason="protection",
+        )
+        return 0
     obj.damage += amount
     if source_oid is not None and _has(state, source_oid, Keyword.DEATHTOUCH):
         obj.deathtouched = True
@@ -272,9 +287,15 @@ def create_token(
 
 
 def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
+    from .characteristics import protected_from
+
     aura = state.objects.get(aura_oid)
     target = state.objects.get(target_oid)
     if aura is None or target is None or not target.on_battlefield:
+        return False
+    # "Protection from Wizards" cannot be enchanted or equipped by one. The Aura
+    # is left where it is; state-based actions bin an Aura attached to nothing.
+    if protected_from(state, target_oid, aura_oid):
         return False
     aura.attached_to = target_oid
     state.bump_chars()
@@ -304,6 +325,46 @@ def grant_keyword(state: GameState, oid: int, keyword: str, source: int | None =
         return
     obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
     state.bump_chars()
+
+
+def grant_ability(state: GameState, oid: int, ability_index: int, source: int) -> None:
+    """Hand one of ``source``'s grantable abilities to ``oid`` until end of turn.
+
+    Stored as a pointer -- source oid plus index -- rather than a copy of the
+    ability, so there is exactly one definition of what was granted and it stays
+    the card file's.
+    """
+    from .structs import TempEffect
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(kind="ability", ability_index=ability_index, source=source)
+    )
+    state.bump_chars()
+
+
+def granted_abilities(state: GameState, oid: int):
+    """Every ability currently granted to this object, as ``(source, ability)``.
+
+    The *granted-to* object is what triggers and legality treat as the source,
+    which is what makes "whenever **this creature** deals combat damage" mean
+    the creature that was granted the ability rather than the thing that granted
+    it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    for temp in obj.until_eot:
+        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        source = state.objects.get(temp.source)
+        if source is None:
+            continue
+        card = state.card_of(source)
+        if temp.ability_index < len(card.grantable_abilities):
+            yield source, card.grantable_abilities[temp.ability_index]
 
 
 def lock_abilities(state: GameState, oid: int, source: int | None = None) -> None:
@@ -343,7 +404,16 @@ def untap_all(state: GameState, pid: int) -> list[int]:
     untapped = []
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
-        if obj is None or obj.controller != pid or not obj.tapped:
+        if obj is None or obj.controller != pid:
+            continue
+        if obj.skip_next_untap:
+            # Spent by *this* untap step whether or not there was anything to
+            # skip. A permanent that happens to be untapped already still uses
+            # the effect up -- holding the flag back until it is next tapped
+            # would skip some later, unrelated untap step instead.
+            obj.skip_next_untap = False
+            continue
+        if not obj.tapped:
             continue
         if obj.frozen_by is not None:
             holder = state.objects.get(obj.frozen_by)

@@ -1,0 +1,91 @@
+{
+  "card": {
+    "id": "greensleeves_maro_sorcerer",
+    "name": "Greensleeves, Maro-Sorcerer",
+    "oracle_text": "Protection from planeswalkers and from Wizards\nGreensleeves's power and toughness are each equal to the number of lands you control.\nLandfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+    "mana_cost": "{3}{G}{G}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elemental",
+      "Sorcerer"
+    ],
+    "power": 0,
+    "toughness": 0,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Protection from planeswalkers and from Wizards",
+        "effect": "protection",
+        "affects": {
+          "self_only": true
+        },
+        "from_types": [
+          "Planeswalker"
+        ],
+        "from_subtypes": [
+          "Wizard"
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Greensleeves's power and toughness are each equal to the number of lands you control.",
+        "effect": "set_pt",
+        "affects": {
+          "self_only": true
+        },
+        "power": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "toughness": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Landfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "badger_3_3_g",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

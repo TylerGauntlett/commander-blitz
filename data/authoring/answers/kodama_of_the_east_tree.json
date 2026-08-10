@@ -1,0 +1,94 @@
+{
+  "card": {
+    "id": "kodama_of_the_east_tree",
+    "name": "Kodama of the East Tree",
+    "oracle_text": "Reach\nWhenever another permanent you control enters, if it wasn't put onto the battlefield with this ability, you may put a permanent card with equal or lesser mana value from your hand onto the battlefield.\nPartner (You can have two commanders if both have partner.)",
+    "mana_cost": "{4}{G}{G}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Spirit"
+    ],
+    "power": 6,
+    "toughness": 6,
+    "keywords": [
+      "reach",
+      "partner"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another permanent you control enters, if it wasn't put onto the battlefield with this ability, you may put a permanent card with equal or lesser mana value from your hand onto the battlefield.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "exclude_self": true
+          },
+          "not_cause": "kodama_of_the_east_tree"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a permanent card with equal or lesser mana value from your hand onto the battlefield?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                }
+              }
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "cause": "kodama_of_the_east_tree",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "not_types": [
+                    "Instant",
+                    "Sorcery"
+                  ],
+                  "mana_value": {
+                    "op": "<=",
+                    "value": {
+                      "mana_value_of": {
+                        "binding": "subject"
+                      }
+                    }
+                  },
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

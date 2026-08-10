@@ -51,6 +51,19 @@ class GameObject:
     #: them down.  The untap step clears it once that permanent is gone, which is
     #: what makes the lock end with its source rather than lasting forever.
     frozen_by: int | None = None
+    #: Whose suspended card this is, while it waits in exile with time counters.
+    #: Survives zone changes only in the sense that it is cleared when the card
+    #: is finally cast -- see `engine/suspend.py`.
+    suspended_by: int | None = None
+    #: A creature cast off suspend has haste.  Not an until-end-of-turn effect:
+    #: it lasts as long as the permanent does, which is the only reason suspend
+    #: is ever better than simply waiting.
+    hasted_by_suspend: bool = False
+    #: "That land doesn't untap during its controller's next untap step."  A
+    #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
+    #: which holds for as long as its source is on the battlefield.  Two
+    #: different lifetimes, so two different fields.
+    skip_next_untap: bool = False
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -73,6 +86,10 @@ class GameObject:
         self.until_eot = []
         self.monstrous = False
         self.frozen_by = None
+        self.skip_next_untap = False
+        # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
+        # leaves exile to be cast, and this runs on the way onto the battlefield
+        # a moment later. Clearing it here would take the haste straight back.
         self.entered_turn = -1
         self.stack_id = None
 
@@ -136,4 +153,7 @@ class GameObject:
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
             "frozen_by": self.frozen_by,
+            "skip_next_untap": self.skip_next_untap,
+            "suspended_by": self.suspended_by,
+            "hasted_by_suspend": self.hasted_by_suspend,
         }

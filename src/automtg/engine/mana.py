@@ -35,18 +35,39 @@ def _zeros() -> list[int]:
 
 
 @dataclass(frozen=True)
+class HybridPip:
+    """One ``{W/U}``-style pip: pay any of ``symbols``, or ``generic`` generic.
+
+    Two shapes of hybrid, one representation.  ``{W/U}`` is a choice between two
+    coloured symbols and has no generic alternative.  ``{2/W}`` is a choice
+    between one coloured symbol and two generic, which is why the alternative is
+    a *number* and not another symbol.
+    """
+
+    symbols: frozenset[int] = frozenset()
+    generic: int | None = None
+
+    @property
+    def value(self) -> int:
+        """What this pip contributes to mana value: ``{W/U}`` 1, ``{2/W}`` 2."""
+        return self.generic if self.generic is not None else 1
+
+
+@dataclass(frozen=True)
 class ManaCost:
     """A parsed mana cost.
 
     ``colored`` is a 6-tuple aligned with :data:`SYMBOLS`; the final slot is the
     ``{C}`` colorless requirement, which generic mana cannot satisfy but which can
-    itself pay generic.
+    itself pay generic.  ``hybrid`` holds the pips that offer a choice; they are
+    kept apart from ``colored`` precisely because they are not a fixed demand.
     """
 
     generic: int = 0
     colored: tuple[int, ...] = (0,) * N_SYMBOLS
     x_count: int = 0
     text: str = ""
+    hybrid: tuple[HybridPip, ...] = ()
 
     @staticmethod
     def parse(text: str | None) -> ManaCost:
@@ -56,6 +77,7 @@ class ManaCost:
         generic = 0
         x_count = 0
         colored = _zeros()
+        hybrid: list[HybridPip] = []
         pos = 0
         for match in _TOKEN_RE.finditer(text):
             if match.start() != pos:
@@ -68,24 +90,44 @@ class ManaCost:
                 x_count += 1
             elif sym in SYMBOL_INDEX:
                 colored[SYMBOL_INDEX[sym]] += 1
+            elif "/" in sym:
+                hybrid.append(_parse_hybrid(sym, text))
             else:
                 raise DslError(
                     f"unsupported mana symbol {{{sym}}} in {text!r} "
-                    "(hybrid, phyrexian and snow mana are not implemented)"
+                    "(phyrexian and snow mana are not implemented)"
                 )
         if pos != len(text):
             raise DslError(f"unparsable mana cost {text!r} (trailing {text[pos:]!r})")
-        return ManaCost(generic=generic, colored=tuple(colored), x_count=x_count, text=text)
+        return ManaCost(
+            generic=generic,
+            colored=tuple(colored),
+            x_count=x_count,
+            text=text,
+            hybrid=tuple(hybrid),
+        )
 
     def mana_value(self, x: int = 0) -> int:
         """Converted mana cost.  ``X`` counts as 0 anywhere but on the stack."""
-        return self.generic + sum(self.colored) + self.x_count * x
+        return (
+            self.generic
+            + sum(self.colored)
+            + sum(pip.value for pip in self.hybrid)
+            + self.x_count * x
+        )
 
     @property
     def colors(self) -> frozenset[Color]:
-        return frozenset(
-            COLOR_ORDER[i] for i in range(len(COLOR_ORDER)) if self.colored[i] > 0
-        )
+        """Every colour in the cost.
+
+        A hybrid pip contributes **all** of its colours: ``{G/U}`` makes the card
+        both green and blue, which is what decides its colour identity and so
+        whether a Commander deck may run it at all.
+        """
+        indices = {i for i in range(len(COLOR_ORDER)) if self.colored[i] > 0}
+        for pip in self.hybrid:
+            indices.update(i for i in pip.symbols if i < len(COLOR_ORDER))
+        return frozenset(COLOR_ORDER[i] for i in sorted(indices))
 
     def total_required(self, x: int = 0) -> int:
         return self.mana_value(x)
@@ -93,11 +135,18 @@ class ManaCost:
     def with_x(self, x: int) -> Requirement:
         """Flatten to a concrete requirement with ``X`` resolved."""
         return Requirement(
-            colored=self.colored, generic=self.generic + self.x_count * x
+            colored=self.colored,
+            generic=self.generic + self.x_count * x,
+            hybrid=self.hybrid,
         )
 
     def is_free(self) -> bool:
-        return self.generic == 0 and self.x_count == 0 and not any(self.colored)
+        return (
+            self.generic == 0
+            and self.x_count == 0
+            and not any(self.colored)
+            and not self.hybrid
+        )
 
     def plus(self, other: ManaCost | None) -> ManaCost:
         """This cost with an additional cost folded in -- kicker, for instance.
@@ -112,10 +161,36 @@ class ManaCost:
             colored=tuple(a + b for a, b in zip(self.colored, other.colored, strict=True)),
             x_count=self.x_count + other.x_count,
             text=self.text + other.text,
+            hybrid=self.hybrid + other.hybrid,
         )
 
     def __str__(self) -> str:
         return self.text or "{0}"
+
+
+def _parse_hybrid(sym: str, text: str) -> HybridPip:
+    """``"W/U"`` or ``"2/W"`` -> a :class:`HybridPip`.
+
+    Phyrexian (``{W/P}``) is deliberately still rejected: it is a *life* payment
+    dressed as a mana symbol, and pretending it is a colour choice would make
+    every phyrexian card cheaper than it is printed.
+    """
+    left, _, right = sym.partition("/")
+    symbols: set[int] = set()
+    generic: int | None = None
+    for half in (left, right):
+        if half.isdigit():
+            generic = int(half)
+        elif half in SYMBOL_INDEX:
+            symbols.add(SYMBOL_INDEX[half])
+        else:
+            raise DslError(
+                f"unsupported mana symbol {{{sym}}} in {text!r} "
+                "(phyrexian and snow mana are not implemented)"
+            )
+    if not symbols:
+        raise DslError(f"unparsable hybrid symbol {{{sym}}} in {text!r}")
+    return HybridPip(symbols=frozenset(symbols), generic=generic)
 
 
 @dataclass(frozen=True)
@@ -124,10 +199,11 @@ class Requirement:
 
     colored: tuple[int, ...] = (0,) * N_SYMBOLS
     generic: int = 0
+    hybrid: tuple[HybridPip, ...] = ()
 
     @property
     def total(self) -> int:
-        return sum(self.colored) + self.generic
+        return sum(self.colored) + self.generic + sum(pip.value for pip in self.hybrid)
 
 
 class ManaPool:
@@ -169,6 +245,19 @@ class ManaPool:
                 if self.amounts[i] < need:
                     raise ValueError("pool cannot cover colored requirement")
                 self.amounts[i] -= need
+        # Hybrid pips choose their half here, and must choose it the *same* way
+        # `satisfies` decided they could -- so both run one routine. A second,
+        # looser rule here could take a symbol the solver was relying on for a
+        # coloured pip and strand the payment halfway through.
+        if req.hybrid:
+            chosen = assign_hybrid(list(self.amounts), req.hybrid, remaining_generic)
+            if chosen is None:
+                raise ValueError("pool cannot cover hybrid requirement")
+            for pip, symbol in zip(req.hybrid, chosen, strict=True):
+                if symbol < 0:
+                    remaining_generic += pip.generic or 0
+                else:
+                    self.amounts[symbol] -= 1
         # Pay generic from the most plentiful symbols first so scarce colours are
         # preserved for later spells in the same step.  Deterministic by index.
         while remaining_generic > 0:
@@ -197,6 +286,12 @@ class ManaSource:
     options: tuple[tuple[int, ...], ...]
     is_land: bool = True
     sort_key: tuple = ()
+    #: "Spend this mana only to cast a creature spell."  ``None`` is ordinary
+    #: mana.  Enforced by *filtering sources* before the solver ever sees them
+    #: rather than by tagging the pool: mana here is tapped at the moment it is
+    #: spent, so a source that may not pay for this spell simply is not offered,
+    #: and the solver's inner loop is untouched.
+    restriction: str | None = None
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)
@@ -256,7 +351,49 @@ def satisfies(produced: Sequence[int], req: Requirement) -> bool:
         if have < need:
             return False
         surplus += have - need
-    return surplus >= req.generic
+    if not req.hybrid:
+        # The overwhelming majority of costs. Kept as the untouched fast path,
+        # because this runs inside the solver's inner loop on every priority
+        # window and in every arena game.
+        return surplus >= req.generic
+
+    left = [produced[i] - req.colored[i] for i in range(N_SYMBOLS)]
+    return assign_hybrid(left, req.hybrid, req.generic) is not None
+
+
+def assign_hybrid(
+    left: list[int], pips: Sequence[HybridPip], generic: int
+) -> list[int] | None:
+    """Pick a half for each hybrid pip, or ``None`` if the mana cannot cover them.
+
+    Returns one entry per pip: the symbol index it takes, or ``-1`` for "paid
+    with its generic alternative".  Both :func:`satisfies` and
+    :meth:`ManaPool.spend` go through here, so the decision that a cost *can* be
+    paid and the deduction that pays it can never disagree.
+
+    Exhaustive rather than greedy, because the choices interact: with one white
+    and one blue mana, ``{W/U}{W/U}`` is payable only if the two pips take
+    different symbols, and any rule-of-thumb that picks "most plentiful first"
+    gets that wrong.  Real costs carry at most three hybrid pips, so the search
+    is tiny -- and it never runs at all for a cost without them.
+    """
+    if not pips:
+        return [] if sum(left) >= generic else None
+
+    pip, rest = pips[0], pips[1:]
+    for i in sorted(pip.symbols):
+        if left[i] > 0:
+            left[i] -= 1
+            tail = assign_hybrid(left, rest, generic)
+            left[i] += 1
+            if tail is not None:
+                return [i, *tail]
+    if pip.generic is not None:
+        # "{2/W}" paid the expensive way: two mana of anything at all.
+        tail = assign_hybrid(left, rest, generic + pip.generic)
+        if tail is not None:
+            return [-1, *tail]
+    return None
 
 
 def solve_payment(

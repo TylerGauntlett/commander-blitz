@@ -26,6 +26,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
+from .enums import Keyword
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
 
@@ -128,6 +129,12 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 toughness += temp.toughness
             elif temp.kind == "keyword" and temp.keyword:
                 keywords.add(temp.keyword)
+
+        # 7. haste from suspend, which is *not* an until-end-of-turn effect: it
+        #    lasts as long as the permanent does. Without it a suspended creature
+        #    arrives summoning sick and suspend is never worth doing.
+        if obj.hasted_by_suspend:
+            keywords.add(Keyword.HASTE.value)
 
     return Characteristics(
         power=power,
@@ -307,6 +314,86 @@ def effective_toughness(state: GameState, oid: int) -> int:
     """Toughness minus damage already marked -- how much more it can take."""
     obj = state.objects[oid]
     return chars(state, oid).toughness - obj.damage
+
+
+def protection_from(state: GameState, oid: int) -> frozenset[str]:
+    """The qualities this permanent has protection from.
+
+    Protection is parameterised -- "from Wizards", "from black", "from
+    planeswalkers" -- so it cannot be a `Keyword`, which is a bare string.  It is
+    a static whose `from_types`/`from_subtypes`/`from_colors` name the qualities,
+    and this returns them flattened into one set of strings to test a source
+    against.
+
+    Four rules read it (damage, enchant/equip, block, target).  Returning a set
+    rather than answering a question keeps all four asking it the same way.
+    """
+    if not state.objects.get(oid) or not state.objects[oid].on_battlefield:
+        return frozenset()
+    out: set[str] = set()
+    obj = state.objects[oid]
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "protection":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        out.update(static.get("from_types", ()))
+        out.update(static.get("from_subtypes", ()))
+        out.update(static.get("from_colors", ()))
+    return frozenset(out)
+
+
+def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
+    """Does ``oid`` have protection from ``source_oid``?
+
+    ``source_oid`` is the *source* of the damage, spell or block -- a permanent
+    on the battlefield or a spell on the stack.  A quality it does not have
+    cannot be protected against, so a missing source is never protection.
+    """
+    if source_oid is None:
+        return False
+    qualities = protection_from(state, oid)
+    if not qualities:
+        return False
+    source = state.objects.get(source_oid)
+    if source is None:
+        return False
+    c = chars(state, source_oid)
+    card = state.card_of(source)
+    # Derived characteristics on the battlefield, printed ones anywhere else --
+    # the same rule `selectors.matches` follows, so "protection from Wizards"
+    # sees a creature that was *granted* the Wizard subtype.
+    if source.on_battlefield:
+        have = set(c.types) | set(c.subtypes) | set(c.colors)
+    else:
+        have = set(card.types) | set(card.subtypes) | set(card.colors)
+    return bool(have & qualities)
+
+
+def player_doubles_land_mana(state: GameState, pid: int) -> bool:
+    """Vorinclex: "whenever you tap a land for mana, add one mana of any type
+    that land produced"."""
+    return _player_static(state, pid, "double_land_mana")
+
+
+def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:
+    """Everyone whose ``freeze_opponent_lands`` static is on the battlefield.
+
+    Returned as a set of players rather than asked per-player, because the
+    question at the mana choke point is "does *anybody but this land's
+    controller* have it", and asking once is cheaper than asking per opponent
+    inside a payment.
+    """
+    out: set[int] = set()
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        for ability in state.card_of(obj).abilities:
+            static = ability.static
+            if ability.is_static and static and static.get("effect") == "freeze_opponent_lands":
+                out.add(obj.controller)
+    return frozenset(out)
 
 
 def player_has_no_hand_limit(state: GameState, pid: int) -> bool:

@@ -10,6 +10,7 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
+from . import suspend
 from .actions import PendingDecision
 from .characteristics import player_has_no_hand_limit
 from .effects.context import EffectContext, ask_objects
@@ -33,6 +34,10 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
     if step is Step.UNTAP:
         _untap_step(state)
     elif step is Step.UPKEEP:
+        # Before the upkeep triggers: removing the last time counter casts the
+        # card, and a spell cast this upkeep should be on the stack under
+        # anything that triggers from the upkeep itself.
+        suspend.tick(state, state.active_player)
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
         _draw_step(state)

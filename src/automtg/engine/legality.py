@@ -126,7 +126,37 @@ def _priority_actions(state: GameState, pid: int) -> list[Action]:
         out.extend(_land_actions(state, pid))
 
     out.extend(_cast_actions(state, pid, sorcery_speed))
+    out.extend(_suspend_actions(state, pid, sorcery_speed))
     out.extend(_activate_actions(state, pid, sorcery_speed))
+    return out
+
+
+def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
+    """"Rather than cast this card from your hand, you may pay {G}…"
+
+    A special action rather than a variant of casting: nothing goes on the
+    stack, so it is offered under the same timing the card itself would need
+    (rule 702.62a) but produces its own `ActionKind`.
+    """
+    from .costs import can_pay_mana
+
+    out: list[Action] = []
+    for oid in state.players[pid].hand:
+        card = state.card(oid)
+        if card.suspend is None:
+            continue
+        if not _timing_ok(card, sorcery_speed):
+            continue
+        cost, counters = card.suspend
+        if not can_pay_mana(state, pid, cost):
+            continue
+        out.append(
+            Action(
+                kind=ActionKind.SUSPEND,
+                source=oid,
+                label=f"Suspend {card.name} ({counters} counters)",
+            )
+        )
     return out
 
 
@@ -186,6 +216,18 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
+    # Retrace: the graveyard is a third place a card can be cast from, widened
+    # here the same way `_land_actions` widens where a land may be played from.
+    from .costs import can_pay
+
+    for oid in state.players[pid].graveyard:
+        card = state.card(oid)
+        if not card.retrace or not _timing_ok(card, sorcery_speed):
+            continue
+        if not can_pay(state, pid, card.retrace_cost, oid):
+            continue
+        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+
     for oid in state.players[pid].command:
         obj = state.objects[oid]
         if not obj.is_commander:
@@ -238,9 +280,12 @@ def _cast_variant(
     extra_generic: int,
     kicked: bool,
 ) -> list[Action]:
-    from .costs import cost_reduction, mana_sources
+    from .costs import cost_reduction, mana_sources, spell_purpose
 
-    sources = mana_sources(state, pid)
+    # Restricted mana ("spend only to cast a creature spell") is offered or
+    # withheld here, and `game._cast` must ask the same question with the same
+    # answer -- both go through `spell_purpose`.
+    sources = mana_sources(state, pid, purpose=spell_purpose(card))
     pool = state.players[pid].mana_pool
 
     cost = card.mana_cost.plus(card.kicker) if kicked else card.mana_cost
@@ -258,7 +303,7 @@ def _cast_variant(
     req = cost.with_x(x)
     generic = max(0, req.generic + extra_generic - discount)
     if generic != req.generic:
-        req = Requirement(colored=req.colored, generic=generic)
+        req = Requirement(colored=req.colored, generic=generic, hybrid=req.hybrid)
     payment = solve_payment(req, pool, sources)
     if payment is None:
         return []
@@ -333,19 +378,24 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
-    from .costs import cost_reduction
+    from .costs import cost_reduction, spell_purpose
 
     discount = cost_reduction(state, pid, card)
+    purpose = spell_purpose(card)
     x = 0
     if card.mana_cost.x_count:
         from .costs import mana_sources
 
         x = max_affordable_x(
-            card.mana_cost, state.players[pid].mana_pool, mana_sources(state, pid)
+            card.mana_cost,
+            state.players[pid].mana_pool,
+            mana_sources(state, pid, purpose=purpose),
         )
         if x < 0:
             return "mana"
-    if not can_pay_mana(state, pid, card.mana_cost, x=x, extra_generic=-discount):
+    if not can_pay_mana(
+        state, pid, card.mana_cost, x=x, extra_generic=-discount, purpose=purpose
+    ):
         return "mana"
 
     exclude_sid = state.objects[oid].stack_id

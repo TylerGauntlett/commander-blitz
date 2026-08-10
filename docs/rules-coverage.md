@@ -18,10 +18,10 @@ not a rewrite.
 | **Casting** | Timing restrictions (sorcery speed vs instant vs flash), targets chosen at cast time and re-checked on resolution |
 | **Mana** | Cost parsing, mana pools emptying per step, automatic payment with a backtracking solver, `X` costs |
 | **Combat** | Attacker/blocker declaration, evasion, damage assignment order, simultaneous damage, first and double strike as separate sub-steps |
-| **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, indestructible, flash |
+| **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, indestructible, flash. `partner` is accepted but inert — see below |
 | **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution. Delayed triggers ("at the beginning of the next end step, …") via the `delay` op |
 | **Command zone** | Abilities that work from the command zone (Edgar Markov's eminence), commander tax, commander damage, the zone-change replacement |
-| **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions on counters, and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers |
+| **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions on counters, and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers, doubling land *mana*, and freezing the lands an opponent taps |
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
@@ -32,6 +32,14 @@ not a rewrite.
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
 | **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants |
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
+| **Hybrid mana** | `{W/U}` and `{2/W}` parsed, paid and counted towards colour identity |
+| **Restricted mana** | "Spend this mana only to cast a creature spell", by filtering sources before the solver |
+| **Token copies** | "A token that's a copy of target creature", copying the printed card and nothing accumulated on it |
+| **Protection** | From a type, subtype or colour, across all four of damage, enchant/equip, block and target |
+| **Granted abilities** | "…and 'Whenever this creature deals combat damage to a player, draw a card'", until end of turn. Triggered abilities only |
+| **Retrace** | Casting from the graveyard by discarding a land |
+| **Suspend** | The special action, the upkeep tick, the free cast, and haste on what arrives |
+| **Splitting into piles** | Fact or Fiction: an opponent splits, the caster chooses |
 
 ## Simplified
 
@@ -40,7 +48,7 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | Simplification | What it means | Why |
 |---|---|---|
 | **No layers system** | Continuous effects apply in a fixed order; static filters read printed characteristics only, enforced at load time | The full layer system with timestamps and dependency analysis is a large subsystem that would change no outcome for any card in these decks |
-| **Automatic mana payment** | You cannot choose which land to tap. The solver picks, preferring to spend abundant colours so scarce ones stay open | Removes an enormous branching factor for the RL agent and the worst tedium from the UI. `Action` reserves a `payment` field for a manual mode later |
+| **Automatic mana payment** | You cannot choose which land to tap. The solver picks, preferring to spend abundant colours so scarce ones stay open. A land doubled by Vorinclex doubles what it produced rather than offering a free choice of type, because a mana ability may never stop to ask | Removes an enormous branching factor for the RL agent and the worst tedium from the UI. `Action` reserves a `payment` field for a manual mode later |
 | **Automatic damage assignment order** | Blockers are ordered by effective toughness ascending; the attacker is never asked | One more decision point per combat for a choice that is nearly always forced |
 | **Automatic trigger ordering** | Simultaneous triggers you control resolve in a fixed order rather than one you choose | Matters only for a handful of interactions, none of them in these decks |
 | **Modes chosen on resolution** | A modal spell picks its mode as it resolves, not as it is cast | Keeps the action space flat. Only observable when an opponent would respond differently per mode |
@@ -65,7 +73,7 @@ the card and shown at import; the full list is in
 |---|---|
 | **Non-keyword rules text is inert** | The card is a real permanent with the right name, cost, types and stats. Its printed abilities do nothing |
 | **Front faces only** | A transform or modal DFC generates as its front face. An MDFC land loses the land half |
-| **Hybrid, phyrexian and snow costs are rewritten** | `{W/U}` becomes a half the deck can produce, `{2/W}` becomes `{2}`, `{W/P}` becomes `{W}`, `{S}` becomes `{1}`. Mana value is always preserved |
+| **Phyrexian and snow costs are rewritten** | `{W/P}` becomes `{W}`, `{S}` becomes `{1}`. Mana value is always preserved. Ordinary hybrid (`{W/U}`, `{2/W}`) is now kept exactly as printed |
 | **No loyalty, no defence** | Planeswalkers and Battles enter play and then sit there |
 | **One mana per activation** | Scryfall records *which* mana a permanent makes, not how much. A generated Sol Ring taps for one |
 | **Taplands are unconditional** | "Enters tapped unless…" enters tapped. Generating the upgrade would hand every imported deck a better mana base than it was built with |
@@ -78,19 +86,20 @@ These are absent, and the curated decks avoid them. Adding any one is additive.
 
 **Card types and mechanics**
 Planeswalkers · battles · sagas · modal double-faced cards · split and adventure cards ·
-transforming cards · companions · partners · vehicles
+transforming cards · companions · vehicles.  **Partner** is accepted as an inert
+keyword: it is a deck-construction rule, and the engine is handed a finished deck
 
 **Costs and casting**
-Alternative costs · hybrid, phyrexian and snow mana · convoke and similar ·
-flashback, retrace and other graveyard casting · suspend · overload ·
-mana restricted to a kind of spell
+Alternative costs in general · phyrexian and snow mana · convoke and similar ·
+flashback and other graveyard casting (retrace is implemented) · overload
 
 **Effects**
-Copy effects (including token copies) · gaining control of a permanent · protection ·
-damage prevention or redirection · regeneration · shroud and ward · "unless that player
-pays" · granting an activated or triggered ability to another permanent · splitting
-cards into piles · general replacement effects (only four are whitelisted: enters
-tapped, enters with counters, the commander zone change, and tokens ceasing to exist)
+Copying a permanent as anything but a token · gaining control of a permanent ·
+damage prevention or redirection other than protection · regeneration · shroud and
+ward · "unless that player pays" · granting a *static* or *activated* ability to
+another permanent (triggered ones work) · general replacement effects (only four are
+whitelisted: enters tapped, enters with counters, the commander zone change, and
+tokens ceasing to exist)
 
 **Combat**
 Attacking planeswalkers or battles · banding · "must be blocked" · manual damage
