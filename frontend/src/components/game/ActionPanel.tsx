@@ -24,6 +24,14 @@
  *     chips and carries none itself, so the N ids for N defenders land on N
  *     controls rather than sharing one.
  *
+ * THE ONE EXCEPTION, and it is deliberate: `choose_x`. `ask_x` offers every
+ * value from 0 up to whatever the board can pay for, so a Fireball on ten mana
+ * is eleven legal actions that differ by a number. Drawing eleven buttons would
+ * satisfy the letter of the invariant and destroy the point of it, so the panel
+ * draws a stepper and only the *selected* value carries an id. "Exactly once"
+ * still holds -- no id is duplicated, and there is always at least one button,
+ * which is what `e2e/full-game.spec.ts` actually depends on.
+ *
  * Staging stays client-side, for the reason `Table.onBarAct` documents: posting
  * `add_blocker` one at a time has no inverse, and a single blocker committed onto
  * a menace attacker can strand the declaration with no legal `finish_declaration`
@@ -31,6 +39,7 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import {
   availableAttackers,
@@ -87,7 +96,7 @@ const SPEED_TITLES: Record<Speed, string> = {
   instant: "Skip narration entirely",
 };
 
-type Mode = "attack" | "block" | "play";
+type Mode = "attack" | "block" | "play" | "chooseX";
 
 interface Props {
   state: GameView;
@@ -100,6 +109,7 @@ interface Props {
   onUndo: () => void;
   onQuit: () => void;
   onToggleFullControl: (value: boolean) => void;
+  onToggleManualMana: (value: boolean) => void;
   /** Narration is playing: gate input rather than let a click land mid-flight. */
   narrating: boolean;
   onSkipNarration: () => void;
@@ -125,6 +135,7 @@ export function ActionPanel({
   onUndo,
   onQuit,
   onToggleFullControl,
+  onToggleManualMana,
   narrating,
   onSkipNarration,
   busy,
@@ -150,11 +161,38 @@ export function ActionPanel({
       ? "attack"
       : mine && pending.kind === "declare_blockers"
         ? "block"
-        : "play";
-  const isCombat = mode !== "play";
+        : mine && pending.kind === "choose_x"
+          ? "chooseX"
+          : "play";
+  const isCombat = mode === "attack" || mode === "block";
 
   const card = (oid: number): CardView | null => findCard(state, oid);
   const nameOf = (oid: number) => card(oid)?.name ?? `#${oid}`;
+
+  // ------------------------------------------------------------------ X
+  //
+  // A stepper rather than a row of buttons: `ask_x` offers every value from 0
+  // to whatever the board can pay for, which is up to 21 options for one
+  // question, and a wall of near-identical pills is not a choice anybody can
+  // read. The trade is that only the *selected* value carries a
+  // `data-action-id` -- see the note on the id invariant at the top of this
+  // file, where this is the one deliberate exception.
+  const maxX = mode === "chooseX" ? Number(pending?.context?.max_x ?? 0) : 0;
+  const perPoint = mode === "chooseX" ? Number(pending?.context?.per_point ?? 1) : 1;
+  // A fresh question starts at zero rather than at the last spell's answer.
+  // Stored with the question it belongs to and reset during render rather than
+  // in an effect -- React's own "adjusting state when a prop changes" pattern,
+  // and it avoids a frame where the previous spell's X is on screen. Keyed on
+  // the prompt and the ceiling because a decision has no id of its own.
+  const xKey = `${pending?.kind}:${pending?.prompt}:${maxX}`;
+  const [xAnswer, setXAnswer] = useState({ key: xKey, value: 0 });
+  const chosenX = xAnswer.key === xKey ? xAnswer.value : 0;
+  const setChosenX = (value: number) => setXAnswer({ key: xKey, value });
+  const clampedX = Math.min(Math.max(chosenX, 0), maxX);
+  const xAction =
+    mode === "chooseX"
+      ? (actions.find((a) => a.kind === "choose" && a.choice === clampedX) ?? null)
+      : null;
 
   /**
    * Point the preview rail at the card a control is about.
@@ -278,8 +316,13 @@ export function ActionPanel({
    */
   const playGroups = groupPlayActions(playRows);
 
-  /** Which target this copy of a grouped action aims at, for its chip. */
-  const targetLabel = (action: LegalAction): string => {
+  /** What this copy of a grouped action says on its chip. */
+  const chipLabel = (action: LegalAction): string => {
+    // A row can group over something other than targets: "Add one mana of any
+    // colour" is five actions that all target nothing, and naming them all
+    // "No target" would make the choice unreadable. The server says what
+    // separates them when it is not a target.
+    if (action.option_label) return action.option_label;
     const [ref] = action.targets;
     // Declining an optional target. It is a real, separately legal action, and
     // before the optional-target fix in `targeting.py` it was unreachable.
@@ -615,13 +658,43 @@ export function ActionPanel({
                         onFocus={() => hover(targetOid(aim) ?? head.source_oid)}
                         onBlur={() => hover(head.source_oid)}
                       >
-                        {targetLabel(aim)}
+                        <SymbolText text={chipLabel(aim)} />
                       </button>
                     ))}
                   </span>
                 </div>
               );
             })}
+
+          {mode === "chooseX" && (
+            <div className="xstep" data-testid="choose-x" data-x={clampedX}>
+              <button
+                type="button"
+                className="xstep__btn"
+                data-testid="choose-x-down"
+                disabled={disabled || clampedX <= 0}
+                onClick={() => setChosenX(clampedX - 1)}
+                aria-label="One less"
+              >
+                −
+              </button>
+              <span className="xstep__value tabular">X = {clampedX}</span>
+              <button
+                type="button"
+                className="xstep__btn"
+                data-testid="choose-x-up"
+                disabled={disabled || clampedX >= maxX}
+                onClick={() => setChosenX(clampedX + 1)}
+                aria-label="One more"
+              >
+                +
+              </button>
+              <span className="xstep__hint">
+                up to {maxX}
+                {perPoint > 1 && ` · ${perPoint} mana per point`}
+              </span>
+            </div>
+          )}
 
           {mode === "attack" && attackers.length === 0 && (
             <p className="acts__none">Nothing can attack.</p>
@@ -693,6 +766,27 @@ export function ActionPanel({
           >
             {state.full_control ? "Full control" : "Auto-pass"}
           </button>
+          {/*
+            The second mode with real consequences, and it keeps its words for
+            the same reason. Off, the solver taps for you and mana abilities are
+            not actions at all; on, every untapped source becomes a row and a
+            dual becomes one chip per colour.
+          */}
+          <button
+            type="button"
+            className={state.manual_mana ? "tool tool--on tool--wide" : "tool tool--wide"}
+            onClick={() => onToggleManualMana(!state.manual_mana)}
+            disabled={busy}
+            aria-pressed={state.manual_mana}
+            data-testid="manual-mana"
+            title={
+              state.manual_mana
+                ? "Manual mana: you choose which permanent to tap, and which colour it makes"
+                : "The solver taps for you. Turn on to tap lands yourself."
+            }
+          >
+            {state.manual_mana ? "Manual mana" : "Auto mana"}
+          </button>
           <button
             type="button"
             className="tool"
@@ -716,7 +810,28 @@ export function ActionPanel({
         look identical.
       */}
       <div className="commit-dock">
-        {isCombat ? (
+        {mode === "chooseX" ? (
+          // The only control in the document carrying an id for this decision.
+          // The other twenty values are reachable through the stepper, which
+          // changes which id this slab points at rather than adding more.
+          xAction && (
+            <motion.button
+              type="button"
+              className="btn btn--primary commit"
+              data-action-id={xAction.id}
+              data-action-kind={xAction.kind}
+              disabled={disabled}
+              onClick={() => onAct(xAction.id)}
+              whileHover={disabled ? undefined : { y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={bouncy}
+              data-testid="commit"
+            >
+              <span className="commit__main">Pay X = {clampedX}</span>
+              <span className="commit__key">↵</span>
+            </motion.button>
+          )
+        ) : isCombat ? (
           <>
             {/*
               With nothing declarable there is nothing to confirm, so declining

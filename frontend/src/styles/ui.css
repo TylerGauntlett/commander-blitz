@@ -370,6 +370,51 @@
   color: var(--staged);
 }
 
+/* The X stepper -----------------------------------------------------------
+ *
+ * `ask_x` offers every value from 0 to whatever the board can pay for, which is
+ * up to 21 options for a single question. A row of pills that wide is not a
+ * choice anybody reads, so the panel draws one number and two nudges, and the
+ * commit slab underneath carries the id of whichever value is showing. */
+.xstep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+}
+
+.xstep__btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.xstep__btn:hover:not(:disabled) {
+  border-color: var(--edge-hi);
+}
+
+.xstep__btn:disabled {
+  opacity: 0.35;
+}
+
+.xstep__value {
+  min-width: 62px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.xstep__hint {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
 /* Blocker groups ---------------------------------------------------------
  *
  * One group per creature of yours that can block, and under it the attackers it

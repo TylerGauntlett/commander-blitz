@@ -103,6 +103,15 @@ def _answer(game: Game, decision: PendingDecision):
             if action.kind is ActionKind.FINISH_DECLARATION:
                 return action
 
+    # X is the player's, and "the first choice" is X = 0 -- which would quietly
+    # measure every X card doing nothing. Maximum preserves exactly what this
+    # harness saw before `CHOOSE_X` existed, when legality pinned X to the most
+    # the board could pay for.
+    if decision.kind is DecisionKind.CHOOSE_X:
+        choices = [a for a in actions if a.kind is ActionKind.CHOOSE]
+        if choices:
+            return max(choices, key=lambda a: a.choice or 0)
+
     # Otherwise make a real choice, so optional effects actually get exercised.
     for action in actions:
         if action.kind in (ActionKind.CHOOSE, ActionKind.YES):

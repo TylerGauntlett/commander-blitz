@@ -222,6 +222,19 @@ export const api = {
       body: JSON.stringify({ seat, full_control: fullControl }),
     }),
 
+  /**
+   * Tap your own lands, or let the payment solver do it.
+   *
+   * `full_control` rides along because `/options` carries the whole per-seat
+   * settings block and its `full_control` is required — sending this alone
+   * would silently switch the other setting off.
+   */
+  setManualMana: (gameId: string, seat: number, fullControl: boolean, manualMana: boolean) =>
+    request<StateResponse>(`/games/${gameId}/options`, {
+      method: "POST",
+      body: JSON.stringify({ seat, full_control: fullControl, manual_mana: manualMana }),
+    }),
+
   undo: (gameId: string, seat: number) =>
     request<StateResponse>(`/games/${gameId}/undo`, {
       method: "POST",

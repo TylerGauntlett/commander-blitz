@@ -39,12 +39,17 @@ class TapeEntry:
     taken.  Undo replays the tape, and that setting decides which priority
     windows exist, so replaying under today's value could make a recorded Pass
     illegal.  Recording it per entry keeps replay deterministic.
+
+    ``manual_mana`` is recorded for the same reason and is the sharper case: it
+    decides which *actions* exist, not merely which windows, so a tape recorded
+    with it on and replayed with it off cannot find the tap it recorded.
     """
 
     action: Action
     seat: int
     human: bool
     full_control: bool = False
+    manual_mana: bool = False
 
 
 @dataclass
@@ -64,6 +69,9 @@ class GameSession:
     _action_ids: dict[str, Action] = field(default_factory=dict)
     #: seat -> "stop at every priority window".  Survives the rebuild in undo().
     full_control: dict[int, bool] = field(default_factory=dict)
+    #: Seat -> whether that seat taps its own lands.  Kept beside `full_control`
+    #: because both survive the replay that `undo` performs.
+    manual_mana: dict[int, bool] = field(default_factory=dict)
     #: ``player_token -> seat``.  Written by the lobby when it hands a pod off to
     #: a game; empty for the CLI, the smoke script and single-player, which is
     #: what keeps those callers on the old bounds-check-only authorisation.
@@ -151,6 +159,7 @@ class GameSession:
             player = self.game.state.players[pid]
             player.auto_pass = True
             player.full_control = self.full_control.get(pid, False)
+            player.manual_mana = self.manual_mana.get(pid, False)
         self.drive_ai()
 
     def set_full_control(self, seat: int, value: bool) -> None:
@@ -158,6 +167,13 @@ class GameSession:
         with self._lock:
             self.full_control[seat] = value
             self.game.state.players[seat].full_control = value
+            self._bump()
+
+    def set_manual_mana(self, seat: int, value: bool) -> None:
+        """Offer this seat's tap-only mana abilities instead of solving for them."""
+        with self._lock:
+            self.manual_mana[seat] = value
+            self.game.state.players[seat].manual_mana = value
             self._bump()
 
     # ------------------------------------------------------------------
@@ -192,7 +208,13 @@ class GameSession:
             return self.game.state.events[mark:]
 
     def _entry(self, action: Action, seat: int, *, human: bool) -> TapeEntry:
-        return TapeEntry(action, seat, human, self.full_control.get(seat, False))
+        return TapeEntry(
+            action,
+            seat,
+            human,
+            self.full_control.get(seat, False),
+            self.manual_mana.get(seat, False),
+        )
 
     def _refresh_actions(self) -> None:
         self._action_ids = {}
@@ -217,6 +239,7 @@ class GameSession:
                     kind=action.kind.value,
                     label=action.label or action.kind.value,
                     base_label=action.base_label or action.label or action.kind.value,
+                    option_label=action.option_label,
                     source_oid=action.source,
                     ability_index=action.ability_index,
                     targets=[t.to_dict() for t in action.targets],
@@ -346,6 +369,8 @@ class GameSession:
                 # with.
                 if entry.seat in self.full_control:
                     self.game.state.players[entry.seat].full_control = entry.full_control
+                if entry.seat in self.manual_mana:
+                    self.game.state.players[entry.seat].manual_mana = entry.manual_mana
                 match = next(
                     (a for a in legal_actions(self.game.state) if a == entry.action), None
                 )
@@ -354,10 +379,14 @@ class GameSession:
                     break
                 self.game.apply(match)
                 self.tape.append(
-                    TapeEntry(match, entry.seat, entry.human, entry.full_control)
+                    TapeEntry(
+                        match, entry.seat, entry.human, entry.full_control, entry.manual_mana
+                    )
                 )
             for pid, value in self.full_control.items():
                 self.game.state.players[pid].full_control = value
+            for pid, value in self.manual_mana.items():
+                self.game.state.players[pid].manual_mana = value
             self.drive_ai()
             return True
 

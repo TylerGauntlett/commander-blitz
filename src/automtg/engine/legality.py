@@ -13,7 +13,13 @@ from . import combat as combat_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef
 from .characteristics import chars
-from .costs import can_pay, can_pay_mana, commander_cost, land_drops_available
+from .costs import (
+    can_pay,
+    can_pay_mana,
+    commander_cost,
+    land_drops_available,
+    offerable_mana_ability,
+)
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
 from .mana import Requirement, max_affordable_x, solve_payment
 from .structs import TargetRef
@@ -291,11 +297,16 @@ def _cast_variant(
     cost = card.mana_cost.plus(card.kicker) if kicked else card.mana_cost
     discount = cost_reduction(state, pid, card)
 
+    # X is a *gate* here, not a value.  Legality asks only "is there any X this
+    # is castable at", and `game._cast` then asks the player which one -- so the
+    # action carries X = 0 and the forecast below is the floor.  Pinning it to
+    # the maximum, as this used to, meant every Fireball was cast for everything
+    # the player had and the choice was never offered at all.
+    if cost.x_count and max_affordable_x(
+        cost, pool, sources, extra_generic=extra_generic - discount
+    ) < 0:
+        return []
     x = 0
-    if cost.x_count:
-        x = max_affordable_x(cost, pool, sources)
-        if x < 0:
-            return []
 
     # Solve rather than merely test: the solution names the permanents that
     # would tap, which is what lets the client show a hovered spell eating into
@@ -387,12 +398,18 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     if card.mana_cost.x_count:
         from .costs import mana_sources
 
-        x = max_affordable_x(
-            card.mana_cost,
-            state.players[pid].mana_pool,
-            mana_sources(state, pid, purpose=purpose),
-        )
-        if x < 0:
+        # The same gate `_cast_variant` applies, and it must stay X = 0
+        # afterwards for the same reason: this diagnostic has to agree with the
+        # action list, and that list now offers the spell at its floor.
+        if (
+            max_affordable_x(
+                card.mana_cost,
+                state.players[pid].mana_pool,
+                mana_sources(state, pid, purpose=purpose),
+                extra_generic=-discount,
+            )
+            < 0
+        ):
             return "mana"
     if not can_pay_mana(
         state, pid, card.mana_cost, x=x, extra_generic=-discount, purpose=purpose
@@ -409,49 +426,121 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
 
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
+    manual_mana = state.players[pid].manual_mana
     for oid in state.battlefield:
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid or obj.abilities_locked:
             continue
         card = state.card_of(obj)
         for ability in card.abilities:
-            if not ability.is_activated or ability.is_mana_ability:
-                # Mana abilities are activated automatically by the payment
-                # solver; offering them separately would only add noise.
+            if not ability.is_activated:
+                continue
+            if (
+                ability.is_mana_ability
+                and not offerable_mana_ability(ability)
+                and not (manual_mana and ability.mana_options)
+            ):
+                # A tap-only mana ability is activated automatically by the
+                # payment solver, so offering it here would add noise and a
+                # second way to spend the same permanent -- unless this player
+                # asked for `manual_mana`, which is the request to choose which
+                # land to tap and which colour a dual makes.
+                #
+                # Anything else is *not* the solver's -- `mana_sources` collects
+                # only `Cost.is_tap_only()` abilities -- so a Signet's
+                # "{1}, {T}: Add {W}{U}" has no automatic path at all. Skipping
+                # every mana ability, as this used to, left 27 shipped cards
+                # (every Signet, Cabal Coffers, Prophetic Prism, the filter and
+                # Vivid lands) with no path in the engine that could activate
+                # them. `costs.offerable_mana_ability` is the complement of the
+                # solver's own test so the two cannot drift apart.
                 continue
             if ability.sorcery_speed_only and not sorcery_speed:
                 continue
+            # A gate, not a value -- see `_cast_variant`. `game._activate` asks
+            # which X the player wants; this only decides whether any is payable.
             x = 0
             if ability.cost is not None and ability.cost.mana.x_count:
                 from .costs import mana_sources
 
-                x = max_affordable_x(
-                    ability.cost.mana, state.players[pid].mana_pool, mana_sources(state, pid)
-                )
-                if x < 0:
+                if (
+                    max_affordable_x(
+                        ability.cost.mana,
+                        state.players[pid].mana_pool,
+                        mana_sources(state, pid),
+                    )
+                    < 0
+                ):
                     continue
             if not can_pay(state, pid, ability.cost, oid, x=x):
                 continue
             tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
             if not tuples:
                 continue
+            # "Add one mana of any colour" is five different things to do, and
+            # which one is the player's call -- the solver is not making it,
+            # because it never sees this ability at all. One action per yield,
+            # each naming what it produces so the panel reads as five colour
+            # chips rather than five copies of one line.
             label_base = f"{card.name}: {ability.text or 'activate'}"
-            for targets in tuples:
-                label = label_base
-                if targets:
-                    label += " -> " + ", ".join(_describe_ref(state, ref) for ref in targets)
-                out.append(
-                    Action(
-                        kind=ActionKind.ACTIVATE,
-                        source=oid,
-                        ability_index=ability.index,
-                        targets=targets,
-                        x=x,
-                        label=label,
-                        base_label=label_base,
+            for mana_option in _mana_option_indices(ability):
+                option_label = _mana_option_label(state, oid, ability, mana_option)
+                for targets in tuples:
+                    label = label_base
+                    if option_label:
+                        label += f" ({option_label})"
+                    if targets:
+                        label += " -> " + ", ".join(
+                            _describe_ref(state, ref) for ref in targets
+                        )
+                    out.append(
+                        Action(
+                            kind=ActionKind.ACTIVATE,
+                            source=oid,
+                            ability_index=ability.index,
+                            targets=targets,
+                            x=x,
+                            mana_option=mana_option,
+                            label=label,
+                            # Shared across the yields on purpose: it is the row
+                            # identity, so the five colours of Commander's Sphere
+                            # collapse into one row wearing five chips.
+                            base_label=label_base,
+                            option_label=option_label,
+                        )
                     )
-                )
     return out
+
+
+def _mana_option_indices(ability) -> list[int | None]:
+    """Which yields of this ability to offer, or ``[None]`` for a non-mana one."""
+    if not ability.is_mana_ability:
+        return [None]
+    return list(range(len(ability.mana_options)))
+
+
+def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | None) -> str:
+    """What this yield of a modal mana ability produces, for its chip.
+
+    "Add one mana of any colour" is the same printed text on all five actions,
+    so it cannot tell them apart; the symbols each would actually make can.
+    Empty when there is nothing to choose between, which is what leaves the
+    client's target-based chip labelling alone.
+
+    Doubling is applied, because a Vivid land under Vorinclex really does add
+    two and the chip would otherwise promise one.
+    """
+    if mana_option is None or len(ability.mana_options) <= 1:
+        return ""
+
+    from .characteristics import player_doubles_land_mana
+    from .costs import mana_produced
+    from .mana import format_symbols
+
+    doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
+        state, state.objects[oid].controller
+    )
+    return format_symbols(mana_produced(ability.mana_options[mana_option], doubled=doubled))
 
 
 def _describe_ref(state: GameState, ref: TargetRef) -> str:

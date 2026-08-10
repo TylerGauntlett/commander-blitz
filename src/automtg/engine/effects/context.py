@@ -146,6 +146,50 @@ def ask_mode(
     return list(answer)
 
 
+def ask_x(
+    ctx: EffectContext,
+    prompt: str,
+    max_x: int,
+    chooser: int,
+    *,
+    per_point: int = 1,
+) -> Generator[PendingDecision, list[int], int]:
+    """Ask how big to make ``X`` before the cost is paid.
+
+    ``X`` used to be pinned to :func:`mana.max_affordable_x` by legality, so a
+    Blue Sun's Zenith was always cast for everything the player had.  The
+    maximum is now only the ceiling of this question.
+
+    Returns ``0`` without asking when there is nothing to choose between, the
+    way :func:`ask_mode` declines to ask a forced question.  The ordinal into
+    ``options`` is ``X`` itself by construction, which is what lets the RL
+    encoder read the slot number as the value.
+
+    ``per_point`` is how much one point of ``X`` actually costs -- ``{X}{X}``
+    charges twice -- and is passed through ``context`` so the client can say so
+    rather than making the player work it out from the mana row.
+    """
+    if max_x <= 0:
+        return 0
+    decision = PendingDecision(
+        kind=DecisionKind.CHOOSE_X,
+        player=chooser,
+        prompt=prompt,
+        options=tuple(DecisionOption(label=f"X = {i}", value=i) for i in range(max_x + 1)),
+        min_count=1,
+        max_count=1,
+        context={
+            "purpose": "choose_x",
+            "max_x": max_x,
+            "per_point": per_point,
+            "source": ctx.source_oid,
+            "source_name": ctx.source_name,
+        },
+    )
+    answer = yield decision
+    return int(answer[0]) if answer else 0
+
+
 def ask_player(
     ctx: EffectContext, prompt: str, pids: Sequence[int], chooser: int
 ) -> Generator[PendingDecision, list[int], int | None]:

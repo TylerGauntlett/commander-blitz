@@ -11,8 +11,8 @@
  * to change one thing is how a palette drifts.
  */
 
-import { describe, expect, it } from "vitest";
-import { SPEED_MULTIPLIER, type Speed } from "../src/state/uiStore";
+import { beforeEach, describe, expect, it } from "vitest";
+import { SPEED_MULTIPLIER, type Speed, useUiStore } from "../src/state/uiStore";
 
 const WATCHABLE: Speed[] = ["cinematic", "fast"];
 
@@ -53,5 +53,41 @@ describe("SPEED_MULTIPLIER", () => {
     for (const value of Object.values(SPEED_MULTIPLIER)) {
       expect(value).toBeGreaterThan(0);
     }
+  });
+});
+
+/**
+ * Narrowing a selection rather than resolving it.
+ *
+ * Picking a target answers one of the questions a click can be asking. Into the
+ * Roil aimed at a creature is still two legal actions -- kicked and not -- and
+ * `Table` used to take the first, which `legality` emits unkicked, so the
+ * kicked cast could not be reached by any gesture at all.
+ */
+describe("narrowTargeting", () => {
+  beforeEach(() => {
+    useUiStore.setState({ selectedOid: null, targetingActionIds: [] });
+  });
+
+  it("drops the ids that are no longer in the running", () => {
+    useUiStore.getState().beginTargeting(7, ["a1-cast", "a2-cast", "a3-cast"]);
+    useUiStore.getState().narrowTargeting(["a2-cast", "a3-cast"]);
+    expect(useUiStore.getState().targetingActionIds).toEqual(["a2-cast", "a3-cast"]);
+  });
+
+  it("keeps the selection open, so the panel can ask the rest", () => {
+    // The distinction from `endTargeting`, which clears both: narrowing is
+    // mid-question, and dropping the selection would strand the player with a
+    // target picked and nothing saying so.
+    useUiStore.getState().beginTargeting(7, ["a1-cast", "a2-cast"]);
+    useUiStore.getState().narrowTargeting(["a2-cast"]);
+    expect(useUiStore.getState().selectedOid).toBe(7);
+  });
+
+  it("leaves the card selected where endTargeting would clear it", () => {
+    useUiStore.getState().beginTargeting(7, ["a1-cast", "a2-cast"]);
+    useUiStore.getState().endTargeting();
+    expect(useUiStore.getState().selectedOid).toBeNull();
+    expect(useUiStore.getState().targetingActionIds).toEqual([]);
   });
 });

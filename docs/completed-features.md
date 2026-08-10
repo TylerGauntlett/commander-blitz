@@ -1,3 +1,71 @@
+## Variable cost cards — saying which one you meant
+
+### Overview
+
+The ask was "there is no way to select which effect you'd like to trigger
+(example: Commander's Sphere)". Reading the code turned one complaint into four
+separate things, and the headline example was not the one it looked like.
+
+**Commander's Sphere was never a disambiguation problem.** It has two abilities;
+`legality._activate_actions` skipped every mana ability, so it emitted exactly
+one action and clicking it fired immediately. What the player could not do was
+pick a colour.
+
+**Twenty-seven cards could not be activated at all.** `costs.mana_sources`
+collects only tap-only abilities and legality skipped all mana abilities, so
+anything in between — every Signet, Cabal Coffers, Prophetic Prism, the filter
+and Vivid lands — had no code path that could reach it. Only `arcane_signet` is
+tap-only, which is why the four precons never noticed and no test did either.
+`costs.offerable_mana_ability` is now the exact complement of the solver's own
+test, so the two cannot drift apart, and those abilities are offered
+unconditionally because nothing else can play them.
+
+**The kicked cast was unreachable by any gesture.** Legality emits unkicked
+first and `Table.onBoardCard` took the first match, so clicking a target with
+Into the Roil selected always cast it unkicked — spending the player's decision
+for them. Clicking now narrows the selection and hands what is left to the
+panel.
+
+**X was never chosen.** Legality stamped `max_affordable_x` onto the action, so
+every Fireball was cast for everything the board had.
+
+### What shipped
+
+- `manual_mana`, a per-seat preference beside `full_control`. On, every tap-only
+  mana ability becomes an action and a modal one becomes an action per colour —
+  Commander's Sphere reads as five colour chips plus its sacrifice ability. Off
+  for AI seats, so `ACTION_SPACE_SIZE` stays 825 and the golden replays are
+  untouched. Mana abilities route through `Game._activate_mana`, never the
+  stack (rule 605.3a), so priority is retained.
+- `DecisionKind.CHOOSE_X`, raised by `_cast`/`_activate` before the cost is
+  paid. The rail draws a stepper rather than up to 21 buttons — the one
+  deliberate exception to "every legal action is a button", recorded in
+  `ActionPanel`'s header doc. Four independent auto-answerers (the authoring
+  verifier, two test drivers, the heuristic agent) had to learn that the first
+  choice is X = 0, or every X card would have silently shipped doing nothing.
+- Cast-time modes, using `StackItem.modes` and `EffectContext.modes` — two
+  fields that had been declared and never assigned by anything. Only when the
+  card's whole effect tree holds exactly one top-level `choose_mode`, so nested
+  ones and triggered abilities keep resolving late.
+- A window whose only actions are Pass and mana abilities now auto-passes.
+  Without it, a board with two Signets stopped at all thirteen steps of every
+  turn — and the authoring verifier, which relies on "only Pass is legal" to
+  resolve a spell, broke on 27 cards at once.
+
+### Notes
+
+Two things deliberately did **not** change. Kicker stays two cast actions rather
+than becoming a decision: legality only offers the kicked variant when it is
+affordable, and folding it into a question would lose that gate. And targets are
+still enumerated as part of the action, so they are chosen before modes — the
+reverse of rule 601.2b, which is why the shared `optional: true` idiom in
+`docs/card-dsl.md` is still required.
+
+See `docs/rules-coverage.md`, `docs/card-dsl.md`, `docs/api.md` and
+`docs/bugs.md`.
+
+---
+
 
 ## Systematic card support — the deck finished
 

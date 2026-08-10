@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CardDef, Cost
+from .carddef import Ability, CardDef, Cost
 from .characteristics import chars, player_doubles_land_mana
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
@@ -93,6 +93,38 @@ def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
     return out
 
 
+def solver_taps(ability: Ability) -> bool:
+    """Is this mana ability one the payment solver activates on its own?
+
+    The solver only ever taps: :func:`_sources_of` collects nothing else, so a
+    mana ability with any other cost -- a Signet's `{1}`, a Vivid land's counter
+    -- is invisible to it and must be offered to the player instead. Legality
+    asks this exact question in :func:`legality._activate_actions`, and the two
+    must agree: an ability neither of them claims can never be activated at all,
+    and one they both claim can be spent twice.
+
+    ``mana_options`` is part of the test because
+    :func:`activate_mana_ability` indexes it. An ability that produces nothing
+    is not a mana source and is not offerable either.
+    """
+    if not ability.is_mana_ability or not ability.mana_options:
+        return False
+    return ability.cost is not None and ability.cost.is_tap_only()
+
+
+def offerable_mana_ability(ability: Ability) -> bool:
+    """Should legality put this mana ability in front of the player?
+
+    The complement of :func:`solver_taps` over mana abilities that actually
+    produce something.
+    """
+    return (
+        ability.is_mana_ability
+        and bool(ability.mana_options)
+        and not solver_taps(ability)
+    )
+
+
 def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     """The tap-only mana abilities of one untapped permanent."""
     # A mana ability is an activated ability, so "its activated abilities can't
@@ -109,9 +141,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     doubled = is_land and player_doubles_land_mana(state, obj.controller)
     out: list[ManaSource] = []
     for ability in card.abilities:
-        if not ability.is_mana_ability or not ability.mana_options:
-            continue
-        if ability.cost is None or not ability.cost.is_tap_only():
+        if not solver_taps(ability):
             continue
         out.append(
             ManaSource(

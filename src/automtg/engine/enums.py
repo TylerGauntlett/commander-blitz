@@ -194,6 +194,7 @@ class DecisionKind(str, Enum):
     DISCARD_TO_HAND_SIZE = "discard_to_hand_size"
     CHOOSE_OBJECTS = "choose_objects"
     CHOOSE_MODE = "choose_mode"
+    CHOOSE_X = "choose_x"
     MAY = "may"
     CHOOSE_PLAYER = "choose_player"
     COMMANDER_ZONE_CHANGE = "commander_zone_change"

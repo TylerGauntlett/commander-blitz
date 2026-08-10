@@ -195,6 +195,7 @@ export function gameView(overrides: Partial<GameView> = {}): GameView {
     stack: [],
     combat: null,
     full_control: false,
+    manual_mana: false,
     pending: pending(),
     ...overrides,
   };
@@ -206,6 +207,7 @@ export function action(overrides: Partial<LegalAction> = {}): LegalAction {
     kind: "pass",
     label: "Pass",
     base_label: "Pass",
+    option_label: "",
     source_oid: null,
     ability_index: null,
     targets: [],

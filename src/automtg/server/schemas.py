@@ -38,6 +38,10 @@ class LegalActionDTO(BaseModel):
     #: render the first as one row with six chips.  Falls back to ``label`` for
     #: the kinds that never name a target, so it is always safe to group by.
     base_label: str = ""
+    #: What this copy's chip says when the row is a group and the difference is
+    #: not the target -- "{R}" for one yield of "Add one mana of any colour".
+    #: Empty means "name it by its target", which is the common case.
+    option_label: str = ""
     source_oid: int | None = None
     ability_index: int | None = None
     targets: list[dict[str, Any]] = Field(default_factory=list)
@@ -71,6 +75,10 @@ class OptionsRequest(BaseModel):
     seat: int
     #: Stop at every priority window instead of only the meaningful ones.
     full_control: bool
+    #: Choose which permanent to tap for mana, and which colour a dual makes,
+    #: instead of letting the payment solver decide.  Optional so a client that
+    #: predates it can still send an options request without turning it off.
+    manual_mana: bool | None = None
 
 
 class GameCreatedResponse(BaseModel):

@@ -115,6 +115,13 @@ def _default_answer(game: Game, decision: PendingDecision) -> Action:
     for action in actions:
         if action.kind is preference:
             return action
+    # `CHOOSE_X` has no passive answer: X = 0 is not "declining", it is casting
+    # the spell for nothing. Maximum is what legality used to pin it to, so a
+    # test that merely passes priority past an X spell sees what it always saw.
+    if decision.kind is DecisionKind.CHOOSE_X:
+        choices = [a for a in actions if a.kind is ActionKind.CHOOSE]
+        if choices:
+            return max(choices, key=lambda a: a.choice or 0)
     return actions[0]
 
 

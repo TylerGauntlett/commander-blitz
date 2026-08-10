@@ -283,6 +283,12 @@ class HeuristicAgent:
             return actions[0]
 
         state = game.state
+        # X is not a menu item to pick the first of: `choices[0]` is X = 0,
+        # which casts Blue Sun's Zenith for nothing. Spending everything is both
+        # the better play in almost every position and exactly what the agent
+        # saw before `CHOOSE_X` existed, when legality pinned X to the maximum.
+        if purpose == "choose_x":
+            return max(choices, key=lambda a: a.choice or 0)
         if purpose == "sacrifice":
             return min(choices, key=lambda a: self._creature_value(state, a))
         if purpose in ("discard", "scry_bottom", "surveil"):

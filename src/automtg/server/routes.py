@@ -494,6 +494,8 @@ def set_options(request: Request, game_id: str, body: OptionsRequest) -> StateRe
         raise HTTPException(status_code=400, detail=f"seat {body.seat} is not human")
     since = len(session.game.state.events)
     session.set_full_control(body.seat, body.full_control)
+    if body.manual_mana is not None:
+        session.set_manual_mana(body.seat, body.manual_mana)
     return _state_response(session, body.seat, since)
 
 

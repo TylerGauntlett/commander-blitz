@@ -46,6 +46,14 @@ client never polls for the AI's turn.
 }
 ```
 
+Three of its fields are display-only and exist so the client can *group* the
+list rather than parse labels: `base_label` is the label without its
+`" -> target"` suffix, `option_label` is what a chip says when a row groups
+actions that differ by something other than a target (`"{R}"` for one yield of
+"Add one mana of any colour"), and `mana_option` is which yield that is.
+`x` is now always `0` on a cast: the value is chosen through a `choose_x`
+decision after the action is submitted, not carried on it.
+
 The client echoes `id` back. It never reconstructs an action. Two things follow:
 
 - **Client/engine desync is structurally impossible.** The client cannot invent an
@@ -76,7 +84,7 @@ a card, never enough to decide legality.
 | `POST` | `/api/games/{id}/actions` | Apply one action id |
 | `POST` | `/api/games/{id}/declare` | Submit a whole attack or block at once |
 | `POST` | `/api/games/{id}/advance` | Let the AI seats act (rarely needed) |
-| `POST` | `/api/games/{id}/options` | Change a human seat's play settings (`full_control`) |
+| `POST` | `/api/games/{id}/options` | Change a human seat's play settings (`full_control`, `manual_mana`) |
 | `POST` | `/api/games/{id}/undo` | Rewind past the last human action. `409 multiplayer_undo` with more than one human |
 | `GET` | `/api/games/{id}/events?since=` | Event slice for the log |
 | `GET` | `/api/games/{id}/debug` | Full state, hidden zones included. **Development only** |
@@ -153,6 +161,16 @@ the golden tests see exactly the behaviour they always did. `POST /options` flip
 `full_control` for a seat, which puts every window back; the flag is echoed in
 `player_view` so the client renders the state the engine is actually holding.
 
+A window whose only actions are `PASS` and mana abilities counts as "only
+`PASS`" for this purpose. Adding mana accomplishes nothing on its own -- it
+empties at end of step, and by construction there is nothing else in that window
+to spend it on -- so a board holding two Signets does not stop at all thirteen
+steps. A seat with `manual_mana` set is excluded, since floating mana on purpose
+is what it asked for.
+
+`POST /options` also carries `manual_mana`, which is optional: a client that
+omits it leaves the setting alone rather than switching it off.
+
 ## Undo
 
 `POST /undo` rewinds to before the last human action by **replaying the tape**: the
@@ -165,7 +183,9 @@ irrelevant for a local app.
 
 Each tape entry records the seat's `full_control` setting at the time, because that
 setting decides which priority windows exist: replaying an old Pass under a newer
-setting could find it illegal.
+setting could find it illegal. `manual_mana` is recorded for the same reason and
+is the sharper case -- it decides which *actions* exist, so a tape recorded with
+it on and replayed with it off cannot find the tap it recorded.
 
 ## Pods, tokens, and who is allowed to see what
 

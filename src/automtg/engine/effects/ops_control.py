@@ -61,17 +61,26 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     """A modal spell or ability: "choose one -- ...".
 
-    Modes are chosen on resolution rather than on casting.  This is a documented
-    divergence from the rules (modes are normally locked in at cast time) that
-    keeps the action space flat; it only matters when an opponent could respond
-    differently based on the mode, which the curated decks avoid.
+    Usually already answered.  Rule 601.2b picks modes as the spell is cast, and
+    :meth:`Game._cast` does exactly that when the card asks a single top-level
+    modal question -- the answer arrives here on ``ctx.modes``.
+
+    The fallback still asks, and two shapes rely on it: a *triggered* ability,
+    which has no cast to be asked at, and a nested ``choose_mode``, which is a
+    second question that genuinely belongs to resolution.  The answer is
+    consumed rather than read, so an inner one asks rather than silently reusing
+    the outer one's modes.
     """
     modes = list(spec.get("modes") or [])
     if not modes:
         return
     count = evaluate_value(ctx, spec.get("count", 1))
-    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-    chosen = yield from ask_mode(ctx, "Choose", labels, ctx.controller, max(1, count))
+    chosen = list(ctx.modes)
+    if chosen:
+        ctx.modes = ()
+    else:
+        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+        chosen = yield from ask_mode(ctx, "Choose", labels, ctx.controller, max(1, count))
     for index in chosen:
         yield from execute(ctx, modes[index].get("effects") or [])
 

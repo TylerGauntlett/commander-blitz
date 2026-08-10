@@ -203,6 +203,31 @@ all funnel into the same `act(id)`:
 Path 3 is load-bearing, not a fallback: it is what makes the game keyboard-reachable
 and what makes the Playwright specs writable.
 
+**A click can answer more than one question.** Picking a target settles only the
+target. Into the Roil aimed at a creature is still two legal actions — kicked
+and unkicked — and `Table` used to take the first, which `legality` emits
+unkicked, so the kicked cast could not be reached by any gesture at all. Path 2
+now *narrows* the selection to whatever still matches (`uiStore.narrowTargeting`)
+and lets path 3 ask the rest. The foot says "Pick how, in the panel" once the
+target half is settled.
+
+That is also why the foot no longer renders the remaining actions itself. It
+used to draw a `choice-list` of `data-action-id` buttons for exactly this case,
+while `ActionPanel` drew the same ids — two controls, one id, which is what the
+panel's invariant forbids. It escaped CI only because no shipped card could
+reach the branch; manual mana reaches it immediately.
+
+**One exception to "every legal action is a button": `choose_x`.** `ask_x`
+offers every value from 0 to whatever the board can pay for, so a Fireball on
+ten mana is eleven actions differing by a number. The panel draws a stepper and
+only the *selected* value carries an id. "Exactly once" still holds — nothing is
+duplicated, and there is always at least one button, which is what
+`e2e/full-game.spec.ts` actually depends on.
+
+**Two settings live in the tool strip**, both words rather than glyphs because
+both change how the game plays: `Auto-pass / Full control`, and `Auto mana /
+Manual mana`. The second decides whether mana abilities are actions at all.
+
 Keyboard: `Space` pass, `Enter` confirm, `Esc` cancel targeting, `1-9` play the nth card
 in hand, `U` undo. Any key skips the narration while it is playing.
 

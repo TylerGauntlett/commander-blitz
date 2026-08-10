@@ -34,6 +34,7 @@ const meta = {
     onUndo: fn(),
     onQuit: fn(),
     onToggleFullControl: fn(),
+    onToggleManualMana: fn(),
     onSkipNarration: fn(),
     narrating: false,
     busy: false,
