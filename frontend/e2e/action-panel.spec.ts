@@ -560,8 +560,11 @@ test.describe("the tools footer", () => {
     await mute.click();
     await expect(mute).not.toHaveAttribute("aria-pressed", before ?? "");
 
-    await page.locator('[data-speed="cinematic"]').click();
-    await expect(page.locator('[data-speed="cinematic"]')).toHaveClass(/speed__btn--on/);
+    // The speed selector used to be checked here too. It is gone: it took a
+    // third of the strip's width, which is what pushed quit off the end, and a
+    // per-player animation speed is a confusing thing to offer in a game other
+    // people are waiting on. See `uiStore.ts`.
+    await expect(page.locator("[data-speed]")).toHaveCount(0);
   });
 });
 

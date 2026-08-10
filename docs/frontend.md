@@ -442,7 +442,15 @@ opponents still owe decisions.
 `logic/events.ts` turns each batch of events into timed **beats** — floating damage
 numerals anchored to the struck permanent, life tickers, spotlights on the card being
 cast, turn banners, screen shake. `state/narration.ts` runs the queue; input is gated
-while it drains, with a Skip button and a 1x / 2x / instant speed control.
+while it drains, with a Skip button.
+
+There was a 0.5x / 1x / instant speed control beside it and it is gone. It took a
+third of the tool strip's width on a fixed 304px rail, which is what pushed the quit
+button off the end — and a per-player animation speed is a confusing thing to offer in
+a game other people are waiting on, since it changes only *your* playback while the
+board moves on at everyone else's. The value still exists, still read from storage so
+`e2e/helpers.ts` can force `instant`; there is simply no way to set it from inside the
+game.
 
 The pump waits for the queue, so the animation of one decision finishes before the next
 is requested. A stall guard stops the loop if the engine ever fails to progress.
@@ -455,7 +463,7 @@ is requested. A stall guard stops the loop if the engine ever fails to progress.
   the client is genuinely waiting for somebody.
 - **Routing** — react-router v7, declarative. See [The URL](#the-url) below.
 - **UI state** — zustand: selection, hover, targeting, staged combat, the open stack, the
-  zone modal, animation speed, the error banner. None of it reaches the server except as
+  zone modal, the error banner. None of it reaches the server except as
   an action id.
 
 ## The URL
