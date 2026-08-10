@@ -10,12 +10,15 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
+import { settled } from "../../testing/asserts";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
 import { CardBack } from "./CardBack";
 import { CommanderCard } from "./CommanderCard";
 import { InviteDialog } from "./InviteDialog";
 import { ReadyTrack } from "./ReadyTrack";
+
+const AESI = "aesi_tyrant_of_gyre_strait";
 
 const meta = {
   title: "Lobby/Parts",
@@ -59,11 +62,13 @@ export const CardBacks: Story = {
 /* ------------------------------------------------------------------ */
 
 export const ReadyTrackPartial: Story = {
+  parameters: { automtg: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.filling()} />,
 };
 
 export const ReadyTrackComplete: Story = {
+  parameters: { automtg: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.ready()} />,
   play: async ({ canvasElement }) => {
@@ -75,6 +80,7 @@ export const ReadyTrackComplete: Story = {
 
 /** Three seats, so the denominator is three. */
 export const ReadyTrackThreeHanded: Story = {
+  parameters: { automtg: { mount: "podRail" } },
   args: { mark: "" },
   render: () => <ReadyTrack pod={pods.threeHanded()} />,
   play: async ({ canvasElement }) => {
@@ -89,6 +95,7 @@ export const ReadyTrackThreeHanded: Story = {
 /* ------------------------------------------------------------------ */
 
 export const Invite: Story = {
+  parameters: { automtg: { mount: "screen" } },
   args: { mark: "" },
   render: () => <InviteDialog pod={pods.filling()} onClose={fn()} onOpenChair={fn()} />,
   play: async ({ canvasElement }) => {
@@ -102,11 +109,13 @@ export const Invite: Story = {
 
 /** No chairs open: inviting somebody needs one, so the dialog offers to make it. */
 export const InviteWithNoOpenChairs: Story = {
+  parameters: { automtg: { mount: "screen" } },
   args: { mark: "" },
   render: () => <InviteDialog pod={pods.ready()} onClose={fn()} onOpenChair={fn()} />,
 };
 
 export const InviteOpensAChair: Story = {
+  parameters: { automtg: { mount: "screen" } },
   args: { mark: "" },
   render: function Render() {
     const onOpenChair = fn();
@@ -119,18 +128,79 @@ export const InviteOpensAChair: Story = {
 /* ------------------------------------------------------------------ */
 
 /**
- * A printed card, adapted into a `CardView` so `CardFace` can draw it outside a
- * game. The seeded query is what makes it arrive on first paint.
+ * The same component, in its three homes, at three different sizes.
+ *
+ * `CommanderCard` has no width of its own: it inherits `--card-w` from whichever
+ * container it lands in, and the three differ by more than a factor of two --
+ * a seat is `clamp(152px, 25vh, 296px)`, a catalogue tile `clamp(122px, 15vh,
+ * 168px)`, the dossier `clamp(150px, 22vh, 214px)`. One story at the 104px
+ * `@property` fallback showed a size the app never draws.
  */
-export const CommanderLoaded: Story = {
+export const CommanderInASeat: Story = {
   args: { mark: "" },
   parameters: {
-    automtg: {
-      mount: "bare",
-      query: [[["card", "aesi_tyrant_of_gyre_strait"], cardResponse()]],
-    },
+    automtg: { mount: "podSlot", query: [[["card", AESI], cardResponse()]] },
   },
-  render: () => <CommanderCard cardId="aesi_tyrant_of_gyre_strait" />,
+  render: () => <CommanderCard cardId={AESI} variant="big" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Aesi/);
+    // Relational, for the reason the catalogue story explains.
+    const seat = canvasElement.querySelector(".podcard") as HTMLElement;
+    await settled(seat);
+    const handed = Number.parseFloat(getComputedStyle(seat).getPropertyValue("--card-w"));
+    expect(seat.getBoundingClientRect().width).toBeCloseTo(handed, 0);
+  },
+};
+
+export const CommanderInTheCatalogue: Story = {
+  args: { mark: "" },
+  parameters: {
+    automtg: { mount: "catalogPick", query: [[["card", AESI], cardResponse()]] },
+  },
+  render: () => <CommanderCard cardId={AESI} variant="board" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Aesi/);
+    const card = canvasElement.querySelector(".card") as HTMLElement;
+    // Waited for: the card animates in, and measured on the way it reads 127px
+    // of an eventual 135. Only in a full run, where the machine is busy enough
+    // for the first frame to be the one sampled -- the worst kind of flake.
+    await settled(card);
+
+    /*
+     * Asserted as a relationship, not an absolute. `--card-w` here is
+     * `clamp(122px, 15vh, 168px)` and `vh` is the preview iframe's height, which
+     * the runner is still settling while the first frame paints -- so a literal
+     * is right in the browser and briefly wrong in the runner. "The card is the
+     * width its container handed it" holds in both.
+     */
+    const handed = Number.parseFloat(getComputedStyle(card).getPropertyValue("--card-w"));
+    expect(card.getBoundingClientRect().width).toBeCloseTo(handed, 0);
+
+    /*
+     * The corner radius is a ratio of the card's width, and `.rack` was the one
+     * container that set `--card-w` without re-deriving `--card-r` from it --
+     * `.podhand` and `.dos__top` both do, and both say why. So a catalogue card
+     * rounded at the *board's* radius while every other card in the lobby rounded
+     * proportionally. Nothing says so except the corners.
+     */
+    const radius = Number.parseFloat(
+      getComputedStyle(card.querySelector(".face") as HTMLElement).borderTopLeftRadius,
+    );
+    expect(
+      radius,
+      "the catalogue card rounds at the board's radius, not its own width",
+    ).toBeCloseTo(handed * 0.055, 0);
+  },
+};
+
+export const CommanderInTheDossier: Story = {
+  args: { mark: "" },
+  parameters: {
+    automtg: { mount: "dossierCard", query: [[["card", AESI], cardResponse()]] },
+  },
+  render: () => <CommanderCard cardId={AESI} variant="big" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText(/Aesi/);
@@ -145,6 +215,7 @@ export const CommanderLoaded: Story = {
  */
 export const CommanderLoading: Story = {
   args: { mark: "" },
+  parameters: { automtg: { mount: "podSlot" } },
   render: () => <CommanderCard cardId="not_seeded_yet" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -155,6 +226,7 @@ export const CommanderLoading: Story = {
 /** No card at all, which is a seat with no deck. */
 export const CommanderAbsent: Story = {
   args: { mark: "" },
+  parameters: { automtg: { mount: "podSlot" } },
   render: () => <CommanderCard cardId={null} placeholder="No deck" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

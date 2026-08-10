@@ -62,7 +62,11 @@ type Story = StoryObj<typeof meta>;
 export const Panel: Story = {};
 
 /** The catalogue's footer strip, which is the same thing in one line. */
-export const Row: Story = { args: { variant: "row" } };
+/** The catalogue's footer strip: `flex: 1; min-width: 300px` needs that row. */
+export const Row: Story = {
+  args: { variant: "row" },
+  parameters: { automtg: { mount: "catalogFoot" } },
+};
 
 /**
  * A URL that is not a Moxfield deck.

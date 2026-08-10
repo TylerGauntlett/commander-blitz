@@ -1132,6 +1132,14 @@
    whole grammar. */
 .rack {
   --card-w: clamp(122px, 15vh, 168px);
+  /* Re-derived, for the reason `.podhand` and `.dos__top` both give: `--card-r`
+     is a ratio of `--card-w`, but it is declared on `:root` and an unregistered
+     custom property is substituted *where it is declared* -- so a container that
+     changes the card's width and does not restate the radius gets the board's
+     ~5px corners on a card of a completely different size. This was the one of
+     the three that did not, so catalogue cards rounded at 4.6px where their own
+     width asks for 7.4px. Nothing says so except the corners. */
+  --card-r: calc(var(--card-w) * 0.055);
 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
