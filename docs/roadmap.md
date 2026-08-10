@@ -101,18 +101,26 @@ slack any more. See `docs/frontend.md` and `docs/mockup-fidelity.md`.
 
 ---
 
-## Storybook coverage
+## Storybook coverage — **done**
 
-### Overview
-- The UI is growing complicated as the app is continuting to develop
-- All components are pure state machines, updating based on backend events
-- This makes component testing very easy via interactive tests in Storybook
-- This approach also ensures visual consistancy by treating the whole frontend as a series of design system components
-- Things like the action panel, phase tool bar, etc can have Storybook story interaction tests that verify the components function (and look) as expected
+Storybook 10 with `@storybook/addon-vitest`, running every story as an interaction
+test in a real Chromium. 246 stories covering every component in `game/`, `lobby/`
+and `menu/`. See [frontend.md](frontend.md) ("Storybook") and
+[testing.md](testing.md) ("Where the four frontend suites divide").
 
-### Task
-- Implement Storybook to test macro frontend UI components
-- Include coverage for all core features
+The browser mattered more than expected. jsdom cannot see the cascade the board is
+built out of — no `ResizeObserver`, no `@property`, zeros from every
+`getBoundingClientRect` — so the components that are *most* nearly pure geometry
+were the ones with the least coverage. Writing the stories turned up four real
+defects in the client's own understanding of the server contract:
+`commander_damage_taken` is keyed by player and not by commander oid; an event
+carries its card id in `data.card`, not `data.card_id`; an enumerated choice needs
+`choice` set or the prompt cannot reach the face the server attached; and declining
+combat goes through the engine's `finish_declaration` action rather than an empty
+declaration.
+
+Not done, and deliberately: `NewGameScreen` has no stories, because nothing imports
+it. It should be deleted.
 
 ---
 

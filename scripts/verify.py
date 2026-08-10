@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import os
 import shutil
 import socket
 import subprocess
@@ -227,14 +228,65 @@ def frontend_runner() -> str | None:
     return None
 
 
-def frontend_stages(runner: str) -> list[Stage]:
+def chromium_installed() -> bool:
+    """Whether ``npx playwright install chromium`` has been run.
+
+    The Storybook stories run in a real browser, which is the whole point of
+    them -- jsdom has no layout engine, so it cannot see the cascade this board
+    is built out of. But the binary is a large download that ``npm install``
+    does not fetch, so a fresh clone has to *skip* that stage rather than fail
+    it, exactly as the frontend as a whole is skipped when node_modules is
+    missing. Playwright itself is already a dependency for the e2e suite.
+    """
+    override = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
+    roots = (
+        [Path(override)]
+        if override
+        else [
+            Path.home() / "AppData" / "Local" / "ms-playwright",
+            Path.home() / ".cache" / "ms-playwright",
+            Path.home() / "Library" / "Caches" / "ms-playwright",
+        ]
+    )
+    return any(root.is_dir() and any(root.glob("chromium-*")) for root in roots)
+
+
+def frontend_stages(runner: str, quick: bool) -> list[Stage]:
     # Both runners accept `<runner> run <script>`, and the package's test script
     # goes through vitest, so one spelling works for both.
-    return [
+    stages = [
         Stage("frontend build", [runner, "run", "build"], cwd=FRONTEND),
         Stage("frontend lint", [runner, "run", "lint"], cwd=FRONTEND),
+        # jsdom only. The stories are a separate vitest project and a separate
+        # stage below, so this one keeps meaning exactly what it always meant.
         Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND),
     ]
+
+    # The static build is pure -- it needs no browser -- so it can always run,
+    # and it is what catches a story that no longer compiles.
+    if not quick:
+        stages.append(
+            Stage(
+                "storybook builds",
+                [runner, "run", "build-storybook"],
+                cwd=FRONTEND,
+                slow=True,
+            )
+        )
+
+    if chromium_installed():
+        stages.append(
+            Stage(
+                "storybook stories",
+                [runner, "run", "test:stories"],
+                cwd=FRONTEND,
+                slow=True,
+            )
+        )
+    else:
+        print("SKIP storybook stories: run `npx playwright install chromium` in frontend/\n")
+
+    return stages
 
 
 def readable(text: str) -> str:
@@ -265,7 +317,7 @@ def main() -> int:
         elif not (FRONTEND / "node_modules").exists():
             print("SKIP frontend: run `bun install` (or `npm install`) in frontend/ first\n")
         else:
-            stages += frontend_stages(runner)
+            stages += frontend_stages(runner, args.quick)
 
     print(f"Auto MTG verification - {len(stages)} stages\n")
     total = 0.0

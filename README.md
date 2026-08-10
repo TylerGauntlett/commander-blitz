@@ -38,6 +38,14 @@ cd frontend && bun install && bun run dev     # or: npm install && npm run dev
 
 Then open <http://localhost:5173>. The Vite dev server proxies `/api` to the engine.
 
+To browse the components on their own — every state of every panel, no engine needed:
+
+```bash
+cd frontend && npm run storybook            # port 6006
+npx playwright install chromium             # one time, to run the stories as tests
+npm run test:stories
+```
+
 ### Playing over a LAN
 
 Two to four people on the same network share one engine process. Bind both servers to
