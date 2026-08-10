@@ -1,0 +1,24 @@
+{
+  "card_id": "mulldrifter",
+  "name": "Mulldrifter",
+  "oracle_text": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+  "blocked_sentences": [
+    "Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)"
+  ],
+  "needs": [
+    {
+      "capability": "evoke",
+      "kind": "cost",
+      "what": "A card-level alternative cost that REPLACES the printed mana cost while casting from hand, so legality offers Mulldrifter twice: once for {4}{U} and once for {2}{U}. Shaped like the existing `kicker` field (a card-level cost string plus a flag on the cast action), but subtractive rather than additive, and it must leave the printed mana value at 5.",
+      "why_existing_wont_do": "`kicker` is the only card-level mana cost besides `mana_cost`, and it is explicitly an ADDITIONAL cost paid on top - legality offers the card unkicked then kicked at mana_cost + kicker, so writing `kicker: \"{2}{U}\"` would make the evoked mode cost {6}{U}{U}, i.e. strictly worse, not cheaper. `cost_reduction` is generic-only, clamped at zero, read off the board every time and not a choice the caster makes, so it can neither cut the {U} pip nor be declined. `suspend` casts for free but only after exiling the card and waiting out time counters, and `retrace` only widens the zone a card may be cast from while adding a discard; neither replaces the mana cost of a cast from hand."
+    },
+    {
+      "capability": "evoke",
+      "kind": "engine",
+      "what": "A condition readable from the card's own effects that asks whether this permanent was cast for its evoke cost - the exact analogue of `{\"kicked\": true}` - so the enters trigger can sacrifice the creature only in that case. The flag has to survive the cast-to-battlefield zone change, since the question is asked when the permanent enters and by then the spell is gone.",
+      "why_existing_wont_do": "`{\"kicked\": true}` is the only condition in the vocabulary that reads how a spell was cast, and the loader rejects it on any card without a `kicker` cost, so it cannot be borrowed for a different cast mode. The sacrifice half on its own is expressible - a `self_enters` trigger running `{\"op\": \"sacrifice\", \"objects\": {\"self_only\": true}}`, or the `may`-with-`else` idiom from \"Sacrifice it unless you...\" - but nothing can gate it on which cost was paid, so it would either always sacrifice (turning the {4}{U} mode into a strictly worse card than the one printed) or ask the caster a free yes/no they would always decline, which is the evoke clause doing nothing."
+    }
+  ],
+  "closest_existing": ["kicker", "suspend", "retrace"],
+  "confidence": "high"
+}

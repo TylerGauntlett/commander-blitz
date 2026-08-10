@@ -1,0 +1,24 @@
+{
+  "card_id": "deep_analysis",
+  "name": "Deep Analysis",
+  "oracle_text": "Target player draws two cards.\nFlashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  ],
+  "needs": [
+    {
+      "capability": "flashback",
+      "kind": "cost",
+      "what": "A card-level `flashback` field carrying a full alternative cost (mana `{1}{U}` plus `pay_life: 3`) that legality offers only for a copy of the card in its owner's graveyard, replacing the printed mana cost rather than adding to it",
+      "why_existing_wont_do": "`retrace` is the only field that widens legality to scan the graveyard (legality._cast_actions), but it is a bare boolean: `CardDef.retrace_cost` is hardcoded to `Cost(discard=1, discard_selector={'types': ['Land']})` and is charged *in addition* to the printed `{3}{U}`, so it can express neither a cheaper alternative mana cost nor a life payment as part of the alternative cost. `kicker` is a string cost but is an additional cost paid from the hand and never changes which zone a card may be cast from. `suspend` names an alternative cost but plays the card from exile after a counter countdown, not from the graveyard on demand. Cost already carries `pay_life`, so the life half exists; what is missing is any way to attach a whole alternative cost to a graveyard cast."
+    },
+    {
+      "capability": "flashback",
+      "kind": "replacement",
+      "what": "A once-only rider on that alternative cast: when the spell resolves (or is countered) it goes to exile instead of the graveyard, so the card cannot be flashed back a second time",
+      "why_existing_wont_do": "`retrace` deliberately returns the card to the graveyard and is reusable every turn, which is the opposite of flashback's once-only exile. Nothing else can substitute: the `replacements` whitelist is only `self_enters`, `self_enters_tapped` and `self_enters_with_counters`, so no card can replace a spell's move to the graveyard; and the `exile` op in `spell_effects` cannot stand in for it, because it would run on every cast including the first from hand, exiling the card before it could ever be flashed back."
+    }
+  ],
+  "closest_existing": ["retrace", "suspend", "kicker"],
+  "confidence": "high"
+}

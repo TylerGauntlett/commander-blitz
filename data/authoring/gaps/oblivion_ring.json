@@ -1,0 +1,30 @@
+{
+  "card_id": "oblivion_ring",
+  "name": "Oblivion Ring",
+  "oracle_text": "When this enchantment enters, exile another target nonland permanent.\nWhen this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+  "blocked_sentences": [
+    "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control."
+  ],
+  "needs": [
+    {
+      "capability": "exile_until_leaves",
+      "kind": "engine",
+      "what": "a persistent link recorded on the exiling permanent (or on the exiled object) naming which cards it exiled, written by `exile` and readable by a later, separate ability resolution of the same permanent - the O-Ring / Banishing Light / Fiend Hunter family all need exactly this one link",
+      "why_existing_wont_do": "`snapshot` is the documented answer to last-known information, but it writes into `EffectContext.bindings`, which lives only for one resolution: the `self_enters` trigger and the `leaves_battlefield` trigger are two separate abilities with two separate contexts, so a snapshot taken by the first is gone before the second runs. `exile` itself takes only `objects` and stores nothing about who exiled what (`zones.exile` just calls `move_object` with `cause=\"exiled\"`), so after the enchantment leaves there is nothing anywhere that says which card in exile was its victim."
+    },
+    {
+      "capability": "exile_until_leaves",
+      "kind": "selector",
+      "what": "a selector key that names the cards exiled by the source permanent, e.g. `{\"zone\": \"exile\", \"exiled_with\": \"self\"}`, resolvable from a `leaves_battlefield` trigger after the source has already left the battlefield",
+      "why_existing_wont_do": "`SELECTOR_KEYS` has no exile-linkage key. `{\"target\": \"t1\"}` only reaches targets chosen for the ability currently resolving, and `{\"binding\": ...}` only reaches that resolution's bindings - the leaves trigger binds `subject`, `self` and `was_attacking`, none of which is the exiled card. The only selector that reaches exile at all is a plain `{\"zone\": \"exile\", ...}` filter, which matches every card in exile from every source, so `put_onto_battlefield` over it would return cards this enchantment never exiled. That is a different card, not an approximation of this one."
+    },
+    {
+      "capability": "exile_until_leaves",
+      "kind": "trigger_event",
+      "what": "`leaves_battlefield` with `source: \"self\"` needs to carry the source's exile link into the trigger's bindings at the moment the permanent leaves, the way `was_attacking` is snapshotted for an object that has already gone",
+      "why_existing_wont_do": "`leaves_battlefield` fires correctly with `source: \"self\"`, but its bindings are built fresh per trigger and carry no memory of what the permanent did while it was on the battlefield. `delay` is the one op whose bindings are captured early, and its `step` vocabulary is `upkeep`/`draw_step`/`begin_combat`/`end_step` - turn-based moments, not \"when this permanent leaves\" - so it cannot schedule the return either."
+    }
+  ],
+  "closest_existing": ["snapshot", "exile", "put_onto_battlefield", "leaves_battlefield", "delay"],
+  "confidence": "high"
+}

@@ -1,0 +1,35 @@
+{
+  "card_id": "krosan_tusker",
+  "name": "Krosan Tusker",
+  "oracle_text": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.)\nWhen you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)",
+  "blocked_sentences": [
+    "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.)",
+    "When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)"
+  ],
+  "needs": [
+    {
+      "capability": "cycling",
+      "kind": "cost",
+      "what": "An activated ability that is offered from its owner's HAND and whose cost discards the source card itself. Two halves, both missing. (a) A cost shape meaning \"discard this card\" -- e.g. a `discard_self: true` flag on `CostModel`/`Cost`, or letting `discard_selector` accept `{\"self_only\": true}` and having `costs._discard_pool` resolve `self_only` against `source_oid` rather than filtering the hand generically. (b) Legality must offer the ability while the card sits in hand: `legality._activated_actions` (src/automtg/engine/legality.py:430) iterates `state.battlefield` only, and `loader._compile_ability` (src/automtg/cards/loader.py:309-313) hard-pins `active_zones = (Zone.BATTLEFIELD,)` for every ACTIVATED ability -- `model.active_zones` is read only in the `else` branch, i.e. for triggered abilities (loader.py:360). So even writing `\"active_zones\": [\"hand\"]` on an activated ability loads cleanly and is silently discarded, which is the exact failure mode this format exists to refuse. `Action`/`ActionKind.ACTIVATE` also carries `source=oid` with the implicit assumption that the source is a permanent, so the activation path needs to tolerate a hand object. Since cycling is a whole extra way to use a card that the card does not have where it is sitting, the card-level-field route (`kicker` / `retrace` / `suspend`, schema.py:158-174) is likely the better shape: a `cycling: \"{2}{G}\"` field, legality offering it as its own ActionKind from hand, paying the mana, moving the source to the graveyard, then drawing.",
+      "why_existing_wont_do": "`Cost` (src/automtg/engine/carddef.py:38-49) carries mana, tap, untap, sacrifice, discard, discard_selector, pay_life, remove_counters and exile_from_graveyard. `discard: 1` is the near-miss and is wrong: `costs._discard_pool` (costs.py:326-340) returns the player's whole hand, narrowed only by `discard_selector` merged with `{\"zone\": \"hand\"}`, and then `ask_objects` lets the player CHOOSE which card to pitch. On the real card the discarded card is not a choice -- it is this card, and it must be this card, because the cycling trigger keys off it. With `discard: 1` a Tusker in a full hand cycles by throwing away something else and stays in hand, which is strictly better than the printed card. `sacrifice` is battlefield-only (`_sacrifice_pool` runs `resolve_pool` over permanents) and this card is in hand, never on the battlefield when cycled. `exile_from_graveyard` is the wrong zone and the wrong destination. `self_only` is a valid selector key but nothing in the cost path binds it to the source card in hand. Of the three existing alternative ways to play a card, `retrace` is the closest -- it is precisely a card-level field that widens WHERE a card may be cast from and adds a discard as an additional cost -- but it discards a *different* card (`CardDef.retrace_cost` is hardcoded `Cost(discard=1, discard_selector={\"types\": [\"Land\"]})`, carddef.py:235-237), it casts the card rather than binning it, and it reads the graveyard rather than the hand. `suspend` and `kicker` are likewise about casting the spell, not about discarding it instead of casting it. There is no keyword route either: `Keyword` (src/automtg/engine/enums.py:131-153) is a closed 15-member enum with no `cycling`, and an unknown keyword is a load-time DslError, so no spelling of the word loads.",
+      "see_also": "data/authoring/gaps/savai_triome.json"
+    },
+    {
+      "capability": "cycling",
+      "kind": "trigger_event",
+      "what": "A `cycle` trigger event -- \"When you cycle this card\" -- entered in `TRIGGER_EVENTS` (src/automtg/engine/triggers.py:28-47) against a new `EventType.CYCLED` emitted by whatever pays the cycling cost, with the cycled card as the event's subject and `source: \"self\"` restricting it to the card that was cycled. Two details the implementation has to get right. (1) Zone: by the time the cost is paid the card is in the graveyard, so the ability must be collected with `active_zones: [\"graveyard\"]`, or the collection must run before the card moves; `_candidate_abilities` (triggers.py:161-167) already scans COMMAND, GRAVEYARD, HAND and EXILE for triggered abilities, so the zone machinery itself needs nothing new -- only the event does. (2) Ordering: the reminder text says \"(Do this before you draw.)\", so the triggered ability must resolve ahead of the cycling draw, which means the draw wants to be a resolved effect that can be ordered after the trigger rather than something that happens inside cost payment. Once the event exists this card's own effects are entirely expressible with vocabulary that is already there -- `may` wrapping `search_library` (basic land, `{\"supertypes\": [\"Basic\"], \"types\": [\"Land\"]}`, to hand, revealed) and `shuffle` -- so the event is the only thing standing between this line and an ordinary triggered ability.",
+      "why_existing_wont_do": "None of the 18 events in `TRIGGER_EVENTS` can carry a cycle. `draw` is the tempting substitute and is wrong twice over: it fires on EVERY draw, including the draw step and every other draw spell, so a Tusker sitting in the graveyard would fetch a land each time its controller drew anything; and it fires AFTER the draw, which the parenthetical explicitly forbids. There is no `discard` event at all -- `discard_cards` in the cost path emits nothing a trigger can listen for -- so even the crude \"whenever a card is discarded\" approximation has nothing to hook. `spell_cast` does not fire, because cycling is not casting; `leaves_battlefield`, `dies` and `creature_dies` all require the card to have been a permanent on the battlefield, and a cycled card goes hand -> graveyard without ever being one. `land_played` fires on the land drop, not on fetching a land to hand. `permanent_enters`/`self_enters` describe the 6/5 body arriving, which is the branch of the card this line is explicitly the alternative to. Filtering any of these with `filter`/`condition` cannot help: the shortfall is that the moment being described never becomes an event, not that the event is too broad.",
+      "see_also": "data/authoring/gaps/savai_triome.json"
+    }
+  ],
+  "closest_existing": [
+    "retrace",
+    "suspend",
+    "kicker",
+    "Cost.discard + Cost.discard_selector",
+    "active_zones (triggered abilities only)",
+    "draw trigger event",
+    "search_library"
+  ],
+  "confidence": "high"
+}

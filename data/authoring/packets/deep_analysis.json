@@ -1,0 +1,209 @@
+{
+  "card_id": "deep_analysis",
+  "color_identity": "U",
+  "colors": "U",
+  "examples": [
+    {
+      "id": "concentrate",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Concentrate",
+      "oracle_text": "Draw three cards.",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "id": "cultivate",
+      "mana_cost": "{2}{G}",
+      "name": "Cultivate",
+      "oracle_text": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "id": "day_of_judgment",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Day of Judgment",
+      "oracle_text": "Destroy all creatures.",
+      "types": [
+        "Sorcery"
+      ]
+    }
+  ],
+  "mana_cost": "{3}{U}",
+  "name": "Deep Analysis",
+  "oracle_text": "Target player draws two cards.\nFlashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "power": null,
+  "reference": {
+    "expectation_keys": [
+      "life",
+      "hand_size",
+      "library_size",
+      "graveyard_size",
+      "counters",
+      "tokens",
+      "battlefield_count",
+      "opponent_battlefield_count",
+      "zone",
+      "granted",
+      "target_pt_delta"
+    ],
+    "keywords": [
+      "deathtouch",
+      "defender",
+      "double_strike",
+      "first_strike",
+      "flash",
+      "flying",
+      "haste",
+      "hexproof",
+      "indestructible",
+      "lifelink",
+      "menace",
+      "partner",
+      "reach",
+      "trample",
+      "vigilance"
+    ],
+    "notes": [
+      "A card either uses vocabulary in these lists or it fails to load.",
+      "An ability's `text` must be the printed sentence it implements: the residual gate asks each ability which line it claims, and anything unclaimed means the card is only half implemented.",
+      "An instant or sorcery puts its effects in `spell_effects`; a permanent puts them in `abilities`.",
+      "A static ability's filter may only read printed characteristics.",
+      "`snapshot` is how a card reads a value after its target has left -- there is no general last-known-information system.",
+      "A mana ability may contain only `add_mana`, or one `choose_mode` whose modes each contain only `add_mana`.",
+      "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
+    ],
+    "ops": [
+      "add_counters",
+      "add_mana",
+      "add_mana_per",
+      "animate",
+      "attach",
+      "choose_mode",
+      "copy_permanent",
+      "counter",
+      "create_token",
+      "damage",
+      "delay",
+      "destroy",
+      "discard",
+      "draw",
+      "exile",
+      "extra_land_drop",
+      "for_each",
+      "freeze",
+      "gain_life",
+      "grant_ability",
+      "grant_keyword",
+      "if",
+      "lock_abilities",
+      "lose_life",
+      "may",
+      "mill",
+      "monstrosity",
+      "noop",
+      "pump",
+      "put_on_top",
+      "put_onto_battlefield",
+      "remove_counters",
+      "repeat",
+      "return_from_graveyard",
+      "return_to_hand",
+      "reveal",
+      "sacrifice",
+      "scry",
+      "search_library",
+      "set_pt",
+      "shuffle",
+      "skip_untap",
+      "snapshot",
+      "surveil",
+      "tap",
+      "two_piles",
+      "untap"
+    ],
+    "static_effects": [
+      "buff",
+      "grant_keyword",
+      "set_pt",
+      "add_subtype",
+      "extra_land_drops"
+    ],
+    "static_filter_keys": [
+      "attached",
+      "attacking",
+      "blocking",
+      "colors",
+      "controller",
+      "exclude_self",
+      "is_commander",
+      "is_token",
+      "keywords",
+      "not_types",
+      "self_only",
+      "subtypes",
+      "supertypes",
+      "tapped",
+      "types"
+    ],
+    "supertypes": [
+      "Basic",
+      "Legendary",
+      "Snow"
+    ],
+    "trigger_events": [
+      "attacks",
+      "becomes_monstrous",
+      "begin_combat",
+      "blocks",
+      "counter_placed",
+      "creature_dies",
+      "deals_combat_damage_to_player",
+      "dies",
+      "draw",
+      "draw_step",
+      "end_step",
+      "land_played",
+      "leaves_battlefield",
+      "permanent_enters",
+      "self_enters",
+      "spell_cast",
+      "upkeep",
+      "you_gain_life"
+    ],
+    "types": [
+      "Artifact",
+      "Battle",
+      "Creature",
+      "Enchantment",
+      "Instant",
+      "Land",
+      "Planeswalker",
+      "Sorcery"
+    ]
+  },
+  "starting_point": {
+    "color_identity": [
+      "U"
+    ],
+    "colors": [
+      "U"
+    ],
+    "id": "deep_analysis",
+    "mana_cost": "{3}{U}",
+    "name": "Deep Analysis",
+    "oracle_text": "Target player draws two cards.\nFlashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+    "types": [
+      "Sorcery"
+    ]
+  },
+  "template_said": "Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "todo": [
+    "Target player draws two cards",
+    "Flashback—{1}{U}, Pay 3 life"
+  ],
+  "toughness": null,
+  "type_line": "Sorcery"
+}

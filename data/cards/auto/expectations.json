@@ -203,6 +203,14 @@
   "blood_crypt": {
     "zone": "battlefield"
   },
+  "bloodrite_invoker": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "bloodstained_mire": {
     "zone": "battlefield"
   },
@@ -430,6 +438,13 @@
   "dryad_of_the_ilysian_grove": {
     "zone": "battlefield"
   },
+  "duskborne_skymarcher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "dwarven_trader": {
     "zone": "battlefield"
   },
@@ -621,6 +636,14 @@
     "zone": "battlefield"
   },
   "grasslands": {
+    "zone": "battlefield"
+  },
+  "grave_titan": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "zombie_2_2_b"
+    },
     "zone": "battlefield"
   },
   "graypelt_refuge": {
@@ -916,6 +939,16 @@
   "loxodon_warhammer": {
     "zone": "battlefield"
   },
+  "loyal_drake": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "loyal_warhound": {
     "zone": "battlefield"
   },
@@ -950,6 +983,16 @@
     "zone": "battlefield"
   },
   "marble_diamond": {
+    "zone": "battlefield"
+  },
+  "mardu_woe_reaper": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 41
+    },
     "zone": "battlefield"
   },
   "marsh_flats": {
@@ -1047,6 +1090,19 @@
   },
   "nightveil_predator": {
     "zone": "battlefield"
+  },
+  "nissas_pilgrimage": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "noxious_newt": {
     "zone": "battlefield"
@@ -1472,6 +1528,10 @@
       "0": 1
     }
   },
+  "stromkirk_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "submerged_boneyard": {
     "zone": "battlefield"
   },
@@ -1665,6 +1725,10 @@
   "urza_s_tower": {
     "zone": "battlefield"
   },
+  "vampire_neonate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vault_of_whispers": {
     "zone": "battlefield"
   },
@@ -1684,6 +1748,10 @@
     "zone": "battlefield"
   },
   "vibrant_cityscape": {
+    "zone": "battlefield"
+  },
+  "vicious_conquistador": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vine_trellis": {
@@ -1745,6 +1813,18 @@
   "watery_grave": {
     "zone": "battlefield"
   },
+  "whiptongue_hydra": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "windreader_sphinx": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "windswept_heath": {
     "zone": "battlefield"
   },
@@ -1778,6 +1858,13 @@
     "zone": "battlefield"
   },
   "yargle_glutton_of_urborg": {
+    "zone": "battlefield"
+  },
+  "yavimaya_elder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "zetalpa_primal_dawn": {

@@ -1,0 +1,32 @@
+{
+  "card_id": "bygone_bishop",
+  "name": "Bygone Bishop",
+  "oracle_text": "Flying\nWhenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+  "blocked_sentences": [
+    "Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "Scope: only the `investigate` half of this one printed line is blocked, and it is blocked on a single missing thing -- a Clue token in the shared token pool. The trigger half IS expressible today and needs nothing new; see `expressible_today` below. Because the residual gate reads a printed line as a whole, and because a trigger that fires and creates nothing is a strictly worse card than the one printed (Bygone Bishop's entire function is the Clues), the line goes here rather than being written half. The card already in the hand-written pool covers none of it: `data/cards/isperia.cards.json` has it as a vanilla 2/3 flier -- and with mana cost `{2}{W}{W}` where the packet and the printing say `{2}{W}`, which wants fixing when this is implemented."
+  ],
+  "needs": [
+    {
+      "capability": "investigate",
+      "kind": "engine",
+      "what": "a Clue token definition in the shared token pool -- one new object in `data/cards/tokens.cards.json`, e.g. id `clue_token`, name `Clue`, `types: [\"Artifact\"]`, `subtypes: [\"Clue\"]`, `is_token: true`, no mana cost, no colors, and a single activated ability `{\"kind\": \"activated\", \"text\": \"{2}, Sacrifice this artifact: Draw a card.\", \"cost\": {\"mana\": \"{2}\", \"sacrifice\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"self_only\": true, \"count\": 1}}, \"effects\": [{\"op\": \"draw\", \"player\": \"you\", \"amount\": {\"const\": 1}}]}`. Every piece of that ability is already supported -- `Cost` carries both `mana` and a `sacrifice` selector (`engine/carddef.py:37-49`), and the `self_only` sacrifice-self shape is used by three cards in `data/cards/aesi.cards.json` and `data/cards/core.cards.json` -- so this is a data addition with no engine change behind it. With it in the pool, `investigate` is spelled `{\"op\": \"create_token\", \"token\": \"clue_token\", \"amount\": {\"const\": 1}}` and needs no new op.",
+      "why_existing_wont_do": "`create_token` is in the vocabulary and can name any token id, but `validate_token_references` (`cards/loader.py:683-693`) raises `DslError` unless that id resolves to a card already in the registry with `is_token` set -- it is checked by `CardRegistry.from_paths` and again by gate 3 of the authoring verifier (`cards/authoring/verify.py:420-429`), so naming a Clue that nobody has defined is a load-time failure, not a silent no-op. `data/cards/tokens.cards.json` holds 16 tokens and none is a Clue; `treasure_token` is the closest and the only non-creature among them, which is why it is worth naming: it proves an artifact token with an activated ability loads and works, but its ability adds mana and its cost is `{\"tap\": true}` -- a different cost, a different effect and a different subtype, so it cannot stand in for a Clue. A card worker cannot supply the definition either: an answer file is exactly one `{\"card\": ..., \"expectation\": ...}` pair and `read_answers` (`cards/authoring/packet.py:221-238`) keys it by that one card's id, and `data/cards/` is off-limits to workers -- so the token has to be added by whoever does this work, not by the card that uses it. Adding it unblocks every investigate card at once, not just this one."
+    }
+  ],
+  "expressible_today": {
+    "note": "Recorded so nobody re-derives it. The trigger needs no new vocabulary and should be written exactly this way once the Clue exists.",
+    "trigger": {
+      "event": "spell_cast",
+      "controller": "you",
+      "filter": {
+        "types": ["Creature"],
+        "mana_value": { "op": "<=", "value": { "const": 3 } }
+      }
+    },
+    "why_it_works": "`spell_cast` is in `TRIGGER_EVENTS` and is in `OBJECT_SUBJECT_TRIGGERS` (`engine/triggers.py:50-65`), so the event's `spell_oid` becomes the subject a `filter` is matched against (`_subject_oid`, line 248-255). `matches_card_filter` reads `mana_value` off the printed card face at line 325-326, comparing through `_compare` with the same `{\"op\", \"value\"}` shape the selector language uses -- so \"a creature spell with mana value 3 or less\" is one filter, not two questions. `controller: \"you\"` is compared against `event.player` for `spell_cast` (`_actor`, line 262-263), which is the caster, and that is what \"whenever YOU cast\" means.",
+    "expectation_if_it_were_written": "`{\"zone\": \"battlefield\", \"battlefield_count\": 33}` -- nothing casts a spell after the card under test in the verification sandbox, so this trigger cannot fire there and no `tokens` assertion would be honest even with the Clue defined."
+  },
+  "closest_existing": ["create_token", "treasure_token", "spell_cast"],
+  "confidence": "high"
+}

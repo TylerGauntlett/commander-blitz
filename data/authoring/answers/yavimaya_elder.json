@@ -1,0 +1,85 @@
+{
+  "card": {
+    "id": "yavimaya_elder",
+    "name": "Yavimaya Elder",
+    "oracle_text": "When this creature dies, you may search your library for up to two basic land cards, reveal them, put them into your hand, then shuffle.\n{2}, Sacrifice this creature: Draw a card.",
+    "mana_cost": "{1}{G}{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Druid"
+    ],
+    "power": 2,
+    "toughness": 1,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, you may search your library for up to two basic land cards, reveal them, put them into your hand, then shuffle.",
+        "trigger": {
+          "event": "dies",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Search your library for up to two basic land cards?",
+            "effects": [
+              {
+                "op": "search_library",
+                "player": "you",
+                "count": 2,
+                "destination": "hand",
+                "selector": {
+                  "types": [
+                    "Land"
+                  ],
+                  "supertypes": [
+                    "Basic"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, Sacrifice this creature: Draw a card.",
+        "cost": {
+          "mana": "{2}",
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

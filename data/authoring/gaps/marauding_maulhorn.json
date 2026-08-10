@@ -1,0 +1,30 @@
+{
+  "card_id": "marauding_maulhorn",
+  "name": "Marauding Maulhorn",
+  "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+  "blocked_sentences": [
+    "This creature attacks each combat if able unless you control a creature named Advocate of the Beast."
+  ],
+  "needs": [
+    {
+      "capability": "attack_requirement",
+      "kind": "static_effect",
+      "what": "a continuous static effect meaning 'each creature matched by `affects` attacks each combat if able', so that the printed variants ('This creature attacks each combat if able', 'Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') are one effect with one enforcement point. For this card it would read `{\"kind\": \"static\", \"effect\": \"attacks_if_able\", \"affects\": {\"self_only\": true}}`.",
+      "why_existing_wont_do": "The static effect vocabulary is `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types` plus the player-wide seven, and every one of them writes a characteristic or a player permission that the characteristics pipeline reads. An attack requirement is an obligation on a future action, not a characteristic. `grant_keyword` is the nearest fit and cannot stand in: the keyword vocabulary is a closed list of fifteen (`deathtouch` ... `vigilance`), and even if a `must_attack` keyword were added to it, granting it would change nothing until the declare-attackers step read it. `defender` is the only combat-shaped keyword and it is the exact opposite -- a prohibition on attacking, enforced by refusing an attacker, whereas this must force one in."
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "engine",
+      "what": "declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under a requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline.",
+      "why_existing_wont_do": "Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made, and `defending` only reads who was attacked; `tap`, `freeze`, `skip_untap` and `lock_abilities` all remove availability or permission and none can compel an action. Without this half, a static that merely recorded the flag would load, look implemented and do nothing -- the failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa; that card wants the one-shot until-end-of-turn form, this one wants the permanent form, and both want this enforcement point."
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "static_effect",
+      "what": "an 'unless' clause on the requirement -- a static whose applicability is re-checked against board state, here `{\"not\": {\"exists\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Creature\"], \"name\": \"Advocate of the Beast\"}}}`. Either a static `condition` that accepts the ordinary condition language, or an `unless` selector on the attack-requirement effect itself.",
+      "why_existing_wont_do": "A static's `condition` is deliberately tiny: `characteristics._static_condition_met` reads only `condition.counters`, i.e. how many counters of one kind sit on the static's own source, so it cannot ask about another permanent at all. Widening it generally would let one static depend on another's output and break the acyclic fixed-order pipeline, so the requirement's own effect is the safer place to carry an `unless` selector. Note that matching a permanent by name is NOT the blocker: `name` is already in `SELECTOR_KEYS` and works in ordinary selectors and in `exists` conditions. It is absent from `STATIC_FILTER_KEYS`, but that list constrains `affects`, and the name test belongs in the condition, not in `affects`."
+    }
+  ],
+  "closest_existing": ["grant_keyword", "defender", "lock_abilities", "freeze", "tap", "attacks"],
+  "confidence": "high"
+}

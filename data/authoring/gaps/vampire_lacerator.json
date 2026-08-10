@@ -1,0 +1,25 @@
+{
+  "card_id": "vampire_lacerator",
+  "name": "Vampire Lacerator",
+  "oracle_text": "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
+    "Scope: only the \"unless an opponent has 10 or less life\" clause is blocked. The `upkeep` trigger (`{\"event\": \"upkeep\", \"controller\": \"you\"}`, exactly as Phyrexian Arena writes it) and the `lose_life` half are both expressible today, so this card becomes writable the moment the quantifier below exists."
+  ],
+  "needs": [
+    {
+      "capability": "player_quantifier",
+      "kind": "value",
+      "what": "per-player aggregate value expressions over a multi-player spec -- `min_life_of` / `max_life_of` (and the same shape for other player quantities such as cards in hand), so `{\"min_life_of\": \"each_opponent\"}` yields the life total of the opponent who has the least rather than a total across opponents. With that, \"an opponent has 10 or less life\" is `{\"cmp\": \"<=\", \"left\": {\"min_life_of\": \"each_opponent\"}, \"right\": {\"const\": 10}}`",
+      "why_existing_wont_do": "`life_of` is the only way to read a life total and it SUMS over its player spec (`values.py:104` does `sum(ctx.state.players[p].life for p in pids)`), and `\"opponent\"` is a plain alias for `\"each_opponent\"` -- `select_players` (`selectors.py:278-279`) returns `ctx.opponents()` for both. So `{\"life_of\": \"opponent\"} <= 10` reads as \"my opponents' COMBINED life is 10 or less\", which is identical to the printed card in a duel but diverges sharply in a pod: three opponents at 40 sum to 120, so the exemption becomes effectively unreachable and the card applies its own drawback in games where the real one would not. `min`/`max` exist as value expressions but take a list of value expressions, and there is no per-opponent player spec to feed them -- the player specs are `you`, `opponent`/`each_opponent`, `each_player`, `active_player`, `{target}`, `{controller_of}`, `{owner_of}`, `{binding}`, none of which enumerates opponents one at a time"
+    },
+    {
+      "capability": "player_quantifier",
+      "kind": "op",
+      "what": "a quantifier over players in the condition DSL -- `{\"any_player\": {\"players\": \"each_opponent\", \"condition\": {...}}}` and its `each_player` counterpart -- evaluating the inner condition once per selected player and OR-ing (resp. AND-ing) the results, so \"an opponent has 10 or less life\" and \"each opponent has 10 or less life\" become distinguishable. This is the general form; the `min_life_of` value above is the narrow special case",
+      "why_existing_wont_do": "the condition DSL (`conditions.py`, CONDITION_KEYS = cmp/all/any/not/exists/zone_is/is_your_turn/kicked) has no player-scoped form at all. `all`/`any` combine a fixed literal list of sub-conditions written into the card, not a list generated per player, so they cannot range over an opponent count that is unknown until the game is set up. `exists` looks the closest but quantifies over OBJECTS -- it calls `resolve_pool` on an object selector -- and there is no player selector to hand it. `{\"controller_of\": \"snapshot_name\"}` does yield a single player, but it is whichever one arbitrary opponent happens to control the snapshotted permanent, and an opponent controlling nothing is invisible to it, so it cannot express \"any opponent\""
+    }
+  ],
+  "closest_existing": ["life_of", "exists", "min", "if", "controller_of"],
+  "confidence": "high"
+}

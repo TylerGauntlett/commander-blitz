@@ -1,0 +1,24 @@
+{
+  "card_id": "sengir_vampire",
+  "name": "Sengir Vampire",
+  "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+  "blocked_sentences": [
+    "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature."
+  ],
+  "needs": [
+    {
+      "capability": "damaged_by_source_this_turn",
+      "kind": "engine",
+      "what": "a per-turn ledger recording, for each creature, which source objects have dealt damage to it this turn, readable at the moment that creature dies and cleared during cleanup; the entry must survive the damaged creature leaving the battlefield, since the query is asked about an object that is already in the graveyard",
+      "why_existing_wont_do": "reference has no damage-history state at all -- `damage` is an effect op that applies damage and records nothing, and the notes state plainly that `snapshot` is the only way to read a value after an object has left and that there is no general last-known-information system, so nothing can answer 'was this dying creature damaged by that source earlier this turn'"
+    },
+    {
+      "capability": "damaged_by_source_this_turn",
+      "kind": "trigger_event",
+      "what": "a filter on `creature_dies` that scopes it to creatures which were dealt damage by the ability's own source this turn, binding the trigger to the source object rather than to a side or a characteristic of the dying creature",
+      "why_existing_wont_do": "`creature_dies` and `dies` are the closest trigger events but reference exposes no filter vocabulary for trigger events whatsoever -- `static_filter_keys` is documented as applying to static abilities and reads only printed characteristics, none of which can express a relationship to the source. Using bare `creature_dies` would make the card trigger on every creature death anywhere, a strictly stronger and different card than the one printed, so it is not an acceptable approximation."
+    }
+  ],
+  "closest_existing": ["creature_dies", "dies", "damage", "snapshot"],
+  "confidence": "high"
+}

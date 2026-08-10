@@ -1,0 +1,30 @@
+{
+  "card_id": "bident_of_thassa",
+  "name": "Bident of Thassa",
+  "oracle_text": "Whenever a creature you control deals combat damage to a player, you may draw a card.\n{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+  "blocked_sentences": [
+    "{1}{U}, {T}: Creatures your opponents control attack this turn if able."
+  ],
+  "needs": [
+    {
+      "capability": "attack_requirement",
+      "kind": "op",
+      "what": "an effect op that places an until-end-of-turn 'attacks this combat if able' requirement on a set of creatures chosen by an ordinary selector (here `{\"zone\": \"battlefield\", \"controller\": \"opponent\", \"types\": [\"Creature\"], \"count\": \"all\"}`), surviving on creatures that were not on the battlefield when it resolved only if the printed card says so (Bident's does not, so a snapshot of the affected set at resolution is correct)",
+      "why_existing_wont_do": "The whole Board/Modify op groups act on characteristics or on the object's own state: `tap`, `freeze` and `skip_untap` stop a permanent from being available, and `lock_abilities` removes a permission, but none of them can *compel* an action. `lock_abilities` is the closest in spirit — an until-end-of-turn, non-keyword permission flag read by legality — yet it is a prohibition read at activation time, and an attack requirement is an obligation read while declaring attackers, so it cannot be spelled as a negation of anything that exists."
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "engine",
+      "what": "the declare-attackers step must enforce requirements: a legal attack declaration has to include every creature under a requirement that is able to attack (untapped, not summoning sick, no defender), and the AI/agent choosing attackers for the affected player must be constrained to a maximal legal set rather than being free to decline",
+      "why_existing_wont_do": "Nothing in the reference vocabulary reaches combat declaration at all — `attacks` and `blocks` exist only as trigger events that observe a declaration that has already been made, and `defending` merely reads who was attacked. An op that recorded the flag with no enforcement would load, show on the board and change nothing, which is the exact failure mode the format exists to refuse."
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "static_effect",
+      "what": "the same requirement as a continuous form, so the many printed variants ('Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') and full goad ('attacks each combat if able and attacks a player other than you if able') share one enforcement point in the declare-attackers check",
+      "why_existing_wont_do": "`static_effects` is limited to `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types`, `extra_land_drops` and the player-wide seven, all of which write characteristics or player permissions that the characteristics pipeline reads. `grant_keyword` cannot stand in: the engine's keyword list is a fixed vocabulary of fifteen and an attack requirement is a behaviour, not a printed characteristic, so granting a keyword would need the same combat-step enforcement to exist first."
+    }
+  ],
+  "closest_existing": ["lock_abilities", "freeze", "tap", "grant_keyword", "attacks"],
+  "confidence": "high"
+}

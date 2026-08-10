@@ -28752,12 +28752,12 @@
     },
     "Bloodrite Invoker": {
       "edhrec_rank": 26187,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Bloodrite Invoker",
-      "reason": "{8}: Target player loses 3 life and you gain 3 life.",
+      "reason": "",
       "scryfall_id": "0b332d26-ca9a-458d-9dbc-41f1cf5c4c6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodrock Cyclops": {
@@ -76632,12 +76632,12 @@
     },
     "Duskborne Skymarcher": {
       "edhrec_rank": 18493,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Duskborne Skymarcher",
-      "reason": "{W}, {T}: Target attacking Vampire gets +1/+1 until end of turn.",
+      "reason": "",
       "scryfall_id": "baa524bb-0ce7-4c30-93c3-ae15c3b05e92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskdale Wurm": {
@@ -115592,12 +115592,12 @@
     },
     "Grave Titan": {
       "edhrec_rank": 1389,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Grave Titan",
-      "reason": "Whenever this creature enters or attacks, create two 2/2 black Zombie creature tokens.",
+      "reason": "",
       "scryfall_id": "3b4faa6e-5013-4c59-80f5-662a386672eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grave Upheaval": {
@@ -161022,12 +161022,12 @@
     },
     "Loyal Drake": {
       "edhrec_rank": 5142,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Loyal Drake",
-      "reason": "Lieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
+      "reason": "",
       "scryfall_id": "d827bb89-4e28-4b77-94c0-10f79ec9099a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Fire Sage": {
@@ -166332,12 +166332,12 @@
     },
     "Mardu Woe-Reaper": {
       "edhrec_rank": 16835,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Mardu Woe-Reaper",
-      "reason": "Whenever this creature or another Warrior you control enters, you may exile target creature card from a graveyard. If you do, you gain 1 life.",
+      "reason": "",
       "scryfall_id": "0bf14a32-b97b-48c7-8395-d9c3626735c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marhault Elsdragon": {
@@ -186232,12 +186232,12 @@
     },
     "Nissa's Pilgrimage": {
       "edhrec_rank": 3368,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Nissa's Pilgrimage",
-      "reason": "Spell mastery — If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
+      "reason": "",
       "scryfall_id": "ccf744d0-4349-4338-99aa-db0780c7296f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nissa's Renewal": {
@@ -265342,12 +265342,12 @@
     },
     "Stromkirk Captain": {
       "edhrec_rank": 2991,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Stromkirk Captain",
-      "reason": "Other Vampire creatures you control get +1/+1 and have first strike.",
+      "reason": "",
       "scryfall_id": "50112fc8-82f7-438b-bd35-12b7b3182bdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stromkirk Condemned": {
@@ -298362,12 +298362,12 @@
     },
     "Vampire Neonate": {
       "edhrec_rank": 15261,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Vampire Neonate",
-      "reason": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
+      "reason": "",
       "scryfall_id": "86d64a1d-cda4-4c76-8d58-ccab5a6859a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vampire Noble": {
@@ -301812,12 +301812,12 @@
     },
     "Vicious Conquistador": {
       "edhrec_rank": 8940,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Vicious Conquistador",
-      "reason": "Whenever this creature attacks, each opponent loses 1 life.",
+      "reason": "",
       "scryfall_id": "29ea5874-becd-4c6b-9638-5c075b52079e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vicious Hunger": {
@@ -311312,12 +311312,12 @@
     },
     "Whiptongue Hydra": {
       "edhrec_rank": 7057,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Whiptongue Hydra",
-      "reason": "When this creature enters, destroy all creatures with flying. Put a +1/+1 counter on this creature for each creature destroyed this way.",
+      "reason": "",
       "scryfall_id": "57cfa420-306d-4d2c-8e83-fa9b46f2aa27",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whir of Invention": {
@@ -313502,12 +313502,12 @@
     },
     "Windreader Sphinx": {
       "edhrec_rank": 7485,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Windreader Sphinx",
-      "reason": "Whenever a creature with flying attacks, you may draw a card.",
+      "reason": "",
       "scryfall_id": "11fac13f-bb14-48d5-90c2-0b70b252287c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windreaper Falcon": {
@@ -317932,12 +317932,12 @@
     },
     "Yavimaya Elder": {
       "edhrec_rank": 3463,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Yavimaya Elder",
-      "reason": "{2}, Sacrifice this creature: Draw a card.",
+      "reason": "",
       "scryfall_id": "27dacbde-a646-418c-b569-4a4f11c9faae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yavimaya Enchantress": {
