@@ -6,6 +6,7 @@ import {
   canDropOnLane,
   defendersFor,
   dropTargets,
+  groupPlayActions,
   isOurDecision,
   needsTargetChoice,
   resolveSingleAction,
@@ -102,6 +103,113 @@ describe("target disambiguation", () => {
       action({ id: "a1", kind: "cast", source_oid: 12, targets: [{ kind: "object", id: 1 }] }),
     ];
     expect(needsTargetChoice(actions, 12)).toBe(true);
+  });
+});
+
+describe("groupPlayActions", () => {
+  /** One card in hand, `n` creatures on the board: the engine offers it `n` times. */
+  const aimedAt = (ids: number[], overrides: Partial<Parameters<typeof action>[0]> = {}) =>
+    ids.map((id) =>
+      action({
+        id: `a${id}-cast`,
+        kind: "cast",
+        label: `Cast Simic Charm -> #${id}`,
+        base_label: "Cast Simic Charm",
+        source_oid: 12,
+        targets: [{ kind: "object", id }],
+        ...overrides,
+      }),
+    );
+
+  it("collapses one card's target variants into a single row", () => {
+    // The reported bug: six identical-looking Simic Charm rows in the panel.
+    const groups = groupPlayActions(aimedAt([3, 1, 2, 5, 4, 6]));
+    expect(groups).toHaveLength(1);
+    expect(groups[0].actions).toHaveLength(6);
+    expect(groups[0].head.base_label).toBe("Cast Simic Charm");
+  });
+
+  it("orders the chips by target, so a poll cannot move them", () => {
+    const groups = groupPlayActions(aimedAt([3, 1, 2]));
+    expect(groups[0].actions.map((a) => a.targets[0].id)).toEqual([1, 2, 3]);
+  });
+
+  it("puts declining an optional target last", () => {
+    const groups = groupPlayActions([
+      ...aimedAt([2, 1]),
+      action({
+        id: "a0-cast",
+        kind: "cast",
+        label: "Cast Simic Charm",
+        base_label: "Cast Simic Charm",
+        source_oid: 12,
+      }),
+    ]);
+    expect(groups).toHaveLength(1);
+    expect(groups[0].actions.map((a) => a.id)).toEqual(["a1-cast", "a2-cast", "a0-cast"]);
+  });
+
+  it("keeps kicked and unkicked apart", () => {
+    // Two different things to do with one card, and `base_label` is what says so.
+    const groups = groupPlayActions([
+      ...aimedAt([1, 2]),
+      ...aimedAt([1, 2], { base_label: "Cast Simic Charm (kicked)" }),
+    ]);
+    expect(groups).toHaveLength(2);
+    expect(groups.map((g) => g.actions.length)).toEqual([2, 2]);
+  });
+
+  it("keeps two copies of the same card in hand apart", () => {
+    // docs/bugs.md: deduplicating by card rather than by object is what made
+    // the second and third Forest in hand unclickable.
+    const groups = groupPlayActions([
+      action({ id: "a1", kind: "play_land", label: "Play Forest", source_oid: 20 }),
+      action({ id: "a2", kind: "play_land", label: "Play Forest", source_oid: 21 }),
+    ]);
+    expect(groups).toHaveLength(2);
+  });
+
+  it("keeps two abilities of one permanent apart", () => {
+    const groups = groupPlayActions([
+      action({
+        id: "a1",
+        kind: "activate",
+        source_oid: 30,
+        ability_index: 0,
+        base_label: "Heirloom: {T}: trample",
+      }),
+      action({
+        id: "a2",
+        kind: "activate",
+        source_oid: 30,
+        ability_index: 1,
+        base_label: "Heirloom: {T}: hexproof",
+      }),
+    ]);
+    expect(groups).toHaveLength(2);
+  });
+
+  it("leaves untargeted actions one to a row", () => {
+    const groups = groupPlayActions([
+      action({ id: "a1", kind: "pass", label: "Pass", base_label: "Pass" }),
+      action({
+        id: "a2",
+        kind: "cast",
+        label: "Cast Bear",
+        base_label: "Cast Bear",
+        source_oid: 9,
+      }),
+    ]);
+    expect(groups.map((g) => g.actions.length)).toEqual([1, 1]);
+  });
+
+  it("preserves the server's row order", () => {
+    const groups = groupPlayActions([
+      action({ id: "a1", kind: "play_land", label: "Play Forest", source_oid: 20 }),
+      ...aimedAt([2, 1]),
+      action({ id: "a9", kind: "pass", label: "Pass", base_label: "Pass" }),
+    ]);
+    expect(groups.map((g) => g.head.id)).toEqual(["a1", "a2-cast", "a9"]);
   });
 });
 

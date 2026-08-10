@@ -216,6 +216,7 @@ class GameSession:
                     id=action_id,
                     kind=action.kind.value,
                     label=action.label or action.kind.value,
+                    base_label=action.base_label or action.label or action.kind.value,
                     source_oid=action.source,
                     ability_index=action.ability_index,
                     targets=[t.to_dict() for t in action.targets],

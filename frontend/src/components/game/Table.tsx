@@ -180,7 +180,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     const byOid = new Map<number, string>();
     for (const action of actions) {
       if (action.kind !== "activate" || action.source_oid === null) continue;
-      if (!byOid.has(action.source_oid)) byOid.set(action.source_oid, action.label);
+      // `base_label`, not `label`: the engine offers one action per legal
+      // target, so `label` here would name whichever target happened to be
+      // first and read as a promise the popover cannot keep.
+      if (!byOid.has(action.source_oid)) byOid.set(action.source_oid, action.base_label);
     }
     return byOid;
   }, [actions]);

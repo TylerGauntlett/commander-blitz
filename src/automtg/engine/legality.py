@@ -330,6 +330,7 @@ def _cast_variant(
                 x=x,
                 kicked=kicked,
                 label=label,
+                base_label=label_base,
                 pays=pays,
             )
         )
@@ -434,8 +435,9 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
             if not tuples:
                 continue
+            label_base = f"{card.name}: {ability.text or 'activate'}"
             for targets in tuples:
-                label = f"{card.name}: {ability.text or 'activate'}"
+                label = label_base
                 if targets:
                     label += " -> " + ", ".join(_describe_ref(state, ref) for ref in targets)
                 out.append(
@@ -446,6 +448,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                         targets=targets,
                         x=x,
                         label=label,
+                        base_label=label_base,
                     )
                 )
     return out

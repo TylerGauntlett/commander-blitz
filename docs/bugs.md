@@ -2,6 +2,34 @@
 
 ### Fixed
 
+- **Some cards appear several times in the action panel.**
+  Six rows reading "Simic Charm / Instant / {G}{U}", and one Herd Heirloom ability listed
+  twice. Nothing was duplicated: `legality._cast_variant` and `_activate_actions` emit one
+  action per tuple from `enumerate_target_tuples`, so six targetable creatures are six
+  legal casts of the one card in hand. The panel then drew each as a row — and for a card
+  a row draws the *card* (name, type line, pips) and never the label, so the six ways to
+  aim it were six identical rows. The `activate` rows did draw the label, whose only
+  differing part is the trailing `-> Target` that `.act__name`'s ellipsis clips off.
+  The collapse had to be presentational — deduplicating in `legality` is the Forest bug
+  below, and that list is also the RL action space. So `logic/actionMatch.groupPlayActions`
+  groups the play rows by `(kind, source, ability index, x, choice, base_label)` and the
+  panel renders one row per group with a chip per target, the shape an attacker with
+  several legal defenders already used. `base_label` is a new field on `Action` and on
+  `LegalActionDTO`: the label without its target suffix, which is what tells a kicked cast
+  apart from an unkicked one without parsing strings. The exactly-once id invariant holds
+  the same way combat's does — the group row carries no `data-action-id`, its chips carry
+  one each.
+
+- **A spell with an optional target could never decline it.**
+  `enumerate_target_tuples` honoured `spec.optional` only when there were *no* candidates,
+  so the empty tuple was offered exactly when it was useless. Simic Charm's third mode
+  gives your permanents hexproof and takes no target, which made that mode unreachable in
+  any game with a creature on the battlefield. An optional spec now always contributes the
+  empty choice — **last**, because `stack.push_trigger` and `suspend.cast_suspended` ask
+  with `limit=1` and take `options[0]`, and a Shipbreaker Kraken whose "tap up to four
+  target creatures" defaulted to tapping none is a different card. The cap eats candidates
+  rather than the choice to decline, but never the last candidate.
+
 - **When multiple lands are held in the hand at the same time, only the first 2 are playable.**
   `legality._land_actions` deduplicated by *card-definition* id, so a hand of Forests and
   Islands produced exactly two `play_land` actions. The client keys playability by object

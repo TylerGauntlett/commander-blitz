@@ -4,7 +4,7 @@ import type { PendingDecision } from "../src/api/types";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { CardFace } from "../src/components/game/CardFace";
 import { PromptDialog } from "../src/components/game/PromptDialog";
-import { action, card, gameView } from "./fixtures";
+import { action, card, gameView, player } from "./fixtures";
 
 afterEach(cleanup);
 
@@ -143,6 +143,108 @@ describe("ActionPanel", () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids).toHaveLength(2);
     expect(screen.getByTestId("commit").getAttribute("data-action-id")).toBe("a0-pass");
+  });
+
+  /*
+   * The reported bug: six ways to aim one Simic Charm read as six copies of it,
+   * because a row for a card draws the card and never the label. One row now,
+   * with the ids on its target chips -- the shape an attacker with several legal
+   * defenders already used, and the reason the invariant above still holds.
+   */
+  it("collapses one card's target variants into a row of target chips", () => {
+    const charm = card({ oid: 12, zone: "hand", name: "Simic Charm", types: ["Instant"] });
+    const state = gameView({
+      players: [player({ hand: [charm] }), player({ pid: 1, hand: null })],
+      battlefield: [
+        card({ oid: 1, name: "Arixmethes" }),
+        card({ oid: 2, name: "Kraken Token" }),
+        card({ oid: 3, name: "Wall of Roots" }),
+      ],
+    });
+    const aims = [1, 2, 3].map((id) =>
+      action({
+        id: `a${id}-cast`,
+        kind: "cast",
+        label: `Cast Simic Charm -> #${id}`,
+        base_label: "Cast Simic Charm",
+        source_oid: 12,
+        targets: [{ kind: "object", id }],
+      }),
+    );
+    render(
+      <ActionPanel
+        state={state}
+        actions={[action({ id: "a0-pass", kind: "pass", label: "Pass" }), ...aims]}
+        onAct={noop}
+        {...base}
+      />,
+    );
+
+    const rows = document.querySelectorAll(".acts__list .act");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].getAttribute("data-action-id"), "the group row must carry no id").toBeNull();
+    expect(screen.getByText("Simic Charm")).toBeTruthy();
+
+    // Every action still reachable, exactly once, one control each.
+    const chips = [...document.querySelectorAll(".act__aims .aim")];
+    expect(chips.map((n) => n.textContent)).toEqual([
+      "Arixmethes",
+      "Kraken Token",
+      "Wall of Roots",
+    ]);
+    const ids = renderedIds();
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toEqual(["a1-cast", "a2-cast", "a3-cast", "a0-pass"]);
+  });
+
+  it("names declining an optional target rather than showing a blank chip", () => {
+    const state = gameView({
+      players: [
+        player({ hand: [card({ oid: 12, zone: "hand", name: "Simic Charm" })] }),
+        player({ pid: 1, hand: null }),
+      ],
+      battlefield: [card({ oid: 1, name: "Arixmethes" })],
+    });
+    const shared = { kind: "cast", base_label: "Cast Simic Charm", source_oid: 12 } as const;
+    render(
+      <ActionPanel
+        state={state}
+        actions={[
+          action({ id: "a1-cast", ...shared, targets: [{ kind: "object", id: 1 }] }),
+          action({ id: "a2-cast", ...shared }),
+        ]}
+        onAct={noop}
+        {...base}
+      />,
+    );
+    const chips = [...document.querySelectorAll(".act__aims .aim")];
+    expect(chips.map((n) => n.textContent)).toEqual(["Arixmethes", "No target"]);
+  });
+
+  it("clicking a chip submits that chip's action, not the row's first", () => {
+    const onAct = vi.fn();
+    const state = gameView({
+      battlefield: [card({ oid: 1, name: "Arixmethes" }), card({ oid: 2, name: "Kraken" })],
+    });
+    const shared = {
+      kind: "activate",
+      base_label: "Herd Heirloom: {T}: gains trample",
+      source_oid: 30,
+      ability_index: 1,
+    } as const;
+    render(
+      <ActionPanel
+        state={state}
+        actions={[
+          action({ id: "a1-activate", ...shared, targets: [{ kind: "object", id: 1 }] }),
+          action({ id: "a2-activate", ...shared, targets: [{ kind: "object", id: 2 }] }),
+        ]}
+        onAct={onAct}
+        {...base}
+      />,
+    );
+    fireEvent.click(screen.getByText("Kraken"));
+    expect(onAct).toHaveBeenCalledWith("a2-activate");
   });
 
   it("renders no action at all while a modal owns the decision", () => {
