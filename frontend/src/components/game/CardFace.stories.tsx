@@ -157,7 +157,16 @@ export const EveryCardType: Story = {
 /* Battlefield states                                                  */
 /* ------------------------------------------------------------------ */
 
-export const Tapped: Story = { args: { card: pool.grizzlyBears({ tapped: true }) } };
+/*
+ * There is no `Tapped` story here, and there was one, and it was a lie.
+ *
+ * A face does not tap. `CardFace` has no `tapped` branch at all -- the quarter
+ * turn is `.card--tapped .card__pivot` in cards.css, which also swaps the box's
+ * width and height, and both belong to `Card`. So the story showed an upright
+ * card under a name that said otherwise, which is worse than no story: it is a
+ * documented state that does not exist. `Card.Tapped` is the honest home and it
+ * asserts the rotation.
+ */
 
 export const SummoningSick: Story = {
   args: { card: pool.thragtusk({ summoning_sick: true }) },
