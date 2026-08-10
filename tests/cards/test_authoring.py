@@ -219,6 +219,7 @@ class TestTheSandboxIsUsable:
                 "battlefield_count": 999,
                 "opponent_battlefield_count": 999,
                 "zone": "nowhere",
+                "target_pt_delta": {"power": 999, "toughness": 999},
             }.get(key, {"0": 9999})
             problems = V.check_expectation(game, "x", oid, {key: sample})
             assert problems, f"expectation key {key!r} asserts nothing"

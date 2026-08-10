@@ -30,6 +30,10 @@ class Action:
     targets: tuple[TargetRef, ...] = ()
     choice: int | None = None
     x: int = 0
+    #: Whether this cast pays the card's kicker cost.  Part of the identity, not
+    #: display: "Into the Roil" and "Into the Roil (kicked)" are two different
+    #: things to do with the same card and must not compare equal.
+    kicked: bool = False
     label: str = field(default="", compare=False)
     #: Permanents the mana solver would tap to pay for this, for the UI's
     #: "what will this leave me with" preview.  Display-only, like ``label``:
@@ -47,6 +51,7 @@ class Action:
             targets=self.targets,
             choice=self.choice,
             x=self.x,
+            kicked=self.kicked,
             label=label,
             pays=self.pays,
         )
@@ -60,6 +65,7 @@ class Action:
             tuple((t.kind, t.id) for t in self.targets),
             -1 if self.choice is None else self.choice,
             self.x,
+            self.kicked,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -70,6 +76,7 @@ class Action:
             "targets": [t.to_dict() for t in self.targets],
             "choice": self.choice,
             "x": self.x,
+            "kicked": self.kicked,
             "label": self.label,
             "pays": list(self.pays),
         }

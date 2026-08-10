@@ -33,6 +33,8 @@ class EffectContext:
     #: snapshots (from the ``snapshot`` op) and trigger bindings
     bindings: dict[str, Any] = field(default_factory=dict)
     x: int = 0
+    #: Whether the spell being resolved paid its kicker cost.
+    kicked: bool = False
     modes: tuple[int, ...] = ()
     #: Set by ``for_each`` so nested effects can read the current iteration value.
     loop_value: Any = None

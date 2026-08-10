@@ -75,6 +75,15 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
 
+        # 0. type replacement -- "as long as it has a slumber counter, it's a
+        #    land (it's not a creature)". Before the grants, so a card that both
+        #    replaces and adds ends up with the addition.
+        for source_obj, static in statics:
+            if static.get("effect") != "set_types":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                types = set(static.get("types", ()))
+
         # 1. subtype / type grants
         for source_obj, static in statics:
             if static.get("effect") != "add_subtype":
@@ -132,7 +141,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 
 
 def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
-    """Every ``static`` ability currently on the battlefield, in arrival order."""
+    """Every *active* ``static`` ability on the battlefield, in arrival order."""
     out: list[tuple[GameObject, Mapping[str, Any]]] = []
     for oid in state.battlefield:
         obj = state.objects.get(oid)
@@ -140,9 +149,36 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
             continue
         card = state.card_of(obj)
         for ability in card.abilities:
-            if ability.is_static and ability.static:
+            if ability.is_static and ability.static and _static_active(obj, ability.static):
                 out.append((obj, ability.static))
     return out
+
+
+def _static_active(source: GameObject, static: Mapping[str, Any]) -> bool:
+    """Is this static's "as long as..." clause currently true?
+
+    Deliberately tiny: the only question a static may ask is how many counters of
+    a kind sit on its own source.  That is board state rather than a derived
+    characteristic, so it cannot depend on another static's output and the fixed
+    -order pipeline stays acyclic -- the same reason `affects` filters may only
+    read printed characteristics.
+    """
+    condition = static.get("condition")
+    if not condition:
+        return True
+    spec = condition.get("counters") or {}
+    have = source.counter(str(spec.get("counter", PLUS_ONE)))
+    amount = int(spec.get("amount", 1))
+    op = str(spec.get("op", ">="))
+    return {
+        ">=": have >= amount,
+        "<=": have <= amount,
+        ">": have > amount,
+        "<": have < amount,
+        "=": have == amount,
+        "==": have == amount,
+        "!=": have != amount,
+    }[op]
 
 
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:

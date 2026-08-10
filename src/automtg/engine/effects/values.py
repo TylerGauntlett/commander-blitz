@@ -18,6 +18,7 @@ from typing import Any
 
 from ..characteristics import chars
 from ..errors import DslError
+from ..objects import PLUS_ONE
 from .context import EffectContext
 
 #: Every key that may appear at the top level of a value expression.
@@ -40,6 +41,7 @@ VALUE_KEYS = frozenset(
         "min",
         "loop_value",
         "binding",
+        "counters_on",
     }
 )
 
@@ -73,6 +75,16 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         from .selectors import resolve_pool
 
         return len(resolve_pool(ctx, expr["count"]))
+    if "counters_on" in expr:
+        # How many counters of a kind sit on an object -- which is what "double
+        # the number of +1/+1 counters on this creature" needs, and the one
+        # quantity the value language could not previously reach.
+        spec = expr["counters_on"]
+        kind = str(spec.get("counter", PLUS_ONE))
+        from .selectors import resolve_pool
+
+        pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
+        return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
     if "creatures_you_control" in expr:
         return len(ctx.state.creatures(ctx.controller))
     if "lands_you_control" in expr:

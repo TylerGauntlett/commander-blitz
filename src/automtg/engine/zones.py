@@ -171,11 +171,16 @@ def _enter_battlefield(
         elif event == "self_enters_with_counters" or (
             event == "self_enters" and "counters" in replacement.get("modify", {})
         ):
-            spec = replacement.get("modify", replacement)
-            counters = spec.get("counters") or {}
-            if isinstance(counters, dict):
+            # `modify` defaults to `{}` in the schema, so `get("modify", replacement)`
+            # returned that empty dict rather than falling back -- and the
+            # top-level `counter`/`amount` form was then silently dropped. A card
+            # written that way entered with no counters at all and nothing said
+            # so, which is the exact failure the DSL's load-time checks exist to
+            # prevent. Fall back only when `modify` has nothing in it.
+            counters = (replacement.get("modify") or {}).get("counters") or {}
+            if counters:
                 for kind, amount in counters.items():
-                    obj.add_counter(kind, int(amount))
+                    obj.add_counter(str(kind), int(amount))
             else:
                 obj.add_counter(
                     str(replacement.get("counter", "+1/+1")), int(replacement.get("amount", 1))

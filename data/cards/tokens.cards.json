@@ -163,6 +163,26 @@
       "is_token": true
     },
     {
+      "id": "komas_coil_3_3_u",
+      "name": "Koma's Coil",
+      "oracle_text": "3/3 blue Serpent creature token named Koma's Coil.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Serpent"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
       "id": "kraken_8_8_u",
       "name": "Kraken Token",
       "oracle_text": "8/8 blue Kraken creature token.",

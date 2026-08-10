@@ -192,15 +192,18 @@ class Game:
         obj = state.objects[oid]
         card = state.card_of(obj)
         from_command = obj.zone is Zone.COMMAND
-        extra = 0
-        if from_command:
-            from .costs import commander_cost
+        from .costs import commander_cost, cost_reduction
 
-            extra = commander_cost(state, oid)
+        extra = commander_cost(state, oid) if from_command else 0
+        # Netted against the tax rather than applied separately, so a commander
+        # that also reduces its own cost is charged once. `pay` clamps at zero.
+        extra -= cost_reduction(state, pid, card)
 
-        ok = yield from pay(
-            state, pid, Cost(mana=card.mana_cost), None, x=action.x, extra_generic=extra
-        )
+        # Kicker is an additional cost, paid at the same time as the mana cost
+        # and not separable from it: there is no state in which the spell is on
+        # the stack having paid one half.
+        cost = card.mana_cost.plus(card.kicker) if action.kicked else card.mana_cost
+        ok = yield from pay(state, pid, Cost(mana=cost), None, x=action.x, extra_generic=extra)
         if not ok:  # pragma: no cover - legality already proved payability
             return
 
@@ -208,7 +211,7 @@ class Game:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
 
-        item = stack.push_spell(state, oid, pid, action.targets, x=action.x)
+        item = stack.push_spell(state, oid, pid, action.targets, x=action.x, kicked=action.kicked)
         triggers.fire(
             state,
             EventType.SPELL_CAST,
@@ -218,6 +221,7 @@ class Game:
             spell_oid=oid,
             sid=item.sid,
             card=card.id,
+            kicked=1 if action.kicked else 0,
         )
 
     def _activate(self, pid: int, action: Action) -> Generator[Any, list[int], None]:

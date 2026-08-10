@@ -13,7 +13,7 @@ from .events import GameEvent
 from .objects import GameObject
 from .player import PlayerState
 from .rng import Rng
-from .structs import CombatState, StackItem, TriggerInstance
+from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.cards.registry import CardRegistry
@@ -67,6 +67,8 @@ class GameState:
     #: serialized -- replay reconstructs it by re-running the same actions.
     pending_generator: Any = field(default=None, repr=False)
     pending_triggers: list[TriggerInstance] = field(default_factory=list)
+    #: Effects arranged for a later step -- see `structs.DelayedTrigger`.
+    delayed_triggers: list[DelayedTrigger] = field(default_factory=list)
 
     events: list[GameEvent] = field(default_factory=list)
     game_over: bool = False

@@ -101,6 +101,9 @@
     "id": "vivid_grove"
   },
   "expectation": {
-    "zone": "battlefield"
+    "counters": {
+      "kind": "charge",
+      "amount": 2
+    }
   }
 }

@@ -49,6 +49,7 @@ class EventType:
     COUNTER_PLACED = "counter_placed"
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
+    BECAME_MONSTROUS = "became_monstrous"
 
     # life and damage
     LIFE_GAINED = "life_gained"

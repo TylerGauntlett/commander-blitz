@@ -99,6 +99,21 @@ class ManaCost:
     def is_free(self) -> bool:
         return self.generic == 0 and self.x_count == 0 and not any(self.colored)
 
+    def plus(self, other: ManaCost | None) -> ManaCost:
+        """This cost with an additional cost folded in -- kicker, for instance.
+
+        The result is what gets *paid*; it is deliberately not what the card's
+        mana value is computed from, which stays the printed cost.
+        """
+        if other is None:
+            return self
+        return ManaCost(
+            generic=self.generic + other.generic,
+            colored=tuple(a + b for a, b in zip(self.colored, other.colored, strict=True)),
+            x_count=self.x_count + other.x_count,
+            text=self.text + other.text,
+        )
+
     def __str__(self) -> str:
         return self.text or "{0}"
 

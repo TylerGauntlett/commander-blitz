@@ -43,6 +43,14 @@ class GameObject:
     counters: dict[str, int] = field(default_factory=dict)
     attached_to: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
+    #: Set once "it becomes monstrous"; the whole point of the word is that it
+    #: only happens once, so the ability checks this before doing anything.
+    monstrous: bool = False
+    #: "Those creatures don't untap during their controllers' untap steps for as
+    #: long as you control this creature" -- the oid of the permanent holding
+    #: them down.  The untap step clears it once that permanent is gone, which is
+    #: what makes the lock end with its source rather than lasting forever.
+    frozen_by: int | None = None
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -63,6 +71,8 @@ class GameObject:
         self.counters = {}
         self.attached_to = None
         self.until_eot = []
+        self.monstrous = False
+        self.frozen_by = None
         self.entered_turn = -1
         self.stack_id = None
 
@@ -99,6 +109,16 @@ class GameObject:
         """True if this creature has not been controlled since the turn began."""
         return self.entered_turn >= turn
 
+    @property
+    def abilities_locked(self) -> bool:
+        """"Its activated abilities can't be activated this turn."
+
+        Covers mana abilities too, which is why the mana solver has to ask as
+        well as legality: a locked land that still taps for mana would make the
+        whole effect worth nothing against the only decks that mind it.
+        """
+        return any(t.kind == "lock_abilities" for t in self.until_eot)
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "oid": self.oid,
@@ -114,4 +134,6 @@ class GameObject:
             "is_commander": self.is_commander,
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
+            "monstrous": self.monstrous,
+            "frozen_by": self.frozen_by,
         }

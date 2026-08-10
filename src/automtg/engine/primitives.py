@@ -306,6 +306,20 @@ def grant_keyword(state: GameState, oid: int, keyword: str, source: int | None =
     state.bump_chars()
 
 
+def lock_abilities(state: GameState, oid: int, source: int | None = None) -> None:
+    """"Its activated abilities can't be activated this turn."
+
+    Recorded as an until-end-of-turn effect like a pump, so the cleanup step
+    already knows to remove it and no new lifetime has to be tracked.
+    """
+    from .structs import TempEffect
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(TempEffect(kind="lock_abilities", source=source))
+
+
 def clear_until_eot(state: GameState) -> None:
     """Cleanup step: remove damage and every until-end-of-turn effect."""
     for oid in state.battlefield:
@@ -319,13 +333,25 @@ def clear_until_eot(state: GameState) -> None:
 
 
 def untap_all(state: GameState, pid: int) -> list[int]:
-    """Untap step: untap every permanent this player controls."""
+    """Untap step: untap every permanent this player controls.
+
+    Except the ones something is holding down.  The hold ends when its source
+    leaves the battlefield -- "for as long as you control this creature" -- and
+    this is where that is noticed, because the untap step is the only moment the
+    lock has any effect.
+    """
     untapped = []
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
-        if obj is not None and obj.controller == pid and obj.tapped:
-            obj.tapped = False
-            untapped.append(oid)
+        if obj is None or obj.controller != pid or not obj.tapped:
+            continue
+        if obj.frozen_by is not None:
+            holder = state.objects.get(obj.frozen_by)
+            if holder is not None and holder.on_battlefield:
+                continue
+            obj.frozen_by = None
+        obj.tapped = False
+        untapped.append(oid)
     if untapped:
         state.bump_chars()
         state.emit(EventType.UNTAPPED, player=pid, count=len(untapped))

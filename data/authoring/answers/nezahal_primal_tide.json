@@ -1,0 +1,91 @@
+{
+  "card": {
+    "id": "nezahal_primal_tide",
+    "name": "Nezahal, Primal Tide",
+    "oracle_text": "This spell can't be countered.\nYou have no maximum hand size.\nWhenever an opponent casts a noncreature spell, draw a card.\nDiscard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step.",
+    "mana_cost": "{5}{U}{U}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elder",
+      "Dinosaur"
+    ],
+    "power": 7,
+    "toughness": 7,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "uncounterable": true,
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You have no maximum hand size.",
+        "effect": "no_hand_limit",
+        "affects_player": "you"
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts a noncreature spell, draw a card.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "filter": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Discard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step.",
+        "cost": {
+          "discard": 3
+        },
+        "effects": [
+          {
+            "op": "exile",
+            "objects": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          {
+            "op": "delay",
+            "step": "end_step",
+            "text": "Return it to the battlefield tapped at the beginning of the next end step.",
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "self_only": true,
+                  "zone": "exile"
+                },
+                "tapped": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

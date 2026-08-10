@@ -5,6 +5,7 @@ clauses on triggers, and static ability conditions.
     {"all": [...]}  {"any": [...]}  {"not": {...}}
     {"exists": {selector}}
     {"zone_is": "battlefield"}
+    {"kicked": true}
 """
 
 from __future__ import annotations
@@ -19,7 +20,18 @@ if TYPE_CHECKING:  # pragma: no cover
     from ..state import GameState
 
 CONDITION_KEYS = frozenset(
-    {"cmp", "left", "right", "all", "any", "not", "exists", "zone_is", "is_your_turn"}
+    {
+        "cmp",
+        "left",
+        "right",
+        "all",
+        "any",
+        "not",
+        "exists",
+        "zone_is",
+        "is_your_turn",
+        "kicked",
+    }
 )
 
 
@@ -47,6 +59,8 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
     if "zone_is" in cond:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         return obj is not None and obj.zone.value == cond["zone_is"]
+    if "kicked" in cond:
+        return ctx.kicked == bool(cond["kicked"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:

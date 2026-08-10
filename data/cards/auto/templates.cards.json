@@ -688,6 +688,44 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play lands from your graveyard."
+        },
+        {
+          "affects_player": "you",
+          "effect": "double_land_triggers",
+          "kind": "static",
+          "text": "If a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ancient_greenwarden",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Ancient Greenwarden",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nYou may play lands from your graveyard.\nIf a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -975,6 +1013,64 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "arcane_denial",
+      "mana_cost": "{1}{U}",
+      "name": "Arcane Denial",
+      "oracle_text": "Counter target spell. Its controller may draw up to two cards at the beginning of the next turn's upkeep.\nYou draw a card at the beginning of the next turn's upkeep.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "opponent"
+            }
+          ],
+          "op": "delay",
+          "step": "upkeep",
+          "text": "Its controller may draw up to two cards at the beginning of the next turn's upkeep."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "delay",
+          "step": "upkeep",
+          "text": "You draw a card at the beginning of the next turn's upkeep."
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -1298,6 +1394,116 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "counters": {
+              "amount": 1,
+              "counter": "slumber",
+              "op": ">="
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as Arixmethes has a slumber counter on it, it's a land. (It's not a creature.)",
+          "types": [
+            "Land"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "slumber",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "slumber",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "remove_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Remove a slumber counter from Arixmethes?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, you may remove a slumber counter from Arixmethes.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{U}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "arixmethes_slumbering_isle",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Arixmethes, Slumbering Isle",
+      "oracle_text": "Arixmethes enters tapped with five slumber counters on it.\nAs long as Arixmethes has a slumber counter on it, it's a land. (It's not a creature.)\nWhenever you cast a spell, you may remove a slumber counter from Arixmethes.\n{T}: Add {G}{U}.",
+      "power": 12,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 5,
+          "counter": "slumber",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 12,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -3756,6 +3962,85 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "top_card",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "library"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "binding": "top_card"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "top_card"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, reveal the top card of your library. If it's a land card, put it onto the battlefield. Otherwise, put that card into your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "coiling_oracle",
+      "mana_cost": "{G}{U}",
+      "name": "Coiling Oracle",
+      "oracle_text": "When this creature enters, reveal the top card of your library. If it's a land card, put it onto the battlefield. Otherwise, put that card into your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -4003,6 +4288,100 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Island"
+                  ],
+                  "tapped": false,
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "subtypes": [
+                          "Island"
+                        ],
+                        "tapped": false,
+                        "zone": "battlefield"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Return an untapped Island you control to its owner's hand?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, sacrifice it unless you return an untapped Island you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{U}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "coral_atoll",
+      "name": "Coral Atoll",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, sacrifice it unless you return an untapped Island you control to its owner's hand.\n{T}: Add {C}{U}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -4101,6 +4480,103 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Cultivator Colossus's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a land card from your hand onto the battlefield tapped?",
+              "repeat": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may put a land card from your hand onto the battlefield tapped. If you do, draw a card and repeat this process.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cultivator_colossus",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Cultivator Colossus",
+      "oracle_text": "Trample\nCultivator Colossus's power and toughness are each equal to the number of lands you control.\nWhen this creature enters, you may put a land card from your hand onto the battlefield tapped. If you do, draw a card and repeat this process.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Beast"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -6623,6 +7099,42 @@
       "colors": [
         "G"
       ],
+      "cost_reduction": {
+        "total_power": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "ghalta_primal_hunger",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{10}{G}{G}",
+      "name": "Ghalta, Primal Hunger",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total power of creatures you control.\nTrample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": 12,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dinosaur"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 12,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "id": "gigantosaurus",
       "mana_cost": "{G}{G}{G}{G}{G}",
       "name": "Gigantosaurus",
@@ -9051,6 +9563,59 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "into_the_roil",
+      "kicker": "{1}{U}",
+      "mana_cost": "{1}{U}",
+      "name": "Into the Roil",
+      "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nReturn target nonland permanent to its owner's hand. If this spell was kicked, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "condition": {
+            "kicked": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -9447,6 +10012,100 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Forest"
+                  ],
+                  "tapped": false,
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "subtypes": [
+                          "Forest"
+                        ],
+                        "tapped": false,
+                        "zone": "battlefield"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Return an untapped Forest you control to its owner's hand?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, sacrifice it unless you return an untapped Forest you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "jungle_basin",
+      "name": "Jungle Basin",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, sacrifice it unless you return an untapped Forest you control to its owner's hand.\n{T}: Add {C}{G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -10136,6 +10795,115 @@
       "types": [
         "Creature"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "komas_coil_3_3_u"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, create a 3/3 blue Serpent creature token named Koma's Coil.",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "subtypes": [
+                "Serpent"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "tap"
+                    },
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "lock_abilities"
+                    }
+                  ],
+                  "label": "Tap target permanent; its activated abilities can't be activated this turn"
+                },
+                {
+                  "effects": [
+                    {
+                      "keyword": "indestructible",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "label": "Koma gains indestructible until end of turn"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Sacrifice another Serpent: Choose one — • Tap target permanent. Its activated abilities can't be activated this turn. • Koma gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "koma_cosmos_serpent",
+      "mana_cost": "{3}{G}{G}{U}{U}",
+      "name": "Koma, Cosmos Serpent",
+      "oracle_text": "This spell can't be countered.\nAt the beginning of each upkeep, create a 3/3 blue Serpent creature token named Koma's Coil.\nSacrifice another Serpent: Choose one —\n• Tap target permanent. Its activated abilities can't be activated this turn.\n• Koma gains indestructible until end of turn.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Serpent"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
     },
     {
       "color_identity": [
@@ -12000,6 +12768,72 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "mossborn_hydra",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Mossborn Hydra",
+      "oracle_text": "Trample\nThis creature enters with a +1/+1 counter on it.\nLandfall — Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Hydra"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true
@@ -12369,6 +13203,93 @@
       "types": [
         "Land"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell, draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "discard": 3
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return it to the battlefield tapped at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "Discard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nezahal_primal_tide",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Nezahal, Primal Tide",
+      "oracle_text": "This spell can't be countered.\nYou have no maximum hand size.\nWhenever an opponent casts a noncreature spell, draw a card.\nDiscard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dinosaur"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
     },
     {
       "color_identity": [
@@ -16008,6 +16929,80 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{6}{U}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{6}{U}{U}: Monstrosity 4."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "freeze"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 4,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature becomes monstrous, tap up to four target creatures. Those creatures don't untap during their controllers' untap steps for as long as you control this creature.",
+          "trigger": {
+            "event": "becomes_monstrous",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shipbreaker_kraken",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Shipbreaker Kraken",
+      "oracle_text": "{6}{U}{U}: Monstrosity 4. (If this creature isn't monstrous, put four +1/+1 counters on it and it becomes monstrous.)\nWhen this creature becomes monstrous, tap up to four target creatures. Those creatures don't untap during their controllers' untap steps for as long as you control this creature.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -16349,6 +17344,88 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "simic_charm",
+      "mana_cost": "{G}{U}",
+      "name": "Simic Charm",
+      "oracle_text": "Choose one —\n• Target creature gets +3/+3 until end of turn.\n• Permanents you control gain hexproof until end of turn.\n• Return target creature to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 3
+                  },
+                  "toughness": {
+                    "const": 3
+                  }
+                }
+              ],
+              "label": "Target creature gets +3/+3 until end of turn"
+            },
+            {
+              "effects": [
+                {
+                  "keyword": "hexproof",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Permanents you control gain hexproof until end of turn"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Return target creature to its owner's hand"
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

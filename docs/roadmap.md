@@ -20,7 +20,7 @@ Full design in [card-authoring.md](card-authoring.md).
 
 ### What shipped
 
-**Playable cards: 230 → 687.** 457 written by the pipeline, committed to
+**Playable cards: 230 → 724.** Written by the pipeline, committed to
 `data/cards/auto/`, re-verified on every test run.
 
 - **A verifier with six gates**, which is the centre of the design rather than
@@ -50,22 +50,55 @@ trigger the DSL has always been able to say.
 session and an unattended API worker read the identical file and write the
 identical answer.
 
+### The imported deck, card by card
+
+The headline metric for this work is the deck that started it
+(`moxfield.com/decks/brDuu9c6_0yuaoHLijLFHw`). **72 distinct cards; 8 still
+inert.** Everything else plays.
+
+Each of the following was a *mechanic* rather than effort, and each shipped with
+its own unit tests and a `card-dsl.md` entry:
+
+| Mechanic | Card that needed it |
+|---|---|
+| Delayed triggers (`delay`) | Arcane Denial, Nezahal |
+| Kicker | Into the Roil |
+| Modal spells with a shared optional target | Simic Charm, Koma |
+| "Its activated abilities can't be activated" (`lock_abilities`) | Koma |
+| `else`/`condition`/`repeat` on `may` | Coral Atoll, Jungle Basin, Cultivator Colossus |
+| Filtering a `binding` — "is the card I revealed a land?" | Coiling Oracle |
+| `*/*` via a static `set_pt` reading the board | Cultivator Colossus |
+| `set_types` plus "as long as" conditions on counters | Arixmethes |
+| `double_land_triggers` | Ancient Greenwarden |
+| `cost_reduction` | Ghalta |
+| Monstrosity and `freeze` | Shipbreaker Kraken |
+
+One of those found a real bug rather than a gap: `self_enters` and
+`permanent_enters` are the same engine event, separated only by `source: "self"`,
+so a card omitting it fired on *every* permanent entering. Every hand-written
+card had it; three new ones did not. The loader now supplies it, because the name
+can only mean one thing.
+
 ### What is left
 
-`--report` names the blockers, ranked by how many cards each holds up: **modal
-spells** (153), **Flashback** (75), **Crew** (74), **Cycling** (71), **Ward**
-(41), **Convoke** (39), **Kicker**.
+Eight cards, and they need subsystems rather than card files:
 
-Modal looks cheap and is not: `choose_mode` exists, but modes resolve *after*
-targets are chosen at cast, and a card whose modes target different things has
-nowhere to put that.
+- **Copy effects** — Scute Swarm, Spitting Image. A token that is a copy of
+  another creature has no card definition to point at.
+- **Protection** — Greensleeves. Needs targeting, damage and blocking to all ask.
+- **Suspend and retrace** — Search for Tomorrow, Spitting Image. Both are new
+  ways to cast a card from somewhere other than the hand.
+- **Granting an ability to another permanent** — Herd Heirloom, which also needs
+  mana restricted to a kind of spell.
+- **Splitting cards into piles** — Fact or Fiction, whose decision is an
+  opponent's.
+- **Triggering off tapping a land for mana** — Vorinclex, which is awkward while
+  mana payment is automatic and the player never names a land.
+- **Kodama of the East Tree**, whose trigger cares where a permanent came from.
 
-Beyond them is the genuine long tail — bespoke rules, one packet each. That is
-what an imported deck's remaining dead cards are: Ancient Greenwarden's "play
-lands from your graveyard", Scute Swarm's landfall, Ghalta's cost reduction.
-
-The template tier was never going to touch those. It was the cheap coverage that
-had to come first so the expensive tier is not spent on Grizzly Bears.
+Across the whole catalog `--report` still ranks **Flashback** (75), **Crew** (74),
+**Cycling** (71), **Ward** (41) and **Convoke** (39) as the biggest remaining
+blocks by card count.
 
 ## All Card Support — done
 

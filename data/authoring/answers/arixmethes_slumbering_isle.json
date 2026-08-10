@@ -1,0 +1,118 @@
+{
+  "card": {
+    "id": "arixmethes_slumbering_isle",
+    "name": "Arixmethes, Slumbering Isle",
+    "oracle_text": "Arixmethes enters tapped with five slumber counters on it.\nAs long as Arixmethes has a slumber counter on it, it's a land. (It's not a creature.)\nWhenever you cast a spell, you may remove a slumber counter from Arixmethes.\n{T}: Add {G}{U}.",
+    "mana_cost": "{2}{G}{U}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Kraken"
+    ],
+    "power": 12,
+    "toughness": 12,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "color_identity": [
+      "G",
+      "U"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      },
+      {
+        "event": "self_enters_with_counters",
+        "counter": "slumber",
+        "amount": 5
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as Arixmethes has a slumber counter on it, it's a land. (It's not a creature.)",
+        "effect": "set_types",
+        "affects": {
+          "self_only": true
+        },
+        "types": [
+          "Land"
+        ],
+        "condition": {
+          "counters": {
+            "counter": "slumber",
+            "op": ">=",
+            "amount": 1
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a spell, you may remove a slumber counter from Arixmethes.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Remove a slumber counter from Arixmethes?",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "slumber",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "effects": [
+              {
+                "op": "remove_counters",
+                "objects": {
+                  "self_only": true
+                },
+                "counter": "slumber",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}{U}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{G}{U}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {
+      "kind": "slumber",
+      "amount": 5
+    }
+  }
+}

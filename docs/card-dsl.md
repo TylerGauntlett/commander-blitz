@@ -47,18 +47,18 @@ silently producing a card that looks implemented and does nothing.
 
 ## Effect ops
 
-38 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+42 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` |
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` |
 | Modify | `pump` `grant_keyword` `set_pt` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` |
-| Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` |
+| Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` `delay` |
 
 ## Selectors — "which objects"
 
@@ -87,12 +87,30 @@ Every key is optional; all present keys must match.
 }
 ```
 
-Two shorthands bypass matching entirely:
+Two shorthands name a pool directly instead of searching a zone:
 
 ```jsonc
 { "target": "t1" }       // whatever was chosen for target spec t1
 { "binding": "subject" } // the object a trigger bound (the land that was played, ...)
 ```
+
+On their own they *are* the whole selector. Combined with other keys they are the
+**source** and the rest still filters, which is how a card asks a question about
+one particular card rather than about a zone:
+
+```jsonc
+// Coiling Oracle: is the card I just bound a land?
+{ "op": "snapshot", "as": "top_card", "objects": { "zone": "library", "controller": "you" } },
+{ "op": "if",
+  "condition": { "exists": { "binding": "top_card", "zone": "library", "types": ["Land"] } },
+  "then": [ { "op": "put_onto_battlefield", "objects": { "binding": "top_card" } } ],
+  "else": [ { "op": "return_to_hand",       "objects": { "binding": "top_card" } } ] }
+```
+
+Without that, the nearest thing a card could ask was "is there a land *somewhere*
+in my library", which is true almost always and would have made the branch a
+formality. Note the explicit `"zone": "library"` — filtering defaults to the
+battlefield, and a card being asked about anywhere else has to say so.
 
 ## Value expressions
 
@@ -108,6 +126,7 @@ Anywhere a number is expected:
 { "life_of": "you" }
 { "cards_in_hand": "each_opponent" }
 { "binding": "amount" }                         // a value the trigger carried
+{ "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
 
@@ -190,8 +209,34 @@ characteristics — the loader rejects anything else. See
   "power": { "const": 1 }, "toughness": { "const": 1 } }
 ```
 
-Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `extra_land_drops`.
+Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
+`extra_land_drops`, plus the player-wide ones below.
 Values inside a static may only be `{"const": n}` or `{"count": filter}`.
+
+`set_types` **replaces** the printed types rather than adding to them —
+Arixmethes is "a land (it's not a creature)", which `add_subtype` cannot say. A
+`{"count": filter}` value is also how a creature printed `*/*` works:
+
+```jsonc
+{ "kind": "static", "effect": "set_pt", "affects": { "self_only": true },
+  "power":     { "count": { "controller": "you", "types": ["Land"] } },
+  "toughness": { "count": { "controller": "you", "types": ["Land"] } } }
+```
+
+### "As long as…"
+
+A static may carry a `condition`, and it may ask exactly one question: how many
+counters of a kind sit on **its own source**.
+
+```jsonc
+{ "kind": "static", "effect": "set_types",
+  "affects": { "self_only": true }, "types": ["Land"],
+  "condition": { "counters": { "counter": "slumber", "op": ">=", "amount": 1 } } }
+```
+
+Deliberately that small, and for the same reason `affects` filters are: counters
+are board state, so a condition cannot depend on another static's output and the
+fixed-order pipeline stays acyclic.
 
 ## Worked examples
 
@@ -357,7 +402,7 @@ and state-based actions put it in the graveyard.
 
 ## Player-wide statics
 
-Four static effects describe the *player* rather than a characteristic, so they
+Five static effects describe the *player* rather than a characteristic, so they
 take `affects_player` instead of `affects`:
 
 ```jsonc
@@ -366,7 +411,13 @@ take `affects_player` instead of `affects`:
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 ```
+
+`double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
+permanents' triggers fire an additional time. Read by `triggers.collect`, which
+queues the ability **twice** rather than resolving it twice — the two copies are
+separate abilities on the stack and anything in between still goes between them.
 
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
@@ -374,6 +425,192 @@ Dryad of the Ilysian Grove is two drops from anywhere, which is correct.
 
 `play_lands_from_library_top` offers the top card only. That is what the cards
 say, and it is also the only part of a hidden zone anybody is entitled to see.
+
+## "Sacrifice it unless you…"
+
+`may` takes an `else`, and that is what turns an optional effect into a cost:
+
+```jsonc
+{ "op": "if",
+  "condition": { "exists": { "zone": "battlefield", "controller": "you",
+                             "subtypes": ["Island"], "tapped": false } },
+  "then": [ { "op": "may",
+              "prompt": "Return an untapped Island you control to its owner's hand?",
+              "effects": [ { "op": "return_to_hand", "objects": { ... } } ],
+              "else":    [ { "op": "sacrifice", "objects": { "self_only": true } } ] } ],
+  "else": [ { "op": "sacrifice", "objects": { "self_only": true } } ] }
+```
+
+The outer `exists` guard is not optional bookkeeping. Without it the card offers
+a "may" that can be accepted when there is nothing to return, and a Karoo land
+that never costs anything is simply a better card than the one printed — the
+failure this whole format exists to refuse.
+
+`may` also takes `condition` (ask only while it holds) and `repeat` (ask again
+after each yes, stop at the first no), which together are "…if you do, draw a
+card and **repeat this process**":
+
+```jsonc
+{ "op": "may", "repeat": true,
+  "prompt": "Put a land card from your hand onto the battlefield tapped?",
+  "condition": { "exists": { "zone": "hand", "controller": "you", "types": ["Land"] } },
+  "effects": [ { "op": "put_onto_battlefield", "objects": { ... }, "tapped": true },
+               { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+A loop rather than a counted `repeat` because the number of iterations is not
+knowable up front — Cultivator Colossus draws into the lands it is putting down —
+and because a counted version would let a player decline and then accept, which
+the printed card does not. Bounded at 100 iterations, like `repeat`.
+
+## Modal spells with a target
+
+`choose_mode` picks its mode as the spell resolves (a
+[documented simplification](rules-coverage.md)), but a spell's *targets* are
+chosen when it is cast. Where the modes point at different things, that gap is
+closed by declaring one **optional** target that the modes that need it share:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "count": 1, "optional": true,
+    "selector": { "zone": "battlefield", "types": ["Creature"] } }
+],
+"spell_effects": [
+  { "op": "choose_mode", "count": 1, "modes": [
+    { "label": "Target creature gets +3/+3 until end of turn",
+      "effects": [ { "op": "pump", "objects": { "target": "t1" }, ... } ] },
+    { "label": "Permanents you control gain hexproof until end of turn",
+      "effects": [ { "op": "grant_keyword", ... } ] },
+    { "label": "Return target creature to its owner's hand",
+      "effects": [ { "op": "return_to_hand", "objects": { "target": "t1" } } ] }
+  ] }
+]
+```
+
+`optional: true` is what makes Simic Charm castable with no creature anywhere —
+its second mode needs no target, and without the flag the card would vanish from
+the hand's legal actions exactly when that mode is the one you want.
+
+Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
+wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern.
+
+## Monstrosity, and holding creatures down
+
+```jsonc
+{ "op": "monstrosity", "amount": { "const": 4 } }
+```
+
+Puts the counters on and sets a one-way `monstrous` flag. The flag *is* the
+mechanic: without it the ability is a repeatable pump and the
+`becomes_monstrous` trigger fires every time instead of once.
+
+```jsonc
+{ "op": "freeze", "objects": { "target": "t1" } }
+```
+
+"…don't untap during their controllers' untap steps for as long as you control
+this creature." The frozen permanent records the **oid of the source** rather
+than a flag with a lifetime of its own, because the hold has to end when the
+source leaves and pointing at it is the only way the untap step can tell.
+
+## "Its activated abilities can't be activated this turn"
+
+```jsonc
+{ "op": "lock_abilities", "objects": { "target": "t1" } }
+```
+
+An until-end-of-turn effect, so the cleanup step already removes it. It is
+deliberately *not* a keyword: a keyword is a characteristic and would show in the
+card's keyword list, and this is a permission. It is read by `legality` and by
+the mana solver — mana abilities are activated abilities too, and a locked land
+that still tapped for mana would make the effect worth nothing.
+
+## Cost reduction
+
+```jsonc
+{ "id": "ghalta_primal_hunger", "mana_cost": "{10}{G}{G}",
+  "cost_reduction": { "total_power": { "controller": "you", "types": ["Creature"] } } }
+```
+
+Also `{"count": filter}`, for "costs {1} less for each…". Generic only, clamped
+at zero: "costs {X} less" never reaches through the generic part into the
+coloured pips, which is both the rule and the only thing the payment solver could
+act on. Mana value stays what is printed.
+
+Read off the board every time it is asked for, never stored — Ghalta is a
+twelve-drop or a two-drop depending on what is already in play. Legality and
+payment both call `costs.cost_reduction`, because a reduction one of them knows
+about and the other does not is the difference between an uncastable card and a
+free one.
+
+The filter may only read printed characteristics, like a static's: it is
+evaluated while deciding what is castable, before anything is on the stack.
+
+## Kicker
+
+An additional cost the caster may choose to pay. Two fields, and they only mean
+anything together:
+
+```jsonc
+{
+  "id": "into_the_roil",
+  "mana_cost": "{1}{U}",
+  "kicker": "{1}{U}",
+  "spell_effects": [
+    { "op": "return_to_hand", "objects": { "target": "t1" } },
+    { "op": "if", "condition": { "kicked": true },
+      "then": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+  ]
+}
+```
+
+Legality offers a kickable card **twice** — unkicked first, then kicked, when the
+extra mana is there — and the two are different actions, not one action with a
+flag the client sets. `kicker` is deliberately not folded into `mana_cost`: mana
+value stays what is printed, and the choice is the mechanic.
+
+The loader rejects **half** a kicker in either direction: a `kicker` cost that no
+effect reads via `kicked`, and a `kicked` condition on a card with no `kicker`.
+One is a spell that charges more and does the same thing; the other is a clause
+that can never fire. Both load cleanly and neither shows on the board, which is
+why they are caught at load time.
+
+Gate 5 of the authoring verifier measures a kicker card **kicked**, because that
+is the strictly larger claim; gate 4 still casts it unkicked, so neither line
+goes unexercised.
+
+## Delayed triggers — "at the beginning of the next …"
+
+Every other trigger in the engine fires *from* an event that has just happened.
+This is the other shape: an effect that has already resolved arranging for
+something to happen later, with no object left to hang a trigger on. Arcane
+Denial is the whole argument for it — without the delayed draws it is a strictly
+worse Counterspell, and nothing on screen would say so.
+
+```jsonc
+{ "op": "delay", "step": "upkeep",
+  "text": "At the beginning of the next turn's upkeep, draw a card.",
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+`step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_step`, checked at
+load time like every other piece of vocabulary: a misspelled step would schedule
+something that never comes due.
+
+Two things are worth knowing before writing one:
+
+- **Bindings are captured when it is scheduled**, not when it fires. That is the
+  point — by the time it fires, the object it was about may be in another zone.
+  `{"binding": "how_many"}` inside the scheduled effects reads the value the
+  scheduling effect had.
+- **It waits for the step's *next* occurrence.** `begin_step` for the current
+  step has already run by the time any effect resolves, so scheduling `upkeep`
+  during an upkeep means the following turn's, which is what the cards say.
+
+The scheduled effects resolve directly rather than going on the stack. That is a
+divergence — a delayed trigger is a real triggered ability and should be
+respondable — recorded with the other simplifications in
+[rules-coverage.md](rules-coverage.md).
 
 ## "This spell can't be countered"
 

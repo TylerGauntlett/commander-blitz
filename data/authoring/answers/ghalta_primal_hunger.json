@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "ghalta_primal_hunger",
+    "name": "Ghalta, Primal Hunger",
+    "oracle_text": "This spell costs {X} less to cast, where X is the total power of creatures you control.\nTrample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
+    "mana_cost": "{10}{G}{G}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elder",
+      "Dinosaur"
+    ],
+    "power": 12,
+    "toughness": 12,
+    "keywords": [
+      "trample"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "cost_reduction": {
+      "total_power": {
+        "controller": "you",
+        "types": [
+          "Creature"
+        ]
+      }
+    }
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

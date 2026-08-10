@@ -8182,12 +8182,12 @@
     },
     "Ancient Greenwarden": {
       "edhrec_rank": 682,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Greenwarden",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "7109092e-52c3-417b-a2c0-340eabb5af9d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ancient Grudge": {
@@ -11202,12 +11202,12 @@
     },
     "Arcane Denial": {
       "edhrec_rank": 54,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Denial",
-      "reason": "no template for: Counter target spell. Its controller may draw up to two cards at the beginning of the next",
+      "reason": "",
       "scryfall_id": "5eb843ef-b223-40d0-a461-54b16d188d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Arcane Encyclopedia": {
@@ -12952,12 +12952,12 @@
     },
     "Arixmethes, Slumbering Isle": {
       "edhrec_rank": 1983,
-      "gate": "template",
+      "gate": null,
       "name": "Arixmethes, Slumbering Isle",
-      "reason": "no template for: As long as Arixmethes has a slumber counter on it, it's a land",
+      "reason": "",
       "scryfall_id": "bf561379-4e5f-486a-bcdf-6e08e105316e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Arjun, the Shifting Flame": {
@@ -49372,12 +49372,12 @@
     },
     "Coiling Oracle": {
       "edhrec_rank": 1308,
-      "gate": "template",
+      "gate": null,
       "name": "Coiling Oracle",
-      "reason": "no template for: When this creature enters, reveal the top card of your library. If it's a land card, put i",
+      "reason": "",
       "scryfall_id": "9cfb4080-0f31-4352-b47a-a36955b68a18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Coiling Rebirth": {
@@ -52842,12 +52842,12 @@
     },
     "Coral Atoll": {
       "edhrec_rank": 5798,
-      "gate": "template",
+      "gate": null,
       "name": "Coral Atoll",
-      "reason": "no template for: When this land enters, sacrifice it unless you return an untapped Island you control to it",
+      "reason": "",
       "scryfall_id": "77e3ea71-ea9f-4bbf-93cb-0f6339f8a3ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Coral Barrier": {
@@ -57702,12 +57702,12 @@
     },
     "Cultivator Colossus": {
       "edhrec_rank": 1589,
-      "gate": "template",
+      "gate": null,
       "name": "Cultivator Colossus",
-      "reason": "no template for: 's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "426ed66e-41b3-4e44-90a2-697aafaa8c5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cultivator Drone": {
@@ -106512,12 +106512,12 @@
     },
     "Ghalta, Primal Hunger": {
       "edhrec_rank": 466,
-      "gate": "template",
+      "gate": null,
       "name": "Ghalta, Primal Hunger",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total power of creatures you control",
+      "reason": "",
       "scryfall_id": "3f89bc6f-fc43-49ad-881f-8897750e4b5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ghalta, Primal Hunger // Ghalta, Primal Hunger": {
@@ -137162,12 +137162,12 @@
     },
     "Into the Roil": {
       "edhrec_rank": 5358,
-      "gate": "template",
+      "gate": null,
       "name": "Into the Roil",
-      "reason": "no template for: Kicker {1}{U}",
+      "reason": "",
       "scryfall_id": "25edefa9-9fff-4b71-83ae-696c196a795c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Into the Story": {
@@ -143112,12 +143112,12 @@
     },
     "Jungle Basin": {
       "edhrec_rank": 5898,
-      "gate": "template",
+      "gate": null,
       "name": "Jungle Basin",
-      "reason": "no template for: When this land enters, sacrifice it unless you return an untapped Forest you control to it",
+      "reason": "",
       "scryfall_id": "d4929e39-fccc-450b-bb18-f5ad56a397bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jungle Creeper": {
@@ -150032,12 +150032,12 @@
     },
     "Koma, Cosmos Serpent": {
       "edhrec_rank": 1406,
-      "gate": "template",
+      "gate": null,
       "name": "Koma, Cosmos Serpent",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "25b26103-d7f4-43c4-976f-f061476b11bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Koma, World-Eater": {
@@ -178202,12 +178202,12 @@
     },
     "Mossborn Hydra": {
       "edhrec_rank": 799,
-      "gate": "template",
+      "gate": null,
       "name": "Mossborn Hydra",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "2be84175-062c-439f-abad-c57cd9eb490f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mossbridge Troll": {
@@ -184462,12 +184462,12 @@
     },
     "Nezahal, Primal Tide": {
       "edhrec_rank": 1088,
-      "gate": "residual",
+      "gate": null,
       "name": "Nezahal, Primal Tide",
-      "reason": "printed text not represented: This spell can't be countered / Discard three cards: Exile Nezahal. Return it to the battlefield tapped under its owner's control at the beginning of the next end step",
+      "reason": "",
       "scryfall_id": "83731072-3c9f-4e47-802c-b54a59b865f8",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nezumi Bladeblesser": {
@@ -242432,12 +242432,12 @@
     },
     "Shipbreaker Kraken": {
       "edhrec_rank": 8482,
-      "gate": "template",
+      "gate": null,
       "name": "Shipbreaker Kraken",
-      "reason": "no template for: {6}{U}{U}: Monstrosity 4",
+      "reason": "",
       "scryfall_id": "2e558f0a-f921-4ecf-b1c9-2c93aa2d3fd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Shipwreck Dowser": {
@@ -245902,12 +245902,12 @@
     },
     "Simic Charm": {
       "edhrec_rank": 2821,
-      "gate": "template",
+      "gate": null,
       "name": "Simic Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3384ee4e-738f-4442-bccd-4f96022b7219",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Simic Cluestone": {
