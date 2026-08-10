@@ -40,7 +40,7 @@ const SCALE: Record<CardVariant, number> = {
 const meta = {
   title: "Game/CardFace",
   component: CardFace,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
   render: (args) => (
     <div
       className="card card--static"
@@ -218,7 +218,7 @@ export const LongName: Story = {
 /** Loaded, and this card has no printing: the hatched plate, drawn on purpose. */
 export const NoArt: Story = {
   args: { card: pool.krakenToken() },
-  parameters: { automtg: { frame: "bare", art: "none" } },
+  parameters: { automtg: { mount: "bare", art: "none" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Kraken");

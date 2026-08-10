@@ -34,6 +34,7 @@ const imported = deckDetail({
 const meta = {
   title: "Lobby/DeckDossier",
   component: DeckDossier,
+  parameters: { automtg: { mount: "screen" } },
   args: { canTake: true, onTake: fn(), onClose: fn() },
 } satisfies Meta<typeof DeckDossier>;
 
@@ -105,7 +106,7 @@ export const CannotTake: Story = {
  */
 export const Ratings: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
   render: () => (
     <div style={{ display: "grid", gap: 8, maxWidth: 320 }}>
       <RatingBar label="Speed" value={1} />
@@ -124,7 +125,7 @@ export const Ratings: Story = {
 /** The curve, tallest column at full height. */
 export const Curve: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
   render: () => <ManaCurve values={[9, 13, 18, 7, 7, 3, 5]} />,
   play: async ({ canvasElement }) => {
     const bars = [...canvasElement.querySelectorAll<HTMLElement>(".curve__bar")];
@@ -140,7 +141,7 @@ export const Curve: Story = {
 /** No curve at all: said, rather than drawn as a flat line. */
 export const EmptyCurve: Story = {
   args: { deckId: precon.id },
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
   render: () => <ManaCurve values={[]} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

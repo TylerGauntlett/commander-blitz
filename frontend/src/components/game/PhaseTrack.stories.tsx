@@ -15,7 +15,7 @@ import { PhaseTrack } from "./PhaseTrack";
 const meta = {
   title: "Game/PhaseTrack",
   component: PhaseTrack,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "trackRow" } },
 } satisfies Meta<typeof PhaseTrack>;
 
 export default meta;

@@ -57,10 +57,11 @@ export default defineConfig({
         plugins: [storybookTest({ configDir: ".storybook" })],
         test: {
           name: "storybook",
-          // No setup file: since Storybook 10.3 the addon applies `preview.tsx`'s
-          // annotations itself, and calling `setProjectAnnotations` as well makes
-          // it skip its own provisioning -- which is one more way for the runner
-          // and the browser to disagree about what a story is.
+          // The setup file only flags that this is the runner, so `preview.tsx`
+          // can hold motion still here and let it play in the browser. It must
+          // not call `setProjectAnnotations` -- the addon has applied the
+          // preview's annotations itself since 10.3.
+          setupFiles: [".storybook/vitest.setup.ts"],
           browser: {
             enabled: true,
             headless: true,

@@ -9,10 +9,10 @@
  *      makes is meaningless.
  *   2. The UI store is pristine. It is module state, so one story's staged
  *      attackers are the next story's, and the failure looks like flake.
- *   3. Motion is off. `layoutId` transitions and hover springs are the reason a
- *      `getByTestId` immediately after a click can genuinely miss.
- *   4. The board has a height. This one is subtle and is explained at
- *      `withFrame` below.
+ *   3. Motion is held still *for the runner only*. A test needs determinism and
+ *      a person needs to see the thing move; see `withMotion`.
+ *   4. The component is where the app puts it. This is the one that matters most
+ *      and is the easiest to get silently wrong -- see `withMount`.
  *
  * A story configures the harness through `parameters.automtg`, never by
  * reaching into the store itself -- that way the reset above stays the only
@@ -33,17 +33,25 @@ import "../src/styles/lobby.css";
 import { useUiStore } from "../src/state/uiStore";
 import type { ArtMode } from "../src/testing/art";
 import { artFor } from "../src/testing/art";
+import type { MountId } from "../src/testing/mounts";
+import { Mounted } from "../src/testing/mounts";
 
 /** What a story may ask the harness for. */
 export interface AutomtgParameters {
+  /**
+   * Where in the app this component hangs. Required -- see `withMount`.
+   *
+   * The chain is built from the app's own class names in `src/testing/mounts.tsx`,
+   * so the component's size comes from the app's stylesheets rather than from
+   * anything the story says.
+   */
+  mount?: MountId;
   /** Seed the UI store: selection, hover, staged combat, the open zone modal. */
   ui?: Partial<ReturnType<typeof useUiStore.getState>>;
   /** Override the art toolbar for one story -- `none` poses the plate. */
   art?: ArtMode;
   /** Entries pre-loaded into react-query, as `[queryKey, data]` pairs. */
   query?: [readonly unknown[], unknown][];
-  /** `screen` gives a full-height board; `bare` is for atoms. */
-  frame?: "screen" | "bare";
   /** Let the progressive zoom actually measure. Off by default; see below. */
   zoomLock?: boolean;
 }
@@ -113,45 +121,63 @@ const withQueryClient: Decorator = (Story, context) => {
 };
 
 /**
- * Motion, held still.
+ * Motion, held still -- but only for the runner.
  *
- * `transition={{ duration: 0 }}` alone is not enough, and the reason is by
- * design: `motion/springs.ts` exists so that "components import a preset; they
- * never inline a transition", and those presets are passed as explicit
- * `transition={ease}` props, which beat `MotionConfig`'s default every time.
- * `reducedMotion="always"` is the one that wins -- it snaps transforms and
- * layout animations, `layoutId` cross-fades included, and leaves only opacity
- * animating.
+ * A test needs determinism and a person needs to see the thing move. Holding
+ * motion still for both meant the hand fan's lift, the card's hover and every
+ * `layoutId` cross-fade simply did not happen when you opened Storybook to look
+ * at them, which makes a visual suite that cannot show you the visuals.
  *
- * That residual opacity is why play functions still use `findBy*` rather than
- * `getBy*`. No amount of configuration removes that rule.
+ * So the runner gets `reducedMotion="always"` and the browser gets the app's real
+ * springs. `reducedMotion` is the setting that works because
+ * `transition={{ duration: 0 }}` alone does not: `motion/springs.ts` exists so
+ * that components import a preset and pass it as an explicit `transition={ease}`,
+ * which beats `MotionConfig`'s default every time. `reducedMotion` overrides them.
+ *
+ * It still leaves opacity animating, which is why play functions use `findBy*`
+ * rather than `getBy*`. That rule is now load-bearing rather than belt and
+ * braces -- `Card.Tapped` has to wait for its transform because Motion writes it
+ * on the first frame, not during render.
  */
-const withMotion: Decorator = (Story) => (
-  <MotionConfig reducedMotion="always" transition={{ duration: 0 }}>
+const inTestRunner = (): boolean =>
+  (window as Window & { __STORY_TEST__?: boolean }).__STORY_TEST__ === true;
+
+const withMotion: Decorator = (Story) =>
+  inTestRunner() ? (
+    <MotionConfig reducedMotion="always" transition={{ duration: 0 }}>
+      <Story />
+    </MotionConfig>
+  ) : (
     <Story />
-  </MotionConfig>
-);
+  );
 
 /**
- * The box the story is drawn in.
+ * The chain of wrappers the app would have around this component.
  *
- * The height is not decoration. `board.css` gives `.table` `height: 100%`, and
- * `theme.css` only sets a height on `#root` -- but Storybook's canvas root is
- * `#storybook-root`. Left alone the chain resolves against auto height,
- * `useZoomFit` measures a table 0px tall, and `solveHandCardWidth` clamps every
- * card in the story to its 52px floor. The symptom is a board of postage
- * stamps and it looks like a CSS bug anywhere but here. `preview-head.html`
- * fixes the root; this fixes the wrapper.
+ * Required, and deliberately so. Every story used to inherit a generic
+ * full-height `.screen` box by saying nothing, which is the wrapper the app gives
+ * only `Table` and `PodLobby` -- so twelve components were drawn somewhere the app
+ * never puts them, and `PlayerOrb`, which has no width of its own, spanned the
+ * canvas instead of sitting in its 190px column. A default is how that happened,
+ * so there is no default. `bare` and `screen` are still valid answers; they just
+ * have to be chosen out loud.
  *
- * `--card-w-base` is deliberately *not* set here. It lives on `:root`, which is
- * the iframe's own `html`, and Chromium resolves its `clamp()` for real --
- * seeding it by hand would override the exact cascade these stories exist to
- * check.
+ * `--card-w-base` is deliberately not set anywhere in here. It lives on `:root`,
+ * which is the iframe's own `html`, and Chromium resolves its `clamp()` for real
+ * -- seeding it by hand would override the exact cascade these stories exist to
+ * check. Same for every other size: see `src/testing/mounts.tsx`.
  */
-const withFrame: Decorator = (Story, context) => {
-  const frame =
-    (context.parameters.automtg as AutomtgParameters | undefined)?.frame ?? "screen";
-  if (frame === "bare") {
+const withMount: Decorator = (Story, context) => {
+  const mount = (context.parameters.automtg as AutomtgParameters | undefined)?.mount;
+  if (!mount) {
+    throw new Error(
+      `story "${context.title} / ${context.name}" declares no mount. Add ` +
+        "`parameters: { automtg: { mount: ... } }` naming where the app hangs this " +
+        "component -- see src/testing/mounts.tsx. `bare` is a valid answer, but it " +
+        "has to be an answer.",
+    );
+  }
+  if (mount === "bare") {
     return (
       <div className="sb-frame-bare" style={{ padding: "1rem" }}>
         <Story />
@@ -159,9 +185,9 @@ const withFrame: Decorator = (Story, context) => {
     );
   }
   return (
-    <div className="screen" style={{ height: "100vh", width: "100%", overflow: "hidden" }}>
+    <Mounted mount={mount}>
       <Story />
-    </div>
+    </Mounted>
   );
 };
 
@@ -195,7 +221,7 @@ const preview: Preview = {
     };
   },
 
-  decorators: [withFrame, withMotion, withQueryClient],
+  decorators: [withMount, withMotion, withQueryClient],
 
   parameters: {
     layout: "fullscreen",

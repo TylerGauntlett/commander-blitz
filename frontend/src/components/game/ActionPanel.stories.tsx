@@ -26,7 +26,7 @@ import { ActionPanel } from "./ActionPanel";
 const meta = {
   title: "Game/ActionPanel",
   component: ActionPanel,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "railRightUnderPreview" } },
   args: {
     onAct: fn(),
     onStage: fn(),
@@ -171,7 +171,9 @@ export const StagingAnAttacker: Story = {
 /** Confirming sends the staged pairs in one declaration. */
 export const ConfirmingAttacks: Story = {
   args: from(scenarios.combatDeclareAttackers()),
-  parameters: { automtg: { frame: "bare", ui: { stagedAttacks: { 301: 1, 302: 2 } } } },
+  parameters: {
+    automtg: { mount: "railRightUnderPreview", ui: { stagedAttacks: { 301: 1, 302: 2 } } },
+  },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("combat-panel");

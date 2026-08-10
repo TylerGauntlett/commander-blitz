@@ -31,7 +31,7 @@ const meta = {
     onClose: fn(),
     onImported: fn(),
   },
-  parameters: { automtg: { query: cards } },
+  parameters: { automtg: { mount: "screen", query: cards } },
 } satisfies Meta<typeof DeckCatalog>;
 
 export default meta;

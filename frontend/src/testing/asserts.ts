@@ -70,3 +70,56 @@ export function expectWithin(root: HTMLElement, container: HTMLElement, slack = 
     expect(box.right, "hangs off the right").toBeLessThanOrEqual(bounds.right + slack);
   }
 }
+
+/**
+ * Resolve a CSS length in the document the element lives in.
+ *
+ * A clamp of `vh` cannot be compared to a literal: a story runs in an iframe
+ * whose height is not the window's, and `theme.css` has a media query keyed on
+ * viewport height too. Writing the value onto a throwaway probe and reading it
+ * back is the only way to get the number *this* document would have used.
+ */
+function resolveLength(el: HTMLElement, value: string): number {
+  const probe = el.ownerDocument.createElement("div");
+  probe.style.position = "absolute";
+  probe.style.visibility = "hidden";
+  probe.style.height = value;
+  el.ownerDocument.body.appendChild(probe);
+  const px = probe.getBoundingClientRect().height;
+  probe.remove();
+  return px;
+}
+
+/**
+ * The component is the size its mount gives it in the app.
+ *
+ * Compared against `appGeometry.ts` -- the numbers `board.css` and `lobby.css`
+ * state -- rather than against the mount that produced the box, because
+ * comparing a thing to itself passes whatever it is. A failure means the story
+ * lost its mount, or the app's layout moved and the stories now lie.
+ */
+export function expectMountedLike(
+  el: HTMLElement,
+  expected: { width?: number | string; height?: number | string; slack?: number },
+): void {
+  const slack = expected.slack ?? 1;
+  const box = el.getBoundingClientRect();
+  if (expected.width !== undefined) {
+    const want =
+      typeof expected.width === "number" ? expected.width : resolveLength(el, expected.width);
+    expect(
+      Math.abs(box.width - want),
+      `width ${Math.round(box.width)}px, but the app gives this ${Math.round(want)}px`,
+    ).toBeLessThanOrEqual(slack);
+  }
+  if (expected.height !== undefined) {
+    const want =
+      typeof expected.height === "number"
+        ? expected.height
+        : resolveLength(el, expected.height);
+    expect(
+      Math.abs(box.height - want),
+      `height ${Math.round(box.height)}px, but the app gives this ${Math.round(want)}px`,
+    ).toBeLessThanOrEqual(slack);
+  }
+}

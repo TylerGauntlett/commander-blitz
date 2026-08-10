@@ -37,7 +37,7 @@ const meta = {
   component: PodSeat,
   parameters: {
     automtg: {
-      frame: "bare",
+      mount: "podHand",
       // Seeded so the commander face is there on first paint rather than
       // resolving a tick later and racing the assertion.
       query: [

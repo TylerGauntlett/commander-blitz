@@ -36,7 +36,7 @@ const SPECIAL = ["T", "Q", "S", "E"];
 const meta = {
   title: "Game/ManaSymbol",
   component: ManaSymbol,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
 } satisfies Meta<typeof ManaSymbol>;
 
 export default meta;

@@ -26,7 +26,7 @@ const names: Record<string, string> = {
 const meta = {
   title: "Game/EventTicker",
   component: EventTicker,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "railLeft" } },
 } satisfies Meta<typeof EventTicker>;
 
 export default meta;

@@ -26,7 +26,7 @@ function withCommanders(cards = [pool.aesi({ oid: 900 })], overrides = {}) {
 const meta = {
   title: "Game/CommandZone",
   component: CommandZone,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "orbBody" } },
   args: {
     pid: 0,
     playableOids: new Set<number>(),
