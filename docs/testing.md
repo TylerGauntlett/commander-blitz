@@ -11,10 +11,10 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/unit/` | 395 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
 | `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 269 | The HTTP API end to end: hidden information, image serving, the catalog, and the whole lobby |
-| `frontend/tests/` | 568 | The client's pure logic modules, the palette ladders, the card face and the lobby |
+| `tests/server/` | 287 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 594 | The client's pure logic modules, the palette ladders, the card face, the lobby, and the routes |
 | `frontend/src/**/*.stories.tsx` | 246 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see |
-| `frontend/e2e/` | 103 | Playwright: full games, combat, stacking, card art, legibility, layout, and a two-browser pod |
+| `frontend/e2e/` | 112 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
 `scripts/verify.py` runs 14 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
@@ -48,6 +48,17 @@ them" and "an e2e run that needs a Python process".
 needing the real cascade, real box geometry, or a gesture spanning components.
 Duplicate coverage on `ActionPanel` and `CardFace` is deliberate — the jsdom test is
 the fast guard, the story is the honest one.
+
+**"No providers" has exactly one exception**, and it is a narrow one. `routing.test.tsx`
+mounts `<App/>` under a `MemoryRouter` and a `QueryClientProvider` through the
+`renderApp` helper, because a deep link is not observable any other way. Every
+*component* still renders bare, and stays able to: nothing under `components/` imports
+react-router. Route wiring lives in `screens/`, which is what that file tests.
+
+Its `fetch` stub answers each endpoint once and then blocks forever. That is not a
+shortcut — the pod and the game are read by long polls that re-issue the instant one
+lands, so a stub that answered every time spins the loop as fast as the event loop
+allows. A poll that hangs is exactly a poll waiting for news.
 
 And the symmetrical warning: **do not port `e2e/` into stories.** Those assert against
 a real engine's legal-action list; a story asserts against a fixture and can only

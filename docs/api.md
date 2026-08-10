@@ -199,6 +199,14 @@ filled and hands them to `SessionRegistry.create`, so a pod holding
 dead seats**. It also writes `session.tokens`, a `player_token -> seat` map — which is
 why `GET /state` with no `?seat=` can tell you which seat is yours.
 
+A pod view carries `invite_link`, the pod's address **in the client**: `/pods/GYRE-8412`.
+Relative on purpose — the server does not know what host the browser reached it on, and
+over a LAN that is a machine address it cannot guess, so an absolute link it built would
+say `localhost` and work for exactly one person. The client resolves it against
+`window.location`. Following it on a browser that holds no token for the pod lands at
+the front door with the code filled in, because the token is per-tab and a link is not
+what grants a seat; see `docs/adr/0008-url-routing.md`.
+
 Pod errors carry a machine-readable code in the same shape deck import established:
 
 | code | status | means |

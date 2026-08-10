@@ -70,7 +70,9 @@ class TestCreateAndJoin:
         assert view["seats"][0]["kind"] == "human"
         assert [s["kind"] for s in view["seats"][1:]] == ["empty"] * 3
         assert view["status"] == "open"
-        assert view["invite_link"].endswith(code)
+        # The exact shape, not just the code: the client routes on this path,
+        # so a change to it is a change to where an invite link lands.
+        assert view["invite_link"] == f"/pods/{code}"
 
     def test_the_code_looks_like_a_code(self, client):
         code, _, _ = create(client)

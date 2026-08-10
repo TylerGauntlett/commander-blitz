@@ -340,7 +340,7 @@ export function podView(
     your_seat: you ? you.index : null,
     you_are_host: you ? you.is_host : false,
     game_id: null,
-    invite_link: "/?join=GYRE-8412",
+    invite_link: "/pods/GYRE-8412",
     ...overrides,
   };
 }

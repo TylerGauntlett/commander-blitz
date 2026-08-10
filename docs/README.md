@@ -25,6 +25,7 @@ separately:
 - [adr/0005-no-state-cloning.md](adr/0005-no-state-cloning.md) — replay instead of snapshots
 - [adr/0006-no-colour-accessibility-requirement.md](adr/0006-no-colour-accessibility-requirement.md) — colour accessibility is out of scope
 - [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md) — how multiplayer clients hear about each other, without sockets
+- [adr/0008-url-routing.md](adr/0008-url-routing.md) — real addresses for pods, games and decks, reversing "no router"
 
 ## If you are here to...
 

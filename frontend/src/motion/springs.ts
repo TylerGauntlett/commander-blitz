@@ -42,3 +42,33 @@ export const mechanical: Transition = {
 export const ease: Transition = { duration: 0.22, ease: [0.22, 1, 0.36, 1] };
 
 export const quick: Transition = { duration: 0.12, ease: "easeOut" };
+
+/**
+ * Whole-screen swaps, one per kind of arrival.
+ *
+ * Here rather than in the router because they are physics, and this file is
+ * where the app's physics live. `slide` is going somewhere; `fade` is waiting
+ * for the server to say something; `zoom` is the table, which arrives by
+ * settling into place rather than by sliding in from a direction.
+ */
+export const SCREEN_VARIANTS = {
+  slide: {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -12 },
+    transition: ease,
+  },
+  fade: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  },
+  zoom: {
+    initial: { opacity: 0, scale: 0.98 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 1.02 },
+    transition: ease,
+  },
+} as const;
+
+export type ScreenVariant = keyof typeof SCREEN_VARIANTS;

@@ -133,4 +133,26 @@ it. It should be deleted.
 ### Task
 - Using a React routing library, add proper support for page routing
 
+C:\Users\tyler\.claude\plans\url-routing-clever-meteor.md
+
+Done. react-router v7, declarative. Pods, games and decks have addresses shaped
+like the API resources behind them — `/pods/:code` beside `/api/pods/{code}` —
+and the server's `invite_link` points at the pod rather than smuggling a code
+through `?join=`, which keeps working for links already shared.
+
+This reverses a decision `App.tsx` argued for at length, so it has its own
+record: `docs/adr/0008-url-routing.md`. The objection was real — a pod that has
+dealt cannot be re-entered, so Back must not offer to — and it is answered by
+`replace` on the one-way transitions rather than by refusing to have URLs. The
+history stack after a full session is `["/", "/games/G"]`.
+
+The URL carries the place; `sessionStorage` still carries the identity, because
+an invite link is something people paste into a group chat. That split is what
+makes **reloading at the table return you to your seat**, which had never worked
+before, while a cold link to a pod you are not in still goes through the join
+flow. `get_app()` now serves `frontend/dist` with a catch-all so a deep link
+resolves on a deployment the way Vite already resolves it in development.
+
+See `docs/frontend.md` ("The URL"), `docs/api.md` and `docs/testing.md`.
+
 ---

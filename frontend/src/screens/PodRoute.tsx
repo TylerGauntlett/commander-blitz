@@ -1,0 +1,115 @@
+/**
+ * A pod, at its own address.
+ *
+ * The address says which pod; `sessionStorage` says whether this tab is in it.
+ * Those are two different questions and the split is deliberate -- a link is
+ * something people paste into a group chat, so it must not be the thing that
+ * grants a seat. A tab with no token for this code goes to the front door with
+ * the code filled in, which is the join flow that already existed.
+ *
+ * Reloading with a token is the case this whole route exists for: it lands you
+ * back in your chair with nothing to click. Before, the code was in a `useState`
+ * and a refresh forgot which pod you were in.
+ */
+
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router";
+import { ApiError } from "../api/client";
+import { PodLobby } from "../components/lobby/PodLobby";
+import { Screen } from "../components/screen/Screen";
+import { normaliseCode } from "../logic/lobby";
+import { gamePath, joinPath } from "../logic/routes";
+import { useDecks } from "../state/useGame";
+import { usePod } from "../state/usePod";
+import { linkGame, usePodSession } from "../state/usePodSession";
+
+export function PodRoute() {
+  const navigate = useNavigate();
+  const raw = useParams().code ?? "";
+  const code = normaliseCode(raw);
+  const { session, forget } = usePodSession(code || undefined);
+  const lobby = usePod(session);
+  const decks = useDecks();
+  const [seed, setSeed] = useState("");
+
+  const pod = lobby.pod;
+  const gameId = pod?.status === "in_game" ? pod.game_id : null;
+
+  // Everybody in the pod -- host and guests alike -- learns the game id from
+  // their own poll, so they arrive at the table together rather than the host
+  // navigating and the guests waiting for a nudge.
+  //
+  // `replace`, because this is the transition the old no-router argument was
+  // about: the pod is now `in_game` and its lobby cannot be re-entered, so the
+  // history entry must stop existing rather than sit there offering to go back
+  // to a room that is gone.
+  useEffect(() => {
+    if (!gameId) return;
+    linkGame(gameId, code);
+    navigate(gamePath(gameId), { replace: true });
+  }, [gameId, code, navigate]);
+
+  const leave = () => {
+    lobby.leave.mutate();
+    forget();
+    navigate("/", { replace: true });
+  };
+
+  if (!session) return <Navigate to={joinPath(code)} replace />;
+
+  if (lobby.error && !pod) {
+    const status = lobby.error instanceof ApiError ? lobby.error.status : 0;
+    return (
+      <Screen variant="fade" center>
+        <p className="menu__note">
+          {status === 404
+            ? "There is no pod with that code."
+            : status === 410
+              ? "That pod has closed."
+              : `Could not find the pod: ${lobby.error.message}`}
+        </p>
+        <button type="button" className="btn btn--ghost" onClick={() => navigate("/")}>
+          Back
+        </button>
+      </Screen>
+    );
+  }
+
+  if (!pod) {
+    return (
+      <Screen variant="fade" center>
+        <p className="menu__note">Finding the pod…</p>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen>
+      <PodLobby
+        pod={pod}
+        decks={decks.data ?? []}
+        busy={lobby.busy}
+        starting={lobby.start.isPending || pod.status !== "open"}
+        error={lobby.error}
+        seed={seed}
+        onSeedChange={setSeed}
+        onUpdateSeat={(body) => lobby.updateSeat.mutate(body)}
+        onAdminSeat={(index, action) => lobby.adminSeat.mutate({ index, action })}
+        onSetSeatDeck={(index, deckId) =>
+          lobby.adminSeat.mutate({ index, action: "set_deck", deck_id: deckId })
+        }
+        onStart={() => {
+          // An empty field means "surprise me", which is a *different* game
+          // every deal -- so it must reach the server as no seed at all rather
+          // than as 0, which is a perfectly good seed.
+          const parsed = Number(seed.trim());
+          lobby.start.mutate(
+            seed.trim() !== "" && Number.isFinite(parsed) ? parsed : undefined,
+          );
+        }}
+        onLeave={leave}
+        onDecksChanged={() => decks.refetch()}
+      />
+    </Screen>
+  );
+}

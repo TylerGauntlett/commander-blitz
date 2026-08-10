@@ -16,6 +16,10 @@
  * The token lives in `sessionStorage`, keyed by pod code. Session rather than
  * local, deliberately: two tabs on one machine are then two different players,
  * which is exactly how this gets tested by hand.
+ *
+ * That storage is also what makes `/pods/CODE` work as an address: the URL says
+ * which pod, the token says whether this tab is in it. See `usePodSession`,
+ * which derives one from the other.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -244,17 +248,4 @@ export function useDeckDetail(deckId: string | null) {
     enabled: deckId !== null,
     staleTime: Number.POSITIVE_INFINITY,
   });
-}
-
-/**
- * The `?join=CODE` an invite link carries.
- *
- * Read once, at boot. Not kept in sync with the address bar: this client has no
- * router, and a lobby that re-entered the join flow every time the URL changed
- * would be reacting to history the player has already moved past.
- */
-export function inviteCode(): string | null {
-  if (typeof window === "undefined") return null;
-  const found = new URLSearchParams(window.location.search).get("join");
-  return found ? found.toUpperCase() : null;
 }

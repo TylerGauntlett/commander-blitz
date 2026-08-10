@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+import os
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from automtg import __version__
 from automtg.cards.images import load_index
@@ -36,8 +40,58 @@ LAN_ORIGIN_RE = (
     r")(:\d+)?$"
 )
 
+#: Where ``npm run build`` leaves the client, when this is a checkout.  Under a
+#: site-packages install that walk lands nowhere, which is why ``client_dir``
+#: and ``AUTOMTG_CLIENT_DIR`` exist -- the default is a convenience, not a rule.
+CLIENT_DIR = Path(__file__).resolve().parents[3] / "frontend" / "dist"
 
-def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) -> FastAPI:
+#: First segments the SPA fallback must never answer for.  A mistyped ``/api``
+#: path has to stay a 404 the client can read, not an HTML document it will try
+#: to ``JSON.parse`` and report as a syntax error three layers away from here.
+SERVER_PREFIXES = frozenset(
+    {"api", "art", "health", "docs", "redoc", "openapi.json"}
+)
+
+
+def _serve_client(app: FastAPI, root: Path) -> None:
+    """Serve the built client, and every client route, from ``root``.
+
+    The client is a single page with real addresses -- ``/pods/GYRE-8412``,
+    ``/games/abc`` -- and nothing on disk sits at those paths.  So anything that
+    is not a file and not the server's own is answered with ``index.html``, and
+    react-router picks the screen once it is running.  Vite does this for
+    ``dev`` and ``preview`` already; this is the same rule for a real deployment.
+
+    Registered last, after every router, so it can only ever see a path that
+    nothing else claimed.  ``GET`` only, so a ``POST`` to a typo stays a 405
+    rather than being handed a document.
+    """
+    index = root / "index.html"
+    base = root.resolve()
+
+    @app.get("/{client_path:path}", include_in_schema=False)
+    def client(client_path: str) -> FileResponse:
+        if client_path.split("/", 1)[0] in SERVER_PREFIXES:
+            raise HTTPException(status_code=404, detail="not found")
+        target = (root / client_path).resolve()
+        # One rule covers the hashed bundles, the mana symbols and the favicon:
+        # a real file inside `dist` is served as itself.  `is_relative_to` is
+        # the traversal guard -- a `..` resolves out of the directory and so
+        # stops being a candidate before it is ever opened.
+        if client_path and target.is_file() and target.is_relative_to(base):
+            return FileResponse(target)
+        # The document must not be cached: its whole job is to name the current
+        # hashed bundles, and a stale one names bundles that no longer exist.
+        return FileResponse(index, headers={"Cache-Control": "no-store"})
+
+
+def create_app(
+    data: GameData | None = None,
+    *,
+    allow_art_fetch: bool = True,
+    serve_client: bool = False,
+    client_dir: Path | None = None,
+) -> FastAPI:
     app = FastAPI(
         title="Auto MTG",
         version=__version__,
@@ -121,6 +175,15 @@ def create_app(data: GameData | None = None, *, allow_art_fetch: bool = True) ->
             },
         }
 
+    # Last, so the catch-all only sees what nothing else claimed.  Opt-in rather
+    # than "on whenever `dist` happens to exist": a route table that depends on
+    # whether somebody has run `npm run build` is one that behaves differently
+    # on two machines, and `create_app` is called directly by the test suite.
+    if serve_client:
+        root = client_dir or Path(os.environ.get("AUTOMTG_CLIENT_DIR", CLIENT_DIR))
+        if (root / "index.html").is_file():
+            _serve_client(app, root)
+
     return app
 
 
@@ -128,8 +191,14 @@ app = None
 
 
 def get_app() -> FastAPI:
-    """Lazily built module-level app, for ``uvicorn automtg.server.app:get_app``."""
+    """Lazily built module-level app, for ``uvicorn automtg.server.app:get_app``.
+
+    Serves the built client too, because this is the entry point a deployment
+    uses -- one process on one origin, so a deep link resolves without a second
+    server in front of it.  A checkout with no ``frontend/dist`` simply has no
+    such route, and Vite goes on serving the client in development.
+    """
     global app
     if app is None:
-        app = create_app()
+        app = create_app(serve_client=True)
     return app
