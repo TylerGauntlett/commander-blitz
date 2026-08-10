@@ -35,6 +35,12 @@ class Action:
     #: things to do with the same card and must not compare equal.
     kicked: bool = False
     label: str = field(default="", compare=False)
+    #: ``label`` with the ``" -> target, target"`` suffix removed: what this
+    #: action *is*, without which of its legal targets this copy aims at.  The
+    #: client groups the action list by it, so one card offering six targets is
+    #: one row with six chips rather than six identical-looking rows.  Display
+    #: -only, like ``label``.
+    base_label: str = field(default="", compare=False)
     #: Permanents the mana solver would tap to pay for this, for the UI's
     #: "what will this leave me with" preview.  Display-only, like ``label``:
     #: excluded from equality and from :meth:`key`, so an action reconstructed
@@ -43,7 +49,7 @@ class Action:
     #: at resolution time, and this is only ever a forecast.
     pays: tuple[int, ...] = field(default=(), compare=False)
 
-    def with_label(self, label: str) -> Action:
+    def with_label(self, label: str, base_label: str | None = None) -> Action:
         return Action(
             kind=self.kind,
             source=self.source,
@@ -53,6 +59,7 @@ class Action:
             x=self.x,
             kicked=self.kicked,
             label=label,
+            base_label=label if base_label is None else base_label,
             pays=self.pays,
         )
 
@@ -78,6 +85,7 @@ class Action:
             "x": self.x,
             "kicked": self.kicked,
             "label": self.label,
+            "base_label": self.base_label,
             "pays": list(self.pays),
         }
 

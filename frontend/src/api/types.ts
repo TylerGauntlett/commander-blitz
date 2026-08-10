@@ -199,6 +199,14 @@ export interface LegalAction {
   id: string;
   kind: string;
   label: string;
+  /**
+   * `label` without its `-> target` suffix: what this action *is*, rather than
+   * which of its legal targets this copy aims at. The engine emits one action
+   * per legal target tuple, so grouping the list by this is what turns "six
+   * ways to aim one Simic Charm" back into one row. Never empty — the server
+   * falls back to `label` for the kinds that never name a target.
+   */
+  base_label: string;
   source_oid: number | null;
   ability_index: number | null;
   targets: { kind: string; id: number }[];

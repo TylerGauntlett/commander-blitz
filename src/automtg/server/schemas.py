@@ -33,6 +33,11 @@ class LegalActionDTO(BaseModel):
     id: str
     kind: str
     label: str
+    #: ``label`` without its ``" -> target"`` suffix, so the client can tell
+    #: "six ways to aim one Simic Charm" from "six copies of Simic Charm" and
+    #: render the first as one row with six chips.  Falls back to ``label`` for
+    #: the kinds that never name a target, so it is always safe to group by.
+    base_label: str = ""
     source_oid: int | None = None
     ability_index: int | None = None
     targets: list[dict[str, Any]] = Field(default_factory=list)

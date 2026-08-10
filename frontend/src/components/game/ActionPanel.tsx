@@ -37,6 +37,7 @@ import {
   availableBlockers,
   blockableBy,
   defendersFor,
+  groupPlayActions,
 } from "../../logic/actionMatch";
 import { type BlockTier, autoBlocks, blockTier } from "../../logic/autoBlock";
 import { keywordLabel, manaPips, statLine } from "../../logic/cardStyle";
@@ -139,6 +140,7 @@ export function ActionPanel({
   const stageAttack = useUiStore((s) => s.stageAttack);
   const stageBlock = useUiStore((s) => s.stageBlock);
   const hover = useUiStore((s) => s.hover);
+  const targetingActionIds = useUiStore((s) => s.targetingActionIds);
 
   const disabled = busy || narrating;
   const pending = state.pending;
@@ -242,9 +244,58 @@ export function ActionPanel({
   const commit = standDown
     ? null
     : (actions.find((a) => COMMIT_KINDS.includes(a.kind)) ?? null);
+  /**
+   * Ids `Table`'s `.choices` fallback bar is rendering in the foot right now.
+   *
+   * That bar carries `data-action-id` for the targeting actions, but only when
+   * none of them names a board object or a player -- targets you cannot click
+   * on the board, i.e. spells on the stack. Whenever it is up those ids are in
+   * the document twice, which is the exactly-once invariant this file's header
+   * describes. The panel yields for the duration: the foot bar is the surface
+   * the player is looking at mid-selection.
+   */
+  const targetingRows = actions.filter((a) => targetingActionIds.includes(a.id));
+  const footOwnsIds =
+    targetingRows.length > 0 &&
+    !targetingRows.some((a) =>
+      a.targets.some((ref) => ref.kind === "object" || ref.kind === "player"),
+    );
+  const claimed = footOwnsIds ? new Set(targetingRows.map((a) => a.id)) : null;
+
   // Everything the slab did not take. Filtering by id, not by identity, so this
   // stays right if the action list is ever rebuilt between renders.
-  const playRows = standDown ? [] : actions.filter((a) => a.id !== commit?.id);
+  const playRows = standDown
+    ? []
+    : actions.filter((a) => a.id !== commit?.id && !claimed?.has(a.id));
+  /**
+   * One row per card or ability, not per legal target tuple.
+   *
+   * The engine offers a targeted spell once per legal target, so a Simic Charm
+   * with six creatures to point at is six `cast` actions -- and a row for a
+   * card draws the card, so all six read as six copies of it. See
+   * `logic/actionMatch.groupPlayActions` for why the collapse cannot happen in
+   * the engine.
+   */
+  const playGroups = groupPlayActions(playRows);
+
+  /** Which target this copy of a grouped action aims at, for its chip. */
+  const targetLabel = (action: LegalAction): string => {
+    const [ref] = action.targets;
+    // Declining an optional target. It is a real, separately legal action, and
+    // before the optional-target fix in `targeting.py` it was unreachable.
+    if (ref === undefined) return "No target";
+    if (ref.kind === "player") return state.players[ref.id]?.name ?? `p${ref.id}`;
+    if (ref.kind === "stack") {
+      return state.stack.find((item) => item.sid === ref.id)?.name ?? `#${ref.id}`;
+    }
+    return nameOf(ref.id);
+  };
+
+  /** The oid a chip previews, so hovering it shows the creature it would hit. */
+  const targetOid = (action: LegalAction): number | null => {
+    const [ref] = action.targets;
+    return ref !== undefined && ref.kind === "object" ? ref.id : null;
+  };
 
   const hand = state.players[state.seat]?.hand ?? [];
   /** The 1-9 key that already plays this card, from Table's keyboard handler. */
@@ -467,27 +518,18 @@ export function ActionPanel({
             })}
 
           {mode === "play" &&
-            playRows.map((action) => {
-              const source = action.source_oid === null ? null : card(action.source_oid);
-              const isCard = action.kind === "cast" || action.kind === "play_land";
+            playGroups.map(({ key: groupKey, head, actions: aims }) => {
+              const source = head.source_oid === null ? null : card(head.source_oid);
+              const isCard = head.kind === "cast" || head.kind === "play_land";
               const tone = isCard
                 ? " act--playable"
-                : action.kind === "activate"
+                : head.kind === "activate"
                   ? " act--ability"
                   : "";
-              const key = handKey(action.source_oid);
-              return (
-                <button
-                  type="button"
-                  key={action.id}
-                  className={`act${tone}`}
-                  data-action-id={action.id}
-                  data-action-kind={action.kind}
-                  data-source={action.source_oid ?? undefined}
-                  disabled={disabled}
-                  onClick={() => onAct(action.id)}
-                  {...previewing(action.source_oid)}
-                >
+              const key = handKey(head.source_oid);
+              const single = aims.length === 1;
+              const body = (
+                <>
                   {key && <span className="act__key">{key}</span>}
                   {isCard && source ? (
                     <>
@@ -511,11 +553,73 @@ export function ActionPanel({
                   ) : (
                     // Activation costs live in these labels ("{2}, {T}, Sacrifice:
                     // ..."), and they were the last place mana stayed raw text.
+                    // Grouped, the row names the ability and the chips name the
+                    // targets, so the `-> Bear` suffix would be one arbitrary
+                    // target repeated on every row of the same permanent.
                     <span className="act__name">
-                      <SymbolText text={action.label} />
+                      <SymbolText text={single ? head.label : head.base_label} />
                     </span>
                   )}
-                </button>
+                </>
+              );
+
+              // One way to aim it: the row *is* the action, exactly as before.
+              if (single) {
+                return (
+                  <button
+                    type="button"
+                    key={groupKey}
+                    className={`act${tone}`}
+                    data-action-id={head.id}
+                    data-action-kind={head.kind}
+                    data-source={head.source_oid ?? undefined}
+                    disabled={disabled}
+                    onClick={() => onAct(head.id)}
+                    {...previewing(head.source_oid)}
+                  >
+                    {body}
+                  </button>
+                );
+              }
+
+              // Several: the row is inert and each target carries its own id,
+              // which is what keeps N actions on N controls rather than on one.
+              // Same shape as an attacker with several legal defenders above.
+              return (
+                <div
+                  key={groupKey}
+                  className={`act${tone} act--group`}
+                  data-source={head.source_oid ?? undefined}
+                  {...previewing(head.source_oid)}
+                >
+                  {body}
+                  <span className="act__aims">
+                    {aims.map((aim) => (
+                      <button
+                        type="button"
+                        key={aim.id}
+                        className="aim"
+                        data-action-id={aim.id}
+                        data-action-kind={aim.kind}
+                        data-source={aim.source_oid ?? undefined}
+                        disabled={disabled}
+                        onClick={() => onAct(aim.id)}
+                        title={aim.label}
+                        // Not `previewing`: this is a hovering child of a
+                        // hovering container, the case that comment warns
+                        // about. Falling back to the row's own card rather
+                        // than to null is what keeps the preview from going
+                        // blank on the way from a chip back onto the row.
+                        onMouseEnter={() => hover(targetOid(aim) ?? head.source_oid)}
+                        onMouseLeave={() => hover(head.source_oid)}
+                        onFocus={() => hover(targetOid(aim) ?? head.source_oid)}
+                        onBlur={() => hover(head.source_oid)}
+                      >
+                        {targetLabel(aim)}
+                      </button>
+                    ))}
+                  </span>
+                </div>
               );
             })}
 

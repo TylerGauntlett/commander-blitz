@@ -118,6 +118,75 @@ export function availableBlockers(actions: LegalAction[]): number[] {
   return [...seen].sort((a, b) => a - b);
 }
 
+/** One play-mode row: a card or ability, plus every way to aim it. */
+export interface ActionGroup {
+  key: string;
+  /** Representative, for the name, cost and label the row draws. */
+  head: LegalAction;
+  /** One per legal target tuple, in target order. Length 1 is the common case. */
+  actions: LegalAction[];
+}
+
+/** The one dimension a row collapses over: which legal target this copy aims at. */
+function groupKey(action: LegalAction): string {
+  return [
+    action.kind,
+    action.source_oid ?? -1,
+    action.ability_index ?? -1,
+    action.x,
+    action.choice ?? -1,
+    action.base_label,
+  ].join("|");
+}
+
+/**
+ * Lowest target id an action names, for ordering the chips within a row.
+ *
+ * A no-target variant sorts last, agreeing with the order `targeting.py` puts
+ * an optional spec's choices in: declining is the tail of the list, not a
+ * creature you might mistake for the obvious pick.
+ */
+function firstTargetId(action: LegalAction): number {
+  // Finite, so an all-untargeted comparison is 0 rather than NaN.
+  let low = Number.MAX_SAFE_INTEGER;
+  for (const ref of action.targets) low = Math.min(low, ref.id);
+  return low;
+}
+
+/**
+ * Play-mode rows: one per card or ability, not per legal target tuple.
+ *
+ * `legality._cast_variant` and `_activate_actions` emit one action per tuple
+ * returned by `enumerate_target_tuples`, so a Simic Charm with six targetable
+ * creatures on the board is six `cast` actions -- and the panel drew them as
+ * six identical rows, because for a card it draws the card, never the label.
+ * This is presentational only: the engine must keep one action per object per
+ * variant (docs/bugs.md records deduplicating there as the bug that made the
+ * second and third Forest in hand unclickable), and it is also the RL action
+ * space.
+ *
+ * Kicked and unkicked casts of the same card stay two rows -- they are two
+ * different things to do, and `base_label` is what says so.
+ *
+ * Group order is the server's, which is legality's: lands, casts, suspends,
+ * activations. Within a group the chips sort by target id for the reason the
+ * combat helpers above give: the action list is not order-stable between
+ * polls, and an unsorted list moves the control the player is reaching for.
+ */
+export function groupPlayActions(actions: LegalAction[]): ActionGroup[] {
+  const byKey = new Map<string, ActionGroup>();
+  for (const action of actions) {
+    const key = groupKey(action);
+    const found = byKey.get(key);
+    if (found) found.actions.push(action);
+    else byKey.set(key, { key, head: action, actions: [action] });
+  }
+  return [...byKey.values()].map((group) => ({
+    ...group,
+    actions: [...group.actions].sort((a, b) => firstTargetId(a) - firstTargetId(b)),
+  }));
+}
+
 export function findByKind(actions: LegalAction[], kind: string): LegalAction | null {
   return actions.find((action) => action.kind === kind) ?? null;
 }

@@ -100,6 +100,11 @@ def can_be_targeted(
     return Keyword.HEXPROOF.value not in chars(state, oid).keywords
 
 
+def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
+    """How many real candidates fit under ``limit`` beside the decline option."""
+    return max(1, limit - len(empty))
+
+
 def enumerate_target_tuples(
     state: GameState,
     controller: int,
@@ -113,6 +118,12 @@ def enumerate_target_tuples(
 
     Returns ``[()]`` for a spell with no targets and ``[]`` when a required
     target has no legal choice (i.e. the spell cannot be cast at all).
+
+    An ``optional`` spec always contributes the empty choice, whether or not it
+    has candidates.  It used to contribute one only when there were none, which
+    made declining impossible the moment anything legal was on the battlefield
+    -- so Simic Charm's "permanents you control gain hexproof" mode, whose
+    target is optional, could not be reached in any game with a creature in it.
     """
     if not specs:
         return [()]
@@ -120,20 +131,31 @@ def enumerate_target_tuples(
     per_spec: list[list[tuple[TargetRef, ...]]] = []
     for spec in specs:
         options = candidates(state, controller, spec, source_oid, exclude_sid=exclude_sid)
+        # Declining comes *last*, and that is load-bearing rather than
+        # cosmetic: whatever picks a tuple without asking -- an AI seat, a
+        # trigger resolving on its own -- takes the first, and a Shipbreaker
+        # Kraken whose "tap up to four target creatures" defaulted to tapping
+        # none would be a different card.
+        empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
         if spec.count > 1:
             combos = [
                 tuple(c) for c in itertools.combinations(options, min(spec.count, len(options)))
             ]
             if not combos and not spec.optional:
                 return []
-            per_spec.append(combos[:limit])
+            # `combinations(x, 0)` is `[()]`, so an optional spec with nothing to
+            # choose would otherwise offer the empty choice twice -- and two
+            # identical actions is the very thing this list must not produce.
+            # The cap eats candidates, never the choice to decline -- but it
+            # never eats the last candidate either: `stack.push_trigger` and
+            # `suspend` ask with `limit=1` and take `options[0]`, so trading the
+            # one real choice for "no targets" would silently fizzle every
+            # triggered ability with an optional target.
+            per_spec.append(list(dict.fromkeys(combos[: _room(limit, empty)] + empty)))
         else:
-            if not options:
-                if spec.optional:
-                    per_spec.append([()])
-                    continue
+            if not options and not spec.optional:
                 return []
-            per_spec.append([(o,) for o in options])
+            per_spec.append([(o,) for o in options][: _room(limit, empty)] + empty)
 
     out: list[tuple[TargetRef, ...]] = []
     for combo in itertools.product(*per_spec):

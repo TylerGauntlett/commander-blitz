@@ -127,6 +127,7 @@ export function action(overrides: Partial<LegalAction> = {}): LegalAction {
     id: "a0-pass",
     kind: "pass",
     label: "Pass",
+    base_label: "Pass",
     source_oid: null,
     ability_index: null,
     targets: [],
