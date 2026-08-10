@@ -10,6 +10,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
+import { APP_BOX } from "../../testing/appGeometry";
+import { expectMountedLike } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { gameView, player } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
@@ -35,7 +37,7 @@ function seat(overrides = {}) {
 const meta = {
   title: "Game/PlayerOrb",
   component: PlayerOrb,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "matSide" } },
 } satisfies Meta<typeof PlayerOrb>;
 
 export default meta;
@@ -45,6 +47,18 @@ export const Viewer: Story = {
   args: seat(),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const orb = await canvas.findByTestId("player-0");
+
+    /*
+     * The orb is its column, and the column is the mat's.
+     *
+     * `.orb` declares no width at all -- it is `flex: 1 1 auto` inside
+     * `.mat__side`, which is a 190px grid track of `.mat`. Rendered without that
+     * chain it spans whatever it is given, which is a different design wearing
+     * the same class names, and is exactly what this story used to show.
+     */
+    expectMountedLike(orb, { width: APP_BOX.matSide });
+
     const life = await canvas.findByTestId("life-0");
     expect(life.textContent).toContain("40");
 
@@ -64,8 +78,16 @@ export const Viewer: Story = {
   },
 };
 
+/** An opponent's, in the 112px column a compact mat gives it. */
 export const Opponent: Story = {
   args: { ...seat(), isViewer: false, isActive: false, hasPriority: false, compact: true },
+  parameters: { automtg: { mount: "matSideCompact" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expectMountedLike(await canvas.findByTestId("player-0"), {
+      width: APP_BOX.matSideCompact,
+    });
+  },
 };
 
 export const LowLife: Story = { args: seat({ life: 3 }) };

@@ -66,6 +66,7 @@ function Board({ state }: { state: GameView }) {
 const meta = {
   title: "Game/CombatArrows",
   component: CombatArrows,
+  parameters: { automtg: { mount: "tableBody" } },
 } satisfies Meta<typeof CombatArrows>;
 
 export default meta;

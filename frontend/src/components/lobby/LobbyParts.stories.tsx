@@ -20,7 +20,7 @@ import { ReadyTrack } from "./ReadyTrack";
 const meta = {
   title: "Lobby/Parts",
   component: CardBack,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
 } satisfies Meta<typeof CardBack>;
 
 export default meta;
@@ -126,7 +126,7 @@ export const CommanderLoaded: Story = {
   args: { mark: "" },
   parameters: {
     automtg: {
-      frame: "bare",
+      mount: "bare",
       query: [[["card", "aesi_tyrant_of_gyre_strait"], cardResponse()]],
     },
   },

@@ -65,6 +65,7 @@ function beat(overrides: Partial<LiveBeat> = {}): LiveBeat {
 const meta = {
   title: "Game/FxLayer",
   component: FxLayer,
+  parameters: { automtg: { mount: "tableBody" } },
   args: { beat: null, speed: "cinematic", state, boardRef: { current: null } },
 } satisfies Meta<typeof FxLayer>;
 

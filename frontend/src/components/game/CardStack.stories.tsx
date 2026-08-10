@@ -25,7 +25,7 @@ function pile(count: number) {
 const meta = {
   title: "Game/CardStack",
   component: CardStack,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "laneCards" } },
   args: { cardWidth: cardWidthPx(96, 1), onActivate: fn(), onDropOn: fn() },
 } satisfies Meta<typeof CardStack>;
 

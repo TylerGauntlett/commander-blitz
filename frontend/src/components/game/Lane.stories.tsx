@@ -16,6 +16,7 @@ import { Lane } from "./Lane";
 const meta = {
   title: "Game/Lane",
   component: Lane,
+  parameters: { automtg: { mount: "bandFront" } },
   args: {
     pid: 0,
     cardScale: CARD_SCALE.own,

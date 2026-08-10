@@ -37,6 +37,7 @@ function mat(state = early, pid = 0, overrides = {}) {
 const meta = {
   title: "Game/PlayerMat",
   component: PlayerMat,
+  parameters: { automtg: { mount: "playMine" } },
 } satisfies Meta<typeof PlayerMat>;
 
 export default meta;

@@ -53,7 +53,7 @@ const meta = {
   title: "Menu/DeckImport",
   component: DeckImport,
   args: { onImported: fn() },
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
 } satisfies Meta<typeof DeckImport>;
 
 export default meta;

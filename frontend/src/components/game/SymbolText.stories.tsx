@@ -13,7 +13,7 @@ import { SymbolText } from "./SymbolText";
 const meta = {
   title: "Game/SymbolText",
   component: SymbolText,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "bare" } },
 } satisfies Meta<typeof SymbolText>;
 
 export default meta;

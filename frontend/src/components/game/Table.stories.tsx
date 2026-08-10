@@ -30,6 +30,7 @@ function board(scenario: Scenario, game = {}) {
 const meta = {
   title: "Game/Table",
   component: Table,
+  parameters: { automtg: { mount: "screen" } },
 } satisfies Meta<typeof Table>;
 
 export default meta;

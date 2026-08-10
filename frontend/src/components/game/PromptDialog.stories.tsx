@@ -20,6 +20,7 @@ import { PromptDialog } from "./PromptDialog";
 const meta = {
   title: "Game/PromptDialog",
   component: PromptDialog,
+  parameters: { automtg: { mount: "screen" } },
   args: { onAct: fn(), disabled: false },
 } satisfies Meta<typeof PromptDialog>;
 

@@ -35,6 +35,7 @@ function hand(count: number): CardView[] {
 const meta = {
   title: "Game/HandFan",
   component: HandFan,
+  parameters: { automtg: { mount: "tableFoot" } },
   args: { onActivate: fn(), onDropOn: fn(), selectedOid: null },
 } satisfies Meta<typeof HandFan>;
 

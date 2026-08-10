@@ -20,7 +20,7 @@ const combat = scenarios.combatDeclareAttackers().state;
 const meta = {
   title: "Game/CardPreview",
   component: CardPreview,
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "railRight" } },
 } satisfies Meta<typeof CardPreview>;
 
 export default meta;
@@ -37,7 +37,7 @@ export const Nothing: Story = {
 
 export const HoveredCreature: Story = {
   args: { state: board },
-  parameters: { automtg: { frame: "bare", ui: { hoveredOid: 205 } } },
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Llanowar Elves");
@@ -48,18 +48,18 @@ export const HoveredCreature: Story = {
 
 export const HoveredLand: Story = {
   args: { state: board },
-  parameters: { automtg: { frame: "bare", ui: { hoveredOid: 204 } } },
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 204 } } },
 };
 
 export const HoveredCommander: Story = {
   args: { state: board },
-  parameters: { automtg: { frame: "bare", ui: { hoveredOid: 900 } } },
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 900 } } },
 };
 
 /** An attacker: the status line leads with what it is doing, not where it is. */
 export const HoveredAttacker: Story = {
   args: { state: combat },
-  parameters: { automtg: { frame: "bare", ui: { hoveredOid: 302 } } },
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 302 } } },
 };
 
 /**
@@ -77,7 +77,7 @@ export const HoveredAttacker: Story = {
  */
 export const HeightDoesNotChange: Story = {
   args: { state: board },
-  parameters: { automtg: { frame: "bare" } },
+  parameters: { automtg: { mount: "railRight" } },
   /*
    * Rendered inside the right rail on purpose. The fixed height is
    * `.rail--right .preview { height: clamp(240px, 34vh, 420px) }` -- it is a

@@ -35,6 +35,7 @@ const meta = {
   component: PodLobby,
   parameters: {
     automtg: {
+      mount: "screen",
       query: [[["card", "aesi_tyrant_of_gyre_strait"], cardResponse()]],
     },
   },

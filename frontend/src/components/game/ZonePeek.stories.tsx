@@ -18,6 +18,7 @@ const full = scenarios.fullZones().state;
 const meta = {
   title: "Game/ZonePeek",
   component: ZonePeek,
+  parameters: { automtg: { mount: "screen" } },
 } satisfies Meta<typeof ZonePeek>;
 
 export default meta;
