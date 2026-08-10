@@ -745,6 +745,12 @@ export function searchLibrary(): Scenario {
         kind: "choose",
         label: c.name,
         base_label: c.name,
+        // `choice` is the index into `pending.options`, and it is what makes the
+        // attached face reachable: the dialog looks the option up by it, then
+        // falls back to `findCard`, which cannot resolve a library card because
+        // the player view sends libraries as a count. Without this the prompt
+        // renders exactly the row of bare names `option.card` was added to fix.
+        choice: i,
         targets: [{ kind: "object", id: c.oid }],
       }),
     ),
