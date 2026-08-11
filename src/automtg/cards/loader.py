@@ -85,6 +85,31 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Warden of Evos Isle.  Read by `costs.cost_reduction`, not by the
+        # characteristics pipeline: it prices a card that is still in hand, so
+        # its filter (`affects_spells`) matches a printed face rather than a
+        # permanent, and is a different list from `affects`.
+        "spell_cost_reduction",
+    }
+)
+
+#: Keys a ``spell_cost_reduction`` static's ``affects_spells`` filter may use.
+#:
+#: Deliberately not `STATIC_FILTER_KEYS`: that list describes *permanents* and
+#: carries board state (`tapped`, `attacking`, `attached`) which a card in hand
+#: does not have.  These are the printed face plus who is casting it, which is
+#: all `characteristics._matches_printed` reads.
+SPELL_FILTER_KEYS = frozenset(
+    {
+        "controller",
+        "types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "keywords",
+        "not_keywords",
+        "name",
     }
 )
 
@@ -525,6 +550,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
+    if model.effect == "spell_cost_reduction":
+        # `affects_spells`, not `affects`: this filter is matched against a card
+        # in hand while legality prices it, so it may only read the printed
+        # face. A static that reduced nothing would load clean and show
+        # nothing, so both halves are required.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: spell_cost_reduction filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(f"{where}: spell_cost_reduction needs 'affects_spells'")
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell has a printed face and a caster "
+                f"and no board state; unsupported keys {sorted(unknown)}"
+            )
+        if model.amount is None:
+            raise DslError(
+                f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "
+                f"of nothing is not a card"
+            )
+        _validate_static_value(model.amount, f"{where}.amount")
+    elif model.affects_spells is not None:
+        raise DslError(
+            f"{where}: 'affects_spells' only means anything on a "
+            f"spell_cost_reduction static, not on {model.effect!r}"
+        )
     if model.effect in (
         "extra_land_drops",
         "no_hand_limit",
@@ -536,6 +590,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     ):
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+    elif model.effect == "spell_cost_reduction":
+        # Picks out *spells*, through `affects_spells`, checked above. There are
+        # no permanents for `affects` to name.
+        pass
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
 
@@ -574,6 +632,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["condition"] = dict(model.condition)
     if model.affects is not None:
         static["affects"] = dict(model.affects)
+    if model.affects_spells is not None:
+        static["affects_spells"] = dict(model.affects_spells)
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     for field_name in ("power", "toughness", "amount"):

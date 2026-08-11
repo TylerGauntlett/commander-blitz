@@ -12,7 +12,7 @@ from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
-from .characteristics import chars, player_doubles_land_mana
+from .characteristics import chars, player_doubles_land_mana, spell_cost_reduction
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
 from .events import EventType
@@ -654,17 +654,24 @@ def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     every time a creature arrives -- Ghalta is a 12-drop or a 2-drop depending on
     what is already in play.
     """
+    # Two sources, added together, and they point in opposite directions.
+    # `card.cost_reduction` is Ghalta -- "THIS spell costs {X} less", counting
+    # permanents. The statics are Warden of Evos Isle -- "creature spells with
+    # flying YOU CAST cost {1} less", discounting a different card, picked out
+    # by that card's own printed face.
+    total = spell_cost_reduction(state, pid, card)
+
     spec = card.cost_reduction
     if not spec:
-        return 0
+        return total
     if "count" in spec:
-        return sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
+        return total + sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
     if "total_power" in spec:
-        return sum(
+        return total + sum(
             max(0, chars(state, oid).power)
             for oid in _reduction_matches(state, pid, spec["total_power"])
         )
-    return 0
+    return total
 
 
 def _reduction_matches(state: GameState, pid: int, filt: Any):

@@ -674,7 +674,7 @@
       "id": "warden_of_evos_isle",
       "name": "Warden of Evos Isle",
       "oracle_text": "Flying\nCreature spells with flying you cast cost {1} less to cast.",
-      "mana_cost": "{3}{U}",
+      "mana_cost": "{2}{U}",
       "types": [
         "Creature"
       ],
@@ -686,6 +686,25 @@
       "toughness": 2,
       "keywords": [
         "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature spells with flying you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "flying"
+            ]
+          },
+          "amount": {
+            "const": 1
+          }
+        }
       ]
     },
     {
@@ -735,12 +754,64 @@
         "Creature"
       ],
       "subtypes": [
-        "Bird"
+        "Bird",
+        "Wizard"
       ],
       "power": 2,
       "toughness": 2,
       "keywords": [
         "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature spells with flying you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "flying"
+            ]
+          },
+          "amount": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ],
+              "keywords": [
+                "flying"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
       ]
     },
     
