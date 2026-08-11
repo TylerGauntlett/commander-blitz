@@ -7330,6 +7330,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 4,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you cast this spell, tap up to four target permanents.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "emerge": "{5}{U}{U}",
+      "id": "elder_deep_fiend",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{8}",
+      "name": "Elder Deep-Fiend",
+      "oracle_text": "Flash\nEmerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, tap up to four target permanents.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Octopus"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "eldrazi_devastator",

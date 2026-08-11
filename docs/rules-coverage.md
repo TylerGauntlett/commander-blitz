@@ -29,6 +29,8 @@ not a rewrite.
 | **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself. Plain cycling only: typecycling fetches instead of drawing, and "when you cycle this card" needs a trigger event the engine does not have |
 | **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads — readable by the permanent's own enters trigger, not just during resolution |
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
+| **Emerge** | The alternative cost whose price depends on the creature sacrificed for it — one cast line per creature, reduced by its mana value |
+| **Cast triggers** | "When you cast this spell", via `active_zones: ["stack"]` — an ability firing while its own card is the spell |
 | **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
@@ -119,7 +121,7 @@ keyword: it is a deck-construction rule, and the engine is handed a finished dec
 
 **Costs and casting**
 Alternative costs in general (evoke is implemented) · phyrexian and snow mana ·
-convoke and similar · emerge · flashback and other graveyard casting (retrace is
+convoke and similar · flashback and other graveyard casting (retrace is
 implemented) · overload
 
 **Effects**

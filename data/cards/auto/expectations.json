@@ -502,6 +502,13 @@
   "echoing_deeps": {
     "zone": "battlefield"
   },
+  "elder_deep_fiend": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "eldrazi_devastator": {
     "zone": "battlefield"
   },

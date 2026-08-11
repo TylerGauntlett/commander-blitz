@@ -79582,12 +79582,12 @@
     },
     "Elder Deep-Fiend": {
       "edhrec_rank": 7681,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Deep-Fiend",
-      "reason": "no template for: Emerge {5}{U}{U}",
+      "reason": "",
       "scryfall_id": "10532d06-94e3-47bc-a036-7535be05be98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elder Druid": {

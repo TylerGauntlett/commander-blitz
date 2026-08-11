@@ -158,6 +158,20 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             if ability.is_triggered and ability.trigger is not None:
                 yield obj, ability
 
+    # The stack, for "When you cast this spell, …" -- an ability that fires
+    # while its own card is the spell being cast, and is therefore never on the
+    # battlefield when it matters. Scanned separately because the stack is not a
+    # player zone: it is shared, ordered, and holds the spell under its own
+    # trigger.
+    for item in list(state.stack):
+        if item.oid is None or item.oid in seen:
+            continue
+        obj = state.objects.get(item.oid)
+        if obj is None:
+            continue
+        seen.add(item.oid)
+        yield from emit_from(obj, Zone.STACK)
+
     for p in state.players:
         for zone in (Zone.COMMAND, Zone.GRAVEYARD, Zone.HAND, Zone.EXILE):
             for oid in list(p.zone_list(zone)):

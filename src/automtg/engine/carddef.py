@@ -270,6 +270,11 @@ class CardDef:
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
     evoke: ManaCost | None = None
+    #: "Emerge {5}{U}{U}".  An alternative cost paid by sacrificing a
+    #: creature, reduced by that creature's mana value.  The reduction is
+    #: generic-only and clamped at zero, like every other cost reduction
+    #: here: it never reaches the coloured pips however large the sacrifice.
+    emerge: ManaCost | None = None
     #: "This spell costs {X} less to cast."  See `costs.cost_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.
