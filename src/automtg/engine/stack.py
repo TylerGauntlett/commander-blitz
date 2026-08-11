@@ -114,9 +114,21 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
         pool = state.card_of(granter).grantable_abilities
     else:
         source = state.objects.get(item_or_trig.source_oid)
-        if source is None:
-            return None
-        pool = state.card_of(source).abilities
+        if source is not None:
+            pool = state.card_of(source).abilities
+        else:
+            # A token that paid for its own ability by sacrificing itself is
+            # *gone*: the token state-based action pops it out of
+            # `state.objects` rather than moving it to a graveyard, so unlike
+            # every other self-sacrificing permanent there is no object left to
+            # read the ability off. `_resolve_ability` already says resolution
+            # outlives the source; this is the one place that contradicted it.
+            # Without the fallback every "{cost}, Sacrifice this token: ..."
+            # ability -- a Clue's whole text -- resolves as a silent no-op.
+            def_id = getattr(item_or_trig, "def_id", None)
+            if def_id is None or def_id not in state.registry:
+                return None
+            pool = state.registry.get(def_id).abilities
     return pool[index] if index < len(pool) else None
 
 

@@ -1,3 +1,56 @@
+## Investigate — a keyword action that was one missing token
+
+### Overview
+
+The cheapest capability in the report, and the only one so far whose gap record
+asked for no vocabulary whatsoever. Investigate's reminder text is its whole
+specification — *(Create a Clue token. It's an artifact with "{2}, Sacrifice
+this token: Draw a card.")* — and every piece of that was already expressible:
+`create_token` names any token in the pool, `Cost` carries mana and a
+`self_only` sacrifice together (Mind Stone pays exactly that shape), and `draw`
+is an op. The only thing missing was a Clue for `create_token` to point at.
+
+That is a real constraint rather than an oversight. `validate_token_references`
+refuses to load a card naming a token nobody defined, so Bygone Bishop could not
+be written half; and `data/cards/` is off-limits to authoring workers, so the
+token had to come from an `/extend-dsl` run even though no engine change was
+behind it. Adding it unblocks every investigate card at once.
+
+### What shipped
+
+`clue_token` in `data/cards/tokens.cards.json` — an artifact with the Clue
+subtype and one activated ability costing `{2}` plus a `self_only` sacrifice.
+Bygone Bishop repaired in `data/cards/isperia.cards.json`: it had been a vanilla
+2/3 flier, and its mana cost had been `{2}{W}{W}` where the printing (and
+`data/catalog/cards.sqlite`) say `{2}{W}`.
+
+### The bug the test found
+
+The gap record predicted "a data addition with no engine change behind it", and
+that was wrong — but only findably wrong. `stack.ability_of` resolved an
+ability by looking it up *through the source object*, returning `None` when the
+object was gone. A permanent that sacrifices itself as a cost still has an
+object, in the graveyard, so every self-sacrificing card in the pool worked. A
+**token** does not: the token state-based action pops it out of `state.objects`
+entirely. So the Clue's ability went on the stack, found no source, and resolved
+as a silent no-op — the token vanished and no card was drawn.
+
+`_resolve_ability` already carried the comment *"the ability resolves even if
+its source has left the battlefield"*; `ability_of` was the one place that
+contradicted it. It now falls back to the stack item's `def_id`.
+
+Nothing in the pool had caught this because the only other artifact token,
+`treasure_token`, is itself an approximation: its printed cost is "{T},
+Sacrifice this artifact" and it is implemented with `{"tap": true}` alone, so it
+never sacrifices and never took the broken path. That approximation is still
+there and is a separate repair.
+
+This is the argument for §3 of the skill in one case: the behaviour gate could
+not have found it either, because nothing casts a spell after the card under
+test in the verification sandbox, so Bygone Bishop's trigger never fires there.
+`tests/unit/test_investigate.py` is the only coverage the Clue has, and the
+claim that earned its keep was "it draws a card", not "the token appears".
+
 ## Evasion — the five questions `can_block` could not ask
 
 ### Overview

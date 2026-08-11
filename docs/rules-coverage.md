@@ -86,11 +86,13 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (flashback, evolve, ascend, investigate, intimidate — none of the 15
+waiting on (flashback, evolve, ascend — none of the 15
 keywords in `engine/enums.py` covers them) are `/extend-dsl` jobs. Cycling was
 one of them and now ships; the cards that print "when you cycle this card" still
 wait on the trigger event. Skulk and threshold have both shipped since, and
-Nimble Mongoose is off this list.
+Nimble Mongoose is off this list. So are intimidate (with the rest of the
+evasion family) and investigate — the latter needed no vocabulary at all, only a
+Clue in the token pool, and Bygone Bishop is off this list with it.
 
 ## Imported cards, which are simplified further
 
