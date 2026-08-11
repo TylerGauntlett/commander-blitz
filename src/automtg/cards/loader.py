@@ -602,28 +602,119 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
 #: Comparisons a static's "as long as..." clause may use.
 STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
 
+#: The forms a static's condition may take, one per node.
+STATIC_CONDITION_HEADS = ("counters", "all", "any", "not", "exists", "is_your_turn", "cmp")
+
+#: Zones a static's *counting* filter may name.  The stack is absent: a static
+#: is read while the pipeline computes characteristics, including for objects
+#: that are themselves resolving, and "how many spells are on the stack" would
+#: change under a card mid-resolution.
+STATIC_COUNT_ZONES = frozenset({"battlefield", "graveyard", "hand", "exile", "library", "command"})
+
+#: Keys a static's *counting* filter may use -- the selection keys, plus the
+#: zone.  ``affects`` and ``blockers`` deliberately do not get ``zone``: they
+#: pick out permanents the static applies to, and there are no permanents
+#: outside the battlefield, so a zone there would load and match nothing.
+STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone"}
+
+#: ...and once it names a zone other than the battlefield, only these.  A card
+#: in a graveyard has a printed face and an owner; it is not tapped, attacking,
+#: attached to anything or a token, so those keys are refused here rather than
+#: loading and silently matching nothing.
+STATIC_ZONE_FILTER_KEYS = frozenset(
+    {
+        "zone",
+        "controller",
+        "types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "keywords",
+        "not_keywords",
+    }
+)
+
+
+def _validate_static_count_filter(spec: Any, where: str) -> None:
+    """A filter in a *counting* position -- ``{"count": ...}`` or ``exists``."""
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    zone = str(spec.get("zone", "battlefield"))
+    if zone not in STATIC_COUNT_ZONES:
+        raise DslError(f"{where}.zone: unknown zone {zone!r} (countable: {sorted(STATIC_COUNT_ZONES)})")
+    if zone == "battlefield":
+        unknown = set(spec) - STATIC_COUNT_FILTER_KEYS
+        if unknown:
+            raise DslError(f"{where}: unsupported filter keys {sorted(unknown)}")
+        return
+    unknown = set(spec) - STATIC_ZONE_FILTER_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: a card in {zone} has a printed face and an owner and nothing else; "
+            f"unsupported keys {sorted(unknown)}"
+        )
+    controller = spec.get("controller", "you")
+    if controller not in ("you", "opponent", "any"):
+        raise DslError(f"{where}.controller: must be 'you', 'opponent' or 'any', got {controller!r}")
+
 
 def _validate_static_condition(condition: Any, where: str) -> None:
-    """A static may only ask about counters on its own source.
+    """A static may ask about pipeline *inputs* only.
 
     Much smaller than the ``if``-effect condition language, and for the same
     reason ``affects`` filters are: anything that reads a *derived*
     characteristic would let one static depend on another's output, and the
-    fixed-order pipeline has no way to resolve that.
+    fixed-order pipeline has no way to resolve that.  Counters on the source,
+    printed characteristics of the board, the contents of a zone and whose turn
+    it is are all inputs, so all four are safe; every one of them is settled
+    before the first layer applies.
     """
-    if condition is None:
+    if condition is None or isinstance(condition, bool):
         return
-    if not isinstance(condition, Mapping) or set(condition) != {"counters"}:
-        raise DslError(f"{where}: a static condition may only be {{'counters': ...}}")
-    spec = condition["counters"]
-    if not isinstance(spec, Mapping):
-        raise DslError(f"{where}.counters: must be an object")
-    unknown = set(spec) - {"counter", "amount", "op"}
-    if unknown:
-        raise DslError(f"{where}.counters: unsupported keys {sorted(unknown)}")
-    op = str(spec.get("op", ">="))
-    if op not in STATIC_CONDITION_OPS:
-        raise DslError(f"{where}.counters: unknown comparison {op!r}")
+    if not isinstance(condition, Mapping):
+        raise DslError(f"{where}: a static condition must be an object")
+    heads = [k for k in STATIC_CONDITION_HEADS if k in condition]
+    if len(heads) != 1:
+        raise DslError(
+            f"{where}: a static condition names exactly one of "
+            f"{list(STATIC_CONDITION_HEADS)}, got {sorted(condition)}"
+        )
+    head = heads[0]
+    extra = set(condition) - {head} - ({"left", "right"} if head == "cmp" else set())
+    if extra:
+        raise DslError(f"{where}: unsupported keys {sorted(extra)} beside {head!r}")
+
+    if head == "counters":
+        spec = condition["counters"]
+        if not isinstance(spec, Mapping):
+            raise DslError(f"{where}.counters: must be an object")
+        unknown = set(spec) - {"counter", "amount", "op"}
+        if unknown:
+            raise DslError(f"{where}.counters: unsupported keys {sorted(unknown)}")
+        op = str(spec.get("op", ">="))
+        if op not in STATIC_CONDITION_OPS:
+            raise DslError(f"{where}.counters: unknown comparison {op!r}")
+    elif head in ("all", "any"):
+        if not isinstance(condition[head], list) or not condition[head]:
+            raise DslError(f"{where}.{head}: takes a non-empty list of conditions")
+        for i, sub in enumerate(condition[head]):
+            _validate_static_condition(sub, f"{where}.{head}[{i}]")
+    elif head == "not":
+        _validate_static_condition(condition["not"], f"{where}.not")
+    elif head == "exists":
+        _validate_static_count_filter(condition["exists"], f"{where}.exists")
+    elif head == "is_your_turn":
+        if not isinstance(condition["is_your_turn"], bool):
+            raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "cmp":
+        op = str(condition["cmp"])
+        if op not in STATIC_CONDITION_OPS:
+            raise DslError(f"{where}.cmp: unknown comparison {op!r}")
+        for side in ("left", "right"):
+            if side not in condition:
+                raise DslError(f"{where}: a 'cmp' condition needs both 'left' and 'right'")
+            _validate_static_value(condition[side], f"{where}.{side}")
 
 
 def _validate_static_value(value: Any, where: str) -> None:
@@ -637,9 +728,7 @@ def _validate_static_value(value: Any, where: str) -> None:
             f"{where}: static values may only use 'const' or 'count', got {sorted(value)}"
         )
     if "count" in value:
-        unknown = set(value["count"]) - STATIC_FILTER_KEYS
-        if unknown:
-            raise DslError(f"{where}.count: unsupported filter keys {sorted(unknown)}")
+        _validate_static_count_filter(value["count"], f"{where}.count")
 
 
 def _compile_cost(model, where: str) -> Cost:
