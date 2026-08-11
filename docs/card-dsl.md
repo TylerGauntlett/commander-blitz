@@ -195,7 +195,8 @@ Anywhere a number is expected:
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
     "defending": "you",              // `attacks` only: whom it is attacking
-    "not_cause": "kodama_of_the_east_tree"  // enters triggers only: a loop guard
+    "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
+    "counter": "+1/+1"               // `counter_placed` only: which kind
   },
   "effects": [ ... ]
 }
@@ -221,6 +222,19 @@ creature attacks you" needs the second, and in a duel the two are
 indistinguishable — which is exactly why writing it with `controller:
 "opponent"` looks right until a pod draws you a card for a combat you were not
 in. The loader rejects `defending` on any other event rather than ignoring it.
+
+`counter` names which kind a `counter_placed` trigger cares about. The event has
+always carried the kind and nothing read it, so the only trigger that could be
+written fired on *every* kind — and the shipped pool places `charge` and
+`slumber` counters, so Fathom Mage's "whenever a +1/+1 counter is put on this
+creature" would also draw off Arixmethes waking up. The kind is also copied into
+`bindings` beside `amount`, so effects can read what fired them. Rejected on any
+other event, for the same reason as `defending`.
+
+One placement is one trigger, however many counters it puts: `add_counters`
+fires a single event with `amount` on it. That is correct for "a +1/+1 counter"
+and for Sharktocrab's "one or more +1/+1 counters" alike, so neither needs
+batching work.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·

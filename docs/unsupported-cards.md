@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**33 cards** blocked by **29** capabilities.
+**32 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-attack](#cant-attack) | 1 | 2833 | static_effect |
 | [cast-trigger](#cast-trigger) | 1 | 7681 | trigger_event |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
-| [counter-kind-trigger](#counter-kind-trigger) | 1 | 1709 | trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [distribute-counters](#distribute-counters) | 1 | 12944 | decision |
@@ -317,20 +316,6 @@ Blocks **1** card.
   - As this artifact enters, choose a creature type.
   - Creatures you control of the chosen type get +1/+1.
   - Whenever you cast a creature spell of the chosen type, draw a card.
-
-</details>
-
-## counter-kind-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A way for a `counter_placed` trigger to name the counter kind it cares about -- e.g. `{"event": "counter_placed", "source": "self", "counter": "+1/+1"}` -- so it fires on +1/+1 counters and stays silent on charge, slumber, quest or -1/-1 counters. The data is already on the event and merely never read: `primitives.add_counters` (`engine/primitives.py:234-242`) fires COUNTER_PLACED with `counter=kind` in `event.data`. Three small edits close it: add `counter: str | None = None` to `TriggerModel` (`cards/schema.py:50-67`) and `TriggerSpec` (`engine/carddef.py:95-110`), carry it through `loader._compile_ability` (`cards/loader.py:369-377`) with the same guard the neighbouring `defending` and `not_cause` fields get -- reject it on any event other than `counter_placed`, because a filter that silently never applies is exactly the defect this is fixing -- and check it in `triggers._matches` (`engine/triggers.py:182-226`) as `if spec.counter is not None and event.data.get("counter") != spec.counter: return False`. Worth also adding `"counter"` to the keys `triggers._queue` copies out of `event.data` into `bindings` (`engine/triggers.py:385-387`, which already copies `amount`), so an effect can read the kind that fired it. Note the printed wording is 'a +1/+1 counter', singular-or-more: `add_counters` fires ONE event for the whole batch (`amount` is on the event), so one trigger per placement is already the correct Magic behaviour for both this card and Sharktocrab's 'one or more' phrasing -- no batching work is needed.
-  <br>Why the existing vocabulary won't do: There is no field for it and no selector that reaches it, and both near misses were probed rather than assumed. (1) `{"counter": "+1/+1"}` on the trigger itself is rejected at load: `TriggerModel` is `model_config = Strict` = `ConfigDict(extra="forbid")` (`cards/schema.py:15,53`), verified -> `abilities.0.trigger.counter: Extra inputs are not permitted`. (2) `{"counter": "+1/+1"}` inside the trigger's `filter` is rejected too, verified -> `abilities[0].trigger.filter: unknown selector keys ['counter']`, and it could not work anyway: `matches_card_filter` (`engine/triggers.py:275-332`) matches the SUBJECT OBJECT's printed card face -- types, subtypes, colors, keywords, power, toughness -- and for `counter_placed` the subject is the permanent that received the counter, i.e. this creature. It has no access to the event payload at all. (3) The trigger's `condition` cannot rescue it either: `evaluate_condition` is called from `triggers._matches:220-224` with only `controller` and `source`, so it can ask about the board but never about the event, and `_queue` does not copy `counter` into `bindings` (`engine/triggers.py:385-387` copies `amount`, `damage`, `life`, `sid`, `defender`, `was_attacking` -- not `counter`), so the effects cannot read the kind on resolution either. A `counters_on` self check in an `if` is a different sentence, not a workaround: it is true whenever the creature already has a +1/+1 counter from any earlier source, so a slumber counter arriving later would still draw. The bare unfiltered trigger was built and run: with `{"event": "counter_placed", "source": "self"}` and nothing else, placing a `charge` counter and placing a `slumber` counter each queued the draw trigger just as a `+1/+1` counter did. Those kinds are not hypothetical -- `data/cards/` already places `charge` (4 sites) and `slumber` (4 sites) counters today, so the approximation is observably wrong in the shipped pool, not just in principle. No card in `data/cards/` currently uses `counter_placed` at all, so nothing shipped is approximated yet; Sharktocrab's gap record (`data/authoring/gaps/sharktocrab.json`) carries the same sentence as expressible, which it is not -- whoever clears `adapt` there will hit this.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fathom Mage** (rank 1709) — `fathom_mage`
-  - Whenever a +1/+1 counter is put on this creature, you may draw a card.
 
 </details>
 

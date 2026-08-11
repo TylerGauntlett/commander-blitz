@@ -366,6 +366,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"not on {model.trigger.event!r}"
             )
 
+        if model.trigger.counter is not None and model.trigger.event != "counter_placed":
+            # Same reasoning as `not_cause` above: only `counter_placed` carries
+            # a counter kind, so accepting it elsewhere would look like a filter
+            # and be one that never applies.
+            raise DslError(
+                f"{where}: 'counter' only means anything on a counter_placed trigger, "
+                f"not on {model.trigger.event!r}"
+            )
+
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -374,6 +383,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
+            counter=model.trigger.counter,
         )
         active_zones = tuple(Zone(z) for z in model.active_zones)
 

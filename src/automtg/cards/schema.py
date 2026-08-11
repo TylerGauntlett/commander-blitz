@@ -65,6 +65,10 @@ class TriggerModel(BaseModel):
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.
     not_cause: str | None = None
+    #: For ``counter_placed``: which kind of counter this cares about.  Without
+    #: it "whenever a +1/+1 counter is put on this creature" also fires on
+    #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
+    counter: str | None = None
 
 
 class AbilityModel(BaseModel):

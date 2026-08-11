@@ -201,6 +201,13 @@ def _matches(
     if spec.not_cause is not None and event.data.get("cause") == spec.not_cause:
         return False
 
+    # "Whenever a +1/+1 counter is put on this creature". `add_counters` has
+    # always put the kind on the event and nothing read it, so an unfiltered
+    # trigger fires on charge and slumber counters too -- both of which the
+    # shipped pool places.
+    if spec.counter is not None and event.data.get("counter") != spec.counter:
+        return False
+
     actor = _actor(state, spec.event, event, subject_oid)
     if actor is not None:
         if spec.controller == "you" and actor != obj.controller:
@@ -382,7 +389,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     subject = _subject_oid(spec.event, event)
     if subject is not None:
         bindings["subject"] = subject
-    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking"):
+    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking", "counter"):
         if key in event.data:
             bindings[key] = event.data[key]
 
