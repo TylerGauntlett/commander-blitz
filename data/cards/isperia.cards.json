@@ -1779,7 +1779,8 @@
               "kind": "permanent",
               "selector": {
                 "zone": "battlefield",
-                "controller": "opponent",
+                "controller": "any",
+                "exclude_self": true,
                 "not_types": [
                   "Land"
                 ]
@@ -1793,13 +1794,33 @@
               "op": "exile",
               "objects": {
                 "target": "t1"
-              }
+              },
+              "until_leaves": true
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              },
+              "controller": "owner"
             }
           ]
         }
       ]
     },
-    
+
     {
       "id": "bident_of_thassa",
       "name": "Bident of Thassa",

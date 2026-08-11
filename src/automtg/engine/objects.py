@@ -95,6 +95,21 @@ class GameObject:
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
 
+    #: "…exile it until this permanent leaves the battlefield." The oid of the
+    #: permanent that exiled *this* card, so its own leaves-trigger can find it
+    #: again.
+    #:
+    #: It lives on the exiled card rather than on the exiler because the exiler
+    #: is the thing that goes away: Oblivion Ring is in a graveyard by the time
+    #: the return happens. The exiled card is sitting in exile, unchanged, and
+    #: an oid survives every zone change, so this is the end of the link that
+    #: still exists when it is needed.
+    #:
+    #: Set *after* the move to exile, since `reset_permanent_state` runs during
+    #: it. Cleared by that same reset when the card comes back, which is right:
+    #: the link is spent once it has been followed.
+    exiled_by: int | None = None
+
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
@@ -107,6 +122,7 @@ class GameObject:
         self.monstrous = False
         self.frozen_by = None
         self.skip_next_untap = False
+        self.exiled_by = None
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.

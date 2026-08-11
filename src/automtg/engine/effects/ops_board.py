@@ -37,9 +37,27 @@ def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("exile")
 def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Exile objects, optionally remembering which permanent did it.
+
+    ``until_leaves`` is the O-Ring family -- "exile it until this permanent
+    leaves the battlefield". It records the link and nothing else; the *return*
+    is an ordinary `leaves_battlefield` trigger on the same card, reading the
+    link back through a `{"zone": "exile", "exiled_with": "self"}` selector.
+
+    Two halves rather than one op, because the card really is two abilities and
+    a player can respond between them -- and because what comes back, and under
+    whose control, differs between O-Ring and Fiend Hunter.
+    """
+    link = bool(spec.get("until_leaves"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
     for oid in oids:
         exile(ctx.state, oid)
+        if link and ctx.source_oid is not None:
+            # After the move: `move_object` runs `reset_permanent_state` on the
+            # way, which would wipe this if it were set first.
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.exiled_by = ctx.source_oid
 
 
 @register("sacrifice")
