@@ -9,7 +9,7 @@ cards generated with their rules text inert ([deck-import.md](deck-import.md)).
 |---|---|---|---|---|
 | Colours | Simic (G/U) | Mardu (W/B/R) | Azorius (W/U) | Mardu (W/B/R) |
 | Avg mana value | 3.31 | 2.68 | 3.37 | 2.73 |
-| Plan | Ramp, hit extra land drops, convert each land into cards, close with trample | Flood the board with vampires, buff them with lords, drain on every death and life gain | Fly over, and make attacking you the worst option on the table | Attack, make a token, let it die, turn each death into a card or a drain |
+| Plan | Ramp, hit extra land drops, convert every land that enters into cards, close with a big board | Flood the board with vampires, buff them with lords, drain on every death and life gain | Fly over, and make attacking you the worst option on the table | Attack, make a token, let it die, turn each death into a card or a drain |
 
 ## Isperia, Supreme Judge
 
@@ -53,14 +53,15 @@ Both run 37 lands, as do Isperia and Zurgo.
 
 ## Aesi, Tyrant of Gyre Strait
 
-> Trample. Whenever you play a land, draw a card. You may play an additional land on
-> each of your turns.
+> You may play an additional land on each of your turns.
+> Landfall — Whenever a land you control enters, you may draw a card.
 
 The deck is built to make that trigger fire as often as possible: 21 ramp effects, two
 more sources of extra land drops (Exploration, Azusa), and payoffs that scale with
 lands entering — Tatyova, Rampaging Baloths, Zendikar's Roil, Tireless Provisioner,
-Avenger of Zendikar. Counterspells and instant-speed removal protect the engine; the
-top end is large trampling creatures.
+Avenger of Zendikar. Because Aesi is landfall rather than a land-drop trigger, all 21
+of those ramp spells draw too, and Ancient Greenwarden doubles it. Counterspells and
+instant-speed removal protect the engine; the top end is large creatures.
 
 ## Edgar Markov
 

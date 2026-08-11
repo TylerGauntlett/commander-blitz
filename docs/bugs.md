@@ -154,11 +154,18 @@
   → ETB. Cultivate gives one trigger, Explosive Vegetation two. That is now covered by
   tests, which it was not before.
 
-  The two cards that stay silent are **Aesi** and **Horn of Greed**, and neither is a
-  landfall card: both read "whenever you *play* a land". Cultivate *puts* a land onto the
-  battlefield, which is not playing one, so under MTG rules they correctly do not trigger.
-  They remain `land_played` triggers. Changing that is a two-line data edit if the deviation
-  is ever wanted.
+  **Aesi was wrongly listed here as correctly silent, and was not.** Its printing is
+  "Landfall — Whenever a land you control enters, you may draw a card" — the catalog
+  agrees — so it fires off Cultivate like every other landfall card. The card was
+  hand-authored from stale text and wired to `land_played`; a later pass refreshed its
+  `oracle_text` from Scryfall but left the trigger and a phantom `trample` behind, so it
+  printed landfall and behaved like a land drop. It is now `permanent_enters` + a Land
+  filter, with the draw wrapped in `may`, and Ancient Greenwarden doubles it as it should.
+
+  The one card that genuinely stays silent is **Horn of Greed**, which really does read
+  "whenever a player *plays* a land". Cultivate *puts* a land onto the battlefield, which
+  is not playing one, so under MTG rules it correctly does not trigger. It remains a
+  `land_played` trigger, and that spelling is still worth keeping distinct.
 
   Genuinely broken on that path and now fixed: the land drop was counted *after* the ETB
   fired, so a landfall trigger counting drops this turn read a stale value; and
