@@ -241122,12 +241122,12 @@
     },
     "Sharktocrab": {
       "edhrec_rank": 14630,
-      "gate": "template",
+      "gate": null,
       "name": "Sharktocrab",
-      "reason": "no template for: {2}{G}{U}: Adapt 1",
+      "reason": "",
       "scryfall_id": "ec7933b5-15de-4ed7-af0c-626f81726338",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sharlayan, Nation of Scholars": {

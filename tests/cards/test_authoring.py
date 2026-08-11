@@ -223,3 +223,61 @@ class TestTheSandboxIsUsable:
             }.get(key, {"0": 9999})
             problems = V.check_expectation(game, "x", oid, {key: sample})
             assert problems, f"expectation key {key!r} asserts nothing"
+
+
+class TestThePacketCarriesTheWholeVocabulary:
+    """A worker sees only its packet, so an omission there reads as an absence.
+
+    Sharktocrab was filed as blocked on a new `adapt` op because the packet
+    listed no condition vocabulary, so "if this creature has no +1/+1 counters
+    on it" looked unsayable. It was always sayable -- `cmp` against
+    `counters_on` -- and the card needed no engine work at all. A gap record is
+    cheap, but it is read as a build order, so an omission here costs real
+    engine work on a mechanic that already exists.
+    """
+
+    def test_it_lists_every_vocabulary_the_loader_validates_against(self):
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.loader import STATIC_FILTER_KEYS
+        from automtg.engine.effects import known_ops
+        from automtg.engine.effects.conditions import CONDITION_KEYS
+        from automtg.engine.effects.selectors import SELECTOR_KEYS
+        from automtg.engine.effects.values import VALUE_KEYS
+
+        ref = reference()
+        for key, expected in (
+            ("ops", known_ops()),
+            ("selector_keys", SELECTOR_KEYS),
+            ("condition_keys", CONDITION_KEYS),
+            ("value_keys", VALUE_KEYS),
+            ("static_filter_keys", STATIC_FILTER_KEYS),
+        ):
+            assert set(ref[key]) == set(expected), (
+                f"packet {key!r} has drifted from the set the loader enforces; a "
+                f"worker cannot use vocabulary it is never shown"
+            )
+
+    def test_the_selector_and_static_filter_lists_are_both_present(self):
+        """They are different languages and being shown only the smaller one
+        reads as the whole of it -- a static may read printed characteristics
+        only, an effect's selector may read far more.
+
+        Neither contains the other, which is the reason both have to travel.
+        `attached` ("enchanted creature gets +2/+2") is static-only because it
+        reads board state rather than a derived characteristic; everything the
+        selector language adds on top is unreachable from a static.
+        """
+        from automtg.cards.authoring.packet import reference
+
+        ref = reference()
+        static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
+        assert static - selector == {"attached"}
+        assert len(selector - static) > 10, "the selector language is the larger one"
+
+    def test_counters_on_is_reachable(self):
+        """The specific omission that cost a card."""
+        from automtg.cards.authoring.packet import reference
+
+        ref = reference()
+        assert "counters_on" in ref["value_keys"]
+        assert "cmp" in ref["condition_keys"]

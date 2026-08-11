@@ -91,6 +91,9 @@ class Packet:
 def reference() -> dict:
     """The DSL, small enough to travel with every packet."""
     from automtg.engine.effects import known_ops
+    from automtg.engine.effects.conditions import CONDITION_KEYS
+    from automtg.engine.effects.selectors import SELECTOR_KEYS
+    from automtg.engine.effects.values import VALUE_KEYS
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.triggers import TRIGGER_EVENTS
 
@@ -110,9 +113,28 @@ def reference() -> dict:
             "extra_land_drops",
         ],
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        #: The three vocabularies a packet used to omit, each of which cost a
+        #: real card.  A worker that cannot see `counters_on` cannot know
+        #: "if this creature has no +1/+1 counters on it" is sayable, and files
+        #: a gap for a mechanic that already works -- Sharktocrab's `adapt` was
+        #: exactly that.  `selector_keys` is the effect-side list;
+        #: `static_filter_keys` above is the far smaller printed-only subset,
+        #: and being shown only the subset reads as the whole language.
+        "selector_keys": sorted(SELECTOR_KEYS),
+        "condition_keys": sorted(CONDITION_KEYS),
+        "value_keys": sorted(VALUE_KEYS),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`condition_keys` and `value_keys` are what an `if` can ask and what"
+            " an amount can be. `counters_on` reads a counter count off an"
+            " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
+            " against `{\"const\": 0}` and needs no new op.",
+            "`selector_keys` is what an effect's `objects` or a target spec's"
+            " `selector` may contain. `static_filter_keys` is the much smaller"
+            " set a *static ability* may read, because a static may only read"
+            " printed characteristics -- do not mistake it for the whole"
+            " selector language.",
             "An ability's `text` must be the printed sentence it implements: the"
             " residual gate asks each ability which line it claims, and anything"
             " unclaimed means the card is only half implemented.",
