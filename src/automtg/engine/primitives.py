@@ -164,6 +164,11 @@ def damage_permanent(
         )
         return 0
     obj.damage += amount
+    if source_oid is not None:
+        # Recorded here rather than on the object: Sengir Vampire asks the
+        # question about a creature that has already died, and anything stored
+        # on the victim is wiped by `reset_permanent_state` on the way out.
+        state.damage_ledger.setdefault(oid, set()).add(source_oid)
     if source_oid is not None and _has(state, source_oid, Keyword.DEATHTOUCH):
         obj.deathtouched = True
     fire(

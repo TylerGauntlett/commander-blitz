@@ -325,6 +325,17 @@ def matches_card_filter(
     if filt.get("self_only") and oid != ability_source.oid:
         return False
 
+    # "Whenever a creature dealt damage by this creature this turn dies…"
+    # Sengir Vampire. A relationship rather than a characteristic, so it is
+    # answered from the per-turn ledger on the state rather than from the card
+    # face -- and it has to be, because the subject has already died and
+    # anything stored on it is gone.
+    damaged_by = filt.get("damaged_by")
+    if damaged_by is not None:
+        who = ability_source.oid if damaged_by == "self" else damaged_by
+        if who not in state.damage_ledger.get(oid, ()):
+            return False
+
     controller = filt.get("controller")
     if controller == "you" and obj.controller != ability_source.controller:
         return False

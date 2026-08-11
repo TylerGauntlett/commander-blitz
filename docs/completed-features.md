@@ -1,3 +1,49 @@
+## A damage ledger — remembering who hurt what
+
+### Overview
+
+"Whenever a creature dealt damage by this creature this turn dies, put a +1/+1
+counter on this creature." Sengir Vampire, and the clause is a *relationship*
+between two objects across a span of time rather than a characteristic of
+either. Nothing recorded one: `damage` applied damage and remembered nothing
+about who dealt it.
+
+### Where it had to live
+
+The awkward part is **when** the question is asked — about a creature that has
+already died. So anything stored on the victim is wrong by construction, because
+`reset_permanent_state` wipes it on the way to the graveyard, which is the exact
+moment the trigger needs it.
+
+Hence `GameState.damage_ledger`: victim oid → the oids of everything that has
+damaged it this turn. Written by `damage_permanent`, cleared during cleanup
+next to rule 514.2's "remove all damage from permanents" — a ledger that
+outlived the turn would let Sengir grow off a creature it hurt yesterday.
+
+This is the second of the two ledger-shaped capabilities in this sequence, and
+they were deliberately kept as separate runs. The other, `exiled_by`, sits on
+the *object* because the thing that goes away there is the source, not the
+victim; here it is the victim that goes away, so the storage had to invert. Two
+different lifetimes, two different survivors, and merging them would have hidden
+that.
+
+### Read back through a filter
+
+`{"damaged_by": "self"}` on the trigger. Bare `creature_dies` fires on **every**
+creature death anywhere, which is a strictly stronger card — and one that looks
+right in almost every game where Sengir is the one doing the killing.
+
+### Two traps the test now pins
+
+`TriggerModel.controller` defaults to `"you"`, so an unqualified `creature_dies`
+only sees your *own* creatures dying. Sengir's victims are usually an
+opponent's, so the default made the ability load, look implemented, and never
+fire. That cost a debugging cycle and is now written down in card-dsl.md.
+
+And the blocker has to be able to block: Sengir flies, a ground bear never
+blocks it, nothing dies, and a test built that way passes for the wrong reason.
+The first version of this test did exactly that.
+
 ## Exile until it leaves — a link that outlives the thing that made it
 
 ### Overview

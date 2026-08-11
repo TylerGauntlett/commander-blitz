@@ -1078,6 +1078,39 @@ divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
 
+## "…dealt damage by this creature this turn"
+
+Sengir Vampire. A trigger filter, because the clause is a *relationship* between
+two objects over a span of time rather than a characteristic of either:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever a creature dealt damage by this creature this turn dies, …",
+  "trigger": { "event": "creature_dies", "controller": "any",
+               "filter": { "controller": "any", "damaged_by": "self" } },
+  "effects": [ … ] }
+```
+
+Answered from a per-turn ledger on the state — victim oid → who has damaged it —
+written by `damage_permanent` and cleared during cleanup alongside rule 514.2's
+"remove all damage from permanents". A ledger that outlived the turn would let
+Sengir grow off a creature it hurt yesterday.
+
+**It is on the state rather than on the damaged creature**, and that is forced:
+the question is asked *about a creature that has just died*, and anything stored
+on the victim is wiped by `reset_permanent_state` on the way to the graveyard —
+the exact moment the trigger needs it.
+
+Two traps, both of which produce a card that loads and looks implemented:
+
+- **`controller: "any"` on the trigger.** `TriggerModel.controller` defaults to
+  `"you"`, so an unqualified `creature_dies` only sees *your own* creatures
+  dying. Sengir's victims are usually an opponent's, so the default silently
+  makes the ability never fire.
+- Bare `creature_dies` without the filter fires on **every** creature death
+  anywhere, which is a strictly stronger card and looks right in most games
+  where Sengir is doing the killing.
+
 ## "Exile it until this permanent leaves the battlefield"
 
 Oblivion Ring, and the whole Banishing Light / Fiend Hunter family. Two
