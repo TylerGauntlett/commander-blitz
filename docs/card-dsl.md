@@ -1173,6 +1173,41 @@ its controller's declare-attackers whether or not it was met — an obligation t
 creature could not meet is still spent, or it would compel the following combat
 too.
 
+### The continuous form
+
+"This creature attacks each combat if able" is the same obligation and a
+*different mechanism*: it is true again next turn, true for a creature that
+entered after any op would have resolved, and false the moment its source leaves.
+A one-shot flag cannot say that, so it is a static:
+
+```jsonc
+// Marauding Maulhorn — "…unless you control a creature named
+//                       Advocate of the Beast."
+{ "kind": "static", "effect": "attacks_if_able",
+  "affects": { "self_only": true },
+  "condition": { "not": { "exists": { "controller": "you",
+                                      "types": ["Creature"],
+                                      "name": "Advocate of the Beast" } } } }
+```
+
+One effect covers every printed variant, because they differ only in `affects`:
+`{"self_only": true}` for "This creature…", `{"controller": "opponent", "types":
+["Creature"]}` for the goad-shaped "Creatures your opponents control…", and
+`{"attached": true}` for "Enchanted creature…". Like `cant_attack` — its exact
+mirror image — that filter routinely names creatures the source's controller
+does not control.
+
+Both forms meet at one enforcement point, `combat.attack_required`, so there is
+still only one place that decides whether "Done attacking" is offered. A goad
+is owed only on the compelled creature's **own** turn: a creature cannot attack
+on somebody else's, so "if able" excuses it, and without that the goading
+player could never finish a declaration while an opponent held an untapped
+creature.
+
+`name` is readable in a static's **condition** — inside `exists` or `count` —
+but deliberately not in `affects`. "Unless you control a creature named X" is a
+question about the board; "each creature named X gets +1/+1" is not a card.
+
 ## Block restrictions
 
 "This creature can't be blocked by …" is a static, not a keyword, because the

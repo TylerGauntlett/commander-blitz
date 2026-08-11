@@ -79,6 +79,12 @@ STATIC_EFFECTS = frozenset(
         # prohibition, so unlike every other static here its `affects`
         # routinely names creatures its own controller does not control.
         "cant_attack",
+        # Marauding Maulhorn.  The obligation to `cant_attack`'s prohibition,
+        # read by `combat.attack_required` at the same enforcement point the
+        # `must_attack` op uses.  A static rather than that op because a
+        # printed "attacks each combat if able" is true again every turn, where
+        # the op writes a one-shot flag that is spent on declaration.
+        "attacks_if_able",
     }
 )
 
@@ -618,7 +624,12 @@ STATIC_COUNT_ZONES = frozenset({"battlefield", "graveyard", "hand", "exile", "li
 #: zone.  ``affects`` and ``blockers`` deliberately do not get ``zone``: they
 #: pick out permanents the static applies to, and there are no permanents
 #: outside the battlefield, so a zone there would load and match nothing.
-STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone"}
+#: ``name`` is here and deliberately *not* in ``STATIC_FILTER_KEYS``. "…unless
+#: you control a creature named Advocate of the Beast" is a question the
+#: condition asks about the board; "each creature named X gets +1/+1" is not a
+#: card, so `affects` has no use for it and allowing it there would only invite
+#: one.
+STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone", "name"}
 
 #: ...and once it names a zone other than the battlefield, only these.  A card
 #: in a graveyard has a printed face and an owner; it is not tapped, attacking,
@@ -628,6 +639,8 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
     {
         "zone",
         "controller",
+        # A card in a graveyard has no board state, but it does have a name.
+        "name",
         "types",
         "not_types",
         "subtypes",

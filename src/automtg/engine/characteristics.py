@@ -382,6 +382,14 @@ def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
     not_keywords = selector.get("not_keywords")
     if not_keywords and set(not_keywords) & card.keywords:
         return False
+    # "…unless you control a creature named Advocate of the Beast." A name is
+    # the most printed characteristic there is and nothing in the pipeline can
+    # change one, so it is safe here for the same reason `types` is. Allowed
+    # only in a *counting* filter, never in `affects`: "each creature named X
+    # gets +1/+1" is not a card, and the name test belongs in the condition.
+    name = selector.get("name")
+    if name is not None and card.name != name:
+        return False
     return True
 
 
@@ -601,6 +609,33 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
         return False
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_attack":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
+def attack_compelled(state: GameState, oid: int) -> bool:
+    """Is this creature under a continuous "attacks each combat if able"?
+
+    The permanent counterpart of the `must_attack` op. That op writes a
+    one-shot flag on the object -- Bident of Thassa's "this turn", Trench
+    Behemoth's "next combat" -- and is spent once the declaration is locked in.
+    A printed "This creature attacks each combat if able" is not spent: it is
+    true again next turn, and it stops being true the moment its source leaves
+    or its condition turns off. That is a static, so it is read live off the
+    battlefield rather than stored.
+
+    One effect covers all the printed variants -- "This creature…", "Creatures
+    your opponents control…", "Enchanted creature…" -- because they differ only
+    in `affects`. Like `cant_attack`, that filter routinely names creatures the
+    static's own controller does not control.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "attacks_if_able":
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return True

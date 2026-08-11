@@ -600,7 +600,7 @@
       "id": "marauding_maulhorn",
       "name": "Marauding Maulhorn",
       "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
-      "mana_cost": "{2}{R}",
+      "mana_cost": "{2}{R}{R}",
       "types": [
         "Creature"
       ],
@@ -608,7 +608,28 @@
         "Beast"
       ],
       "power": 5,
-      "toughness": 3
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "name": "Advocate of the Beast"
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dictate_of_erebos",
