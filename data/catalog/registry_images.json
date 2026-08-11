@@ -1779,6 +1779,10 @@
     "artist": "Clint Cearley",
     "scryfall_id": "93d7f033-217f-4fb3-a57b-e32291257ec8"
   },
+  "meteor_golem": {
+    "artist": "Domenico Cava",
+    "scryfall_id": "a1a1cfec-72ca-499b-b621-fa2d8502ea20"
+  },
   "meticulous_archive": {
     "artist": "Sam Burley",
     "scryfall_id": "652236c2-84ef-45e4-b5fc-ed6170bc3d6c"
@@ -2011,6 +2015,10 @@
   "path_to_exile": {
     "artist": "Klaus Janson & Mike Zeck",
     "scryfall_id": "e2e30b25-b710-4566-8b0f-56f6e390a446"
+  },
+  "peel_from_reality": {
+    "artist": "Jason Felix",
+    "scryfall_id": "55aec3bd-b52f-4b23-a86a-429fa78a5a6a"
   },
   "perilous_landscape": {
     "artist": "Alayna Danner",
@@ -2348,6 +2356,10 @@
     "artist": "Eddie Mendoza",
     "scryfall_id": "ac52be0c-49f4-4956-820e-bdd7d2744d2f"
   },
+  "scourge_of_fleets": {
+    "artist": "Steven Belledin",
+    "scryfall_id": "a79471f9-5cc0-48f5-9fa4-1f1374993825"
+  },
   "scouting_hawk": {
     "artist": "Ilse Gort",
     "scryfall_id": "bce2209e-7a5c-4394-876c-e0f68cfba9ca"
@@ -2599,6 +2611,10 @@
   "sphinx_of_magosi": {
     "artist": "James Ryman",
     "scryfall_id": "a2b4f70d-e922-4ecb-9d5a-6253f7a7716c"
+  },
+  "sphinx_of_uthuun": {
+    "artist": "Kekai Kotaki",
+    "scryfall_id": "5bd5cd33-20e2-4063-b422-2bde13021888"
   },
   "sphinxs_revelation": {
     "artist": "Slawomir Maniak",
@@ -3048,6 +3064,10 @@
     "artist": "Vance Kovacs",
     "scryfall_id": "94c229ea-90da-4aa0-bfda-b162fb3b5b8b"
   },
+  "verdant_sun_s_avatar": {
+    "artist": "Izzy",
+    "scryfall_id": "e8fce06a-56f7-4d0c-b094-ff147fec8256"
+  },
   "vesuva": {
     "artist": "Stephen Andrade",
     "scryfall_id": "2671eaa1-e6d5-4b70-a36c-3c7765695f1b"
@@ -3155,6 +3175,10 @@
   "wayfarers_bauble": {
     "artist": "JB Casacop",
     "scryfall_id": "b279f268-c37e-4a2d-8195-74f4881226fc"
+  },
+  "whelming_wave": {
+    "artist": "Slawomir Maniak",
+    "scryfall_id": "ddb863a0-3ff8-42a3-a151-4ea9aa433336"
   },
   "whiptongue_hydra": {
     "artist": "Tomasz Jedruszek",

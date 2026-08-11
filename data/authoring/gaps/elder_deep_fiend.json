@@ -1,0 +1,43 @@
+{
+  "card_id": "elder_deep_fiend",
+  "name": "Elder Deep-Fiend",
+  "oracle_text": "Flash\nEmerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, tap up to four target permanents.",
+  "blocked_sentences": [
+    "Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)",
+    "When you cast this spell, tap up to four target permanents.",
+    "Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered."
+  ],
+  "needs": [
+    {
+      "capability": "emerge",
+      "kind": "cost",
+      "what": "A card-level alternative cast cost, `emerge: \"{5}{U}{U}\"`, that (a) replaces the printed mana cost while casting from hand, (b) adds sacrificing a creature you control as part of the cost, and (c) reduces the generic portion of that cost by the mana value of the creature actually sacrificed. The reduction is dynamic and per-cast -- it is a function of a choice the caster makes while paying, not of the board -- so legality has to offer one castable action per sacrificeable creature (or offer the mode once and let the payment step ask which creature), and the payment solver has to compute `{5}{U}{U}` minus that one creature's mana value, clamped at zero on the generic part and never touching the two {U} pips. The printed mana value must stay 8.",
+      "why_existing_wont_do": "Nothing in `CardModel` can express a cast cost that both replaces the printed one and is chosen at cast time. `kicker` is the only other card-level mana cost and is explicitly ADDITIVE -- legality offers the card at `mana_cost` then at `mana_cost + kicker` -- so it makes the card more expensive, never less. `cost_reduction` is the closest fit and still cannot do it: `_validate_cost_reduction` (`src/automtg/cards/loader.py:504-516`) accepts exactly one of `count` or `total_power` over a static filter of printed characteristics, and the comment there says why -- it is evaluated while deciding what is castable, before anything is on the stack, so it can only read the board as it stands. Emerge's reduction is not a property of the board; it is the mana value of a creature the caster picks and destroys as part of the payment, which no reduction spec can name. `cost_reduction` also reduces the printed cost rather than replacing it, is generic-only, and is never optional, so it could not model the choice between casting for {8} and emerging. `Cost.sacrifice` exists (`src/automtg/cards/schema.py:26`) but belongs to `CostModel`, the cost of an ACTIVATED ability, and there is no path from an activated ability to casting the card that owns it. `suspend` and `retrace` are the two existing card-level alternate ways to play a card and neither replaces a cast-from-hand mana cost with a cheaper one: suspend exiles the card and waits out time counters before casting it free, retrace only widens the zone while adding a discard.",
+      "notes": "Once this exists, the same field covers every emerge card, and the sacrifice-as-part-of-the-cost machinery is most of what `evoke` (already recorded on `mulldrifter`) and other alternative-cost keywords want too -- worth building as one 'alternative cast cost' mechanism with per-keyword parameters rather than a third one-off card-level flag."
+    },
+    {
+      "capability": "cast_trigger",
+      "kind": "trigger_event",
+      "what": "A triggered ability that fires when its own card is CAST -- i.e. while that card is on the stack as a spell -- and resolves above the spell, so its effect happens whether or not the spell itself ever resolves. Concretely: `stack` has to become a legal `active_zones` value, `_candidate_abilities` has to scan the stack, and `push_trigger` has to place the triggered ability above the spell that caused it. Targets are chosen as the trigger goes on the stack, as usual.",
+      "why_existing_wont_do": "`spell_cast` is in `TRIGGER_EVENTS` and in `OBJECT_SUBJECT_TRIGGERS` (`src/automtg/engine/triggers.py:34,57`), so an ability can already watch other spells being cast -- but not its own, because of where triggers are scanned from. `_candidate_abilities` (`src/automtg/engine/triggers.py:127-178`) walks the battlefield, then the command, graveyard, hand and exile zones, plus the object that just left the battlefield for leave-triggers. The stack is never scanned, and `Ability.active_zones` cannot name it: the schema's literal set is `battlefield | command | graveyard | hand | exile` (`src/automtg/cards/schema.py:92`), and `Zone.STACK` (`src/automtg/engine/enums.py:18`) is deliberately absent from it. A card being cast has already left hand for the stack when `EventType.SPELL_CAST` fires, so even `active_zones: [\"hand\"]` -- the shape cycling uses -- would not catch it. `self_enters` is the nearest event that does fire for this card and is NOT a substitute: it fires on resolution, one step later and only if the spell resolves, which loses the reason cast triggers are printed at all.",
+      "notes": "Same shape unblocks every 'When you cast this spell...' card, which in practice means most of the emerge and Eldrazi cast-trigger cycle -- so it pairs naturally with the emerge work above."
+    }
+  ],
+  "expressible_today": {
+    "note": "Recorded so nobody re-derives it. Once a stack-zone cast trigger exists, the ability body needs no new vocabulary and should be written exactly this way.",
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 4,
+        "optional": true,
+        "selector": {}
+      }
+    ],
+    "effects": [{ "op": "tap", "objects": { "target": "t1" } }],
+    "why_it_works": "`count: 4` with `optional: true` is the engine's existing idiom for 'up to four target permanents' -- `legal_target_sets` (`src/automtg/engine/targeting.py:139-154`) builds the 4-combinations and appends the empty choice last, and the comment at line 136-138 names Shipbreaker Kraken's 'tap up to four target creatures' as the case it was written for. `op_tap` (`src/automtg/engine/effects/ops_board.py:157-161`) taps every oid a selector yields, and `{\"target\": \"t1\"}` is the standard way to point a selector at a chosen target (used throughout `data/cards/aesi.cards.json`). The one caveat, worth knowing before this is built: that idiom offers exactly four or exactly zero, not one, two or three, so a faithful 'up to four' may also want variable-size target counts -- that is a smaller, separate gap and not what blocks this card.",
+    "expectation_if_it_were_written": "`{\"zone\": \"battlefield\", \"battlefield_count\": 33}` -- the sandbox casts the card and reads the board, and no expectation key can observe permanents being tapped, so the tap itself is unassertable there regardless."
+  },
+  "closest_existing": ["kicker", "cost_reduction", "suspend", "retrace", "spell_cast", "self_enters"],
+  "confidence": "high"
+}

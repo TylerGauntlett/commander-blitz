@@ -170932,12 +170932,12 @@
     },
     "Meteor Golem": {
       "edhrec_rank": 781,
-      "gate": "template",
+      "gate": null,
       "name": "Meteor Golem",
-      "reason": "no template for: When this creature enters, destroy target nonland permanent an opponent controls",
+      "reason": "",
       "scryfall_id": "a1a1cfec-72ca-499b-b621-fa2d8502ea20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meteor Shower": {
@@ -197662,12 +197662,12 @@
     },
     "Peel from Reality": {
       "edhrec_rank": 14012,
-      "gate": "template",
+      "gate": null,
       "name": "Peel from Reality",
-      "reason": "no template for: Return target creature you control and target creature you don't control to their owners' ",
+      "reason": "",
       "scryfall_id": "55aec3bd-b52f-4b23-a86a-429fa78a5a6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peema Aether-Seer": {
@@ -234232,12 +234232,12 @@
     },
     "Scourge of Fleets": {
       "edhrec_rank": 2152,
-      "gate": "template",
+      "gate": null,
       "name": "Scourge of Fleets",
-      "reason": "no template for: When this creature enters, return each creature your opponents control with toughness X or",
+      "reason": "",
       "scryfall_id": "a79471f9-5cc0-48f5-9fa4-1f1374993825",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scourge of Geier Reach": {
@@ -241092,9 +241092,9 @@
     },
     "Sharktocrab": {
       "edhrec_rank": 14630,
-      "gate": null,
+      "gate": "template",
       "name": "Sharktocrab",
-      "reason": "",
+      "reason": "no template for: {2}{G}{U}: Adapt 1",
       "scryfall_id": "ec7933b5-15de-4ed7-af0c-626f81726338",
       "source": "",
       "status": "pending",
@@ -256502,12 +256502,12 @@
     },
     "Sphinx of Uthuun": {
       "edhrec_rank": 9974,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx of Uthuun",
-      "reason": "no template for: When this creature enters, reveal the top five cards of your library. An opponent separate",
+      "reason": "",
       "scryfall_id": "5bd5cd33-20e2-4063-b422-2bde13021888",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphinx of the Chimes": {
@@ -300692,12 +300692,12 @@
     },
     "Verdant Sun's Avatar": {
       "edhrec_rank": 2147,
-      "gate": "template",
+      "gate": null,
       "name": "Verdant Sun's Avatar",
-      "reason": "no template for: Whenever this creature or another creature you control enters, you gain life equal to that",
+      "reason": "",
       "scryfall_id": "e8fce06a-56f7-4d0c-b094-ff147fec8256",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verdant Touch": {
@@ -311072,12 +311072,12 @@
     },
     "Whelming Wave": {
       "edhrec_rank": 2311,
-      "gate": "template",
+      "gate": null,
       "name": "Whelming Wave",
-      "reason": "no template for: Return all creatures to their owners' hands except for Krakens, Leviathans, Octopuses, and",
+      "reason": "",
       "scryfall_id": "ddb863a0-3ff8-42a3-a151-4ea9aa433336",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "When We Were Young": {

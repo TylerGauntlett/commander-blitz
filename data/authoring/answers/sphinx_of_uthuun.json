@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "sphinx_of_uthuun",
+    "name": "Sphinx of Uthuun",
+    "oracle_text": "Flying\nWhen this creature enters, reveal the top five cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+    "mana_cost": "{5}{U}{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Sphinx"
+    ],
+    "power": 5,
+    "toughness": 6,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, reveal the top five cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "two_piles",
+            "amount": {
+              "const": 5
+            },
+            "to": "hand",
+            "other": "graveyard"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 35
+    }
+  }
+}

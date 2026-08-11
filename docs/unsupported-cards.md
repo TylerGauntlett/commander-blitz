@@ -10,41 +10,59 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **17** capabilities.
+**35 cards** blocked by **31** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [blocking-restriction](#blocking-restriction) | 3 | 6728 | keyword, static_effect |
+| [blocking-restriction](#blocking-restriction) | 4 | 4894 | keyword, static_effect |
+| [attack-requirement](#attack-requirement) | 3 | 420 | engine, op, static_effect |
 | [static-condition](#static-condition) | 3 | 19289 | static_effect |
-| [attack-requirement](#attack-requirement) | 2 | 420 | engine, op, static_effect |
 | [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
+| [return-to-hand-cost](#return-to-hand-cost) | 2 | 5792 | cost |
 | [shroud](#shroud) | 2 | 8522 | keyword |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
+| [adapt](#adapt) | 1 | 14630 | op |
 | [ascend](#ascend) | 1 | 19289 | engine |
+| [cant-attack](#cant-attack) | 1 | 2833 | static_effect |
+| [cast-trigger](#cast-trigger) | 1 | 7681 | trigger_event |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
+| [counter-kind-trigger](#counter-kind-trigger) | 1 | 1709 | trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
+| [distribute-counters](#distribute-counters) | 1 | 12944 | decision |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
+| [emerge](#emerge) | 1 | 7681 | cost |
 | [evoke](#evoke) | 1 | 584 | cost, engine |
+| [filtered-discard](#filtered-discard) | 1 | 4366 | op |
+| [illusion-token](#illusion-token) | 1 | 5792 | engine |
 | [investigate](#investigate) | 1 | 7272 | engine |
+| [kicker](#kicker) | 1 | 4628 | engine |
+| [landwalk](#landwalk) | 1 | 2833 | keyword |
+| [may-pay](#may-pay) | 1 | 4344 | cost, decision |
+| [type-disjunction](#type-disjunction) | 1 | 5177 | selector |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
+| [untap-during-each-untap-step](#untap-during-each-untap-step) | 1 | 2584 | static_effect, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
 
 ## blocking-restriction
 
-Blocks **3** cards.
+Blocks **4** cards.
 
 - **(keyword)** the same missing block-legality hook as Stromkirk Noble (filtered by creature type) and Vampire Cutthroat (filtered by relative power), here filtered by color and card type: the `intimidate` evasion keyword -- "this creature can't be blocked except by artifact creatures and/or creatures that share a color with it" -- as a `Keyword` enum member the loader accepts, plus the block-legality rule behind it in `combat.py`: a declared blocker is legal only if it has the Artifact type OR its colors intersect the attacker's colors. It must read *derived* colors of both creatures at declare-blockers time, so a creature that has been made black can block this and this creature being made a second color widens who may block it
   <br>Why the existing vocabulary won't do: `Keyword` (`engine/enums.py:131-153`) is a closed enum of 15 members and `KNOWN_KEYWORDS` is derived from it (`cards/loader.py:37`), so a card printing `intimidate` in its `keywords` or granting it via `grant_keyword` is a `DslError` at load, not a silent no-op. Nothing in the list is a colour-based evasion: `EVASION_KEYWORDS` is exactly `{flying, menace}` (`enums.py:156`) and `combat.py:181` notes menace is the only blocking restriction implemented. Menace is the nearest and is wrong in both directions -- it permits any two creatures of any colour to block, and forbids a lone artifact creature or a lone black creature from blocking, which intimidate expressly allows. `protection` (the one parameterised static, with `from_colors`) is a stop rather than an exemption: it names colours that *may not* block and it also blanks damage, targeting and enchanting, whereas intimidate names the colours that *may* and touches nothing but blocking -- and its `from_colors` is a fixed literal list, so it cannot say "shares a color with THIS creature" and would have to be rewritten if the creature's colour changed
 - **(static_effect)** a static continuous effect that restricts which creatures may block the source, filtered by a characteristic of the would-be blocker (here `subtypes: ["Human"]`) -- i.e. an evasion effect of the form "this creature can't be blocked by <filter>", evaluated when blockers are declared rather than as a granted keyword
   <br>Why the existing vocabulary won't do: `static_effects` offers only `buff`, `grant_keyword`, `set_pt`, `add_subtype` and `extra_land_drops` -- all of which change characteristics of permanents, none of which constrains the legality of a block. The nearest keyword is `menace` (and `flying`/`reach`), but those are fixed evasion rules with no filter: menace requires two or more blockers of any type and would let a single Human block alongside a second creature, while this card must forbid Humans outright and permit any one non-Human blocker. `static_filter_keys` does contain `blocking` and `subtypes`, but a filter alone has no restriction effect to attach to -- there is no effect kind that consumes it to veto a block declaration.
+- **(static_effect)** A static effect that constrains how a creature may be blocked, evaluated when blocks are declared and again when they are validated as a set. Tromokratis needs the 'all creatures the defending player controls must be blocking this creature, or the block is illegal' variant, which is a whole-declaration legality check rather than a per-pair one; the same effect should cover the ordinary 'can't be blocked' and 'can't be blocked except by N or more creatures' cases.
+  <br>Why the existing vocabulary won't do: The only static effects available are buff, grant_keyword, set_pt, add_subtype and extra_land_drops -- none of them speaks about blocking at all. The nearest existing thing is the menace keyword, but it is a fixed hardcoded rule rather than a parameterised one: combat.blocks_valid is documented as 'Menace is the only one implemented' and hardcodes len(blockers) < 2, and combat.can_block only knows about tapped/controller/protection, so there is no seam where a card-supplied blocking restriction could be consulted. Granting menace instead would be an approximation (2 blockers, not all of them) and is refused.
 - **(static_effect)** The same missing capability filed for `stromkirk_noble`: a static continuous effect that vetoes a block declaration against its source, filtered by a characteristic of the would-be blocker, consulted from `engine/combat.py:can_block` when blockers are declared. Skulk needs a *distinct sub-need* on top of that: the filter is not a fixed quality but a RELATIVE COMPARISON between two objects -- "power of the would-be blocker > power of this creature", read from derived (not printed) power on both sides at the moment blockers are declared, so an anthem, a pump spell or a +1/+1 counter on either creature changes who may block. Concretely this wants either (a) a `skulk` entry in `Keyword`/`EVASION_KEYWORDS` handled directly in `can_block`, or (b) a general "can't be blocked by" static whose filter may express a comparison against a characteristic of the source -- e.g. a value expression like `{"power_of": "source"}` usable as the right-hand side of the selector's `power: {"op": ">", "value": ...}` comparison.
   <br>Why the existing vocabulary won't do: `Keyword` is a closed enum of fifteen (`src/automtg/engine/enums.py:131`) with no `skulk`, and `EVASION_KEYWORDS` is `frozenset({FLYING, MENACE})` -- an unknown keyword is a load-time `DslError`, not a silently inert card. `can_block` (`src/automtg/engine/combat.py:121-153`) consults exactly three restrictions: protection, flying-vs-reach, and (via `blocks_valid`) menace; nothing reads a static there. `STATIC_EFFECTS` (`src/automtg/cards/loader.py:41-71`) offers `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types`, `protection` and the player-wide ones -- every object-facing one changes a characteristic, none constrains block legality. `protection` is the only static `can_block` does read, but it is wrong twice over: it names a fixed quality (`from_types`/`from_subtypes`/`from_colors`) and cannot express a power comparison at all, and it is a DEBT keyword that would also stop damage, enchanting and targeting, making the creature far better than the one printed. `menace` restricts blocker *count*, not blocker power. Filter keys cannot reach it either: `STATIC_FILTER_KEYS` (`loader.py:76-97`) has no `power` key whatsoever, and even the full selector's `power: {"op": ">", "value": {...}}` compares against a value expression with no way to name the blocked creature's own power -- `power_of` takes a `var` (snapshot) or a `target`, and a static block restriction has neither. Static filters are additionally required to read only *printed* characteristics, which skulk must not do.
 
 <details><summary>Cards waiting on this</summary>
 
+- **Tromokratis** (rank 4894) — `tromokratis`
+  - Tromokratis can't be blocked unless all creatures defending player controls block it. (If any creature that player controls doesn't block this creature, it can't be blocked.)
 - **Vampire Cutthroat** (rank 6728) — `vampire_cutthroat`
   - Skulk (This creature can't be blocked by creatures with greater power.)
 - **Stromkirk Noble** (rank 13287) — `stromkirk_noble`
@@ -52,6 +70,39 @@ Blocks **3** cards.
 - **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
   - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
   - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
+
+</details>
+
+## attack-requirement
+
+Blocks **3** cards.
+
+- **(op)** an effect op that places an until-end-of-turn 'attacks this combat if able' requirement on a set of creatures chosen by an ordinary selector (here `{"zone": "battlefield", "controller": "opponent", "types": ["Creature"], "count": "all"}`), surviving on creatures that were not on the battlefield when it resolved only if the printed card says so (Bident's does not, so a snapshot of the affected set at resolution is correct)
+  <br>Why the existing vocabulary won't do: The whole Board/Modify op groups act on characteristics or on the object's own state: `tap`, `freeze` and `skip_untap` stop a permanent from being available, and `lock_abilities` removes a permission, but none of them can *compel* an action. `lock_abilities` is the closest in spirit — an until-end-of-turn, non-keyword permission flag read by legality — yet it is a prohibition read at activation time, and an attack requirement is an obligation read while declaring attackers, so it cannot be spelled as a negation of anything that exists.
+- **(engine)** the declare-attackers step must enforce requirements: a legal attack declaration has to include every creature under a requirement that is able to attack (untapped, not summoning sick, no defender), and the AI/agent choosing attackers for the affected player must be constrained to a maximal legal set rather than being free to decline
+  <br>Why the existing vocabulary won't do: Nothing in the reference vocabulary reaches combat declaration at all — `attacks` and `blocks` exist only as trigger events that observe a declaration that has already been made, and `defending` merely reads who was attacked. An op that recorded the flag with no enforcement would load, show on the board and change nothing, which is the exact failure mode the format exists to refuse.
+- **(static_effect)** the same requirement as a continuous form, so the many printed variants ('Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') and full goad ('attacks each combat if able and attacks a player other than you if able') share one enforcement point in the declare-attackers check
+  <br>Why the existing vocabulary won't do: `static_effects` is limited to `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types`, `extra_land_drops` and the player-wide seven, all of which write characteristics or player permissions that the characteristics pipeline reads. `grant_keyword` cannot stand in: the engine's keyword list is a fixed vocabulary of fifteen and an attack requirement is a behaviour, not a printed characteristic, so granting a keyword would need the same combat-step enforcement to exist first.
+- **(static_effect)** a continuous static effect meaning 'each creature matched by `affects` attacks each combat if able', so that the printed variants ('This creature attacks each combat if able', 'Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') are one effect with one enforcement point. For this card it would read `{"kind": "static", "effect": "attacks_if_able", "affects": {"self_only": true}}`.
+  <br>Why the existing vocabulary won't do: The static effect vocabulary is `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types` plus the player-wide seven, and every one of them writes a characteristic or a player permission that the characteristics pipeline reads. An attack requirement is an obligation on a future action, not a characteristic. `grant_keyword` is the nearest fit and cannot stand in: the keyword vocabulary is a closed list of fifteen (`deathtouch` ... `vigilance`), and even if a `must_attack` keyword were added to it, granting it would change nothing until the declare-attackers step read it. `defender` is the only combat-shaped keyword and it is the exact opposite -- a prohibition on attacking, enforced by refusing an attacker, whereas this must force one in.
+- **(engine)** declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under a requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline.
+  <br>Why the existing vocabulary won't do: Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made, and `defending` only reads who was attacked; `tap`, `freeze`, `skip_untap` and `lock_abilities` all remove availability or permission and none can compel an action. Without this half, a static that merely recorded the flag would load, look implemented and do nothing -- the failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa; that card wants the one-shot until-end-of-turn form, this one wants the permanent form, and both want this enforcement point.
+- **(static_effect)** an 'unless' clause on the requirement -- a static whose applicability is re-checked against board state, here `{"not": {"exists": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "name": "Advocate of the Beast"}}}`. Either a static `condition` that accepts the ordinary condition language, or an `unless` selector on the attack-requirement effect itself.
+  <br>Why the existing vocabulary won't do: A static's `condition` is deliberately tiny: `characteristics._static_condition_met` reads only `condition.counters`, i.e. how many counters of one kind sit on the static's own source, so it cannot ask about another permanent at all. Widening it generally would let one static depend on another's output and break the acyclic fixed-order pipeline, so the requirement's own effect is the safer place to carry an `unless` selector. Note that matching a permanent by name is NOT the blocker: `name` is already in `SELECTOR_KEYS` and works in ordinary selectors and in `exists` conditions. It is absent from `STATIC_FILTER_KEYS`, but that list constrains `affects`, and the name test belongs in the condition, not in `affects`.
+- **(op)** an effect op that places an attack requirement on a single targeted creature -- `{"op": "must_attack", "target": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}, "duration": "next_combat"}` -- meaning 'this creature attacks during its controller's next combat phase if able'. The duration is the part not shared with the already-filed variants: it is neither until-end-of-turn (Bident of Thassa) nor permanent (Marauding Maulhorn), but a one-shot obligation that persists across turns until that player's *next* combat phase arrives, is discharged there, and expires whether or not the creature was able to attack.
+  <br>Why the existing vocabulary won't do: No op in the vocabulary can compel an action. `tap`, `freeze` and `skip_untap` remove availability, `lock_abilities` removes a permission -- all prohibitions, and an attack requirement cannot be spelled as the negation of any of them. `delay` is the closest fit for the timing half and still does not help: it schedules an *effect* to run at a later step, whereas this must install a requirement that the declare-attackers legality check reads, and `delay` has nothing to run because no such requirement exists. Duplicating this as a bare 'this turn' op would also be wrong here -- the trigger fires on the controller's own landfall, so 'this turn' would frequently be discharged during a combat phase the affected opponent never gets.
+- **(engine)** declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under an unexpired requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline. For the `next_combat` duration this is also the point where the obligation is discharged and cleared.
+  <br>Why the existing vocabulary won't do: Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made. Without this half, an op that merely recorded the flag would load, claim the printed line and change nothing -- the exact failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa and Marauding Maulhorn; all three want this one enforcement point, and this card additionally needs it to expire a per-combat obligation there.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bident of Thassa** (rank 420) — `bident_of_thassa`
+  - {1}{U}, {T}: Creatures your opponents control attack this turn if able.
+- **Trench Behemoth** (rank 9467) — `trench_behemoth`
+  - Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.
+  - Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.
+- **Marauding Maulhorn** (rank 30863) — `marauding_maulhorn`
+  - This creature attacks each combat if able unless you control a creature named Advocate of the Beast.
 
 </details>
 
@@ -78,32 +129,6 @@ Blocks **3** cards.
 - **Nimble Mongoose** (rank 26520) — `nimble_mongoose`
   - Shroud (This creature can't be the target of spells or abilities.)
   - Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.
-
-</details>
-
-## attack-requirement
-
-Blocks **2** cards.
-
-- **(op)** an effect op that places an until-end-of-turn 'attacks this combat if able' requirement on a set of creatures chosen by an ordinary selector (here `{"zone": "battlefield", "controller": "opponent", "types": ["Creature"], "count": "all"}`), surviving on creatures that were not on the battlefield when it resolved only if the printed card says so (Bident's does not, so a snapshot of the affected set at resolution is correct)
-  <br>Why the existing vocabulary won't do: The whole Board/Modify op groups act on characteristics or on the object's own state: `tap`, `freeze` and `skip_untap` stop a permanent from being available, and `lock_abilities` removes a permission, but none of them can *compel* an action. `lock_abilities` is the closest in spirit — an until-end-of-turn, non-keyword permission flag read by legality — yet it is a prohibition read at activation time, and an attack requirement is an obligation read while declaring attackers, so it cannot be spelled as a negation of anything that exists.
-- **(engine)** the declare-attackers step must enforce requirements: a legal attack declaration has to include every creature under a requirement that is able to attack (untapped, not summoning sick, no defender), and the AI/agent choosing attackers for the affected player must be constrained to a maximal legal set rather than being free to decline
-  <br>Why the existing vocabulary won't do: Nothing in the reference vocabulary reaches combat declaration at all — `attacks` and `blocks` exist only as trigger events that observe a declaration that has already been made, and `defending` merely reads who was attacked. An op that recorded the flag with no enforcement would load, show on the board and change nothing, which is the exact failure mode the format exists to refuse.
-- **(static_effect)** the same requirement as a continuous form, so the many printed variants ('Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') and full goad ('attacks each combat if able and attacks a player other than you if able') share one enforcement point in the declare-attackers check
-  <br>Why the existing vocabulary won't do: `static_effects` is limited to `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types`, `extra_land_drops` and the player-wide seven, all of which write characteristics or player permissions that the characteristics pipeline reads. `grant_keyword` cannot stand in: the engine's keyword list is a fixed vocabulary of fifteen and an attack requirement is a behaviour, not a printed characteristic, so granting a keyword would need the same combat-step enforcement to exist first.
-- **(static_effect)** a continuous static effect meaning 'each creature matched by `affects` attacks each combat if able', so that the printed variants ('This creature attacks each combat if able', 'Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') are one effect with one enforcement point. For this card it would read `{"kind": "static", "effect": "attacks_if_able", "affects": {"self_only": true}}`.
-  <br>Why the existing vocabulary won't do: The static effect vocabulary is `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types` plus the player-wide seven, and every one of them writes a characteristic or a player permission that the characteristics pipeline reads. An attack requirement is an obligation on a future action, not a characteristic. `grant_keyword` is the nearest fit and cannot stand in: the keyword vocabulary is a closed list of fifteen (`deathtouch` ... `vigilance`), and even if a `must_attack` keyword were added to it, granting it would change nothing until the declare-attackers step read it. `defender` is the only combat-shaped keyword and it is the exact opposite -- a prohibition on attacking, enforced by refusing an attacker, whereas this must force one in.
-- **(engine)** declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under a requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline.
-  <br>Why the existing vocabulary won't do: Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made, and `defending` only reads who was attacked; `tap`, `freeze`, `skip_untap` and `lock_abilities` all remove availability or permission and none can compel an action. Without this half, a static that merely recorded the flag would load, look implemented and do nothing -- the failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa; that card wants the one-shot until-end-of-turn form, this one wants the permanent form, and both want this enforcement point.
-- **(static_effect)** an 'unless' clause on the requirement -- a static whose applicability is re-checked against board state, here `{"not": {"exists": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "name": "Advocate of the Beast"}}}`. Either a static `condition` that accepts the ordinary condition language, or an `unless` selector on the attack-requirement effect itself.
-  <br>Why the existing vocabulary won't do: A static's `condition` is deliberately tiny: `characteristics._static_condition_met` reads only `condition.counters`, i.e. how many counters of one kind sit on the static's own source, so it cannot ask about another permanent at all. Widening it generally would let one static depend on another's output and break the acyclic fixed-order pipeline, so the requirement's own effect is the safer place to carry an `unless` selector. Note that matching a permanent by name is NOT the blocker: `name` is already in `SELECTOR_KEYS` and works in ordinary selectors and in `exists` conditions. It is absent from `STATIC_FILTER_KEYS`, but that list constrains `affects`, and the name test belongs in the condition, not in `affects`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bident of Thassa** (rank 420) — `bident_of_thassa`
-  - {1}{U}, {T}: Creatures your opponents control attack this turn if able.
-- **Marauding Maulhorn** (rank 30863) — `marauding_maulhorn`
-  - This creature attacks each combat if able unless you control a creature named Advocate of the Beast.
 
 </details>
 
@@ -177,6 +202,26 @@ Blocks **2** cards.
 
 </details>
 
+## return-to-hand-cost
+
+Blocks **2** cards.
+
+- **(cost)** a cost component that returns a permanent you control to its owner's hand as part of paying an activated ability, chosen by an ordinary selector, e.g. `{"mana": "{1}", "return_to_hand": {"zone": "battlefield", "controller": "you", "types": ["Land"], "count": 1}}`. It needs both halves of the existing cost contract: a payability test (a matching permanent exists, exactly as `_sacrifice_pool` gates `sacrifice` in `engine/costs.py:351`) and a payment step that asks the controller which permanent goes and then moves it to its owner's hand (`engine/costs.py:445` is the shape, with `sacrifice_object` swapped for a move to hand). Meloku differs from Trench Behemoth in one way worth building for: the returned land is combined with a mana cost (`{1}`), so the new component must compose with `mana` in the same `Cost`, not stand alone. Note also that the cost is repeatable with no tap, so payability must be re-tested per activation as the land pool shrinks.
+  <br>Why the existing vocabulary won't do: `Cost` (`engine/carddef.py:37-55`, mirrored by `CostModel` in `cards/schema.py:18-35`) carries exactly `mana`, `tap`, `untap`, `sacrifice`, `discard`, `discard_selector`, `discard_self`, `pay_life`, `remove_counters` and `exile_from_graveyard`; nothing in that list moves a battlefield permanent to hand. `sacrifice` is the closest -- same selector shape, same ask-the-player payment -- but it puts the land in the graveyard instead of the hand, which makes a materially different card: Meloku is played as a repeatable engine precisely because the lands come back and can be replayed, and a sacrifice version would strip-mine its own mana base. Substituting it would silently change the card. The `return_to_hand` **op** is in the vocabulary but is an effect, not a cost: effects run on resolution, so the ability could be activated with no land on the battlefield at all, the payment would not gate activation, and it would not be rewindable if it failed. Same need already filed under this slug for Trench Behemoth (`data/authoring/gaps/trench_behemoth.json`), whose ability has no mana component; one cost field satisfying both is the work item.
+- **(cost)** a cost component that returns a permanent you control to its owner's hand as part of paying an activated ability, chosen by an ordinary selector, e.g. `{"return_to_hand": {"zone": "battlefield", "controller": "you", "types": ["Land"], "count": 1}}`. It needs both halves of the existing cost contract: a payability test (a matching permanent exists, exactly as `_sacrifice_pool` gates `sacrifice`) and a payment step that asks the controller which permanent goes and then moves it to its owner's hand. Note this ability has no mana and no tap in its cost, so the returned permanent is the entire cost -- a bounce cost is the whole activation, not a rider on one.
+  <br>Why the existing vocabulary won't do: `Cost` carries exactly `mana`, `tap`, `untap`, `sacrifice` (+`discard`, `discard_selector`, `discard_self`, `pay_life`, `remove_counters`, `exile_from_graveyard`) and nothing moves a battlefield permanent to hand. `sacrifice` is the closest -- it already takes the right selector shape and already asks the player to choose -- but it destroys the land instead of returning it, which is a materially different card: Trench Behemoth is a recursion engine precisely because the land comes back and can be replayed for another landfall trigger. Substituting it would silently change the card. The `return_to_hand` **op** exists but is an effect, not a cost: effects run on resolution after the ability is already on the stack, so paying with it would let the ability be activated with no land at all and would not be rewindable if the payment failed.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Meloku the Clouded Mirror** (rank 5792) — `meloku_the_clouded_mirror`
+  - {1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying.
+  - Scope: only this second printed line is blocked. `Flying` is expressible today and is already on the packet's `starting_point` as `keywords: ["flying"]`, needing nothing new. The blocked line is blocked twice over -- once on the activation cost and once on the token it creates -- and either one alone would be enough to keep the card out. Because the residual gate reads a printed line as a whole, and because Meloku's entire function is turning excess lands into fliers, the line goes here rather than being written half.
+- **Trench Behemoth** (rank 9467) — `trench_behemoth`
+  - Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.
+  - Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.
+
+</details>
+
 ## shroud
 
 Blocks **2** cards.
@@ -216,6 +261,20 @@ Blocks **2** cards.
 
 </details>
 
+## adapt
+
+Blocks **1** card.
+
+- **(op)** An `adapt` op taking an amount N: put N +1/+1 counters on the source only if it currently has no +1/+1 counters on it, otherwise do nothing. Unlike a one-shot keyword action it must be repeatable -- the same ability can adapt again on a later turn once the counters are gone -- and the check is on the live counter count, not on a flag the op itself sets.
+  <br>Why the existing vocabulary won't do: `monstrosity` is the closest op but gates on a permanent one-way monstrous flag it sets itself, so it can never fire a second time and it ignores +1/+1 counters that arrived from any other source; a creature made monstrous can still adapt, and a creature given a counter by another card cannot. `add_counters` alone drops the whole conditional clause and would keep stacking counters. `if` is in the op list but the packet documents no condition vocabulary at all, so there is no stated way to test 'the source has no +1/+1 counters on it' -- and if such a condition exists it would still need a counter-count read on the source object, which is the same missing piece.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sharktocrab** (rank 14630) — `sharktocrab`
+  - {2}{G}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)
+
+</details>
+
 ## ascend
 
 Blocks **1** card.
@@ -229,6 +288,37 @@ Blocks **1** card.
   - Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)
   - This creature has flying as long as you have the city's blessing.
   - Scope: both printed lines are blocked, and the second is blocked twice over -- once because there is nothing to ask about (no city's blessing exists to be read) and once because a static's `condition` may not ask it even if it did. The card already in the hand-written pool (`data/cards/edgar.cards.json`) carries the correct printed `oracle_text` but implements neither line; it is a vanilla 2/1 Vampire Soldier, and `tests/cards/precon_deficits.json` records exactly that residual. No partial answer is possible: printing `"keywords": ["flying"]` unconditionally would be a strictly better card than the one printed (a 2/1 flier for {W} that flies from turn one regardless of board), and it would still leave the Ascend line unclaimed by any ability.
+
+</details>
+
+## cant-attack
+
+Blocks **1** card.
+
+- **(static_effect)** A `cant_attack` static effect whose `affects` filter selects the creatures forbidden to attack, enforced by a new clause in `can_attack` (src/automtg/engine/combat.py:46) alongside the existing `Keyword.DEFENDER` check, so `legal_attackers` and the DECLARE_ATTACKERS action mask both stay exact. It must apply to creatures of *every* controller, so the filter needs a `controller: "any"` path in `_matches` (src/automtg/engine/characteristics.py) that is reachable from an attack restriction. It additionally needs a negated keyword filter key -- `not_keywords: ["flying", "islandwalk"]`, matching an object only when it has none of the listed keywords -- and that key must read *current* keywords rather than printed ones, since a creature granted flying by another permanent must be able to attack.
+  <br>Why the existing vocabulary won't do: `static_effects` is only `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `extra_land_drops`; none of them touches attack legality, and `can_attack` reads nothing but tapped state, types, `defender` and summoning sickness. The tempting substitute is a static `grant_keyword` of `defender` to the matching creatures, and it is wrong twice over: `defender` is checked in other places as a printed characteristic of walls and it also blanks 'attacks' triggers differently, but more importantly the filter cannot be written -- `static_filter_keys` offers `keywords` (has all of these) and `not_types`, but no negation over keywords, so 'creatures without flying or islandwalk' is inexpressible even before the effect is. `lock_abilities` is a permission on activating abilities and is until-end-of-turn, not a combat restriction. Approximating by omitting the sentence would leave the card's main effect -- a global attack lock -- silently absent.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stormtide Leviathan** (rank 2833) — `stormtide_leviathan`
+  - Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
+  - Creatures without flying or islandwalk can't attack.
+
+</details>
+
+## cast-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** A triggered ability that fires when its own card is CAST -- i.e. while that card is on the stack as a spell -- and resolves above the spell, so its effect happens whether or not the spell itself ever resolves. Concretely: `stack` has to become a legal `active_zones` value, `_candidate_abilities` has to scan the stack, and `push_trigger` has to place the triggered ability above the spell that caused it. Targets are chosen as the trigger goes on the stack, as usual.
+  <br>Why the existing vocabulary won't do: `spell_cast` is in `TRIGGER_EVENTS` and in `OBJECT_SUBJECT_TRIGGERS` (`src/automtg/engine/triggers.py:34,57`), so an ability can already watch other spells being cast -- but not its own, because of where triggers are scanned from. `_candidate_abilities` (`src/automtg/engine/triggers.py:127-178`) walks the battlefield, then the command, graveyard, hand and exile zones, plus the object that just left the battlefield for leave-triggers. The stack is never scanned, and `Ability.active_zones` cannot name it: the schema's literal set is `battlefield | command | graveyard | hand | exile` (`src/automtg/cards/schema.py:92`), and `Zone.STACK` (`src/automtg/engine/enums.py:18`) is deliberately absent from it. A card being cast has already left hand for the stack when `EventType.SPELL_CAST` fires, so even `active_zones: ["hand"]` -- the shape cycling uses -- would not catch it. `self_enters` is the nearest event that does fire for this card and is NOT a substitute: it fires on resolution, one step later and only if the spell resolves, which loses the reason cast triggers are printed at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elder Deep-Fiend** (rank 7681) — `elder_deep_fiend`
+  - Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)
+  - When you cast this spell, tap up to four target permanents.
+  - Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered.
 
 </details>
 
@@ -249,6 +339,20 @@ Blocks **1** card.
   - As this artifact enters, choose a creature type.
   - Creatures you control of the chosen type get +1/+1.
   - Whenever you cast a creature spell of the chosen type, draw a card.
+
+</details>
+
+## counter-kind-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** A way for a `counter_placed` trigger to name the counter kind it cares about -- e.g. `{"event": "counter_placed", "source": "self", "counter": "+1/+1"}` -- so it fires on +1/+1 counters and stays silent on charge, slumber, quest or -1/-1 counters. The data is already on the event and merely never read: `primitives.add_counters` (`engine/primitives.py:234-242`) fires COUNTER_PLACED with `counter=kind` in `event.data`. Three small edits close it: add `counter: str | None = None` to `TriggerModel` (`cards/schema.py:50-67`) and `TriggerSpec` (`engine/carddef.py:95-110`), carry it through `loader._compile_ability` (`cards/loader.py:369-377`) with the same guard the neighbouring `defending` and `not_cause` fields get -- reject it on any event other than `counter_placed`, because a filter that silently never applies is exactly the defect this is fixing -- and check it in `triggers._matches` (`engine/triggers.py:182-226`) as `if spec.counter is not None and event.data.get("counter") != spec.counter: return False`. Worth also adding `"counter"` to the keys `triggers._queue` copies out of `event.data` into `bindings` (`engine/triggers.py:385-387`, which already copies `amount`), so an effect can read the kind that fired it. Note the printed wording is 'a +1/+1 counter', singular-or-more: `add_counters` fires ONE event for the whole batch (`amount` is on the event), so one trigger per placement is already the correct Magic behaviour for both this card and Sharktocrab's 'one or more' phrasing -- no batching work is needed.
+  <br>Why the existing vocabulary won't do: There is no field for it and no selector that reaches it, and both near misses were probed rather than assumed. (1) `{"counter": "+1/+1"}` on the trigger itself is rejected at load: `TriggerModel` is `model_config = Strict` = `ConfigDict(extra="forbid")` (`cards/schema.py:15,53`), verified -> `abilities.0.trigger.counter: Extra inputs are not permitted`. (2) `{"counter": "+1/+1"}` inside the trigger's `filter` is rejected too, verified -> `abilities[0].trigger.filter: unknown selector keys ['counter']`, and it could not work anyway: `matches_card_filter` (`engine/triggers.py:275-332`) matches the SUBJECT OBJECT's printed card face -- types, subtypes, colors, keywords, power, toughness -- and for `counter_placed` the subject is the permanent that received the counter, i.e. this creature. It has no access to the event payload at all. (3) The trigger's `condition` cannot rescue it either: `evaluate_condition` is called from `triggers._matches:220-224` with only `controller` and `source`, so it can ask about the board but never about the event, and `_queue` does not copy `counter` into `bindings` (`engine/triggers.py:385-387` copies `amount`, `damage`, `life`, `sid`, `defender`, `was_attacking` -- not `counter`), so the effects cannot read the kind on resolution either. A `counters_on` self check in an `if` is a different sentence, not a workaround: it is true whenever the creature already has a +1/+1 counter from any earlier source, so a slumber counter arriving later would still draw. The bare unfiltered trigger was built and run: with `{"event": "counter_placed", "source": "self"}` and nothing else, placing a `charge` counter and placing a `slumber` counter each queued the draw trigger just as a `+1/+1` counter did. Those kinds are not hypothetical -- `data/cards/` already places `charge` (4 sites) and `slumber` (4 sites) counters today, so the approximation is observably wrong in the shipped pool, not just in principle. No card in `data/cards/` currently uses `counter_placed` at all, so nothing shipped is approximated yet; Sharktocrab's gap record (`data/authoring/gaps/sharktocrab.json`) carries the same sentence as expressible, which it is not -- whoever clears `adapt` there will hit this.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fathom Mage** (rank 1709) — `fathom_mage`
+  - Whenever a +1/+1 counter is put on this creature, you may draw a card.
 
 </details>
 
@@ -282,6 +386,20 @@ Blocks **1** card.
 
 </details>
 
+## distribute-counters
+
+Blocks **1** card.
+
+- **(decision)** A division decision that splits a single pool of N counters (here N = the X paid, via the existing {"x": true} value) across a player-chosen set of objects, each object receiving its own share of at least one and the shares summing to exactly N. The chooser picks both how many objects participate ('any number of commanders', plus the source itself, which is always included) and each object's share, and the shares must be locked in as the ability is put on the stack, since divided counters/damage are chosen at announcement, not on resolution.
+  <br>Why the existing vocabulary won't do: `add_counters` is the closest op, but its `amount` is evaluated once and then applied in full to every object returned by `choose_objects` -- so `{"counter": "+1/+1", "amount": {"x": true}, "objects": {...}}` gives X counters to each chosen commander rather than X counters total split among them. `for_each` and `repeat` can iterate, but they multiply the effect per iteration rather than partitioning a fixed pool, and neither offers a per-object amount the player chooses. There is no decision kind in the vocabulary that asks a player to divide a number among targets. The selector side is fine -- `static_filter_keys` already carries `is_commander` and `self_only` -- so the missing piece is purely the divided-amount decision, not the ability to find the objects.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stumpsquall Hydra** (rank 12944) — `stumpsquall_hydra`
+  - When this creature enters, distribute X +1/+1 counters among it and any number of commanders.
+
+</details>
+
 ## embalm
 
 Blocks **1** card.
@@ -296,6 +414,22 @@ Blocks **1** card.
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
   - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
+
+</details>
+
+## emerge
+
+Blocks **1** card.
+
+- **(cost)** A card-level alternative cast cost, `emerge: "{5}{U}{U}"`, that (a) replaces the printed mana cost while casting from hand, (b) adds sacrificing a creature you control as part of the cost, and (c) reduces the generic portion of that cost by the mana value of the creature actually sacrificed. The reduction is dynamic and per-cast -- it is a function of a choice the caster makes while paying, not of the board -- so legality has to offer one castable action per sacrificeable creature (or offer the mode once and let the payment step ask which creature), and the payment solver has to compute `{5}{U}{U}` minus that one creature's mana value, clamped at zero on the generic part and never touching the two {U} pips. The printed mana value must stay 8.
+  <br>Why the existing vocabulary won't do: Nothing in `CardModel` can express a cast cost that both replaces the printed one and is chosen at cast time. `kicker` is the only other card-level mana cost and is explicitly ADDITIVE -- legality offers the card at `mana_cost` then at `mana_cost + kicker` -- so it makes the card more expensive, never less. `cost_reduction` is the closest fit and still cannot do it: `_validate_cost_reduction` (`src/automtg/cards/loader.py:504-516`) accepts exactly one of `count` or `total_power` over a static filter of printed characteristics, and the comment there says why -- it is evaluated while deciding what is castable, before anything is on the stack, so it can only read the board as it stands. Emerge's reduction is not a property of the board; it is the mana value of a creature the caster picks and destroys as part of the payment, which no reduction spec can name. `cost_reduction` also reduces the printed cost rather than replacing it, is generic-only, and is never optional, so it could not model the choice between casting for {8} and emerging. `Cost.sacrifice` exists (`src/automtg/cards/schema.py:26`) but belongs to `CostModel`, the cost of an ACTIVATED ability, and there is no path from an activated ability to casting the card that owns it. `suspend` and `retrace` are the two existing card-level alternate ways to play a card and neither replaces a cast-from-hand mana cost with a cheaper one: suspend exiles the card and waits out time counters before casting it free, retrace only widens the zone while adding a discard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elder Deep-Fiend** (rank 7681) — `elder_deep_fiend`
+  - Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)
+  - When you cast this spell, tap up to four target permanents.
+  - Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered.
 
 </details>
 
@@ -315,6 +449,35 @@ Blocks **1** card.
 
 </details>
 
+## filtered-discard
+
+Blocks **1** card.
+
+- **(op)** a `discard` effect that accepts a selector over the discarding player's hand (e.g. `{"types": ["Land"]}`), so the chosen cards must match a card type, and that only runs when such a card is available -- letting the 'unless' branch be written as a `may` whose taken branch is 'discard a land card' and whose `else` is 'discard two cards'
+  <br>Why the existing vocabulary won't do: The `discard` op reads only `amount`, `random` and `player`; it asks the player for any cards from the whole hand, so 'discards a land card' would silently become 'discards any card'. The only type-narrowed discard in the engine is `Cost.discard_selector`, which is a cost paid to activate an ability, not vocabulary a resolving sorcery's `spell_effects` can use, and `may`/`choose_mode` can pose the choice but not constrain what it throws away.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Compulsive Research** (rank 4366) — `compulsive_research`
+  - Then that player discards two cards unless they discard a land card.
+
+</details>
+
+## illusion-token
+
+Blocks **1** card.
+
+- **(engine)** a 1/1 blue flying Illusion token in the shared token pool -- one new object in `data/cards/tokens.cards.json`, following the naming already used there for keyworded tokens (`knight_2_2_w_vigilance`, `vampire_1_1_b_lifelink`): id `illusion_1_1_u_flying`, name `Illusion Token`, `types: ["Creature"]`, `subtypes: ["Illusion"]`, `colors: ["U"]`, `power: 1`, `toughness: 1`, `keywords: ["flying"]`, `is_token: true`, no mana cost. Every piece of that is already supported -- `flying` is in the keyword vocabulary and `knight_2_2_w_vigilance` proves a token may carry one -- so this is a data addition with no engine change behind it. With it in the pool the effect half is spelled `{"op": "create_token", "token": "illusion_1_1_u_flying", "amount": {"const": 1}}` and needs no new op.
+  <br>Why the existing vocabulary won't do: `create_token` is in the vocabulary and can name any token id, but `validate_token_references` (`cards/loader.py:703-711`) raises `DslError: create_token references unknown card` for any id not already in the registry, and the whole pool today is 16 objects, none of them an Illusion and none of them a 1/1 blue flier: the only blue creature tokens are `komas_coil_3_3_u` and `kraken_8_8_u`, and the only 1/1 fliers are none at all. `create_token_copy` cannot stand in either -- it names no token id, so it can only copy something already on the battlefield, and nothing in Meloku's text copies anything. There is no facility for a card to define a token inline, so the token must exist as data before the card can load.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Meloku the Clouded Mirror** (rank 5792) — `meloku_the_clouded_mirror`
+  - {1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying.
+  - Scope: only this second printed line is blocked. `Flying` is expressible today and is already on the packet's `starting_point` as `keywords: ["flying"]`, needing nothing new. The blocked line is blocked twice over -- once on the activation cost and once on the token it creates -- and either one alone would be enough to keep the card out. Because the residual gate reads a printed line as a whole, and because Meloku's entire function is turning excess lands into fliers, the line goes here rather than being written half.
+
+</details>
+
 ## investigate
 
 Blocks **1** card.
@@ -327,6 +490,65 @@ Blocks **1** card.
 - **Bygone Bishop** (rank 7272) — `bygone_bishop`
   - Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
   - Scope: only the `investigate` half of this one printed line is blocked, and it is blocked on a single missing thing -- a Clue token in the shared token pool. The trigger half IS expressible today and needs nothing new; see `expressible_today` below. Because the residual gate reads a printed line as a whole, and because a trigger that fires and creates nothing is a strictly worse card than the one printed (Bygone Bishop's entire function is the Clues), the line goes here rather than being written half. The card already in the hand-written pool covers none of it: `data/cards/isperia.cards.json` has it as a vanilla 2/3 flier -- and with mana cost `{2}{W}{W}` where the packet and the printing say `{2}{W}`, which wants fixing when this is implemented.
+
+</details>
+
+## kicker
+
+Blocks **1** card.
+
+- **(engine)** The kicked flag has to survive the cast-to-battlefield zone change and reach a triggered ability, so a `self_enters` trigger whose intervening-if is `{"kicked": true}` is true exactly when the kicker cost was paid. Concretely, the same three-step plumbing that already exists for X: record it on the object as it resolves (`GameObject.cast_x` at objects.py:77, set at stack.py:193 by `obj.cast_x = item.x`), carry it into the trigger's bindings (triggers.py:380 already does `"x": obj.cast_x`), and set it on the ability's EffectContext (stack.py:250 `_resolve_ability`, mirroring the `kicked=item.kicked` that stack.py:185 `_resolve_spell` already passes). This is the whole of what this card needs -- every other piece is already shipped, including the `kicker` cost field, the `{"kicked": true}` condition, the `self_enters` trigger event and the `not_subtypes` selector key the bounce half wants.
+  <br>Why the existing vocabulary won't do: `{"kicked": true}` is the right condition and the loader will happily accept it here -- `_mentions_kicked` (loader.py:278-281) walks each ability's effects and its trigger condition, so the card passes the half-a-kicker check and loads clean. It is then silently inert: `stack._resolve_ability` builds its EffectContext without a `kicked=` argument, so `EffectContext.kicked` (context.py:37) falls back to its `False` default and `conditions.evaluate`'s `ctx.kicked == bool(cond["kicked"])` (conditions.py:62-63) is false on every resolution, kicked or not. The bounce would never happen, which is exactly the quietly-wrong card a gap record exists to prevent -- and gate verification, which casts a kicker card *kicked* (verify.py:498), would see an unchanged board. Putting the effect in `spell_effects`, where `kicked` genuinely works, is not open: Slinn Voda is a permanent and the loader routes a permanent's effects to `abilities`. Nothing else records how a permanent was cast either -- `StackItem.kicked` is documented as decided at cast time and read on resolution "because that is the only place it can be known: nothing about the object afterwards records what was paid for it" (structs.py:99-102), `zone_is` reads the source's current zone, and `cast_x` is the only cast-time value carried across the zone change. The bounce clause on its own is fully expressible -- `return_to_hand` over `{"zone": "battlefield", "types": ["Creature"], "not_subtypes": ["Merfolk", "Kraken", "Leviathan", "Octopus", "Serpent"], "count": "all"}`, the same shape already shipped on Whelming Wave -- but ungated it would fire on the unkicked {6}{U}{U} mode too, which is a strictly different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Slinn Voda, the Rising Deep** (rank 4628) — `slinn_voda_the_rising_deep`
+  - When Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.
+
+</details>
+
+## landwalk
+
+Blocks **1** card.
+
+- **(keyword)** A parameterised landwalk keyword -- `islandwalk`, `swampwalk`, `forestwalk`, `mountainwalk`, `plainswalk` -- as members on `Keyword` (src/automtg/engine/enums.py), plus a check in `can_block` (src/automtg/engine/combat.py) that returns False when the attacker has landwalk of subtype X and the *defending player* controls at least one land with subtype X. The check must read the land's current subtypes via `chars()`, not the printed card, because this very card grants Island to everything; it belongs next to the existing flying/reach clause in `can_block`, which is already the one place block legality is decided. Because the family is five keywords sharing one rule, the cleanest shape is one keyword value carrying the land subtype (e.g. `landwalk:Island`) or a small keyword-to-subtype table consulted by the block check, so `grant_keyword` (op and static) picks up the whole family for free -- roughly 40 further landwalk cards sit in data/authoring/queue.json.
+  <br>Why the existing vocabulary won't do: `reference.keywords` has no walk keyword at all, and the near-misses are all wrong. `menace` and `flying` are the only evasion in `can_block`, and both are unconditional properties of the attacker/blocker pair -- neither can express 'conditional on what the defending player's battlefield contains', and there is no static_filter_key or value expression that `can_block` consults. `hexproof`/`indestructible` are unrelated rules. Granting `flying` instead is a strictly different card: it would dodge every non-reach blocker regardless of the defender's lands, and would additionally satisfy this card's own third sentence for free. There is also no 'can't be blocked' effect in `ops` or `static_effects` to build a conditional unblockability on top of.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stormtide Leviathan** (rank 2833) — `stormtide_leviathan`
+  - Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
+  - Creatures without flying or islandwalk can't attack.
+
+</details>
+
+## may-pay
+
+Blocks **1** card.
+
+- **(cost)** an optional mana cost payable by the ability's controller while a triggered ability is resolving -- e.g. `{"op": "may", "pay": {"mana": "{2}"}, "effects": [{"op": "draw", "amount": {"const": 1}}]}` -- where the mana is actually paid out of the pool (with mana abilities activatable to make it) and the wrapped effects happen only when the payment completes
+  <br>Why the existing vocabulary won't do: Every cost in reference is attached to the object being cast or activated, never to an effect mid-resolution: `Cost` (engine/carddef.py) carries mana, tap, untap, sacrifice, discard, discard_self, pay_life, remove_counters and exile_from_graveyard, and it is only ever read when a spell is cast or an ability is activated. The trigger here fires on its own and its effects run with no cost hook at all, so the {2} would simply have to be dropped -- turning a card that draws for {2} a land into one that draws free
+- **(decision)** the yes/no prompt for that optional payment must be priced: offered only when the player can actually afford {2}, and its answer must be readable as the condition for the 'If you do' branch, so declining or being unable to pay skips the draw
+  <br>Why the existing vocabulary won't do: `may` (engine/effects/ops_control.py) is the only optional-effect op and it asks a bare yes/no with nothing at stake -- it takes `player`, `prompt`, `condition`, `effects`, `else` and `repeat`, but no cost, and it never consults affordability. Its `condition` and the `if` op both evaluate board conditions, and no condition in the vocabulary can read whether a mana payment was made, so 'If you do' has no source of truth to branch on. The nearest existing shape, `unless_pays` (Rhystic Study), is a different mechanic: it routes the payment to another player and inverts the outcome
+
+<details><summary>Cards waiting on this</summary>
+
+- **Seer's Sundial** (rank 4344) — `seer_s_sundial`
+  - Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.
+
+</details>
+
+## type-disjunction
+
+Blocks **1** card.
+
+- **(selector)** A selector clause that matches an object having ANY ONE of several card types -- e.g. `{"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]}` -- usable as a target spec's selector, so 'target artifact or enchantment' picks one permanent that is either. The same key covers 'target creature or planeswalker', 'target instant or sorcery card' and 'target artifact or creature'; `data/authoring/queue.json` alone has well over twenty queued cards whose only blocked clause is a type disjunction, so this is one selector key against a large batch of cards.
+  <br>Why the existing vocabulary won't do: `types` is the closest key and it is a conjunction, not a disjunction: `effects/selectors.matches` tests `set(want).issubset(types)`, so `["Artifact", "Enchantment"]` matches only a permanent that is both at once, and `["Artifact"]` alone silently drops half the printed clause. The asymmetry is deliberate elsewhere in the same function -- `subtypes` and `colors` use `set(want) & ...`, i.e. any-of -- so the any-of form exists for those keys and simply has no type equivalent. `not_types` cannot stand in either: `{"not_types": ["Creature", "Land", "Planeswalker", "Battle"]}` is the complement only for permanents with a single type, and it would refuse artifact creatures and enchantment creatures, which are legal targets for the printed line. Two optional target specs (one Artifact, one Enchantment) is not the card either -- the ability would then destroy up to two permanents. `SELECTOR_KEYS` in `src/automtg/engine/effects/selectors.py` is validated at load time, so an invented key is a load error rather than a silent no-op, and the static-filter list in the packet shows the same `types`/`not_types` pair with no any-of member.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wickerbough Elder** (rank 5177) — `wickerbough_elder`
+  - {G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment.
 
 </details>
 
@@ -345,6 +567,22 @@ Blocks **1** card.
 
 - **Rhystic Study** (rank 44) — `rhystic_study`
   - Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.
+
+</details>
+
+## untap-during-each-untap-step
+
+Blocks **1** card.
+
+- **(static_effect)** A continuous ability, read by the untap-step turn-based action, that adds a set of permanents chosen by an ordinary static filter to the set untapped during a *different* player's untap step. Concretely a static of the shape `{"kind": "static", "effect": "untap_during_others_untap_step", "affects": {"controller": "you", "types": ["Creature"], "colors": ["G", "U"]}}`, and a matching read inside `primitives.untap_all` (`src/automtg/engine/primitives.py:437-460`): today it walks the battlefield and skips every object whose `controller != pid`, so it must additionally untap any object matched by an active static of this kind whose controller is not the active player. The filter is the existing static selector (`characteristics._matches` -> the selector walk at `characteristics.py:270-300`), where `colors` is already an intersection test -- `if colors and not (set(colors) & card.colors)` at line 284-286 -- so `["G", "U"]` means exactly the printed "green and/or blue". This one effect covers the whole family at once: Seedborn Muse, Prophet of Kruphix, Awakening, Murkfiend Liege and Vedalken Orrery-adjacent 'untaps during each untap step' text all differ only in the filter.
+  <br>Why the existing vocabulary won't do: `static_effects` is limited to `buff`, `grant_keyword`, `set_pt`, `add_subtype` and `extra_land_drops`. The first four write characteristics that the characteristics pipeline reads; `extra_land_drops` writes a player permission that the land-play legality check reads. None of them is read anywhere near the untap step. `skip_untap` is the closest existing vocabulary -- it is the *only* thing in the reference block that touches the untap step at all -- and it is the exact negation of what is wanted: it sets a one-shot `skip_next_untap` flag on an object, consumed by `untap_all` (`primitives.py:450-455`) to *remove* a permanent from an untap it would otherwise get. There is no positive counterpart, and no amount of skipping can add a permanent to an untap step that never considered it: `untap_all` is called from `turn._untap_step` (`turn.py:110-118`) as `untap_all(state, player.pid)` with the active player's pid hard-wired, so permanents controlled by anyone else are filtered out before any flag is consulted.
+- **(trigger_event)** An `untap_step` trigger event, fired for the untapping player and honouring the existing `controller: "opponent"` clause, plus priority plumbing so an ability that triggers there can actually resolve during that step. This is the near-miss route -- 'at the beginning of each other player's untap step, untap all green and/or blue creatures you control' -- and it is written down because it is the first thing anyone will reach for; see below for why it is second best even once it exists.
+  <br>Why the existing vocabulary won't do: Three separate stops, all verified in the source. (1) There is no event: `TRIGGER_EVENTS` (`src/automtg/engine/triggers.py:28-47`) maps `upkeep`, `draw_step`, `begin_combat` and `end_step` and nothing for the untap step. (2) Nothing is even emitted for triggers to match: `turn.begin_step` handles `Step.UNTAP` by calling `_untap_step`, which uses `state.emit(EventType.TURN_BEGAN, ...)` rather than `triggers.fire(...)` (`turn.py:34-35`, `110-118`) -- `emit` records the event but never calls `collect`, so no ability is scanned during that step, and `TURN_BEGAN` is not in `TRIGGER_EVENTS` either. (3) Even with both fixed, the timing would be wrong: `step_grants_priority` returns `False` for `Step.UNTAP` (`turn.py:186-189`, correct per rule 502.3), so a queued triggered ability would sit in `pending_triggers` until the upkeep and untap one step late -- and worse, it would be respondable, which the printed card is not. Murkfiend Liege's line is a static ability modifying a turn-based action, not a trigger; the `static_effect` need above is the shape that matches the card. `delay` cannot stand in either: its `DELAY_STEPS` whitelist (`turn.py:68-73`) has no untap entry, and a delayed trigger is one-shot and must be scheduled by something that already resolved, whereas this is a permanent, always-on modification of every other player's untap step.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Murkfiend Liege** (rank 2584) — `murkfiend_liege`
+  - Untap all green and/or blue creatures you control during each other player's untap step.
 
 </details>
 

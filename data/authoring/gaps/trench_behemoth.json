@@ -1,0 +1,43 @@
+{
+  "card_id": "trench_behemoth",
+  "name": "Trench Behemoth",
+  "oracle_text": "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.\nLandfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+  "blocked_sentences": [
+    "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.",
+    "Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able."
+  ],
+  "needs": [
+    {
+      "capability": "return_to_hand_cost",
+      "kind": "cost",
+      "what": "a cost component that returns a permanent you control to its owner's hand as part of paying an activated ability, chosen by an ordinary selector, e.g. `{\"return_to_hand\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Land\"], \"count\": 1}}`. It needs both halves of the existing cost contract: a payability test (a matching permanent exists, exactly as `_sacrifice_pool` gates `sacrifice`) and a payment step that asks the controller which permanent goes and then moves it to its owner's hand. Note this ability has no mana and no tap in its cost, so the returned permanent is the entire cost -- a bounce cost is the whole activation, not a rider on one.",
+      "why_existing_wont_do": "`Cost` carries exactly `mana`, `tap`, `untap`, `sacrifice` (+`discard`, `discard_selector`, `discard_self`, `pay_life`, `remove_counters`, `exile_from_graveyard`) and nothing moves a battlefield permanent to hand. `sacrifice` is the closest -- it already takes the right selector shape and already asks the player to choose -- but it destroys the land instead of returning it, which is a materially different card: Trench Behemoth is a recursion engine precisely because the land comes back and can be replayed for another landfall trigger. Substituting it would silently change the card. The `return_to_hand` **op** exists but is an effect, not a cost: effects run on resolution after the ability is already on the stack, so paying with it would let the ability be activated with no land at all and would not be rewindable if the payment failed.",
+      "confidence": "high"
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "op",
+      "what": "an effect op that places an attack requirement on a single targeted creature -- `{\"op\": \"must_attack\", \"target\": {\"zone\": \"battlefield\", \"controller\": \"opponent\", \"types\": [\"Creature\"]}, \"duration\": \"next_combat\"}` -- meaning 'this creature attacks during its controller's next combat phase if able'. The duration is the part not shared with the already-filed variants: it is neither until-end-of-turn (Bident of Thassa) nor permanent (Marauding Maulhorn), but a one-shot obligation that persists across turns until that player's *next* combat phase arrives, is discharged there, and expires whether or not the creature was able to attack.",
+      "why_existing_wont_do": "No op in the vocabulary can compel an action. `tap`, `freeze` and `skip_untap` remove availability, `lock_abilities` removes a permission -- all prohibitions, and an attack requirement cannot be spelled as the negation of any of them. `delay` is the closest fit for the timing half and still does not help: it schedules an *effect* to run at a later step, whereas this must install a requirement that the declare-attackers legality check reads, and `delay` has nothing to run because no such requirement exists. Duplicating this as a bare 'this turn' op would also be wrong here -- the trigger fires on the controller's own landfall, so 'this turn' would frequently be discharged during a combat phase the affected opponent never gets.",
+      "confidence": "high"
+    },
+    {
+      "capability": "attack_requirement",
+      "kind": "engine",
+      "what": "declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under an unexpired requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline. For the `next_combat` duration this is also the point where the obligation is discharged and cleared.",
+      "why_existing_wont_do": "Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made. Without this half, an op that merely recorded the flag would load, claim the printed line and change nothing -- the exact failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa and Marauding Maulhorn; all three want this one enforcement point, and this card additionally needs it to expire a per-combat obligation there.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": [
+    "sacrifice",
+    "return_to_hand",
+    "delay",
+    "lock_abilities",
+    "freeze",
+    "tap",
+    "attacks",
+    "permanent_enters"
+  ],
+  "confidence": "high"
+}

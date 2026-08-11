@@ -1,0 +1,28 @@
+{
+  "card_id": "stormtide_leviathan",
+  "name": "Stormtide Leviathan",
+  "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nAll lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
+  "blocked_sentences": [
+    "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)",
+    "Creatures without flying or islandwalk can't attack."
+  ],
+  "needs": [
+    {
+      "capability": "landwalk",
+      "kind": "keyword",
+      "what": "A parameterised landwalk keyword -- `islandwalk`, `swampwalk`, `forestwalk`, `mountainwalk`, `plainswalk` -- as members on `Keyword` (src/automtg/engine/enums.py), plus a check in `can_block` (src/automtg/engine/combat.py) that returns False when the attacker has landwalk of subtype X and the *defending player* controls at least one land with subtype X. The check must read the land's current subtypes via `chars()`, not the printed card, because this very card grants Island to everything; it belongs next to the existing flying/reach clause in `can_block`, which is already the one place block legality is decided. Because the family is five keywords sharing one rule, the cleanest shape is one keyword value carrying the land subtype (e.g. `landwalk:Island`) or a small keyword-to-subtype table consulted by the block check, so `grant_keyword` (op and static) picks up the whole family for free -- roughly 40 further landwalk cards sit in data/authoring/queue.json.",
+      "why_existing_wont_do": "`reference.keywords` has no walk keyword at all, and the near-misses are all wrong. `menace` and `flying` are the only evasion in `can_block`, and both are unconditional properties of the attacker/blocker pair -- neither can express 'conditional on what the defending player's battlefield contains', and there is no static_filter_key or value expression that `can_block` consults. `hexproof`/`indestructible` are unrelated rules. Granting `flying` instead is a strictly different card: it would dodge every non-reach blocker regardless of the defender's lands, and would additionally satisfy this card's own third sentence for free. There is also no 'can't be blocked' effect in `ops` or `static_effects` to build a conditional unblockability on top of.",
+      "confidence": "high"
+    },
+    {
+      "capability": "cant_attack",
+      "kind": "static_effect",
+      "what": "A `cant_attack` static effect whose `affects` filter selects the creatures forbidden to attack, enforced by a new clause in `can_attack` (src/automtg/engine/combat.py:46) alongside the existing `Keyword.DEFENDER` check, so `legal_attackers` and the DECLARE_ATTACKERS action mask both stay exact. It must apply to creatures of *every* controller, so the filter needs a `controller: \"any\"` path in `_matches` (src/automtg/engine/characteristics.py) that is reachable from an attack restriction. It additionally needs a negated keyword filter key -- `not_keywords: [\"flying\", \"islandwalk\"]`, matching an object only when it has none of the listed keywords -- and that key must read *current* keywords rather than printed ones, since a creature granted flying by another permanent must be able to attack.",
+      "why_existing_wont_do": "`static_effects` is only `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `extra_land_drops`; none of them touches attack legality, and `can_attack` reads nothing but tapped state, types, `defender` and summoning sickness. The tempting substitute is a static `grant_keyword` of `defender` to the matching creatures, and it is wrong twice over: `defender` is checked in other places as a printed characteristic of walls and it also blanks 'attacks' triggers differently, but more importantly the filter cannot be written -- `static_filter_keys` offers `keywords` (has all of these) and `not_types`, but no negation over keywords, so 'creatures without flying or islandwalk' is inexpressible even before the effect is. `lock_abilities` is a permission on activating abilities and is until-end-of-turn, not a combat restriction. Approximating by omitting the sentence would leave the card's main effect -- a global attack lock -- silently absent.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": ["defender", "flying", "menace", "grant_keyword", "not_types", "lock_abilities"],
+  "confidence": "high",
+  "notes": "The middle sentence, \"All lands are Islands in addition to their other types\", is expressible today as a static `add_subtype` with `subtypes: [\"Island\"]`, `types: [\"Land\"]` and a controller-agnostic filter -- it is not blocked. Once landwalk and cant_attack exist the whole card is one static `add_subtype` plus the islandwalk keyword plus one `cant_attack` static."
+}
