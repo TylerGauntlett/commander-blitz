@@ -110,6 +110,13 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      # Lets the droplet pull using this run's GITHUB_TOKEN rather than a
+      # long-lived PAT. The package was pushed by the build job with the same
+      # token, so it is linked to this repo and readable here. The credential
+      # expires with the run, so nothing durable sits on the box or in secrets.
+      packages: read
     # No `url:` here. GitHub does not expose the `secrets` context to
     # `environment.url`, and referencing it there is a startup failure that
     # rejects the whole workflow before a single job runs.
@@ -134,15 +141,21 @@ jobs:
         uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
-          GHCR_USER: ${{ github.repository_owner }}
-          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          envs: IMAGE_TAG,GHCR_USER,GHCR_TOKEN
-          script_stop: true # Without this a failing line is ignored.
+          envs: IMAGE_TAG,GHCR_USER,GHCR_TOKEN,IMAGE_NAME
+          script_stop: true
           script: |
+            # Explicit, rather than relying on script_stop: a registry denial
+            # was observed to leave `docker compose pull` exiting 0, and the
+            # step went green having deployed nothing at all.
+            set -euo pipefail
+
             # First deploy after `terraform apply` can land while cloud-init is
             # still installing Docker.
             for _ in $(seq 1 60); do
@@ -158,8 +171,19 @@ jobs:
             # edit to roll back.
             echo "IMAGE_TAG=$IMAGE_TAG" > .env
             docker compose pull
+
+            # Assert the image is really here. This is the check that would have
+            # caught the silent pull failure, and it cannot itself pass vacuously.
+            docker image inspect "$IMAGE_NAME:$IMAGE_TAG" >/dev/null \
+              || { echo "pull reported success but $IMAGE_NAME:$IMAGE_TAG is not present"; exit 1; }
+
             docker compose up -d --remove-orphans
             docker logout ghcr.io
+
+            # Same reasoning one level up: prove a container is actually running
+            # before handing off to the health check.
+            docker compose ps --status running --quiet | grep -q . \
+              || { echo "no running container after up -d"; docker compose logs --tail=50; exit 1; }
 
       - name: Wait for health
         # The deploy is not "done" because the SSH step exited zero -- it is done
