@@ -25570,6 +25570,67 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "any_of": [
+                      {
+                        "self_only": true
+                      },
+                      {
+                        "is_commander": true
+                      }
+                    ],
+                    "chooser": "controller",
+                    "count": 1,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, distribute X +1/+1 counters among it and any number of commanders.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "stumpsquall_hydra",
+      "mana_cost": "{X}{G}{G}{G}",
+      "name": "Stumpsquall Hydra",
+      "oracle_text": "When this creature enters, distribute X +1/+1 counters among it and any number of commanders.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

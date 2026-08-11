@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **18** capabilities.
+**21 cards** blocked by **17** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
-| [distribute-counters](#distribute-counters) | 1 | 12944 | decision |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 | [emerge](#emerge) | 1 | 7681 | cost |
 | [investigate](#investigate) | 1 | 7272 | engine |
@@ -276,20 +275,6 @@ Blocks **1** card.
 
 - **Sengir Vampire** (rank 18150) — `sengir_vampire`
   - Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.
-
-</details>
-
-## distribute-counters
-
-Blocks **1** card.
-
-- **(decision)** A division decision that splits a single pool of N counters (here N = the X paid, via the existing {"x": true} value) across a player-chosen set of objects, each object receiving its own share of at least one and the shares summing to exactly N. The chooser picks both how many objects participate ('any number of commanders', plus the source itself, which is always included) and each object's share, and the shares must be locked in as the ability is put on the stack, since divided counters/damage are chosen at announcement, not on resolution.
-  <br>Why the existing vocabulary won't do: `add_counters` is the closest op, but its `amount` is evaluated once and then applied in full to every object returned by `choose_objects` -- so `{"counter": "+1/+1", "amount": {"x": true}, "objects": {...}}` gives X counters to each chosen commander rather than X counters total split among them. `for_each` and `repeat` can iterate, but they multiply the effect per iteration rather than partitioning a fixed pool, and neither offers a per-object amount the player chooses. There is no decision kind in the vocabulary that asks a player to divide a number among targets. The selector side is fine -- `static_filter_keys` already carries `is_commander` and `self_only` -- so the missing piece is purely the divided-amount decision, not the ability to find the objects.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Stumpsquall Hydra** (rank 12944) — `stumpsquall_hydra`
-  - When this creature enters, distribute X +1/+1 counters among it and any number of commanders.
 
 </details>
 
