@@ -1,3 +1,54 @@
+## "Attacks each combat if able" — the continuous half of a requirement
+
+### Overview
+
+The `attack-requirement` entry opened with two cards and closed with one. Bident
+of Thassa was already expressible the day the report was regenerated — the
+`must_attack` op names it as its own `this_turn` witness — and was repaired at
+the start of this sequence. Marauding Maulhorn is what actually needed building.
+
+`must_attack` writes a one-shot flag that `discharge_attack_requirements` spends
+once attackers are locked in. Right for "attacks this turn if able", wrong for a
+printed line: that is true again next turn, true for a creature that entered
+after any op would have resolved, and false the moment its source leaves. So the
+continuous form is a static, read live off the battlefield.
+
+### What shipped
+
+`attacks_if_able` in `STATIC_EFFECTS`, read by `characteristics.attack_compelled`
+— written as the exact mirror of `attack_forbidden` (Stormtide Leviathan's
+`cant_attack`), down to the `affects` filter routinely naming creatures the
+source's controller does not control.
+
+Both forms meet at `combat.attack_required`, so there is still exactly one place
+deciding whether "Done attacking" is offered. Tier B in shape but small in
+practice, because the enforcement half — the part the gap record called an
+engine need — shipped with `must_attack` and needed nothing.
+
+One effect covers every printed variant, since they differ only in `affects`:
+`self_only` for "This creature…", `controller: opponent` for the goad-shaped
+"Creatures your opponents control…", `attached` for "Enchanted creature…".
+
+### `name` in a condition, not in a filter
+
+The "unless" clause needed a static condition able to ask whether a card with a
+particular name is on the battlefield. `name` was already in `SELECTOR_KEYS` and
+absent from the static ones; it is now allowed in the **counting** filters
+(`exists`, `count`, and their off-battlefield form) and still refused in
+`affects`. "Unless you control a creature named Advocate of the Beast" is a
+question about the board; "each creature named X gets +1/+1" is not a card, and
+allowing it in `affects` would only invite one. A name is as printed as a type
+and nothing in the pipeline can change one, so it is safe where a type is.
+
+### What the test corrected
+
+Two claims written first and found wrong by the engine, both kept as tests
+because the real behaviour is the more interesting one: a goaded creature owes
+nothing on its goader's turn (it cannot attack then, so "if able" excuses it —
+otherwise the goading player could never finish a declaration), and a lone
+summoning-sick compelled creature does not deadlock the step because the engine
+skips declare-attackers entirely when nothing is able.
+
 ## Variable mana abilities — nine cards that were tapping for one
 
 ### Overview

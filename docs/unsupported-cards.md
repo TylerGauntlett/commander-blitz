@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**12 cards** blocked by **10** capabilities.
+**11 cards** blocked by **9** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
-| [attack-requirement](#attack-requirement) | 1 | 30863 | engine, static_effect |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
@@ -106,24 +105,6 @@ Blocks **1** card.
   - Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)
   - This creature has flying as long as you have the city's blessing.
   - Scope: both printed lines are blocked, and the second is blocked twice over -- once because there is nothing to ask about (no city's blessing exists to be read) and once because a static's `condition` may not ask it even if it did. The card already in the hand-written pool (`data/cards/edgar.cards.json`) carries the correct printed `oracle_text` but implements neither line; it is a vanilla 2/1 Vampire Soldier, and `tests/cards/precon_deficits.json` records exactly that residual. No partial answer is possible: printing `"keywords": ["flying"]` unconditionally would be a strictly better card than the one printed (a 2/1 flier for {W} that flies from turn one regardless of board), and it would still leave the Ascend line unclaimed by any ability.
-
-</details>
-
-## attack-requirement
-
-Blocks **1** card.
-
-- **(static_effect)** a continuous static effect meaning 'each creature matched by `affects` attacks each combat if able', so that the printed variants ('This creature attacks each combat if able', 'Creatures your opponents control attack each combat if able', 'Enchanted creature attacks each combat if able') are one effect with one enforcement point. For this card it would read `{"kind": "static", "effect": "attacks_if_able", "affects": {"self_only": true}}`.
-  <br>Why the existing vocabulary won't do: The static effect vocabulary is `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types` plus the player-wide seven, and every one of them writes a characteristic or a player permission that the characteristics pipeline reads. An attack requirement is an obligation on a future action, not a characteristic. `grant_keyword` is the nearest fit and cannot stand in: the keyword vocabulary is a closed list of fifteen (`deathtouch` ... `vigilance`), and even if a `must_attack` keyword were added to it, granting it would change nothing until the declare-attackers step read it. `defender` is the only combat-shaped keyword and it is the exact opposite -- a prohibition on attacking, enforced by refusing an attacker, whereas this must force one in.
-- **(engine)** declare-attackers must enforce requirements: an attack declaration is legal only if it includes every creature under a requirement that is able to attack (untapped, not summoning sick, no `defender`, not otherwise restricted), and the agent choosing attackers for that player must be constrained to such a set rather than being free to decline.
-  <br>Why the existing vocabulary won't do: Nothing in the DSL reaches combat declaration. `attacks` and `blocks` are trigger events that observe a declaration already made, and `defending` only reads who was attacked; `tap`, `freeze`, `skip_untap` and `lock_abilities` all remove availability or permission and none can compel an action. Without this half, a static that merely recorded the flag would load, look implemented and do nothing -- the failure this format exists to refuse. This is the same engine need already filed under `attack_requirement` for Bident of Thassa; that card wants the one-shot until-end-of-turn form, this one wants the permanent form, and both want this enforcement point.
-- **(static_effect)** an 'unless' clause on the requirement -- a static whose applicability is re-checked against board state, here `{"not": {"exists": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "name": "Advocate of the Beast"}}}`. Either a static `condition` that accepts the ordinary condition language, or an `unless` selector on the attack-requirement effect itself.
-  <br>Why the existing vocabulary won't do: A static's `condition` is deliberately tiny: `characteristics._static_condition_met` reads only `condition.counters`, i.e. how many counters of one kind sit on the static's own source, so it cannot ask about another permanent at all. Widening it generally would let one static depend on another's output and break the acyclic fixed-order pipeline, so the requirement's own effect is the safer place to carry an `unless` selector. Note that matching a permanent by name is NOT the blocker: `name` is already in `SELECTOR_KEYS` and works in ordinary selectors and in `exists` conditions. It is absent from `STATIC_FILTER_KEYS`, but that list constrains `affects`, and the name test belongs in the condition, not in `affects`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Marauding Maulhorn** (rank 30863) — `marauding_maulhorn`
-  - This creature attacks each combat if able unless you control a creature named Advocate of the Beast.
 
 </details>
 

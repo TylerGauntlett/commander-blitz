@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from .characteristics import (
+    attack_compelled,
     attack_forbidden,
     block_restrictions,
     chars,
@@ -76,10 +77,17 @@ def attack_required(state: GameState, oid: int) -> bool:
     not have to.  So this is the requirement AND `can_attack`, never one alone.
     """
     obj = state.objects.get(oid)
-    if obj is None or obj.must_attack is None:
+    if obj is None:
         return False
-    if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
-        return False
+    # Two sources, one enforcement point. The `must_attack` op writes a
+    # one-shot flag that `discharge_attack_requirements` spends; a printed
+    # "attacks each combat if able" is a static, read live and never spent.
+    # Both are "…if able", so both go through `can_attack` below.
+    if not attack_compelled(state, oid):
+        if obj.must_attack is None:
+            return False
+        if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
+            return False
     return can_attack(state, oid)
 
 

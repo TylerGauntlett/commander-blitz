@@ -2019,6 +2019,77 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_compelled_beast",
+      "name": "Test Compelled Beast",
+      "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+      "mana_cost": "{2}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "name": "Advocate of the Beast"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_advocate_of_the_beast",
+      "name": "Advocate of the Beast",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "power": 2,
+      "toughness": 3
+    },
+    {
+      "id": "t_goading_banner",
+      "name": "Test Goading Banner",
+      "oracle_text": "Creatures your opponents control attack each combat if able.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control attack each combat if able.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
     }
   ]
 }
