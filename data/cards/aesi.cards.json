@@ -496,12 +496,72 @@
         "Elf",
         "Druid"
       ],
-      "power": 0,
+      "power": 1,
       "toughness": 2,
       "abilities": [
         {
+          "kind": "triggered",
+          "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "power_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "power_of": {
+                        "self": true
+                      }
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "toughness_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "toughness_of": {
+                        "self": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "then": [
+                {
+                  "op": "add_counters",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "kind": "activated",
-          "text": "{T}: Add {G}.",
+          "text": "{T}: Add {G} for each +1/+1 counter on this creature.",
           "is_mana_ability": true,
           "cost": {
             "tap": true
@@ -509,7 +569,15 @@
           "effects": [
             {
               "op": "add_mana",
-              "mana": "{G}"
+              "mana": "{G}",
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
             }
           ]
         }

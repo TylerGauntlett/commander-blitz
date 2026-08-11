@@ -679,13 +679,19 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
         return ""
 
     from .characteristics import player_doubles_land_mana
-    from .costs import mana_produced
+    from .costs import mana_amount, mana_produced
     from .mana import format_symbols
 
     doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
         state, state.objects[oid].controller
     )
-    return format_symbols(mana_produced(ability.mana_options[mana_option], doubled=doubled))
+    return format_symbols(
+        mana_produced(
+            ability.mana_options[mana_option],
+            doubled=doubled,
+            times=mana_amount(state, oid, ability),
+        )
+    )
 
 
 def _describe_ref(state: GameState, ref: TargetRef) -> str:

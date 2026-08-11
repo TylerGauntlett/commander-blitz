@@ -524,6 +524,45 @@ contain only `add_mana`. The loader enforces this, and it is why a dual land nev
 to ask which colour: the payment solver picks the mode, records the option index, and
 the engine adds exactly that mana without running the effect interpreter at all.
 
+### "Add {G} for each …"
+
+The one part of a mana ability that is not a constant. `add_mana` takes an
+optional `amount`, an ordinary value expression evaluated **when the ability is
+activated**, multiplying the symbols it produces:
+
+```jsonc
+// Gyre Sage: {T}: Add {G} for each +1/+1 counter on this creature.
+{ "op": "add_mana", "mana": "{G}",
+  "amount": { "counters_on": { "counter": "+1/+1",
+                               "objects": { "self_only": true } } } }
+
+// Gaea's Cradle: {T}: Add {G} for each creature you control.
+{ "op": "add_mana", "mana": "{G}",
+  "amount": { "count": { "controller": "you", "types": ["Creature"] } } }
+```
+
+This does not break rule 605's "a mana ability never stops to ask": evaluating
+the amount asks nothing, it only looks at the board.
+
+Three constraints, each with a failure behind it:
+
+- **One `add_mana`, or no amount.** An amount scales one symbol tuple, so a
+  card that also summed several `add_mana`s or offered modes would have nothing
+  single to scale.
+- **No `x`, `binding` or `loop_value`.** A mana ability is activated inside cost
+  payment: there is no X, no trigger binding and no enclosing loop, so each
+  would read 0 and make a card that silently taps for nothing. Refused at load.
+- **It is read before the tap.** The payment solver enumerates sources while
+  they are still untapped; measuring after tapping would let the offer and the
+  payment see two different boards.
+
+That last one is the property the whole feature is shaped around. The multiplier
+is threaded through `costs.mana_produced`, which is the single function both the
+solver's `_sources_of` and `activate_mana_ability` already call — so the price a
+spell is *offered* at and the mana a tap actually *makes* cannot be given
+different numbers. A spell offered on mana that does not materialise strands the
+payment mid-cast, and nothing on screen would say why.
+
 ### Hybrid costs
 
 `{W/U}` and `{2/W}` are parsed and paid properly. A hybrid pip is kept *apart*

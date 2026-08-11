@@ -500,6 +500,62 @@ _ADD_CLAUSE = re.compile(r":\s*Add\s+(?P<what>[^.]+)", re.I)
 _FIXED_MANA = re.compile(r"^(?:\{[WUBRGC]\})+$")
 _ANY_COLOR = re.compile(r"^one mana of any (?:one )?color$", re.I)
 
+#: ``Add {G} for each creature you control`` -- a payout that scales with the
+#: board.  Read rather than approximated: a Gaea's Cradle that taps for one is a
+#: Forest, and the difference does not show anywhere on screen.
+_FOR_EACH = re.compile(r"^(?P<sym>(?:\{[WUBRGC]\})+)\s+for each\s+(?P<what>.+)$", re.I)
+
+#: ``creature you control with defender`` -> the trailing quality.
+_WITH_KEYWORD = re.compile(r"^(?P<noun>.+?)\s+with\s+(?P<keyword>[a-z ]+)$", re.I)
+
+
+def _for_each_selector(what: str) -> dict | None:
+    """``"Swamp you control"`` -> a counting selector, or ``None`` if unreadable.
+
+    ``None`` is the important return. Anything this cannot read must fall back
+    to a *noted* approximation rather than a silent one -- Kydele's "for each
+    card you've drawn this turn" is not a board count at all, and there is
+    nothing here to count it with.
+    """
+    from .loader import KNOWN_KEYWORDS, KNOWN_TYPES
+
+    text = " ".join(what.split()).rstrip(".")
+    selector: dict = {}
+
+    # "with defender" comes *after* "you control" in print, so it has to come
+    # off first -- otherwise the controller clause is no longer the suffix.
+    keyword = _WITH_KEYWORD.match(text)
+    if keyword:
+        word = keyword.group("keyword").strip().lower()
+        if word not in KNOWN_KEYWORDS:
+            return None
+        selector["keywords"] = [word]
+        text = keyword.group("noun").strip()
+
+    lowered = text.lower()
+    if lowered.endswith("you control"):
+        selector["controller"] = "you"
+        text = text[: -len("you control")].strip()
+    elif lowered.endswith("on the battlefield"):
+        selector["controller"] = "any"
+        text = text[: -len("on the battlefield")].strip()
+    else:
+        return None
+
+    noun = text.strip()
+    if not noun or " " in noun:
+        # "card you've drawn this turn", "differently named land" -- not a
+        # single type or subtype, so not something this tier may guess at.
+        return None
+    if noun.title() in KNOWN_TYPES:
+        selector["types"] = [noun.title()]
+    else:
+        # A subtype: Swamp, Elf, Locus. Not validated against a closed list
+        # because subtypes are not one, so a nonsense word would count nothing
+        # rather than fail -- which is why the caller still notes it.
+        selector["subtypes"] = [noun.title()]
+    return selector
+
 
 def _mana_effects(line: str, symbols: list[str]) -> tuple[list[dict], str | None]:
     """What the ability adds, read from the printed clause where possible.
@@ -515,6 +571,25 @@ def _mana_effects(line: str, symbols: list[str]) -> tuple[list[dict], str | None
     # "Add {C}{C}" / "Add {G}{U}" -- a fixed payout, taken verbatim.
     if _FIXED_MANA.match(clause.replace(" ", "")):
         return [{"op": "add_mana", "mana": clause.replace(" ", "")}], None
+
+    # "Add {G} for each creature you control" -- a payout that scales.
+    for_each = _FOR_EACH.match(clause)
+    if for_each:
+        selector = _for_each_selector(for_each.group("what"))
+        if selector is not None:
+            return [
+                {
+                    "op": "add_mana",
+                    "mana": for_each.group("sym").replace(" ", ""),
+                    "amount": {"count": selector},
+                }
+            ], None
+        # Unreadable, so it stays one mana -- but *said out loud*. Without the
+        # note this lands as a "full" card that taps for a sixth of what it
+        # prints, which is how nine of these shipped in the first place.
+        return [
+            {"op": "add_mana", "mana": for_each.group("sym").replace(" ", "")}
+        ], f"mana scales with {for_each.group('what')[:40]!r}; implemented as one"
 
     # "Add {G} or {U}" -- a choice, one mana either way.
     options = [p.strip() for p in re.split(r"\bor\b|,", clause) if p.strip()]

@@ -1,3 +1,63 @@
+## Variable mana abilities — nine cards that were tapping for one
+
+### Overview
+
+"{T}: Add {G} for each +1/+1 counter on this creature." Gyre Sage was the card
+in the gap report; the run's real weight was elsewhere. Gaea's Cradle, Cabal
+Coffers, Serra's Sanctum, Priest of Titania, Circle of Dreams Druid, Overgrown
+Battlement, Magus of the Coffers and Cloudpost were all already **shipped**,
+each tapping for exactly one mana, each recorded in the queue as
+`template:proxy:complete` — marked correct while being wrong.
+
+Everything else about a mana ability is a constant folded at load time, for a
+good reason: rule 605 says a mana ability resolves immediately without the
+stack, so it may never stop to ask. `loader._sum_mana` folds the symbols into a
+fixed 6-tuple and `costs.activate_mana_ability` pays that tuple out without ever
+running the ability's effects. A count of counters cannot be folded — but it
+also asks nothing. It only looks.
+
+### What shipped
+
+`Ability.mana_amount`: an optional value expression on the single `add_mana`
+inside a mana ability, evaluated at activation. `costs.mana_amount` reads it
+through the ordinary value language, which already computes exactly this.
+
+The multiplier is threaded through `costs.mana_produced` — the one function both
+the solver's `_sources_of` and `activate_mana_ability` already call, and whose
+docstring already said the two must not be able to disagree. That is the whole
+design: the price a spell is **offered** at and the mana a tap actually **makes**
+come from the same arithmetic, so they cannot drift. A spell offered on mana
+that does not materialise strands the payment mid-cast, and nothing on screen
+would say why. `activate_mana_ability` was also reordered to measure *before*
+tapping, because the solver enumerates sources while they are still untapped.
+
+Three load-time constraints, each with a failure behind it: one `add_mana` per
+amount (nothing else is single enough to scale); no `x` / `binding` /
+`loop_value` (a mana ability is activated during payment, so each reads 0 and
+makes a card that silently taps for nothing); and the amount is read before the
+tap.
+
+### The nine, and the one that got away
+
+`proxy._mana_effects` read `Add {C}{C}` correctly and fell through to
+one-of-each-symbol for anything else — **with no note**, which is why nine cards
+shipped as `complete`. It now parses "for each &lt;noun&gt; you control / on the
+battlefield", optionally with a trailing keyword ("creature you control with
+defender"), into a counting selector. Eight of the nine were re-authored through
+the ordinary template tier and are now correct.
+
+Kydele, Chosen of Kruphix is the ninth and does not fall out of this. Its
+multiplier is "for each card you've drawn this turn" — not a board count at all,
+but a per-turn tally of an *event*, which nothing in the engine keeps. Per rule
+3 it now **refuses** rather than shipping a strictly worse card, so it has left
+the pool and gained a gap record under a new `cards-drawn-this-turn` capability.
+That is a card fewer in the registry and a card more in the report, and it is
+the honest direction: it was previously in the pool tapping for a sixth of what
+it prints, with nothing recorded to say so.
+
+An unreadable "for each" clause now emits a note rather than falling through
+silently, so the next one cannot repeat this.
+
 ## Per-opponent life — the leaf that makes a pod question answerable
 
 ### Overview

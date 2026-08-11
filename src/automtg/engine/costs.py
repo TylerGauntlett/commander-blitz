@@ -149,7 +149,14 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                 oid=oid,
                 ability_index=ability.index,
                 options=(
-                    tuple(mana_produced(option, doubled=doubled) for option in ability.mana_options)
+                    tuple(
+                        mana_produced(
+                            option,
+                            doubled=doubled,
+                            times=mana_amount(state, oid, ability),
+                        )
+                        for option in ability.mana_options
+                    )
                 ),
                 is_land=is_land,
                 sort_key=(0 if is_land else 1, card.id, oid),
@@ -159,7 +166,39 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     return out
 
 
-def mana_produced(option: Sequence[int], *, doubled: bool) -> tuple[int, ...]:
+def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
+    """How many times this mana ability's symbols are produced, right now.
+
+    "Add {G} for each +1/+1 counter on this creature" -- Gyre Sage. The count is
+    a question about the board, so unlike everything else about a mana ability
+    it cannot be folded into a constant at load time.
+
+    Read at *activation* time, and read through the ordinary value language,
+    which already computes exactly this (`counters_on` reads live counters off
+    the source; `count` reads the board). A mana ability may not stop to ask
+    anything, and this asks nothing -- it only looks.
+
+    Clamped at zero: a negative multiplier is not a thing a card can mean, and
+    an ability with no counters on it simply makes no mana.
+    """
+    if ability.mana_amount is None:
+        return 1
+    from .effects.context import EffectContext
+    from .effects.values import evaluate_value
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return 0
+    ctx = EffectContext(
+        state=state,
+        controller=obj.controller,
+        source_oid=oid,
+        source_name=state.card_of(obj).name,
+    )
+    return max(0, int(evaluate_value(ctx, ability.mana_amount)))
+
+
+def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tuple[int, ...]:
     """What tapping for ``option`` actually yields.
 
     Vorinclex's "whenever you tap a land for mana, add one mana of any type that
@@ -175,10 +214,16 @@ def mana_produced(option: Sequence[int], *, doubled: bool) -> tuple[int, ...]:
     *Simplification*: a dual land doubles whatever it produced rather than
     offering a free choice of type, because a mana ability cannot ask.  Recorded
     in ``docs/rules-coverage.md`` alongside the other automatic-mana trades.
+
+    ``times`` is the variable-output multiplier from :func:`mana_amount`, and it
+    is threaded through *here* for the same reason the doubling is: this is the
+    one place both the offer and the payment come through, so they cannot be
+    given different numbers.
     """
-    if not doubled:
+    scale = (2 if doubled else 1) * times
+    if scale == 1:
         return tuple(option)
-    return tuple(v * 2 for v in option)
+    return tuple(v * scale for v in option)
 
 
 def produced_symbols(card: CardDef) -> list[str]:
@@ -537,16 +582,27 @@ def activate_mana_ability(
     ``mana_options`` rather than from running its effects.  A modal mana ability
     ("Add {G} or {U}") would otherwise ask its controller to pick a mode, and a
     mana ability must never stop to ask anything.
+
+    A *variable* ability ("Add {G} for each +1/+1 counter") is the one part read
+    from the board, and it is read **before** the tap. The payment solver
+    enumerates sources while they are still untapped, so measuring after tapping
+    would let the offer and the payment see two different boards -- the exact
+    disagreement `mana_produced` exists to prevent.
     """
     card = state.card(oid)
     ability = card.abilities[ability_index]
-    if ability.cost is not None and ability.cost.tap:
-        tap_permanent(state, oid)
 
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
     doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
-    produced = mana_produced(ability.mana_options[option_index], doubled=doubled)
+    produced = mana_produced(
+        ability.mana_options[option_index],
+        doubled=doubled,
+        times=mana_amount(state, oid, ability),
+    )
+
+    if ability.cost is not None and ability.cost.tap:
+        tap_permanent(state, oid)
 
     state.players[pid].mana_pool.add_tuple(produced)
     state.emit(
