@@ -165,6 +165,33 @@ hand whose cost does not remove it from hand is an infinite engine. Typecycling
 and "when you cycle this card" are deliberately still refused; see
 [card-dsl.md](card-dsl.md).
 
+*The Aesi precon is done, and it is the best evidence this loop has.* The deck
+shipped here was never the precon -- it was a hand-curated Simic list built
+around what the engine could already say, with five substitutions and five
+*invented* cards wearing real cards' ids. Importing the real thing, Commander
+Legends' **Reap the Tides**, resolved 100 cards with 19 simplified.
+
+Getting those 19 to zero took fourteen capabilities, and the shape of the work is
+the argument for driving the pipeline from a deck somebody else built:
+
+| | |
+|---|---|
+| Needed no engine work at all | Meteor Golem, Sphinx of Uthuun, Peel from Reality, Verdant Sun's Avatar, Whelming Wave, Scourge of Fleets |
+| Needed no engine work *once the packet stopped lying* | Sharktocrab, Compulsive Research |
+| Keywords and selectors | `shroud`, `any_types`, `any_of`, landwalk, `not_keywords` on statics |
+| Costs | `may.pay`, `return_to_hand`, `evoke`, `emerge` |
+| Rules seams | `block_restriction`, `must_attack`, `cant_attack`, untap-on-another-turn, stack triggers, the `kicked` lifetime |
+
+**Three cards were filed as blocked on mechanics that already existed**, and all
+three for the same reason: the work packet under-reported the language. It listed
+ops, keywords and trigger events, and omitted conditions, value expressions, the
+effect-side selector keys, and nine of the fourteen static effects. A worker sees
+only its packet, so an omission there reads as an absence -- and a gap record is
+read as a build order, so it buys engine work for something that already ships.
+Every one of those lists is now derived from what the loader enforces, pinned by
+`tests/cards/test_authoring.py`. That is the single highest-leverage fix in the
+whole run.
+
 Still outstanding: **Crew** (74), **Flashback** (75), **Kicker**,
 **Convoke** (39), **Ward** (41), and **modal spells** (153).
 

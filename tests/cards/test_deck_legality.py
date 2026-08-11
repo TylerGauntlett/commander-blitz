@@ -68,7 +68,12 @@ class TestDecksAreLegal:
         lands = sum(
             qty for card_id, qty in decks[deck_id].cards if real_registry.get(card_id).is_land
         )
-        assert 33 <= lands <= 42, f"{deck_id} runs {lands} lands"
+        # The upper bound was 42 while every shipped deck was hand-built to 37.
+        # `aesi` is now the Reap the Tides precon exactly as printed, and it
+        # runs 44 -- Wizards builds precons land-heavy, and 30 of those are
+        # basics. Raised rather than special-cased: the assertion is meant to
+        # catch a deck that cannot cast its own cards, and 44 is not that.
+        assert 33 <= lands <= 45, f"{deck_id} runs {lands} lands"
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)
     def test_no_tokens_in_the_deck_list(self, deck_id, decks, real_registry):

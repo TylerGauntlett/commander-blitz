@@ -91,15 +91,19 @@ class TestDerivedFields:
     def test_lands_are_counted(self, client):
         # Hand-counted from the list.  A derived number that nothing pins is a
         # number that can silently start counting the wrong thing.
-        assert client.get("/api/decks/aesi").json()["lands"] == 37
+        # 44 since `aesi` became the printed Reap the Tides list: 15 Forests,
+        # 15 Islands and 14 others.
+        assert client.get("/api/decks/aesi").json()["lands"] == 44
 
     def test_swaps_come_from_the_substitutions(self, client, decks):
-        detail = client.get("/api/decks/aesi").json()
-        assert detail["swaps"] == len(decks["aesi"].substitutions) == 5
-        assert "Rhystic Study" in detail["swap_note"]
+        # Was `aesi`, which had five. It has none now -- it is the precon as
+        # printed -- so the case is carried by `edgar`, which still does.
+        detail = client.get("/api/decks/edgar").json()
+        assert detail["swaps"] == len(decks["edgar"].substitutions) == 7
+        assert "Captivating Vampire" in detail["swap_note"]
 
     def test_a_deck_with_no_substitutions_says_nothing(self, client):
-        detail = client.get("/api/decks/isperia").json()
+        detail = client.get("/api/decks/aesi").json()
         assert detail["swaps"] == 0
         assert detail["swap_note"] == ""
 

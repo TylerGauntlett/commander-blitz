@@ -1,137 +1,329 @@
 {
   "id": "aesi",
-  "name": "Aesi, Tyrant of Gyre Strait",
-  "commanders": ["aesi_tyrant_of_gyre_strait"],
-  "color_identity": ["G", "U"],
-  "notes": "Simic ramp and landfall. Plays extra lands, turns each one into cards off Aesi and Tatyova, and closes with large trampling threats.",
-  "cards": [
-    { "id": "forest", "qty": 16 },
-    { "id": "island", "qty": 14 },
-    { "id": "command_tower", "qty": 1 },
-    { "id": "simic_growth_chamber", "qty": 1 },
-    { "id": "woodland_stream", "qty": 1 },
-    { "id": "thornwood_falls", "qty": 1 },
-    { "id": "temple_of_mystery", "qty": 1 },
-    { "id": "terramorphic_expanse", "qty": 1 },
-    { "id": "evolving_wilds", "qty": 1 },
-
-    { "id": "sol_ring", "qty": 1 },
-    { "id": "arcane_signet", "qty": 1 },
-    { "id": "commanders_sphere", "qty": 1 },
-    { "id": "mind_stone", "qty": 1 },
-    { "id": "wayfarers_bauble", "qty": 1 },
-
-    { "id": "llanowar_elves", "qty": 1 },
-    { "id": "elvish_mystic", "qty": 1 },
-    { "id": "fyndhorn_elves", "qty": 1 },
-    { "id": "gyre_sage", "qty": 1 },
-    { "id": "sakura_tribe_elder", "qty": 1 },
-    { "id": "wood_elves", "qty": 1 },
-    { "id": "farhaven_elf", "qty": 1 },
-    { "id": "solemn_simulacrum", "qty": 1 },
-    { "id": "yavimaya_elder", "qty": 1 },
-
-    { "id": "rampant_growth", "qty": 1 },
-    { "id": "cultivate", "qty": 1 },
-    { "id": "kodamas_reach", "qty": 1 },
-    { "id": "explosive_vegetation", "qty": 1 },
-    { "id": "skyshroud_claim", "qty": 1 },
-    { "id": "harrow", "qty": 1 },
-    { "id": "roiling_regrowth", "qty": 1 },
-    { "id": "nissas_pilgrimage", "qty": 1 },
-
-    { "id": "tatyova_benthic_druid", "qty": 1 },
-    { "id": "rampaging_baloths", "qty": 1 },
-    { "id": "zendikars_roil", "qty": 1 },
-    { "id": "tireless_provisioner", "qty": 1 },
-    { "id": "avenger_of_zendikar", "qty": 1 },
-
-    { "id": "beast_whisperer", "qty": 1 },
-    { "id": "guardian_project", "qty": 1 },
-    { "id": "horn_of_greed", "qty": 1 },
-    { "id": "divination", "qty": 1 },
-    { "id": "harmonize", "qty": 1 },
-    { "id": "preordain", "qty": 1 },
-    { "id": "growth_spiral", "qty": 1 },
-    { "id": "explore", "qty": 1 },
-    { "id": "deep_analysis", "qty": 1 },
-    { "id": "mulldrifter", "qty": 1 },
-    { "id": "elvish_visionary", "qty": 1 },
-    { "id": "garruks_packleader", "qty": 1 },
-    { "id": "sylvan_ranger", "qty": 1 },
-
-    { "id": "azusa_lost_but_seeking", "qty": 1 },
-    { "id": "exploration", "qty": 1 },
-
-    { "id": "counterspell", "qty": 1 },
-    { "id": "cancel", "qty": 1 },
-    { "id": "rapid_hybridization", "qty": 1 },
-    { "id": "beast_within", "qty": 1 },
-    { "id": "acidic_slime", "qty": 1 },
-    { "id": "reclamation_sage", "qty": 1 },
-    { "id": "kraken_hatchling_swarm", "qty": 1 },
-    { "id": "naturalize", "qty": 1 },
-
-    { "id": "eternal_witness", "qty": 1 },
-    { "id": "thragtusk", "qty": 1 },
-    { "id": "colossal_dreadmaw", "qty": 1 },
-    { "id": "whiptongue_hydra", "qty": 1 },
-    { "id": "aetherling_serpent", "qty": 1 },
-    { "id": "simic_sky_swallower", "qty": 1 },
-    { "id": "nimble_mongoose", "qty": 1 },
-    { "id": "vorel_of_the_hull_clade", "qty": 1 },
-    { "id": "hydra_broodmaster", "qty": 1 },
-    { "id": "krosan_tusker", "qty": 1 },
-
-    { "id": "kiora_growth_surge", "qty": 1 },
-    { "id": "overrun_lite", "qty": 1 }
+  "name": "Reap the Tides",
+  "commanders": [
+    "aesi_tyrant_of_gyre_strait"
   ],
-  "substitutions": [
+  "color_identity": [
+    "G",
+    "U"
+  ],
+  "notes": "The Commander Legends precon, as printed. Simic ramp and landfall: play extra lands, turn each one into cards off Aesi and Seer's Sundial, and close with Leviathans nobody can block.",
+  "cards": [
     {
-      "slot": "scute_swarm",
-      "replaced_with": "tireless_provisioner",
-      "reason": "copy effects are not implemented"
+      "id": "acidic_slime",
+      "qty": 1
     },
     {
-      "slot": "rhystic_study",
-      "replaced_with": "guardian_project",
-      "reason": "optional 'unless that player pays' costs are not implemented"
+      "id": "arcane_denial",
+      "qty": 1
     },
     {
-      "slot": "cyclonic_rift",
-      "replaced_with": "kraken_hatchling_swarm",
-      "reason": "overload alternative costs are not implemented"
+      "id": "avenger_of_zendikar",
+      "qty": 1
     },
     {
-      "slot": "ancient_greenwarden",
-      "replaced_with": "zendikars_roil",
-      "reason": "replacement effects beyond the whitelist are not implemented"
+      "id": "beast_within",
+      "qty": 1
     },
     {
-      "slot": "oracle_of_mul_daya",
-      "replaced_with": "azusa_lost_but_seeking",
-      "reason": "playing lands off the top of the library needs continuous zone-permission effects"
+      "id": "blighted_woodland",
+      "qty": 1
+    },
+    {
+      "id": "coiling_oracle",
+      "qty": 1
+    },
+    {
+      "id": "command_tower",
+      "qty": 1
+    },
+    {
+      "id": "compulsive_research",
+      "qty": 1
+    },
+    {
+      "id": "coral_atoll",
+      "qty": 1
+    },
+    {
+      "id": "counterspell",
+      "qty": 1
+    },
+    {
+      "id": "cultivate",
+      "qty": 1
+    },
+    {
+      "id": "elder_deep_fiend",
+      "qty": 1
+    },
+    {
+      "id": "eternal_witness",
+      "qty": 1
+    },
+    {
+      "id": "evolving_wilds",
+      "qty": 1
+    },
+    {
+      "id": "explore",
+      "qty": 1
+    },
+    {
+      "id": "fact_or_fiction",
+      "qty": 1
+    },
+    {
+      "id": "fathom_mage",
+      "qty": 1
+    },
+    {
+      "id": "forest",
+      "qty": 15
+    },
+    {
+      "id": "growth_spiral",
+      "qty": 1
+    },
+    {
+      "id": "harmonize",
+      "qty": 1
+    },
+    {
+      "id": "into_the_roil",
+      "qty": 1
+    },
+    {
+      "id": "ior_ruin_expedition",
+      "qty": 1
+    },
+    {
+      "id": "island",
+      "qty": 15
+    },
+    {
+      "id": "jungle_basin",
+      "qty": 1
+    },
+    {
+      "id": "khalni_heart_expedition",
+      "qty": 1
+    },
+    {
+      "id": "kodamas_reach",
+      "qty": 1
+    },
+    {
+      "id": "meloku_the_clouded_mirror",
+      "qty": 1
+    },
+    {
+      "id": "memorial_to_genius",
+      "qty": 1
+    },
+    {
+      "id": "meteor_golem",
+      "qty": 1
+    },
+    {
+      "id": "molimo_maro_sorcerer",
+      "qty": 1
+    },
+    {
+      "id": "mulldrifter",
+      "qty": 1
+    },
+    {
+      "id": "murkfiend_liege",
+      "qty": 1
+    },
+    {
+      "id": "nezahal_primal_tide",
+      "qty": 1
+    },
+    {
+      "id": "peel_from_reality",
+      "qty": 1
+    },
+    {
+      "id": "rampaging_baloths",
+      "qty": 1
+    },
+    {
+      "id": "rampant_growth",
+      "qty": 1
+    },
+    {
+      "id": "ramunap_excavator",
+      "qty": 1
+    },
+    {
+      "id": "reclamation_sage",
+      "qty": 1
+    },
+    {
+      "id": "reliquary_tower",
+      "qty": 1
+    },
+    {
+      "id": "retreat_to_kazandu",
+      "qty": 1
+    },
+    {
+      "id": "scourge_of_fleets",
+      "qty": 1
+    },
+    {
+      "id": "search_for_tomorrow",
+      "qty": 1
+    },
+    {
+      "id": "seer_s_sundial",
+      "qty": 1
+    },
+    {
+      "id": "sharktocrab",
+      "qty": 1
+    },
+    {
+      "id": "shipbreaker_kraken",
+      "qty": 1
+    },
+    {
+      "id": "simic_charm",
+      "qty": 1
+    },
+    {
+      "id": "simic_growth_chamber",
+      "qty": 1
+    },
+    {
+      "id": "simic_guildgate",
+      "qty": 1
+    },
+    {
+      "id": "simic_signet",
+      "qty": 1
+    },
+    {
+      "id": "simic_sky_swallower",
+      "qty": 1
+    },
+    {
+      "id": "slinn_voda_the_rising_deep",
+      "qty": 1
+    },
+    {
+      "id": "sol_ring",
+      "qty": 1
+    },
+    {
+      "id": "sphinx_of_uthuun",
+      "qty": 1
+    },
+    {
+      "id": "spitting_image",
+      "qty": 1
+    },
+    {
+      "id": "sporemound",
+      "qty": 1
+    },
+    {
+      "id": "stormtide_leviathan",
+      "qty": 1
+    },
+    {
+      "id": "stumpsquall_hydra",
+      "qty": 1
+    },
+    {
+      "id": "swiftfoot_boots",
+      "qty": 1
+    },
+    {
+      "id": "terastodon",
+      "qty": 1
+    },
+    {
+      "id": "terramorphic_expanse",
+      "qty": 1
+    },
+    {
+      "id": "thornwood_falls",
+      "qty": 1
+    },
+    {
+      "id": "trench_behemoth",
+      "qty": 1
+    },
+    {
+      "id": "tromokratis",
+      "qty": 1
+    },
+    {
+      "id": "urban_evolution",
+      "qty": 1
+    },
+    {
+      "id": "verdant_sun_s_avatar",
+      "qty": 1
+    },
+    {
+      "id": "vivid_creek",
+      "qty": 1
+    },
+    {
+      "id": "vivid_grove",
+      "qty": 1
+    },
+    {
+      "id": "whelming_wave",
+      "qty": 1
+    },
+    {
+      "id": "wickerbough_elder",
+      "qty": 1
+    },
+    {
+      "id": "woodland_stream",
+      "qty": 1
+    },
+    {
+      "id": "yavimaya_elder",
+      "qty": 1
     }
   ],
-  "tags": ["Ramp", "Landfall", "Card draw"],
-  "ratings": {"speed": 2, "complexity": 3, "interaction": 2, "resilience": 3, "pilot": 2},
-  "strategy": "The first four turns are spent almost entirely on mana: a dork, a rock, a land-search sorcery, a second land drop. Aesi lands on turn five or six and converts the whole plan into cards - every land after that draws one, and Aesi lets you play two. By turn eight the deck is drawing three or four cards a turn off lands alone, and the payoffs stop being incremental: Avenger of Zendikar turns a board of lands into a board of bodies, Rampaging Baloths turns each new land into a 4/4. It wins by having more of everything than the table and swinging with trample.",
+  "tags": [
+    "Ramp",
+    "Landfall",
+    "Card draw"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 2
+  },
+  "strategy": "The first several turns are mana: a Signet, Rampant Growth, Kodama's Reach, an Explore for the extra land drop. Aesi arrives on turn six and converts the whole plan into cards - every land after that draws one, and Aesi lets you play two. The top end is Leviathans that the deck's own Islands make unblockable: Stormtide Leviathan turns off the ground entirely, and Slinn Voda kicked clears the board of everything that is not one of yours.",
   "signature": [
     {
-      "card_id": "tatyova_benthic_druid",
-      "why": "A second Aesi. Every land is a card and a life."
+      "card_id": "avenger_of_zendikar",
+      "why": "Turns a board full of lands into a board full of creatures in one cast."
     },
     {
-      "card_id": "avenger_of_zendikar",
-      "why": "Turns thirty-seven lands into a board in one cast."
+      "card_id": "stormtide_leviathan",
+      "why": "Makes every land an Island, so it is unblockable and nothing on the ground may attack."
     },
     {
       "card_id": "rampaging_baloths",
       "why": "Every land after this one is a 4/4."
     },
     {
-      "card_id": "explosive_vegetation",
-      "why": "Two lands at once, and lands are the engine."
+      "card_id": "seer_s_sundial",
+      "why": "Two mana a land, over and over, for as long as the game runs."
     }
   ]
 }

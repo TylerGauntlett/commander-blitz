@@ -43,7 +43,6 @@
     "artist": "Viktor Titov",
     "scryfall_id": "673c21f8-02b6-4ac4-b2fc-df065b4ac662"
   },
-  "aetherling_serpent": null,
   "air_elemental": {
     "artist": "Kev Walker",
     "scryfall_id": "81ac7bdf-a722-4bed-b480-a1c2f80c5d64"
@@ -1372,7 +1371,6 @@
     "artist": "David \u00c1lvarez",
     "scryfall_id": "25b0644d-4934-4495-9b6e-c31d1d10c298"
   },
-  "hydra_broodmaster": null,
   "ice_tunnel": {
     "artist": "Johannes Voss",
     "scryfall_id": "8cff3ef0-4dfb-472e-aa1e-77613dd0f6d8"
@@ -1565,7 +1563,6 @@
     "artist": "Simon Dominic",
     "scryfall_id": "04421508-b5ac-4466-9f77-dfef478d3cc2"
   },
-  "kiora_growth_surge": null,
   "kismet": {
     "artist": "Kaja Foglio",
     "scryfall_id": "d18d53f6-4cec-4c91-a507-39038d300b00"
@@ -1610,7 +1607,6 @@
     "artist": "Dan Murayama Scott",
     "scryfall_id": "9155825a-6449-4b36-aa14-4c227075ed51"
   },
-  "kraken_hatchling_swarm": null,
   "krenkos_command": {
     "artist": "Lucas Graciano",
     "scryfall_id": "edd9e8d3-6e30-43fc-8931-0f5c07a0e5b7"
@@ -2035,7 +2031,6 @@
     "artist": "Pavel Kolomeyets",
     "scryfall_id": "ad7e18e2-c033-4b6c-86e8-d0e5cc824cfd"
   },
-  "overrun_lite": null,
   "palladium_myr": {
     "artist": "Alan Pollack",
     "scryfall_id": "f7c6aba3-38c3-45d1-83e1-40829eb07862"

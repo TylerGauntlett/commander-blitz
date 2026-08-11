@@ -23,18 +23,18 @@ from automtg.cards.images import (
 )
 from automtg.cards.registry import default_registry
 
-#: The five cards in ``data/cards/`` that are original designs with no printing
-#: anywhere.  Frozen deliberately: a *sixth* entry appearing here means a real
-#: card stopped resolving, which is a bug, not a new custom card.
-KNOWN_ARTLESS = frozenset(
-    {
-        "aetherling_serpent",  # "Gyre Strait Leviathan"
-        "hydra_broodmaster",  # "Tidal Broodmaster"
-        "kiora_growth_surge",  # "Surge of Growth"
-        "kraken_hatchling_swarm",  # "Whelming Tide"
-        "overrun_lite",  # "Wave of Growth"
-    }
-)
+#: Cards in ``data/cards/`` that are original designs with no printing anywhere.
+#:
+#: **Empty, and that is the claim.** It used to hold five: the Aesi deck carried
+#: invented cards wearing real cards' ids -- "Tidal Broodmaster" under
+#: ``hydra_broodmaster``, "Gyre Strait Leviathan" under ``aetherling_serpent``.
+#: They existed because the deck was a hand-curated approximation of the Aesi
+#: precon rather than the precon, and they went when the real list shipped.
+#:
+#: So an entry appearing here now means a real card stopped resolving, which is
+#: a bug -- there is no longer such a thing as a card in this pool without a
+#: printing to check it against.
+KNOWN_ARTLESS: frozenset[str] = frozenset()
 
 pytestmark = pytest.mark.skipif(
     not catalog_path().exists(),
@@ -87,13 +87,13 @@ class TestResolution:
         assert entry.name == "Aesi, Tyrant of Gyre Strait"
         assert entry.art_url().startswith("https://cards.scryfall.io/art_crop/")
 
-    def test_a_custom_card_resolves_to_nothing(self, registry, index):
-        # Not a failure: the client draws a deliberate plate for these.
-        assert resolve(registry.get("aetherling_serpent"), index) is None
-
-    def test_exactly_the_known_customs_are_artless(self, registry, index):
+    def test_no_card_in_the_pool_is_artless(self, registry, index):
+        """Was "exactly the known customs are artless", over a frozen set of
+        five. The five were invented cards in the hand-curated Aesi list and
+        went with it, so the claim is now the stronger one: every card here has
+        a printing to be checked against."""
         artless = {card.id for card in registry if resolve(card, index) is None}
-        assert artless == KNOWN_ARTLESS
+        assert artless == KNOWN_ARTLESS == frozenset()
 
 
 class TestTheCommittedArtifact:
