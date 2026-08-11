@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**27 cards** blocked by **22** capabilities.
+**26 cards** blocked by **21** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters](#distribute-counters) | 1 | 12944 | decision |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 | [emerge](#emerge) | 1 | 7681 | cost |
-| [evoke](#evoke) | 1 | 584 | cost, engine |
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [landwalk](#landwalk) | 1 | 2833 | keyword |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
@@ -352,22 +351,6 @@ Blocks **1** card.
   - Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)
   - When you cast this spell, tap up to four target permanents.
   - Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered.
-
-</details>
-
-## evoke
-
-Blocks **1** card.
-
-- **(cost)** A card-level alternative cost that REPLACES the printed mana cost while casting from hand, so legality offers Mulldrifter twice: once for {4}{U} and once for {2}{U}. Shaped like the existing `kicker` field (a card-level cost string plus a flag on the cast action), but subtractive rather than additive, and it must leave the printed mana value at 5.
-  <br>Why the existing vocabulary won't do: `kicker` is the only card-level mana cost besides `mana_cost`, and it is explicitly an ADDITIONAL cost paid on top - legality offers the card unkicked then kicked at mana_cost + kicker, so writing `kicker: "{2}{U}"` would make the evoked mode cost {6}{U}{U}, i.e. strictly worse, not cheaper. `cost_reduction` is generic-only, clamped at zero, read off the board every time and not a choice the caster makes, so it can neither cut the {U} pip nor be declined. `suspend` casts for free but only after exiling the card and waiting out time counters, and `retrace` only widens the zone a card may be cast from while adding a discard; neither replaces the mana cost of a cast from hand.
-- **(engine)** A condition readable from the card's own effects that asks whether this permanent was cast for its evoke cost - the exact analogue of `{"kicked": true}` - so the enters trigger can sacrifice the creature only in that case. The flag has to survive the cast-to-battlefield zone change, since the question is asked when the permanent enters and by then the spell is gone.
-  <br>Why the existing vocabulary won't do: `{"kicked": true}` is the only condition in the vocabulary that reads how a spell was cast, and the loader rejects it on any card without a `kicker` cost, so it cannot be borrowed for a different cast mode. The sacrifice half on its own is expressible - a `self_enters` trigger running `{"op": "sacrifice", "objects": {"self_only": true}}`, or the `may`-with-`else` idiom from "Sacrifice it unless you..." - but nothing can gate it on which cost was paid, so it would either always sacrifice (turning the {4}{U} mode into a strictly worse card than the one printed) or ask the caster a free yes/no they would always decline, which is the evoke clause doing nothing.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mulldrifter** (rank 584) — `mulldrifter`
-  - Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)
 
 </details>
 

@@ -179302,12 +179302,12 @@
     },
     "Mulldrifter": {
       "edhrec_rank": 584,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Mulldrifter",
-      "reason": "Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "reason": "",
       "scryfall_id": "ff990293-3e73-4c01-9b79-707339c8b28b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Multani's Acolyte": {

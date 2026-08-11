@@ -1001,14 +1001,31 @@ turned into plain cyclers.
 
 ## Alternative ways to play a card
 
-Three now, each a card-level field rather than an ability, because the card does
+Four now, each a card-level field rather than an ability, because the card does
 not have them where it is sitting:
 
 ```jsonc
 "kicker": "{1}{U}"                          // pay more as you cast it
+"evoke": "{2}{U}"                           // pay less instead, and it dies on arrival
 "retrace": true                             // cast from the graveyard, discarding a land
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 ```
+
+**Evoke** is `kicker` pointing the other way: an *alternative* cost that
+replaces the printed one rather than adding to it, offered only from hand, and
+listed as a third cast variant beside the full-price line. Neither is folded
+into `mana_cost`, for the same reason — mana value stays what is printed, so an
+evoked Mulldrifter is still a five-drop to everything that counts one.
+
+Its two halves are checked together like kicker's, and half of it fails the same
+silent way: an evoke cost nothing reads is a cheaper cast that never dies, and an
+`{"evoked": true}` clause with no cost can never fire. Both load cleanly, so both
+are load errors. An evoke cost that is not actually cheaper is refused too — an
+alternative nobody would take is dead weight that reads as a mechanic.
+
+"It's sacrificed when it enters" is an ordinary `self_enters` trigger gated on
+`{"evoked": true}`, which works because the flag is written onto the object at
+resolution and outlives the spell — see the note under Kicker.
 
 **Retrace** widens *where* a card may be cast from, the same way
 `play_lands_from_graveyard` widens where a land may be played from — legality

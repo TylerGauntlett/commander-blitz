@@ -170,6 +170,11 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: "Evoke {2}{U}" -- an *alternative* cost that replaces the printed one
+    #: while casting from hand.  Subtractive where kicker is additive, and the
+    #: printed mana value is unchanged: a Mulldrifter evoked is still a
+    #: five-drop for anything that counts mana value.
+    evoke: str | None = None
     #: "This spell costs {X} less to cast, where X is the total power of
     #: creatures you control."  Reduces the *generic* part of the cost only,
     #: never below zero and never the coloured pips -- which is what the rules

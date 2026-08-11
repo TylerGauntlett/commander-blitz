@@ -216,6 +216,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if kicker is not None and not reads_kicked:
         raise DslError(f"{where}: has a 'kicker' cost that no effect reads via 'kicked'")
 
+    # Evoke is two halves the same way, and half of it is the same silent
+    # failure: a cheaper cast that never dies, or a sacrifice clause that can
+    # never fire.  Both would load cleanly.
+    evoke = ManaCost.parse(model.evoke) if model.evoke else None
+    if evoke is not None and evoke.x_count:
+        raise DslError(f"{where}: an evoke cost with X is not implemented")
+    reads_evoked = _mentions_condition(model, "evoked")
+    if reads_evoked and evoke is None:
+        raise DslError(f"{where}: reads the 'evoked' condition but has no 'evoke' cost")
+    if evoke is not None and not reads_evoked:
+        raise DslError(f"{where}: has an 'evoke' cost that no effect reads via 'evoked'")
+    if evoke is not None and evoke.mana_value() >= mana_cost.mana_value():
+        # An "alternative" cost no cheaper than the printed one is never taken,
+        # so the whole mechanic would be dead weight nobody would notice.
+        raise DslError(
+            f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
+        )
+
     colors = (
         frozenset(model.colors)
         if model.colors is not None
@@ -257,6 +275,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         is_token=model.is_token,
         uncounterable=model.uncounterable,
         kicker=kicker,
+        evoke=evoke,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         suspend=suspend,
@@ -265,10 +284,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
 def _mentions_kicked(model: CardModel) -> bool:
     """Does anything on this card read ``{"kicked": ...}``?"""
+    return _mentions_condition(model, "kicked")
+
+
+def _mentions_condition(model: CardModel, key: str) -> bool:
+    """Does anything on this card read the ``key`` condition?"""
 
     def walk(node: Any) -> bool:
         if isinstance(node, Mapping):
-            return "kicked" in node or any(walk(v) for v in node.values())
+            return key in node or any(walk(v) for v in node.values())
         if isinstance(node, (list, tuple)):
             return any(walk(v) for v in node)
         return False

@@ -1288,25 +1288,7 @@
       "types": ["Sorcery"],
       "spell_effects": [{ "op": "draw", "player": "you", "amount": { "const": 2 } }]
     },
-    {
-      "id": "mulldrifter",
-      "name": "Mulldrifter",
-      "oracle_text": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
-      "mana_cost": "{4}{U}",
-      "types": ["Creature"],
-      "subtypes": ["Elemental"],
-      "power": 2,
-      "toughness": 2,
-      "keywords": ["flying"],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When this enters, draw two cards.",
-          "trigger": { "event": "self_enters", "source": "self" },
-          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 2 } }]
-        }
-      ]
-    },
+    
     {
       "id": "garruks_packleader",
       "name": "Garruk's Packleader",

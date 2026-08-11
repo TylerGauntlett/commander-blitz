@@ -6,6 +6,7 @@ clauses on triggers, and static ability conditions.
     {"exists": {selector}}
     {"zone_is": "battlefield"}
     {"kicked": true}
+    {"evoked": true}
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ CONDITION_KEYS = frozenset(
         "zone_is",
         "is_your_turn",
         "kicked",
+        "evoked",
     }
 )
 
@@ -68,6 +70,13 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_kicked = ctx.kicked or (obj is not None and obj.cast_kicked)
         return was_kicked == bool(cond["kicked"])
+    if "evoked" in cond:
+        # Only ever read on the battlefield -- "it's sacrificed when it
+        # enters" is an ETB trigger -- but written the same way as `kicked`
+        # so the two cannot drift.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was_evoked = obj is not None and obj.cast_evoked
+        return was_evoked == bool(cond["evoked"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:

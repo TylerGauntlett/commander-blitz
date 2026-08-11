@@ -262,6 +262,11 @@ def _cast_options(
     it are two different actions with the same source, offered side by side, and
     the player picks.  Unkicked is listed first so the cheap line stays the
     obvious one.
+
+    Evoke is the same shape pointing the other way -- an *alternative* cost that
+    replaces the printed one -- so it is a third variant rather than a flag on
+    the first.  A card is never offered as both: kicker adds to a cost evoke has
+    already replaced, and no printed card asks for that.
     """
     exclude_sid = state.objects[oid].stack_id
     tuples = enumerate_target_tuples(
@@ -273,6 +278,13 @@ def _cast_options(
     out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
     if card.kicker is not None:
         out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True)
+    # Only from hand: an alternative cost is permission to cast the card *this
+    # way*, and nothing extends it to the graveyard or the command zone the way
+    # `retrace` and commander casting do.
+    if card.evoke is not None and state.objects[oid].zone is Zone.HAND:
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
+        )
     return out
 
 
@@ -284,7 +296,8 @@ def _cast_variant(
     tuples,
     *,
     extra_generic: int,
-    kicked: bool,
+    kicked: bool = False,
+    evoked: bool = False,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
 
@@ -294,7 +307,12 @@ def _cast_variant(
     sources = mana_sources(state, pid, purpose=spell_purpose(card))
     pool = state.players[pid].mana_pool
 
-    cost = card.mana_cost.plus(card.kicker) if kicked else card.mana_cost
+    if evoked and card.evoke is not None:
+        cost = card.evoke
+    elif kicked:
+        cost = card.mana_cost.plus(card.kicker)
+    else:
+        cost = card.mana_cost
     discount = cost_reduction(state, pid, card)
 
     # X is a *gate* here, not a value.  Legality asks only "is there any X this
@@ -326,6 +344,8 @@ def _cast_variant(
     label_base = f"Cast {card.name}"
     if kicked:
         label_base += " (kicked)"
+    if evoked:
+        label_base += " (evoked)"
     if extra_generic:
         label_base += f" (+{extra_generic})"
     out = []
@@ -340,6 +360,7 @@ def _cast_variant(
                 targets=targets,
                 x=x,
                 kicked=kicked,
+                evoked=evoked,
                 label=label,
                 base_label=label_base,
                 pays=pays,

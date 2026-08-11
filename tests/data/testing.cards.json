@@ -223,6 +223,60 @@
       ]
     },
     {
+      "id": "t_evoker",
+      "name": "Test Evoker",
+      "oracle_text": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "mana_cost": "{4}{U}",
+      "evoke": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, draw two cards.",
+          "trigger": {
+            "event": "self_enters"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+          "trigger": {
+            "event": "self_enters",
+            "condition": {
+              "evoked": true
+            }
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_kicker_creature",
       "name": "Test Kicker Creature",
       "oracle_text": "Kicker {2}\nWhen this creature enters, if it was kicked, you gain 5 life.",

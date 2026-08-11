@@ -100,6 +100,7 @@ class StackItem:
     #: time and read on resolution, because that is the only place it can be
     #: known: nothing about the object afterwards records what was paid for it.
     kicked: bool = False
+    evoked: bool = False
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""

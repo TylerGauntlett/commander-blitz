@@ -81,6 +81,10 @@ class GameObject:
     #: the StackItem is gone.  Without this the condition is silently False
     #: on every permanent -- an inert card that loads clean.
     cast_kicked: bool = False
+    #: Whether this object was cast for its evoke cost.  Same contract again:
+    #: "it's sacrificed when it enters" is an ETB trigger, so the flag has to
+    #: outlive the spell.
+    cast_evoked: bool = False
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
