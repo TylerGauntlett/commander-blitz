@@ -24332,12 +24332,12 @@
     },
     "Bident of Thassa": {
       "edhrec_rank": 420,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Bident of Thassa",
-      "reason": "{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+      "reason": "",
       "scryfall_id": "60a9018a-24a9-4c25-89ca-4ac52a60fbf1",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Bifur, Melodic Rider": {
@@ -185852,12 +185852,12 @@
     },
     "Nimble Mongoose": {
       "edhrec_rank": 26520,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Nimble Mongoose",
-      "reason": "Shroud (This creature can't be the target of spells or abilities.) / Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
+      "reason": "",
       "scryfall_id": "b356bf24-0c6b-457e-b53e-263a0100f611",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Nimble Obstructionist": {
