@@ -4960,6 +4960,72 @@
       "colors": [
         "U"
       ],
+      "id": "compulsive_research",
+      "mana_cost": "{2}{U}",
+      "name": "Compulsive Research",
+      "oracle_text": "Target player draws three cards. Then that player discards two cards unless they discard a land card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "noop"
+            }
+          ],
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "discard",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "player": {
+            "target": "t1"
+          },
+          "prompt": "Discard a land card instead of discarding two cards?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "consider",
       "mana_cost": "{U}",
       "name": "Consider",

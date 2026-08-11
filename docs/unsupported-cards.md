@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **26** capabilities.
+**29 cards** blocked by **25** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 | [emerge](#emerge) | 1 | 7681 | cost |
 | [evoke](#evoke) | 1 | 584 | cost, engine |
-| [filtered-discard](#filtered-discard) | 1 | 4366 | op |
 | [illusion-token](#illusion-token) | 1 | 5792 | engine |
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [kicker](#kicker) | 1 | 4628 | engine |
@@ -393,20 +392,6 @@ Blocks **1** card.
 
 - **Mulldrifter** (rank 584) — `mulldrifter`
   - Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)
-
-</details>
-
-## filtered-discard
-
-Blocks **1** card.
-
-- **(op)** a `discard` effect that accepts a selector over the discarding player's hand (e.g. `{"types": ["Land"]}`), so the chosen cards must match a card type, and that only runs when such a card is available -- letting the 'unless' branch be written as a `may` whose taken branch is 'discard a land card' and whose `else` is 'discard two cards'
-  <br>Why the existing vocabulary won't do: The `discard` op reads only `amount`, `random` and `player`; it asks the player for any cards from the whole hand, so 'discards a land card' would silently become 'discards any card'. The only type-narrowed discard in the engine is `Cost.discard_selector`, which is a cost paid to activate an ability, not vocabulary a resolving sorcery's `spell_effects` can use, and `may`/`choose_mode` can pose the choice but not constrain what it throws away.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Compulsive Research** (rank 4366) — `compulsive_research`
-  - Then that player discards two cards unless they discard a land card.
 
 </details>
 

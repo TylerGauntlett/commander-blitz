@@ -50912,12 +50912,12 @@
     },
     "Compulsive Research": {
       "edhrec_rank": 4366,
-      "gate": "template",
+      "gate": null,
       "name": "Compulsive Research",
-      "reason": "no template for: Target player draws three cards. Then that player discards two cards unless they discard a",
+      "reason": "",
       "scryfall_id": "64b04692-1358-41cb-8f43-19cd06662144",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Compulsory Rest": {

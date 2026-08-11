@@ -331,6 +331,18 @@
   "commercial_district": {
     "zone": "battlefield"
   },
+  "compulsive_research": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "consider": {
     "hand_size": {
       "0": 1
