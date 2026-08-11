@@ -42,6 +42,26 @@ from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
 
+#: What ``min_life_of`` reports when its player spec selects nobody.
+#:
+#: Not zero, and the direction matters. "An opponent has 10 or less life" with
+#: no opponents left must be **false**, and a minimum of 0 would make it
+#: vacuously true -- turning Vampire Lacerator's drawback off at the exact
+#: moment the last opponent died. So the minimum over an empty set is a life
+#: total nothing reaches. ``max_life_of`` has the opposite bias and uses a plain
+#: 0, because "each opponent has 10 or less" over nobody *is* vacuously true and
+#: that is the correct reading.
+#:
+#: It lives here rather than next to the rest of the value language because
+#: ``effects/values.py`` already imports this module, and both languages need
+#: the same answer.
+NO_PLAYERS_LIFE = 1_000_000
+
+
+def min_life(lives: list[int]) -> int:
+    """The lowest of several life totals, biased away from vacuous truth."""
+    return min(lives, default=NO_PLAYERS_LIFE)
+
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
@@ -257,9 +277,15 @@ def _compare(op: str, left: int, right: int) -> bool:
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     """Evaluate the restricted value language allowed inside static abilities.
 
-    Only ``{"const": n}`` and ``{"count": <filter>}`` are permitted here -- the
-    full value language would need the selector engine, which needs derived
-    characteristics, which would reintroduce recursion.
+    ``{"const": n}``, ``{"count": <filter>}`` and the two per-player life leaves
+    are permitted here -- the full value language would need the selector
+    engine, which needs derived characteristics, which would reintroduce
+    recursion.
+
+    A life total is safe for the same reason a zone count is: it is a *pipeline
+    input*. Nothing in the fixed-order characteristics pipeline can change what
+    a player's life is, so reading one cannot make a static depend on another
+    static's output.
     """
     if expr is None:
         return 0
@@ -271,6 +297,12 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "min_life_of" in expr:
+        pids = _static_players(state, source, expr["min_life_of"])
+        return min_life([state.players[p].life for p in pids])
+    if "max_life_of" in expr:
+        pids = _static_players(state, source, expr["max_life_of"])
+        return max([state.players[p].life for p in pids], default=0)
     return 0
 
 
@@ -314,7 +346,10 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     who = str(spec or "you")
     if who == "you":
         return [source.controller]
-    if who == "opponent":
+    # "opponent" and "each_opponent" are the same set, as they are in the
+    # effect-side `select_players`. Spelling only one of them here meant
+    # "each_opponent" fell through to *every* player including yourself.
+    if who in ("opponent", "each_opponent"):
         return state.opponents(source.controller)
     return state.alive()
 

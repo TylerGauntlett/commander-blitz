@@ -1,3 +1,66 @@
+## Per-opponent life — the leaf that makes a pod question answerable
+
+### Overview
+
+Two cards, one printed clause: "an opponent has 10 or less life". Vampire
+Lacerator asks it from an `if` inside a triggered ability, Guul Draz Vampire
+from a static's "as long as" clause — so the leaf had to land in both condition
+languages, which are deliberately separate.
+
+The engine could already read a life total, and that was the trap rather than
+the solution. `life_of` **sums** over its player spec, and `"opponent"` and
+`"each_opponent"` are the same set, so the obvious spelling asks whether the
+opponents' *combined* life is 10 or less. In a duel that is the printed card
+exactly. At a Commander table it is a different card and the wrong way round:
+three opponents at 4 life sum to 12, so a summing Lacerator drains its
+controller against a table that is nearly dead, and a summing Guul Draz stays a
+1/1 while every opponent is in burn range. This repo is Commander-first, so that
+is a divergence, not a rounding error.
+
+### What shipped
+
+`min_life_of` and `max_life_of` — the existential and the universal — in
+`VALUE_KEYS`, in `characteristics._static_value`, and mirrored in
+`loader._validate_static_value` with their own player-spec whitelist.
+
+Tier A, and the narrow form on purpose. The gap record also proposed the general
+shape, `{"any_player": {"players": …, "condition": …}}`, and named the min/max
+leaves as its special case. The narrow one expresses both printed cards exactly
+— "an opponent has" is `min <= 10`, "each opponent has" is `max <= 10` — and a
+quantifier over players inside the *static* condition language would be new
+machinery in the one place the repo guards hardest. `min`/`max` already existed
+as value expressions and could not stand in: they take a literal list written
+into the card, and no player spec enumerates opponents one at a time.
+
+A life total is safe inside a static for the same reason a zone count is: it is
+a pipeline **input**. Nothing in the fixed-order characteristics pipeline can
+change one, so no static can come to depend on another's output through it.
+
+### The empty set has a right answer and a wrong one
+
+With no opponents left, "an opponent has 10 or less life" must be **false**. A
+minimum over nothing that returned 0 would make it vacuously true and switch
+Lacerator's drawback off at the instant the last opponent died — so
+`NO_PLAYERS_LIFE` is a life total nothing reaches. `max_life_of` takes the
+opposite bias deliberately: "each opponent has 10 or less" over nobody *is*
+vacuously true, and 0 is the correct reading there. Statics are evaluated during
+state-based-action passes, so this is observable rather than theoretical.
+
+### A latent bug fixed on the way
+
+`characteristics._static_players` spelled `"opponent"` but not
+`"each_opponent"`, so the latter fell through to *every* player including the
+static's own controller. Nothing reached it today — the loader restricts
+`controller` on zone filters to `you`/`opponent`/`any` — but the new leaf takes
+a full player spec, and the effect-side `select_players` has always treated the
+two as synonyms. Now both do.
+
+### Also repaired
+
+Vampire Lacerator's printed subtypes are "Vampire Warrior"; the pool had it as a
+Vampire only. Checked against `data/catalog/cards.sqlite`, like every printed
+characteristic touched in this sequence.
+
 ## "Unless that player pays" — the best-ranked card in the report, for one guard
 
 ### Overview

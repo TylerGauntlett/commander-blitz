@@ -717,18 +717,36 @@ def _validate_static_condition(condition: Any, where: str) -> None:
             _validate_static_value(condition[side], f"{where}.{side}")
 
 
+#: Player specs a static's per-player life leaf may name.  Smaller than the
+#: effect-side list: `active_player` and the binding forms read something that
+#: is not settled while characteristics are being computed.
+STATIC_LIFE_PLAYERS = frozenset({"you", "opponent", "each_opponent", "each_player", "all"})
+
+#: The per-player life leaves.  Safe inside a static for the same reason a zone
+#: count is: a life total is a pipeline *input*, and nothing in the fixed-order
+#: characteristics pipeline can change one.
+STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
+
+
 def _validate_static_value(value: Any, where: str) -> None:
-    """Static abilities allow only ``{"const": n}`` and ``{"count": filter}``."""
+    """Static abilities allow ``const``, ``count`` and the per-player life leaves."""
+    allowed = {"const", "count"} | STATIC_LIFE_KEYS
     if isinstance(value, int):
         return
     if not isinstance(value, Mapping):
         raise DslError(f"{where}: static values must be an int, 'const' or 'count'")
-    if set(value) - {"const", "count"}:
+    if set(value) - allowed:
         raise DslError(
-            f"{where}: static values may only use 'const' or 'count', got {sorted(value)}"
+            f"{where}: static values may only use {sorted(allowed)}, got {sorted(value)}"
         )
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    for key in STATIC_LIFE_KEYS & set(value):
+        who = value[key]
+        if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
+            raise DslError(
+                f"{where}.{key}: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+            )
 
 
 def _compile_cost(model, where: str) -> Cost:

@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **11** capabilities.
+**12 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
-| [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [attack-requirement](#attack-requirement) | 1 | 30863 | engine, static_effect |
@@ -71,28 +70,6 @@ Blocks **2** cards.
 - **Increasing Devotion** (rank 3292) — `increasing_devotion`
   - If this spell was cast from a graveyard, create ten of those tokens instead.
   - Flashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)
-
-</details>
-
-## player-quantifier
-
-Blocks **2** cards.
-
-- **(value)** The static `condition` tree itself has SHIPPED (see `tests/unit/test_static_condition.py`): a static may now carry `all`/`any`/`not`/`exists`/`is_your_turn`/`cmp` over `{"const": n}` and `{"count": filter}`, and the count filter may name a zone. What is still missing for this card is a *leaf* for that tree to read, and it is the leaf named below, not the tree. Concretely: a static condition can express the SHAPE of "as long as an opponent has 10 or less life" today, but a static value is `const` or `count` only -- there is no `life_of` leaf, and the one in the `if`-effect language would be wrong here anyway because it SUMS. What this card needs is a per-opponent life leaf readable from a static condition: `min_life_of` over a multi-player spec, or the general `{"any_player": {"players": "each_opponent", "condition": {...}}}` form -- so that "an opponent has 10 or less life" is a question about SOME ONE opponent. the existential over individual opponents already specified in the Vampire Lacerator gap record -- `min_life_of` / `max_life_of` over a multi-player spec, or the general `{"any_player": {"players": "each_opponent", "condition": {...}}}` condition form -- so that "an opponent has 10 or less life" is a question about SOME ONE opponent. Needed here in whatever condition language the `static_condition` item above ends up with, not only in the `if`-effect language
-  <br>Why the existing vocabulary won't do: `life_of` is the only way to read a life total and it SUMS over its player spec (`engine/effects/values.py:102-104` does `sum(ctx.state.players[p].life for p in pids)`), while `"opponent"` and `"each_opponent"` are the same thing -- `select_players` returns `ctx.opponents()` for both. So even granting the `static_condition` item above, `{"cmp": "<=", "left": {"life_of": "opponent"}, "right": {"const": 10}}` would read "my opponents' COMBINED life is 10 or less". In a duel that matches the printed card; in a pod it is a different card, and the wrong way round -- three opponents at 4 life each sum to 12, so this creature would stay a 1/1 against a table that is nearly dead. This engine is multiplayer and this repo is Commander-first, so that is a divergence rather than a rounding error. `min`/`max` exist as value expressions but take a literal list of value expressions, and no player spec enumerates opponents one at a time to feed them
-- **(value)** per-player aggregate value expressions over a multi-player spec -- `min_life_of` / `max_life_of` (and the same shape for other player quantities such as cards in hand), so `{"min_life_of": "each_opponent"}` yields the life total of the opponent who has the least rather than a total across opponents. With that, "an opponent has 10 or less life" is `{"cmp": "<=", "left": {"min_life_of": "each_opponent"}, "right": {"const": 10}}`
-  <br>Why the existing vocabulary won't do: `life_of` is the only way to read a life total and it SUMS over its player spec (`values.py:104` does `sum(ctx.state.players[p].life for p in pids)`), and `"opponent"` is a plain alias for `"each_opponent"` -- `select_players` (`selectors.py:278-279`) returns `ctx.opponents()` for both. So `{"life_of": "opponent"} <= 10` reads as "my opponents' COMBINED life is 10 or less", which is identical to the printed card in a duel but diverges sharply in a pod: three opponents at 40 sum to 120, so the exemption becomes effectively unreachable and the card applies its own drawback in games where the real one would not. `min`/`max` exist as value expressions but take a list of value expressions, and there is no per-opponent player spec to feed them -- the player specs are `you`, `opponent`/`each_opponent`, `each_player`, `active_player`, `{target}`, `{controller_of}`, `{owner_of}`, `{binding}`, none of which enumerates opponents one at a time
-- **(op)** a quantifier over players in the condition DSL -- `{"any_player": {"players": "each_opponent", "condition": {...}}}` and its `each_player` counterpart -- evaluating the inner condition once per selected player and OR-ing (resp. AND-ing) the results, so "an opponent has 10 or less life" and "each opponent has 10 or less life" become distinguishable. This is the general form; the `min_life_of` value above is the narrow special case
-  <br>Why the existing vocabulary won't do: the condition DSL (`conditions.py`, CONDITION_KEYS = cmp/all/any/not/exists/zone_is/is_your_turn/kicked) has no player-scoped form at all. `all`/`any` combine a fixed literal list of sub-conditions written into the card, not a list generated per player, so they cannot range over an opponent count that is unknown until the game is set up. `exists` looks the closest but quantifies over OBJECTS -- it calls `resolve_pool` on an object selector -- and there is no player selector to hand it. `{"controller_of": "snapshot_name"}` does yield a single player, but it is whichever one arbitrary opponent happens to control the snapshotted permanent, and an opponent controlling nothing is invisible to it, so it cannot express "any opponent"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vampire Lacerator** (rank 21815) — `vampire_lacerator`
-  - At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.
-  - Scope: only the "unless an opponent has 10 or less life" clause is blocked. The `upkeep` trigger (`{"event": "upkeep", "controller": "you"}`, exactly as Phyrexian Arena writes it) and the `lose_life` half are both expressible today, so this card becomes writable the moment the quantifier below exists.
-- **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
-  - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
-  - Scope (updated): two of the three blockers on this card's ONE printed line have now shipped. `static_condition` gave the "as long as" tree, and `intimidate` is `Keyword.INTIMIDATE`, compared on derived colors in `combat.can_block` -- so `"keywords": ["intimidate"]` and a conditional `buff` with `affects.self_only` are both expressible today. The card is blocked on exactly one thing: the condition has no leaf that can ask about ONE opponent's life total.
 
 </details>
 

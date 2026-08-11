@@ -8,6 +8,7 @@ forms::
     {"count": {selector}}             how many objects match
     {"power_of": {"target": "t1"}}    a characteristic of an object or snapshot
     {"life_of": "you"}                a player quantity
+    {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"sum": [a, b, ...]}              arithmetic
 """
 
@@ -16,7 +17,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import chars
+from ..characteristics import chars, min_life
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from .context import EffectContext
@@ -31,6 +32,14 @@ VALUE_KEYS = frozenset(
         "toughness_of",
         "mana_value_of",
         "life_of",
+        # "…unless an opponent has 10 or less life."  `life_of` SUMS over its
+        # player spec, which is the printed card in a duel and a different card
+        # at a pod: three opponents at 4 life sum to 12, so a summing test would
+        # say nobody is low against a table that is nearly dead.  These two ask
+        # about ONE player -- `min_life_of` is the existential ("an opponent
+        # has…"), `max_life_of` the universal ("each opponent has…").
+        "min_life_of",
+        "max_life_of",
         "cards_in_hand",
         "creatures_you_control",
         "lands_you_control",
@@ -102,6 +111,12 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_of" in expr:
         pids = _players(ctx, expr["life_of"])
         return sum(ctx.state.players[p].life for p in pids)
+    if "min_life_of" in expr:
+        pids = _players(ctx, expr["min_life_of"])
+        return min_life([ctx.state.players[p].life for p in pids])
+    if "max_life_of" in expr:
+        pids = _players(ctx, expr["max_life_of"])
+        return max([ctx.state.players[p].life for p in pids], default=0)
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)

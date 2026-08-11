@@ -172,7 +172,9 @@ Anywhere a number is expected:
 { "power_of": { "var": "victim" } }             // from a snapshot
 { "toughness_of": { "target": "t1" } }
 { "mana_value_of": { "target": "t1" } }
-{ "life_of": "you" }
+{ "life_of": "you" }                            // SUMS over its player spec
+{ "min_life_of": "each_opponent" }              // the lowest, one player at a time
+{ "max_life_of": "each_opponent" }              // the highest
 { "cards_in_hand": "each_opponent" }
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
@@ -380,10 +382,44 @@ The line that decides what may be in this table is the same one that shapes
 A condition is evaluated in `_battlefield_statics`, *before* the first layer
 applies, so counters, printed characteristics, zone contents and whose turn it
 is are all safe — no layer can change whether another static is switched on, and
-the fixed order stays acyclic. A life total is not in the table because
-`life_of` sums over its player spec, and "an opponent has 10 or less life" is a
-question about one opponent; see the `player-quantifier` entry in
-[unsupported-cards.md](unsupported-cards.md).
+the fixed order stays acyclic. A **life total** is safe for exactly that reason
+too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
+can change what a player's life is.
+
+`life_of` itself is deliberately *not*, and the difference is the whole point.
+
+#### "An opponent has 10 or less life"
+
+`life_of` **sums** over its player spec, and `"opponent"` and `"each_opponent"`
+name the same set — so `{"life_of": "opponent"} <= 10` asks whether your
+opponents' *combined* life is 10 or less. In a duel that is the printed card. At
+a Commander table it is a different card and backwards: three opponents at 4
+life sum to 12, so Guul Draz Vampire would stay a 1/1 against a table in burn
+range, and Vampire Lacerator would drain its controller at the same moment.
+
+So the leaves ask about one player at a time:
+
+```jsonc
+{ "cmp": "<=", "left": { "min_life_of": "each_opponent" }, "right": { "const": 10 } }
+// "an opponent has 10 or less life"   -- the existential
+
+{ "cmp": "<=", "left": { "max_life_of": "each_opponent" }, "right": { "const": 10 } }
+// "each opponent has 10 or less life" -- the universal
+```
+
+`min` and `max` already existed and cannot stand in: they take a literal list of
+value expressions written into the card, and no player spec enumerates opponents
+one at a time to feed them.
+
+With nobody selected, `min_life_of` reports a life total nothing reaches rather
+than 0 — "an opponent has 10 or less life" has to be **false** when there are no
+opponents, and a minimum of 0 would make it vacuously true. `max_life_of`
+returns 0 there, because "each opponent has…" over nobody is vacuously true and
+that reading is correct.
+
+Both work in the `if`-effect language and in a static's `condition`; the two are
+validated separately, so a leaf added to one and not the other would load in a
+card that then quietly read 0.
 
 #### Counting filters, and the `zone` key
 
