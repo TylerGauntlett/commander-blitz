@@ -326,6 +326,10 @@
     "zone": "battlefield"
   },
   "coiling_oracle": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "commercial_district": {
@@ -1532,6 +1536,10 @@
     "zone": "battlefield"
   },
   "search_for_tomorrow": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 39
+    },
     "zone": "graveyard"
   },
   "seaside_citadel": {
@@ -1863,6 +1871,15 @@
     "zone": "battlefield"
   },
   "terastodon": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 3,
+      "id": "elephant_3_3_g"
+    },
     "zone": "battlefield"
   },
   "terrain_elemental": {
