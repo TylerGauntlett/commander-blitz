@@ -31,6 +31,7 @@ not a rewrite.
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
 | **Emerge** | The alternative cost whose price depends on the creature sacrificed for it — one cast line per creature, reduced by its mana value |
 | **Cast triggers** | "When you cast this spell", via `active_zones: ["stack"]` — an ability firing while its own card is the spell |
+| **Ascend / the city's blessing** | "If you control ten or more permanents, you get the city's blessing for the rest of the game", as a **state trigger** in the state-based-action pass -- no stack, no response, checked continuously -- plus a `has_city_s_blessing` condition leaf in both condition languages. Player state, so it survives the permanents leaving, survives the Ascend card leaving, and is shared by every card that player controls |
 | **Flashback** | "Flashback—{1}{U}, Pay 3 life" — an alternative cost offered only from the owner's graveyard, replacing the printed mana cost, with the rest of it paid as an additional cost. Once-only: the spell is exiled instead of returning to the graveyard, on resolution and on fizzling alike. `cast_from_graveyard` is readable inside `if`, so Increasing Devotion makes ten tokens rather than five |
 | **Embalm** | An activated ability offered from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause (replacement colours, added subtypes, no mana cost). The same infinite-engine guard cycling introduced, now satisfiable by either self-discard or self-exile |
 | **Damage history** | "Whenever a creature dealt damage by this creature this turn dies" — a per-turn ledger of victim → sources, cleared at cleanup with the damage itself, read by a `damaged_by` trigger filter. On the state rather than the object, because the creature it asks about has just died |
@@ -93,8 +94,8 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (ascend — none of the 15
-keywords in `engine/enums.py` covers them) are `/extend-dsl` jobs. Cycling was
+waiting on are `/extend-dsl` jobs, and as of this sequence there are none left
+in the report except Kydele's per-turn draw tally. Cycling was
 one of them and now ships in full, trigger included, so Krosan Tusker is off
 this list. Evolve went with it, on Gyre Sage. Skulk and threshold have both shipped since, and
 Nimble Mongoose is off this list. So are intimidate (with the rest of the
@@ -146,8 +147,9 @@ Attacking planeswalkers or battles · banding · "must be blocked" · manual dam
 division · attacking with creatures you do not control
 
 **Structural**
-Multiplayer politics (voting, goad) · sideboards and companions · the monarch,
-initiative, day/night, and other designated-player mechanics
+Multiplayer politics (voting) · sideboards and companions · the monarch,
+initiative, day/night and the other designated-player mechanics (the city's
+blessing is implemented; the rest are not)
 
 ## How this is enforced
 

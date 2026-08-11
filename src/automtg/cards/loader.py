@@ -354,6 +354,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         flashback=flashback,
+        ascend=model.ascend,
         suspend=suspend,
     )
 
@@ -705,7 +706,10 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
 STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
 
 #: The forms a static's condition may take, one per node.
-STATIC_CONDITION_HEADS = ("counters", "all", "any", "not", "exists", "is_your_turn", "cmp")
+STATIC_CONDITION_HEADS = (
+    "counters", "all", "any", "not", "exists", "is_your_turn",
+    "has_city_s_blessing", "cmp",
+)
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static
 #: is read while the pipeline computes characteristics, including for objects
@@ -816,6 +820,13 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "has_city_s_blessing":
+        who = condition["has_city_s_blessing"]
+        if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
+            raise DslError(
+                f"{where}.has_city_s_blessing: must name one of "
+                f"{sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+            )
     elif head == "cmp":
         op = str(condition["cmp"])
         if op not in STATIC_CONDITION_OPS:

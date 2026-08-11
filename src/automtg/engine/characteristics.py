@@ -269,6 +269,13 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "has_city_s_blessing" in cond:
+        # Player state, so a pipeline *input* exactly as a zone count is:
+        # nothing in the fixed-order characteristics pipeline can change whether
+        # a player has the blessing, so no static can come to depend on another
+        # static's output through it.
+        pids = _static_players(state, source, cond["has_city_s_blessing"])
+        return any(state.players[p].has_city_s_blessing for p in pids)
     if "cmp" in cond:
         left = _static_value(state, cond.get("left"), source)
         right = _static_value(state, cond.get("right"), source)

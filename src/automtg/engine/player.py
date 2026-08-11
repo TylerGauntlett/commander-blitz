@@ -53,6 +53,19 @@ class PlayerState:
     #: then makes this player lose (rule 104.3c) rather than losing immediately.
     attempted_draw_from_empty: bool = False
 
+    #: The city's blessing (rules 700.6, 702.131). Once you have it you have it
+    #: **for the rest of the game**: it survives the permanents leaving, it
+    #: survives the Ascend card itself leaving, and every card you control reads
+    #: the same flag -- so a second Ascend card printed later sees the blessing
+    #: an earlier one granted.
+    #:
+    #: The first genuinely per-player designation in the engine, and it is why
+    #: this is player state rather than something on an object: ``monstrous`` is
+    #: the closest existing one-way flag and lives on a `GameObject`, so it is
+    #: cleared by `reset_permanent_state` on any zone change and cannot be
+    #: shared between two cards.
+    has_city_s_blessing: bool = False
+
     mulligans_taken: int = 0
     has_kept_hand: bool = False
 
@@ -116,5 +129,6 @@ class PlayerState:
             "commander_tax": dict(self.commander_tax),
             "commander_damage_taken": dict(self.commander_damage_taken),
             "has_lost": self.has_lost,
+            "has_city_s_blessing": self.has_city_s_blessing,
             "loss_reason": self.loss_reason.value if self.loss_reason else None,
         }

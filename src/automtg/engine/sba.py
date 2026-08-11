@@ -39,6 +39,54 @@ def check(state: GameState) -> bool:
     changed |= _counter_annihilation(state)
     changed |= _creature_deaths(state)
     changed |= _legend_rule(state)
+    changed |= _ascend(state)
+    return changed
+
+
+#: Permanents you must control to get the city's blessing (rule 702.131a).
+ASCEND_THRESHOLD = 10
+
+
+def _ascend(state: GameState) -> bool:
+    """The city's blessing, granted by a **state trigger** (rule 702.131a).
+
+    Not a triggered ability, and that is the whole reason this lives here.
+    Ascend is not an *event*: a player at nine permanents who plays a land gets
+    the blessing at the instant of the tenth, with nothing having fired, and
+    gets it during an opponent's turn just as readily. State triggers are
+    checked whenever state-based actions are, use no stack and cannot be
+    responded to -- so this is the pass they belong in, beside the legend rule.
+
+    One-way, for the rest of the game: it survives the permanents leaving, it
+    survives the Ascend card itself leaving, and it is shared by every card that
+    player controls. A trigger-plus-counter version would be a *different* card
+    in the direction that matters, because a re-checked trigger would come and
+    go.
+    """
+    changed = False
+    for pid in state.alive():
+        if state.players[pid].has_city_s_blessing:
+            continue
+        # Someone must actually have Ascend for the check to matter. Read off
+        # the battlefield rather than stored, so a card that leaves stops
+        # granting it -- to anyone who does not have it already.
+        if not any(
+            (obj := state.objects.get(oid)) is not None
+            and obj.controller == pid
+            and state.card_of(obj).ascend
+            for oid in state.battlefield
+        ):
+            continue
+        permanents = sum(
+            1
+            for oid in state.battlefield
+            if (obj := state.objects.get(oid)) is not None and obj.controller == pid
+        )
+        if permanents >= ASCEND_THRESHOLD:
+            state.players[pid].has_city_s_blessing = True
+            state.emit(EventType.CITY_S_BLESSING, player=pid)
+            state.bump_chars()
+            changed = True
     return changed
 
 
