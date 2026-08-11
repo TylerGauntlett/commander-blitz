@@ -289972,12 +289972,12 @@
     },
     "Trench Behemoth": {
       "edhrec_rank": 9467,
-      "gate": "template",
+      "gate": null,
       "name": "Trench Behemoth",
-      "reason": "no template for: Return a land you control to its owner's hand: Untap this creature. It gains hexproof unti",
+      "reason": "",
       "scryfall_id": "909dc123-8234-4e81-bb7b-77404d94a87c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trench Gorger": {

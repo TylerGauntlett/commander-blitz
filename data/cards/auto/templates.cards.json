@@ -27678,6 +27678,93 @@
       "abilities": [
         {
           "cost": {
+            "return_to_hand": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            },
+            {
+              "keywords": [
+                "hexproof"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "duration": "next_combat",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "must_attack"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "trench_behemoth",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Trench Behemoth",
+      "oracle_text": "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.\nLandfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [

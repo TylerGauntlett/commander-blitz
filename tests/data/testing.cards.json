@@ -223,6 +223,52 @@
       ]
     },
     {
+      "id": "t_compeller",
+      "name": "Test Compeller",
+      "oracle_text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+          "trigger": {
+            "event": "self_enters"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "must_attack",
+              "objects": {
+                "target": "t1"
+              },
+              "duration": "next_combat"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tromokratis",
       "name": "Test Unblockable Unless All",
       "oracle_text": "This creature can't be blocked unless all creatures defending player controls block it.",

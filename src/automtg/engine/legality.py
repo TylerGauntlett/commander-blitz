@@ -98,7 +98,12 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
                     label=f"Attack p{defender} with {name}",
                 )
             )
-    out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
+    # "…attacks this combat if able" is enforced by withholding the way out of
+    # the declaration, which is the only lever legality has: there is no action
+    # for "refuse to attack". A creature that cannot attack owes nothing, which
+    # `attack_required` has already accounted for, so this can never deadlock.
+    if not combat_mod.unmet_attack_requirements(state):
+        out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
     del pid
     return out
 
