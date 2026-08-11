@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "wickerbough_elder",
+    "name": "Wickerbough Elder",
+    "oracle_text": "This creature enters with a -1/-1 counter on it.\n{G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment.",
+    "mana_cost": "{3}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Treefolk", "Shaman"],
+    "power": 4,
+    "toughness": 4,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "replacements": [
+      {"event": "self_enters_with_counters", "counter": "-1/-1", "amount": 1}
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment.",
+        "cost": {"mana": "{G}", "remove_counters": {"counter": "-1/-1", "amount": 1}},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]},
+            "count": 1
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "-1/-1", "amount": 1}
+  }
+}

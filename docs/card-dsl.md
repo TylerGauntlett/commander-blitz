@@ -88,6 +88,7 @@ Every key is optional; all present keys must match.
   "zone": "battlefield",          // library|hand|battlefield|graveyard|exile|stack|command
   "controller": "you",            // you|opponent|any
   "types": ["Creature"],          // all must be present
+  "any_types": ["Artifact", "Enchantment"],   // any one is enough -- "artifact or enchantment"
   "not_types": ["Artifact"],
   "subtypes": ["Vampire"],        // any one is enough
   "supertypes": ["Basic"],
@@ -105,6 +106,22 @@ Every key is optional; all present keys must match.
   "name": "Forest"
 }
 ```
+
+`types` and `any_types` are the two halves of the same question and the
+difference is load-bearing. `types` is *and* — `["Artifact", "Enchantment"]`
+selects a permanent that is both at once, which on most boards is nothing.
+`any_types` is *or*, matching how `subtypes` and `colors` have always behaved,
+and it is what "destroy target artifact or enchantment" needs.
+
+Neither `not_types` nor a second target spec substitutes for it. The complement
+spelling is only equal for permanents with a single type, so it refuses Solemn
+Simulacrum — an Artifact Creature, and a legal target for that line; and two
+optional target specs destroy *up to two* permanents rather than one.
+
+Both keys are validated against the card types the engine knows, because a typo
+narrows a selector silently rather than failing: "artifact or enchantmnet" would
+quietly become "artifact". `any_types` with a single entry is also refused —
+`types` already says that, and two spellings of one filter is how they drift.
 
 Two shorthands name a pool directly instead of searching a zone:
 

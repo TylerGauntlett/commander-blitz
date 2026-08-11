@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**34 cards** blocked by **30** capabilities.
+**33 cards** blocked by **29** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [kicker](#kicker) | 1 | 4628 | engine |
 | [landwalk](#landwalk) | 1 | 2833 | keyword |
 | [may-pay](#may-pay) | 1 | 4344 | cost, decision |
-| [type-disjunction](#type-disjunction) | 1 | 5177 | selector |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [untap-during-each-untap-step](#untap-during-each-untap-step) | 1 | 2584 | static_effect, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
@@ -514,20 +513,6 @@ Blocks **1** card.
 
 - **Seer's Sundial** (rank 4344) — `seer_s_sundial`
   - Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.
-
-</details>
-
-## type-disjunction
-
-Blocks **1** card.
-
-- **(selector)** A selector clause that matches an object having ANY ONE of several card types -- e.g. `{"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]}` -- usable as a target spec's selector, so 'target artifact or enchantment' picks one permanent that is either. The same key covers 'target creature or planeswalker', 'target instant or sorcery card' and 'target artifact or creature'; `data/authoring/queue.json` alone has well over twenty queued cards whose only blocked clause is a type disjunction, so this is one selector key against a large batch of cards.
-  <br>Why the existing vocabulary won't do: `types` is the closest key and it is a conjunction, not a disjunction: `effects/selectors.matches` tests `set(want).issubset(types)`, so `["Artifact", "Enchantment"]` matches only a permanent that is both at once, and `["Artifact"]` alone silently drops half the printed clause. The asymmetry is deliberate elsewhere in the same function -- `subtypes` and `colors` use `set(want) & ...`, i.e. any-of -- so the any-of form exists for those keys and simply has no type equivalent. `not_types` cannot stand in either: `{"not_types": ["Creature", "Land", "Planeswalker", "Battle"]}` is the complement only for permanents with a single type, and it would refuse artifact creatures and enchantment creatures, which are legal targets for the printed line. Two optional target specs (one Artifact, one Enchantment) is not the card either -- the ability would then destroy up to two permanents. `SELECTOR_KEYS` in `src/automtg/engine/effects/selectors.py` is validated at load time, so an invented key is a load error rather than a silent no-op, and the static-filter list in the packet shows the same `types`/`not_types` pair with no any-of member.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wickerbough Elder** (rank 5177) — `wickerbough_elder`
-  - {G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment.
 
 </details>
 

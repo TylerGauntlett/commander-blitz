@@ -2021,6 +2021,14 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "wickerbough_elder": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "-1/-1"
+    },
+    "zone": "battlefield"
+  },
   "windreader_sphinx": {
     "battlefield_count": 33,
     "zone": "battlefield"

@@ -312162,12 +312162,12 @@
     },
     "Wickerbough Elder": {
       "edhrec_rank": 5177,
-      "gate": "template",
+      "gate": null,
       "name": "Wickerbough Elder",
-      "reason": "no template for: This creature enters with a -1/-1 counter on it",
+      "reason": "",
       "scryfall_id": "83e0b855-0259-4229-a6b9-d0faaf225355",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wickerfolk Indomitable": {
