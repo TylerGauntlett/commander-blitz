@@ -34,6 +34,7 @@ CONDITION_KEYS = frozenset(
         "kicked",
         "evoked",
         "cast_from_graveyard",
+        "has_city_s_blessing",
     }
 )
 
@@ -89,6 +90,11 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
+    if "has_city_s_blessing" in cond:
+        from .selectors import select_players
+
+        pids = select_players(ctx, cond["has_city_s_blessing"])
+        return any(ctx.state.players[p].has_city_s_blessing for p in pids)
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:

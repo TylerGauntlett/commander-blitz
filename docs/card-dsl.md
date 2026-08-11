@@ -1674,6 +1674,42 @@ them where it is sitting:
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 ```
 
+### Ascend
+
+```jsonc
+"ascend": true                              // a card-level flag, not a keyword
+```
+
+```jsonc
+// "This creature has flying as long as you have the city's blessing."
+{ "kind": "static", "effect": "grant_keyword",
+  "affects": { "self_only": true }, "keywords": ["flying"],
+  "condition": { "has_city_s_blessing": "you" } }
+```
+
+The blessing is granted by a **state trigger** in the state-based-action pass
+(rule 702.131a), not by a triggered ability. Ascend is not an *event*: a player
+at nine permanents who plays a land gets it at the instant of the tenth, with
+nothing having fired, and gets it on an opponent's turn just as readily. State
+triggers use no stack and cannot be responded to, so the SBA pass — beside the
+legend rule — is where they belong.
+
+**Player state, not object state.** `PlayerState.has_city_s_blessing` is one-way
+and lasts the rest of the game: it survives the permanents leaving, survives the
+Ascend card leaving, and is shared by every card that player controls, so a
+second Ascend card printed later reads the blessing a first one granted.
+`monstrous` is the closest existing one-way flag and cannot be reused — it lives
+on a `GameObject`, so `reset_permanent_state` clears it on any zone change.
+
+**Not a `Keyword`.** The enum's members are read off *derived characteristics*
+by `grant_keyword` and the evasion checks, and Ascend is neither granted nor
+evasive.
+
+`has_city_s_blessing` reads in both condition languages — a static's `condition`
+and the `if`-effect one. It is safe in a static for the same reason a zone count
+is: player state is a pipeline **input**, and nothing in the fixed-order
+characteristics pipeline can change it.
+
 ### Flashback
 
 A whole `Cost`, not a mana string like `evoke`, because Deep Analysis charges

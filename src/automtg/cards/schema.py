@@ -211,6 +211,10 @@ class CardModel(BaseModel):
     #: land card in addition to paying its other costs."  A whole extra way to
     #: cast the card, so it is a card-level field rather than an ability.
     retrace: bool = False
+    #: Ascend: "If you control ten or more permanents, you get the
+    #: city's blessing for the rest of the game." A bare keyword with
+    #: no parameters, so a card-level flag rather than an ability.
+    ascend: bool = False
     #: "Flashback {1}{U}, Pay 3 life" -- an alternative cost offered only from
     #: the owner's graveyard. A full cost, not just mana, because Deep Analysis
     #: charges life too. Card-level like ``retrace``, because it changes which

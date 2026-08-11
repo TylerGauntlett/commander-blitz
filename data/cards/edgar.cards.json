@@ -276,7 +276,18 @@
       "types": ["Creature"],
       "subtypes": ["Vampire", "Soldier"],
       "power": 2,
-      "toughness": 1
+      "toughness": 1,
+      "ascend": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature has flying as long as you have the city's blessing.",
+          "effect": "grant_keyword",
+          "affects": { "self_only": true },
+          "keywords": ["flying"],
+          "condition": { "has_city_s_blessing": "you" }
+        }
+      ]
     },
     {
       "id": "pulse_tracker",

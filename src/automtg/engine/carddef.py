@@ -298,6 +298,11 @@ class CardDef:
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.
     retrace: bool = False
+    #: Ascend. Deliberately *not* a `Keyword`: the enum's members are
+    #: read by `grant_keyword` and the evasion checks off derived
+    #: characteristics, and Ascend is neither granted nor evasive --
+    #: it is a state trigger watching a permanent count.
+    ascend: bool = False
     #: "Flashback {1}{U}, Pay 3 life" -- an alternative cost offered only for a
     #: copy in the owner's *graveyard*, replacing the printed mana cost.
     #:

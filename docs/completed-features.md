@@ -1,3 +1,53 @@
+## Ascend — the first per-player designation, and the last entry in the report
+
+### Overview
+
+"Ascend (If you control ten or more permanents, you get the city's blessing for
+the rest of the game.)" plus "This creature has flying as long as you have the
+city's blessing." Skymarcher Aspirant, and both printed lines were blocked: one
+because there was nothing to grant, the other because there was nothing to ask.
+
+This reverses a documented decision. `rules-coverage.md` listed "the monarch,
+initiative, day/night, and other designated-player mechanics" under Not
+implemented, and the city's blessing is exactly one of those. It is the only run
+in this sequence built against the plan's own advice — the recommendation was to
+refuse it, and the instruction was to build it.
+
+### A state trigger, not a triggered ability
+
+Rule 702.131a, and it is the whole design. Ascend is not an *event*: a player at
+nine permanents who plays a land gets the blessing at the instant of the tenth,
+with nothing having fired, and gets it on an opponent's turn just as readily.
+State triggers are checked whenever state-based actions are, use no stack and
+cannot be responded to — so `_ascend` lives in the SBA pass beside the legend
+rule. A trigger-plus-counter version would be a different card in the direction
+that matters, because a re-checked trigger would come and go and the blessing
+never does.
+
+### Player state, not object state
+
+`PlayerState.has_city_s_blessing` is the engine's first genuinely per-player
+designation. `monstrous` is the closest existing one-way flag and is wrong in
+all three respects that matter: it lives on a `GameObject`, so
+`reset_permanent_state` clears it on any zone change; it is set by an op
+resolving from the stack rather than by a continuous check; and it cannot be
+shared between two cards.
+
+The blessing has to survive the permanents leaving, survive the Ascend card
+leaving, and be visible to every card the player controls — so a second Ascend
+card printed later reads the blessing a first one granted. All three are tests.
+
+`ascend` is a card-level field rather than a `Keyword`, because the enum's
+members are read off *derived characteristics* by `grant_keyword` and the
+evasion checks, and Ascend is neither granted nor evasive.
+
+### The residual gate needed telling
+
+"Ascend" is a printed line no ability carries, exactly like "Kicker {1}{U}" — the
+mechanic is a state trigger, so there is nothing for an ability's `text` to hang
+on. `verify._covered` has one clause per card-level field of that shape, and now
+has one more.
+
 ## Flashback — three pieces, and the third does not fall out of the other two
 
 ### Overview
