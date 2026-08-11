@@ -13,8 +13,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .characteristics import block_restrictions, chars, matches_static, protected_from
-from .enums import Keyword
+from .characteristics import (
+    attack_forbidden,
+    block_restrictions,
+    chars,
+    matches_static,
+    protected_from,
+)
+from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
 from .primitives import damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
@@ -55,6 +61,8 @@ def can_attack(state: GameState, oid: int) -> bool:
     if Keyword.DEFENDER.value in c.keywords:
         return False
     if obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
+        return False
+    if attack_forbidden(state, oid):
         return False
     combat = state.combat
     return combat is None or oid not in combat.attackers
@@ -196,6 +204,14 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     if Keyword.FLYING.value in ac.keywords and grounded:
         return False
 
+    # Landwalk (702.14): unblockable while the *defending player* controls a
+    # land of the named type. Unlike every other evasion, the condition is not a
+    # quality of either creature -- which is exactly why it could not be written
+    # as a `blockers` filter.
+    for keyword, subtype in LANDWALK_SUBTYPE.items():
+        if keyword in ac.keywords and _controls_land_type(state, defender, subtype):
+            return False
+
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
     # blocker is what has the quality -- the same asymmetry as protection above.
@@ -212,6 +228,22 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
         if matches_static(state, blocker, source_obj, spec):
             return False
     return True
+
+
+def _controls_land_type(state: GameState, pid: int, subtype: str) -> bool:
+    """Does this player control a land with that subtype, right now?
+
+    Read from `chars`, not the printed card: Stormtide Leviathan's own second
+    line makes every land an Island, and its islandwalk has to see that.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.controller != pid:
+            continue
+        c = chars(state, oid)
+        if "Land" in c.types and subtype in c.subtypes:
+            return True
+    return False
 
 
 def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:

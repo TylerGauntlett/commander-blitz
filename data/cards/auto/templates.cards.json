@@ -25407,6 +25407,61 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Island"
+          ],
+          "text": "All lands are Islands in addition to their other types."
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "not_keywords": [
+              "flying",
+              "islandwalk"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Creatures without flying or islandwalk can't attack."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stormtide_leviathan",
+      "keywords": [
+        "islandwalk"
+      ],
+      "mana_cost": "{5}{U}{U}{U}",
+      "name": "Stormtide Leviathan",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nAll lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Leviathan"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

@@ -264452,12 +264452,12 @@
     },
     "Stormtide Leviathan": {
       "edhrec_rank": 2833,
-      "gate": "template",
+      "gate": null,
       "name": "Stormtide Leviathan",
-      "reason": "no template for: Islandwalk",
+      "reason": "",
       "scryfall_id": "996bb4c0-dc72-4233-9f44-2e25aef71ad7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormwatch Eagle": {

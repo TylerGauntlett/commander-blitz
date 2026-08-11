@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**23 cards** blocked by **20** capabilities.
+**22 cards** blocked by **18** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
-| [cant-attack](#cant-attack) | 1 | 2833 | static_effect |
 | [cast-trigger](#cast-trigger) | 1 | 7681 | trigger_event |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
@@ -31,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 | [emerge](#emerge) | 1 | 7681 | cost |
 | [investigate](#investigate) | 1 | 7272 | engine |
-| [landwalk](#landwalk) | 1 | 2833 | keyword |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
 
@@ -215,21 +213,6 @@ Blocks **1** card.
 
 </details>
 
-## cant-attack
-
-Blocks **1** card.
-
-- **(static_effect)** A `cant_attack` static effect whose `affects` filter selects the creatures forbidden to attack, enforced by a new clause in `can_attack` (src/automtg/engine/combat.py:46) alongside the existing `Keyword.DEFENDER` check, so `legal_attackers` and the DECLARE_ATTACKERS action mask both stay exact. It must apply to creatures of *every* controller, so the filter needs a `controller: "any"` path in `_matches` (src/automtg/engine/characteristics.py) that is reachable from an attack restriction. It additionally needs a negated keyword filter key -- `not_keywords: ["flying", "islandwalk"]`, matching an object only when it has none of the listed keywords -- and that key must read *current* keywords rather than printed ones, since a creature granted flying by another permanent must be able to attack.
-  <br>Why the existing vocabulary won't do: `static_effects` is only `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `extra_land_drops`; none of them touches attack legality, and `can_attack` reads nothing but tapped state, types, `defender` and summoning sickness. The tempting substitute is a static `grant_keyword` of `defender` to the matching creatures, and it is wrong twice over: `defender` is checked in other places as a printed characteristic of walls and it also blanks 'attacks' triggers differently, but more importantly the filter cannot be written -- `static_filter_keys` offers `keywords` (has all of these) and `not_types`, but no negation over keywords, so 'creatures without flying or islandwalk' is inexpressible even before the effect is. `lock_abilities` is a permission on activating abilities and is until-end-of-turn, not a combat restriction. Approximating by omitting the sentence would leave the card's main effect -- a global attack lock -- silently absent.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Stormtide Leviathan** (rank 2833) — `stormtide_leviathan`
-  - Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
-  - Creatures without flying or islandwalk can't attack.
-
-</details>
-
 ## cast-trigger
 
 Blocks **1** card.
@@ -355,21 +338,6 @@ Blocks **1** card.
 - **Bygone Bishop** (rank 7272) — `bygone_bishop`
   - Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
   - Scope: only the `investigate` half of this one printed line is blocked, and it is blocked on a single missing thing -- a Clue token in the shared token pool. The trigger half IS expressible today and needs nothing new; see `expressible_today` below. Because the residual gate reads a printed line as a whole, and because a trigger that fires and creates nothing is a strictly worse card than the one printed (Bygone Bishop's entire function is the Clues), the line goes here rather than being written half. The card already in the hand-written pool covers none of it: `data/cards/isperia.cards.json` has it as a vanilla 2/3 flier -- and with mana cost `{2}{W}{W}` where the packet and the printing say `{2}{W}`, which wants fixing when this is implemented.
-
-</details>
-
-## landwalk
-
-Blocks **1** card.
-
-- **(keyword)** A parameterised landwalk keyword -- `islandwalk`, `swampwalk`, `forestwalk`, `mountainwalk`, `plainswalk` -- as members on `Keyword` (src/automtg/engine/enums.py), plus a check in `can_block` (src/automtg/engine/combat.py) that returns False when the attacker has landwalk of subtype X and the *defending player* controls at least one land with subtype X. The check must read the land's current subtypes via `chars()`, not the printed card, because this very card grants Island to everything; it belongs next to the existing flying/reach clause in `can_block`, which is already the one place block legality is decided. Because the family is five keywords sharing one rule, the cleanest shape is one keyword value carrying the land subtype (e.g. `landwalk:Island`) or a small keyword-to-subtype table consulted by the block check, so `grant_keyword` (op and static) picks up the whole family for free -- roughly 40 further landwalk cards sit in data/authoring/queue.json.
-  <br>Why the existing vocabulary won't do: `reference.keywords` has no walk keyword at all, and the near-misses are all wrong. `menace` and `flying` are the only evasion in `can_block`, and both are unconditional properties of the attacker/blocker pair -- neither can express 'conditional on what the defending player's battlefield contains', and there is no static_filter_key or value expression that `can_block` consults. `hexproof`/`indestructible` are unrelated rules. Granting `flying` instead is a strictly different card: it would dodge every non-reach blocker regardless of the defender's lands, and would additionally satisfy this card's own third sentence for free. There is also no 'can't be blocked' effect in `ops` or `static_effects` to build a conditional unblockability on top of.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Stormtide Leviathan** (rank 2833) — `stormtide_leviathan`
-  - Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
-  - Creatures without flying or islandwalk can't attack.
 
 </details>
 

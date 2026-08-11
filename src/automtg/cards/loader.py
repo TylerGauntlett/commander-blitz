@@ -75,6 +75,10 @@ STATIC_EFFECTS = frozenset(
         # characteristics pipeline: it is a fact about when a set of
         # permanents untaps, which no characteristic can carry.
         "untap_during_each_untap_step",
+        # Stormtide Leviathan.  Read by `combat.can_attack`.  A global
+        # prohibition, so unlike every other static here its `affects`
+        # routinely names creatures its own controller does not control.
+        "cant_attack",
     }
 )
 
@@ -92,6 +96,10 @@ STATIC_FILTER_KEYS = frozenset(
         "supertypes",
         "colors",
         "keywords",
+        # "Creatures **without** flying or islandwalk can't attack."  The
+        # negated form, which the effect-side selector language always had
+        # and the static one did not.
+        "not_keywords",
         "tapped",
         "is_commander",
         "is_token",

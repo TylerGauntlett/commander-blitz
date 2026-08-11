@@ -1748,6 +1748,16 @@
   "stormchaser_mage": {
     "zone": "battlefield"
   },
+  "stormtide_leviathan": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "islandwalk"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "striped_bears": {
     "hand_size": {
       "0": 1
