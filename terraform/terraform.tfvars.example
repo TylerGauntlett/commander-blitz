@@ -1,0 +1,16 @@
+# Copy to terraform.tfvars and fill in. *.tfvars is gitignored.
+#
+# The DigitalOcean token is deliberately not here -- it comes from the
+# DIGITALOCEAN_TOKEN environment variable, sourced from the repo-root .env.
+
+# Your own key, for `ssh admin@<ip>`.
+admin_ssh_public_key = "ssh-ed25519 AAAA... you@example.com"
+
+# The CI deploy key created by:
+#   ssh-keygen -t ed25519 -N '""' -C automtg-ci -f $env:USERPROFILE\.ssh\automtg_ci
+# Paste the contents of automtg_ci.pub here. The private half never leaves your
+# machine except as the DROPLET_SSH_KEY Actions secret.
+ci_ssh_public_key = "ssh-ed25519 AAAA... automtg-ci"
+
+# region       = "nyc3"
+# droplet_size = "s-1vcpu-2gb"

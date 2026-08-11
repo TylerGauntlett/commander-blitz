@@ -1,0 +1,35 @@
+# Runs on the droplet, not here. The deploy job copies this file to
+# /opt/automtg/ and writes a sibling .env holding IMAGE_TAG, so the compose file
+# stays in version control and the tag stays a per-deploy value.
+#
+# Rollback is therefore: edit IMAGE_TAG in /opt/automtg/.env to an older
+# sha-<commit> and re-run `docker compose up -d`. See docs/deployment.md.
+
+services:
+  web:
+    image: ghcr.io/tylergauntlett/auto-mtg:${IMAGE_TAG:?set IMAGE_TAG in /opt/automtg/.env}
+    restart: unless-stopped
+    ports:
+      # Host 80 -> container 8000. Plain HTTP for now; a TLS terminator would
+      # slot in here as a second service without the image changing.
+      - "80:8000"
+    volumes:
+      # Both are written at runtime and must outlive the container.
+      #
+      # A named volume seeds itself from the image the first time it is created,
+      # so `art` starts life holding the ~800 jpgs baked into the image and then
+      # accumulates whatever the art store lazily fetches from Scryfall. Later
+      # images do not re-seed it -- that is fine, since anything missing is
+      # fetched on demand anyway.
+      - art:/app/data/art
+      - generated:/app/data/generated
+    logging:
+      # Uncapped json-file logging is the classic way to fill a droplet's disk.
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  art:
+  generated:

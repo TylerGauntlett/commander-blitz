@@ -1,0 +1,63 @@
+# Build context hygiene. The repo is large -- .git alone is ~130MB and the
+# Scryfall bulk dump is ~74MB -- and every byte here is uploaded to the builder
+# before the first instruction runs.
+
+# Version control
+.git
+.gitignore
+.github
+
+# Secrets. Belt and braces: these are gitignored, but a build context is not a
+# git checkout, and a stray token must not be copyable into a layer.
+.env
+*.local.env
+terraform/
+
+# Python
+.venv
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Node -- reinstalled from the lockfile inside the client stage, and `dist` is
+# built there rather than copied from whatever is on the developer's disk.
+frontend/node_modules
+frontend/dist
+frontend/storybook-static
+frontend/e2e-report
+frontend/e2e-shots
+frontend/playwright-report
+frontend/test-results
+
+# The Scryfall bulk dump: a build input for data/catalog/cards.sqlite, which is
+# committed. The dump itself is never read at runtime.
+data/catalog/bulk
+
+# Imported decks are per-machine, untracked state. A CI build has none of this
+# and a local build would have whatever the developer last imported, so leaving
+# it in the context makes the same commit produce two different images. The
+# Dockerfile recreates the directory empty; the `generated` volume owns it.
+data/generated
+
+# Training artifacts
+runs
+*.pt
+*.ckpt
+
+# Not shipped: the server imports none of it.
+tests
+legacy-frontend
+mockups
+docs
+scripts
+data/authoring
+
+# Editors / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db

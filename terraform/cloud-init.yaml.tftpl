@@ -1,0 +1,54 @@
+#cloud-config
+# One-time bootstrap for the Auto MTG droplet. Everything here runs once, on
+# first boot. Deploys are handled entirely by the GitHub Actions job, which only
+# ever copies a compose file and runs `docker compose up -d`.
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - fail2ban
+
+users:
+  - name: deploy
+    shell: /bin/bash
+    # No sudo. This account exists so CI can run `docker compose`; membership of
+    # the docker group is already root-equivalent, and adding passwordless sudo
+    # on top would widen a key that lives in a CI secret store.
+    ssh_authorized_keys:
+      - ${ci_ssh_public_key}
+  - name: admin
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - ${admin_ssh_public_key}
+
+# Keys only. The droplet has a public IP and port 22 open, so password auth
+# would be brute-forced within the hour.
+ssh_pwauth: false
+disable_root: true
+
+runcmd:
+  # Docker from Docker's own apt repo rather than Ubuntu's `docker.io`: this is
+  # what ships the v2 `docker compose` subcommand the deploy job calls.
+  - install -m 0755 -d /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - chmod a+r /etc/apt/keyrings/docker.asc
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+  - apt-get update
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  - systemctl enable --now docker
+  # After the install, because the group does not exist until Docker creates it.
+  - usermod -aG docker deploy
+  # Where the deploy job scp's docker-compose.yml and writes .env.
+  - mkdir -p /opt/automtg
+  - chown deploy:deploy /opt/automtg
+  # Old images accumulate one per deploy and each carries ~90MB of card data.
+  - printf '0 4 * * * root docker image prune -af --filter "until=168h"\n' > /etc/cron.d/docker-prune
+  # The deploy job waits on this: it is the difference between "the droplet is
+  # up" and "the droplet can actually run a container".
+  - touch /opt/automtg/.bootstrap-complete
