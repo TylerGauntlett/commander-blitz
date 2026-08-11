@@ -21,7 +21,7 @@ not a rewrite.
 | **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, shroud, indestructible, flash, the five landwalks, skulk. `partner` is accepted but inert — see below |
 | **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution. Delayed triggers ("at the beginning of the next end step, …") via the `delay` op |
 | **Command zone** | Abilities that work from the command zone (Edgar Markov's eminence), commander tax, commander damage, the zone-change replacement |
-| **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions on counters, and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers, doubling land *mana*, and freezing the lands an opponent taps |
+| **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions (a boolean tree over counters, board and zone counts, and whose turn it is — Threshold), and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers, doubling land *mana*, and freezing the lands an opponent taps |
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
@@ -34,7 +34,7 @@ not a rewrite.
 | **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
-| **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants |
+| **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants. The condition is a boolean tree (`all`/`any`/`not`/`exists`/`cmp`/`is_your_turn`) over counters on the source, printed characteristics of the board, and how many cards sit in a zone, so **Threshold** works: Nimble Mongoose is a 1/1 at six cards in the graveyard and a 3/3 at seven, in either direction |
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
 | **Hybrid mana** | `{W/U}` and `{2/W}` parsed, paid and counted towards colour identity |
 | **Restricted mana** | "Spend this mana only to cast a creature spell", by filtering sources before the solver |
@@ -54,7 +54,7 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 
 | Simplification | What it means | Why |
 |---|---|---|
-| **No layers system** | Continuous effects apply in a fixed order; static filters read printed characteristics only, enforced at load time | The full layer system with timestamps and dependency analysis is a large subsystem that would change no outcome for any card in these decks |
+| **No layers system** | Continuous effects apply in a fixed order; static filters and static "as long as" conditions read pipeline *inputs* only — printed characteristics, board state, counters, zone counts — never another static's output, enforced at load time | The full layer system with timestamps and dependency analysis is a large subsystem that would change no outcome for any card in these decks |
 | **Automatic mana payment, by default** | The solver picks which land to tap, preferring to spend abundant colours so scarce ones stay open. A land doubled by Vorinclex doubles what it produced rather than offering a free choice of type, because a mana ability may never stop to ask. A seat can opt out with **manual mana** (`PlayerState.manual_mana`, the rail's Auto mana / Manual mana toggle), which offers every tap-only mana ability as an action and one action per colour a dual could make. Off for AI seats, so the RL action space is unchanged. Independently of the toggle, a permanent that offers something *besides* its tap-only mana ability offers both to a human seat (`PlayerState.offer_all_abilities`): a Forest stays the solver's, a Mind Stone shows its sacrifice ability *and* its tap | Removes an enormous branching factor for the RL agent and the worst tedium from the UI, without making "tap this land for blue" impossible to say — or letting one click spend a permanent that had more than one thing to do |
 | **Automatic damage assignment order** | Blockers are ordered by effective toughness ascending; the attacker is never asked | One more decision point per combat for a choice that is nearly always forced |
 | **Automatic trigger ordering** | Simultaneous triggers you control resolve in a fixed order rather than one you choose | Matters only for a handful of interactions, none of them in these decks |
@@ -86,10 +86,11 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (flashback, evolve, threshold, ascend, investigate, skulk,
-intimidate — none of the 15 keywords in `engine/enums.py` covers them) are
-`/extend-dsl` jobs. Cycling was one of them and now ships; the cards that print
-"when you cycle this card" still wait on the trigger event.
+waiting on (flashback, evolve, ascend, investigate, intimidate — none of the 15
+keywords in `engine/enums.py` covers them) are `/extend-dsl` jobs. Cycling was
+one of them and now ships; the cards that print "when you cycle this card" still
+wait on the trigger event. Skulk and threshold have both shipped since, and
+Nimble Mongoose is off this list.
 
 ## Imported cards, which are simplified further
 

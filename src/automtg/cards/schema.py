@@ -118,8 +118,9 @@ class AbilityModel(BaseModel):
     subtypes: list[str] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
-    #: A static's "as long as..." clause.  Only counters on the static's own
-    #: source may be read -- see ``characteristics._static_active``.
+    #: A static's "as long as..." clause.  A condition tree over pipeline
+    #: *inputs* only -- counters on the source, printed characteristics, zone
+    #: contents, whose turn it is -- see ``characteristics._condition_met``.
     condition: dict[str, Any] | None = None
     #: The qualities a ``protection`` static protects from.  Three lists rather
     #: than one so the card file reads like the card: "protection from

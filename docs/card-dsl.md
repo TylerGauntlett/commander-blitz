@@ -338,18 +338,70 @@ Arixmethes is "a land (it's not a creature)", which `add_subtype` cannot say. A
 
 ### "As long as…"
 
-A static may carry a `condition`, and it may ask exactly one question: how many
-counters of a kind sit on **its own source**.
+A static may carry a `condition`: a small boolean tree that switches the whole
+static on and off as the board moves. There is no trigger and nothing goes on
+the stack — the effect simply exists whenever the condition holds, and stops
+existing the instant it does not, including mid-combat and on someone else's
+turn.
 
 ```jsonc
+// Arixmethes — "as long as it has a slumber counter on it, it's a land"
 { "kind": "static", "effect": "set_types",
   "affects": { "self_only": true }, "types": ["Land"],
   "condition": { "counters": { "counter": "slumber", "op": ">=", "amount": 1 } } }
+
+// Nimble Mongoose — "Threshold — gets +2/+2 as long as there are seven or
+// more cards in your graveyard"
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "const": 2 }, "toughness": { "const": 2 },
+  "condition": { "cmp": ">=",
+                 "left":  { "count": { "zone": "graveyard", "controller": "you" } },
+                 "right": { "const": 7 } } }
 ```
 
-Deliberately that small, and for the same reason `affects` filters are: counters
-are board state, so a condition cannot depend on another static's output and the
-fixed-order pipeline stays acyclic.
+Each node names **exactly one** form:
+
+| form | asks |
+|---|---|
+| `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
+| `{"cmp": op, "left": …, "right": …}` | compares two static values (`{"const": n}` or `{"count": filter}`) |
+| `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
+| `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
+| `{"is_your_turn": true}` | whether it is the source's controller's turn |
+
+This is a **mirror** of the `if`-effect condition language in
+`engine/effects/conditions.py`, not that language. The keys it does not have —
+`zone_is`, `kicked`, `evoked` — are not oversights: they read a resolving
+object's state, and a static is evaluated for every permanent on every cache
+miss. Borrowing one is a `DslError` at load.
+
+The line that decides what may be in this table is the same one that shapes
+`affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
+A condition is evaluated in `_battlefield_statics`, *before* the first layer
+applies, so counters, printed characteristics, zone contents and whose turn it
+is are all safe — no layer can change whether another static is switched on, and
+the fixed order stays acyclic. A life total is not in the table because
+`life_of` sums over its player spec, and "an opponent has 10 or less life" is a
+question about one opponent; see the `player-quantifier` entry in
+[unsupported-cards.md](unsupported-cards.md).
+
+#### Counting filters, and the `zone` key
+
+A filter in a *counting* position — `{"count": …}` in a static value, or
+`exists` — may name a `zone`: `battlefield` (the default), `graveyard`, `hand`,
+`exile`, `library` or `command`, scoped by `controller` (`you`, `opponent`,
+`any`). That is what makes Threshold, Delirium and Hellbent expressible.
+
+Off the battlefield only the printed face and the owner are readable. A card in
+a graveyard is not tapped, not attacking and attached to nothing, so `tapped`,
+`attacking`, `blocking`, `attached`, `self_only`, `exclude_self`, `is_token` and
+`is_commander` are rejected there at load time rather than loading and matching
+nothing.
+
+`affects` and `blockers` do **not** take `zone`, and that asymmetry is the
+point: they pick out the permanents a static applies to, and there are no
+permanents outside the battlefield. A zone there would load clean and do
+nothing, which is the one failure this format exists to refuse.
 
 ## Worked examples
 

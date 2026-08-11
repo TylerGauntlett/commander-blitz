@@ -1,3 +1,97 @@
+## Static conditions — "as long as", widened past its own counters
+
+### Overview
+
+`static-condition` was the top entry in `unsupported-cards.md` with three cards,
+and reading all three is what decided the shape. They ask for three different
+leaves — a life total (Guul Draz Vampire), a count of cards in a zone (Nimble
+Mongoose), and a player-level designation (Skymarcher Aspirant) — and *none* of
+them asks for a bespoke flag. Three different questions with one grammar between
+them is a condition language, not a `threshold: true`.
+
+Two of the three are blocked elsewhere as well, so only one card could land here:
+Guul Draz Vampire also needs `intimidate` and a per-opponent life quantifier,
+and Skymarcher Aspirant needs the city's blessing to exist before anything can
+read it. That was clear before any code was written and is the honest size of
+the job — the value is the grammar, and the two remaining cards each now wait on
+exactly one leaf instead of a leaf *and* a language.
+
+The constraint this had to survive is the one that makes the whole "layers-lite"
+pipeline work: **a static may not read another static's output.** A condition
+that reached the effect language's `evaluate` would go through the selector
+engine, which calls `chars`, which builds the static list, which evaluates
+conditions — an unbounded recursion, not a subtle ordering bug.
+
+### What shipped
+
+The resolution of that is where the condition is *evaluated*, and it needed no
+new machinery at all. `_static_active` runs inside `_battlefield_statics`,
+before layer -1, so everything reachable from it is a pipeline **input**:
+counters on the source, printed characteristics of the board, the contents of a
+zone, whose turn it is. No layer can change whether another static is switched
+on, so the gate is computed once and the fixed order stays acyclic. The language
+is therefore a deliberate *mirror* of `effects/conditions.py` rather than that
+module — `all` / `any` / `not` / `exists` / `is_your_turn` / `cmp`, over the
+static value language that already existed (`{"const": n}`, `{"count": filter}`)
+and the `counters` form kept verbatim.
+
+One new key: a filter in a **counting** position may name a `zone`.
+
+```jsonc
+{ "cmp": ">=",
+  "left":  { "count": { "zone": "graveyard", "controller": "you" } },
+  "right": { "const": 7 } }
+```
+
+`affects` and `blockers` deliberately did *not* get it, and that asymmetry is
+the design. They pick out the permanents a static applies to, and there are no
+permanents outside the battlefield — a zone there would load clean and match
+nothing, which is the one failure this format exists to refuse. For the same
+reason the loader rejects `tapped`, `attacking`, `attached`, `self_only` and the
+rest once a filter names a non-battlefield zone: a card in a graveyard has a
+printed face and an owner and nothing else. `_matches` was split so the two
+counting paths share one definition of "the printed face matches" rather than
+drifting.
+
+`life_of` was deliberately left out. It sums over its player spec, so
+`{"life_of": "opponent"} <= 10` reads "my opponents' *combined* life", which is
+the printed card in a duel and a different card in a pod — precisely the
+divergence the separate `player-quantifier` gap was filed over. Adding it here
+would have let Guul Draz Vampire load while being wrong at four seats.
+
+Server and frontend: no change. Statics are card data, and the condition never
+leaves the engine.
+
+### Harvested
+
+**Nimble Mongoose**, which was already in the hand-written pool as a 1/1 with no
+threshold and — worse — `hexproof` where it prints Shroud, a strictly better
+card than the one printed. Both printed lines now work, it clears all six
+authoring gates, and it is off `tests/cards/precon_deficits.json`, which drops
+from 23 cards to 22.
+
+No template was added. Zero cards in the authoring queue print the threshold
+sentence, so a template would have had nothing to read; the remaining
+threshold-shaped work is agent-tier.
+
+Gap records: `nimble_mongoose.json` retired. The `static_condition` need was
+struck from the other two and folded into the leaf each still waits on — a
+per-opponent life value for Guul Draz Vampire, the blessing itself for
+Skymarcher Aspirant — so the build order re-ranks honestly instead of sending
+the next run back here. `attack-requirement` is now the top entry.
+
+### Guarded by
+
+`tests/unit/test_static_condition.py`. The claim that needed the most care is
+not that the bonus turns on but that it turns *off*: a trigger-plus-pump
+substitute passes every "it is a 3/3 at seven cards" test and fails the moment
+the graveyard shrinks, so the boundary is tested from both sides at six, seven
+and back down. `TestItStaysAcyclic` pins the invariant directly by standing an
+anthem next to a conditional static and asserting the count still reads printed
+faces. `TestTheLoaderRefusesWhatCannotWork` is the other half — every rejection
+above is asserted, including that `affects` still cannot name a zone and that
+Arixmethes' original `counters` spelling is untouched.
+
 ## Skulk — the first evasion that compares the two creatures
 
 ### Overview

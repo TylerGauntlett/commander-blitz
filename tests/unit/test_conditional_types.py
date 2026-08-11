@@ -100,9 +100,22 @@ class TestTheConditionLanguageIsSmall:
             }
         )
 
-    def test_counters_is_the_only_question(self):
-        with pytest.raises(DslError, match="only be"):
-            compile_card(self._with({"exists": {"types": ["Land"]}}))
+    def test_the_if_op_s_condition_keys_are_not_borrowable(self):
+        """The static language is a *mirror* of the effect one, not that one.
+
+        `zone_is` and `kicked` are real `if` conditions and read a resolving
+        object's state, which a static -- evaluated for every permanent on every
+        cache miss -- has no business asking.  See `test_static_condition.py`
+        for the forms a static *may* use.
+        """
+        with pytest.raises(DslError, match="exactly one of"):
+            compile_card(self._with({"zone_is": "battlefield"}))
+        with pytest.raises(DslError, match="exactly one of"):
+            compile_card(self._with({"kicked": True}))
+
+    def test_a_condition_names_one_form(self):
+        with pytest.raises(DslError, match="exactly one of"):
+            compile_card(self._with({"counters": {"counter": "slumber"}, "is_your_turn": True}))
 
     def test_unknown_comparison_is_rejected(self):
         with pytest.raises(DslError, match="unknown comparison"):

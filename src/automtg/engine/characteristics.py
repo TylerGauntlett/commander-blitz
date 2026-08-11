@@ -16,6 +16,17 @@ object's own board state: controller, tapped, attacking, counters).  That remove
 all recursion and all dependency ordering, at the cost of not supporting cards
 whose anthem depends on another anthem's result.  The curated decks respect this.
 
+A static's "as long as…" `condition` obeys the same constraint from the other
+side.  It is evaluated in :func:`_static_active`, which runs in
+:func:`_battlefield_statics` -- *before* layer -1, so before any layer has
+applied.  Everything it may read is therefore an **input** to the pipeline rather
+than an output: printed characteristics, an object's own board state, counters,
+whose turn it is, and how many cards sit in a zone.  No layer can change whether
+another static is switched on, so the gate is computed once and the fixed order
+stays acyclic.  That is the whole reason the condition language is a mirror of
+:mod:`automtg.engine.effects.conditions` rather than that module itself: `if`'s
+conditions go through the selector engine, which calls :func:`chars`.
+
 Results are cached against ``state.char_version``, which every mutating primitive
 bumps.
 """
@@ -26,7 +37,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
-from .enums import Keyword
+from .enums import Keyword, Zone
+from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
 
@@ -171,36 +183,75 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
             continue
         card = state.card_of(obj)
         for ability in card.abilities:
-            if ability.is_static and ability.static and _static_active(obj, ability.static):
+            if ability.is_static and ability.static and _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
     return out
 
 
-def _static_active(source: GameObject, static: Mapping[str, Any]) -> bool:
-    """Is this static's "as long as..." clause currently true?
+#: The comparisons a static's condition may use.  Mirrors the loader's copy.
+_COMPARISONS = {
+    ">=": lambda a, b: a >= b,
+    "<=": lambda a, b: a <= b,
+    ">": lambda a, b: a > b,
+    "<": lambda a, b: a < b,
+    "=": lambda a, b: a == b,
+    "==": lambda a, b: a == b,
+    "!=": lambda a, b: a != b,
+}
 
-    Deliberately tiny: the only question a static may ask is how many counters of
-    a kind sit on its own source.  That is board state rather than a derived
-    characteristic, so it cannot depend on another static's output and the fixed
-    -order pipeline stays acyclic -- the same reason `affects` filters may only
-    read printed characteristics.
-    """
+
+def _static_active(state: GameState, source: GameObject, static: Mapping[str, Any]) -> bool:
+    """Is this static's "as long as..." clause currently true?"""
     condition = static.get("condition")
     if not condition:
         return True
-    spec = condition.get("counters") or {}
-    have = source.counter(str(spec.get("counter", PLUS_ONE)))
-    amount = int(spec.get("amount", 1))
-    op = str(spec.get("op", ">="))
-    return {
-        ">=": have >= amount,
-        "<=": have <= amount,
-        ">": have > amount,
-        "<": have < amount,
-        "=": have == amount,
-        "==": have == amount,
-        "!=": have != amount,
-    }[op]
+    return _condition_met(state, source, condition)
+
+
+def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
+    """Evaluate a static's condition tree.
+
+    A deliberately smaller language than :func:`automtg.engine.effects.conditions.evaluate`
+    -- see the module docstring.  Every leaf here reads a pipeline *input*, so
+    nothing it can ask depends on a static's output:
+
+    ``counters``      how many counters of a kind sit on the static's own source
+    ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
+                      characteristics and, off the battlefield, on zone contents
+    ``is_your_turn``  whose turn it is
+    """
+    if isinstance(cond, bool):
+        return cond
+    if not isinstance(cond, Mapping):
+        raise DslError(f"unparsable static condition {cond!r}")
+
+    if "counters" in cond:
+        spec = cond["counters"] or {}
+        have = source.counter(str(spec.get("counter", PLUS_ONE)))
+        return _compare(str(spec.get("op", ">=")), have, int(spec.get("amount", 1)))
+    if "all" in cond:
+        return all(_condition_met(state, source, c) for c in cond["all"])
+    if "any" in cond:
+        return any(_condition_met(state, source, c) for c in cond["any"])
+    if "not" in cond:
+        return not _condition_met(state, source, cond["not"])
+    if "exists" in cond:
+        return _count_matching(state, cond["exists"], source) > 0
+    if "is_your_turn" in cond:
+        return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "cmp" in cond:
+        left = _static_value(state, cond.get("left"), source)
+        right = _static_value(state, cond.get("right"), source)
+        return _compare(str(cond["cmp"]), left, right)
+
+    raise DslError(f"unknown static condition {sorted(cond)}")
+
+
+def _compare(op: str, left: int, right: int) -> bool:
+    try:
+        return _COMPARISONS[op](left, right)
+    except KeyError:
+        raise DslError(f"unknown comparison operator {op!r}") from None
 
 
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
@@ -224,14 +275,79 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
 
 
 def _count_matching(state: GameState, selector: Mapping[str, Any], source: GameObject) -> int:
+    """How many objects a static's *counting* filter matches.
+
+    Two paths, because a filter that names a zone other than the battlefield is
+    asking a different question.  On the battlefield it is a filter over
+    permanents and reads their board state as well as their printed face; in a
+    graveyard, hand, exile, library or command zone there is no board state to
+    read, so it is the printed face alone.  The loader refuses the board-state
+    keys on the second path rather than letting them load and match nothing.
+    """
+    zone = str(selector.get("zone", "battlefield"))
+    if zone == Zone.BATTLEFIELD.value:
+        count = 0
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            if _matches(state, obj, source, selector):
+                count += 1
+        return count
+
     count = 0
-    for oid in state.battlefield:
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        if _matches(state, obj, source, selector):
-            count += 1
+    for pid in _static_players(state, source, selector.get("controller", "you")):
+        for oid in state.players[pid].zone_list(Zone(zone)):
+            obj = state.objects.get(oid)
+            if obj is not None and _matches_printed(state.card_of(obj), selector):
+                count += 1
     return count
+
+
+def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int]:
+    """Whose zones a static's counting filter reaches.
+
+    "Your graveyard" is the source's controller, not its owner: a stolen
+    Nimble Mongoose counts the graveyard of whoever controls it, which is what
+    "your" means on a permanent.
+    """
+    who = str(spec or "you")
+    if who == "you":
+        return [source.controller]
+    if who == "opponent":
+        return state.opponents(source.controller)
+    return state.alive()
+
+
+def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
+    """The half of a static filter that reads the printed card face.
+
+    Split out so the two counting paths cannot drift: a permanent on the
+    battlefield is matched on this *plus* its board state, and a card in a
+    graveyard or hand -- which has no board state -- on this alone.
+    """
+    types = selector.get("types")
+    if types and not set(types).issubset(card.types):
+        return False
+    not_types = selector.get("not_types")
+    if not_types and set(not_types) & card.types:
+        return False
+    subtypes = selector.get("subtypes")
+    if subtypes and not (set(subtypes) & card.subtypes):
+        return False
+    supertypes = selector.get("supertypes")
+    if supertypes and not set(supertypes).issubset(card.supertypes):
+        return False
+    colors = selector.get("colors")
+    if colors and not (set(colors) & card.colors):
+        return False
+    keywords = selector.get("keywords")
+    if keywords and not set(keywords).issubset(card.keywords):
+        return False
+    not_keywords = selector.get("not_keywords")
+    if not_keywords and set(not_keywords) & card.keywords:
+        return False
+    return True
 
 
 def _matches(
@@ -269,26 +385,7 @@ def _matches(
     if controller == "opponent" and obj.controller == source.controller:
         return False
 
-    types = selector.get("types")
-    if types and not set(types).issubset(card.types):
-        return False
-    not_types = selector.get("not_types")
-    if not_types and set(not_types) & card.types:
-        return False
-    subtypes = selector.get("subtypes")
-    if subtypes and not (set(subtypes) & card.subtypes):
-        return False
-    supertypes = selector.get("supertypes")
-    if supertypes and not set(supertypes).issubset(card.supertypes):
-        return False
-    colors = selector.get("colors")
-    if colors and not (set(colors) & card.colors):
-        return False
-    keywords = selector.get("keywords")
-    if keywords and not set(keywords).issubset(card.keywords):
-        return False
-    not_keywords = selector.get("not_keywords")
-    if not_keywords and set(not_keywords) & card.keywords:
+    if not _matches_printed(card, selector):
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):

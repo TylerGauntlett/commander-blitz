@@ -1749,6 +1749,132 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_threshold_bear",
+      "name": "Test Threshold Bear",
+      "oracle_text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "zone": "graveyard",
+                "controller": "you"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_island_flier",
+      "name": "Test Island Flier",
+      "oracle_text": "Test Island Flier has flying as long as you control an Island.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Island Flier has flying as long as you control an Island.",
+          "effect": "grant_keyword",
+          "affects": {
+            "self_only": true
+          },
+          "keywords": [
+            "flying"
+          ],
+          "condition": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Island"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_defensive_wall",
+      "name": "Test Defensive Wall",
+      "oracle_text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "const": 0
+          },
+          "toughness": {
+            "const": 3
+          },
+          "condition": {
+            "all": [
+              {
+                "is_your_turn": false
+              },
+              {
+                "not": {
+                  "exists": {
+                    "zone": "graveyard",
+                    "controller": "opponent",
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

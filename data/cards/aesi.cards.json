@@ -1785,7 +1785,35 @@
       "power": 1,
       "toughness": 1,
       "keywords": [
-        "hexproof"
+        "shroud"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "zone": "graveyard",
+                "controller": "you"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          }
+        }
       ]
     },
     {
