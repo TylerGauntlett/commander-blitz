@@ -453,6 +453,35 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "no_hand_limit")
 
 
+def untap_also(state: GameState, active_pid: int) -> list[int]:
+    """Permanents that untap during *someone else's* untap step.
+
+    Murkfiend Liege: "Untap all green and/or blue creatures you control during
+    each other player's untap step." A fact about a set of permanents rather
+    than a characteristic of any one of them, so it is read here at the untap
+    step rather than layered into `chars` -- the same shape as the player-wide
+    statics below, which is what `extra_land_drops` and `no_hand_limit` already
+    are.
+
+    "each *other* player's" is the whole of it: on your own untap step these
+    creatures untap anyway, so a version that ignored whose turn it is would
+    look identical every time you tested it.
+    """
+    out: list[int] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "untap_during_each_untap_step":
+            continue
+        if source_obj.controller == active_pid:
+            continue
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None or obj.controller != source_obj.controller:
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                out.append(oid)
+    return out
+
+
 def _player_static(state: GameState, pid: int, effect: str) -> bool:
     """Whether any permanent grants ``effect`` to this player."""
     for oid in state.battlefield:

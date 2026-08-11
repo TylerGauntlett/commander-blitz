@@ -71,6 +71,10 @@ STATIC_EFFECTS = frozenset(
         # "can't be blocked unless all creatures defending player controls
         # block it".  Read by `combat`, not by the characteristics pipeline.
         "block_restriction",
+        # Murkfiend Liege.  Read by `turn._untap_step`, not by the
+        # characteristics pipeline: it is a fact about when a set of
+        # permanents untaps, which no characteristic can carry.
+        "untap_during_each_untap_step",
     }
 )
 

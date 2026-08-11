@@ -534,6 +534,31 @@ silent: `move_object` calls `reset_permanent_state` on the way onto the
 battlefield, which clears `attached_to`, so the Aura arrives enchanting nothing
 and state-based actions put it in the graveyard.
 
+## Untapping on somebody else's turn
+
+    Murkfiend Liege — "Untap all green and/or blue creatures you control during
+    each other player's untap step."
+
+```jsonc
+{ "kind": "static", "effect": "untap_during_each_untap_step",
+  "affects": { "controller": "you", "types": ["Creature"], "colors": ["G"] } }
+```
+
+Read by `turn._untap_step`, not by the characteristics pipeline — it is a fact
+about *when a set of permanents untaps*, which no characteristic can carry, and
+it sits beside the player-wide statics below for that reason.
+
+A trigger cannot do this, and the gap record checked all three routes: there is
+no untap-step entry in `TRIGGER_EVENTS`; `_untap_step` uses `state.emit` rather
+than `fire`, so no ability is scanned there at all; and the untap step grants no
+priority, so a trigger would resolve a step late and be respondable when the
+printed static is not.
+
+`skip_next_untap` still wins — a prohibition beats a permission — and the
+"**each other** player's" clause is load-bearing in a way that is easy to lose:
+on your own untap step these creatures untap regardless, so a version that
+ignored whose turn it is looks identical on every board you would think to try.
+
 ## Player-wide statics
 
 Seven static effects describe the *player* rather than a characteristic, so they

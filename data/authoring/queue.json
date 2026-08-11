@@ -179722,12 +179722,12 @@
     },
     "Murkfiend Liege": {
       "edhrec_rank": 2584,
-      "gate": "template",
+      "gate": null,
       "name": "Murkfiend Liege",
-      "reason": "no template for: Other green creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "16677645-f635-4183-8afc-056520b94122",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murktide Regent": {
