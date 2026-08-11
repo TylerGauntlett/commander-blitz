@@ -213,7 +213,16 @@ class Game:
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
         # the stack having paid one half.
-        cost = card.mana_cost.plus(card.kicker) if action.kicked else card.mana_cost
+        # Evoke is the other direction and they are mutually exclusive by
+        # construction: legality never offers a variant that is both, because
+        # an alternative cost replaces the printed one and the kicker is an
+        # addition to it.
+        if action.evoked and card.evoke is not None:
+            cost = card.evoke
+        elif action.kicked:
+            cost = card.mana_cost.plus(card.kicker)
+        else:
+            cost = card.mana_cost
 
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
@@ -252,7 +261,14 @@ class Game:
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
 
         item = stack.push_spell(
-            state, oid, pid, action.targets, x=x, kicked=action.kicked, modes=modes
+            state,
+            oid,
+            pid,
+            action.targets,
+            x=x,
+            kicked=action.kicked,
+            evoked=action.evoked,
+            modes=modes,
         )
         triggers.fire(
             state,

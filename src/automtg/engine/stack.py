@@ -33,6 +33,7 @@ def push_spell(
     *,
     x: int = 0,
     kicked: bool = False,
+    evoked: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -56,6 +57,7 @@ def push_spell(
         targets=tuple(targets),
         x=x,
         kicked=kicked,
+        evoked=evoked,
         modes=modes,
         description=card.name,
     )
@@ -192,6 +194,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.stack_id = None
     obj.cast_x = item.x
     obj.cast_kicked = item.kicked
+    obj.cast_evoked = item.evoked
     _place_after_resolution(state, obj, card)
     _attach_aura(state, obj, card, targets)
 

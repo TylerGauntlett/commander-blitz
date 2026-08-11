@@ -265,6 +265,11 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: "Evoke {2}{U}" -- an alternative cost that *replaces* the printed one.
+    #: Subtractive where ``kicker`` is additive, and like it kept out of
+    #: ``mana_cost`` so mana value stays what is printed: an evoked
+    #: Mulldrifter is still a five-drop to anything that counts.
+    evoke: ManaCost | None = None
     #: "This spell costs {X} less to cast."  See `costs.cost_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.

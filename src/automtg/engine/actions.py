@@ -34,6 +34,11 @@ class Action:
     #: display: "Into the Roil" and "Into the Roil (kicked)" are two different
     #: things to do with the same card and must not compare equal.
     kicked: bool = False
+    #: Whether this cast pays the card's *evoke* cost instead of its printed
+    #: one.  Part of the identity for the same reason ``kicked`` is: a
+    #: Mulldrifter cast for {2}{U} and one cast for {4}{U} are two different
+    #: things to do with the same card, and only one of them dies on arrival.
+    evoked: bool = False
     #: Which of a mana ability's ``mana_options`` this activation takes -- the
     #: colour, for "Add one mana of any colour". Part of the identity: tapping
     #: Commander's Sphere for {U} and for {R} are two different things to do.
@@ -70,6 +75,7 @@ class Action:
             choice=self.choice,
             x=self.x,
             kicked=self.kicked,
+            evoked=self.evoked,
             mana_option=self.mana_option,
             label=label,
             base_label=label if base_label is None else base_label,
@@ -87,6 +93,7 @@ class Action:
             -1 if self.choice is None else self.choice,
             self.x,
             self.kicked,
+            self.evoked,
             -1 if self.mana_option is None else self.mana_option,
         )
 
@@ -99,6 +106,7 @@ class Action:
             "choice": self.choice,
             "x": self.x,
             "kicked": self.kicked,
+            "evoked": self.evoked,
             "mana_option": self.mana_option,
             "label": self.label,
             "base_label": self.base_label,
