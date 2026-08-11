@@ -38,7 +38,7 @@ token into it.
 | Variable | Where to get it | Scopes |
 | --- | --- | --- |
 | `DIGITALOCEAN_TOKEN` | [DO API tokens](https://cloud.digitalocean.com/account/api/tokens) | read + write |
-| `GH_TOKEN` | GitHub → Settings → Developer settings → PAT | classic: `repo`, `workflow`, `read:packages` |
+| `GH_TOKEN` | GitHub → Settings → Developer settings → PAT | Only needs to write Actions secrets. A fine-grained PAT with Contents r/w, Workflows r/w and **Secrets r/w** is enough; no package scope is required |
 
 ### 2. Tooling
 
@@ -87,19 +87,32 @@ cd ..
 $ip = terraform -chdir=terraform output -raw reserved_ip
 
 gh secret set DROPLET_HOST --repo TylerGauntlett/Auto-MTG --body $ip
-Get-Content $env:USERPROFILE\.ssh\automtg_ci -Raw |
-  gh secret set DROPLET_SSH_KEY --repo TylerGauntlett/Auto-MTG
-gh secret set GHCR_PULL_TOKEN --repo TylerGauntlett/Auto-MTG --body $env:GH_TOKEN
+```
+
+The SSH key must be set from a shell that will not re-encode it. **Do not pipe
+it in from PowerShell** — PowerShell 5.1 re-encodes native-command pipes and the
+key arrives corrupted, which surfaces as `ssh: no key found` at deploy time with
+no hint about where the damage happened. Use Git Bash and a redirect:
+
+```bash
+gh secret set DROPLET_SSH_KEY --repo TylerGauntlett/Auto-MTG < ~/.ssh/automtg_ci
 ```
 
 | Secret | Purpose |
 | --- | --- |
 | `DROPLET_HOST` | Where to SSH, and what the health check curls |
 | `DROPLET_SSH_KEY` | Private half of the CI deploy key |
-| `GHCR_PULL_TOKEN` | Lets the droplet pull from GHCR. Needs only `read:packages` — a dedicated narrow PAT is better hygiene than reusing `GH_TOKEN` |
 
-Pushing from the registry side needs no secret: the build job authenticates
-with the `GITHUB_TOKEN` Actions injects automatically.
+**Neither side of the registry needs a stored token.** The build job pushes with
+the `GITHUB_TOKEN` Actions injects automatically, and the deploy job hands that
+same token to the droplet for the pull, which is why it declares
+`permissions: packages: read`. The credential dies with the workflow run, so no
+long-lived registry token exists on the droplet or in the repo's secrets.
+
+A fine-grained PAT will *not* work here as a substitute: it authenticates to
+`ghcr.io` and is issued a token, but that token is refused (403) when it tries
+to read a private package. GHCR wants a classic PAT with `read:packages`, and
+this setup avoids needing either.
 
 ### 6. Push
 
