@@ -212,6 +212,14 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
         if keyword in ac.keywords and _controls_land_type(state, defender, subtype):
             return False
 
+    # Skulk (702.72): "can't be blocked by creatures with greater power". The
+    # first evasion that *compares* the two creatures rather than testing a
+    # fixed quality of one, which is why it could not be a `blockers` filter:
+    # those read printed characteristics, and skulk is asked of derived power on
+    # both sides at the moment blockers are declared.
+    if Keyword.SKULK.value in ac.keywords and bc.power > ac.power:
+        return False
+
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
     # blocker is what has the quality -- the same asymmetry as protection above.

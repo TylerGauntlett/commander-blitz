@@ -1013,6 +1013,25 @@ and is the entire point of the card.
 A `block_restriction` carrying neither field is refused at load time — an
 evasion ability that evades nothing, which would load perfectly cleanly.
 
+### Skulk
+
+    Vampire Cutthroat — "Skulk (This creature can't be blocked by creatures with
+    greater power.)"
+
+An ordinary `keywords` entry — `"keywords": ["skulk", "lifelink"]` — not a third
+`block_restriction` form, and the reason is the same one that made landwalk a
+keyword: it takes no parameter, because the whole content of the quality *is*
+the comparison.
+
+It also could not have been a `blockers` filter even given a `power` key.
+`blockers` is a static filter and static filters read **printed**
+characteristics, which is what keeps the characteristics pipeline acyclic; skulk
+must read *derived* power on both sides, so an anthem, a pump spell or a +1/+1
+counter on either creature changes who may block. The comparison therefore sits
+in `combat.can_block` beside landwalk, which reads `chars` for the same reason.
+
+"Greater" is strictly greater: an equal-power creature blocks a skulker.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:

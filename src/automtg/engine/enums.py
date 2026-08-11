@@ -139,6 +139,14 @@ class Keyword(str, Enum):
     VIGILANCE = "vigilance"
     HASTE = "haste"
     MENACE = "menace"
+    #: Skulk (702.72).  "This creature can't be blocked by creatures with
+    #: greater power."  A keyword rather than a `block_restriction` static for
+    #: the same reason landwalk is: it takes no parameter, the whole content of
+    #: the quality is the comparison itself.  And it *could* not be one -- a
+    #: static's `blockers` filter reads printed characteristics by design, while
+    #: skulk must read derived power on both sides, so an anthem, a pump spell
+    #: or a +1/+1 counter on either creature changes who may block.
+    SKULK = "skulk"
     FIRST_STRIKE = "first_strike"
     DOUBLE_STRIKE = "double_strike"
     DEFENDER = "defender"
@@ -177,7 +185,8 @@ LANDWALK_SUBTYPE = {
 }
 
 EVASION_KEYWORDS = frozenset(
-    {Keyword.FLYING, Keyword.MENACE} | {Keyword(k) for k in LANDWALK_SUBTYPE}
+    {Keyword.FLYING, Keyword.MENACE, Keyword.SKULK}
+    | {Keyword(k) for k in LANDWALK_SUBTYPE}
 )
 
 #: Keywords with no in-game effect, kept so a card can represent its own text.
