@@ -1058,20 +1058,33 @@
       "color_identity": [],
       "abilities": [
         {
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "choose_type", "prompt": "Choose a creature type" }]
+        },
+        {
           "kind": "static",
-          "text": "Vampires you control get +1/+1.",
+          "text": "Creatures you control of the chosen type get +1/+1.",
           "effect": "buff",
-          "affects": { "controller": "you", "subtypes": ["Vampire"] },
+          "affects": {
+            "controller": "you",
+            "types": ["Creature"],
+            "subtypes": [{ "chosen_type_of": "self" }]
+          },
           "power": { "const": 1 },
           "toughness": { "const": 1 }
         },
         {
           "kind": "triggered",
-          "text": "Whenever you cast a Vampire spell, draw a card.",
+          "text": "Whenever you cast a creature spell of the chosen type, draw a card.",
           "trigger": {
             "event": "spell_cast",
             "controller": "you",
-            "filter": { "subtypes": ["Vampire"] }
+            "filter": {
+              "types": ["Creature"],
+              "subtypes": [{ "chosen_type_of": "self" }]
+            }
           },
           "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
         }

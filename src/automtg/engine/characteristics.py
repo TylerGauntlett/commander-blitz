@@ -364,6 +364,37 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     return state.alive()
 
 
+def resolve_chosen_subtypes(
+    selector: Mapping[str, Any], source: GameObject | None
+) -> Mapping[str, Any]:
+    """Turn ``[{"chosen_type_of": "self"}]`` into the type that was chosen.
+
+    Vanquisher's Banner's anthem and its draw trigger both say "of the chosen
+    type", and a filter is a plain list of literal names everywhere else. This
+    is the one substitution, done wherever a filter is about to be matched
+    rather than at load time -- the choice does not exist until the permanent is
+    on the battlefield.
+
+    A source that has chosen nothing yet matches **nothing**, which is right: an
+    anthem for "the chosen type" before a type is chosen should pump nobody, not
+    everybody.
+    """
+    wanted = selector.get("subtypes")
+    if not wanted or not any(isinstance(s, Mapping) for s in wanted):
+        return selector
+    out: list[str] = []
+    for entry in wanted:
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_type_of") == "self":
+            chosen = source.chosen_type if source is not None else None
+            if chosen is None:
+                return {**selector, "subtypes": ["\0none"]}
+            out.append(chosen)
+    return {**selector, "subtypes": out}
+
+
 def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -418,6 +449,7 @@ def _matches(
         return False
     if not obj.on_battlefield:
         return False
+    selector = resolve_chosen_subtypes(selector, source)
     card = state.card_of(obj)
 
     if selector.get("exclude_self") and obj.oid == source.oid:

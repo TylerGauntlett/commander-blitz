@@ -1078,6 +1078,54 @@ divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
 
+## "Choose a creature type"
+
+Vanquisher's Banner, which asks the question twice — once as a static filter and
+once as a trigger filter:
+
+```jsonc
+// As this artifact enters, choose a creature type.
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "choose_type", "prompt": "Choose a creature type" } ] },
+
+// Creatures you control of the chosen type get +1/+1.
+{ "kind": "static", "effect": "buff",
+  "affects": { "controller": "you", "types": ["Creature"],
+               "subtypes": [ { "chosen_type_of": "self" } ] },
+  "power": { "const": 1 }, "toughness": { "const": 1 } },
+
+// Whenever you cast a creature spell of the chosen type, draw a card.
+{ "kind": "triggered",
+  "trigger": { "event": "spell_cast", "controller": "you",
+               "filter": { "types": ["Creature"],
+                           "subtypes": [ { "chosen_type_of": "self" } ] } },
+  "effects": [ … ] }
+```
+
+`{"chosen_type_of": "self"}` may stand anywhere a literal subtype name does, and
+is substituted wherever the filter is matched rather than at load time — the
+choice does not exist until the permanent is on the battlefield.
+
+**Before a type is chosen the filter matches nothing**, which is the important
+half: falling back to "match everything" would make the Banner a global anthem
+for as long as the choice was pending.
+
+`choose_type` needs **no new `DecisionKind`**. `ask_mode` already asks "pick one
+of these labels" and returns the index, so legality, `game.apply` and the
+authoring verifier's auto-answer table all work unchanged. Reach for an existing
+`ask_*` before adding a kind; this is the same lesson `two_piles` teaches.
+
+The prompt offers every creature subtype the **card pool** contains, sorted. The
+rules say any creature type; a type no card in the game has is a choice with no
+consequence, and the full Comprehensive Rules list would make the prompt
+unusable without making any card play differently.
+
+*Divergence*: the printed line is "**as** this artifact enters", a replacement
+that cannot be responded to. `zones._enter_battlefield` applies enter-
+replacements synchronously and cannot stop to ask, so this is a `self_enters`
+trigger and the choice happens a moment after the permanent arrives.
+[Recorded in rules-coverage.md](rules-coverage.md).
+
 ## Embalm — an ability activated from the graveyard
 
 ```jsonc

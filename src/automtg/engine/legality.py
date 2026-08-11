@@ -121,6 +121,12 @@ def _blocker_actions(state: GameState, pid: int) -> list[Action]:
         )
     if combat_mod.blocks_valid(state, pid):
         out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done blocking"))
+    elif not out:
+        # Nothing left to add and the declaration is still invalid: a
+        # `require_all` block the player can no longer complete. Offering
+        # nothing at all is a game that cannot continue, so "Done" is offered
+        # and `finish_blockers` retracts the blocks that were never legal.
+        out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done blocking"))
     return out
 
 

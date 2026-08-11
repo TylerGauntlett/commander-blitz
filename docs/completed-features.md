@@ -1,3 +1,83 @@
+## The chosen creature type — a Tier C run that was Tier A
+
+### Overview
+
+Vanquisher's Banner, EDHREC rank 369 and the second-best-ranked card the report
+ever carried. It asks the same question from both filter languages:
+"Creatures you control **of the chosen type** get +1/+1" is a static filter,
+"whenever you cast a creature spell **of the chosen type**" is a trigger filter.
+
+### The part that did not need building
+
+The gap record asked for a new `DecisionKind.CHOOSE_TYPE` and the whole Tier C
+chain behind it — `enums`, `actions.GENERATOR_DECISIONS`,
+`legality._choice_actions`, `game.apply`, a new `ask_*`, and the authoring
+verifier's auto-answer table, which the skill warns is not optional because an
+unanswerable kind hangs the verifier for every card.
+
+None of it was needed. `ask_mode` already asks "pick one of these labels" and
+returns the index, which is exactly this question — so `_choice_actions` (generic
+over `decision.options`) and the verifier's `_answer` (which falls through to
+"take a real choice") both worked untouched. A `CHOOSE_TYPE` kind would have
+been the same decision wearing a different name.
+
+That is the Fact-or-Fiction lesson the skill opens with, and this is the second
+time in the sequence it turned a run into a much smaller one — the first was
+Rhystic Study.
+
+### What shipped
+
+`GameObject.chosen_type`, a `choose_type` op, and
+`characteristics.resolve_chosen_subtypes` — one substitution applied wherever a
+filter is about to be matched, in the static path and the trigger path both.
+
+Not at load time: the choice does not exist until the permanent is on the
+battlefield. And **before a type is chosen the filter matches nothing**, which
+is the half that matters — falling back to "match everything" would make the
+Banner a global anthem while the choice was pending, the same failure the
+spell-cost-reduction run hit for real.
+
+The choice lives on the object rather than the card, so two Banners choose
+independently and a Banner that leaves and returns chooses again.
+
+The prompt offers every creature subtype the card pool contains (119 of them),
+sorted. The rules say any creature type; a type no card in the game has is a
+choice with no consequence, and the full Comprehensive Rules list would make the
+prompt unusable without changing how any card plays.
+
+### A deadlock this run happened to find
+
+`tests/ai` went red, and not for any reason to do with chosen types: a
+four-player rollout reached turn 47 with **zero legal actions** at a
+declare-blockers decision.
+
+The cause is `require_all` — Tromokratis' "can't be blocked unless all
+creatures defending player controls block it". Declarations are made all at once
+in the rules and one block at a time here, so a player who blocks it with one
+creature and then finds no second legal block is stuck forever: no
+`ADD_BLOCKER` left to offer, and `blocks_valid` withholding "Done blocking".
+
+Pre-existing and latent; the Banner only changed the random trajectory enough to
+walk into it. Fixed at the escape rather than at the rule: when nothing can be
+added and the declaration is still invalid, "Done" is offered, and
+`finish_blockers` retracts the blocks that were never legal. "No creature blocks
+Tromokratis" is exactly what the rules would have produced, so nothing is
+conceded — and `blocks_valid` keeps its meaning, which is what let the existing
+`TestRequireAll` tests stand unchanged.
+
+A first attempt refused the uncompletable block up front instead, in
+`legal_blocks`. It broke two passing tests and was reverted: it changed what is
+*legal*, where the bug is only about what is *reachable*.
+
+### The divergence
+
+The printed line is "**as** this artifact enters" — a replacement effect that
+cannot be responded to. `zones._enter_battlefield` applies enter-replacements
+synchronously and cannot stop to ask, so this is a `self_enters` trigger and the
+type is chosen a moment after the permanent arrives. Recorded in
+`rules-coverage.md` rather than papered over; the window is observable only by
+another trigger ordered between the two.
+
 ## Embalm — the graveyard as a place you activate from
 
 ### Overview

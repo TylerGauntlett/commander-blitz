@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **4** capabilities.
+**4 cards** blocked by **3** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
-| [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 
 ## flashback
 
@@ -70,25 +69,5 @@ Blocks **1** card.
 - **Kydele, Chosen of Kruphix** (rank 12219) — `kydele_chosen_of_kruphix`
   - {T}: Add {C} for each card you've drawn this turn.
   - Scope: variable mana ABILITIES now ship -- an `add_mana` inside a mana ability may carry an `amount` value expression, evaluated at activation (see `tests/unit/test_variable_mana_ability.py`). Eight sibling cards were repaired by that change. Kydele is the one it does not reach, and for a different reason: its multiplier is not a board count. `{"count": <selector>}` counts objects, and "cards you've drawn this turn" is a per-turn tally of an *event*, which the engine does not keep. This card was previously in the pool tapping for a flat {C} with no note recorded against it; it now refuses rather than shipping a Kydele that is strictly worse than the printed one.
-
-</details>
-
-## chosen-creature-type
-
-Blocks **1** card.
-
-- **(decision)** an 'as this enters, choose a creature type' choice: while the permanent is entering the battlefield (not a triggered ability that resolves afterwards), its controller picks one creature subtype from the whole creature-type list, and the pick is stored on the permanent object for as long as it remains on the battlefield
-  <br>Why the existing vocabulary won't do: The only choice vocabulary is `choose_mode` (DecisionKind.CHOOSE_MODE), which picks among a fixed, card-authored list of effect branches, and `select`-style object choices (CHOOSE_OBJECTS/CHOOSE_PLAYER) that pick objects or players, never a characteristic value. There is no CHOOSE_TYPE decision kind in `engine/enums.py`, and no field on a permanent to record a chosen value; `snapshot` records an object reference so a later effect can read its power/controller, not a free-standing designation. `self_enters` is also a triggered ability that uses the stack, so even a mode-based stand-in would happen after the permanent is already on the battlefield rather than as it enters.
-- **(selector)** a subtype reference that resolves at check time to the type chosen on the ability's own source, usable wherever a literal subtype is written - a static's `affects.subtypes`, a trigger's `filter.subtypes` - e.g. `"subtypes": [{"chosen_type_of": "self"}]`
-  <br>Why the existing vocabulary won't do: `subtypes` in both a selector and a static's `affects` is a plain `list[str]` of literal names validated against the vocabulary at load time (`cards/schema.py`, `AbilityModel.subtypes`), so a static can only ever say a fixed type. `add_subtype` writes a fixed subtype onto affected objects and cannot read one; there is no value expression or binding form that yields a type name rather than a number or an object. Writing `Vampire` (what the existing pool entry does) makes the anthem and the draw trigger apply to a type the player never chose, which is a different card.
-- **(trigger_event)** `spell_cast` needs its `filter` to accept the same chosen-type reference, so 'a creature spell of the chosen type' scopes to the value stored on the trigger's own source rather than to a literal subtype baked into the card file
-  <br>Why the existing vocabulary won't do: The trigger `filter` is an ordinary selector, so it inherits the same literal `subtypes: list[str]` limitation; `binding` reads values the *event* carried (subject, amount, defender), never state stored on the ability's source, so there is nothing for the filter to point at even once the choice can be made and stored.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vanquisher's Banner** (rank 369) — `vanquisher_s_banner`
-  - As this artifact enters, choose a creature type.
-  - Creatures you control of the chosen type get +1/+1.
-  - Whenever you cast a creature spell of the chosen type, draw a card.
 
 </details>

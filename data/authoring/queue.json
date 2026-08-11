@@ -298892,12 +298892,12 @@
     },
     "Vanquisher's Banner": {
       "edhrec_rank": 369,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Vanquisher's Banner",
-      "reason": "As this artifact enters, choose a creature type.",
+      "reason": "",
       "scryfall_id": "efa6944e-b5e2-4584-ae37-f5b59a8ec75e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vantress Gargoyle": {

@@ -320,6 +320,12 @@ def matches_card_filter(
         return False
     card = state.card_of(obj)
 
+    # "…a creature spell of the chosen type." The same substitution the static
+    # filters do, because Vanquisher's Banner asks the question from both.
+    from .characteristics import resolve_chosen_subtypes
+
+    filt = resolve_chosen_subtypes(filt, ability_source)
+
     if filt.get("exclude_self") and oid == ability_source.oid:
         return False
     if filt.get("self_only") and oid != ability_source.oid:
