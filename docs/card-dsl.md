@@ -1078,6 +1078,51 @@ divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
 
+## Embalm — an ability activated from the graveyard
+
+```jsonc
+{ "kind": "activated",
+  "text": "Embalm {5}{W} (…)",
+  "active_zones": ["graveyard"],
+  "sorcery_speed_only": true,
+  "cost": { "mana": "{5}{W}",
+            "exile_from_graveyard": { "self_only": true, "count": 1 } },
+  "effects": [
+    { "op": "copy_permanent",
+      "objects": { "zone": "exile", "controller": "any", "self_only": true },
+      "controller": "you",
+      "except_": { "colors": ["W"], "add_subtypes": ["Zombie"],
+                   "no_mana_cost": true } } ] }
+```
+
+Cycling paid for most of the zone half; the graveyard joins the hand in
+`legality._activate_zones`. The safety rule is the same one and now has two ways
+to be satisfied: an activated ability offered outside the battlefield **must**
+have a cost that removes its source from that zone. Cycling discards itself,
+embalm exiles itself. Without it the ability is an infinite engine.
+
+Note the effect's selector says `"zone": "exile"`: the cost has already exiled
+the card by the time the ability resolves, and an oid survives the move.
+
+### `except_` — a copy that is not quite a copy
+
+A token copy is a token whose `def_id` is the original's, which is right — a
+copy copies the printed card, not the counters and damage on it — but it leaves
+the printed "except" clause nowhere to live, because the token has no card of
+its own. So the exception rides on the **object**, as `copy_overrides`:
+
+| key | meaning |
+|---|---|
+| `colors` | replaces the printed colours outright |
+| `add_subtypes` | *adds* to the printed subtypes — an embalm token is a Zombie **Angel** |
+| `no_mana_cost` | mana value reads 0 rather than the printed card's |
+
+Applied to the printed face *before* any layer, because the exception is part of
+what the token is rather than an effect on it — so an anthem afterwards layers
+on top exactly as it would on a real card. The loader rejects unknown keys: a
+misspelled one dropped silently gives a plain copy, which looks identical until
+somebody reads its colour.
+
 ## "…dealt damage by this creature this turn"
 
 Sengir Vampire. A trigger filter, because the clause is a *relationship* between

@@ -95,6 +95,19 @@ class GameObject:
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
 
+    #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
+    #: no mana cost." Embalm and eternalize.
+    #:
+    #: A copy is a token whose ``def_id`` is the original's, so the "except"
+    #: clause has nowhere to live on the card -- it is a property of this one
+    #: object. Kept deliberately small: added subtypes, replacement colours, and
+    #: whether the mana cost is gone. Anything richer belongs in a real
+    #: copiable-values layer, which this engine does not have.
+    #:
+    #: Preserved across zone changes for the same reason ``is_token`` is: it is
+    #: part of what the object *is*, not something that happened to it.
+    copy_overrides: dict[str, Any] | None = None
+
     #: "…exile it until this permanent leaves the battlefield." The oid of the
     #: permanent that exiled *this* card, so its own leaves-trigger can find it
     #: again.

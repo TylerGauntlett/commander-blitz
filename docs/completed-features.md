@@ -1,3 +1,52 @@
+## Embalm — the graveyard as a place you activate from
+
+### Overview
+
+Angel of Sanctions, and the last card in the report that two earlier runs had
+already half-built. Cycling made `active_zones` real for activated abilities and
+gave `legality` a walk over zones other than the battlefield; the
+exile-until-leaves run three commits ago shipped the card's other printed line.
+What was left was the graveyard itself, and the copy.
+
+### The zone half
+
+`legality._activate_zones` now walks the player's graveyard as well as their
+hand. The safety rule is the same one cycling introduced and now has two ways to
+be satisfied: an activated ability offered outside the battlefield **must** have
+a cost that removes its source from that zone, or it is an infinite engine —
+a card whose ability costs only mana could be activated forever without leaving.
+Cycling discards itself; embalm exiles itself from the graveyard. The loader
+checks both and accepts either.
+
+`Cost.exile_from_graveyard` and `sorcery_speed_only` already existed, which is
+why this was one zone rather than a mechanic.
+
+### The copy half
+
+A token copy is a token whose `def_id` is the original's — right, because a copy
+copies the printed card and not the counters and damage piled on it, but it
+leaves "except it's a white Zombie Angel with no mana cost" nowhere to live: the
+token has no card of its own.
+
+So the exception rides on the **object**, as `copy_overrides`, deliberately
+small: replacement `colors`, *added* `add_subtypes`, and `no_mana_cost`. Applied
+to the printed face before any layer, because the exception is part of what the
+token is rather than an effect on it — an anthem afterwards layers on top
+exactly as it would on a real card. Anything richer belongs in a real
+copiable-values layer, which this engine does not have and did not need here.
+
+`no_mana_cost` is not decoration: the token's `def_id` is the Angel's, so
+without it a mana-value query reports 5 for a token that has no cost at all.
+
+### A test helper that had aged
+
+`tests/cards/test_every_card_works.py` places a card in "the zone the ability is
+offered from", and was written when that was battlefield-or-hand — so it put the
+embalm card in *hand*, found no activation, and failed. It now uses
+`zone_list(zone)` and puts the card wherever the ability actually says. That is
+the pool-wide gate doing its job: the change was fine, the harness's assumption
+about how many zones exist was not.
+
 ## A damage ledger — remembering who hurt what
 
 ### Overview

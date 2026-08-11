@@ -8,7 +8,7 @@ that is the effect layer's job.
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .characteristics import chars
 from .enums import Keyword, Zone
@@ -267,6 +267,7 @@ def create_token(
     *,
     tapped: bool = False,
     attacking: int | None = None,
+    overrides: dict[str, Any] | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -274,12 +275,18 @@ def create_token(
     the battlefield attacking was **never declared** as an attacker, so it does
     not trigger anything that fires on attacking -- that is the actual rule, and
     it is also what stops a mobilize token making another mobilize token forever.
+
+    ``overrides`` is embalm's "except it's a white Zombie Angel with no mana
+    cost".  Set *before* the token enters, so its enters-trigger and every
+    characteristic read afterwards see the token it actually is.
     """
     made: list[int] = []
     for _ in range(max(0, count)):
         obj = new_object(
             state, def_id, owner=controller, zone=Zone.EXILE, controller=controller, is_token=True
         )
+        if overrides:
+            obj.copy_overrides = dict(overrides)
         # The token is created "nowhere" and then enters the battlefield, so ETB
         # triggers and enters-tapped replacements run through the normal path.
         state.players[controller].exile.append(obj.oid)

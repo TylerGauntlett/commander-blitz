@@ -508,6 +508,10 @@ def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
     """
     pairs: list[tuple[int, Zone]] = [(oid, Zone.BATTLEFIELD) for oid in state.battlefield]
     pairs += [(oid, Zone.HAND) for oid in state.players[pid].hand]
+    # …and this player's graveyard, for embalm and its relatives. Public, unlike
+    # the hand, but still only this player's: the ability belongs to the card's
+    # owner and nobody else may activate it.
+    pairs += [(oid, Zone.GRAVEYARD) for oid in state.players[pid].graveyard]
     return pairs
 
 
