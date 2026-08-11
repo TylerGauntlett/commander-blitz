@@ -117,6 +117,10 @@ class AbilityModel(BaseModel):
     # static
     effect: str | None = None
     affects: dict[str, Any] | None = None
+    #: "Creature spells with flying you cast cost {1} less." Filters a *card
+    #: being cast* by its printed face, which is a different question from
+    #: `affects` (which picks out permanents on the battlefield).
+    affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     power: Any = None
     toughness: Any = None

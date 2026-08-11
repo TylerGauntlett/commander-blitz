@@ -1,3 +1,53 @@
+## Spell cost reduction — discounting somebody else's card
+
+### Overview
+
+"Creature spells with flying you cast cost {1} less to cast." Warden of Evos
+Isle and Watcher of the Spheres print the same line, and the near miss made it
+worse rather than better: the card-level `cost_reduction` field points the other
+way. It discounts the card that *carries* it, choosing by counting permanents —
+Ghalta's "this spell costs {X} less". Writing it on Warden would have made
+Warden cheaper, a different card that would have looked implemented.
+
+### What shipped
+
+A `spell_cost_reduction` static with its own filter, `affects_spells`, matched
+against the printed face of the card being cast plus who is casting it —
+`characteristics._matches_printed`, the same helper the counting filters use.
+
+`affects` could not be reused: it names permanents and carries board state
+(`tapped`, `attacking`, `attached`), and a spell being priced is still in hand
+and has none of it. The loader refuses those keys in `affects_spells` and
+refuses `affects` on this effect entirely.
+
+**Where it is applied is the whole design.** It goes inside
+`costs.cost_reduction` — the one function both `legality` (deciding what is
+castable, and what the client shows) and `game.cast` (actually charging) already
+call. So a spell offered at the reduced price is paid at the reduced price by
+construction, which is the same argument the variable-mana run made about
+`mana_produced` two commits earlier. A `spell_cast` trigger could not stand in:
+it fires after the spell is paid for, so at best it refunds mana into the pool,
+which is not the same as being able to afford the spell.
+
+### The bug, and why the guard is shaped as it is
+
+The first implementation compiled cleanly and discounted **every spell in the
+game**. `_compile_static` assembles the static into a plain dict field by field,
+and `affects_spells` was not among the fields it copied — so the filter arrived
+empty, and an empty filter matches everything.
+
+Two changes came out of that. The loader now requires `affects_spells` and an
+`amount`, and `spell_cost_reduction` skips a static whose filter is missing
+rather than defaulting to `{}`: a compile bug should discount nothing, not the
+whole game. `test_it_does_not_discount_everything` is that failure, kept.
+
+### Also repaired
+
+Warden's mana cost was `{3}{U}` where the printing says `{2}{U}`, and Watcher
+was missing the Wizard subtype and its third printed line ("Whenever another
+creature you control with flying enters, this creature gets +1/+1 until end of
+turn"), which needed nothing new.
+
 ## The cycle trigger — an event, and two orderings
 
 ### Overview

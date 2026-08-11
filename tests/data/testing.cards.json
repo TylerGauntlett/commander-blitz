@@ -2056,6 +2056,34 @@
       ]
     },
     {
+      "id": "t_flier",
+      "name": "Test Flier",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_flying_artifact",
+      "name": "Test Flying Artifact",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "t_advocate_of_the_beast",
       "name": "Advocate of the Beast",
       "mana_cost": "{2}{G}",

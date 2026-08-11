@@ -31,7 +31,7 @@ not a rewrite.
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
 | **Emerge** | The alternative cost whose price depends on the creature sacrificed for it — one cast line per creature, reduced by its mana value |
 | **Cast triggers** | "When you cast this spell", via `active_zones: ["stack"]` — an ability firing while its own card is the spell |
-| **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
+| **Cost reduction** | Both directions: "This spell costs {X} less to cast" as a card-level field (Ghalta), and "Creature spells with flying you cast cost {1} less" as a `spell_cost_reduction` static discounting *other* cards, filtered on the printed face of the spell being cast. Both go through one function, so legality and payment cannot disagree |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
 | **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants. The condition is a boolean tree (`all`/`any`/`not`/`exists`/`cmp`/`is_your_turn`) over counters on the source, printed characteristics of the board, and how many cards sit in a zone, so **Threshold** works: Nimble Mongoose is a 1/1 at six cards in the graveyard and a 3/3 at seven, in either direction |

@@ -961,6 +961,36 @@ free one.
 The filter may only read printed characteristics, like a static's: it is
 evaluated while deciding what is castable, before anything is on the stack.
 
+### Making *other* spells cheaper
+
+`cost_reduction` discounts the card that carries it. Warden of Evos Isle
+discounts a different card, chosen by *that* card's printed face — a different
+question, so a different mechanism:
+
+```jsonc
+// Warden of Evos Isle — "Creature spells with flying you cast cost {1} less."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you",
+                      "types": ["Creature"], "keywords": ["flying"] },
+  "amount": { "const": 1 } }
+```
+
+**`affects_spells`, not `affects`.** `affects` names permanents and carries
+board state — `tapped`, `attacking`, `attached` — and a spell being priced is
+still in hand and has none of it. This filter reads the printed face plus who is
+casting, and the loader refuses the board-state keys there rather than letting
+them load and match nothing.
+
+Both halves are required. A `spell_cost_reduction` with no filter or no amount
+would load clean and discount either everything or nothing, and both look
+identical on a board.
+
+It is applied inside `costs.cost_reduction`, the same function the card-level
+field goes through — so legality and payment cannot disagree about it, for the
+same reason and by the same route. A `spell_cast` trigger cannot substitute: it
+fires after the spell is paid for, so the best it could do is refund mana, which
+is not the same as being able to afford the spell.
+
 ## Kicker
 
 An additional cost the caster may choose to pay. Two fields, and they only mean

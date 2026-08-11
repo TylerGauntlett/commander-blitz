@@ -615,6 +615,45 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+    """How much less ``pid`` pays for ``card`` because of statics on the board.
+
+    "Creature spells with flying you cast cost {1} less to cast." The card-level
+    `cost_reduction` field points the other way -- it discounts the card that
+    *carries* it, by counting permanents -- so Warden of Evos Isle cannot be
+    written with it. This discounts a **different** card, picked out by that
+    card's own printed characteristics.
+
+    The filter is matched against the printed face rather than a permanent,
+    which is why it reuses `_matches_printed` and nothing else: the spell is
+    still in hand while legality prices it, so there is no board state to read
+    and no derived characteristics to recurse into.
+
+    Returns a total, clamped and applied by `costs.cost_reduction` -- the one
+    function both legality and payment already call, so a spell offered at the
+    reduced price is also paid at it.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_reduction":
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` here would make an
+            # empty filter match *every* spell, so a compile bug would silently
+            # discount the whole game rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        if not _matches_printed(card, filt):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
 def attack_compelled(state: GameState, oid: int) -> bool:
     """Is this creature under a continuous "attacks each combat if able"?
 

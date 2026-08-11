@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**10 cards** blocked by **8** capabilities.
+**8 cards** blocked by **7** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
-| [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
@@ -68,26 +67,6 @@ Blocks **2** cards.
 - **Increasing Devotion** (rank 3292) — `increasing_devotion`
   - If this spell was cast from a graveyard, create ten of those tokens instead.
   - Flashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)
-
-</details>
-
-## spell-cost-reduction
-
-Blocks **2** cards.
-
-- **(static_effect)** a static ability on a permanent that reduces the generic portion of the cost of OTHER spells its controller casts, scoped by a filter over the spell's own printed characteristics - e.g. `{"kind": "static", "effect": "spell_cost_reduction", "affects_spells": {"controller": "you", "types": ["Creature"], "keywords": ["flying"]}, "amount": {"const": 1}}`. It must be read at the same choke points the existing self-reduction is (`legality.affordable`/`legality` cast enumeration and `game.cast` via `costs.cost_reduction`), so a spell offered at the reduced price is also paid at the reduced price, and it must be clamped at zero and generic-only like the existing one.
-  <br>Why the existing vocabulary won't do: The nearest thing is the card-level `cost_reduction` field (`carddef.CardDef.cost_reduction`, `costs.cost_reduction`, `loader.COST_REDUCTION_KEYS = {count, total_power}`), and it points the other way: it reduces the cost of the card that CARRIES it, and its filter is a board filter counting permanents on the battlefield (`costs._reduction_matches` iterates `state.battlefield`). Warden reduces the cost of a different card - a creature spell with flying being cast from hand - selected by that spell's own characteristics, which `cost_reduction` has no way to name and no way to apply to anything but its own card. Writing `cost_reduction` on Warden would make Warden itself cheaper, a different card. The static vocabulary offers no alternative either: `loader.STATIC_EFFECTS` is buff / grant_keyword / set_pt / add_subtype / set_types / protection plus the player-wide extra_land_drops, no_hand_limit, play_lands_from_graveyard, play_lands_from_library_top, double_land_triggers, double_land_mana, freeze_opponent_lands - all of which describe a characteristic of a permanent or a permission of a player, none of which touches what a spell costs. The `double_land_mana` precedent shows the shape a payment-time static takes, but it doubles mana produced by lands, not the price of a spell.
-- **(selector)** a filter form that can be matched against a spell being cast (a card in hand / on the stack) rather than against a permanent on the battlefield, reading its printed types and keywords - so "creature spells with flying" is expressible at the moment legality prices the card
-  <br>Why the existing vocabulary won't do: `STATIC_FILTER_KEYS` (which `_validate_cost_reduction` reuses) does carry `types` and `keywords`, but the only consumer, `costs._reduction_matches`, walks `state.battlefield` and calls `chars(state, oid)` on permanents - there is no code path that applies a filter to the card whose cost is being computed. A trigger-based stand-in (`spell_cast` with `filter: {types: ["Creature"], keywords: ["flying"]}`) cannot substitute: the trigger resolves after the spell has already been cast and paid for, so at best it could refund mana into the pool, which is not the same as being able to afford the spell in the first place and would change what `legality` offers.
-- **(static_effect)** a static ability on a permanent that reduces the generic cost of OTHER spells its controller casts, scoped by a filter over the spell's own printed characteristics (here: types include Creature and keywords include flying) and by who is casting it - e.g. `{"kind": "static", "effect": "spells_cost_less", "affects_spells": {"controller": "you", "types": ["Creature"], "keywords": ["flying"]}, "amount": {"const": 1}}`. Legality and payment must both read it by scanning the battlefield for such statics while deciding what is castable, the same generic-only, clamped-at-zero arithmetic `costs.cost_reduction` already does.
-  <br>Why the existing vocabulary won't do: The near miss is the card-level `cost_reduction` field, and it points the other way: `costs.cost_reduction(state, pid, card)` reads `card.cost_reduction` off the card BEING CAST and discounts that one card by counting permanents on the board (`{"count": filter}` / `{"total_power": filter}`). It is Ghalta - 'THIS spell costs {X} less' - and there is no form of it that reaches out to discount other spells, nor any filter position that reads the characteristics of the spell being cast rather than of battlefield permanents. Putting `cost_reduction` on Watcher of the Spheres would make Watcher itself cheaper, which is a different card. Nothing else covers it either: `STATIC_EFFECTS` in `cards/loader.py` holds only characteristic effects (buff, grant_keyword, set_pt, add_subtype, set_types, protection) and player-wide facts (extra_land_drops, no_hand_limit, play_lands_from_graveyard, play_lands_from_library_top, double_land_triggers, double_land_mana, freeze_opponent_lands) - none of which touch cost. The `replacements` whitelist is only `self_enters` / `self_enters_tapped` / `self_enters_with_counters`, so a cost-altering replacement cannot be written. A `spell_cast` triggered ability is too late by construction: the spell is already paid for and on the stack, and `mana_restriction` only filters which sources may pay, never how much is owed.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Warden of Evos Isle** (rank 3804) — `warden_of_evos_isle`
-  - Creature spells with flying you cast cost {1} less to cast.
-- **Watcher of the Spheres** (rank 4342) — `watcher_of_the_spheres`
-  - Creature spells with flying you cast cost {1} less to cast.
 
 </details>
 
