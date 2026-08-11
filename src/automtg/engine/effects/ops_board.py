@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..enums import Zone
+from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
@@ -350,3 +351,37 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     from .selectors import select_players
 
     return select_players(ctx, spec)
+
+
+@register("must_attack")
+def op_must_attack(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Target creature attacks during its controller's next combat phase if able."
+
+    A *requirement*, which is a shape the engine had none of: every other way a
+    card touches combat removes an option (tap, freeze, skip_untap, defender)
+    and this one removes the option not to. It is enforced in `legality` by
+    withholding "Done attacking" while an able creature that must attack is not
+    attacking.
+
+    Two durations, and the difference is which combat is meant:
+
+    ``this_turn``     Bident of Thassa -- the combat in the turn it was used,
+                      and nothing later.
+    ``next_combat``   Trench Behemoth -- the *controller's* next combat phase,
+                      which for an opponent's creature is a later turn. It
+                      cannot be "this turn": the trigger fires on your landfall,
+                      and the affected player's combat has not happened yet.
+
+    Not a `TempEffect`, for that reason -- those are wiped by the cleanup step,
+    and this has to outlive it.
+    """
+    duration = str(spec.get("duration", "next_combat"))
+    if duration not in ("this_turn", "next_combat"):  # pragma: no cover - loader guards
+        raise DslError(f"unknown must_attack duration {duration!r}")
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.must_attack = duration
+        obj.must_attack_turn = ctx.state.turn
+    yield from ()

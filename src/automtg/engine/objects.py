@@ -85,9 +85,19 @@ class GameObject:
     #: "it's sacrificed when it enters" is an ETB trigger, so the flag has to
     #: outlive the spell.
     cast_evoked: bool = False
+    #: An attack *requirement* placed on this creature -- the duration, one
+    #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
+    #: "attacks during its controller's next combat phase" has to survive
+    #: the cleanup step, and often a whole turn, because the trigger that
+    #: places it fires on *your* turn and binds *their* combat.
+    must_attack: str | None = None
+    #: The turn the requirement was placed, which is what makes
+    #: ``"this_turn"`` expire.
+    must_attack_turn: int = 0
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
+        self.must_attack = None
         self.tapped = False
         self.damage = 0
         self.deathtouched = False

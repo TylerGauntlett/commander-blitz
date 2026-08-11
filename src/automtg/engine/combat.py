@@ -60,6 +60,50 @@ def can_attack(state: GameState, oid: int) -> bool:
     return combat is None or oid not in combat.attackers
 
 
+def attack_required(state: GameState, oid: int) -> bool:
+    """Must this creature attack right now, and can it?
+
+    "…if able" is the whole of the second half: a requirement never makes an
+    illegal attack legal, and a tapped or summoning-sick creature simply does
+    not have to.  So this is the requirement AND `can_attack`, never one alone.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.must_attack is None:
+        return False
+    if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
+        return False
+    return can_attack(state, oid)
+
+
+def unmet_attack_requirements(state: GameState) -> list[int]:
+    """Creatures that must attack and are not, for the active player."""
+    combat = state.combat
+    attacking = set(combat.attackers) if combat else set()
+    return [
+        oid
+        for oid in state.battlefield
+        if oid not in attacking
+        and state.objects[oid].controller == state.active_player
+        and attack_required(state, oid)
+    ]
+
+
+def discharge_attack_requirements(state: GameState) -> None:
+    """Spend the active player's requirements once attackers are locked in.
+
+    A ``next_combat`` obligation is one-shot and expires here whether or not it
+    was met -- the creature may have been tapped, and "if able" means it owed
+    nothing.  Leaving it set would compel the following combat too.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.must_attack is None:
+            continue
+        if obj.controller != state.active_player:
+            continue
+        obj.must_attack = None
+
+
 def legal_attackers(state: GameState) -> list[int]:
     return [oid for oid in state.battlefield if can_attack(state, oid)]
 
@@ -87,6 +131,7 @@ def finish_attackers(state: GameState) -> None:
     if combat is None:
         return
     combat.attackers_declared = True
+    discharge_attack_requirements(state)
     for oid in list(combat.attackers):
         c = chars(state, oid)
         if Keyword.VIGILANCE.value not in c.keywords:

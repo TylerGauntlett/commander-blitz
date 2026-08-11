@@ -707,6 +707,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: 'pay' needs 'effects' -- paying for nothing is not a card"
             )
+    if op == "must_attack":
+        duration = str(effect.get("duration", "next_combat"))
+        if duration not in ("this_turn", "next_combat"):
+            # A misspelled duration would set a requirement nothing ever
+            # discharges, or one that expires before the combat it names.
+            raise DslError(
+                f"{where}: unknown must_attack duration {duration!r} "
+                f"(implemented: 'this_turn', 'next_combat')"
+            )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:

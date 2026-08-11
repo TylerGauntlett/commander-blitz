@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>46 ops"]
+    ctx --> ops["op registry<br/>47 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,13 +66,13 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-46 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+47 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -873,6 +873,41 @@ what must not come with it.
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
+
+## Attack requirements
+
+    Trench Behemoth — "Landfall — Whenever a land you control enters, target
+    creature an opponent controls attacks during its controller's next combat
+    phase if able."
+
+```jsonc
+{ "op": "must_attack", "objects": { "target": "t1" }, "duration": "next_combat" }
+```
+
+The first thing on a card that removes an *option* rather than an ability.
+Everything else that touches combat is a prohibition — `tap`, `freeze`,
+`skip_untap`, `defender`, protection — and a requirement cannot be written as
+the negation of any of them.
+
+Enforced by withholding **Done attacking** while an able creature that must
+attack is not attacking, because there is no action for "refuse to attack" for
+legality to remove. That is safe precisely because "if able" is honoured: a
+tapped, summoning-sick or `defender` creature owes nothing, so the declaration
+can never deadlock.
+
+Two durations, and picking the wrong one silently misses the combat it names:
+
+| | |
+|---|---|
+| `this_turn` | Bident of Thassa — the combat in the turn it was used, and nothing later |
+| `next_combat` | Trench Behemoth — that creature's **controller's** next combat, which for an opponent's creature is a later turn |
+
+`next_combat` is why this is not a `TempEffect`: the trigger fires on *your*
+landfall and binds *their* combat, and the cleanup step would wipe an
+until-end-of-turn effect long before it arrived. It is one-shot, discharged at
+its controller's declare-attackers whether or not it was met — an obligation the
+creature could not meet is still spent, or it would compel the following combat
+too.
 
 ## Block restrictions
 

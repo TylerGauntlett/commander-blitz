@@ -1887,6 +1887,10 @@
   "treetop_village": {
     "zone": "battlefield"
   },
+  "trench_behemoth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "treno_dark_city": {
     "zone": "battlefield"
   },
