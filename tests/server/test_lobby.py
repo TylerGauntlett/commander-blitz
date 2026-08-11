@@ -537,7 +537,7 @@ class TestDeckLookupIsLive:
 
         pod, (host,) = seated(pods, guests=0)
         seat = pod.view_for(host.player_id).seats[0]
-        assert seat.deck.name == "Aesi, Tyrant of Gyre Strait"
+        assert seat.deck.name == "Reap the Tides"
 
         # Stand in for what `reload()` does: build a fresh GameData and rebind it
         # onto the session registry, leaving the pod object untouched.

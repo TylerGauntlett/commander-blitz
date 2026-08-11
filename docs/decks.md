@@ -83,13 +83,8 @@ repeated here.
 
 ### Aesi
 
-| Original | Replacement | Why |
-|---|---|---|
-| Scute Swarm | Tireless Provisioner | Copy effects are not implemented |
-| Rhystic Study | Guardian Project | "Unless that player pays" is not implemented |
-| Cyclonic Rift | Whelming Tide | Overload is an alternative cost |
-| Ancient Greenwarden | Zendikar's Roil | Needs a general replacement effect |
-| Oracle of Mul Daya | Azusa, Lost but Seeking | Playing off the top of the library needs continuous zone permission |
+**None.** It is the printed precon, and every card in it does what it prints. The five
+it used to carry went with the hand-curated list they belonged to.
 
 ### Edgar Markov
 
@@ -113,7 +108,7 @@ without any other change.
 data/cards/basics.cards.json    5 basic lands
 data/cards/tokens.cards.json    11 token definitions
 data/cards/core.cards.json      colourless staples shared by every deck
-data/cards/aesi.cards.json      the Simic deck
+data/cards/aesi.cards.json      the Simic half, shared with Isperia
 data/cards/edgar.cards.json     Edgar's Mardu vampires
 data/cards/isperia.cards.json   the Azorius deck
 data/cards/zurgo.cards.json     Zurgo's token half

@@ -53,10 +53,18 @@ class TestImagesEndpoint:
         assert entry["art"] == "/art/forest.jpg"
         assert entry["artist"]
 
-    def test_a_card_with_no_printing_is_null(self, client):
-        # Null rather than a dangling path: the client draws a plate, and never
-        # issues a request it knows will 404.
-        assert client.get("/api/images").json()["images"]["aetherling_serpent"] is None
+    def test_nothing_in_the_map_is_null(self, client):
+        """Was "a card with no printing is null", pointed at `aetherling_serpent`.
+
+        Null rather than a dangling path was the right contract and still is --
+        the client draws a plate and never issues a request it knows will 404 --
+        but there is no card left in the pool to exercise it with. The five
+        invented designs in the hand-curated Aesi list went when the printed
+        precon shipped, so the claim worth holding is that *nothing* is null.
+        """
+        images = client.get("/api/images").json()["images"]
+        assert images
+        assert not [card_id for card_id, art in images.items() if art is None]
 
 
 class TestScopingToAGame:
@@ -120,8 +128,11 @@ class TestScopingToAGame:
         assert card["art_url"] == "/art/forest.jpg"
         assert card["artist"]
 
-    def test_a_custom_card_has_no_art_url(self, client):
-        assert client.get("/api/cards/aetherling_serpent").json()["art_url"] is None
+    def test_a_card_the_pool_does_not_have_is_a_404(self, client):
+        """The replacement for "a custom card has no art_url". There is no
+        artless card left to ask about, so the neighbouring case is the one
+        worth pinning: an id nobody defined is absent, not null."""
+        assert client.get("/api/cards/aetherling_serpent").status_code == 404
 
 
 class TestArtRoute:
