@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "whelming_wave",
+    "name": "Whelming Wave",
+    "oracle_text": "Return all creatures to their owners' hands except for Krakens, Leviathans, Octopuses, and Serpents.",
+    "mana_cost": "{2}{U}{U}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "return_to_hand",
+        "objects": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ],
+          "not_subtypes": [
+            "Kraken",
+            "Leviathan",
+            "Octopus",
+            "Serpent"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2,
+      "1": 2
+    },
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4
+  }
+}

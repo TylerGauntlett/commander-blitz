@@ -1,0 +1,18 @@
+{
+  "card_id": "sharktocrab",
+  "name": "Sharktocrab",
+  "oracle_text": "{2}{G}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)\nWhenever one or more +1/+1 counters are put on this creature, tap target creature an opponent controls. That creature doesn't untap during its controller's next untap step.",
+  "blocked_sentences": [
+    "{2}{G}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)"
+  ],
+  "needs": [
+    {
+      "capability": "adapt",
+      "kind": "op",
+      "what": "An `adapt` op taking an amount N: put N +1/+1 counters on the source only if it currently has no +1/+1 counters on it, otherwise do nothing. Unlike a one-shot keyword action it must be repeatable -- the same ability can adapt again on a later turn once the counters are gone -- and the check is on the live counter count, not on a flag the op itself sets.",
+      "why_existing_wont_do": "`monstrosity` is the closest op but gates on a permanent one-way monstrous flag it sets itself, so it can never fire a second time and it ignores +1/+1 counters that arrived from any other source; a creature made monstrous can still adapt, and a creature given a counter by another card cannot. `add_counters` alone drops the whole conditional clause and would keep stacking counters. `if` is in the op list but the packet documents no condition vocabulary at all, so there is no stated way to test 'the source has no +1/+1 counters on it' -- and if such a condition exists it would still need a counter-count read on the source object, which is the same missing piece."
+    }
+  ],
+  "closest_existing": ["monstrosity", "add_counters", "if"],
+  "confidence": "high"
+}

@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "scourge_of_fleets",
+    "name": "Scourge of Fleets",
+    "oracle_text": "When this creature enters, return each creature your opponents control with toughness X or less to its owner's hand, where X is the number of Islands you control.",
+    "mana_cost": "{5}{U}{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Kraken"
+    ],
+    "power": 6,
+    "toughness": 6,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, return each creature your opponents control with toughness X or less to its owner's hand, where X is the number of Islands you control.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ],
+              "toughness": {
+                "op": "<=",
+                "value": {
+                  "count": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "subtypes": [
+                      "Island"
+                    ]
+                  }
+                }
+              },
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 4,
+    "hand_size": {
+      "0": 0,
+      "1": 2
+    }
+  }
+}

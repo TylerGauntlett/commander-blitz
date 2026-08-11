@@ -1082,6 +1082,11 @@
       "graveyard"
     ]
   },
+  "meteor_golem": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "meticulous_archive": {
     "zone": "battlefield"
   },
@@ -1233,6 +1238,14 @@
   },
   "palladium_myr": {
     "zone": "battlefield"
+  },
+  "peel_from_reality": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "perilous_landscape": {
     "zone": "battlefield"
@@ -1456,6 +1469,15 @@
   "scholarship_sponsor": {
     "zone": "battlefield"
   },
+  "scourge_of_fleets": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0,
+      "1": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "scouting_hawk": {
     "zone": "battlefield"
   },
@@ -1614,6 +1636,13 @@
     "zone": "battlefield"
   },
   "spara_s_headquarters": {
+    "zone": "battlefield"
+  },
+  "sphinx_of_uthuun": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 35
+    },
     "zone": "battlefield"
   },
   "spidersilk_net": {
@@ -1884,6 +1913,13 @@
   "verdant_catacombs": {
     "zone": "battlefield"
   },
+  "verdant_sun_s_avatar": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 45
+    },
+    "zone": "battlefield"
+  },
   "vesuva": {
     "zone": "battlefield"
   },
@@ -1952,6 +1988,15 @@
   },
   "watery_grave": {
     "zone": "battlefield"
+  },
+  "whelming_wave": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 2,
+      "1": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "whiptongue_hydra": {
     "counters": {

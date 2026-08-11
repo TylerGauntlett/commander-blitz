@@ -1,0 +1,24 @@
+{
+  "card_id": "wickerbough_elder",
+  "name": "Wickerbough Elder",
+  "oracle_text": "This creature enters with a -1/-1 counter on it.\n{G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment.",
+  "blocked_sentences": [
+    "{G}, Remove a -1/-1 counter from this creature: Destroy target artifact or enchantment."
+  ],
+  "partially_expressible": {
+    "expressible_sentences": [
+      "This creature enters with a -1/-1 counter on it."
+    ],
+    "note": "Sentence one is fully sayable today as a card-level replacement, `{\"event\": \"self_enters_with_counters\", \"counter\": \"-1/-1\", \"amount\": 1}` -- `zones._enter_battlefield` applies it and `verify._covered` accepts a replacement of that event as the claim on a printed line containing both 'enters' and 'counter', so no ability needs to carry the text. The cost half of sentence two is also already sayable: `CostModel` carries both `mana` and `remove_counters`, and `vivid_creek` in `data/cards/auto/templates.cards.json` pays exactly `{\"tap\": true, \"remove_counters\": {\"counter\": \"charge\", \"amount\": 1}}`. Only the *target* of the activated ability is blocked, so no answer is written: a card whose ability destroyed only artifacts, or only non-creature permanents, would be a different card, and the residual gate would still see the printed line half-claimed."
+  },
+  "needs": [
+    {
+      "capability": "type_disjunction",
+      "kind": "selector",
+      "what": "A selector clause that matches an object having ANY ONE of several card types -- e.g. `{\"zone\": \"battlefield\", \"any_types\": [\"Artifact\", \"Enchantment\"]}` -- usable as a target spec's selector, so 'target artifact or enchantment' picks one permanent that is either. The same key covers 'target creature or planeswalker', 'target instant or sorcery card' and 'target artifact or creature'; `data/authoring/queue.json` alone has well over twenty queued cards whose only blocked clause is a type disjunction, so this is one selector key against a large batch of cards.",
+      "why_existing_wont_do": "`types` is the closest key and it is a conjunction, not a disjunction: `effects/selectors.matches` tests `set(want).issubset(types)`, so `[\"Artifact\", \"Enchantment\"]` matches only a permanent that is both at once, and `[\"Artifact\"]` alone silently drops half the printed clause. The asymmetry is deliberate elsewhere in the same function -- `subtypes` and `colors` use `set(want) & ...`, i.e. any-of -- so the any-of form exists for those keys and simply has no type equivalent. `not_types` cannot stand in either: `{\"not_types\": [\"Creature\", \"Land\", \"Planeswalker\", \"Battle\"]}` is the complement only for permanents with a single type, and it would refuse artifact creatures and enchantment creatures, which are legal targets for the printed line. Two optional target specs (one Artifact, one Enchantment) is not the card either -- the ability would then destroy up to two permanents. `SELECTOR_KEYS` in `src/automtg/engine/effects/selectors.py` is validated at load time, so an invented key is a load error rather than a silent no-op, and the static-filter list in the packet shows the same `types`/`not_types` pair with no any-of member."
+    }
+  ],
+  "closest_existing": ["types", "not_types", "subtypes", "destroy"],
+  "confidence": "high"
+}

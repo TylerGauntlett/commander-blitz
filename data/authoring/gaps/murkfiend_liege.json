@@ -1,0 +1,58 @@
+{
+  "card_id": "murkfiend_liege",
+  "name": "Murkfiend Liege",
+  "oracle_text": "Other green creatures you control get +1/+1.\nOther blue creatures you control get +1/+1.\nUntap all green and/or blue creatures you control during each other player's untap step.",
+  "blocked_sentences": [
+    "Untap all green and/or blue creatures you control during each other player's untap step."
+  ],
+  "scope": "ONLY the third line is blocked. Both anthem lines are fully expressible today with vocabulary already in the packet's `reference` block -- see `expressible_today` below, recorded so nobody re-triages them and so whoever clears the untap line can write the whole card in one pass. The card goes here rather than being written half because a partly-expressible card is a gap record by the brief, and because the untap line is not decoration: it is the entire reason Murkfiend Liege is played over any other five-mana lord. A version with only the two anthems is a strictly worse card than the one printed, and it would read as finished on the board.",
+  "needs": [
+    {
+      "capability": "untap_during_each_untap_step",
+      "kind": "static_effect",
+      "what": "A continuous ability, read by the untap-step turn-based action, that adds a set of permanents chosen by an ordinary static filter to the set untapped during a *different* player's untap step. Concretely a static of the shape `{\"kind\": \"static\", \"effect\": \"untap_during_others_untap_step\", \"affects\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"colors\": [\"G\", \"U\"]}}`, and a matching read inside `primitives.untap_all` (`src/automtg/engine/primitives.py:437-460`): today it walks the battlefield and skips every object whose `controller != pid`, so it must additionally untap any object matched by an active static of this kind whose controller is not the active player. The filter is the existing static selector (`characteristics._matches` -> the selector walk at `characteristics.py:270-300`), where `colors` is already an intersection test -- `if colors and not (set(colors) & card.colors)` at line 284-286 -- so `[\"G\", \"U\"]` means exactly the printed \"green and/or blue\". This one effect covers the whole family at once: Seedborn Muse, Prophet of Kruphix, Awakening, Murkfiend Liege and Vedalken Orrery-adjacent 'untaps during each untap step' text all differ only in the filter.",
+      "why_existing_wont_do": "`static_effects` is limited to `buff`, `grant_keyword`, `set_pt`, `add_subtype` and `extra_land_drops`. The first four write characteristics that the characteristics pipeline reads; `extra_land_drops` writes a player permission that the land-play legality check reads. None of them is read anywhere near the untap step. `skip_untap` is the closest existing vocabulary -- it is the *only* thing in the reference block that touches the untap step at all -- and it is the exact negation of what is wanted: it sets a one-shot `skip_next_untap` flag on an object, consumed by `untap_all` (`primitives.py:450-455`) to *remove* a permanent from an untap it would otherwise get. There is no positive counterpart, and no amount of skipping can add a permanent to an untap step that never considered it: `untap_all` is called from `turn._untap_step` (`turn.py:110-118`) as `untap_all(state, player.pid)` with the active player's pid hard-wired, so permanents controlled by anyone else are filtered out before any flag is consulted."
+    },
+    {
+      "capability": "untap_during_each_untap_step",
+      "kind": "trigger_event",
+      "what": "An `untap_step` trigger event, fired for the untapping player and honouring the existing `controller: \"opponent\"` clause, plus priority plumbing so an ability that triggers there can actually resolve during that step. This is the near-miss route -- 'at the beginning of each other player's untap step, untap all green and/or blue creatures you control' -- and it is written down because it is the first thing anyone will reach for; see below for why it is second best even once it exists.",
+      "why_existing_wont_do": "Three separate stops, all verified in the source. (1) There is no event: `TRIGGER_EVENTS` (`src/automtg/engine/triggers.py:28-47`) maps `upkeep`, `draw_step`, `begin_combat` and `end_step` and nothing for the untap step. (2) Nothing is even emitted for triggers to match: `turn.begin_step` handles `Step.UNTAP` by calling `_untap_step`, which uses `state.emit(EventType.TURN_BEGAN, ...)` rather than `triggers.fire(...)` (`turn.py:34-35`, `110-118`) -- `emit` records the event but never calls `collect`, so no ability is scanned during that step, and `TURN_BEGAN` is not in `TRIGGER_EVENTS` either. (3) Even with both fixed, the timing would be wrong: `step_grants_priority` returns `False` for `Step.UNTAP` (`turn.py:186-189`, correct per rule 502.3), so a queued triggered ability would sit in `pending_triggers` until the upkeep and untap one step late -- and worse, it would be respondable, which the printed card is not. Murkfiend Liege's line is a static ability modifying a turn-based action, not a trigger; the `static_effect` need above is the shape that matches the card. `delay` cannot stand in either: its `DELAY_STEPS` whitelist (`turn.py:68-73`) has no untap entry, and a delayed trigger is one-shot and must be scheduled by something that already resolved, whereas this is a permanent, always-on modification of every other player's untap step."
+    }
+  ],
+  "expressible_today": {
+    "note": "Both anthem lines need NO new vocabulary. `colors` is a printed characteristic and a legal `static_filter_keys` entry, and the selector's colour test is an intersection, so `colors: [\"G\"]` correctly matches a gold green-blue creature. `exclude_self` covers the printed word 'Other' -- Murkfiend Liege is itself both green and blue, so without it the card would pump itself twice.",
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other green creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "colors": ["G"],
+          "exclude_self": true
+        },
+        "power": { "const": 1 },
+        "toughness": { "const": 1 }
+      },
+      {
+        "kind": "static",
+        "text": "Other blue creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "colors": ["U"],
+          "exclude_self": true
+        },
+        "power": { "const": 1 },
+        "toughness": { "const": 1 }
+      }
+    ],
+    "why_two_abilities_and_not_one": "`colors: [\"G\", \"U\"]` in a single buff would be a *different card*: the selector's colour test is an OR, so one +1/+1 would reach every green-or-blue creature, whereas the printed card gives a creature that is both green and blue +2/+2. Two statics stack correctly on such a creature and each claims its own printed line, which is also what the residual gate wants.",
+    "expectation_if_the_card_were_written": "`{\"zone\": \"battlefield\", \"battlefield_count\": 33}` and nothing more. The sandbox's two creatures are chosen by role, not colour, so neither their colours nor their printed P/T can be assumed, and there is no expectation key that reads the P/T of a permanent that is not the spell's own target -- `target_pt_delta` only applies to a spell that targeted, and this card targets nothing. The untap line cannot be observed either: the harness casts the card in the controller's own precombat main phase and stops, so no other player's untap step is ever reached."
+  },
+  "closest_existing": ["skip_untap", "untap", "upkeep", "delay", "extra_land_drops"],
+  "confidence": "high"
+}
