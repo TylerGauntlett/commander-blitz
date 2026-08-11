@@ -223,6 +223,43 @@
       ]
     },
     {
+      "id": "t_bouncer",
+      "name": "Test Bouncer",
+      "oracle_text": "{1}, Return a land you control to its owner's hand: Draw a card.",
+      "mana_cost": "{4}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Return a land you control to its owner's hand: Draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "return_to_hand": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_sundial",
       "name": "Test Sundial",
       "oracle_text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",

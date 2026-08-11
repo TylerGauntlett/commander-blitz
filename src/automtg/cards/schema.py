@@ -24,6 +24,11 @@ class CostModel(BaseModel):
     tap: bool = False
     untap: bool = False
     sacrifice: dict[str, Any] | None = None
+    #: "Return a land you control to its owner's hand" -- Meloku and Trench
+    #: Behemoth. A selector over the battlefield, like ``sacrifice``, and
+    #: deliberately not that one: sacrificing graveyards the land, which
+    #: breaks the replay-for-landfall loop those cards are built on.
+    return_to_hand: dict[str, Any] | None = None
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.

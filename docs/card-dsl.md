@@ -166,6 +166,32 @@ Anywhere a number is expected:
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
 
+## Costs
+
+What an activated ability charges, and what `may`'s `pay` spends:
+
+```jsonc
+{ "mana": "{1}{U}", "tap": true, "untap": true,
+  "pay_life": 3,
+  "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
+  "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
+  "discard": 1, "discard_selector": { "types": ["Land"] },
+  "discard_self": true,                           // cycling: *this* card, no choice
+  "remove_counters": { "counter": "-1/-1", "amount": 1 },
+  "exile_from_graveyard": { "types": ["Creature"] } }
+```
+
+`return_to_hand` is not `sacrifice` with a nicer ending, and the two cards that
+need it are built entirely on the difference. Meloku the Clouded Mirror and
+Trench Behemoth both *replay* what they return — every bounce is another land
+drop, and in a landfall deck another trigger. Written as a sacrifice they are not
+worse cards or better ones, they are a different engine, and nothing on screen
+would say so.
+
+Both take a selector over the battlefield defaulting to `controller: "you"`, and
+both make the ability **unavailable** when nothing matches rather than free: an
+ability whose bounce cost has nothing to bounce would cost only its mana.
+
 ## Player specs
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·

@@ -169252,12 +169252,12 @@
     },
     "Meloku the Clouded Mirror": {
       "edhrec_rank": 5792,
-      "gate": "template",
+      "gate": null,
       "name": "Meloku the Clouded Mirror",
-      "reason": "no template for: {1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature to",
+      "reason": "",
       "scryfall_id": "60b9db96-a6ab-454b-99a7-910ef77560d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Melt Terrain": {

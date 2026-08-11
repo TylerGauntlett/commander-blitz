@@ -121,6 +121,29 @@
       "is_token": true
     },
     {
+      "id": "illusion_1_1_u_flying",
+      "name": "Illusion",
+      "oracle_text": "1/1 blue Illusion creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "is_token": true
+    },
+    {
       "id": "insect_1_1_g",
       "name": "Insect Token",
       "types": [

@@ -26,6 +26,7 @@ from .mana import (
     solve_payment,
 )
 from .primitives import discard_cards, lose_life, tap_permanent
+from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
 
@@ -309,6 +310,8 @@ def can_pay(
             return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
+    if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
+        return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         kind = str(cost.remove_counters.get("counter", "+1/+1"))
@@ -354,6 +357,27 @@ def _sacrifice_pool(
     from .effects.selectors import resolve_pool
 
     spec = dict(cost.sacrifice or {})
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    count = int(spec.pop("count", 1) or 1)
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = resolve_pool(ctx, spec)
+    return pool if len(pool) >= count else []
+
+
+def _return_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """Which permanents this cost may bounce -- "return a land you control".
+
+    Deliberately a separate pool from ``_sacrifice_pool`` even though the
+    selectors look identical, because what happens to the permanent is the
+    whole difference: Meloku and Trench Behemoth both replay the land they
+    return, and a sacrifice would graveyard it.
+    """
+    from .effects.selectors import resolve_pool
+
+    spec = dict(cost.return_to_hand or {})
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
@@ -449,6 +473,16 @@ def pay(
         picked = yield from ask_objects(ctx, "Sacrifice", pool, count, count, pid, "sacrifice")
         for oid in picked:
             sacrifice_object(state, oid)
+
+    if cost.return_to_hand is not None:
+        spec = dict(cost.return_to_hand)
+        count = int(spec.pop("count", 1) or 1)
+        pool = _return_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(
+            ctx, "Return to hand", pool, count, count, pid, "return_cost"
+        )
+        for oid in picked:
+            bounce_object(state, oid)
 
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters
