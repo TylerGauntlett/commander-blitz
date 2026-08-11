@@ -191,6 +191,10 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
         )
         discard_cards(state, pid, picked)
     clear_until_eot(state)
+    # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
+    # permanents here; the ledger that remembers who dealt it goes with it, or
+    # a Sengir Vampire would keep growing off a creature it hurt last turn.
+    state.damage_ledger.clear()
     # Rule 514.3a: if anything happened, players get priority and cleanup repeats.
     state.cleanup_repeat = bool(state.pending_triggers)
 

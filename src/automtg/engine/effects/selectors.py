@@ -77,6 +77,10 @@ SELECTOR_KEYS = frozenset(
         # "…until this permanent leaves the battlefield." Cards in exile that
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
+        # "…dealt damage by this creature this turn." A trigger filter rather
+        # than an object filter: answered from the per-turn damage ledger,
+        # because the creature it asks about has usually just died.
+        "damaged_by",
     }
 )
 

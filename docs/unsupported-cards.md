@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**7 cards** blocked by **6** capabilities.
+**6 cards** blocked by **5** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
-| [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 
 ## flashback
@@ -92,22 +91,6 @@ Blocks **1** card.
   - As this artifact enters, choose a creature type.
   - Creatures you control of the chosen type get +1/+1.
   - Whenever you cast a creature spell of the chosen type, draw a card.
-
-</details>
-
-## damaged-by-source-this-turn
-
-Blocks **1** card.
-
-- **(engine)** a per-turn ledger recording, for each creature, which source objects have dealt damage to it this turn, readable at the moment that creature dies and cleared during cleanup; the entry must survive the damaged creature leaving the battlefield, since the query is asked about an object that is already in the graveyard
-  <br>Why the existing vocabulary won't do: reference has no damage-history state at all -- `damage` is an effect op that applies damage and records nothing, and the notes state plainly that `snapshot` is the only way to read a value after an object has left and that there is no general last-known-information system, so nothing can answer 'was this dying creature damaged by that source earlier this turn'
-- **(trigger_event)** a filter on `creature_dies` that scopes it to creatures which were dealt damage by the ability's own source this turn, binding the trigger to the source object rather than to a side or a characteristic of the dying creature
-  <br>Why the existing vocabulary won't do: `creature_dies` and `dies` are the closest trigger events but reference exposes no filter vocabulary for trigger events whatsoever -- `static_filter_keys` is documented as applying to static abilities and reads only printed characteristics, none of which can express a relationship to the source. Using bare `creature_dies` would make the card trigger on every creature death anywhere, a strictly stronger and different card than the one printed, so it is not an acceptable approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sengir Vampire** (rank 18150) — `sengir_vampire`
-  - Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.
 
 </details>
 

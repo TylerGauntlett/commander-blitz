@@ -84,6 +84,16 @@ class GameState:
     char_cache_version: int = -1
 
     triggers_this_step: int = 0
+    #: "Whenever a creature dealt damage by this creature this turn dies…"
+    #:
+    #: victim oid -> the oids of everything that has damaged it this turn.
+    #: Cleared during cleanup.
+    #:
+    #: It lives on the state rather than on the damaged object because the whole
+    #: question is asked *about a creature that has just died*: an entry on the
+    #: object would be wiped by `reset_permanent_state` on the way to the
+    #: graveyard, which is exactly the moment it is needed.
+    damage_ledger: dict[int, set[int]] = field(default_factory=dict)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False

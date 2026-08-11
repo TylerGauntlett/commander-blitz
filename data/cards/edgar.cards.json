@@ -762,7 +762,29 @@
       "subtypes": ["Vampire"],
       "power": 4,
       "toughness": 4,
-      "keywords": ["flying"]
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "any",
+            "filter": {
+              "controller": "any",
+              "damaged_by": "self"
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "objects": { "self_only": true },
+              "counter": "+1/+1",
+              "amount": { "const": 1 }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "champion_of_dusk",
