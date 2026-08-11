@@ -2,6 +2,33 @@
 
 ### Fixed
 
+- **Clicking Mind Stone sacrificed it.**
+  Mind Stone reads "{T}: Add {C}" and "{1}, {T}, Sacrifice this artifact: Draw a
+  card", and the panel showed one option. `legality._activate_actions` withholds
+  a *tap-only* mana ability because the payment solver taps it automatically —
+  correct for a Forest, wrong here, because it left the artifact with a single
+  action, and `Table.onBoardCard` submits when a permanent has exactly one
+  untargeted activation. The gesture that means "what can this do?" therefore
+  spent the card. The suppression is now conditional: a permanent that offers
+  something *besides* its tap-only mana ability offers both
+  (`legality._offers_something_else`, gated on the new
+  `PlayerState.offer_all_abilities`, which `GameSession` sets for human seats
+  only — the heuristic agent scores every activation alike and would tap its
+  rocks for nothing). A permanent whose only offer is the mana ability, or whose
+  other ability is unaffordable, still belongs to the solver alone, so a board of
+  lands grows no rows. `game._only_pass_or_mana` is deliberately *not* wired to
+  the new flag: it already counts extra mana activations as nothing to
+  accomplish, and hooking it in the way `manual_mana` is would stop every human
+  at all thirteen steps of every turn.
+
+- **The Auto/Manual mana and Full control toggles did nothing until the next
+  action.** `GameSession.set_manual_mana` and `set_full_control` mutated the seat
+  flag and called `_bump()`, but never `_refresh_actions()` — and `actions_for`
+  serves the cached `_action_ids`. `POST /options` therefore answered with the
+  action list from *before* the toggle, so a player who turned Manual mana on to
+  see a rock's mana ability got the same list back and their next click did the
+  same thing it would have done. Both setters refresh now.
+
 - **Twenty-seven cards could never be activated at all.**
   `costs.mana_sources` collects only `Cost.is_tap_only()` abilities, and
   `legality._activate_actions` skipped *every* mana ability on the grounds the

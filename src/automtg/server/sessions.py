@@ -155,9 +155,15 @@ class GameSession:
         }
         # Human seats skip priority windows with nothing to respond to. AI seats
         # keep every window so training and the golden tests are unaffected.
+        #
+        # `offer_all_abilities` rides along for the same reason and is not a
+        # preference: a human clicks permanents, and a permanent that can do two
+        # things has to show both. An AI seat picks from a list and would only
+        # tap its rocks for mana it has nothing to spend on.
         for pid in self.human_seats:
             player = self.game.state.players[pid]
             player.auto_pass = True
+            player.offer_all_abilities = True
             player.full_control = self.full_control.get(pid, False)
             player.manual_mana = self.manual_mana.get(pid, False)
         self.drive_ai()
@@ -167,6 +173,11 @@ class GameSession:
         with self._lock:
             self.full_control[seat] = value
             self.game.state.players[seat].full_control = value
+            # Both settings change what `legality` offers, and `actions_for`
+            # serves the cached `_action_ids` -- so without this the toggle only
+            # took effect after the *next* action, and `POST /options` returned
+            # the list from before it was flipped.
+            self._refresh_actions()
             self._bump()
 
     def set_manual_mana(self, seat: int, value: bool) -> None:
@@ -174,6 +185,7 @@ class GameSession:
         with self._lock:
             self.manual_mana[seat] = value
             self.game.state.players[seat].manual_mana = value
+            self._refresh_actions()
             self._bump()
 
     # ------------------------------------------------------------------

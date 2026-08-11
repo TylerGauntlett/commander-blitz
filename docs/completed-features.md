@@ -91,10 +91,16 @@ every Fireball was cast for everything the board had.
 
 - `manual_mana`, a per-seat preference beside `full_control`. On, every tap-only
   mana ability becomes an action and a modal one becomes an action per colour —
-  Commander's Sphere reads as five colour chips plus its sacrifice ability. Off
-  for AI seats, so `ACTION_SPACE_SIZE` stays 825 and the golden replays are
-  untouched. Mana abilities route through `Game._activate_mana`, never the
-  stack (rule 605.3a), so priority is retained.
+  every land included. Off for AI seats, so `ACTION_SPACE_SIZE` stays 825 and the
+  golden replays are untouched. Mana abilities route through
+  `Game._activate_mana`, never the stack (rule 605.3a), so priority is retained.
+
+  *Superseded in part.* Commander's Sphere reading as five colour chips plus its
+  sacrifice ability no longer needs the toggle: `offer_all_abilities` covers the
+  permanents that have more than one thing to do, which was the case this section
+  was really about. See "Mind Stone showed one option" in
+  [bugs.md](bugs.md) — hiding the mana ability left the artifact with a single
+  action, and a single action is one the board click submits.
 - `DecisionKind.CHOOSE_X`, raised by `_cast`/`_activate` before the cost is
   paid. The rail draws a stepper rather than up to 21 buttons — the one
   deliberate exception to "every legal action is a button", recorded in
