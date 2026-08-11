@@ -237172,12 +237172,12 @@
     },
     "Seer's Sundial": {
       "edhrec_rank": 4344,
-      "gate": "template",
+      "gate": null,
       "name": "Seer's Sundial",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "bde9a59a-ff01-4e0f-b438-1d1fe49ec660",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seer's Vision": {

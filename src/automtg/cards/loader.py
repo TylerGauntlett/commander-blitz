@@ -30,7 +30,7 @@ from automtg.engine.mana import ManaCost, parse_mana_production
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 
-from .schema import AbilityModel, CardModel, DeckModel, TargetModel
+from .schema import AbilityModel, CardModel, CostModel, DeckModel, TargetModel
 
 KNOWN_TYPES = frozenset(t.value for t in CardType)
 KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
@@ -574,20 +574,11 @@ def _compile_cost(model, where: str) -> Cost:
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
     if model.discard_selector is not None and not model.discard:
         raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
-    return Cost(
-        mana=ManaCost.parse(model.mana),
-        tap=model.tap,
-        untap=model.untap,
-        sacrifice=dict(model.sacrifice) if model.sacrifice else None,
-        discard=model.discard,
-        discard_selector=dict(model.discard_selector) if model.discard_selector else None,
-        discard_self=model.discard_self,
-        pay_life=model.pay_life,
-        remove_counters=dict(model.remove_counters) if model.remove_counters else None,
-        exile_from_graveyard=(
-            dict(model.exile_from_graveyard) if model.exile_from_graveyard else None
-        ),
-    )
+    # One constructor for both spellings of a cost -- the model here, and the
+    # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
+    cost = Cost.from_spec(model.model_dump())
+    assert cost is not None  # model_dump() is never None
+    return cost
 
 
 def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int, ...], ...]:
@@ -647,6 +638,21 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
 
+    if op == "may" and "pay" in effect:
+        # "You may pay {2}. If you do, draw a card." Validated through the same
+        # CostModel an activated ability's cost uses, so an unknown key here is a
+        # load error rather than a cost quietly dropped -- which would turn a
+        # card that draws for {2} into one that draws free.
+        if not isinstance(effect["pay"], dict):
+            raise DslError(f"{where}: 'pay' must be an object")
+        try:
+            CostModel.model_validate(effect["pay"])
+        except Exception as exc:  # pydantic ValidationError
+            raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        if not effect.get("effects"):
+            raise DslError(
+                f"{where}: 'pay' needs 'effects' -- paying for nothing is not a card"
+            )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:
