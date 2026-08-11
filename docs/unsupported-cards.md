@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**17 cards** blocked by **14** capabilities.
+**17 cards** blocked by **13** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
-| [blocking-restriction](#blocking-restriction) | 1 | 22408 | keyword |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
@@ -121,7 +120,7 @@ Blocks **2** cards.
   - Scope: only the "unless an opponent has 10 or less life" clause is blocked. The `upkeep` trigger (`{"event": "upkeep", "controller": "you"}`, exactly as Phyrexian Arena writes it) and the `lose_life` half are both expressible today, so this card becomes writable the moment the quantifier below exists.
 - **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
   - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
-  - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
+  - Scope (updated): two of the three blockers on this card's ONE printed line have now shipped. `static_condition` gave the "as long as" tree, and `intimidate` is `Keyword.INTIMIDATE`, compared on derived colors in `combat.can_block` -- so `"keywords": ["intimidate"]` and a conditional `buff` with `affects.self_only` are both expressible today. The card is blocked on exactly one thing: the condition has no leaf that can ask about ONE opponent's life total.
 
 </details>
 
@@ -158,21 +157,6 @@ Blocks **1** card.
   - Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)
   - This creature has flying as long as you have the city's blessing.
   - Scope: both printed lines are blocked, and the second is blocked twice over -- once because there is nothing to ask about (no city's blessing exists to be read) and once because a static's `condition` may not ask it even if it did. The card already in the hand-written pool (`data/cards/edgar.cards.json`) carries the correct printed `oracle_text` but implements neither line; it is a vanilla 2/1 Vampire Soldier, and `tests/cards/precon_deficits.json` records exactly that residual. No partial answer is possible: printing `"keywords": ["flying"]` unconditionally would be a strictly better card than the one printed (a 2/1 flier for {W} that flies from turn one regardless of board), and it would still leave the Ascend line unclaimed by any ability.
-
-</details>
-
-## blocking-restriction
-
-Blocks **1** card.
-
-- **(keyword)** the `intimidate` evasion keyword -- "this creature can't be blocked except by artifact creatures and/or creatures that share a color with it" -- as a `Keyword` enum member the loader accepts, plus the block-legality rule behind it in `combat.can_block`: a declared blocker is legal only if it has the Artifact type OR its colors intersect the attacker's colors. It must read *derived* colors and types of both creatures at declare-blockers time, so a creature that has been made black can block this and this creature being made a second color widens who may block it. NOTE (updated): the two sibling needs once filed under this slug have both shipped -- Stromkirk Noble's fixed-quality form is the `block_restriction` static with a `blockers` filter, and Vampire Cutthroat's relative-power form is `Keyword.SKULK`, compared in `can_block`. Neither reaches this card. Intimidate is a third shape again: a relation between the two creatures' COLORS (and one type escape hatch), stated as an exemption rather than a prohibition.
-  <br>Why the existing vocabulary won't do: `Keyword` (`engine/enums.py`) is a closed enum and `KNOWN_KEYWORDS` is derived from it, so a card printing `intimidate` in its `keywords` or granting it via `grant_keyword` is a `DslError` at load, not a silent no-op. Nothing in `EVASION_KEYWORDS` is a colour-based evasion. Menace is the nearest keyword and is wrong in both directions -- it permits any two creatures of any colour to block, and forbids a lone artifact creature or a lone black creature from blocking, which intimidate expressly allows. `skulk` is the newest arrival and is the right *shape* -- a comparison between the two creatures, read from derived characteristics in `can_block` -- but it compares power and takes no parameter, so it cannot be reused or parameterised into this. The `block_restriction` static is wrong twice over: its `blockers` filter is a PROHIBITION ("can't be blocked by X") while intimidate is an EXEMPTION ("can't be blocked EXCEPT by X"), which is a negation the positive-conjunctive filter language cannot express; and it is a static filter, so it reads printed characteristics only, while the colour relation must see derived colours on both sides. `protection` (the one parameterised static, with `from_colors`) is also a stop rather than an exemption, it blanks damage, targeting and enchanting as well, and its `from_colors` is a fixed literal list, so it cannot say "shares a color with THIS creature" and would have to be rewritten if the creature's colour changed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
-  - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
-  - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
 
 </details>
 

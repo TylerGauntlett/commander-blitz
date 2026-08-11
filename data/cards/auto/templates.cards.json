@@ -107,6 +107,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "accursed_spirit",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Accursed Spirit",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -2195,6 +2219,32 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "barbarian_general",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Barbarian General",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Barbarian",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -2825,6 +2875,30 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bladetusk_boar",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Bladetusk Boar",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Boar"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -5953,6 +6027,31 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dauthi_marauder",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dauthi Marauder",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dauthi",
+        "Minion"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -6976,6 +7075,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dross_prowler",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dross Prowler",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -7205,6 +7328,30 @@
       "toughness": 4,
       "types": [
         "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dryad_sophisticate",
+      "keywords": [
+        "nonbasic_landwalk"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Dryad Sophisticate",
+      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dryad"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -9958,6 +10105,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gluttonous_zombie",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Gluttonous Zombie",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -11864,6 +12035,30 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "highborn_ghoul",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{B}{B}",
+      "name": "Highborn Ghoul",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -14520,6 +14715,31 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "krenko_s_enforcer",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{1}{R}{R}",
+      "name": "Krenko's Enforcer",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -14556,6 +14776,35 @@
       "subtypes": [
         "Human",
         "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lady_zhurong_warrior_queen",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Lady Zhurong, Warrior Queen",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Warrior"
       ],
       "supertypes": [
         "Legendary"
@@ -15393,6 +15642,64 @@
         "Dog"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "lu_bu_master_at_arms",
+      "keywords": [
+        "haste",
+        "horsemanship"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Lu Bu, Master-at-Arms",
+      "oracle_text": "Haste; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lu_meng_wu_general",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{U}{U}",
+      "name": "Lu Meng, Wu General",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -19396,6 +19703,31 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "prickly_boggart",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{B}",
+      "name": "Prickly Boggart",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -20562,6 +20894,30 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "razortooth_rats",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Razortooth Rats",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Rat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -22734,6 +23090,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "severed_legion",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Severed Legion",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -23654,6 +24034,82 @@
         "Knight"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Shu Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_elite_companions",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Shu Elite Companions",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_general",
+      "keywords": [
+        "vigilance",
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Shu General",
+      "oracle_text": "Vigilance; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -24731,6 +25187,31 @@
       "colors": [
         "W"
       ],
+      "id": "soltari_foot_soldier",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{W}",
+      "name": "Soltari Foot Soldier",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Soltari",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "space_marine_scout",
       "keywords": [
         "first_strike",
@@ -24839,6 +25320,31 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spectral_rider",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Spectral Rider",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -25078,6 +25584,30 @@
         "Fungus"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "squirming_mass",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Squirming Mass",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -27228,6 +27758,31 @@
         "Legendary"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thalakos_sentry",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Thalakos Sentry",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Thalakos",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -30356,6 +30911,82 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_elite_companions",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Wei Elite Companions",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_scout",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Wei Scout",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_strike_force",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Wei Strike Force",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -31027,6 +31658,56 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wu_elite_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Wu Elite Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wu_light_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Wu Light Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -31400,6 +32081,36 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "zhang_fei_fierce_warrior",
+      "keywords": [
+        "vigilance",
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Zhang Fei, Fierce Warrior",
+      "oracle_text": "Vigilance; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

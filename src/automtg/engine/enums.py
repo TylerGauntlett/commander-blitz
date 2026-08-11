@@ -147,6 +147,23 @@ class Keyword(str, Enum):
     #: skulk must read derived power on both sides, so an anthem, a pump spell
     #: or a +1/+1 counter on either creature changes who may block.
     SKULK = "skulk"
+    #: Fear (702.36), intimidate (702.13), horsemanship (702.32) and shadow
+    #: (702.28).  Four more evasions in the shape skulk opened: the condition is
+    #: a quality of the *would-be blocker*, or a relation between the two
+    #: creatures, and it is asked of **derived** characteristics when blockers
+    #: are declared.  None takes a parameter -- "artifact and/or black" and
+    #: "shares a color with it" are the whole content of the quality, not an
+    #: argument to it -- so there is nothing for a static to carry, and a
+    #: `block_restriction`'s `blockers` filter could not say them anyway: it is
+    #: a prohibition and these are exemptions, and it reads printed
+    #: characteristics while a creature made black may block a fear creature.
+    FEAR = "fear"
+    INTIMIDATE = "intimidate"
+    HORSEMANSHIP = "horsemanship"
+    #: Shadow is the only evasion that cuts both ways -- "can block or be
+    #: blocked by only creatures with shadow" -- which is why it is a keyword
+    #: read symmetrically rather than a restriction hung on the attacker.
+    SHADOW = "shadow"
     FIRST_STRIKE = "first_strike"
     DOUBLE_STRIKE = "double_strike"
     DEFENDER = "defender"
@@ -166,6 +183,11 @@ class Keyword(str, Enum):
     SWAMPWALK = "swampwalk"
     MOUNTAINWALK = "mountainwalk"
     FORESTWALK = "forestwalk"
+    #: Nonbasic landwalk, the same rule with the test inverted: a *supertype*
+    #: the land must lack rather than a subtype it must have.  So it cannot be a
+    #: sixth `LANDWALK_SUBTYPE` row, and it is a separate keyword for the reason
+    #: the other five are separate from each other -- `Keyword` is a bare string.
+    NONBASIC_LANDWALK = "nonbasic_landwalk"
     INDESTRUCTIBLE = "indestructible"
     FLASH = "flash"
     #: Deck construction only -- "you can have two commanders if both have
@@ -185,7 +207,16 @@ LANDWALK_SUBTYPE = {
 }
 
 EVASION_KEYWORDS = frozenset(
-    {Keyword.FLYING, Keyword.MENACE, Keyword.SKULK}
+    {
+        Keyword.FLYING,
+        Keyword.MENACE,
+        Keyword.SKULK,
+        Keyword.FEAR,
+        Keyword.INTIMIDATE,
+        Keyword.HORSEMANSHIP,
+        Keyword.SHADOW,
+        Keyword.NONBASIC_LANDWALK,
+    }
     | {Keyword(k) for k in LANDWALK_SUBTYPE}
 )
 

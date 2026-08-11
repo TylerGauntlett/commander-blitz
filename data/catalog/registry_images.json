@@ -11,6 +11,10 @@
     "artist": "Alan Pollack",
     "scryfall_id": "c5a4c2ab-c5bc-4e07-8671-a688ebd5471c"
   },
+  "accursed_spirit": {
+    "artist": "Kev Walker",
+    "scryfall_id": "e8e26415-b1af-4718-9aef-aca0297d176f"
+  },
   "acidic_slime": {
     "artist": "Michele Giorgi",
     "scryfall_id": "9e2ee84d-1d11-48a3-b79d-6a67991a2e60"
@@ -267,6 +271,10 @@
     "artist": "Donato Giancola",
     "scryfall_id": "dc506497-4ecd-41d3-9042-f92f498251b0"
   },
+  "barbarian_general": {
+    "artist": "Kuang Sheng",
+    "scryfall_id": "060da652-03c7-45e3-ad83-f0a9fa9d1049"
+  },
   "baron_airship_kingdom": {
     "artist": "Rockey Chen",
     "scryfall_id": "6e4bf840-802d-47d5-bffd-8ba495e19cf6"
@@ -350,6 +358,10 @@
   "bladed_pinions": {
     "artist": "Steve Argyle",
     "scryfall_id": "bf479c90-c791-4152-a8e6-fd3123f698df"
+  },
+  "bladetusk_boar": {
+    "artist": "Sam Burley",
+    "scryfall_id": "5f157fb0-81ac-4108-aafc-7ee81df965a9"
   },
   "blasted_landscape": {
     "artist": "Ciruelo",
@@ -675,6 +687,10 @@
     "artist": "Jeremy Paillotin",
     "scryfall_id": "bcb5a670-7c8f-4b76-82c6-c89abffbb4bd"
   },
+  "dauthi_marauder": {
+    "artist": "Andrew Robinson",
+    "scryfall_id": "ee847d84-ec8d-4ec3-8436-68d6f144e22f"
+  },
   "dawn_s_light_archer": {
     "artist": "Scott Gustafson",
     "scryfall_id": "76e80656-6bcb-4d99-8bd2-ca5f75f40daf"
@@ -799,6 +815,10 @@
     "artist": "Jonas De Ro",
     "scryfall_id": "8cb024fa-2df1-4414-b0d7-6f700d152c51"
   },
+  "dross_prowler": {
+    "artist": "Michael Sutfin",
+    "scryfall_id": "1fff470a-3574-42be-8f0b-ac5e7a70f61a"
+  },
   "drossforge_bridge": {
     "artist": "Raoul Vitale",
     "scryfall_id": "707bc538-cdc1-49ca-9c36-3d6d5245d962"
@@ -818,6 +838,10 @@
   "dryad_of_the_ilysian_grove": {
     "artist": "Scott Murphy",
     "scryfall_id": "76e85c9f-bd0a-4285-b86c-69e170d4405a"
+  },
+  "dryad_sophisticate": {
+    "artist": "Ron Spears",
+    "scryfall_id": "0b5bf5ce-f7f8-47cb-abb8-f14ce5f1af67"
   },
   "dusk_legion_zealot": {
     "artist": "Winona Nelson",
@@ -1143,6 +1167,10 @@
     "artist": "Jonas De Ro",
     "scryfall_id": "8943cd0a-cfa3-4795-82c1-c500e9a7269b"
   },
+  "gluttonous_zombie": {
+    "artist": "Thomas M. Baxa",
+    "scryfall_id": "7741c976-000d-476c-9b53-34ef1ee701e1"
+  },
   "go_for_the_throat": {
     "artist": "Kael Ngu",
     "scryfall_id": "f608fcd6-b59d-457e-879e-bcc53e15bc15"
@@ -1330,6 +1358,10 @@
   "heros_downfall": {
     "artist": "Zoltan Boros",
     "scryfall_id": "10cedc6d-075a-4f9b-a858-e2c29809ee33"
+  },
+  "highborn_ghoul": {
+    "artist": "Volkan Ba\u01f5a",
+    "scryfall_id": "fbe999ed-b419-440c-9189-1046f43d7b87"
   },
   "highland_forest": {
     "artist": "Alayna Danner",
@@ -1607,6 +1639,10 @@
     "artist": "Dan Murayama Scott",
     "scryfall_id": "9155825a-6449-4b36-aa14-4c227075ed51"
   },
+  "krenko_s_enforcer": {
+    "artist": "Karl Kopinski",
+    "scryfall_id": "a3aaaa79-b8d1-40b2-a63c-f682b99a680b"
+  },
   "krenkos_command": {
     "artist": "Lucas Graciano",
     "scryfall_id": "edd9e8d3-6e30-43fc-8931-0f5c07a0e5b7"
@@ -1618,6 +1654,10 @@
   "kydele_chosen_of_kruphix": {
     "artist": "Bastien L. Deharme",
     "scryfall_id": "86eee902-dc0b-48d0-a8db-7e6de89977ef"
+  },
+  "lady_zhurong_warrior_queen": {
+    "artist": "Miao Aili",
+    "scryfall_id": "009661e7-c704-43a1-82e3-7da0b609844e"
   },
   "lapis_orb_of_dragonkind": {
     "artist": "Olena Richards",
@@ -1698,6 +1738,14 @@
   "loyal_warhound": {
     "artist": "Filip Burburan",
     "scryfall_id": "1d01ce54-3f64-465e-835a-27c55753926b"
+  },
+  "lu_bu_master_at_arms": {
+    "artist": "Gao Jianzhang",
+    "scryfall_id": "07d60c27-8625-48eb-a3f0-1e26d6930ae7"
+  },
+  "lu_meng_wu_general": {
+    "artist": "Gao Yan",
+    "scryfall_id": "77a8b376-eda5-4bf9-9093-9518c09e50e8"
   },
   "lumbering_falls": {
     "artist": "Daniel Romanovsky",
@@ -2099,6 +2147,10 @@
     "artist": "Aitor Sebasti\u00e1n",
     "scryfall_id": "8221b564-acf0-4d82-94f5-2ba1337ff5e1"
   },
+  "prickly_boggart": {
+    "artist": "Jesper Ejsing",
+    "scryfall_id": "55121b63-22a6-4923-82e9-c55f66742980"
+  },
   "priest_of_titania": {
     "artist": "Rebecca Guay",
     "scryfall_id": "c777b6f4-38de-4cba-b050-361b0f5bc560"
@@ -2218,6 +2270,10 @@
   "razortide_bridge": {
     "artist": "Rob Alexander",
     "scryfall_id": "0bbd24cd-48f7-40d7-9741-f30108f04b84"
+  },
+  "razortooth_rats": {
+    "artist": "Carl Critchlow",
+    "scryfall_id": "92750247-eba4-4810-a758-f943cd8a16b1"
   },
   "reach_through_mists": {
     "artist": "Anthony S. Waters",
@@ -2459,6 +2515,10 @@
     "artist": "Ciruelo",
     "scryfall_id": "f7a18130-dbaa-4657-a885-3a96a985935a"
   },
+  "severed_legion": {
+    "artist": "Dany Orizio",
+    "scryfall_id": "1a83c90f-f737-452c-b324-e825d181d1fe"
+  },
   "shadowblood_ridge": {
     "artist": "Ramza Psyru",
     "scryfall_id": "4d02658c-bbe8-4673-8b44-0b24e0155a85"
@@ -2514,6 +2574,18 @@
   "shrike_force": {
     "artist": "N\u00e9stor Ossand\u00f3n Leal",
     "scryfall_id": "306fec2c-d8b7-4f4b-8f58-10e3b9f3158f"
+  },
+  "shu_cavalry": {
+    "artist": "Li Xiaohua",
+    "scryfall_id": "0433bee7-406d-4dd3-8d1b-dfd6cb64d038"
+  },
+  "shu_elite_companions": {
+    "artist": "Qiao Dafu",
+    "scryfall_id": "11ac63f6-cd61-4334-902a-777410311b2d"
+  },
+  "shu_general": {
+    "artist": "Li Xiaohua",
+    "scryfall_id": "c9c3be7a-82a8-411c-bfe2-16749ada1244"
   },
   "shuko": {
     "artist": "Greg Hildebrandt",
@@ -2635,6 +2707,10 @@
     "artist": "Flavio Greco Paglia",
     "scryfall_id": "d00a69f9-0364-4a2f-9493-4e0d0db7f37f"
   },
+  "soltari_foot_soldier": {
+    "artist": "Janet Aulisio",
+    "scryfall_id": "3524d78b-d120-46ff-83e3-c502589fd5ba"
+  },
   "space_marine_scout": {
     "artist": "Games Workshop",
     "scryfall_id": "1d7c6801-2c75-435c-a16b-a30b8c3a6be2"
@@ -2642,6 +2718,10 @@
   "spara_s_headquarters": {
     "artist": "WFlemming Illustration",
     "scryfall_id": "0ddd6093-eb29-4a1a-a0af-debb86c9cadd"
+  },
+  "spectral_rider": {
+    "artist": "Igor Kieryluk",
+    "scryfall_id": "b47e4e56-8bde-480d-b59c-17a017665b19"
   },
   "sphinx_of_magosi": {
     "artist": "James Ryman",
@@ -2670,6 +2750,10 @@
   "sporemound": {
     "artist": "Svetlin Velinov",
     "scryfall_id": "90594c9c-95a5-4d3c-9005-863fa710cdbd"
+  },
+  "squirming_mass": {
+    "artist": "Ron Spencer",
+    "scryfall_id": "e47793a3-9a98-4733-8d6a-2fb1a67b15c9"
   },
   "steam_vents": {
     "artist": "Shahab Alizadeh",
@@ -2874,6 +2958,10 @@
   "terrian_world_tyrant": {
     "artist": "Nicholas Gregory",
     "scryfall_id": "b44255cf-5264-4ead-9de0-20cc0f7cac6f"
+  },
+  "thalakos_sentry": {
+    "artist": "Andrew Robinson",
+    "scryfall_id": "739a13d6-5f73-4166-b923-9db8ee3f2cf7"
   },
   "thalia_heretic_cathar": {
     "artist": "Rian Gonzales",
@@ -3227,6 +3315,18 @@
     "artist": "JB Casacop",
     "scryfall_id": "b279f268-c37e-4a2d-8195-74f4881226fc"
   },
+  "wei_elite_companions": {
+    "artist": "Li Youliang",
+    "scryfall_id": "843cbf18-60ac-4d97-b156-874735db61c6"
+  },
+  "wei_scout": {
+    "artist": "Jiang Zhuqing",
+    "scryfall_id": "a11d58fb-fb70-4e8f-8f64-232ad2c1f59b"
+  },
+  "wei_strike_force": {
+    "artist": "Tang Xiaogu",
+    "scryfall_id": "6eae8ce1-b21f-4d64-91ff-e98bf6a4548a"
+  },
   "whelming_wave": {
     "artist": "Slawomir Maniak",
     "scryfall_id": "ddb863a0-3ff8-42a3-a151-4ea9aa433336"
@@ -3299,6 +3399,14 @@
     "artist": "Johan Grenier",
     "scryfall_id": "aeff3db7-81ac-4c51-9954-bc1dbcb8c4e3"
   },
+  "wu_elite_cavalry": {
+    "artist": "Li Wang",
+    "scryfall_id": "7cf562e2-be8e-4514-b2c8-3268dc1ab0db"
+  },
+  "wu_light_cavalry": {
+    "artist": "Huang Qishi",
+    "scryfall_id": "60e55b25-fde2-4b57-b5db-65b75262ff3d"
+  },
   "xander_s_lounge": {
     "artist": "V\u00e9ronique Meignaud",
     "scryfall_id": "1d96f496-1fc1-4e66-878a-b0905e920cdc"
@@ -3334,6 +3442,10 @@
   "zhalfirin_void": {
     "artist": "Chase Stone",
     "scryfall_id": "e653a3ff-d421-403b-9142-27fa02eabf31"
+  },
+  "zhang_fei_fierce_warrior": {
+    "artist": "Qiao Dafu",
+    "scryfall_id": "2a58ec38-f1dc-4c69-9d26-a4599bce586a"
   },
   "ziatora_s_proving_ground": {
     "artist": "Elektrodeko",

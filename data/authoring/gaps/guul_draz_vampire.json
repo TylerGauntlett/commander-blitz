@@ -4,16 +4,9 @@
  "oracle_text": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
  "blocked_sentences": [
   "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
-  "Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{\"kind\": \"static\", \"effect\": \"buff\", \"affects\": {\"self_only\": true}, \"power\": {\"const\": 2}, \"toughness\": {\"const\": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue."
+  "Scope (updated): two of the three blockers on this card's ONE printed line have now shipped. `static_condition` gave the \"as long as\" tree, and `intimidate` is `Keyword.INTIMIDATE`, compared on derived colors in `combat.can_block` -- so `\"keywords\": [\"intimidate\"]` and a conditional `buff` with `affects.self_only` are both expressible today. The card is blocked on exactly one thing: the condition has no leaf that can ask about ONE opponent's life total."
  ],
  "needs": [
-  {
-   "capability": "blocking_restriction",
-   "kind": "keyword",
-   "what": "the `intimidate` evasion keyword -- \"this creature can't be blocked except by artifact creatures and/or creatures that share a color with it\" -- as a `Keyword` enum member the loader accepts, plus the block-legality rule behind it in `combat.can_block`: a declared blocker is legal only if it has the Artifact type OR its colors intersect the attacker's colors. It must read *derived* colors and types of both creatures at declare-blockers time, so a creature that has been made black can block this and this creature being made a second color widens who may block it. NOTE (updated): the two sibling needs once filed under this slug have both shipped -- Stromkirk Noble's fixed-quality form is the `block_restriction` static with a `blockers` filter, and Vampire Cutthroat's relative-power form is `Keyword.SKULK`, compared in `can_block`. Neither reaches this card. Intimidate is a third shape again: a relation between the two creatures' COLORS (and one type escape hatch), stated as an exemption rather than a prohibition.",
-   "why_existing_wont_do": "`Keyword` (`engine/enums.py`) is a closed enum and `KNOWN_KEYWORDS` is derived from it, so a card printing `intimidate` in its `keywords` or granting it via `grant_keyword` is a `DslError` at load, not a silent no-op. Nothing in `EVASION_KEYWORDS` is a colour-based evasion. Menace is the nearest keyword and is wrong in both directions -- it permits any two creatures of any colour to block, and forbids a lone artifact creature or a lone black creature from blocking, which intimidate expressly allows. `skulk` is the newest arrival and is the right *shape* -- a comparison between the two creatures, read from derived characteristics in `can_block` -- but it compares power and takes no parameter, so it cannot be reused or parameterised into this. The `block_restriction` static is wrong twice over: its `blockers` filter is a PROHIBITION (\"can't be blocked by X\") while intimidate is an EXEMPTION (\"can't be blocked EXCEPT by X\"), which is a negation the positive-conjunctive filter language cannot express; and it is a static filter, so it reads printed characteristics only, while the colour relation must see derived colours on both sides. `protection` (the one parameterised static, with `from_colors`) is also a stop rather than an exemption, it blanks damage, targeting and enchanting as well, and its `from_colors` is a fixed literal list, so it cannot say \"shares a color with THIS creature\" and would have to be rewritten if the creature's colour changed",
-   "related_capability": "blocking_restriction"
-  },
   {
    "capability": "player_quantifier",
    "kind": "value",
@@ -23,10 +16,8 @@
   }
  ],
  "closest_existing": [
-  "menace",
-  "blocking_restriction",
-  "protection (static, from_colors)",
-  "static condition {\"counters\": ...}",
+  "intimidate",
+  "static condition (all/any/not/exists/is_your_turn/cmp)",
   "static_effect buff with affects self_only",
   "life_of",
   "min"

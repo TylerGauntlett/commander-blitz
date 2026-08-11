@@ -1,3 +1,112 @@
+## Evasion — the five questions `can_block` could not ask
+
+### Overview
+
+Five keywords in one run, which reads like a violation of "one capability per
+run" and is the opposite of one. Fear, intimidate, horsemanship, shadow and
+nonbasic landwalk are not five mechanics; they are five instances of a mechanism
+`can_block` already had, and skulk had already paid for. That is the landwalk
+precedent exactly — five keywords, one rule, one test file — and the argument is
+in [keywords.md](keywords.md), which is what made this sizeable in the first
+place.
+
+The demand-driven report could not have surfaced this. Only intimidate had a gap
+record (Guul Draz Vampire's, filed against `blocking-restriction`, which the
+skulk run had already narrowed to this one card). The census is what showed that
+the *other four* were sitting behind the same rule with 108 pending cards
+between them, and that once they shipped the evasion family would be closed —
+everything left in combat (flanking, rampage, bushido, frenzy, provoke) wants a
+trigger event rather than a block rule, which is a different tier of work.
+
+### What shipped
+
+Five `Keyword` members and five checks in `combat.can_block`, plus one helper.
+Each is two or three lines:
+
+```python
+if Keyword.HORSEMANSHIP.value in ac.keywords and (
+    Keyword.HORSEMANSHIP.value not in bc.keywords
+):
+    return False
+
+if (Keyword.SHADOW.value in ac.keywords) != (Keyword.SHADOW.value in bc.keywords):
+    return False
+
+if "Artifact" not in bc.types:
+    if Keyword.FEAR.value in ac.keywords and "B" not in bc.colors:
+        return False
+    if Keyword.INTIMIDATE.value in ac.keywords and not (ac.colors & bc.colors):
+        return False
+```
+
+Keywords rather than `block_restriction` statics, and this run added a **second**
+reason to the one skulk established. The derived-versus-printed argument covers
+fear and intimidate — a land animated into a black creature may block a fear
+creature, and a static filter reads printed characteristics by design. But
+horsemanship's quality is printed, so that argument alone would not have settled
+it. The one that does is structural: a `blockers` filter is a **prohibition**
+("can't be blocked by Humans") and all four of these are **exemptions** ("can't
+be blocked *except* by …"). The filter language is a positive conjunction and
+its negation is not another key. That corollary is now written down in
+`keywords.md` beside the other two.
+
+Three of the five are their own shape and each has a boundary that a plausible
+implementation gets wrong:
+
+- **intimidate** compares the two creatures, on colors. A **colorless** creature
+  with intimidate shares a color with nothing, so only an artifact creature may
+  block it. Read as "is not a different color" it inverts into nearly the
+  opposite card.
+- **shadow** is the only evasion that is not an attacker-side rule at all.
+  702.28b is "can block **or** be blocked by only creatures with shadow", so the
+  check asks whether the two creatures *agree*. Hung on the attacker it would be
+  half a mechanic, and the missing half is the one that stops a Dauthi
+  Voidwalker from blocking.
+- **nonbasic landwalk** is 702.14 with the test inverted: a supertype the
+  defending player's land must *lack*. So it could not be a sixth
+  `LANDWALK_SUBTYPE` row, and "the defender controls eight Forests" is the case
+  that separates it from a naive "controls a land".
+
+One importer change, because Portal Three Kingdoms prints horsemanship as
+"Haste; horsemanship" and `proxy.lift_keywords` split on commas only. It now
+splits on semicolons too, which widens nothing: the check is still all-or-nothing
+over every part, so "Trample; rampage 2" and "First strike; banding" still fail
+on their second part exactly as they did when the line was unsplittable.
+
+Nothing else. `KNOWN_KEYWORDS` derives from the enum, so the loader, the
+residual gate and the importer picked all five up unprompted; `grant_keyword`
+carries them because the checks read the characteristic layer. Server and
+frontend: no change.
+
+### Harvested
+
+**28 cards**, across all five keywords — thirteen horsemanship, six fear, five
+intimidate, three shadow, and Dryad Sophisticate. Three of those (Lu Bu, Shu
+General, Zhang Fei) exist only because of the semicolon fix.
+
+The other 94 pending cards printing one of these keywords have no template,
+because they print something else as well; they stay in the agent tier for the
+next `/author-cards`, which is the ordinary outcome.
+
+`blocking-restriction` is retired from `unsupported-cards.md` entirely. Guul
+Draz Vampire's record survives with **one** need instead of three — the `+2/+1`
+and the `intimidate` halves are both expressible now, and what is left is a
+condition leaf that can ask about *one* opponent's life total rather than the
+sum. That is `player-quantifier`, which two cards now share.
+
+### Guarded by
+
+`tests/unit/test_evasion_keywords.py`. One class per keyword, plus a class for
+the claim they share. Every class carries its pair — a creature *without* the
+keyword being blocked normally — because a rule that refused every block would
+otherwise look identical from the refusals alone. The boundaries are tested in
+preference to the happy paths: the colorless intimidator against three different
+blockers, shadow refused in **both** directions, and nonbasic landwalk against a
+board of basics and against a dual on the *attacker's* side. The derived half is
+pinned with `animate`, which is the only way to change a creature's colour — a
+Forest cannot block a fear creature until it is animated into a black one, and
+then it can.
+
 ## Static conditions — "as long as", widened past its own counters
 
 ### Overview
