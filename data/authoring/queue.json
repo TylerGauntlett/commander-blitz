@@ -290972,12 +290972,12 @@
     },
     "Tromokratis": {
       "edhrec_rank": 4894,
-      "gate": "template",
+      "gate": null,
       "name": "Tromokratis",
-      "reason": "no template for: has hexproof unless it's attacking or blocking",
+      "reason": "",
       "scryfall_id": "f40ad933-ddd9-4975-a222-21fe3305137c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tromp the Domains": {

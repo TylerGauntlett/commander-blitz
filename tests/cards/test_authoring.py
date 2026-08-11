@@ -238,7 +238,7 @@ class TestThePacketCarriesTheWholeVocabulary:
 
     def test_it_lists_every_vocabulary_the_loader_validates_against(self):
         from automtg.cards.authoring.packet import reference
-        from automtg.cards.loader import STATIC_FILTER_KEYS
+        from automtg.cards.loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
         from automtg.engine.effects import known_ops
         from automtg.engine.effects.conditions import CONDITION_KEYS
         from automtg.engine.effects.selectors import SELECTOR_KEYS
@@ -251,6 +251,7 @@ class TestThePacketCarriesTheWholeVocabulary:
             ("condition_keys", CONDITION_KEYS),
             ("value_keys", VALUE_KEYS),
             ("static_filter_keys", STATIC_FILTER_KEYS),
+            ("static_effects", STATIC_EFFECTS),
         ):
             assert set(ref[key]) == set(expected), (
                 f"packet {key!r} has drifted from the set the loader enforces; a "

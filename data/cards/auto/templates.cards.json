@@ -27732,6 +27732,54 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attacking": false,
+            "blocking": false,
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Tromokratis has hexproof unless it's attacking or blocking."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "require_all": true,
+          "text": "Tromokratis can't be blocked unless all creatures defending player controls block it."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tromokratis",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Tromokratis",
+      "oracle_text": "Tromokratis has hexproof unless it's attacking or blocking.\nTromokratis can't be blocked unless all creatures defending player controls block it. (If any creature that player controls doesn't block this creature, it can't be blocked.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

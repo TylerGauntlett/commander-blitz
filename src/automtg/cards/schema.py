@@ -125,6 +125,15 @@ class AbilityModel(BaseModel):
     from_types: list[str] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
+    #: ``block_restriction``: which would-be blockers are refused. A static
+    #: filter over the *blocker*, so "can't be blocked by Humans" is
+    #: ``{"subtypes": ["Human"]}``.
+    blockers: dict[str, Any] | None = None
+    #: ``block_restriction``: Tromokratis' "can't be blocked unless all
+    #: creatures defending player controls block it". Judged on the whole
+    #: declaration rather than per pair, so it cannot be a ``blockers``
+    #: filter.
+    require_all: bool = False
 
 
 class ReplacementModel(BaseModel):

@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .characteristics import chars, protected_from
+from .characteristics import block_restrictions, chars, matches_static, protected_from
 from .enums import Keyword
 from .events import EventType
 from .primitives import damage_permanent, damage_player, tap_permanent
@@ -150,6 +150,22 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     )
     if Keyword.FLYING.value in ac.keywords and grounded:
         return False
+
+    # "This creature can't be blocked by Humans." A card-supplied restriction,
+    # checked on the attacker because the attacker is what has it and the
+    # blocker is what has the quality -- the same asymmetry as protection above.
+    for source_obj, static in block_restrictions(state, attacker_oid):
+        spec = static.get("blockers")
+        if spec is None:
+            continue
+        # `controller` defaults to "you" everywhere else a static filter is
+        # read, and here that default is always wrong: a blocker belongs to the
+        # defending player by definition, so "you" would match nothing and the
+        # restriction would silently never fire. Whose creature it is has
+        # already been settled above; this clause is only about what it *is*.
+        spec = {"controller": "any", **dict(spec)}
+        if matches_static(state, blocker, source_obj, spec):
+            return False
     return True
 
 
@@ -178,8 +194,11 @@ def add_blocker(state: GameState, blocker_oid: int, attacker_oid: int, defender:
 def blocks_valid(state: GameState, defender: int) -> bool:
     """Check evasion requirements that only make sense on the *complete* declaration.
 
-    Menace is the only one implemented: an attacker with menace must be blocked
-    by zero or at least two creatures.
+    Two of them.  Menace: an attacker with menace must be blocked by zero or at
+    least two creatures.  And ``require_all``, Tromokratis' "can't be blocked
+    unless all creatures defending player controls block it" -- which cannot be
+    a per-pair check, because whether *this* block is legal depends on what
+    every other creature is doing.
     """
     combat = state.combat
     if combat is None:
@@ -198,6 +217,33 @@ def blocks_valid(state: GameState, defender: int) -> bool:
             and Keyword.MENACE.value in chars(state, attacker_oid).keywords
             and len(blockers) < 2
         ):
+            return False
+        if blockers and not _all_blockers_present(state, attacker_oid, defender, blockers):
+            return False
+    return True
+
+
+def _all_blockers_present(
+    state: GameState, attacker_oid: int, defender: int, blockers: list[int]
+) -> bool:
+    """Tromokratis: every creature the defending player controls must be blocking it.
+
+    The reminder text is literal -- "if any creature that player controls doesn't
+    block this creature, it can't be blocked" -- and it says *controls*, not
+    "could block". A tapped creature therefore makes the block illegal too,
+    which is why the card is nearly unblockable and is the whole point of it.
+    """
+    for _source, static in block_restrictions(state, attacker_oid):
+        if not static.get("require_all"):
+            continue
+        theirs = {
+            oid
+            for oid in state.battlefield
+            if (obj := state.objects.get(oid)) is not None
+            and obj.controller == defender
+            and "Creature" in chars(state, oid).types
+        }
+        if theirs - set(blockers):
             return False
     return True
 

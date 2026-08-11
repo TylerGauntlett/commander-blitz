@@ -67,6 +67,10 @@ STATIC_EFFECTS = frozenset(
         # where nothing can go on the stack.
         "double_land_mana",
         "freeze_opponent_lands",
+        # "This creature can't be blocked by Humans", and Tromokratis'
+        # "can't be blocked unless all creatures defending player controls
+        # block it".  Read by `combat`, not by the characteristics pipeline.
+        "block_restriction",
     }
 )
 
@@ -461,6 +465,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: static filters may only read printed characteristics; "
                 f"unsupported keys {sorted(unknown)}"
             )
+    if model.effect == "block_restriction":
+        # Exactly one of the two forms, because they are evaluated at different
+        # moments and a static carrying neither is an evasion ability that
+        # evades nothing -- which loads clean and shows nothing on the board.
+        if (model.blockers is None) == (not model.require_all):
+            raise DslError(
+                f"{where}: block_restriction needs exactly one of 'blockers' "
+                f"(a filter on the would-be blocker) or 'require_all'"
+            )
+        if model.blockers is not None:
+            unknown = set(model.blockers) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}: block_restriction 'blockers' may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
+    elif model.blockers is not None or model.require_all:
+        raise DslError(
+            f"{where}: 'blockers'/'require_all' only mean anything on a "
+            f"block_restriction static, not on {model.effect!r}"
+        )
     if model.effect in (
         "extra_land_drops",
         "no_hand_limit",
@@ -526,6 +551,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         value = getattr(model, field_name)
         if value:
             static[field_name] = list(value)
+    if model.blockers is not None:
+        static["blockers"] = dict(model.blockers)
+    if model.require_all:
+        static["require_all"] = True
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
 

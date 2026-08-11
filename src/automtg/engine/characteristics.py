@@ -358,6 +358,38 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
     return frozenset(out)
 
 
+def matches_static(
+    state: GameState, obj: GameObject, source: GameObject, selector: Mapping[str, Any] | None
+) -> bool:
+    """Public name for the static-filter matcher, for rules outside this module."""
+    return _matches(state, obj, source, selector)
+
+
+def block_restrictions(
+    state: GameState, oid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The "can't be blocked …" statics that apply to this attacker.
+
+    Returned as ``(source, static)`` pairs rather than answered here, for the
+    same reason :func:`protection_from` returns a set: two rules read them at two
+    different moments and must ask the same question.  A per-blocker filter is
+    checked in ``combat.can_block``, one pair at a time; ``require_all`` can only
+    be judged once the whole declaration exists, so it is checked in
+    ``combat.blocks_valid`` beside menace, which has exactly that shape.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return []
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "block_restriction":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        out.append((source_obj, static))
+    return out
+
+
 def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
     """Does ``oid`` have protection from ``source_oid``?
 

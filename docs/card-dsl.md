@@ -309,6 +309,7 @@ characteristics — the loader rejects anything else. See
 ```
 
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
+`block_restriction` ·
 `extra_land_drops`, plus the player-wide ones below.
 Values inside a static may only be `{"const": n}` or `{"count": filter}`.
 
@@ -872,6 +873,41 @@ what must not come with it.
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
+
+## Block restrictions
+
+"This creature can't be blocked by …" is a static, not a keyword, because the
+quality it names is a parameter:
+
+```jsonc
+// Stromkirk Noble: can't be blocked by Humans
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "blockers": { "subtypes": ["Human"] } }
+
+// Tromokratis: can't be blocked unless all creatures defending player controls block it
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "require_all": true }
+```
+
+The two forms are evaluated at different moments and neither is the other with a
+parameter. `blockers` is a **per-pair** question — is *this* creature allowed to
+block? — and is asked in `combat.can_block`, beside flying and protection.
+`require_all` cannot be answered per pair at all, because whether one block is
+legal depends on what every other creature is doing, so it is asked in
+`combat.blocks_valid`, which is the shape menace already needed.
+
+`blockers` is a static filter and may read printed characteristics only, with
+one difference from every other static filter: `controller` defaults to **any**
+rather than `you`. A blocker belongs to the defending player by definition, so
+the usual default would match nothing and the restriction would silently never
+fire.
+
+`require_all` is literal about "controls": a *tapped* creature that cannot block
+still makes the block illegal, which is why Tromokratis is close to unblockable
+and is the entire point of the card.
+
+A `block_restriction` carrying neither field is refused at load time — an
+evasion ability that evades nothing, which would load perfectly cleanly.
 
 ## Protection
 
