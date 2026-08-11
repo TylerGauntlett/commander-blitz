@@ -27104,10 +27104,46 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "as": "victim",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "destroy"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "each",
+                      "zone": "graveyard"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": {
+                        "controller_of": "victim"
+                      },
+                      "op": "create_token",
+                      "token": "elephant_3_3_g"
+                    }
+                  ]
+                }
+              ],
               "objects": {
                 "target": "t1"
               },
-              "op": "destroy"
+              "op": "for_each"
             }
           ],
           "kind": "triggered",
