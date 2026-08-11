@@ -1767,6 +1767,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "stumpsquall_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "submerged_boneyard": {
     "zone": "battlefield"
   },

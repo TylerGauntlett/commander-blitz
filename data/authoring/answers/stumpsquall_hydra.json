@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "stumpsquall_hydra",
+    "name": "Stumpsquall Hydra",
+    "oracle_text": "When this creature enters, distribute X +1/+1 counters among it and any number of commanders.",
+    "mana_cost": "{X}{G}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Hydra"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, distribute X +1/+1 counters among it and any number of commanders.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "repeat",
+            "amount": {"x": true},
+            "effects": [
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "amount": {"const": 1},
+                "objects": {
+                  "zone": "battlefield",
+                  "any_of": [{"self_only": true}, {"is_commander": true}],
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "+1/+1", "amount": 20},
+    "battlefield_count": 33
+  }
+}

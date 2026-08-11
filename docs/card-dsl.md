@@ -89,6 +89,7 @@ Every key is optional; all present keys must match.
   "controller": "you",            // you|opponent|any
   "types": ["Creature"],          // all must be present
   "any_types": ["Artifact", "Enchantment"],   // any one is enough -- "artifact or enchantment"
+  "any_of": [{"self_only": true}, {"is_commander": true}],  // a union of whole selectors
   "not_types": ["Artifact"],
   "subtypes": ["Vampire"],        // any one is enough
   "supertypes": ["Basic"],
@@ -122,6 +123,18 @@ Both keys are validated against the card types the engine knows, because a typo
 narrows a selector silently rather than failing: "artifact or enchantmnet" would
 quietly become "artifact". `any_types` with a single entry is also refused —
 `types` already says that, and two spellings of one filter is how they drift.
+
+`any_of` is the same idea one level up, for where there is no single clause to
+widen. Stumpsquall Hydra distributes counters "among **it and any number of
+commanders**", and neither `self_only` nor `is_commander` is true of both
+objects — they are two different descriptions, so the union has to be across
+selectors rather than inside a key.
+
+A union narrows nothing on its own and every key beside it still filters, so
+`{"types": ["Creature"], "any_of": [...]}` reads "a creature that is either of
+these", not "either a creature or these". A branch may not name a `zone` — that
+would read as "or anything over there" and is not what it does — and a union of
+one is refused, since that is a filter written the long way.
 
 Two shorthands name a pool directly instead of searching a zone:
 

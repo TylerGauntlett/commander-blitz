@@ -265822,12 +265822,12 @@
     },
     "Stumpsquall Hydra": {
       "edhrec_rank": 12944,
-      "gate": "template",
+      "gate": null,
       "name": "Stumpsquall Hydra",
-      "reason": "no template for: When this creature enters, distribute X +1/+1 counters among it and any number of commande",
+      "reason": "",
       "scryfall_id": "8fe8096b-332a-4832-b957-7a35bb350e4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stun": {

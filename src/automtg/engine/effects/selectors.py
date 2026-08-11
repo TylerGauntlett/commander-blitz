@@ -42,6 +42,12 @@ SELECTOR_KEYS = frozenset(
         #: complement is only equal for single-typed permanents, so it would
         #: refuse artifact creatures, which the printed line accepts.
         "any_types",
+        #: A union of whole sub-selectors: matches when *any* of them does.
+        #: "…among it and any number of commanders" is not a filter that can
+        #: be narrowed into -- `self_only` and `is_commander` are both true
+        #: of neither object -- so it needs an or across two descriptions
+        #: rather than an or inside one key.
+        "any_of",
         "not_types",
         "subtypes",
         "not_subtypes",
@@ -157,6 +163,12 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     # any-of, matching `subtypes` and `colors` above rather than `types`.
     if (want := selector.get("any_types")) and not (set(want) & types):
+        return False
+    # Checked here, alongside the other keys, so it composes with them: the
+    # union narrows nothing on its own and everything outside it still filters.
+    if (branches := selector.get("any_of")) and not any(
+        matches(ctx, oid, branch) for branch in branches
+    ):
         return False
     if (want := selector.get("not_types")) and set(want) & types:
         return False
@@ -345,6 +357,19 @@ def validate_selector(selector: Any, where: str) -> None:
         for name in selector.get(key) or ():
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    branches = selector.get("any_of")
+    if branches is not None:
+        if not isinstance(branches, (list, tuple)) or len(branches) < 2:
+            raise DslError(f"{where}: any_of takes a list of at least two selectors")
+        for i, branch in enumerate(branches):
+            # A branch naming a zone would be read as a filter on the pool the
+            # outer selector already chose, which is not what it looks like.
+            if isinstance(branch, Mapping) and "zone" in branch:
+                raise DslError(
+                    f"{where}.any_of[{i}]: put 'zone' on the outer selector; a "
+                    f"branch filters the pool it already chose"
+                )
+            validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
 
