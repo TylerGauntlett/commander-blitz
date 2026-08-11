@@ -223,6 +223,42 @@
       ]
     },
     {
+      "id": "t_kicker_creature",
+      "name": "Test Kicker Creature",
+      "oracle_text": "Kicker {2}\nWhen this creature enters, if it was kicked, you gain 5 life.",
+      "mana_cost": "{2}{U}",
+      "kicker": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Leviathan"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if it was kicked, you gain 5 life.",
+          "trigger": {
+            "event": "self_enters",
+            "condition": {
+              "kicked": true
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_bouncer",
       "name": "Test Bouncer",
       "oracle_text": "{1}, Return a land you control to its owner's hand: Draw a card.",

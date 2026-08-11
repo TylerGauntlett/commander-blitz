@@ -24207,6 +24207,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "not_subtypes": [
+                  "Merfolk",
+                  "Kraken",
+                  "Leviathan",
+                  "Octopus",
+                  "Serpent"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "slinn_voda_the_rising_deep",
+      "kicker": "{1}{U}",
+      "mana_cost": "{6}{U}{U}",
+      "name": "Slinn Voda, the Rising Deep",
+      "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nWhen Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Leviathan"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

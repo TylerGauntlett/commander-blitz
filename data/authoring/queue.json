@@ -250142,12 +250142,12 @@
     },
     "Slinn Voda, the Rising Deep": {
       "edhrec_rank": 4628,
-      "gate": "template",
+      "gate": null,
       "name": "Slinn Voda, the Rising Deep",
-      "reason": "no template for: Kicker {1}{U}",
+      "reason": "",
       "scryfall_id": "cebf2c16-bd9d-4a8f-a1b6-6e0c393178bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slinza, the Spiked Stampede": {

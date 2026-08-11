@@ -191,6 +191,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     state.emit(EventType.SPELL_RESOLVED, player=item.controller, source=item.oid, card=card.id)
     obj.stack_id = None
     obj.cast_x = item.x
+    obj.cast_kicked = item.kicked
     _place_after_resolution(state, obj, card)
     _attach_aura(state, obj, card, targets)
 
