@@ -191,6 +191,14 @@ class Ability:
     cost: Cost | None = None
     is_mana_ability: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
+    #: "Add {G} for each +1/+1 counter on this creature."  A value expression
+    #: evaluated **when the ability is activated**, multiplying the single
+    #: option in ``mana_options``.  ``None`` means the ordinary fixed output.
+    #:
+    #: It cannot be folded into ``mana_options`` at load time, which is the
+    #: whole difficulty: those tuples are constants, and this one is a question
+    #: about the board.
+    mana_amount: Mapping[str, Any] | None = None
     #: "Spend this mana only to cast a creature spell" -- the card type the mana
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None

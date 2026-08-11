@@ -3903,6 +3903,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ]
+                }
+              },
               "mana": "{B}",
               "op": "add_mana"
             }
@@ -4589,6 +4597,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -4715,6 +4731,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "subtypes": [
+                    "Locus"
+                  ]
+                }
+              },
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -9419,6 +9443,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -14740,52 +14772,6 @@
       ]
     },
     {
-      "abilities": [
-        {
-          "cost": {
-            "tap": true
-          },
-          "effects": [
-            {
-              "mana": "{C}",
-              "op": "add_mana"
-            }
-          ],
-          "is_mana_ability": true,
-          "kind": "activated",
-          "text": "{T}: Add {C} for each card you've drawn this turn."
-        }
-      ],
-      "color_identity": [
-        "G",
-        "U"
-      ],
-      "colors": [
-        "G",
-        "U"
-      ],
-      "id": "kydele_chosen_of_kruphix",
-      "keywords": [
-        "partner"
-      ],
-      "mana_cost": "{2}{G}{U}",
-      "name": "Kydele, Chosen of Kruphix",
-      "oracle_text": "{T}: Add {C} for each card you've drawn this turn.\nPartner (You can have two commanders if both have partner.)",
-      "power": 2,
-      "source": "auto",
-      "subtypes": [
-        "Human",
-        "Wizard"
-      ],
-      "supertypes": [
-        "Legendary"
-      ],
-      "toughness": 3,
-      "types": [
-        "Creature"
-      ]
-    },
-    {
       "color_identity": [
         "G"
       ],
@@ -16016,6 +16002,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ]
+                }
+              },
               "mana": "{B}",
               "op": "add_mana"
             }
@@ -19089,6 +19083,17 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "keywords": [
+                    "defender"
+                  ],
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -19735,6 +19740,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "subtypes": [
+                    "Elf"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -23119,6 +23132,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Enchantment"
+                  ]
+                }
+              },
               "mana": "{W}",
               "op": "add_mana"
             }

@@ -38,6 +38,7 @@ not a rewrite.
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
 | **Hybrid mana** | `{W/U}` and `{2/W}` parsed, paid and counted towards colour identity |
 | **Restricted mana** | "Spend this mana only to cast a creature spell", by filtering sources before the solver |
+| **Variable mana abilities** | "Add {G} for each +1/+1 counter on this creature" / "for each creature you control" — an `amount` on `add_mana`, evaluated at activation and applied at the one point the payment solver and the payout already share, so the price offered and the mana made cannot differ. Rule 605 is intact: evaluating the amount asks nothing, it only looks |
 | **Token copies** | "A token that's a copy of target creature", copying the printed card and nothing accumulated on it |
 | **Protection** | From a type, subtype or colour, across all four of damage, enchant/equip, block and target |
 | **Granted abilities** | "…and 'Whenever this creature deals combat damage to a player, draw a card'", until end of turn. Triggered abilities only |

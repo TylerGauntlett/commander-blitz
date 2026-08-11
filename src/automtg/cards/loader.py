@@ -437,12 +437,14 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         active_zones = tuple(Zone(z) for z in model.active_zones)
 
     mana_options: tuple[tuple[int, ...], ...] = ()
+    mana_amount: Mapping[str, Any] | None = None
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
         mana_options = _mana_options(model.effects, where)
+        mana_amount = _mana_amount(model.effects, where)
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
@@ -459,6 +461,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
+        mana_amount=mana_amount,
         mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         trigger=trigger,
@@ -775,6 +778,29 @@ def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int,
     return (_sum_mana(effects, where),)
 
 
+#: Value forms a mana ability's ``amount`` may NOT use.
+#:
+#: A mana ability is activated inside cost payment, with nothing on the stack:
+#: there is no X, no target, no trigger binding and no enclosing loop. Each of
+#: these would evaluate to 0 and make a card that silently produces no mana, so
+#: they are refused at load rather than at the table.
+MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
+
+
+def _validate_mana_amount(amount: Any, where: str) -> None:
+    validate_value(amount, where)
+    if isinstance(amount, str) and amount == "x":
+        raise DslError(f"{where}: a mana ability has no X to read")
+    if not isinstance(amount, Mapping):
+        return
+    bad = MANA_AMOUNT_FORBIDDEN & set(amount)
+    if bad:
+        raise DslError(
+            f"{where}: a mana ability is activated during payment, with no X, "
+            f"targets, bindings or loop -- {sorted(bad)} would always read 0"
+        )
+
+
 def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
     total = [0] * 6
     for effect in effects:
@@ -788,6 +814,27 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
     if not any(total):
         raise DslError(f"{where}: mana ability produces no mana")
     return tuple(total)
+
+
+def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any] | None:
+    """The ``amount`` on a variable mana ability -- "Add {G} for each ...".
+
+    Deliberately narrow. The amount scales *one* symbol tuple, so a card that
+    carried one would be ambiguous if it also summed several `add_mana`s or
+    offered modes: "for each counter" would have no single thing to multiply.
+    One `add_mana`, or no amount at all.
+    """
+    carriers = [e for e in effects if isinstance(e, Mapping) and "amount" in e]
+    if not carriers:
+        return None
+    if len(effects) != 1:
+        raise DslError(
+            f"{where}: a mana ability with an 'amount' must be a single 'add_mana' "
+            f"-- there is otherwise no one symbol for the amount to scale"
+        )
+    amount = carriers[0]["amount"]
+    _validate_mana_amount(amount, f"{where}.amount")
+    return dict(amount) if isinstance(amount, Mapping) else amount
 
 
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:

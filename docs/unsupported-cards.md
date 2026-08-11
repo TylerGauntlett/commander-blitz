@@ -19,11 +19,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [attack-requirement](#attack-requirement) | 1 | 30863 | engine, static_effect |
+| [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
-| [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
 
 ## exile-until-leaves
 
@@ -127,6 +127,21 @@ Blocks **1** card.
 
 </details>
 
+## cards-drawn-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-turn tally of how many cards a player has drawn, readable as a value expression -- e.g. `{"cards_drawn_this_turn": "you"}` -- reset during cleanup, and incremented by every draw whatever caused it (draw step, spell, ability, or a replacement that draws). Kydele spells it `{"op": "add_mana", "mana": "{C}", "amount": {"cards_drawn_this_turn": "you"}}` and needs nothing else, because the variable mana ability machinery it plugs into already ships.
+  <br>Why the existing vocabulary won't do: `VALUE_KEYS` has no event tally of any kind. `count` walks a zone and counts objects, so the closest spelling -- counting the hand -- is a different number the moment anything is played, discarded or drawn on an opponent's turn. `cards_in_hand` has the same problem for the same reason. Nothing on `PlayerState` records draws: the fields are life, zones, mana, land drops, commander tax/damage, loss and UI flags, and none of them is a per-turn counter. The `draw` EventType exists and is emitted, so the tally has a natural place to be incremented, but no state to be incremented into and no cleanup hook resetting it. This is the same shape of missing bookkeeping as `damaged-by-source-this-turn` -- a per-turn ledger keyed by player rather than by object -- and whichever ships first should decide where per-turn counters live.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kydele, Chosen of Kruphix** (rank 12219) — `kydele_chosen_of_kruphix`
+  - {T}: Add {C} for each card you've drawn this turn.
+  - Scope: variable mana ABILITIES now ship -- an `add_mana` inside a mana ability may carry an `amount` value expression, evaluated at activation (see `tests/unit/test_variable_mana_ability.py`). Eight sibling cards were repaired by that change. Kydele is the one it does not reach, and for a different reason: its multiplier is not a board count. `{"count": <selector>}` counts objects, and "cards you've drawn this turn" is a per-turn tally of an *event*, which the engine does not keep. This card was previously in the pool tapping for a flat {C} with no note recorded against it; it now refuses rather than shipping a Kydele that is strictly worse than the printed one.
+
+</details>
+
 ## chosen-creature-type
 
 Blocks **1** card.
@@ -191,19 +206,5 @@ Blocks **1** card.
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
   - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-
-</details>
-
-## variable-mana-ability
-
-Blocks **1** card.
-
-- **(engine)** A mana ability whose output is a value expression evaluated when it is activated, rather than a constant fixed at load time. Concretely: let a mana ability carry an amount alongside its `mana` symbol -- e.g. `{"kind": "activated", "is_mana_ability": true, "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{G}", "amount": {"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}}}]}` -- and teach the places that read `Ability.mana_options` to ask the board instead of reading a tuple: `costs.activate_mana_ability` (`engine/costs.py:497-520`, which must multiply the unit tuple by the evaluated amount when it pays out), the payment solver's source enumeration (`engine/costs.py:106-125` and `:151`, `:193`, so it counts the real number of {G} available rather than one), and `engine/legality.py:542-566` (so the client's mana row and its per-option labels are not a lie). The count must be read at activation time, and the value language already computes it: `{"counters_on": ...}` is in `VALUE_KEYS` (`engine/effects/values.py:44`, evaluated at lines 78-87) and reads live counters off the source. The same change unblocks every "Add {C} for each ..." card at once -- Gaea's Cradle, Cabal Coffers, Serra's Sanctum, Priest of Titania, Circle of Dreams Druid, Overgrown Battlement, Magus of the Coffers, Cloudpost and Kydele are all sitting in `data/cards/auto/templates.cards.json` today with a flat one-pip `add_mana`, i.e. approximated, so this is a correctness fix for nine shipped cards as well as an unblock for this one.
-  <br>Why the existing vocabulary won't do: A mana ability's output is a constant computed at load time and the effect interpreter is never run for it. `loader._sum_mana` (`cards/loader.py:595-607`) walks the ability's effects and raises `DslError` on anything that is not `add_mana`, folding the `mana` strings into one fixed 6-tuple; `loader._mana_options` (lines 583-592) stores those tuples on the `Ability`. `costs.activate_mana_ability` (`engine/costs.py:497-520`) then pays out `mana_produced(ability.mana_options[option_index])` and never touches `ability.effects` -- its own docstring says the mana "comes straight from the ability's precomputed `mana_options` rather than from running its effects", because a mana ability must never stop to ask anything. There is no value expression anywhere on that path, so no amount of counters can change what a mana ability produces. Three near misses, all checked: (1) `add_mana_per` is the closest op and is wrong twice over -- `loader._sum_mana` rejects it outright inside a mana ability (verified: `probe_a.abilities[0]: mana abilities may only contain 'add_mana' (or a single 'choose_mode' of them), got 'add_mana_per'`), and even where it is legal it counts OBJECTS, `len(resolve_pool(ctx, spec.get("per")))` in `engine/effects/ops_mana.py:33`, so it can say "for each Forest you control" but has no way to ask how many counters sit on one permanent. (2) A `choose_mode` mana ability of `add_mana {G}`, `add_mana {G}{G}`, ... compiles to several fixed options (`loader._mana_options` lines 585-591) and the payment solver picks whichever one it likes with nothing checking the counters -- a Gyre Sage that taps for six on an empty board, i.e. strictly better than printed. (3) Dropping `is_mana_ability` and building the amount out of `repeat` + `add_mana` numerically works but stops being a mana ability: the solver-tap and offerable checks (`engine/costs.py:106-125`) both require the flag, so the ability would go on the stack, be invisible to the payment solver, and could never be activated during a payment -- which is the only thing this card's mana is for. `mana_restriction` is unrelated (it filters which sources may pay, never how much they make), and `cost_reduction` points at costs rather than production.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gyre Sage** (rank 829) — `gyre_sage`
-  - {T}: Add {G} for each +1/+1 counter on this creature.
 
 </details>
