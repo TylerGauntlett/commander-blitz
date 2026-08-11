@@ -2130,15 +2130,31 @@
       "types": [
         "Sorcery"
       ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "count": 1
+        }
+      ],
       "spell_effects": [
         {
           "op": "draw",
-          "player": "you",
+          "player": {
+            "target": "t1"
+          },
           "amount": {
             "const": 2
           }
         }
-      ]
+      ],
+      "flashback": {
+        "mana": "{1}{U}",
+        "pay_life": 3
+      }
     },
     {
       "id": "garruks_packleader",

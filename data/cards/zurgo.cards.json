@@ -244,13 +244,33 @@
       ],
       "spell_effects": [
         {
-          "op": "create_token",
-          "token": "human_1_1_w",
-          "amount": {
-            "const": 5
-          }
+          "op": "if",
+          "condition": {
+            "cast_from_graveyard": true
+          },
+          "then": [
+            {
+              "op": "create_token",
+              "token": "human_1_1_w",
+              "amount": {
+                "const": 10
+              }
+            }
+          ],
+          "else": [
+            {
+              "op": "create_token",
+              "token": "human_1_1_w",
+              "amount": {
+                "const": 5
+              }
+            }
+          ]
         }
-      ]
+      ],
+      "flashback": {
+        "mana": "{7}{W}{W}"
+      }
     },
     {
       "id": "secure_the_wastes",

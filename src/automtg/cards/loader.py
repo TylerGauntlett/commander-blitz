@@ -289,6 +289,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    flashback = Cost.from_spec(model.flashback.model_dump()) if model.flashback else None
+    if flashback is not None:
+        if not flashback.mana.text:
+            # The mana half *replaces* the printed cost, so without it the card
+            # would be castable from the graveyard for free.
+            raise DslError(f"{where}: a flashback cost needs mana")
+        if flashback.mana.x_count:
+            raise DslError(f"{where}: a flashback cost with X is not implemented")
+        if model.retrace:
+            # Both widen legality to the graveyard and each replaces the other's
+            # answer to "what does it cost from there".
+            raise DslError(f"{where}: a card may not have both 'flashback' and 'retrace'")
+    reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
+    if reads_from_graveyard and flashback is None:
+        raise DslError(
+            f"{where}: reads the 'cast_from_graveyard' condition but has no "
+            f"'flashback' cost, so it could never be true"
+        )
+
     colors = (
         frozenset(model.colors)
         if model.colors is not None
@@ -334,6 +353,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
+        flashback=flashback,
         suspend=suspend,
     )
 

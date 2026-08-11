@@ -224,6 +224,8 @@ class Game:
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
             extra -= state.card(action.emerge_oid).mana_cost.mana_value()
+        elif action.flashback and card.flashback is not None:
+            cost = card.flashback.mana
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
         elif action.kicked:
@@ -263,6 +265,14 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
+        # Flashback's mana replaced the printed cost above; anything else on it
+        # -- Deep Analysis' "Pay 3 life" -- is an additional cost, paid here for
+        # the same reason and in the same order retrace's discard is.
+        if action.flashback and card.flashback is not None:
+            ok = yield from pay(state, pid, card.flashback.without_mana(), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
         # Rule 601.2g: additional costs are paid after the mana. Sacrificing
         # here rather than before means a creature that taps for mana can still
         # help pay for the spell it is about to be eaten by.
@@ -281,6 +291,7 @@ class Game:
             x=x,
             kicked=action.kicked,
             evoked=action.evoked,
+            flashback=action.flashback,
             modes=modes,
         )
         triggers.fire(

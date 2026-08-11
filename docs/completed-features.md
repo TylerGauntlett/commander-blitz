@@ -1,3 +1,55 @@
+## Flashback — three pieces, and the third does not fall out of the other two
+
+### Overview
+
+"Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for
+its flashback cost. Then exile it.)" Deep Analysis and Increasing Devotion are
+the witnesses, and between them they need every piece.
+
+This reverses a documented decision: `rules-coverage.md` listed "flashback and
+other graveyard casting" under Not implemented. That line is retired.
+
+`retrace` is the near miss and is wrong in every particular. It is the only
+field that widens legality to the graveyard, but it is a bare boolean whose cost
+is hardcoded to a discarded land and charged *in addition* to the printed cost,
+so it can name no alternative price at all — Increasing Devotion would cost
+`{3}{W}{W}` plus a land instead of `{7}{W}{W}`. It is also deliberately
+reusable, which is the opposite of flashback. A card may now not have both.
+
+### The three pieces
+
+**The cost.** `CardDef.flashback` is a full `Cost`, not a `ManaCost` like
+`evoke`, because Deep Analysis charges life too. The mana half replaces the
+printed cost and everything else is an additional cost paid after it, in the
+order rule 601.2g gives — the same two-step `retrace` already used, and
+`Cost.without_mana()` is what splits them so legality can test the halves
+separately.
+
+**The once-only rider.** A spell cast this way is exiled rather than put into a
+graveyard, on resolution *and* on fizzling. Without it the card is flashed back
+forever, which is a different card and one that wins the game.
+
+**`cast_from_graveyard`.** An engine could implement flashback casting perfectly
+and Increasing Devotion would still be wrong, making five tokens where it prints
+ten. `zone_is` cannot answer it: it reports the source's *current* zone, which
+for any resolving sorcery is the stack, identically whether it was cast from
+hand or from a graveyard. So it is a flag on the object, following the `cast_x`
+/ `cast_kicked` / `cast_evoked` precedent exactly.
+
+### The ordering that had to be right
+
+The flag is written **before** `spell_effects` run, not after. Every sibling
+flag (`cast_x`, `cast_kicked`, `cast_evoked`) is set after resolution, because
+they are read by *enters-the-battlefield* triggers on the permanent that arrives
+— by which time the spell is done. `cast_from_graveyard` is read by the spell's
+own effects while they run, so copying the sibling placement would have made the
+condition always false and Increasing Devotion always make five.
+
+### Also repaired
+
+Deep Analysis printed "Target player draws two cards" and the pool had it
+drawing for its controller unconditionally. It now has the target.
+
 ## The chosen creature type — a Tier C run that was Tier A
 
 ### Overview

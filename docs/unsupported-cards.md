@@ -10,36 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **3** capabilities.
+**2 cards** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
-
-## flashback
-
-Blocks **2** cards.
-
-- **(cost)** A card-level `flashback` field carrying a full alternative cost (mana `{1}{U}` plus `pay_life: 3`) that legality offers only for a copy of the card in its owner's graveyard, replacing the printed mana cost rather than adding to it
-  <br>Why the existing vocabulary won't do: `retrace` is the only field that widens legality to scan the graveyard (legality._cast_actions loops `state.players[pid].graveyard` on `card.retrace`), but it is a bare boolean: `CardDef.retrace_cost` is hardcoded to `Cost(discard=1, discard_selector={'types': ['Land']})` and `game.py` charges it *in addition* to the printed `{3}{U}`, so it can express neither a cheaper alternative mana cost nor a life payment as part of the alternative cost. `kicker` is a string cost but is an additional cost paid from the hand and never changes which zone a card may be cast from. `suspend` names an alternative cost but plays the card from exile after a counter countdown, not from the graveyard on demand. Cycling -- newly shipped as `Cost.discard_self` plus `active_zones` on an activated ability -- is the closest new arrival and is still the wrong shape twice over: it *activates* an ability rather than *casting* the card, so the spell never goes on the stack and `spell_effects` never run and the draw would have to be duplicated into the ability; and loader.py:326 requires any ability active outside the battlefield to pay `discard_self`, i.e. to remove its source from that zone by discarding, which a graveyard card cannot do. Cost already carries `pay_life`, so the life half exists; what is missing is any way to attach a whole alternative cost to a graveyard *cast*.
-- **(replacement)** A once-only rider on that alternative cast: when the spell resolves (or is countered) it goes to exile instead of the graveyard, so the card cannot be flashed back a second time
-  <br>Why the existing vocabulary won't do: `retrace` deliberately returns the card to the graveyard and is reusable every turn, which is the opposite of flashback's once-only exile. Nothing else can substitute: the `replacements` whitelist is only `self_enters`, `self_enters_tapped` and `self_enters_with_counters`, so no card can replace a spell's move to the graveyard; and the `exile` op in `spell_effects` cannot stand in for it, because it would run on every cast including the first from hand, exiling the card before it could ever be flashed back.
-- **(cost)** A card-level `flashback` field carrying an alternative mana cost (`{7}{W}{W}`) that legality offers only for a copy of the card in its owner's graveyard, replacing the printed `{3}{W}{W}` rather than adding to it, plus the once-only rider that the spell goes to exile instead of the graveyard when it resolves or is countered
-  <br>Why the existing vocabulary won't do: `retrace` is the only field that widens legality to scan the graveyard (`legality._cast_actions` loops `state.players[pid].graveyard` on `card.retrace`), but it is a bare boolean: `CardDef.retrace_cost` is hardcoded to `Cost(discard=1, discard_selector={'types': ['Land']})` and `game.py` charges it *in addition* to the printed cost, so it can name no alternative mana cost at all — Increasing Devotion would cost `{3}{W}{W}` plus a discarded land instead of `{7}{W}{W}`. Retrace is also deliberately reusable, returning the card to the graveyard, which is the opposite of flashback's exile. `kicker` is a real string cost but is additional, paid from the hand, and never changes which zone a card may be cast from. `suspend` names an alternative cost but plays the card from exile on a counter countdown, not from the graveyard on demand. The `replacements` whitelist covers only enters-the-battlefield shapes, so nothing can replace a spell's move to the graveyard, and an `exile` op in `spell_effects` cannot stand in because it would fire on the first cast from hand too, exiling the card before it could ever be flashed back. Same need filed under this slug for Deep Analysis (`data/authoring/gaps/deep_analysis.json`), which additionally needs a `pay_life` component in the alternative cost; Increasing Devotion needs only the mana half, so one field satisfying both is a full cost, not just a mana string.
-- **(value)** A condition readable inside `if`, of the shape `{"cast_from_graveyard": true}` (equivalently `{"flashed_back": true}`), that is true exactly when the resolving spell was cast from its owner's graveyard — so one card can do strictly more on the flashback cast than on the cast from hand, without duplicating the card
-  <br>Why the existing vocabulary won't do: `{"kicked": true}` is precisely this shape and precisely this plumbing — a per-cast flag chosen on the action, carried through `stack.push_spell(..., kicked=action.kicked)` onto `EffectContext.kicked`, and read in `conditions.evaluate` — but it is welded to the `kicker` cost, and the loader actively rejects a `kicked` condition on a card with no `kicker` (`loader.py:215`), so it cannot be borrowed to mean anything else. `zone_is` reads `ctx.state.objects[ctx.source_oid].zone` — the source's *current* zone, which for any resolving sorcery is the stack, identically whether it was cast from hand or from the graveyard, so it cannot tell the two casts apart. No selector, value expression or binding records a spell's cast-from zone either. Note this need is distinct from the cost need above and does not fall out of it: an engine could implement flashback casting completely and this card would still be unimplementable, because it would create five tokens on the flashback cast instead of ten.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deep Analysis** (rank 1442) — `deep_analysis`
-  - Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)
-- **Increasing Devotion** (rank 3292) — `increasing_devotion`
-  - If this spell was cast from a graveyard, create ten of those tokens instead.
-  - Flashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)
-
-</details>
 
 ## ascend
 
