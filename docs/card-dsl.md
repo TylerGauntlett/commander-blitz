@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>47 ops"]
+    ctx --> ops["op registry<br/>48 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-47 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+48 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -963,6 +963,35 @@ what must not come with it.
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
+
+## Keyword actions that are only a token
+
+Some printed keywords add no vocabulary at all. **Investigate** is the clearest
+case: the reminder text on Bygone Bishop *(Create a Clue token. It's an artifact
+with "{2}, Sacrifice this token: Draw a card.")* is the entire specification, so
+it is spelled with the ops that already exist —
+
+```jsonc
+{ "op": "create_token", "token": "clue_token", "amount": { "const": 1 } }
+```
+
+— and the work is adding `clue_token` to `data/cards/tokens.cards.json`. Reach
+for this shape before writing an op. A keyword action that names a token, and
+whose token's text is all cost-and-effect the DSL can already say, is a data
+change.
+
+The catch is what the token's ability *costs*. A Clue pays for itself by
+sacrificing itself, and a token that leaves the battlefield does not go to a
+graveyard — it **ceases to exist**, as a state-based action, and is dropped from
+`state.objects` outright. So by the time the ability resolves its source is not
+merely somewhere else, it is gone. `stack.ability_of` looks the ability up
+through the source object and now falls back to the stack item's `def_id` when
+there is no object left; without that fallback every `"Sacrifice this token:
+…"` ability resolves as a silent no-op, which is precisely the failure a token
+with an approximated cost will never reveal.
+
+If you add a token whose ability sacrifices it, assert that the effect actually
+happened — not just that the token went away.
 
 ## Which mechanism a printed keyword lands on
 

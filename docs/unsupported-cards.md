@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**16 cards** blocked by **13** capabilities.
+**15 cards** blocked by **12** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
-| [investigate](#investigate) | 1 | 7272 | engine |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
 
@@ -216,21 +215,6 @@ Blocks **1** card.
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
   - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-
-</details>
-
-## investigate
-
-Blocks **1** card.
-
-- **(engine)** a Clue token definition in the shared token pool -- one new object in `data/cards/tokens.cards.json`, e.g. id `clue_token`, name `Clue`, `types: ["Artifact"]`, `subtypes: ["Clue"]`, `is_token: true`, no mana cost, no colors, and a single activated ability `{"kind": "activated", "text": "{2}, Sacrifice this artifact: Draw a card.", "cost": {"mana": "{2}", "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}}, "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]}`. Every piece of that ability is already supported -- `Cost` carries both `mana` and a `sacrifice` selector (`engine/carddef.py:37-49`), and the `self_only` sacrifice-self shape is used by three cards in `data/cards/aesi.cards.json` and `data/cards/core.cards.json` -- so this is a data addition with no engine change behind it. With it in the pool, `investigate` is spelled `{"op": "create_token", "token": "clue_token", "amount": {"const": 1}}` and needs no new op.
-  <br>Why the existing vocabulary won't do: `create_token` is in the vocabulary and can name any token id, but `validate_token_references` (`cards/loader.py:683-693`) raises `DslError` unless that id resolves to a card already in the registry with `is_token` set -- it is checked by `CardRegistry.from_paths` and again by gate 3 of the authoring verifier (`cards/authoring/verify.py:420-429`), so naming a Clue that nobody has defined is a load-time failure, not a silent no-op. `data/cards/tokens.cards.json` holds 16 tokens and none is a Clue; `treasure_token` is the closest and the only non-creature among them, which is why it is worth naming: it proves an artifact token with an activated ability loads and works, but its ability adds mana and its cost is `{"tap": true}` -- a different cost, a different effect and a different subtype, so it cannot stand in for a Clue. A card worker cannot supply the definition either: an answer file is exactly one `{"card": ..., "expectation": ...}` pair and `read_answers` (`cards/authoring/packet.py:221-238`) keys it by that one card's id, and `data/cards/` is off-limits to workers -- so the token has to be added by whoever does this work, not by the card that uses it. Adding it unblocks every investigate card at once, not just this one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bygone Bishop** (rank 7272) — `bygone_bishop`
-  - Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
-  - Scope: only the `investigate` half of this one printed line is blocked, and it is blocked on a single missing thing -- a Clue token in the shared token pool. The trigger half IS expressible today and needs nothing new; see `expressible_today` below. Because the residual gate reads a printed line as a whole, and because a trigger that fires and creates nothing is a strictly worse card than the one printed (Bygone Bishop's entire function is the Clues), the line goes here rather than being written half. The card already in the hand-written pool covers none of it: `data/cards/isperia.cards.json` has it as a vanilla 2/3 flier -- and with mana cost `{2}{W}{W}` where the packet and the printing say `{2}{W}`, which wants fixing when this is implemented.
 
 </details>
 
