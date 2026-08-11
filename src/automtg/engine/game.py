@@ -332,6 +332,19 @@ class Game:
             sid=item.sid,
             card=card.id,
         )
+        if ability.is_cycling:
+            # Fired *after* the cycling ability is on the stack, and the order
+            # is the whole of "(Do this before you draw.)": a trigger queued now
+            # drains on top of that ability, so it resolves first and Krosan
+            # Tusker's land is fetched before the cycling draw.
+            #
+            # The card is already in the graveyard -- paying the cost discarded
+            # it -- so the trigger is collected there, which is why it declares
+            # `active_zones: ["graveyard"]`.
+            # `fire`, not `emit`: emit only writes the log, and a cycle event
+            # nothing listens to is the silent no-op this whole run exists to
+            # add a listener for.
+            triggers.fire(state, EventType.CYCLED, player=pid, source=oid, card=card.id)
 
     def _ask_x(
         self,

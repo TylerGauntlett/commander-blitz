@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**11 cards** blocked by **9** capabilities.
+**10 cards** blocked by **8** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
-| [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 
@@ -140,20 +139,6 @@ Blocks **1** card.
   - As this artifact enters, choose a creature type.
   - Creatures you control of the chosen type get +1/+1.
   - Whenever you cast a creature spell of the chosen type, draw a card.
-
-</details>
-
-## cycling-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A `cycle` trigger event -- "When you cycle this card" -- entered in `TRIGGER_EVENTS` (src/automtg/engine/triggers.py:28-47) against a new `EventType.CYCLED` emitted by whatever pays the cycling cost, with the cycled card as the event's subject and `source: "self"` restricting it to the card that was cycled. Two details the implementation has to get right. (1) Zone: by the time the cost is paid the card is in the graveyard, so the ability must be collected with `active_zones: ["graveyard"]`, or the collection must run before the card moves; `_candidate_abilities` (triggers.py:161-167) already scans COMMAND, GRAVEYARD, HAND and EXILE for triggered abilities, so the zone machinery itself needs nothing new -- only the event does. (2) Ordering: the reminder text says "(Do this before you draw.)", so the triggered ability must resolve ahead of the cycling draw, which means the draw wants to be a resolved effect that can be ordered after the trigger rather than something that happens inside cost payment. Once the event exists this card's own effects are entirely expressible with vocabulary that is already there -- `may` wrapping `search_library` (basic land, `{"supertypes": ["Basic"], "types": ["Land"]}`, to hand, revealed) and `shuffle` -- so the event is the only thing standing between this line and an ordinary triggered ability.
-  <br>Why the existing vocabulary won't do: Plain cycling now ships -- `Cost.discard_self` plus activated abilities offerable from hand -- so the cost half of this card is expressible and only the trigger is not. None of the 18 events in `TRIGGER_EVENTS` can carry a cycle. `draw` is the tempting substitute and is wrong twice over: it fires on EVERY draw, including the draw step and every other draw spell, so a Tusker sitting in the graveyard would fetch a land each time its controller drew anything; and it fires AFTER the draw, which the parenthetical explicitly forbids. There is no `discard` event at all -- `discard_cards` in the cost path emits nothing a trigger can listen for -- so even the crude "whenever a card is discarded" approximation has nothing to hook. `spell_cast` does not fire, because cycling is not casting; `leaves_battlefield`, `dies` and `creature_dies` all require the card to have been a permanent on the battlefield, and a cycled card goes hand -> graveyard without ever being one. `land_played` fires on the land drop, not on fetching a land to hand. `permanent_enters`/`self_enters` describe the 6/5 body arriving, which is the branch of the card this line is explicitly the alternative to. Filtering any of these with `filter`/`condition` cannot help: the shortfall is that the moment being described never becomes an event, not that the event is too broad.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Krosan Tusker** (rank 10668) — `krosan_tusker`
-  - When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)
 
 </details>
 

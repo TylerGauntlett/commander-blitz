@@ -95,6 +95,12 @@ class AbilityModel(BaseModel):
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
     mana_restriction: str | None = None
     sorcery_speed_only: bool = False
+    #: This activated ability *is* the cycling ability, so paying for it emits
+    #: the `cycle` event a "When you cycle this card" trigger listens for.
+    #: Declared rather than inferred: "Discard this card: draw" is a shape other
+    #: cards print without being cycling, and a trigger firing on those would be
+    #: a different card.
+    is_cycling: bool = False
 
     # triggered
     trigger: TriggerModel | None = None

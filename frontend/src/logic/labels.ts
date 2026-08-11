@@ -263,6 +263,8 @@ export function describeEvent(
       return `${who} ${v("draw", "draws")} a card`;
     case "discard":
       return `${who} ${v("discard", "discards")} ${card ?? "a card"}`;
+    case "cycled":
+      return `${who} ${v("cycle", "cycles")} ${card ?? "a card"}`;
     case "damage_dealt":
       if (amount === null || amount <= 0) return null;
       return event.data.to === "player"

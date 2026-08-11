@@ -44,6 +44,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     "draw": EventType.DRAW,
+    "cycle": EventType.CYCLED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -61,11 +62,20 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "counter_placed",
         "land_played",
         "becomes_monstrous",
+        # The cycled card itself, so `source: "self"` scopes the trigger to the
+        # card that was cycled rather than to every cycling anywhere.
+        "cycle",
     }
 )
 
 #: Triggers that keep working while their source is in the graveyard, because the
 #: source has just left the battlefield.
+#:
+#: ``cycle`` is deliberately absent. This set drives one special path, keyed on
+#: DIES/LEAVES_BATTLEFIELD, for an object no zone list holds any more. A cycled
+#: card *is* in a zone list -- the graveyard, which `_candidate_abilities`
+#: already walks -- so it is found by declaring `active_zones: ["graveyard"]`
+#: like any other graveyard trigger.
 LEAVE_TRIGGERS = frozenset({"dies", "creature_dies", "leaves_battlefield"})
 
 

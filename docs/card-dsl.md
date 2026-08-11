@@ -1425,9 +1425,44 @@ infinite engine — a card in hand whose ability costs only mana could be
 activated forever without ever leaving.
 
 Only plain cycling. Typecycling (`Landcycling {1}{G}`) fetches instead of
-drawing and is a different ability, and "When you cycle this card…" needs a
-trigger event that does not exist — both fail the template rather than being
-turned into plain cyclers.
+drawing and is a different ability, so it fails the template rather than being
+turned into a plain cycler.
+
+### "When you cycle this card…"
+
+```jsonc
+// Krosan Tusker — the two abilities together.
+{ "kind": "activated", "text": "Cycling {2}{G} (…)",
+  "active_zones": ["hand"], "is_cycling": true,
+  "cost": { "mana": "{2}{G}", "discard_self": true },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] },
+
+{ "kind": "triggered",
+  "text": "When you cycle this card, you may search your library …",
+  "active_zones": ["graveyard"],
+  "trigger": { "event": "cycle", "source": "self" },
+  "effects": [ … ] }
+```
+
+**`is_cycling` is declared, not inferred.** "Discard this card:" is a shape
+other cards print without being cycling, and a trigger firing on those would be
+a different card. The loader refuses `is_cycling` on a cost that does not
+discard the card.
+
+**`active_zones: ["graveyard"]` on the trigger**, because paying the cycling
+cost discards the card — by the time the event fires, its source is already in
+the graveyard, which `_candidate_abilities` already walks.
+
+**The ordering is free, and it is the card.** The event fires *after* the
+cycling ability is on the stack, so the trigger drains on top of it and resolves
+first. That is the whole of the printed "(Do this before you draw.)", out of the
+stack's ordinary last-on-first-off behaviour rather than a special case.
+
+`draw` and `discard` both exist and neither can stand in: `draw` fires on every
+draw including the draw step, and *after* the draw, which the parenthetical
+forbids; `discard` fires on hand-size discards and every discard cost, so a
+Tusker pitched to a Wheel would fetch. The event is fired with `triggers.fire`,
+not `state.emit` — `emit` only writes the log.
 
 ## Alternative ways to play a card
 
