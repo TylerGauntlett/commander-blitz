@@ -1089,6 +1089,10 @@
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
+  "meloku_the_clouded_mirror": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "memnite": {
     "zone": "battlefield"
   },

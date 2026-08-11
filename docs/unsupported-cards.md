@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **25** capabilities.
+**28 cards** blocked by **23** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
-| [return-to-hand-cost](#return-to-hand-cost) | 2 | 5792 | cost |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cant-attack](#cant-attack) | 1 | 2833 | static_effect |
@@ -32,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [embalm](#embalm) | 1 | 8765 | engine, op |
 | [emerge](#emerge) | 1 | 7681 | cost |
 | [evoke](#evoke) | 1 | 584 | cost, engine |
-| [illusion-token](#illusion-token) | 1 | 5792 | engine |
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [kicker](#kicker) | 1 | 4628 | engine |
 | [landwalk](#landwalk) | 1 | 2833 | keyword |
@@ -93,7 +91,6 @@ Blocks **3** cards.
 - **Bident of Thassa** (rank 420) — `bident_of_thassa`
   - {1}{U}, {T}: Creatures your opponents control attack this turn if able.
 - **Trench Behemoth** (rank 9467) — `trench_behemoth`
-  - Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.
   - Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.
 - **Marauding Maulhorn** (rank 30863) — `marauding_maulhorn`
   - This creature attacks each combat if able unless you control a creature named Advocate of the Beast.
@@ -192,26 +189,6 @@ Blocks **2** cards.
 - **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
   - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
   - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
-
-</details>
-
-## return-to-hand-cost
-
-Blocks **2** cards.
-
-- **(cost)** a cost component that returns a permanent you control to its owner's hand as part of paying an activated ability, chosen by an ordinary selector, e.g. `{"mana": "{1}", "return_to_hand": {"zone": "battlefield", "controller": "you", "types": ["Land"], "count": 1}}`. It needs both halves of the existing cost contract: a payability test (a matching permanent exists, exactly as `_sacrifice_pool` gates `sacrifice` in `engine/costs.py:351`) and a payment step that asks the controller which permanent goes and then moves it to its owner's hand (`engine/costs.py:445` is the shape, with `sacrifice_object` swapped for a move to hand). Meloku differs from Trench Behemoth in one way worth building for: the returned land is combined with a mana cost (`{1}`), so the new component must compose with `mana` in the same `Cost`, not stand alone. Note also that the cost is repeatable with no tap, so payability must be re-tested per activation as the land pool shrinks.
-  <br>Why the existing vocabulary won't do: `Cost` (`engine/carddef.py:37-55`, mirrored by `CostModel` in `cards/schema.py:18-35`) carries exactly `mana`, `tap`, `untap`, `sacrifice`, `discard`, `discard_selector`, `discard_self`, `pay_life`, `remove_counters` and `exile_from_graveyard`; nothing in that list moves a battlefield permanent to hand. `sacrifice` is the closest -- same selector shape, same ask-the-player payment -- but it puts the land in the graveyard instead of the hand, which makes a materially different card: Meloku is played as a repeatable engine precisely because the lands come back and can be replayed, and a sacrifice version would strip-mine its own mana base. Substituting it would silently change the card. The `return_to_hand` **op** is in the vocabulary but is an effect, not a cost: effects run on resolution, so the ability could be activated with no land on the battlefield at all, the payment would not gate activation, and it would not be rewindable if it failed. Same need already filed under this slug for Trench Behemoth (`data/authoring/gaps/trench_behemoth.json`), whose ability has no mana component; one cost field satisfying both is the work item.
-- **(cost)** a cost component that returns a permanent you control to its owner's hand as part of paying an activated ability, chosen by an ordinary selector, e.g. `{"return_to_hand": {"zone": "battlefield", "controller": "you", "types": ["Land"], "count": 1}}`. It needs both halves of the existing cost contract: a payability test (a matching permanent exists, exactly as `_sacrifice_pool` gates `sacrifice`) and a payment step that asks the controller which permanent goes and then moves it to its owner's hand. Note this ability has no mana and no tap in its cost, so the returned permanent is the entire cost -- a bounce cost is the whole activation, not a rider on one.
-  <br>Why the existing vocabulary won't do: `Cost` carries exactly `mana`, `tap`, `untap`, `sacrifice` (+`discard`, `discard_selector`, `discard_self`, `pay_life`, `remove_counters`, `exile_from_graveyard`) and nothing moves a battlefield permanent to hand. `sacrifice` is the closest -- it already takes the right selector shape and already asks the player to choose -- but it destroys the land instead of returning it, which is a materially different card: Trench Behemoth is a recursion engine precisely because the land comes back and can be replayed for another landfall trigger. Substituting it would silently change the card. The `return_to_hand` **op** exists but is an effect, not a cost: effects run on resolution after the ability is already on the stack, so paying with it would let the ability be activated with no land at all and would not be rewindable if the payment failed.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Meloku the Clouded Mirror** (rank 5792) — `meloku_the_clouded_mirror`
-  - {1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying.
-  - Scope: only this second printed line is blocked. `Flying` is expressible today and is already on the packet's `starting_point` as `keywords: ["flying"]`, needing nothing new. The blocked line is blocked twice over -- once on the activation cost and once on the token it creates -- and either one alone would be enough to keep the card out. Because the residual gate reads a printed line as a whole, and because Meloku's entire function is turning excess lands into fliers, the line goes here rather than being written half.
-- **Trench Behemoth** (rank 9467) — `trench_behemoth`
-  - Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.
-  - Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.
 
 </details>
 
@@ -392,21 +369,6 @@ Blocks **1** card.
 
 - **Mulldrifter** (rank 584) — `mulldrifter`
   - Evoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)
-
-</details>
-
-## illusion-token
-
-Blocks **1** card.
-
-- **(engine)** a 1/1 blue flying Illusion token in the shared token pool -- one new object in `data/cards/tokens.cards.json`, following the naming already used there for keyworded tokens (`knight_2_2_w_vigilance`, `vampire_1_1_b_lifelink`): id `illusion_1_1_u_flying`, name `Illusion Token`, `types: ["Creature"]`, `subtypes: ["Illusion"]`, `colors: ["U"]`, `power: 1`, `toughness: 1`, `keywords: ["flying"]`, `is_token: true`, no mana cost. Every piece of that is already supported -- `flying` is in the keyword vocabulary and `knight_2_2_w_vigilance` proves a token may carry one -- so this is a data addition with no engine change behind it. With it in the pool the effect half is spelled `{"op": "create_token", "token": "illusion_1_1_u_flying", "amount": {"const": 1}}` and needs no new op.
-  <br>Why the existing vocabulary won't do: `create_token` is in the vocabulary and can name any token id, but `validate_token_references` (`cards/loader.py:703-711`) raises `DslError: create_token references unknown card` for any id not already in the registry, and the whole pool today is 16 objects, none of them an Illusion and none of them a 1/1 blue flier: the only blue creature tokens are `komas_coil_3_3_u` and `kraken_8_8_u`, and the only 1/1 fliers are none at all. `create_token_copy` cannot stand in either -- it names no token id, so it can only copy something already on the battlefield, and nothing in Meloku's text copies anything. There is no facility for a card to define a token inline, so the token must exist as data before the card can load.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Meloku the Clouded Mirror** (rank 5792) — `meloku_the_clouded_mirror`
-  - {1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying.
-  - Scope: only this second printed line is blocked. `Flying` is expressible today and is already on the packet's `starting_point` as `keywords: ["flying"]`, needing nothing new. The blocked line is blocked twice over -- once on the activation cost and once on the token it creates -- and either one alone would be enough to keep the card out. Because the residual gate reads a printed line as a whole, and because Meloku's entire function is turning excess lands into fliers, the line goes here rather than being written half.
 
 </details>
 

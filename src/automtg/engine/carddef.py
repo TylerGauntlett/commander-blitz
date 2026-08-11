@@ -41,6 +41,10 @@ class Cost:
     tap: bool = False
     untap: bool = False
     sacrifice: Mapping[str, Any] | None = None
+    #: "Return a land you control to its owner's hand": a selector over the
+    #: battlefield. Distinct from ``sacrifice`` because the permanent comes
+    #: back -- Meloku and Trench Behemoth both replay it for landfall.
+    return_to_hand: Mapping[str, Any] | None = None
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -72,6 +76,9 @@ class Cost:
             tap=bool(spec.get("tap", False)),
             untap=bool(spec.get("untap", False)),
             sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
+            return_to_hand=(
+                dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
+            ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
@@ -93,6 +100,7 @@ class Cost:
             and self.mana.is_free()
             and not self.untap
             and self.sacrifice is None
+            and self.return_to_hand is None
             and self.discard == 0
             and not self.discard_self
             and self.pay_life == 0
@@ -110,6 +118,8 @@ class Cost:
             parts.append("{Q}")
         if self.sacrifice:
             parts.append("Sacrifice")
+        if self.return_to_hand:
+            parts.append("Return to hand")
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:

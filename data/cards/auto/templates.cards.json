@@ -16156,6 +16156,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "return_to_hand": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "illusion_1_1_u_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "meloku_the_clouded_mirror",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Meloku the Clouded Mirror",
+      "oracle_text": "Flying\n{1}, Return a land you control to its owner's hand: Create a 1/1 blue Illusion creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "memnite",
