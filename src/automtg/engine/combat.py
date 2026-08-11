@@ -330,6 +330,45 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
     return out
 
 
+def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
+    """Retract blocks that can never become a legal declaration.
+
+    Declarations are made all at once in the rules and one block at a time
+    here, and `require_all` is the shape where that difference bites.
+    Tromokratis is "can't be blocked unless all creatures defending player
+    controls block it": a player who blocks it with one creature and then finds
+    no second legal block is **stuck forever** -- there is no `ADD_BLOCKER` left
+    to offer and `blocks_valid` withholds "Done blocking", so the game cannot
+    continue. A four-player rollout found exactly that on turn 47.
+
+    Blocks like these were never legal, so dropping them is not a concession:
+    "no creature blocks Tromokratis" is precisely what the rules would have
+    produced. Returns the blockers it retracted.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    dropped: list[int] = []
+    for attacker_oid, attacker_defender in combat.attackers.items():
+        if attacker_defender != defender:
+            continue
+        blockers = [
+            b
+            for b in combat.block_order.get(attacker_oid, [])
+            if state.objects.get(b) is not None
+            and state.objects[b].controller == defender
+        ]
+        if not blockers or _all_blockers_present(state, attacker_oid, defender, blockers):
+            continue
+        for b in blockers:
+            combat.blockers.pop(b, None)
+            dropped.append(b)
+        combat.block_order[attacker_oid] = [
+            b for b in combat.block_order.get(attacker_oid, []) if b not in dropped
+        ]
+    return dropped
+
+
 def add_blocker(state: GameState, blocker_oid: int, attacker_oid: int, defender: int) -> bool:
     combat = state.combat
     if combat is None or not can_block(state, blocker_oid, attacker_oid, defender):
@@ -401,6 +440,11 @@ def finish_blockers(state: GameState) -> None:
     combat = state.combat
     if combat is None:
         return
+    # An incremental declaration can reach a state the rules would never have
+    # produced -- see `drop_illegal_blocks`. Retract those before locking in,
+    # so what gets recorded is a declaration that was actually legal.
+    for defender in set(combat.attackers.values()):
+        drop_illegal_blocks(state, defender)
     combat.blockers_declared = True
 
     # Damage assignment order is sorted by effective toughness ascending -- the

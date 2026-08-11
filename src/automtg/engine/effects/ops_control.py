@@ -84,6 +84,56 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             return
 
 
+#: How many creature types a "choose a creature type" prompt will offer.
+#:
+#: The rules say *any* creature type. The pool's own subtypes are the finite,
+#: honest version of that: a type no card in the game has is a choice with no
+#: consequence, and enumerating the full Comprehensive Rules list would make the
+#: prompt unusable without making any card play differently.
+MAX_TYPE_CHOICES = 400
+
+
+@register("choose_type")
+def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"As this artifact enters, choose a creature type." Vanquisher's Banner.
+
+    Stored on the permanent, read back by its own abilities through
+    ``{"chosen_type_of": "self"}``.
+
+    **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
+    labels" and hands back the index, which is exactly this question -- so
+    legality's `_choice_actions`, `game.apply` and the authoring verifier's
+    auto-answer table all work unchanged. A `CHOOSE_TYPE` kind would have been
+    the same decision wearing a different name.
+
+    *Divergence, recorded in `rules-coverage.md`*: the printed line is "**as**
+    this enters", a replacement that cannot be responded to. `zones` applies
+    enter-replacements synchronously and cannot stop to ask, so this is a
+    `self_enters` trigger instead and the type is chosen a moment after the
+    permanent arrives rather than as it does.
+    """
+    types = sorted(_creature_types(ctx))
+    if not types:
+        return
+    prompt = str(spec.get("prompt") or "Choose a creature type")
+    picked = yield from ask_mode(ctx, prompt, types[:MAX_TYPE_CHOICES], ctx.controller)
+    if not picked:
+        return
+    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if obj is not None:
+        obj.chosen_type = types[picked[0]]
+        ctx.state.bump_chars()
+
+
+def _creature_types(ctx: EffectContext) -> set[str]:
+    """Every creature subtype the card pool actually contains."""
+    found: set[str] = set()
+    for card in ctx.state.registry:
+        if "Creature" in card.types:
+            found.update(card.subtypes)
+    return found
+
+
 @register("choose_mode")
 def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     """A modal spell or ability: "choose one -- ...".

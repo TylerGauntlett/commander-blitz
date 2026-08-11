@@ -95,6 +95,15 @@ class GameObject:
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
 
+    #: "As this artifact enters, choose a creature type." The type this
+    #: permanent's controller named, read back by its own abilities through
+    #: ``{"chosen_type_of": "self"}``.
+    #:
+    #: Reset with the rest of the battlefield state: a permanent that leaves and
+    #: comes back is a new object as far as the rules are concerned, and chooses
+    #: again.
+    chosen_type: str | None = None
+
     #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
     #: no mana cost." Embalm and eternalize.
     #:
@@ -136,6 +145,7 @@ class GameObject:
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
+        self.chosen_type = None
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.
