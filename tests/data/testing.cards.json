@@ -223,6 +223,68 @@
       ]
     },
     {
+      "id": "t_islandwalker",
+      "name": "Test Islandwalker",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "islandwalk"
+      ]
+    },
+    {
+      "id": "t_tide_lock",
+      "name": "Test Tide Lock",
+      "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
+      "mana_cost": "{5}{U}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Leviathan"
+      ],
+      "power": 8,
+      "toughness": 8,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All lands are Islands in addition to their other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "subtypes": [
+            "Island"
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Creatures without flying or islandwalk can't attack.",
+          "effect": "cant_attack",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "not_keywords": [
+              "flying",
+              "islandwalk"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "t_vigil_liege",
       "name": "Test Vigil Liege",
       "oracle_text": "Untap all green creatures you control during each other player's untap step.",

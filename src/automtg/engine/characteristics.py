@@ -287,6 +287,9 @@ def _matches(
     keywords = selector.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
         return False
+    not_keywords = selector.get("not_keywords")
+    if not_keywords and set(not_keywords) & card.keywords:
+        return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False
@@ -451,6 +454,25 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     fact about the *player* and there is no object for it to attach to.
     """
     return _player_static(state, pid, "no_hand_limit")
+
+
+def attack_forbidden(state: GameState, oid: int) -> bool:
+    """Is this creature under a global "can't attack" static?
+
+    Stormtide Leviathan's "creatures without flying or islandwalk can't
+    attack". Unlike every other static, its filter routinely names creatures its
+    controller does not control -- the card is a lock on the whole table -- so
+    `affects` here is written with an explicit ``controller: "any"``.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_attack":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
 
 
 def untap_also(state: GameState, active_pid: int) -> list[int]:

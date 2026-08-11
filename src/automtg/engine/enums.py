@@ -148,6 +148,16 @@ class Keyword(str, Enum):
     #: creature either.  Read only by :func:`targeting.can_be_targeted` -- it is
     #: a target rule and nothing else, unlike protection, which four rules read.
     SHROUD = "shroud"
+    #: Landwalk (702.14).  Five keywords rather than one parameterised
+    #: ability because `Keyword` is a bare string and the whole point of the
+    #: quality is *which* land type: `LANDWALK_SUBTYPE` maps each to the
+    #: subtype the defending player must control.  Read only by
+    #: `combat.can_block`, and unlike protection it is one rule.
+    PLAINSWALK = "plainswalk"
+    ISLANDWALK = "islandwalk"
+    SWAMPWALK = "swampwalk"
+    MOUNTAINWALK = "mountainwalk"
+    FORESTWALK = "forestwalk"
     INDESTRUCTIBLE = "indestructible"
     FLASH = "flash"
     #: Deck construction only -- "you can have two commanders if both have
@@ -158,7 +168,17 @@ class Keyword(str, Enum):
     PARTNER = "partner"
 
 
-EVASION_KEYWORDS = frozenset({Keyword.FLYING, Keyword.MENACE})
+LANDWALK_SUBTYPE = {
+    Keyword.PLAINSWALK.value: "Plains",
+    Keyword.ISLANDWALK.value: "Island",
+    Keyword.SWAMPWALK.value: "Swamp",
+    Keyword.MOUNTAINWALK.value: "Mountain",
+    Keyword.FORESTWALK.value: "Forest",
+}
+
+EVASION_KEYWORDS = frozenset(
+    {Keyword.FLYING, Keyword.MENACE} | {Keyword(k) for k in LANDWALK_SUBTYPE}
+)
 
 #: Keywords with no in-game effect, kept so a card can represent its own text.
 #: `docs/rules-coverage.md` names them; anything added here must genuinely do

@@ -899,6 +899,37 @@ Unlike `create_token` it names no token id, so nothing has to be pre-declared an
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
 
+## Landwalk, and global attack prohibitions
+
+    Stormtide Leviathan — "Islandwalk. All lands are Islands in addition to
+    their other types. Creatures without flying or islandwalk can't attack."
+
+The three lines only work together, and each needed something different.
+
+**Landwalk** is an ordinary `keywords` entry — `plainswalk`, `islandwalk`,
+`swampwalk`, `mountainwalk`, `forestwalk`. Five keywords rather than one
+parameterised ability because `Keyword` is a bare string and the whole content
+of the quality is *which* land type. It is the first evasion whose condition is
+neither creature's: `can_block` asks what the **defending player's board**
+contains, reading `chars` rather than the printed card so line two above is
+visible to line one.
+
+**`cant_attack`** is a static read by `combat.can_attack`:
+
+```jsonc
+{ "kind": "static", "effect": "cant_attack",
+  "affects": { "controller": "any", "types": ["Creature"],
+               "not_keywords": ["flying", "islandwalk"] } }
+```
+
+It is the one static whose filter routinely names creatures its own controller
+does not control, so `controller: "any"` is explicit — that clause is the whole
+difference between a lock on the table and a drawback on yourself.
+
+`not_keywords` existed in the effect-side selector language and not in the
+static one until this card needed it. And it is why landwalk had to be a real
+keyword rather than another static: a static cannot be *filtered on*.
+
 ## Attack requirements
 
     Trench Behemoth — "Landfall — Whenever a land you control enters, target
