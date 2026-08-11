@@ -1890,6 +1890,16 @@
   "treno_dark_city": {
     "zone": "battlefield"
   },
+  "tromokratis": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "tropical_island": {
     "zone": "battlefield"
   },

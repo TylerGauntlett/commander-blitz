@@ -97,7 +97,7 @@ def reference() -> dict:
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.triggers import TRIGGER_EVENTS
 
-    from ..loader import STATIC_FILTER_KEYS
+    from ..loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
 
     return {
         "ops": sorted(known_ops()),
@@ -105,13 +105,11 @@ def reference() -> dict:
         "types": sorted(t.value for t in CardType),
         "supertypes": sorted(s.value for s in Supertype),
         "trigger_events": sorted(TRIGGER_EVENTS),
-        "static_effects": [
-            "buff",
-            "grant_keyword",
-            "set_pt",
-            "add_subtype",
-            "extra_land_drops",
-        ],
+        # Derived, not a literal.  This was hardcoded to five entries while
+        # nine others existed -- protection, set_types, block_restriction and
+        # the player-wide ones -- so a card needing any of them was filed as
+        # blocked on a mechanic that already shipped.  Tromokratis was.
+        "static_effects": sorted(STATIC_EFFECTS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know

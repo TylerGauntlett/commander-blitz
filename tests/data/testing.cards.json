@@ -223,6 +223,60 @@
       ]
     },
     {
+      "id": "t_tromokratis",
+      "name": "Test Unblockable Unless All",
+      "oracle_text": "This creature can't be blocked unless all creatures defending player controls block it.",
+      "mana_cost": "{5}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kraken"
+      ],
+      "power": 8,
+      "toughness": 8,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked unless all creatures defending player controls block it.",
+          "effect": "block_restriction",
+          "affects": {
+            "self_only": true
+          },
+          "require_all": true
+        }
+      ]
+    },
+    {
+      "id": "t_no_bears",
+      "name": "Test No Bears",
+      "oracle_text": "This creature can't be blocked by Bears.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked by Bears.",
+          "effect": "block_restriction",
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "subtypes": [
+              "Bear"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": "t_evoker",
       "name": "Test Evoker",
       "oracle_text": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
