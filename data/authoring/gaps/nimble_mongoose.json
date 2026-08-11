@@ -1,33 +1,28 @@
 {
-  "card_id": "nimble_mongoose",
-  "name": "Nimble Mongoose",
-  "oracle_text": "Shroud (This creature can't be the target of spells or abilities.)\nThreshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
-  "blocked_sentences": [
-    "Shroud (This creature can't be the target of spells or abilities.)",
-    "Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard."
-  ],
-  "needs": [
-    {
-      "capability": "shroud",
-      "kind": "keyword",
-      "what": "a `shroud` member on `Keyword` (src/automtg/engine/enums.py) plus a targeting check that refuses the object to EVERY player, evaluated before the controller-owns-it early return that hexproof sits behind. Target legality only: shroud does not touch damage, blocking or enchant/equip, so it must not be routed through the protection code path. Same requirement already filed for Simic Sky Swallower this run -- see data/authoring/gaps/simic_sky_swallower.json, which carries the fuller engine breakdown. Once the keyword exists, this card needs nothing else for the line: it is a printed `keywords` entry.",
-      "why_existing_wont_do": "`Keyword` is a closed 15-member enum (flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first_strike, double_strike, defender, hexproof, indestructible, flash, partner) with no shroud, and an unknown keyword is a load-time DslError, so there is no spelling of the word that loads. `hexproof` is the near-miss and is a DIFFERENT rule: it stops opponents only, shroud stops everyone including the controller. Substituting it makes a strictly better card than the one printed -- a hexproof Mongoose could still be pumped, regenerated or equipped-by-targeting by its own controller, and this is a card whose whole point in a graveyard deck is that it is untouchable by both sides. `protection` (static, from_types/from_subtypes/from_colors) is wrong in the other direction: four rules read it (damage, enchant/equip, block, target), so a faked shroud would also prevent damage and stop the creature being blocked, and the loader rejects a protection static naming no quality, so 'from everything' cannot be written at all. Nothing in `static_filter_keys` or in the op list describes targetability; `lock_abilities` is a permission on activating abilities and is until-end-of-turn.",
-      "see_also": "data/authoring/gaps/simic_sky_swallower.json"
-    },
-    {
-      "capability": "static_condition",
-      "kind": "static_effect",
-      "what": "an \"as long as...\" condition on a static ability that may read game state other than counters on its own source -- for THIS card specifically, a count of cards in a zone belonging to a player, i.e. `{\"cmp\": \">=\", \"left\": {\"count\": {\"zone\": \"graveyard\", \"controller\": \"you\"}}, \"right\": {\"const\": 7}}` or an equivalent threshold form -- so a static `buff` switches on and off as the graveyard crosses seven cards. This is the ability word `Threshold`, shared by a large slice of Odyssey-block cards, so the condition wants to be general rather than a bespoke `threshold: true` flag. Whatever form it takes must declare its place in the fixed-order characteristics pipeline, since the present restriction exists to keep that pipeline acyclic; a zone count is board state and cannot depend on another static's output, so it is safe in the same way `attached` is.",
-      "why_existing_wont_do": "`_validate_static_condition` (src/automtg/cards/loader.py:504-524) rejects any static `condition` whose key set is not exactly `{\"counters\"}`, and `characteristics._static_condition_met` (src/automtg/engine/characteristics.py:188-198) reads only `condition.counters` -- how many counters of one kind sit on the static's own source. `docs/card-dsl.md` (\"As long as...\") states the same limit. Cards in a graveyard are not counters and are not on this permanent, so no condition spelling loads. The alternative route, a `{\"count\": filter}` static value, is closed twice over: static values are restricted to `{\"const\": n}` and `{\"count\": filter}` (`_validate_static_value`), the count filter is restricted to `STATIC_FILTER_KEYS`, and `zone` is NOT in that frozenset (loader.py:76-97) -- so a static can only count battlefield permanents, never graveyard cards. Even given a `zone` key it would be the wrong shape: `{\"count\": ...}` is linear, giving +N/+N for N cards, while the printed card is a step function that is +0/+0 at six cards and +2/+2 at seven. The `if` op's condition language is richer and does have `cmp` plus zone-aware `exists`, but it is unreachable here: `if` is an op, ops run only inside `spell_effects` or an ability's `effects`, and a static ability has neither -- its parameters are flattened onto the ability and the characteristics pipeline never invokes the effect interpreter. A triggered ability cannot substitute either: a `pump` from `upkeep` or `creature_dies` applies a bonus at a moment and holds it until cleanup, whereas the printed bonus appears AND disappears the instant the graveyard crosses seven in either direction, including mid-combat and including when cards leave the graveyard -- and no trigger event in the list (`dies`, `creature_dies`, `draw`, `mill` has none) fires on every card entering or leaving a graveyard anyway.",
-      "see_also": "data/authoring/gaps/guul_draz_vampire.json"
-    }
-  ],
-  "closest_existing": [
-    "hexproof",
-    "protection",
-    "static condition {\"counters\": ...}",
-    "static buff",
-    "static value {\"count\": filter}"
-  ],
-  "confidence": "high"
+ "card_id": "nimble_mongoose",
+ "name": "Nimble Mongoose",
+ "oracle_text": "Shroud (This creature can't be the target of spells or abilities.)\nThreshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.",
+ "blocked_sentences": [
+  "Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard."
+ ],
+ "needs": [
+  {
+   "capability": "static_condition",
+   "kind": "static_effect",
+   "what": "an \"as long as...\" condition on a static ability that may read game state other than counters on its own source -- for THIS card specifically, a count of cards in a zone belonging to a player, i.e. `{\"cmp\": \">=\", \"left\": {\"count\": {\"zone\": \"graveyard\", \"controller\": \"you\"}}, \"right\": {\"const\": 7}}` or an equivalent threshold form -- so a static `buff` switches on and off as the graveyard crosses seven cards. This is the ability word `Threshold`, shared by a large slice of Odyssey-block cards, so the condition wants to be general rather than a bespoke `threshold: true` flag. Whatever form it takes must declare its place in the fixed-order characteristics pipeline, since the present restriction exists to keep that pipeline acyclic; a zone count is board state and cannot depend on another static's output, so it is safe in the same way `attached` is.",
+   "why_existing_wont_do": "`_validate_static_condition` (src/automtg/cards/loader.py:504-524) rejects any static `condition` whose key set is not exactly `{\"counters\"}`, and `characteristics._static_condition_met` (src/automtg/engine/characteristics.py:188-198) reads only `condition.counters` -- how many counters of one kind sit on the static's own source. `docs/card-dsl.md` (\"As long as...\") states the same limit. Cards in a graveyard are not counters and are not on this permanent, so no condition spelling loads. The alternative route, a `{\"count\": filter}` static value, is closed twice over: static values are restricted to `{\"const\": n}` and `{\"count\": filter}` (`_validate_static_value`), the count filter is restricted to `STATIC_FILTER_KEYS`, and `zone` is NOT in that frozenset (loader.py:76-97) -- so a static can only count battlefield permanents, never graveyard cards. Even given a `zone` key it would be the wrong shape: `{\"count\": ...}` is linear, giving +N/+N for N cards, while the printed card is a step function that is +0/+0 at six cards and +2/+2 at seven. The `if` op's condition language is richer and does have `cmp` plus zone-aware `exists`, but it is unreachable here: `if` is an op, ops run only inside `spell_effects` or an ability's `effects`, and a static ability has neither -- its parameters are flattened onto the ability and the characteristics pipeline never invokes the effect interpreter. A triggered ability cannot substitute either: a `pump` from `upkeep` or `creature_dies` applies a bonus at a moment and holds it until cleanup, whereas the printed bonus appears AND disappears the instant the graveyard crosses seven in either direction, including mid-combat and including when cards leave the graveyard -- and no trigger event in the list (`dies`, `creature_dies`, `draw`, `mill` has none) fires on every card entering or leaving a graveyard anyway.",
+   "see_also": "data/authoring/gaps/guul_draz_vampire.json"
+  }
+ ],
+ "closest_existing": [
+  "hexproof",
+  "protection",
+  "static condition {\"counters\": ...}",
+  "static buff",
+  "static value {\"count\": filter}"
+ ],
+ "confidence": "high",
+ "expressible_today": {
+  "Shroud (This creature can't be the target of spells or abilities.)": "a printed `keywords` entry: [\"shroud\"]. Shipped; see tests/unit/test_shroud.py."
+ }
 }

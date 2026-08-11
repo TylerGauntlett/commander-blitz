@@ -313,6 +313,6 @@ It stays behind a flag so a routine run can never rewrite `data/cards/`.
 
 Most of what the audit finds is not a card-authoring job at all. The precon
 shortcuts cluster on mechanics the engine does not have — cycling, flashback,
-evolve, threshold, ascend, investigate, shroud, skulk, intimidate — so a worker
+evolve, threshold, ascend, investigate, skulk, intimidate — so a worker
 will correctly refuse them and write a gap record, and they surface through
 `scripts/report_gaps.py` as `/extend-dsl` work.

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **31** capabilities.
+**34 cards** blocked by **30** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [return-to-hand-cost](#return-to-hand-cost) | 2 | 5792 | cost |
-| [shroud](#shroud) | 2 | 8522 | keyword |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [adapt](#adapt) | 1 | 14630 | op |
 | [ascend](#ascend) | 1 | 19289 | engine |
@@ -127,7 +126,6 @@ Blocks **3** cards.
   - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
   - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
 - **Nimble Mongoose** (rank 26520) — `nimble_mongoose`
-  - Shroud (This creature can't be the target of spells or abilities.)
   - Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.
 
 </details>
@@ -219,25 +217,6 @@ Blocks **2** cards.
 - **Trench Behemoth** (rank 9467) — `trench_behemoth`
   - Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.
   - Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.
-
-</details>
-
-## shroud
-
-Blocks **2** cards.
-
-- **(keyword)** a `shroud` member on `Keyword` (src/automtg/engine/enums.py) plus a targeting check that refuses the object to EVERY player, evaluated before the controller-owns-it early return that hexproof sits behind. Target legality only: shroud does not touch damage, blocking or enchant/equip, so it must not be routed through the protection code path. Same requirement already filed for Simic Sky Swallower this run -- see data/authoring/gaps/simic_sky_swallower.json, which carries the fuller engine breakdown. Once the keyword exists, this card needs nothing else for the line: it is a printed `keywords` entry.
-  <br>Why the existing vocabulary won't do: `Keyword` is a closed 15-member enum (flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first_strike, double_strike, defender, hexproof, indestructible, flash, partner) with no shroud, and an unknown keyword is a load-time DslError, so there is no spelling of the word that loads. `hexproof` is the near-miss and is a DIFFERENT rule: it stops opponents only, shroud stops everyone including the controller. Substituting it makes a strictly better card than the one printed -- a hexproof Mongoose could still be pumped, regenerated or equipped-by-targeting by its own controller, and this is a card whose whole point in a graveyard deck is that it is untouchable by both sides. `protection` (static, from_types/from_subtypes/from_colors) is wrong in the other direction: four rules read it (damage, enchant/equip, block, target), so a faked shroud would also prevent damage and stop the creature being blocked, and the loader rejects a protection static naming no quality, so 'from everything' cannot be written at all. Nothing in `static_filter_keys` or in the op list describes targetability; `lock_abilities` is a permission on activating abilities and is until-end-of-turn.
-- **(keyword)** a `shroud` member on `Keyword` (src/automtg/engine/enums.py) plus a check in `can_be_targeted` (src/automtg/engine/targeting.py) that refuses the object to *every* controller, evaluated before the `obj.controller == controller` early return that currently short-circuits hexproof. It is the target rule only: shroud does not touch damage, blocking or enchant/equip, so it must not be routed through `protected_from`. Once the keyword exists the existing `grant_keyword` op and `grant_keyword` static carry the whole 'equipped/enchanted creature has shroud' family (~15 further cards already sitting in data/authoring/queue.json) for free.
-  <br>Why the existing vocabulary won't do: `hexproof` is the near-miss and it is a different rule. `can_be_targeted` returns True unconditionally when `obj.controller == controller` and only then asks about hexproof, so hexproof stops opponents alone while shroud stops everyone including the controller. Substituting it makes a strictly better creature than the one printed - this 6/6 flying trampler could still be pumped, regenerated or blinked by its own controller, which the printed card forbids. `protection` is the other candidate and is wrong in the opposite direction: docs/card-dsl.md's Protection section argues exactly this asymmetry, and protection is read by four rules (damage, enchant/equip, block, target) rather than one, so a shroud faked as protection would also prevent all damage to the creature and stop it being blocked. It is additionally parameterised over from_types/from_subtypes/from_colors and the loader rejects a `protection` static that names no quality (loader.py: 'protection needs from_types/from_subtypes/from_colors'), so there is no way to spell 'from everything' at all. Nothing else in the vocabulary reaches targeting legality: `lock_abilities` is a permission on activating abilities and is until-end-of-turn, and no `static_filter_keys` entry describes targetability.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Simic Sky Swallower** (rank 8522) — `simic_sky_swallower`
-  - Shroud (This creature can't be the target of spells or abilities.)
-- **Nimble Mongoose** (rank 26520) — `nimble_mongoose`
-  - Shroud (This creature can't be the target of spells or abilities.)
-  - Threshold — This creature gets +2/+2 as long as there are seven or more cards in your graveyard.
 
 </details>
 

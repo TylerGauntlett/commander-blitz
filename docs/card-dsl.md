@@ -787,6 +787,35 @@ let you target your own protected creature.
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
 
+### Shroud, which is the third member of that family
+
+`shroud` is an ordinary entry in `keywords`, so a card that prints it needs
+nothing else:
+
+```jsonc
+"keywords": ["flying", "trample", "shroud"]
+```
+
+It shares protection's "everyone, including the controller" half and hexproof's
+"target legality only" half, and it is the only one of the three that is exactly
+one rule. `targeting.can_be_targeted` is the sole reader.
+
+|  | stops the controller | rules that read it |
+|---|---|---|
+| hexproof | no | target |
+| **shroud** | **yes** | **target** |
+| protection | yes | damage, enchant/equip, block, target |
+
+Both neighbours are wrong in a way that is invisible on screen. Written as
+`hexproof`, Simic Sky Swallower is a strictly *better* card — its controller can
+still pump, blink or equip it. Written as `protection`, it also stops taking
+damage and stops being blocked, and the loader will not accept "from everything"
+in any case.
+
+Granting it needs no extra work: `grant_keyword`, as an op or as a static,
+already carries the whole "equipped creature has shroud" family, because the
+check reads the characteristic layer rather than the printed card.
+
 ## Granting an ability
 
 The quoted half of `gains trample and "Whenever this creature deals combat damage

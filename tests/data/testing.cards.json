@@ -207,6 +207,47 @@
       ]
     },
     {
+      "id": "t_shrouded",
+      "name": "Test Shrouded",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Serpent"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "shroud"
+      ]
+    },
+    {
+      "id": "t_shroud_granter",
+      "name": "Test Shroud Granter",
+      "oracle_text": "Creatures you control have shroud.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have shroud.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "shroud"
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_wall",
       "name": "Test Wall",
       "mana_cost": "{W}",

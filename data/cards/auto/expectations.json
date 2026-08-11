@@ -985,6 +985,9 @@
       "graveyard"
     ]
   },
+  "lightning_greaves": {
+    "zone": "battlefield"
+  },
   "lightshell_duo": {
     "zone": "battlefield"
   },
@@ -1584,6 +1587,18 @@
     "zone": "battlefield"
   },
   "simic_signet": {
+    "zone": "battlefield"
+  },
+  "simic_sky_swallower": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "trample",
+        "shroud"
+      ]
+    },
     "zone": "battlefield"
   },
   "sin_spira_s_punishment": {

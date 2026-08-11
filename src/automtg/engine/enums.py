@@ -143,6 +143,11 @@ class Keyword(str, Enum):
     DOUBLE_STRIKE = "double_strike"
     DEFENDER = "defender"
     HEXPROOF = "hexproof"
+    #: Rule 702.18a.  Not hexproof with a wider net: hexproof stops opponents
+    #: and shroud stops *everyone*, so the controller cannot target their own
+    #: creature either.  Read only by :func:`targeting.can_be_targeted` -- it is
+    #: a target rule and nothing else, unlike protection, which four rules read.
+    SHROUD = "shroud"
     INDESTRUCTIBLE = "indestructible"
     FLASH = "flash"
     #: Deck construction only -- "you can have two commanders if both have

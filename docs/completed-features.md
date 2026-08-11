@@ -1,3 +1,45 @@
+## Shroud — the keyword whose whole content is who it stops
+
+### Overview
+
+Two gap records asked for it independently, Nimble Mongoose and Simic Sky
+Swallower, and both spent most of their length arguing that the two obvious
+substitutions are wrong in opposite directions. They were right, which is why
+this is worth a page for a five-line diff.
+
+`hexproof` is the near miss and stops opponents only. Written that way, Simic
+Sky Swallower becomes a **strictly better** card than the one printed: a 6/6
+flying trampler its own controller can still pump, blink or equip by targeting.
+That is the failure this pipeline exists to prevent — nothing on screen would
+look wrong.
+
+`protection` is wrong the other way. Four rules read it — damage, enchant/equip,
+block, target — so a shroud faked as protection would also make the creature
+undamageable and unblockable, and the loader rejects a `protection` static that
+names no quality, so "from everything" cannot be spelled at all.
+
+### What shipped
+
+One enum member and one reordered check. `Keyword.SHROUD`, and in
+`targeting.can_be_targeted` the shroud test moved *above* the
+`obj.controller == controller` early return that hexproof sits behind — that
+ordering is the entire semantic difference between the two keywords.
+
+Nothing else. `KNOWN_KEYWORDS` derives from the enum, so the loader, the
+residual gate and `proxy.lift_keywords` all picked it up; `grant_keyword` as op
+and as static carries the whole "equipped creature has shroud" family for free,
+because the check reads the characteristic layer rather than the printed card.
+Server and frontend: no change, keywords being rendered generically.
+
+### Guarded by
+
+`tests/unit/test_shroud.py`, in pairs. Every claim about shroud is asserted
+beside the same claim about hexproof on the same board, so that a regression
+collapsing the two keywords into one fails rather than passes quietly. The
+"only the target rule" half is pinned by asserting `protected_from` stays False
+for a shrouded creature, which covers damage, blocking and enchant/equip in one
+assertion, since all three ask that question.
+
 ## Cycling — the first ability played from outside the battlefield
 
 ### Overview
