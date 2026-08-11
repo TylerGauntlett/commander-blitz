@@ -31,6 +31,7 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .turn import _next_blocker_decision
 from .zones import move_object
+from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.cards.registry import CardRegistry, DeckList, GameData
@@ -217,7 +218,13 @@ class Game:
         # construction: legality never offers a variant that is both, because
         # an alternative cost replaces the printed one and the kicker is an
         # addition to it.
-        if action.evoked and card.evoke is not None:
+        if action.emerge_oid is not None and card.emerge is not None:
+            cost = card.emerge
+            # The sacrificed creature pays for part of the spell, so it is netted
+            # into `extra` alongside the commander tax rather than paid
+            # separately -- `pay` clamps the generic part at zero.
+            extra -= state.card(action.emerge_oid).mana_cost.mana_value()
+        elif action.evoked and card.evoke is not None:
             cost = card.evoke
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
@@ -255,6 +262,12 @@ class Game:
             ok = yield from pay(state, pid, card.retrace_cost, None)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
+
+        # Rule 601.2g: additional costs are paid after the mana. Sacrificing
+        # here rather than before means a creature that taps for mana can still
+        # help pay for the spell it is about to be eaten by.
+        if action.emerge_oid is not None:
+            sacrifice_object(state, action.emerge_oid)
 
         if from_command:
             player = state.players[obj.owner]

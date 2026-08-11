@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**21 cards** blocked by **17** capabilities.
+**20 cards** blocked by **15** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,12 +22,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
-| [cast-trigger](#cast-trigger) | 1 | 7681 | trigger_event |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
-| [emerge](#emerge) | 1 | 7681 | cost |
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
@@ -212,22 +210,6 @@ Blocks **1** card.
 
 </details>
 
-## cast-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A triggered ability that fires when its own card is CAST -- i.e. while that card is on the stack as a spell -- and resolves above the spell, so its effect happens whether or not the spell itself ever resolves. Concretely: `stack` has to become a legal `active_zones` value, `_candidate_abilities` has to scan the stack, and `push_trigger` has to place the triggered ability above the spell that caused it. Targets are chosen as the trigger goes on the stack, as usual.
-  <br>Why the existing vocabulary won't do: `spell_cast` is in `TRIGGER_EVENTS` and in `OBJECT_SUBJECT_TRIGGERS` (`src/automtg/engine/triggers.py:34,57`), so an ability can already watch other spells being cast -- but not its own, because of where triggers are scanned from. `_candidate_abilities` (`src/automtg/engine/triggers.py:127-178`) walks the battlefield, then the command, graveyard, hand and exile zones, plus the object that just left the battlefield for leave-triggers. The stack is never scanned, and `Ability.active_zones` cannot name it: the schema's literal set is `battlefield | command | graveyard | hand | exile` (`src/automtg/cards/schema.py:92`), and `Zone.STACK` (`src/automtg/engine/enums.py:18`) is deliberately absent from it. A card being cast has already left hand for the stack when `EventType.SPELL_CAST` fires, so even `active_zones: ["hand"]` -- the shape cycling uses -- would not catch it. `self_enters` is the nearest event that does fire for this card and is NOT a substitute: it fires on resolution, one step later and only if the spell resolves, which loses the reason cast triggers are printed at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elder Deep-Fiend** (rank 7681) — `elder_deep_fiend`
-  - Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)
-  - When you cast this spell, tap up to four target permanents.
-  - Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered.
-
-</details>
-
 ## chosen-creature-type
 
 Blocks **1** card.
@@ -292,22 +274,6 @@ Blocks **1** card.
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
   - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-
-</details>
-
-## emerge
-
-Blocks **1** card.
-
-- **(cost)** A card-level alternative cast cost, `emerge: "{5}{U}{U}"`, that (a) replaces the printed mana cost while casting from hand, (b) adds sacrificing a creature you control as part of the cost, and (c) reduces the generic portion of that cost by the mana value of the creature actually sacrificed. The reduction is dynamic and per-cast -- it is a function of a choice the caster makes while paying, not of the board -- so legality has to offer one castable action per sacrificeable creature (or offer the mode once and let the payment step ask which creature), and the payment solver has to compute `{5}{U}{U}` minus that one creature's mana value, clamped at zero on the generic part and never touching the two {U} pips. The printed mana value must stay 8.
-  <br>Why the existing vocabulary won't do: Nothing in `CardModel` can express a cast cost that both replaces the printed one and is chosen at cast time. `kicker` is the only other card-level mana cost and is explicitly ADDITIVE -- legality offers the card at `mana_cost` then at `mana_cost + kicker` -- so it makes the card more expensive, never less. `cost_reduction` is the closest fit and still cannot do it: `_validate_cost_reduction` (`src/automtg/cards/loader.py:504-516`) accepts exactly one of `count` or `total_power` over a static filter of printed characteristics, and the comment there says why -- it is evaluated while deciding what is castable, before anything is on the stack, so it can only read the board as it stands. Emerge's reduction is not a property of the board; it is the mana value of a creature the caster picks and destroys as part of the payment, which no reduction spec can name. `cost_reduction` also reduces the printed cost rather than replacing it, is generic-only, and is never optional, so it could not model the choice between casting for {8} and emerging. `Cost.sacrifice` exists (`src/automtg/cards/schema.py:26`) but belongs to `CostModel`, the cost of an ACTIVATED ability, and there is no path from an activated ability to casting the card that owns it. `suspend` and `retrace` are the two existing card-level alternate ways to play a card and neither replaces a cast-from-hand mana cost with a cheaper one: suspend exiles the card and waits out time counters before casting it free, retrace only widens the zone while adding a discard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elder Deep-Fiend** (rank 7681) — `elder_deep_fiend`
-  - Emerge {5}{U}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)
-  - When you cast this spell, tap up to four target permanents.
-  - Scope: only `Flash` is expressible today, and it is already in the packet's starting_point as a keyword. Both remaining printed lines are blocked, on two independent missing things -- an alternative cast cost, and a trigger that fires from the stack. The `tap up to four target permanents` half of the second line needs nothing new on its own; see `expressible_today` below. Written without the cast trigger the card would be a plain 5/6 flash creature that taps nothing, and written with a `self_enters` trigger instead it would be a materially different card -- Elder Deep-Fiend's whole point is that the tap happens on cast, before the spell resolves, so it can be flashed in to lock down an opponent's untap or combat step even if the creature is countered.
 
 </details>
 

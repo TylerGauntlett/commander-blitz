@@ -1147,6 +1147,8 @@ not have them where it is sitting:
 ```jsonc
 "kicker": "{1}{U}"                          // pay more as you cast it
 "evoke": "{2}{U}"                           // pay less instead, and it dies on arrival
+"emerge": "{5}{U}{U}"                       // pay less still, by eating a creature
+"emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "retrace": true                             // cast from the graveyard, discarding a land
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 ```
@@ -1166,6 +1168,51 @@ alternative nobody would take is dead weight that reads as a mechanic.
 "It's sacrificed when it enters" is an ordinary `self_enters` trigger gated on
 `{"evoked": true}`, which works because the flag is written onto the object at
 resolution and outlives the spell — see the note under Kicker.
+
+**Emerge** is the third alternative cost and the only one whose price is not
+fixed: it is reduced by the mana value of the creature sacrificed, so legality
+offers **one line per sacrificeable creature** rather than one line with a flag.
+The list is capped, because each line multiplies by every legal target tuple —
+the same swamping `MAX_TARGET_OPTIONS` exists to stop — and the biggest mana
+values come first, since those are the lines a player is looking for.
+
+The mana is paid before the sacrifice (rule 601.2g), so a creature that taps for
+mana can help pay for the spell that is about to eat it. A card may not carry
+both `evoke` and `emerge`: no printing does, and legality would have to decide
+which replaces which.
+
+### "When you cast this spell…"
+
+An ability that fires while its own card *is* the spell, so it is never on the
+battlefield when it matters:
+
+```jsonc
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ ... ] }
+```
+
+`_candidate_abilities` scanned the battlefield, the command zone, the graveyard,
+the hand and exile — every zone except the one place this card lives at the
+moment it speaks. The stack is scanned separately rather than added to that loop,
+because it is not a player zone: it is shared, ordered, and holds the spell under
+its own trigger.
+
+**Emerge** is `evoke` with a price that is not fixed: it replaces the printed
+cost *and* is reduced by the mana value of a creature you sacrifice. Because the
+creature decides the number, legality offers **one line per sacrificeable
+creature** rather than one line with a flag, capped at four so a wide board does
+not swamp the action list. The sacrifice is taken after the mana (rule 601.2g),
+so a creature that taps for mana can help pay for the spell that eats it. A card
+may not carry both `evoke` and `emerge`; no printing does, and legality would
+have to decide which replaces which.
+
+`"When you cast this spell, …"` is an ordinary triggered ability with
+`"active_zones": ["stack"]` and a `spell_cast` trigger sourced to `self`. The
+stack is scanned for triggers now — it is the one zone a card is in at the
+moment that line speaks, and `_candidate_abilities` had covered every other one.
+What keeps ordinary abilities out of it is `active_zones`, which still defaults
+to the battlefield.
 
 **Retrace** widens *where* a card may be cast from, the same way
 `play_lands_from_graveyard` widens where a land may be played from — legality

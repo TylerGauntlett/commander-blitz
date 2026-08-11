@@ -236,6 +236,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
     # never fire.  Both would load cleanly.
     evoke = ManaCost.parse(model.evoke) if model.evoke else None
+    emerge = ManaCost.parse(model.emerge) if model.emerge else None
+    if emerge is not None and evoke is not None:
+        # Checked before either half-a-cost guard below, because a card
+        # carrying both trips those first and the message would name the
+        # wrong problem.
+        raise DslError(f"{where}: a card may not have both 'evoke' and 'emerge'")
     if evoke is not None and evoke.x_count:
         raise DslError(f"{where}: an evoke cost with X is not implemented")
     reads_evoked = _mentions_condition(model, "evoked")
@@ -243,6 +249,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: reads the 'evoked' condition but has no 'evoke' cost")
     if evoke is not None and not reads_evoked:
         raise DslError(f"{where}: has an 'evoke' cost that no effect reads via 'evoked'")
+    if emerge is not None and emerge.x_count:
+        raise DslError(f"{where}: an emerge cost with X is not implemented")
     if evoke is not None and evoke.mana_value() >= mana_cost.mana_value():
         # An "alternative" cost no cheaper than the printed one is never taken,
         # so the whole mechanic would be dead weight nobody would notice.
@@ -292,6 +300,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         kicker=kicker,
         evoke=evoke,
+        emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         suspend=suspend,

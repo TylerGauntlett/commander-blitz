@@ -644,6 +644,18 @@ def _covered(card: CardDef, line: str) -> bool:
     # stack has already been paid for.
     if card.cost_reduction is not None and "costs" in lowered and "less to cast" in lowered:
         return True
+
+    # "Emerge {5}{U}{U}" is a whole alternative way to cast the card, paid and
+    # spent inside `game._cast`. Like `kicker` above there is no ability that
+    # could honestly claim it -- an AbilityModel is activated, triggered or
+    # static, and emerge is none of those. Elder Deep-Fiend is the first
+    # permanent whose alternative-cost line has no sacrifice trigger to hang on,
+    # which is why `evoke` had not hit this: Mulldrifter's line is claimed by
+    # the "it's sacrificed when it enters" trigger it really does have.
+    if card.emerge is not None and stripped.lower().startswith("emerge "):
+        return True
+    if card.evoke is not None and stripped.lower().startswith("evoke "):
+        return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:

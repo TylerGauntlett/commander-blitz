@@ -98,7 +98,9 @@ class AbilityModel(BaseModel):
 
     # triggered
     trigger: TriggerModel | None = None
-    active_zones: list[Literal["battlefield", "command", "graveyard", "hand", "exile"]] = Field(
+    active_zones: list[
+        Literal["battlefield", "command", "graveyard", "hand", "exile", "stack"]
+    ] = Field(
         default_factory=lambda: ["battlefield"]
     )
 
@@ -184,6 +186,11 @@ class CardModel(BaseModel):
     #: printed mana value is unchanged: a Mulldrifter evoked is still a
     #: five-drop for anything that counts mana value.
     evoke: str | None = None
+    #: "Emerge {5}{U}{U}" -- an alternative cost that sacrifices a creature
+    #: and is then reduced by that creature's mana value. Like ``evoke`` it
+    #: replaces the printed cost; unlike it, how much you pay depends on
+    #: what you sacrifice, which is why it cannot be a fixed ManaCost alone.
+    emerge: str | None = None
     #: "This spell costs {X} less to cast, where X is the total power of
     #: creatures you control."  Reduces the *generic* part of the cost only,
     #: never below zero and never the coloured pips -- which is what the rules

@@ -39,6 +39,10 @@ class Action:
     #: Mulldrifter cast for {2}{U} and one cast for {4}{U} are two different
     #: things to do with the same card, and only one of them dies on arrival.
     evoked: bool = False
+    #: The creature sacrificed to emerge, chosen as part of the action: how
+    #: much the spell costs depends on which one, so two emerge lines with
+    #: different sacrifices are two different things to do.
+    emerge_oid: int | None = None
     #: Which of a mana ability's ``mana_options`` this activation takes -- the
     #: colour, for "Add one mana of any colour". Part of the identity: tapping
     #: Commander's Sphere for {U} and for {R} are two different things to do.
@@ -76,6 +80,7 @@ class Action:
             x=self.x,
             kicked=self.kicked,
             evoked=self.evoked,
+            emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
             label=label,
             base_label=label if base_label is None else base_label,
@@ -94,6 +99,7 @@ class Action:
             self.x,
             self.kicked,
             self.evoked,
+            -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
         )
 
@@ -107,6 +113,7 @@ class Action:
             "x": self.x,
             "kicked": self.kicked,
             "evoked": self.evoked,
+            "emerge_oid": self.emerge_oid,
             "mana_option": self.mana_option,
             "label": self.label,
             "base_label": self.base_label,

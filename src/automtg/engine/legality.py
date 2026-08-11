@@ -290,7 +290,42 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
+    # Emerge offers one line *per sacrificeable creature*, because the price
+    # depends on which one goes: the cost is reduced by that creature's mana
+    # value. Same reason kicked and unkicked are two actions rather than one
+    # with a flag -- the player is choosing, and the choice changes the cost.
+    if card.emerge is not None and state.objects[oid].zone is Zone.HAND:
+        for victim in _emerge_fodder(state, pid, oid):
+            out += _cast_variant(
+                state,
+                pid,
+                oid,
+                card,
+                tuples,
+                extra_generic=extra_generic,
+                emerge_oid=victim,
+            )
     return out
+
+
+def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
+    """Creatures this player could sacrifice to emerge, cheapest reduction last.
+
+    Capped, because every one of them is a separate cast action multiplied by
+    every legal target tuple -- the same swamping `MAX_TARGET_OPTIONS` exists to
+    stop. The biggest mana values come first, since those are the lines a player
+    is actually looking for.
+    """
+    creatures = [
+        other
+        for other in state.battlefield
+        if (obj := state.objects.get(other)) is not None
+        and obj.controller == pid
+        and other != oid
+        and "Creature" in chars(state, other).types
+    ]
+    creatures.sort(key=lambda c: (-state.card(c).mana_cost.mana_value(), c))
+    return creatures[:4]
 
 
 def _cast_variant(
@@ -303,6 +338,7 @@ def _cast_variant(
     extra_generic: int,
     kicked: bool = False,
     evoked: bool = False,
+    emerge_oid: int | None = None,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
 
@@ -312,13 +348,19 @@ def _cast_variant(
     sources = mana_sources(state, pid, purpose=spell_purpose(card))
     pool = state.players[pid].mana_pool
 
-    if evoked and card.evoke is not None:
+    if emerge_oid is not None and card.emerge is not None:
+        cost = card.emerge
+    elif evoked and card.evoke is not None:
         cost = card.evoke
     elif kicked:
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
     discount = cost_reduction(state, pid, card)
+    if emerge_oid is not None:
+        # The sacrifice pays for part of the spell. Generic-only and clamped by
+        # `pay`, like every other reduction here.
+        discount += state.card(emerge_oid).mana_cost.mana_value()
 
     # X is a *gate* here, not a value.  Legality asks only "is there any X this
     # is castable at", and `game._cast` then asks the player which one -- so the
@@ -351,6 +393,8 @@ def _cast_variant(
         label_base += " (kicked)"
     if evoked:
         label_base += " (evoked)"
+    if emerge_oid is not None:
+        label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
     if extra_generic:
         label_base += f" (+{extra_generic})"
     out = []
@@ -366,6 +410,7 @@ def _cast_variant(
                 x=x,
                 kicked=kicked,
                 evoked=evoked,
+                emerge_oid=emerge_oid,
                 label=label,
                 base_label=label_base,
                 pays=pays,
