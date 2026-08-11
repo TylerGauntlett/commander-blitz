@@ -308,7 +308,9 @@ def _strip_reminders(text: str) -> str:
     return _REMINDER.sub("", text)
 
 
-def lift_keywords(oracle_text: str, printed: tuple[str, ...]) -> tuple[list[str], set[str]]:
+def lift_keywords(
+    oracle_text: str, printed: tuple[str, ...], *, strict: bool = False
+) -> tuple[list[str], set[str]]:
     """``(keywords, the lines they consumed)``.
 
     Scryfall's ``keywords`` array lists keywords a card *grants* as well as ones
@@ -320,6 +322,16 @@ def lift_keywords(oracle_text: str, printed: tuple[str, ...]) -> tuple[list[str]
     cross-check, never as a source.  Parameterised keywords -- "Ward {2}",
     "Protection from red", "Annihilator 2" -- are not in ``Keyword`` at all, so
     they fall out of this on their own and land in the residual.
+
+    ``strict`` changes who ``printed`` is and therefore what consuming a line
+    means.  Generating a proxy, ``printed`` is Scryfall's array and the line is
+    consumed because the card being written is *about to be given* those
+    keywords.  Auditing an existing card -- :func:`verify.claimed_lines` --
+    ``printed`` is what that card actually has, and consuming a line it does not
+    implement is the whole failure the residual gate exists to catch.  Simic Sky
+    Swallower prints "Shroud" and shipped carrying ``hexproof``: a strictly
+    better card, silently, and the moment ``shroud`` joined ``Keyword`` the
+    permissive reading stopped reporting it.
     """
     printed_lower = {k.casefold().replace(" ", "_") for k in printed}
     found: list[str] = []
@@ -329,10 +341,13 @@ def lift_keywords(oracle_text: str, printed: tuple[str, ...]) -> tuple[list[str]
         if not bare:
             continue
         parts = [p.strip().casefold().replace(" ", "_") for p in bare.split(",")]
-        if not all(p in KNOWN_KEYWORDS for p in parts if p):
+        parts = [p for p in parts if p]
+        if not parts or not all(p in KNOWN_KEYWORDS for p in parts):
+            continue
+        if strict and not all(p in printed_lower for p in parts):
             continue
         for part in parts:
-            if part and part not in found and (not printed_lower or part in printed_lower):
+            if part not in found and (not printed_lower or part in printed_lower):
                 found.append(part)
         consumed.add(line)
     return found, consumed

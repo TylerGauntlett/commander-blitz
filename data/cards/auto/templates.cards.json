@@ -14627,6 +14627,64 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste",
+            "shroud"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has haste and shroud"
+        },
+        {
+          "cost": {
+            "mana": "{0}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {0}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "lightning_greaves",
+      "mana_cost": "{2}",
+      "name": "Lightning Greaves",
+      "oracle_text": "Equipped creature has haste and shroud. (It can't be the target of spells or abilities.)\nEquip {0}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -23388,6 +23446,34 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "simic_sky_swallower",
+      "keywords": [
+        "flying",
+        "trample",
+        "shroud"
+      ],
+      "mana_cost": "{5}{G}{U}",
+      "name": "Simic Sky Swallower",
+      "oracle_text": "Flying, trample\nShroud (This creature can't be the target of spells or abilities.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Leviathan"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

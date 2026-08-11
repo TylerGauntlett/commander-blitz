@@ -567,7 +567,12 @@ def claimed_lines(card: CardDef, oracle_text: str) -> set[str]:
     from ..proxy import lift_keywords
 
     consumed: set[str] = set()
-    _, keyword_lines = lift_keywords(oracle_text, tuple(str(k) for k in card.keywords))
+    # ``strict``: the line counts as claimed only if this card really has those
+    # keywords.  Without it a card printing "Shroud" and carrying `hexproof`
+    # clears the residual gate, because the line names *a* known keyword.
+    _, keyword_lines = lift_keywords(
+        oracle_text, tuple(str(k) for k in card.keywords), strict=True
+    )
     consumed |= keyword_lines
 
     # An instant or sorcery has exactly one place for its text to go, so

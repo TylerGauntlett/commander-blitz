@@ -78,6 +78,7 @@
       "menace",
       "partner",
       "reach",
+      "shroud",
       "trample",
       "vigilance"
     ],
@@ -211,7 +212,8 @@
     "id": "simic_sky_swallower",
     "keywords": [
       "flying",
-      "trample"
+      "trample",
+      "shroud"
     ],
     "mana_cost": "{5}{G}{U}",
     "name": "Simic Sky Swallower",
@@ -227,7 +229,7 @@
   },
   "template_said": "Shroud (This creature can't be the target of spells or abilities.)",
   "todo": [
-    "Shroud"
+    "Flying, trample\nShroud (This creature can't be the target of spells or abilities.)"
   ],
   "toughness": "6",
   "type_line": "Creature — Leviathan"

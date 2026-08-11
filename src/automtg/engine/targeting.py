@@ -87,6 +87,13 @@ def can_be_targeted(
     Protection stops *anyone*, including the controller: "protection from
     Wizards" means your own Wizard cannot target it either, which is the half of
     protection that a hexproof-shaped implementation would silently get wrong.
+
+    Shroud (702.18a) stops everyone too, and that is the whole difference
+    between it and hexproof -- so it has to be asked *before* the controller
+    early return below, not folded in beside hexproof after it.  A Simic Sky
+    Swallower its own controller could still pump or blink would be a strictly
+    better card than the one printed.  Unlike protection it is read here and
+    nowhere else: shroud says nothing about damage, blocking or enchant/equip.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -95,9 +102,12 @@ def can_be_targeted(
         return True
     if protected_from(state, oid, source_oid):
         return False
+    keywords = chars(state, oid).keywords
+    if Keyword.SHROUD.value in keywords:
+        return False
     if obj.controller == controller:
         return True
-    return Keyword.HEXPROOF.value not in chars(state, oid).keywords
+    return Keyword.HEXPROOF.value not in keywords
 
 
 def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:

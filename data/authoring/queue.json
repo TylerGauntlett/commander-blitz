@@ -28640,6 +28640,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Bloodline Necromancer": {
+      "edhrec_rank": 4006,
+      "gate": "fidelity",
+      "name": "Bloodline Necromancer",
+      "reason": "Lifelink",
+      "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Bloodline Pretender": {
       "edhrec_rank": 1833,
       "gate": "template",
@@ -68030,6 +68040,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Dictate of Erebos": {
+      "edhrec_rank": 990,
+      "gate": "fidelity",
+      "name": "Dictate of Erebos",
+      "reason": "Flash",
+      "scryfall_id": "93789500-bcc5-40b0-991d-84d17cef95a6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Dictate of Heliod": {
       "edhrec_rank": 6845,
       "gate": "template",
@@ -78856,6 +78876,16 @@
       "name": "Eden, Seat of the Sanctum",
       "reason": "no template for: {5}, {T}: Mill two cards. Then you may sacrifice this land. When you do, return another ta",
       "scryfall_id": "4786e79c-1e64-41bd-87f6-9a33110afa71",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Edgar Markov": {
+      "edhrec_rank": 3118,
+      "gate": "fidelity",
+      "name": "Edgar Markov",
+      "reason": "First strike, haste",
+      "scryfall_id": "089b6e6f-c178-4612-866f-da9cbc01b442",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -157052,12 +157082,12 @@
     },
     "Lightning Greaves": {
       "edhrec_rank": 13,
-      "gate": "template",
+      "gate": null,
       "name": "Lightning Greaves",
-      "reason": "no template for: Equipped creature has haste and shroud",
+      "reason": "",
       "scryfall_id": "0596b5ac-0d95-430a-a747-332abdd30139",
-      "source": "",
-      "status": "pending",
+      "source": "template:attached:grant,equip",
+      "status": "done",
       "wanted": false
     },
     "Lightning Helix": {
@@ -246232,12 +246262,12 @@
     },
     "Simic Sky Swallower": {
       "edhrec_rank": 8522,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Simic Sky Swallower",
-      "reason": "Shroud (This creature can't be the target of spells or abilities.)",
+      "reason": "",
       "scryfall_id": "f791b7fa-3d12-409d-b017-cb9fd8b71af7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Simoon": {
@@ -248716,6 +248746,16 @@
       "name": "Skyknight Squire",
       "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on this creature",
       "scryfall_id": "28007f11-6610-42e8-9fb6-1a6091ec9435",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Skyknight Vanguard": {
+      "edhrec_rank": 3813,
+      "gate": "fidelity",
+      "name": "Skyknight Vanguard",
+      "reason": "Flying",
+      "scryfall_id": "e570f4d4-5235-4ee8-a00f-8c327637c493",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -267166,6 +267206,16 @@
       "name": "Sun Sentinel",
       "reason": "",
       "scryfall_id": "5cd0b4d6-9753-46a3-924c-2adf3dad2819",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sun Titan": {
+      "edhrec_rank": 296,
+      "gate": "fidelity",
+      "name": "Sun Titan",
+      "reason": "Vigilance",
+      "scryfall_id": "3d6eacf2-f6c7-4ede-b5a5-7463602699ae",
       "source": "",
       "status": "pending",
       "wanted": false

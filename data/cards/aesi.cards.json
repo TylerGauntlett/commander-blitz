@@ -1082,17 +1082,7 @@
       "toughness": 7,
       "keywords": ["trample"]
     },
-    {
-      "id": "simic_sky_swallower",
-      "name": "Simic Sky Swallower",
-      "oracle_text": "Flying, trample\nShroud (This creature can't be the target of spells or abilities.)",
-      "mana_cost": "{5}{G}{U}",
-      "types": ["Creature"],
-      "subtypes": ["Leviathan"],
-      "power": 6,
-      "toughness": 6,
-      "keywords": ["flying", "trample", "hexproof"]
-    },
+    
     {
       "id": "nimble_mongoose",
       "name": "Nimble Mongoose",
