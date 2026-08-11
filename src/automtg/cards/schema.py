@@ -211,6 +211,11 @@ class CardModel(BaseModel):
     #: land card in addition to paying its other costs."  A whole extra way to
     #: cast the card, so it is a card-level field rather than an ability.
     retrace: bool = False
+    #: "Flashback {1}{U}, Pay 3 life" -- an alternative cost offered only from
+    #: the owner's graveyard. A full cost, not just mana, because Deep Analysis
+    #: charges life too. Card-level like ``retrace``, because it changes which
+    #: zone the card may be cast from.
+    flashback: CostModel | None = None
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

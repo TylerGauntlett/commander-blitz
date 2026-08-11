@@ -39,6 +39,11 @@ class Action:
     #: Mulldrifter cast for {2}{U} and one cast for {4}{U} are two different
     #: things to do with the same card, and only one of them dies on arrival.
     evoked: bool = False
+    #: Cast from a graveyard for its flashback cost. Part of the
+    #: action's identity like ``kicked`` and ``evoked``: the same card
+    #: may be castable from hand and from the graveyard at once, and
+    #: they are different actions at different prices.
+    flashback: bool = False
     #: The creature sacrificed to emerge, chosen as part of the action: how
     #: much the spell costs depends on which one, so two emerge lines with
     #: different sacrifices are two different things to do.
@@ -80,6 +85,7 @@ class Action:
             x=self.x,
             kicked=self.kicked,
             evoked=self.evoked,
+            flashback=self.flashback,
             emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
             label=label,
@@ -99,6 +105,7 @@ class Action:
             self.x,
             self.kicked,
             self.evoked,
+            self.flashback,
             -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
         )

@@ -34,6 +34,7 @@ def push_spell(
     x: int = 0,
     kicked: bool = False,
     evoked: bool = False,
+    flashback: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -58,6 +59,7 @@ def push_spell(
         x=x,
         kicked=kicked,
         evoked=evoked,
+        flashback=flashback,
         modes=modes,
         description=card.name,
     )
@@ -186,8 +188,15 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
             EventType.SPELL_FIZZLED, player=item.controller, source=item.oid, card=card.id
         )
         obj.stack_id = None
-        move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="fizzled")
+        obj.cast_from_graveyard = item.flashback
+        destination = Zone.EXILE if item.flashback else Zone.GRAVEYARD
+        move_object(state, item.oid, destination, to_player=obj.owner, cause="fizzled")
         return
+
+    # Set before the effects run, not after: "if this spell was cast from a
+    # graveyard, create ten of those tokens instead" is read *during*
+    # `spell_effects`, so a flag written afterwards would always read False.
+    obj.cast_from_graveyard = item.flashback
 
     ctx = EffectContext(
         state=state,
@@ -218,6 +227,12 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     filtering the (already popped) stack list, so no cleanup is needed here.
     """
     destination = Zone.BATTLEFIELD if card.is_permanent else Zone.GRAVEYARD
+    # "Then exile it." Flashback is once-only, and this is what makes it so: a
+    # spell cast from a graveyard for its flashback cost goes to exile instead
+    # of back to the graveyard it came from. A permanent still enters the
+    # battlefield -- the rider only replaces the graveyard.
+    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD:
+        destination = Zone.EXILE
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
 
 

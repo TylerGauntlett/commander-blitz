@@ -33,6 +33,7 @@ CONDITION_KEYS = frozenset(
         "is_your_turn",
         "kicked",
         "evoked",
+        "cast_from_graveyard",
     }
 )
 
@@ -77,6 +78,17 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_evoked = obj is not None and obj.cast_evoked
         return was_evoked == bool(cond["evoked"])
+    if "cast_from_graveyard" in cond:
+        # "If this spell was cast from a graveyard, create ten of those tokens
+        # instead." Read while the spell is still resolving, so `ctx.source_oid`
+        # is the spell itself.
+        #
+        # `zone_is` cannot answer this: it reports the source's *current* zone,
+        # which for any resolving sorcery is the stack, identically whether it
+        # was cast from hand or from the graveyard.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        from_graveyard = obj is not None and obj.cast_from_graveyard
+        return from_graveyard == bool(cond["cast_from_graveyard"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:

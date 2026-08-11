@@ -1662,17 +1662,54 @@ not `state.emit` — `emit` only writes the log.
 
 ## Alternative ways to play a card
 
-Four now, each a card-level field rather than an ability, because the card does
-not have them where it is sitting:
+Each a card-level field rather than an ability, because the card does not have
+them where it is sitting:
 
 ```jsonc
 "kicker": "{1}{U}"                          // pay more as you cast it
 "evoke": "{2}{U}"                           // pay less instead, and it dies on arrival
-"emerge": "{5}{U}{U}"                       // pay less still, by eating a creature
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "retrace": true                             // cast from the graveyard, discarding a land
+"flashback": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard, then exile
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 ```
+
+### Flashback
+
+A whole `Cost`, not a mana string like `evoke`, because Deep Analysis charges
+life as well. The **mana half replaces** the printed cost; everything else is an
+additional cost paid after it, in the order rule 601.2g gives — the same
+two-step `retrace` already uses.
+
+`retrace` cannot stand in even though it is the other graveyard-casting field:
+its cost is hardcoded to a discarded land and charged *in addition* to the
+printed one, so it can name no alternative price, and it deliberately returns
+the card to the graveyard to be used again. A card may not have both.
+
+Two riders come with it, and the second does not fall out of the first:
+
+**"Then exile it."** A spell cast this way goes to exile rather than the
+graveyard when it resolves *or* fizzles. Without that it could be flashed back
+forever.
+
+**`cast_from_graveyard`**, a condition readable inside `if`:
+
+```jsonc
+// Increasing Devotion — "…create ten of those tokens instead."
+{ "op": "if", "condition": { "cast_from_graveyard": true },
+  "then": [ { "op": "create_token", "token": "human_1_1_w",
+              "amount": { "const": 10 } } ],
+  "else": [ { "op": "create_token", "token": "human_1_1_w",
+              "amount": { "const": 5 } } ] }
+```
+
+An engine could implement flashback casting perfectly and this card would still
+be wrong. `zone_is` cannot answer it: it reports the source's *current* zone,
+which for any resolving sorcery is the stack, identically either way. So it is a
+flag on the object following the `cast_x` / `cast_kicked` / `cast_evoked`
+precedent — and written **before** `spell_effects` run, because that is when it
+is read. The loader refuses the condition on a card with no flashback cost,
+since it could never be true.
 
 **Evoke** is `kicker` pointing the other way: an *alternative* cost that
 replaces the printed one rather than adding to it, offered only from hand, and

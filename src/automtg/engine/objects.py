@@ -85,6 +85,16 @@ class GameObject:
     #: "it's sacrificed when it enters" is an ETB trigger, so the flag has to
     #: outlive the spell.
     cast_evoked: bool = False
+    #: Whether this object was cast from a graveyard for its flashback cost.
+    #: Same contract as the two above, and it does two jobs: Increasing
+    #: Devotion's "if this spell was cast from a graveyard" reads it, and the
+    #: once-only rider reads it to send the card to exile instead of back to
+    #: the graveyard.
+    #:
+    #: `zone_is` cannot answer either question: it reports the source's
+    #: *current* zone, which for any resolving sorcery is the stack, identically
+    #: whether it was cast from hand or from the graveyard.
+    cast_from_graveyard: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
