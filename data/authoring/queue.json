@@ -36922,12 +36922,12 @@
     },
     "Bygone Bishop": {
       "edhrec_rank": 7272,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Bygone Bishop",
-      "reason": "Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "reason": "",
       "scryfall_id": "cf879fc7-9f84-40a7-a7be-9cc98a720af5",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Bygone Colossus": {
@@ -119932,12 +119932,12 @@
     },
     "Guul Draz Vampire": {
       "edhrec_rank": 22408,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Guul Draz Vampire",
-      "reason": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "reason": "",
       "scryfall_id": "f3c92575-1c97-48bf-801b-22f34040cf9a",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Guy in the Chair": {
@@ -298402,12 +298402,12 @@
     },
     "Vampire Lacerator": {
       "edhrec_rank": 21815,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Vampire Lacerator",
-      "reason": "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
+      "reason": "",
       "scryfall_id": "f8b76f75-5151-4bbc-a792-4eacdf8ecf44",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Vampire Neonate": {
