@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "fathom_mage",
+    "name": "Fathom Mage",
+    "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever a +1/+1 counter is put on this creature, you may draw a card.",
+    "mana_cost": "{2}{G}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Wizard"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["G", "U"],
+    "color_identity": ["G", "U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": { "types": ["Creature"], "exclude_self": true }
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "any": [
+                {
+                  "cmp": ">",
+                  "left": { "power_of": { "binding": "subject" } },
+                  "right": { "power_of": { "self": true } }
+                },
+                {
+                  "cmp": ">",
+                  "left": { "toughness_of": { "binding": "subject" } },
+                  "right": { "toughness_of": { "self": true } }
+                }
+              ]
+            },
+            "then": [
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "amount": { "const": 1 },
+                "objects": { "self_only": true }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a +1/+1 counter is put on this creature, you may draw a card.",
+        "trigger": { "event": "counter_placed", "source": "self", "counter": "+1/+1" },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Draw a card?",
+            "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": { "zone": "battlefield", "battlefield_count": 33 }
+}

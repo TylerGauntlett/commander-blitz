@@ -7701,6 +7701,117 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "power_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "power_of": {
+                        "self": true
+                      }
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "toughness_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "toughness_of": {
+                        "self": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a +1/+1 counter is put on this creature, you may draw a card.",
+          "trigger": {
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "fathom_mage",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Fathom Mage",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever a +1/+1 counter is put on this creature, you may draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true

@@ -108,6 +108,10 @@ class TriggerSpec:
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
     not_cause: str | None = None
+    #: Which counter kind a ``counter_placed`` trigger cares about.  The event
+    #: has always carried it; nothing read it, so every such trigger fired on
+    #: every kind.  Fathom Mage is the witness.
+    counter: str | None = None
 
 
 def count_mode_specs(effects: Any) -> int:

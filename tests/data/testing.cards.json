@@ -223,6 +223,73 @@
       ]
     },
     {
+      "id": "t_counter_watcher",
+      "name": "Test Counter Watcher",
+      "oracle_text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "source": "self",
+            "counter": "+1/+1"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_any_counter_watcher",
+      "name": "Test Any Counter Watcher",
+      "oracle_text": "Whenever a counter is put on this creature, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a counter is put on this creature, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_shroud_granter",
       "name": "Test Shroud Granter",
       "oracle_text": "Creatures you control have shroud.",

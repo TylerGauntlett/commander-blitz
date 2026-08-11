@@ -523,6 +523,10 @@
   "fang_of_shigeki": {
     "zone": "battlefield"
   },
+  "fathom_mage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ferrous_lake": {
     "zone": "battlefield"
   },

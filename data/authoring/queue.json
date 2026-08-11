@@ -91452,12 +91452,12 @@
     },
     "Fathom Mage": {
       "edhrec_rank": 1709,
-      "gate": "template",
+      "gate": null,
       "name": "Fathom Mage",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "4bb9c7e1-46a6-4acf-8415-221d9c9d9d23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fathom Seer": {
