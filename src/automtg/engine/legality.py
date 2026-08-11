@@ -443,6 +443,7 @@ def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
 def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
     manual_mana = state.players[pid].manual_mana
+    offer_all = state.players[pid].offer_all_abilities
     for oid, zone in _activate_zones(state, pid):
         obj = state.objects.get(oid)
         if obj is None or obj.abilities_locked:
@@ -453,52 +454,46 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         if whose != pid:
             continue
         card = state.card_of(obj)
+        # Resolved at most once per object, and only for an object that actually
+        # has a suppressed tap-only mana ability to decide about -- so a board of
+        # lands never pays for the second scan.
+        show_tap_only: bool | None = None
         for ability in card.abilities:
-            if not ability.is_activated:
-                continue
-            if zone not in ability.active_zones:
-                continue
-            if (
-                ability.is_mana_ability
-                and not offerable_mana_ability(ability)
-                and not (manual_mana and ability.mana_options)
-            ):
-                # A tap-only mana ability is activated automatically by the
-                # payment solver, so offering it here would add noise and a
-                # second way to spend the same permanent -- unless this player
-                # asked for `manual_mana`, which is the request to choose which
-                # land to tap and which colour a dual makes.
-                #
-                # Anything else is *not* the solver's -- `mana_sources` collects
-                # only `Cost.is_tap_only()` abilities -- so a Signet's
-                # "{1}, {T}: Add {W}{U}" has no automatic path at all. Skipping
-                # every mana ability, as this used to, left 27 shipped cards
-                # (every Signet, Cabal Coffers, Prophetic Prism, the filter and
-                # Vivid lands) with no path in the engine that could activate
-                # them. `costs.offerable_mana_ability` is the complement of the
-                # solver's own test so the two cannot drift apart.
-                continue
-            if ability.sorcery_speed_only and not sorcery_speed:
-                continue
+            if ability.is_mana_ability and not offerable_mana_ability(ability):
+                if show_tap_only is None:
+                    show_tap_only = manual_mana or (
+                        offer_all
+                        and _offers_something_else(
+                            state, pid, oid, card, zone, sorcery_speed
+                        )
+                    )
+                if not (show_tap_only and ability.mana_options):
+                    # A tap-only mana ability is activated automatically by the
+                    # payment solver, so offering it here would add noise and a
+                    # second way to spend the same permanent. Two things buy it
+                    # back. `manual_mana` is the request to choose which land to
+                    # tap and which colour a dual makes. `offer_all_abilities` is
+                    # narrower and needs no toggle: a permanent that offers
+                    # something *else* is one the player is going to click, and
+                    # then it must show everything it can do -- otherwise Mind
+                    # Stone's single visible row is its sacrifice ability, and
+                    # one click spends the artifact.
+                    #
+                    # Anything else is *not* the solver's -- `mana_sources`
+                    # collects only `Cost.is_tap_only()` abilities -- so a
+                    # Signet's "{1}, {T}: Add {W}{U}" has no automatic path at
+                    # all. Skipping every mana ability, as this used to, left 27
+                    # shipped cards (every Signet, Cabal Coffers, Prophetic
+                    # Prism, the filter and Vivid lands) with no path in the
+                    # engine that could activate them.
+                    # `costs.offerable_mana_ability` is the complement of the
+                    # solver's own test so the two cannot drift apart.
+                    continue
             # A gate, not a value -- see `_cast_variant`. `game._activate` asks
             # which X the player wants; this only decides whether any is payable.
             x = 0
-            if ability.cost is not None and ability.cost.mana.x_count:
-                from .costs import mana_sources
-
-                if (
-                    max_affordable_x(
-                        ability.cost.mana,
-                        state.players[pid].mana_pool,
-                        mana_sources(state, pid),
-                    )
-                    < 0
-                ):
-                    continue
-            if not can_pay(state, pid, ability.cost, oid, x=x):
-                continue
-            tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
-            if not tuples:
+            tuples = _ability_aims(state, pid, oid, ability, zone, sorcery_speed)
+            if tuples is None:
                 continue
             # "Add one mana of any colour" is five different things to do, and
             # which one is the player's call -- the solver is not making it,
@@ -533,6 +528,62 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                         )
                     )
     return out
+
+
+def _ability_aims(
+    state: GameState, pid: int, oid: int, ability, zone: Zone, sorcery_speed: bool
+) -> list[tuple] | None:
+    """The target tuples this ability could be activated with, or ``None``.
+
+    Every condition an offer depends on *except* the mana gate: being activated
+    at all, the zone saying so, timing, X being payable, the cost being payable,
+    and there being a legal target. ``None`` rather than ``[]`` because an
+    untargeted ability legitimately returns ``[()]`` -- one way to aim it, naming
+    nothing.
+
+    Split out of :func:`_activate_actions` so :func:`_offers_something_else` can
+    ask the identical question. If the two drifted, a Mind Stone would show its
+    mana ability beside a sacrifice ability it cannot actually pay for.
+    """
+    if not ability.is_activated:
+        return None
+    if zone not in ability.active_zones:
+        return None
+    if ability.sorcery_speed_only and not sorcery_speed:
+        return None
+    if ability.cost is not None and ability.cost.mana.x_count:
+        from .costs import mana_sources
+
+        if (
+            max_affordable_x(
+                ability.cost.mana,
+                state.players[pid].mana_pool,
+                mana_sources(state, pid),
+            )
+            < 0
+        ):
+            return None
+    if not can_pay(state, pid, ability.cost, oid, x=0):
+        return None
+    return enumerate_target_tuples(state, pid, ability.targets, oid) or None
+
+
+def _offers_something_else(
+    state: GameState, pid: int, oid: int, card, zone: Zone, sorcery_speed: bool
+) -> bool:
+    """Has this permanent an activated ability that is not a mana ability?
+
+    Only counting ones that are actually offerable right now, which is the point:
+    a Mind Stone whose ``{1}`` is unaffordable has nothing to choose between, so
+    its mana ability stays the solver's and no row appears. The non-mana filter
+    comes first so a land -- one ability, and that one a mana ability -- costs a
+    single comparison here rather than a `can_pay` and a target enumeration.
+    """
+    return any(
+        _ability_aims(state, pid, oid, ability, zone, sorcery_speed) is not None
+        for ability in card.abilities
+        if ability.is_activated and not ability.is_mana_ability
+    )
 
 
 def _mana_option_indices(ability) -> list[int | None]:

@@ -798,6 +798,51 @@ export function targetVariants(): Scenario {
   };
 }
 
+/**
+ * A permanent offering two abilities, neither of them targeted.
+ *
+ * The counterpart to `targetVariants`: there the ambiguity is *which target*,
+ * here it is *which ability*, and the board has nothing to point at either way.
+ * Clicking the artifact must therefore reach the panel rather than resolving to
+ * an action -- one of these two sacrifices it.
+ */
+export function twoAbilityPermanent(): Scenario {
+  const battlefield = [
+    pool.mindStone({ oid: 401 }),
+    pool.forest({ oid: 402 }),
+    pool.island({ oid: 403 }),
+  ];
+
+  const state = gameView({
+    players: [you({ hand: [] }, battlefield), opponent(1, "AI 1")],
+    battlefield,
+  });
+
+  return {
+    state,
+    actions: [
+      pass,
+      action({
+        id: "a1-activate",
+        kind: "activate",
+        label: "Mind Stone: {T}: Add {C}",
+        base_label: "Mind Stone: {T}: Add {C}",
+        source_oid: 401,
+        ability_index: 0,
+      }),
+      action({
+        id: "a2-activate",
+        kind: "activate",
+        label: "Mind Stone: {1}, {T}, Sacrifice this artifact: Draw a card.",
+        base_label: "Mind Stone: {1}, {T}, Sacrifice this artifact: Draw a card.",
+        source_oid: 401,
+        ability_index: 1,
+      }),
+    ],
+    events: [],
+  };
+}
+
 /* ------------------------------------------------------------------ */
 /* Events, for the log and the FX layer                                */
 /* ------------------------------------------------------------------ */

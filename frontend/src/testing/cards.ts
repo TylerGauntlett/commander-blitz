@@ -163,6 +163,31 @@ export const solRing = (overrides: Partial<CardView> = {}): CardView =>
     ...overrides,
   });
 
+/**
+ * Two activated abilities, one of them a mana ability, and neither targeted.
+ *
+ * The shape that made the board's click routing wrong: with only one action
+ * offered, clicking the artifact submitted it, so "what does this do?"
+ * sacrificed it. `legality` offers both now whenever the permanent has
+ * something besides its tap-only mana ability.
+ */
+export const mindStone = (overrides: Partial<CardView> = {}): CardView =>
+  card({
+    card_id: "mind_stone",
+    name: "Mind Stone",
+    type_line: "Artifact",
+    mana_cost: "{2}",
+    mana_value: 2,
+    colors: [],
+    types: ["Artifact"],
+    subtypes: [],
+    power: null,
+    toughness: null,
+    produces: ["C"],
+    oracle_text: "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+    ...overrides,
+  });
+
 export const counterspell = (overrides: Partial<CardView> = {}): CardView =>
   card({
     card_id: "counterspell",

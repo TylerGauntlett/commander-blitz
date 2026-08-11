@@ -171,6 +171,17 @@ is what it asked for.
 `POST /options` also carries `manual_mana`, which is optional: a client that
 omits it leaves the setting alone rather than switching it off.
 
+Both settings change what `legality` offers, so both setters rebuild the session's
+action cache before responding. Without that, `actions_for` served the ids the
+*last action* left behind and the response carried the list from before the
+toggle -- the toggle appeared to do nothing until the player acted again.
+
+Neither setting is what makes a Mind Stone show both its abilities. That is
+`PlayerState.offer_all_abilities`, which the session sets for every human seat and
+no client can change: a permanent offering something besides its tap-only mana
+ability offers both, because a human clicks permanents and one option means one
+click spends it. AI seats keep the solver-only view.
+
 ## Undo
 
 `POST /undo` rewinds to before the last human action by **replaying the tape**: the

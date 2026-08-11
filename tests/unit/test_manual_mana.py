@@ -13,6 +13,13 @@ The **preference**: `manual_mana` additionally offers the tap-only abilities the
 solver *does* handle, so a player can choose which land to tap and which colour
 a dual makes. Off by default, which is what keeps the RL action space and the
 golden tests where they were -- see `docs/rules-coverage.md`.
+
+The **seat**: `offer_all_abilities` is narrower than the preference and is not
+one. A permanent that offers something *besides* its tap-only mana ability shows
+both, because a human is going to click it and one option means one click spends
+it -- Mind Stone was being sacrificed by the gesture that meant "what can this
+do?". Set for human seats only, since an AI picks from a list rather than
+clicking and would just tap its rocks for nothing.
 """
 
 from __future__ import annotations
@@ -34,19 +41,22 @@ from automtg.engine.mana import SYMBOL_INDEX
 FILLER_HAND = ["mountain"]
 
 
-def position(builder, cards, *, manual: bool = False, hand=None, pid: int = 0):
-    """A main phase with `cards` on the battlefield and the flag set."""
+def position(
+    builder, cards, *, manual: bool = False, offer_all: bool = False, hand=None, pid: int = 0
+):
+    """A main phase with `cards` on the battlefield and the flags set."""
     game = (
         builder()
         .battlefield(pid, cards)
         .hand(pid, FILLER_HAND if hand is None else hand)
         .step(Step.PRECOMBAT_MAIN)
         .active(pid)
-        # The flag decides which actions exist, so it has to be set before the
+        # The flags decide which actions exist, so they have to be set before the
         # game advances into its first window, not after.
         .build(advance=False)
     )
     game.state.players[pid].manual_mana = manual
+    game.state.players[pid].offer_all_abilities = offer_all
     game._advance()
     return game
 
@@ -126,6 +136,55 @@ class TestTheTapOnlyOnesAreAPreference:
             game = position(builder, ["commanders_sphere"], manual=manual)
             texts = [a.base_label for a in activations(game, "commanders_sphere")]
             assert any("Sacrifice" in text for text in texts), manual
+
+
+class TestAPermanentWithMoreThanOneOptionShowsBoth:
+    """`offer_all_abilities`: what a click on Mind Stone has to reveal.
+
+    The suppression above is right for a Forest and wrong for a Mind Stone. A
+    Forest offers one thing and the solver does it; a Mind Stone offers two, and
+    hiding one of them left the panel with a single row that a single click
+    fires -- so "what can this artifact do?" sacrificed it.
+    """
+
+    def test_mind_stone_offers_both_of_its_abilities(self, builder):
+        game = position(builder, ["mind_stone", "mountain"], offer_all=True)
+        offered = activations(game, "mind_stone")
+        assert len(offered) == 2
+        assert sorted(a.ability_index for a in offered) == [0, 1]
+
+    def test_the_mana_one_is_the_one_that_was_missing(self, builder):
+        game = position(builder, ["mind_stone", "mountain"], offer_all=True)
+        labels = {a.base_label for a in activations(game, "mind_stone")}
+        assert any("Add {C}" in label for label in labels)
+        assert any("Sacrifice" in label for label in labels)
+
+    def test_without_the_flag_only_the_sacrifice_shows(self, builder):
+        # The AI seat's view, and the bug as reported.
+        game = position(builder, ["mind_stone", "mountain"], offer_all=False)
+        offered = activations(game, "mind_stone")
+        assert len(offered) == 1
+        assert "Sacrifice" in offered[0].base_label
+
+    def test_a_land_is_still_the_solvers_alone(self, builder):
+        # The flag is on for every human seat, so this is the case that decides
+        # whether the panel grows a row per land. It must not.
+        game = position(builder, ["forest"], offer_all=True)
+        assert activations(game, "forest") == []
+
+    def test_nothing_to_choose_between_means_nothing_is_offered(self, builder):
+        # No second mana source, so the sacrifice ability's `{1}` is unaffordable
+        # and Mind Stone is back to being one thing the solver does.
+        game = position(builder, ["mind_stone"], offer_all=True)
+        assert activations(game, "mind_stone") == []
+
+    def test_commanders_sphere_reads_as_five_colours_plus_a_sacrifice(self, builder):
+        game = position(builder, ["commanders_sphere"], offer_all=True)
+        offered = activations(game, "commanders_sphere")
+        assert sorted(a.option_label for a in offered if a.option_label) == sorted(
+            ["{W}", "{U}", "{B}", "{R}", "{G}"]
+        )
+        assert any("Sacrifice" in a.base_label for a in offered)
 
 
 class TestTheChosenYieldIsWhatArrives:
@@ -209,6 +268,15 @@ class TestAManaOnlyWindowIsNotADecision:
         assert any(a.kind is ActionKind.ACTIVATE for a in options)
         assert not _only_pass_or_mana(game.state, options, game.state.players[0])
 
+    def test_offer_all_abilities_does_not_keep_them(self, builder):
+        # The guard against wiring the new flag into `_only_pass_or_mana` the way
+        # `manual_mana` is. It is on for every human seat, so doing that would
+        # stop every human at all thirteen steps of every turn.
+        game = position(builder, ["azorius_signet", "island"], offer_all=True)
+        options = [a for a in game.legal_actions() if a.kind is not ActionKind.PLAY_LAND]
+        assert any(a.kind is ActionKind.ACTIVATE for a in options)
+        assert _only_pass_or_mana(game.state, options, game.state.players[0])
+
 
 class TestTheAgentIsUnaffected:
     def test_seats_start_with_it_off(self, builder):
@@ -220,3 +288,9 @@ class TestTheAgentIsUnaffected:
     def test_no_action_carries_a_mana_option_by_default(self, builder):
         game = position(builder, ["forest", "commanders_sphere"], manual=False)
         assert all(a.mana_option is None for a in activations(game))
+
+    def test_offer_all_abilities_is_off_by_default_too(self, builder):
+        # Set by `GameSession` for human seats and nowhere else, so a training
+        # run and a golden replay see exactly the board they always saw.
+        game = builder().build()
+        assert all(not p.offer_all_abilities for p in game.state.players)

@@ -238,6 +238,32 @@ class TestPriorityStops:
         undone = client.post(f"/api/games/{game_id}/undo", json={"seat": 0}).json()
         assert undone["state"]["full_control"] is True
 
+    def test_changing_options_rebuilds_the_action_list(self, client):
+        """Both settings change what `legality` offers, so the response has to be
+        recomputed rather than served from the cache the last action left behind.
+
+        `actions_for` reads `GameSession._action_ids`, and the two setters used to
+        bump the version without refreshing it -- so `POST /options` answered with
+        the list from *before* the toggle, and Manual mana appeared to do nothing
+        until the player took another action. Emptying the cache first is the only
+        way to tell a refreshed list from a stale one that happens to match.
+        """
+        game_id = new_game(client)["game_id"]
+        session = client.app.state.sessions.get(game_id)
+
+        session._action_ids = {}
+        on = client.post(
+            f"/api/games/{game_id}/options",
+            json={"seat": 0, "full_control": False, "manual_mana": True},
+        ).json()
+        assert on["actions"], "manual mana served a stale action list"
+
+        session._action_ids = {}
+        full = client.post(
+            f"/api/games/{game_id}/options", json={"seat": 0, "full_control": True}
+        ).json()
+        assert full["actions"], "full control served a stale action list"
+
     def test_an_unseated_player_cannot_change_options(self, client):
         game_id = new_game(client)["game_id"]
         response = client.post(

@@ -186,6 +186,42 @@ export const PlayingALand: Story = {
   },
 };
 
+/**
+ * A gesture that must *not* reach the server.
+ *
+ * The other half of `PlayingALand`. Mind Stone offers two abilities and one of
+ * them sacrifices it, so the click that means "what can this do?" has to hand
+ * the choice to the panel instead of resolving it. Before the engine offered
+ * both, the artifact had a single action and this click deleted it.
+ */
+export const ChoosingBetweenTwoAbilities: Story = {
+  args: board(scenarios.twoAbilityPermanent(), { act: idleMutation(fn()) }),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    const stone = await canvas.findByTestId("card-401");
+    await userEvent.click(stone);
+    expect(args.game.act.mutate, "clicking the artifact spent it").not.toHaveBeenCalled();
+    expect(stone.className).toContain("card--selected");
+
+    // Both abilities are reachable, on their own controls.
+    for (const id of ["a1-activate", "a2-activate"]) {
+      expect(
+        canvasElement.querySelector(`[data-action-id="${id}"]`),
+        `the panel never rendered ${id}`,
+      ).not.toBeNull();
+    }
+    expectUniqueActionIds(canvasElement);
+
+    // And the click is reversible. Neither ability targets anything, so this is
+    // a selection rather than a target hunt -- entering targeting mode here
+    // would leave the player with nothing to click and no way back out.
+    await userEvent.click(stone);
+    expect(stone.className).not.toContain("card--selected");
+  },
+};
+
 /* ------------------------------------------------------------------ */
 /* The zoom, deliberately unlocked                                     */
 /* ------------------------------------------------------------------ */

@@ -69,6 +69,14 @@ class PlayerState:
     #: and every golden test exactly as they were: see
     #: `docs/rules-coverage.md`'s "Automatic mana payment" row.
     manual_mana: bool = False
+    #: Offer a permanent's tap-only mana ability whenever that permanent offers
+    #: *something else* too.  Narrower than ``manual_mana``: a Forest or a Sol
+    #: Ring still belongs to the solver alone, because there is nothing to choose
+    #: between, but a Mind Stone shows both "{T}: Add {C}" and its sacrifice
+    #: ability rather than letting one click spend the artifact.  Off by default
+    #: so AI seats keep the solver-only view -- ``heuristic_agent`` scores every
+    #: activation alike and would tap its rocks for nothing.
+    offer_all_abilities: bool = False
 
     def zone_list(self, zone: Zone) -> list[int]:
         """The ordered oid list for one of this player's zones."""

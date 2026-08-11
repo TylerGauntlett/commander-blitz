@@ -412,6 +412,16 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         return;
       }
       if (own.length > 0) {
+        // Several abilities, none of them targeted -- a Mind Stone offering
+        // "{T}: Add {C}" beside its sacrifice ability. There is nothing on the
+        // board to point at, so entering targeting mode would leave the player
+        // hunting for a target that does not exist. Select it instead and let
+        // the panel be the chooser: it lists every play action, not only the
+        // narrowed ones, so both rows are already there.
+        if (own.every((a) => a.targets.length === 0)) {
+          select(selectedOid === card.oid ? null : card.oid);
+          return;
+        }
         beginTargeting(
           card.oid,
           own.map((a) => a.id),
