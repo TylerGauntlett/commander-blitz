@@ -1509,6 +1509,10 @@
   "sedge_scorpion": {
     "zone": "battlefield"
   },
+  "seer_s_sundial": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seething_landscape": {
     "zone": "battlefield"
   },

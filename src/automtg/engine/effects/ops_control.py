@@ -5,12 +5,16 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..carddef import Cost
+from ..costs import can_pay, pay
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_yes_no
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
+
+cost_from_spec = Cost.from_spec
 
 
 @register("if")
@@ -37,11 +41,23 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``condition`` gates the question itself: with nothing to do, the card does
     not ask, which is what stops the loop when the hand runs dry.
+
+    ``pay`` is what makes the option cost something -- Seer's Sundial's "you may
+    pay {2}. **If you do**, draw a card".  It is an ordinary ``Cost``, paid out
+    of the pool mid-resolution with mana abilities activatable to make it, and
+    the wrapped ``effects`` are the "if you do" branch: they run only when the
+    payment actually completed.  Without it the only way to write that card is
+    to drop the cost, which turns a card that draws for {2} a land into one that
+    draws free.
+
+    A cost the player cannot afford is not offered at all rather than offered
+    and then failing -- 601.2 in spirit, and it keeps the yes/no honest.
     """
     players = select_players(ctx, spec.get("player", "you"))
     chooser = players[0] if players else ctx.controller
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
     condition = spec.get("condition")
+    cost = cost_from_spec(spec.get("pay"))
 
     if not evaluate(ctx, condition):
         yield from execute(ctx, spec.get("else") or [])
@@ -49,9 +65,20 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
 
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
+        if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
+            yield from execute(ctx, spec.get("else") or [])
+            return
         if not (yield from ask_yes_no(ctx, prompt, chooser)):
             yield from execute(ctx, spec.get("else") or [])
             return
+        if cost is not None:
+            paid = yield from pay(ctx.state, chooser, cost, ctx.source_oid)
+            if not paid:
+                # `can_pay` said yes a moment ago, so this is the board having
+                # changed underneath us. "If you do" is false, so the effects
+                # must not run -- the same contract `else` has for a refusal.
+                yield from execute(ctx, spec.get("else") or [])
+                return
         yield from execute(ctx, spec.get("effects") or [])
         if not spec.get("repeat") or not evaluate(ctx, condition):
             return

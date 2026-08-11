@@ -585,6 +585,34 @@ knowable up front — Cultivator Colossus draws into the lands it is putting dow
 and because a counted version would let a player decline and then accept, which
 the printed card does not. Bounded at 100 iterations, like `repeat`.
 
+### "You may pay {2}. If you do…"
+
+`pay` puts a price on the option. It is an ordinary activated-ability `Cost`,
+paid out of the pool while the ability resolves, and `effects` become the "if you
+do" branch — they run only when the payment completed:
+
+```jsonc
+// Seer's Sundial: Landfall — whenever a land you control enters,
+//                 you may pay {2}. If you do, draw a card.
+{ "op": "may", "pay": { "mana": "{2}" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+Every other cost in the engine hangs off the object being cast or activated and
+is read once, at that moment. A triggered ability fires on its own, so before
+this the only way to write that card was to drop the {2} — and a Sundial that
+draws free is a better card than the printed one.
+
+A cost the player cannot afford is not offered at all, rather than asked and
+then failed. The full `Cost` shape is accepted, not just mana, and it is
+validated at load time through the same model an ability's cost uses, so a
+misspelled key is a load error rather than a cost silently dropped. `pay`
+without `effects` is refused: paying for nothing is not a card.
+
+This is **not** `unless_pays` (Rhystic Study), which is still unimplemented and
+is a different mechanic — it routes the payment to *another* player and inverts
+the outcome.
+
 ## Modal spells with a target
 
 `choose_mode` picks its mode as the spell is **cast** (rule 601.2b), but a

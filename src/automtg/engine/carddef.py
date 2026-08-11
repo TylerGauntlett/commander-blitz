@@ -54,6 +54,38 @@ class Cost:
     remove_counters: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
 
+    @staticmethod
+    def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
+        """Build a ``Cost`` from a raw effect-body mapping.
+
+        Effect bodies stay as plain dicts (see the module docstring), so the
+        ``pay`` on an optional effect -- Seer's Sundial's "you may pay {2}" --
+        arrives here rather than through the loader's ``CostModel``.  Both go
+        through this one constructor so the two spellings cannot drift; the
+        loader validates the *keys* against ``CostModel`` at load time, which is
+        what makes a typo a load error rather than a cost silently dropped.
+        """
+        if spec is None:
+            return None
+        return Cost(
+            mana=ManaCost.parse(spec.get("mana")),
+            tap=bool(spec.get("tap", False)),
+            untap=bool(spec.get("untap", False)),
+            sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
+            discard=int(spec.get("discard", 0) or 0),
+            discard_selector=(
+                dict(spec["discard_selector"]) if spec.get("discard_selector") else None
+            ),
+            discard_self=bool(spec.get("discard_self", False)),
+            pay_life=int(spec.get("pay_life", 0) or 0),
+            remove_counters=(
+                dict(spec["remove_counters"]) if spec.get("remove_counters") else None
+            ),
+            exile_from_graveyard=(
+                dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
+            ),
+        )
+
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
         return (

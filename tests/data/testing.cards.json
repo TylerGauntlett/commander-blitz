@@ -223,6 +223,42 @@
       ]
     },
     {
+      "id": "t_sundial",
+      "name": "Test Sundial",
+      "oracle_text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+          "trigger": {
+            "event": "land_played",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_counter_watcher",
       "name": "Test Counter Watcher",
       "oracle_text": "Whenever a +1/+1 counter is put on this creature, draw a card.",

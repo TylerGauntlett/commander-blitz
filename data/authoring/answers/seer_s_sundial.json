@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "seer_s_sundial",
+    "name": "Seer's Sundial",
+    "oracle_text": "Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+    "mana_cost": "{4}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": { "types": ["Land"] }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "pay": { "mana": "{2}" },
+            "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**31 cards** blocked by **27** capabilities.
+**30 cards** blocked by **26** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [kicker](#kicker) | 1 | 4628 | engine |
 | [landwalk](#landwalk) | 1 | 2833 | keyword |
-| [may-pay](#may-pay) | 1 | 4344 | cost, decision |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [untap-during-each-untap-step](#untap-during-each-untap-step) | 1 | 2584 | static_effect, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
@@ -467,22 +466,6 @@ Blocks **1** card.
 - **Stormtide Leviathan** (rank 2833) — `stormtide_leviathan`
   - Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
   - Creatures without flying or islandwalk can't attack.
-
-</details>
-
-## may-pay
-
-Blocks **1** card.
-
-- **(cost)** an optional mana cost payable by the ability's controller while a triggered ability is resolving -- e.g. `{"op": "may", "pay": {"mana": "{2}"}, "effects": [{"op": "draw", "amount": {"const": 1}}]}` -- where the mana is actually paid out of the pool (with mana abilities activatable to make it) and the wrapped effects happen only when the payment completes
-  <br>Why the existing vocabulary won't do: Every cost in reference is attached to the object being cast or activated, never to an effect mid-resolution: `Cost` (engine/carddef.py) carries mana, tap, untap, sacrifice, discard, discard_self, pay_life, remove_counters and exile_from_graveyard, and it is only ever read when a spell is cast or an ability is activated. The trigger here fires on its own and its effects run with no cost hook at all, so the {2} would simply have to be dropped -- turning a card that draws for {2} a land into one that draws free
-- **(decision)** the yes/no prompt for that optional payment must be priced: offered only when the player can actually afford {2}, and its answer must be readable as the condition for the 'If you do' branch, so declining or being unable to pay skips the draw
-  <br>Why the existing vocabulary won't do: `may` (engine/effects/ops_control.py) is the only optional-effect op and it asks a bare yes/no with nothing at stake -- it takes `player`, `prompt`, `condition`, `effects`, `else` and `repeat`, but no cost, and it never consults affordability. Its `condition` and the `if` op both evaluate board conditions, and no condition in the vocabulary can read whether a mana payment was made, so 'If you do' has no source of truth to branch on. The nearest existing shape, `unless_pays` (Rhystic Study), is a different mechanic: it routes the payment to another player and inverts the outcome
-
-<details><summary>Cards waiting on this</summary>
-
-- **Seer's Sundial** (rank 4344) — `seer_s_sundial`
-  - Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.
 
 </details>
 
