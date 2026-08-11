@@ -1,0 +1,170 @@
+name: verify and deploy
+
+# Every push to main that passes the full gate is deployed. Pull requests run
+# the same gate and stop there.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  # A newer commit supersedes an in-flight run: deploying an older SHA over a
+  # newer one because it happened to finish second is the failure mode here.
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: ghcr.io/tylergauntlett/auto-mtg # GHCR paths must be lowercase.
+
+jobs:
+  verify:
+    name: scripts/verify.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # .git is ~130MB; no stage reads history.
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Python package
+        run: pip install -e ".[dev]"
+
+      # Not optional. verify.py prints "SKIP frontend" and *exits zero* when
+      # frontend/node_modules is missing, so without this the build, lint,
+      # vitest and storybook stages would all pass vacuously.
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # The same trap a second time: the "storybook stories" stage skips itself
+      # unless a chromium build is present, because the stories need a real
+      # layout engine. Installing it here is what makes that stage mean anything.
+      - name: Install Chromium for the story tests
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      # Runs every stage: ruff, deck legality, the card index check, the four
+      # pytest suites, the 60-game arena, a live uvicorn playing full games at
+      # 2p and 4p, then the frontend build/lint/test and the storybook pair.
+      - name: Verify
+        run: python scripts/verify.py --verbose
+
+  build:
+    name: build and push image
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.tag.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Compute image tag
+        id: tag
+        # An immutable per-commit tag is what makes rollback a one-line edit on
+        # the droplet. `latest` moves; this does not.
+        run: echo "value=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # Injected; nothing to configure.
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.value }}
+            ${{ env.IMAGE_NAME }}:latest
+          # Without this the ~90MB data layer and the npm install are rebuilt
+          # from scratch on every single push.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: deploy to droplet
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: http://${{ secrets.DROPLET_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # The compose file ships with the repo rather than living only on the
+      # droplet, so a change to it is reviewed and versioned like anything else.
+      - name: Copy compose file
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: deploy
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          source: docker-compose.yml
+          target: /opt/automtg
+
+      - name: Pull and restart
+        uses: appleboy/ssh-action@v1.2.5
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          GHCR_USER: ${{ github.repository_owner }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: deploy
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          envs: IMAGE_TAG,GHCR_USER,GHCR_TOKEN
+          script_stop: true # Without this a failing line is ignored.
+          script: |
+            # First deploy after `terraform apply` can land while cloud-init is
+            # still installing Docker.
+            for _ in $(seq 1 60); do
+              [ -f /opt/automtg/.bootstrap-complete ] && break
+              echo "waiting for cloud-init to finish..."
+              sleep 10
+            done
+            [ -f /opt/automtg/.bootstrap-complete ] || { echo "bootstrap never completed"; exit 1; }
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            cd /opt/automtg
+            # The single source of truth for what is running, and the thing you
+            # edit to roll back.
+            echo "IMAGE_TAG=$IMAGE_TAG" > .env
+            docker compose pull
+            docker compose up -d --remove-orphans
+            docker logout ghcr.io
+
+      - name: Wait for health
+        # The deploy is not "done" because the SSH step exited zero -- it is done
+        # when the new container answers. --retry-connrefused covers the gap
+        # while uvicorn boots and loads the card pool.
+        run: |
+          curl -fsS --max-time 10 \
+            --retry 30 --retry-delay 5 --retry-connrefused \
+            "http://${{ secrets.DROPLET_HOST }}/health" | tee /dev/stderr | grep -q '"status":"ok"'

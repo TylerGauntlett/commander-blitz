@@ -33,6 +33,18 @@ frontend/playwright-report/
 frontend/test-results/
 .playwright/
 
+# Secrets
+# Deploy tokens live in .env; .env.example is the committed, valueless template.
+.env
+*.local.env
+
+# Terraform
+# State names live resources and can embed secrets. The lock file is committed.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
 # Editors / OS
 .vscode/
 .idea/
