@@ -17,12 +17,16 @@ from collections.abc import Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
-from ..enums import Zone
+from ..enums import CardType, Zone
 from ..errors import DslError
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..state import GameState
+
+#: Card types a selector may name.  Derived from the enum rather than imported
+#: from ``cards.loader``, which imports this module.
+KNOWN_TYPES = frozenset(t.value for t in CardType)
 
 #: Every key a selector may contain.  The loader validates against this set, so a
 #: misspelled key is a load-time error rather than a silently ignored filter.
@@ -31,6 +35,13 @@ SELECTOR_KEYS = frozenset(
         "zone",
         "controller",
         "types",
+        #: "target artifact **or** enchantment".  ``types`` is a conjunction --
+        #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
+        #: the any-of form already existed for ``subtypes`` and ``colors`` and
+        #: simply had no type equivalent.  ``not_types`` cannot stand in: the
+        #: complement is only equal for single-typed permanents, so it would
+        #: refuse artifact creatures, which the printed line accepts.
+        "any_types",
         "not_types",
         "subtypes",
         "not_subtypes",
@@ -143,6 +154,9 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
 
     if (want := selector.get("types")) and not set(want).issubset(types):
+        return False
+    # any-of, matching `subtypes` and `colors` above rather than `types`.
+    if (want := selector.get("any_types")) and not (set(want) & types):
         return False
     if (want := selector.get("not_types")) and set(want) & types:
         return False
@@ -323,6 +337,16 @@ def validate_selector(selector: Any, where: str) -> None:
     controller = selector.get("controller")
     if controller is not None and controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
+    # A misspelled type in an any-of clause matches nothing and narrows the
+    # selector silently -- "target artifact or enchantmnet" would quietly become
+    # "target artifact".  Checked here rather than in the loader's per-op guards
+    # because every selector, on every op and every target spec, comes through.
+    for key in ("types", "any_types", "not_types"):
+        for name in selector.get(key) or ():
+            if name not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
+        raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
 
 
 def sorted_candidates(state: GameState, oids: Sequence[int]) -> list[int]:
