@@ -384,6 +384,48 @@
       ]
     },
     {
+      "id": "t_skulker",
+      "name": "Test Skulker",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)",
+      "mana_cost": "{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "skulk"
+      ]
+    },
+    {
+      "id": "t_skulk_granter",
+      "name": "Test Skulk Granter",
+      "oracle_text": "Creatures you control have skulk.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have skulk.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "skulk"
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tide_lock",
       "name": "Test Tide Lock",
       "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",

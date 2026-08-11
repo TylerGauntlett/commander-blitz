@@ -1,3 +1,75 @@
+## Skulk — the first evasion that compares the two creatures
+
+### Overview
+
+`blocking-restriction` was the top entry in `unsupported-cards.md` with three
+cards, and reading all three rather than the first one is what sized the job.
+Stromkirk Noble's half — "can't be blocked by Humans", a fixed quality of the
+would-be blocker — had already shipped as the `block_restriction` static; its
+gap record was simply stale. Guul Draz Vampire wants `intimidate` and is blocked
+twice more besides, by `static-condition` and `player-quantifier`, so nothing
+here can reach it. What was actually left was Vampire Cutthroat's half, and its
+own gap record named the thing that makes it different: the filter is not a
+quality at all but a **relative comparison between two objects**.
+
+Every evasion the engine had asks a fixed question of one side. Flying and
+menace read a quality of one creature. Landwalk reads the defending player's
+board. A `block_restriction` reads a printed characteristic of the blocker.
+Skulk reads *both* creatures and compares them.
+
+### What shipped
+
+One enum member and one check. `Keyword.SKULK`, and three lines in
+`combat.can_block`:
+
+```python
+if Keyword.SKULK.value in ac.keywords and bc.power > ac.power:
+    return False
+```
+
+A keyword rather than a fourth `block_restriction` form, on the landwalk
+precedent — skulk takes no parameter, so there is nothing for a static to carry.
+And it could not have been a `blockers` filter even with a `power` key added:
+`blockers` is a static filter, static filters are matched against **printed**
+characteristics, and that restriction is the entire reason the fixed-order
+characteristics pipeline is acyclic. Skulk must read *derived* power on both
+sides. Putting the comparison in `can_block` — which already holds `chars` for
+both creatures, and which landwalk reads `chars` from for the same reason —
+costs the invariant nothing.
+
+Nothing else. `KNOWN_KEYWORDS` derives from the enum, so the loader, the
+residual gate and the importer's `_keywords_in` picked it up unprompted;
+`grant_keyword` carries "creatures you control have skulk" for free, because the
+check reads the characteristic layer rather than the printed card. Server and
+frontend: no change, keywords being rendered generically.
+
+### Harvested
+
+Vampire Cutthroat now translates with **both** printed lines consumed and no
+residual — verified against the template tier and the gates. It did not land in
+the pool on this run because it is a `fidelity` entry: a card already present as
+a vanilla in `data/cards/edgar.cards.json`, which the template tier deliberately
+refuses to touch (translating it would mint a second id and leave the incomplete
+incumbent as the one dealt into games). Repairing an incumbent is
+`--tier agent` plus `--collect --supersede`, i.e. the next `/author-cards`.
+Stromkirk Noble is in the same position and has been expressible since
+`block_restriction` shipped; it has no *template*, so it too is agent-tier work.
+
+Both gap records were retired. `blocking-restriction` now blocks one card, Guul
+Draz Vampire, on `intimidate` — which is a colour relation rather than a
+comparison and is a separate build.
+
+### Guarded by
+
+`tests/unit/test_skulk.py`. Two claims, two classes. The refusal is tested
+against its boundary rather than only its happy path: an equal-power creature
+must block, because an engine written with `>=` passes every test that only
+tries a bigger blocker. The derived-power half is tested from three directions —
+an anthem on the blocker, a +1/+1 counter on the blocker (a different layer of
+`chars`), and an anthem on the *attacker*, which gives back a block its own size
+had forbidden. The granted-skulk test is what pins the design choice: it works
+only because skulk is a real keyword.
+
 ## Shroud — the keyword whose whole content is who it stops
 
 ### Overview

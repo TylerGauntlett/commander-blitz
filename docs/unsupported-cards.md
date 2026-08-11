@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**20 cards** blocked by **15** capabilities.
+**18 cards** blocked by **15** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [blocking-restriction](#blocking-restriction) | 3 | 6728 | keyword, static_effect |
 | [static-condition](#static-condition) | 3 | 19289 | static_effect |
 | [attack-requirement](#attack-requirement) | 2 | 420 | engine, op, static_effect |
 | [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
@@ -22,6 +21,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
 | [ascend](#ascend) | 1 | 19289 | engine |
+| [blocking-restriction](#blocking-restriction) | 1 | 22408 | keyword |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
@@ -29,29 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [investigate](#investigate) | 1 | 7272 | engine |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
-
-## blocking-restriction
-
-Blocks **3** cards.
-
-- **(keyword)** the same missing block-legality hook as Stromkirk Noble (filtered by creature type) and Vampire Cutthroat (filtered by relative power), here filtered by color and card type: the `intimidate` evasion keyword -- "this creature can't be blocked except by artifact creatures and/or creatures that share a color with it" -- as a `Keyword` enum member the loader accepts, plus the block-legality rule behind it in `combat.py`: a declared blocker is legal only if it has the Artifact type OR its colors intersect the attacker's colors. It must read *derived* colors of both creatures at declare-blockers time, so a creature that has been made black can block this and this creature being made a second color widens who may block it
-  <br>Why the existing vocabulary won't do: `Keyword` (`engine/enums.py:131-153`) is a closed enum of 15 members and `KNOWN_KEYWORDS` is derived from it (`cards/loader.py:37`), so a card printing `intimidate` in its `keywords` or granting it via `grant_keyword` is a `DslError` at load, not a silent no-op. Nothing in the list is a colour-based evasion: `EVASION_KEYWORDS` is exactly `{flying, menace}` (`enums.py:156`) and `combat.py:181` notes menace is the only blocking restriction implemented. Menace is the nearest and is wrong in both directions -- it permits any two creatures of any colour to block, and forbids a lone artifact creature or a lone black creature from blocking, which intimidate expressly allows. `protection` (the one parameterised static, with `from_colors`) is a stop rather than an exemption: it names colours that *may not* block and it also blanks damage, targeting and enchanting, whereas intimidate names the colours that *may* and touches nothing but blocking -- and its `from_colors` is a fixed literal list, so it cannot say "shares a color with THIS creature" and would have to be rewritten if the creature's colour changed
-- **(static_effect)** a static continuous effect that restricts which creatures may block the source, filtered by a characteristic of the would-be blocker (here `subtypes: ["Human"]`) -- i.e. an evasion effect of the form "this creature can't be blocked by <filter>", evaluated when blockers are declared rather than as a granted keyword
-  <br>Why the existing vocabulary won't do: `static_effects` offers only `buff`, `grant_keyword`, `set_pt`, `add_subtype` and `extra_land_drops` -- all of which change characteristics of permanents, none of which constrains the legality of a block. The nearest keyword is `menace` (and `flying`/`reach`), but those are fixed evasion rules with no filter: menace requires two or more blockers of any type and would let a single Human block alongside a second creature, while this card must forbid Humans outright and permit any one non-Human blocker. `static_filter_keys` does contain `blocking` and `subtypes`, but a filter alone has no restriction effect to attach to -- there is no effect kind that consumes it to veto a block declaration.
-- **(static_effect)** The same missing capability filed for `stromkirk_noble`: a static continuous effect that vetoes a block declaration against its source, filtered by a characteristic of the would-be blocker, consulted from `engine/combat.py:can_block` when blockers are declared. Skulk needs a *distinct sub-need* on top of that: the filter is not a fixed quality but a RELATIVE COMPARISON between two objects -- "power of the would-be blocker > power of this creature", read from derived (not printed) power on both sides at the moment blockers are declared, so an anthem, a pump spell or a +1/+1 counter on either creature changes who may block. Concretely this wants either (a) a `skulk` entry in `Keyword`/`EVASION_KEYWORDS` handled directly in `can_block`, or (b) a general "can't be blocked by" static whose filter may express a comparison against a characteristic of the source -- e.g. a value expression like `{"power_of": "source"}` usable as the right-hand side of the selector's `power: {"op": ">", "value": ...}` comparison.
-  <br>Why the existing vocabulary won't do: `Keyword` is a closed enum of fifteen (`src/automtg/engine/enums.py:131`) with no `skulk`, and `EVASION_KEYWORDS` is `frozenset({FLYING, MENACE})` -- an unknown keyword is a load-time `DslError`, not a silently inert card. `can_block` (`src/automtg/engine/combat.py:121-153`) consults exactly three restrictions: protection, flying-vs-reach, and (via `blocks_valid`) menace; nothing reads a static there. `STATIC_EFFECTS` (`src/automtg/cards/loader.py:41-71`) offers `buff`, `grant_keyword`, `set_pt`, `add_subtype`, `set_types`, `protection` and the player-wide ones -- every object-facing one changes a characteristic, none constrains block legality. `protection` is the only static `can_block` does read, but it is wrong twice over: it names a fixed quality (`from_types`/`from_subtypes`/`from_colors`) and cannot express a power comparison at all, and it is a DEBT keyword that would also stop damage, enchanting and targeting, making the creature far better than the one printed. `menace` restricts blocker *count*, not blocker power. Filter keys cannot reach it either: `STATIC_FILTER_KEYS` (`loader.py:76-97`) has no `power` key whatsoever, and even the full selector's `power: {"op": ">", "value": {...}}` compares against a value expression with no way to name the blocked creature's own power -- `power_of` takes a `var` (snapshot) or a `target`, and a static block restriction has neither. Static filters are additionally required to read only *printed* characteristics, which skulk must not do.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vampire Cutthroat** (rank 6728) — `vampire_cutthroat`
-  - Skulk (This creature can't be blocked by creatures with greater power.)
-- **Stromkirk Noble** (rank 13287) — `stromkirk_noble`
-  - This creature can't be blocked by Humans.
-- **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
-  - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
-  - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
-
-</details>
 
 ## static-condition
 
@@ -207,6 +184,21 @@ Blocks **1** card.
   - Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)
   - This creature has flying as long as you have the city's blessing.
   - Scope: both printed lines are blocked, and the second is blocked twice over -- once because there is nothing to ask about (no city's blessing exists to be read) and once because a static's `condition` may not ask it even if it did. The card already in the hand-written pool (`data/cards/edgar.cards.json`) carries the correct printed `oracle_text` but implements neither line; it is a vanilla 2/1 Vampire Soldier, and `tests/cards/precon_deficits.json` records exactly that residual. No partial answer is possible: printing `"keywords": ["flying"]` unconditionally would be a strictly better card than the one printed (a 2/1 flier for {W} that flies from turn one regardless of board), and it would still leave the Ascend line unclaimed by any ability.
+
+</details>
+
+## blocking-restriction
+
+Blocks **1** card.
+
+- **(keyword)** the `intimidate` evasion keyword -- "this creature can't be blocked except by artifact creatures and/or creatures that share a color with it" -- as a `Keyword` enum member the loader accepts, plus the block-legality rule behind it in `combat.can_block`: a declared blocker is legal only if it has the Artifact type OR its colors intersect the attacker's colors. It must read *derived* colors and types of both creatures at declare-blockers time, so a creature that has been made black can block this and this creature being made a second color widens who may block it. NOTE (updated): the two sibling needs once filed under this slug have both shipped -- Stromkirk Noble's fixed-quality form is the `block_restriction` static with a `blockers` filter, and Vampire Cutthroat's relative-power form is `Keyword.SKULK`, compared in `can_block`. Neither reaches this card. Intimidate is a third shape again: a relation between the two creatures' COLORS (and one type escape hatch), stated as an exemption rather than a prohibition.
+  <br>Why the existing vocabulary won't do: `Keyword` (`engine/enums.py`) is a closed enum and `KNOWN_KEYWORDS` is derived from it, so a card printing `intimidate` in its `keywords` or granting it via `grant_keyword` is a `DslError` at load, not a silent no-op. Nothing in `EVASION_KEYWORDS` is a colour-based evasion. Menace is the nearest keyword and is wrong in both directions -- it permits any two creatures of any colour to block, and forbids a lone artifact creature or a lone black creature from blocking, which intimidate expressly allows. `skulk` is the newest arrival and is the right *shape* -- a comparison between the two creatures, read from derived characteristics in `can_block` -- but it compares power and takes no parameter, so it cannot be reused or parameterised into this. The `block_restriction` static is wrong twice over: its `blockers` filter is a PROHIBITION ("can't be blocked by X") while intimidate is an EXEMPTION ("can't be blocked EXCEPT by X"), which is a negation the positive-conjunctive filter language cannot express; and it is a static filter, so it reads printed characteristics only, while the colour relation must see derived colours on both sides. `protection` (the one parameterised static, with `from_colors`) is also a stop rather than an exemption, it blanks damage, targeting and enchanting as well, and its `from_colors` is a fixed literal list, so it cannot say "shares a color with THIS creature" and would have to be rewritten if the creature's colour changed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Guul Draz Vampire** (rank 22408) — `guul_draz_vampire`
+  - As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)
+  - Scope: the card's ONE printed line is blocked three separate ways and none of the three is optional. The +2/+1 half alone would be `{"kind": "static", "effect": "buff", "affects": {"self_only": true}, "power": {"const": 2}, "toughness": {"const": 1}}`, which is expressible today -- but only unconditionally, which is a strictly better card than the one printed, and it would still leave `intimidate` unimplemented on a line the residual gate reads as a whole. The card that is already in the hand-written pool covers none of this; it is a vanilla 1/1 Vampire Rogue.
 
 </details>
 
