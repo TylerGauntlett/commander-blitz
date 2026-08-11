@@ -180,6 +180,11 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     if obj is None:
         return 0
     if which == "mana_value":
+        # "…except it's a white Zombie Angel with **no mana cost**." An embalm
+        # token's def_id is the original card's, so without this it would still
+        # report the printed cost's mana value.
+        if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+            return 0
         return ctx.state.card_of(obj).mana_value
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness

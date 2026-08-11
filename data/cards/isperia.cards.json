@@ -1142,14 +1142,14 @@
         "Angel"
       ],
       "power": 3,
-      "toughness": 3,
+      "toughness": 4,
       "keywords": [
         "flying"
       ],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "text": "When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -1174,6 +1174,61 @@
               "op": "exile",
               "objects": {
                 "target": "t1"
+              },
+              "until_leaves": true
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              },
+              "controller": "owner"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{5}{W}",
+            "exile_from_graveyard": {
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "self_only": true
+              },
+              "controller": "you",
+              "except_": {
+                "colors": [
+                  "W"
+                ],
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "no_mana_cost": true
               }
             }
           ]

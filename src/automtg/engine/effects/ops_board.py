@@ -120,12 +120,21 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     Unlike `create_token` this names no token id, so there is nothing for
     `validate_token_references` to check and nothing to pre-declare: the thing
     being copied is only known while the spell is resolving.
+
+    ``except_`` is embalm's "…except it's a white Zombie Angel with no mana
+    cost". It is stored on the token rather than on a card, because a copy has
+    no card of its own -- its identity is the original's ``def_id``.
+
+    The source need not be on the battlefield: embalm copies a card in the
+    *graveyard*, and `self_only` reaches it there because an oid survives every
+    zone change.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oids = resolve_pool(ctx, spec.get("objects"))
     if not oids:
         return
     controllers = _players(ctx, spec.get("controller", "you"))
+    overrides = spec.get("except_") or spec.get("except")
     for oid in oids:
         source = ctx.state.objects.get(oid)
         if source is None:
@@ -138,6 +147,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                 amount,
                 tapped=bool(spec.get("tapped")),
                 attacking=_attack_target(ctx) if spec.get("attacking") else None,
+                overrides=dict(overrides) if overrides else None,
             )
 
 

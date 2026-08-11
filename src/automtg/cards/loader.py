@@ -411,7 +411,11 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"{where}: 'is_cycling' needs a cost that discards this card "
                 f"(got {cost.describe()!r})"
             )
-        if set(active_zones) - {Zone.BATTLEFIELD} and not cost.discard_self:
+        # Two costs remove the source from a non-battlefield zone: cycling
+        # discards this card from hand, embalm exiles it from the graveyard.
+        # Either satisfies the rule; neither is optional.
+        removes_source = cost.discard_self or cost.exile_from_graveyard is not None
+        if set(active_zones) - {Zone.BATTLEFIELD} and not removes_source:
             raise DslError(
                 f"{where}: an activated ability outside the battlefield needs a cost "
                 f"that removes its source from that zone (got {cost.describe()!r}); "
@@ -986,6 +990,22 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         raise DslError(
             f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
         )
+    if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
+        # "…except it's a white Zombie Angel with no mana cost." A misspelled
+        # key here would be silently dropped, and the token would come back a
+        # plain copy -- which is a different card and looks identical until
+        # somebody reads its colour.
+        if not isinstance(overrides, Mapping):
+            raise DslError(f"{where}: 'except_' must be an object")
+        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost"}
+        if unknown:
+            raise DslError(
+                f"{where}.except_: unsupported keys {sorted(unknown)} "
+                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost')"
+            )
+        for color in overrides.get("colors") or ():
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:

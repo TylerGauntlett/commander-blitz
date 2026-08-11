@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**6 cards** blocked by **5** capabilities.
+**5 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
-| [embalm](#embalm) | 1 | 8765 | engine, op |
 
 ## flashback
 
@@ -91,22 +90,5 @@ Blocks **1** card.
   - As this artifact enters, choose a creature type.
   - Creatures you control of the chosen type get +1/+1.
   - Whenever you cast a creature spell of the chosen type, draw a card.
-
-</details>
-
-## embalm
-
-Blocks **1** card.
-
-- **(engine)** an activated ability offered while its card sits in the GRAVEYARD -- `active_zones: ["graveyard"]` honoured for activated abilities, and `legality._activate_actions` scanning each player's graveyard for cards whose abilities declare it
-  <br>Why the existing vocabulary won't do: `active_zones` exists in the schema and accepts `"graveyard"`, but `cards/loader.py:_compile_ability` only reads `model.active_zones` inside the *triggered* branch (line 360); an activated ability is hard-wired to `(Zone.BATTLEFIELD,)` at line 309, so declaring it is silently ignored. `engine/triggers.py:_candidate_abilities` likewise consults `active_zones` only for triggered abilities. `legality._activate_actions` iterates `state.battlefield` alone, so a graveyard card has no path to activation at all. The cost half is already there -- `Cost.exile_from_graveyard` is a real selector-shaped cost and `sorcery_speed_only` covers "Embalm only as a sorcery" -- which is exactly why this is one missing zone rather than a missing mechanic. The card-level alternatives (`retrace`, `suspend`, `kicker`) widen where a card may be *cast* from, never where an ability may be activated from.
-- **(op)** a token copy that applies an "except" clause -- `copy_permanent` (or a sibling) taking overrides for `colors`, added `subtypes` and a cleared `mana_cost`, and able to copy a card in a zone other than the battlefield
-  <br>Why the existing vocabulary won't do: `copy_permanent` creates a token whose `def_id` is the copied object's and takes only `objects`, `amount`, `controller`, `tapped` and `attacking` -- there is no way to say "except it's a white Zombie Angel with no mana cost", so the token would be a plain Angel copy with the printed colour, subtypes and cost. `create_token` cannot stand in either: it names a pre-declared token id checked by `validate_token_references`, and no white Zombie Angel copy of this card exists in the pool -- and a hand-declared 3/4 stand-in would not be a copy, so it would lose the enters trigger the real embalm token brings. `animate` sets base characteristics on an existing permanent and cannot create one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
-  - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-  - Scope (updated): the exile-until-leaves half now ships -- the `exile` op takes `until_leaves`, and a leaves-trigger reads its victims back through `{"zone": "exile", "controller": "any", "exiled_with": "self"}` (see tests/unit/test_exile_until_leaves.py, and Oblivion Ring in the pool). So the first printed line is expressible today and this card is blocked on embalm alone: an activated ability offered from the GRAVEYARD, and a token copy that applies an 'except it's a white Zombie Angel with no mana cost' clause.
 
 </details>

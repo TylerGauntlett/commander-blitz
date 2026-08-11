@@ -105,6 +105,16 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     keywords = set(card.keywords)
     colors = set(card.colors)
 
+    # "…a copy of it, except it's a white Zombie Angel with no mana cost."
+    # Applied to the *printed* face, before any layer: the exception is part of
+    # what this object is, not an effect on it, so an anthem or an animate
+    # afterwards should layer on top exactly as it would on a printed card.
+    if obj.copy_overrides:
+        if (added := obj.copy_overrides.get("add_subtypes")):
+            subtypes.update(added)
+        if (repaint := obj.copy_overrides.get("colors")) is not None:
+            colors = set(repaint)
+
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
 
