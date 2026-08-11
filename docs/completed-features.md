@@ -1,3 +1,69 @@
+## "Unless that player pays" — the best-ranked card in the report, for one guard
+
+### Overview
+
+Rhystic Study is EDHREC rank 44, the best-ranked card the gap report has ever
+carried, and it was blocked by a single load-time check.
+
+Its gap record is the oldest in the repo and asked for three things: a decision
+routed to another player, a cost payable mid-resolution by someone who does not
+control the ability, and a `spell_cast` trigger that can name the caster. All
+three had shipped in the meantime, and the record says "reference" throughout —
+it was written against a design document rather than the engine. `op_may`
+already resolves an arbitrary `player` through `select_players` (which has taken
+`{"controller_of": ...}` all along), already pays a `Cost` out of the pool
+mid-resolution on behalf of whoever is asked, and already branches to `else` on
+a refusal.
+
+This is the same lesson as the Bident repair one commit earlier, and the reason
+the re-triage step exists: a gap record is a snapshot, nothing retires one
+automatically, and the report drifts in exactly one direction.
+
+### What shipped
+
+One guard, narrowed. `loader._validate_effect` refused a `may` carrying `pay`
+without `effects`, on the grounds that "paying for nothing is not a card". That
+is right when there is no `else` and exactly backwards when there is: what
+Rhystic Study's opponent buys for their {1} is the *absence* of the else branch.
+They get nothing, and that is the mechanic. The guard now asks for `effects`
+**or** `else`, so a payment that buys nothing at all is still refused — with a
+test pinning each of the three shapes.
+
+Tier: below A. No new op, no new decision kind, no engine change. The skill
+warns that the common way to over-build is reaching for a new `DecisionKind`
+when an existing `ask_*` composes, and this is that warning's sharpest case so
+far — the card reads like it needs a bespoke subsystem and needed one word of
+validation.
+
+### What the test pins
+
+That the *opponent* is asked to pay and the *controller* is asked to draw. A
+Rhystic Study whose controller decided whether the opponent paid would be
+unbeatable and would look entirely normal on screen — the same property
+`test_two_piles.py` pins for Fact or Fiction, and free for the same reason.
+
+Also that an opponent who cannot afford the {1} is not prompted at all (rule
+118.4) and the draw simply happens; that "you may draw" stays optional after
+they decline; and that your own spells do not trigger it.
+
+The turn cap in that test is load-bearing rather than decoration. With nothing
+left to do the engine runs on into the next turn, and player 0's draw *step*
+would be counted as the trigger's card — every branch would read one card too
+high, and the "they paid, so no draw" case would pass while being wrong.
+
+### A gate regression caught on the way
+
+`--collect` re-verifies every answer on disk and rewrites `expectations.json`
+from them, which silently weakened two unrelated cards: `coiling_oracle` and
+`search_for_tomorrow` had `battlefield_count` and `library_size` assertions
+committed that their answer files did not carry, so collecting dropped them back
+to a bare `zone` check.
+
+Fixed at the source — the stronger expectations now live in the answer files,
+where the next `--collect` will preserve rather than clobber them, and both
+cards re-verified against them. Worth knowing before the next run: strengthening
+`data/cards/auto/expectations.json` by hand does not survive.
+
 ## Investigate — a keyword action that was one missing token
 
 ### Overview

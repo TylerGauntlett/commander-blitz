@@ -1,0 +1,58 @@
+{
+  "card": {
+    "id": "rhystic_study",
+    "name": "Rhystic Study",
+    "oracle_text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+    "mana_cost": "{2}{U}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": {
+              "controller_of": "subject"
+            },
+            "prompt": "Pay {1} to stop Rhystic Study's draw?",
+            "pay": {
+              "mana": "{1}"
+            },
+            "else": [
+              {
+                "op": "may",
+                "player": "you",
+                "prompt": "Draw a card?",
+                "effects": [
+                  {
+                    "op": "draw",
+                    "player": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

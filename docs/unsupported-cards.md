@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**15 cards** blocked by **12** capabilities.
+**14 cards** blocked by **11** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cycling-trigger](#cycling-trigger) | 1 | 10668 | trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
-| [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [variable-mana-ability](#variable-mana-ability) | 1 | 829 | engine |
 
 ## exile-until-leaves
@@ -215,24 +214,6 @@ Blocks **1** card.
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
   - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-
-</details>
-
-## unless-pays
-
-Blocks **1** card.
-
-- **(decision)** an 'unless that player pays <cost>' wrapper on a triggered ability's effect: while the ability resolves, a player other than the ability's controller is offered an optional cost, and the wrapped effect happens only if they decline
-  <br>Why the existing vocabulary won't do: `may` is the only optional-effect op in reference and it asks the ability's own controller whether to apply the effect; it has no cost attached and cannot route the decision to the opponent whose spell triggered the ability, so the whole 'unless' branch would have to be dropped
-- **(cost)** a mana cost ({1}) payable during another player's ability resolution by a player who does not control that ability, with the payment outcome (paid / not paid) readable as a condition
-  <br>Why the existing vocabulary won't do: costs in reference are attached to activating or casting the object itself and are always paid by its controller; nothing lets a resolving trigger prompt a specific other player for mana, and `if` has no condition that can read whether such a payment happened
-- **(trigger_event)** `spell_cast` needs to expose the spell's controller both as a filter (only opponents' spells trigger it) and as a bound player reference the effect can point back at, so 'that player' means the caster rather than a fixed side
-  <br>Why the existing vocabulary won't do: `spell_cast` is listed as a trigger event but reference offers no filter vocabulary that scopes it to opponents, and no way to name the triggering spell's controller as the target of a later decision; `static_filter_keys.controller` applies to static abilities over permanents, not to the caster of a triggering spell
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rhystic Study** (rank 44) — `rhystic_study`
-  - Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.
 
 </details>
 

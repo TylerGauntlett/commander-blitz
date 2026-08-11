@@ -130,7 +130,7 @@ implemented) · overload
 **Effects**
 Copying a permanent as anything but a token · gaining control of a permanent ·
 damage prevention or redirection other than protection · regeneration · ward ·
-"unless that player pays" · granting a *static* or *activated* ability to
+granting a *static* or *activated* ability to
 another permanent (triggered ones work) · general replacement effects (only four are
 whitelisted: enters tapped, enters with counters, the commander zone change, and
 tokens ceasing to exist)
