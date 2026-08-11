@@ -26,7 +26,7 @@ not a rewrite.
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
 | **Costs** | Mana, tap, untap, sacrifice, discard, discard *this card*, pay life, remove counters, exile from graveyard |
-| **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself. Plain cycling only: typecycling fetches instead of drawing, and "when you cycle this card" needs a trigger event the engine does not have |
+| **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself, plus "When you cycle this card…" as its own `cycle` event, fired after the cycling ability is on the stack so the trigger resolves *before* the draw (the printed "Do this before you draw"). Typecycling is still out: it fetches instead of drawing, which is a different ability |
 | **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads — readable by the permanent's own enters trigger, not just during resolution |
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
 | **Emerge** | The alternative cost whose price depends on the creature sacrificed for it — one cast line per creature, reduced by its mana value |
@@ -88,10 +88,10 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (flashback, evolve, ascend — none of the 15
+waiting on (flashback, ascend — none of the 15
 keywords in `engine/enums.py` covers them) are `/extend-dsl` jobs. Cycling was
-one of them and now ships; the cards that print "when you cycle this card" still
-wait on the trigger event. Skulk and threshold have both shipped since, and
+one of them and now ships in full, trigger included, so Krosan Tusker is off
+this list. Evolve went with it, on Gyre Sage. Skulk and threshold have both shipped since, and
 Nimble Mongoose is off this list. So are intimidate (with the rest of the
 evasion family) and investigate — the latter needed no vocabulary at all, only a
 Clue in the token pool, and Bygone Bishop is off this list with it.

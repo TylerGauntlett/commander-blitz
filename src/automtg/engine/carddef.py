@@ -203,6 +203,8 @@ class Ability:
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None
     sorcery_speed_only: bool = False
+    #: This ability is cycling, so activating it emits ``EventType.CYCLED``.
+    is_cycling: bool = False
     # triggered
     trigger: TriggerSpec | None = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)

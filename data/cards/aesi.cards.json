@@ -2056,7 +2056,71 @@
         "Beast"
       ],
       "power": 6,
-      "toughness": 5
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.)",
+          "active_zones": [
+            "hand"
+          ],
+          "is_cycling": true,
+          "cost": {
+            "mana": "{2}{G}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a basic land?",
+              "effects": [
+                {
+                  "op": "search_library",
+                  "player": "you",
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "reveal": true,
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                },
+                {
+                  "op": "shuffle",
+                  "player": "you"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "deep_analysis",

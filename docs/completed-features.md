@@ -1,3 +1,58 @@
+## The cycle trigger — an event, and two orderings
+
+### Overview
+
+"When you cycle this card, you may search your library for a basic land card …
+**(Do this before you draw.)**" Krosan Tusker is the witness, and plain cycling
+had already shipped, so the cost half was expressible and only the event was
+not.
+
+The first Tier D change in this sequence — a new `EventType` — and so the only
+one that touched `frontend/`.
+
+### Why it needed its own event
+
+Both near misses already exist and both are wrong rather than merely absent.
+`draw` fires on every draw, including the draw step and every other draw spell,
+so a Tusker sitting in the graveyard would fetch a land each time its controller
+drew anything — and it fires *after* the draw, which the parenthetical
+explicitly forbids. `discard` fires on hand-size discards and on every discard
+cost, so a Tusker pitched to a Wheel would fetch.
+
+So `EventType.CYCLED`, and cycling is **declared** rather than inferred:
+`is_cycling` on the ability, refused by the loader unless the cost actually
+discards the card. "Discard this card:" is a shape other cards print without
+being cycling, and inferring from `discard_self` would make those a different
+card.
+
+### Two orderings, both load-bearing
+
+The event fires **after** the cycling ability is pushed onto the stack, so the
+trigger drains on top of it and resolves first. That is the whole of "(Do this
+before you draw.)", and it falls out of the stack's ordinary
+last-on-first-off behaviour rather than any special case. Firing it a few lines
+earlier — before the push — reverses it silently, and the card still looks like
+it works.
+
+And the card is **already in the graveyard** when it fires, because paying the
+cost discarded it. The trigger declares `active_zones: ["graveyard"]` and is
+collected by the walk `_candidate_abilities` already does over that zone, so the
+zone machinery needed nothing.
+
+### The bug in the middle of it
+
+The first implementation used `state.emit`, which only writes the log — the
+`cycled` event appeared in the event stream, the ticker would have narrated it,
+and no trigger ever fired. `triggers.fire` is the one that queues abilities. An
+event nothing listens for is exactly the silent no-op this run exists to remove,
+and it took the ordering test to notice.
+
+### Frontend
+
+`labels.ts::describeEvent` and `events.ts::beatsFor`, both of which have `default`
+fallthroughs — an unnarrated event is dropped with nothing reporting it, which
+is why the skill calls this the only tier that genuinely forces UI work.
+
 ## "Attacks each combat if able" — the continuous half of a requirement
 
 ### Overview

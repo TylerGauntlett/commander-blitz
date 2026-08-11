@@ -378,6 +378,14 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         # again without ever leaving. Cycling pays for itself by discarding
         # itself, which is exactly the property that makes it safe and is why
         # the two arrived together.
+        if model.is_cycling and not cost.discard_self:
+            # Rule 702.29: cycling *is* "Discard this card:". Without the
+            # discard the `cycle` event would fire for an ability that never
+            # cycled anything, and Krosan Tusker would fetch a land every time.
+            raise DslError(
+                f"{where}: 'is_cycling' needs a cost that discards this card "
+                f"(got {cost.describe()!r})"
+            )
         if set(active_zones) - {Zone.BATTLEFIELD} and not cost.discard_self:
             raise DslError(
                 f"{where}: an activated ability outside the battlefield needs a cost "
@@ -470,6 +478,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_amount=mana_amount,
         mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
+        is_cycling=model.is_cycling,
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,
