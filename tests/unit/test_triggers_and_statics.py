@@ -156,11 +156,14 @@ class TestLandfallAcrossZones:
         assert fetched and all(obj.controller == 0 for obj in fetched)
 
     def test_putting_a_land_onto_the_battlefield_is_not_playing_one(self, builder):
-        """Aesi and Horn of Greed read "whenever you *play* a land".
+        """Horn of Greed reads "whenever a player *plays* a land".
 
         Cultivate puts a land onto the battlefield; it does not play one, so a
         land-drop trigger stays silent. Landfall (above) fires either way. This
         is the rules distinction, pinned so the two spellings stay distinct.
+
+        Aesi used to be cited here too, wrongly: it prints landfall and belongs
+        with the tests below, not this one.
         """
         game = (
             builder()
@@ -173,6 +176,77 @@ class TestLandfallAcrossZones:
         self._resolve(game, 2)
         pass_until(game, lambda g: not g.state.stack)
         # The only card in hand is the one Cultivate put there, not a draw.
+        drawn = [e for e in game.state.events if e.type == "draw"]
+        assert drawn == []
+
+    @staticmethod
+    def _settle(game, *, accept: bool) -> None:
+        """Empty the stack, answering every "you may" the same way.
+
+        `pass_until`'s passive answer to a MAY is No, which would quietly
+        decline the very draw these two tests are about.
+        """
+        want = ActionKind.YES if accept else ActionKind.NO
+        for _ in range(200):
+            decision = game.pending()
+            if decision is None:
+                return
+            if decision.kind is DecisionKind.MAY:
+                game.apply(next(a for a in game.legal_actions() if a.kind is want))
+                continue
+            if not game.state.stack:
+                return
+            game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.PASS))
+
+    def _aesi_ramping(self, builder):
+        return (
+            builder()
+            .battlefield(0, ["aesi_tyrant_of_gyre_strait", "forest", "forest", "forest"])
+            .hand(0, ["cultivate"])
+            .library(0, ["forest", "island", "island", "island"])
+            .build()
+        )
+
+    def test_aesi_draws_off_a_land_put_onto_the_battlefield(self, builder):
+        """Aesi prints landfall, so a *put* land draws like a played one.
+
+        It was hand-authored against `land_played` from stale text and stayed
+        silent through every ramp spell in its own deck -- which is the opposite
+        of what the card says, and the reason this test exists.
+        """
+        game = self._aesi_ramping(builder)
+        game.apply(action_for_card(game, ActionKind.CAST, "cultivate"))
+        self._resolve(game, 2)  # one to the battlefield, one to hand
+        self._settle(game, accept=True)
+        drawn = [e for e in game.state.events if e.type == "draw"]
+        assert len(drawn) == 1
+
+    def test_aesi_still_draws_off_an_ordinary_land_drop(self, builder):
+        """The half the old `land_played` wiring got right, kept honest.
+
+        Playing a land goes through `move_object` before `LAND_PLAYED` fires, so
+        landfall covers the land drop as well -- but that is the case a move to
+        `permanent_enters` could plausibly have broken, and nothing else pins it
+        for this card.
+        """
+        game = (
+            builder()
+            .battlefield(0, ["aesi_tyrant_of_gyre_strait"])
+            .hand(0, ["forest"])
+            .library(0, ["island", "island"])
+            .build()
+        )
+        game.apply(action_for_card(game, ActionKind.PLAY_LAND, "forest"))
+        self._settle(game, accept=True)
+        drawn = [e for e in game.state.events if e.type == "draw"]
+        assert len(drawn) == 1
+
+    def test_aesis_draw_can_be_declined(self, builder):
+        """"You *may* draw a card" -- so the No branch has to be real."""
+        game = self._aesi_ramping(builder)
+        game.apply(action_for_card(game, ActionKind.CAST, "cultivate"))
+        self._resolve(game, 2)
+        self._settle(game, accept=False)
         drawn = [e for e in game.state.events if e.type == "draw"]
         assert drawn == []
 

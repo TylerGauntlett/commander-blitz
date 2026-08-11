@@ -302,11 +302,11 @@ export const aesi = (overrides: Partial<CardView> = {}): CardView =>
     toughness: 5,
     subtypes: ["Serpent"],
     supertypes: ["Legendary"],
-    keywords: ["trample"],
+    keywords: [],
     is_commander: true,
     zone: "command",
     oracle_text:
-      "Trample. Whenever you play a land, draw a card. You may play an additional land on each of your turns.",
+      "You may play an additional land on each of your turns.\nLandfall — Whenever a land you control enters, you may draw a card.",
     ...overrides,
   });
 

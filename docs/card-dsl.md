@@ -210,6 +210,14 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `deals_combat_damage_to_player` · `upkeep` · `draw_step` · `begin_combat` ·
 `end_step` · `you_gain_life` · `counter_placed` · `draw`
 
+**Landfall is not `land_played`.** "Whenever a land you control enters" is
+`permanent_enters` with a `{"types": ["Land"]}` filter, and it fires however the
+land arrived — played, or put there by Cultivate. `land_played` is the narrower
+"whenever you *play* a land", which Cultivate does not do; only Horn of Greed
+wants it. Reading the first as the second is a silent defect, because the card
+still works on your own land drops and only goes quiet on ramp — it is exactly
+what was wrong with Aesi (see [bugs.md](bugs.md)).
+
 Triggers carry bindings the effects can read: `subject` (the object the event was
 about), `amount` (damage dealt, life gained), `self`, `x`, `defender` (the player
 attacked), and `was_attacking` on `leaves_battlefield`.
@@ -295,11 +303,14 @@ A commander with a trigger and a static, plus a command-zone ability:
   "id": "aesi_tyrant_of_gyre_strait", "name": "Aesi, Tyrant of Gyre Strait",
   "mana_cost": "{4}{G}{U}",
   "supertypes": ["Legendary"], "types": ["Creature"], "subtypes": ["Serpent"],
-  "power": 5, "toughness": 5, "keywords": ["trample"],
+  "power": 5, "toughness": 5,
   "abilities": [
     { "kind": "triggered",
-      "trigger": { "event": "land_played", "controller": "you" },
-      "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }] },
+      "trigger": { "event": "permanent_enters", "controller": "you",
+                   "filter": { "types": ["Land"] } },
+      "effects": [
+        { "op": "may", "prompt": "Draw a card?",
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }] }] },
     { "kind": "static", "effect": "extra_land_drops",
       "affects_player": "you", "amount": { "const": 1 } }
   ]

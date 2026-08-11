@@ -11,13 +11,22 @@
       "subtypes": ["Serpent"],
       "power": 5,
       "toughness": 5,
-      "keywords": ["trample"],
       "abilities": [
         {
           "kind": "triggered",
           "text": "Landfall — Whenever a land you control enters, you may draw a card.",
-          "trigger": { "event": "land_played", "controller": "you" },
-          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": { "types": ["Land"] }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Draw a card?",
+              "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+            }
+          ]
         },
         {
           "kind": "static",
