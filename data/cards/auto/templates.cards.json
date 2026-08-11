@@ -17100,6 +17100,88 @@
       "abilities": [
         {
           "affects": {
+            "colors": [
+              "G"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other green creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              "U"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other blue creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              "G",
+              "U"
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "untap_during_each_untap_step",
+          "kind": "static",
+          "text": "Untap all green and/or blue creatures you control during each other player's untap step."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "murkfiend_liege",
+      "mana_cost": "{2}{G/U}{G/U}{G/U}",
+      "name": "Murkfiend Liege",
+      "oracle_text": "Other green creatures you control get +1/+1.\nOther blue creatures you control get +1/+1.\nUntap all green and/or blue creatures you control during each other player's untap step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "effect": "add_subtype",

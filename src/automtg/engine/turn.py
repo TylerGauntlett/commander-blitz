@@ -12,12 +12,18 @@ from typing import TYPE_CHECKING, Any
 from . import combat as combat_mod
 from . import suspend
 from .actions import PendingDecision
-from .characteristics import player_has_no_hand_limit
+from .characteristics import player_has_no_hand_limit, untap_also
 from .effects.context import EffectContext, ask_objects
 from .enums import DecisionKind, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
-from .primitives import clear_until_eot, discard_cards, draw_cards, untap_all
+from .primitives import (
+    clear_until_eot,
+    discard_cards,
+    draw_cards,
+    untap_all,
+    untap_permanent,
+)
 from .sba import declare_draw
 from .triggers import fire
 
@@ -112,6 +118,12 @@ def _untap_step(state: GameState) -> None:
     player.lands_played = 0
     player.extra_land_drops = 0
     untap_all(state, player.pid)
+    # Murkfiend Liege. Untapped after the active player's own untap so the
+    # two cannot fight over `skip_next_untap`, which `untap_all` spends.
+    for oid in untap_also(state, player.pid):
+        obj = state.objects.get(oid)
+        if obj is not None and obj.tapped and not obj.skip_next_untap:
+            untap_permanent(state, oid)
     # Both counters: `turn` is the rules one, `round` is the one the log prints.
     state.emit(
         EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round

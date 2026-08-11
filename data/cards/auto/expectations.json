@@ -1165,6 +1165,10 @@
     },
     "zone": "battlefield"
   },
+  "murkfiend_liege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mutable_explorer": {
     "zone": "battlefield"
   },
