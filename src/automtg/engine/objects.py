@@ -75,6 +75,12 @@ class GameObject:
     #: The X paid when this object was cast.  Survives resolution so that
     #: "enters with X counters" triggers can read it; reset only on a new cast.
     cast_x: int = 0
+    #: Whether the kicker was paid when this object was cast.  Same contract
+    #: as ``cast_x`` and for the same reason: Slinn Voda's "When this
+    #: creature enters, **if it was kicked**" is an ETB trigger, and by then
+    #: the StackItem is gone.  Without this the condition is silently False
+    #: on every permanent -- an inert card that loads clean.
+    cast_kicked: bool = False
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""

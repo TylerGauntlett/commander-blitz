@@ -802,6 +802,27 @@ Gate 5 of the authoring verifier measures a kicker card **kicked**, because that
 is the strictly larger claim; gate 4 still casts it unkicked, so neither line
 goes unexercised.
 
+### A permanent's own enters trigger can read it
+
+Slinn Voda's "When this creature enters, **if it was kicked**, return all
+creatures…" is not a `spell_effects` clause — it is an ETB trigger, and by the
+time it resolves the `StackItem` carrying the flag is gone.
+
+So the flag is written onto the object at resolution and survives onto the
+battlefield, exactly as `cast_x` already did for "enters with X counters":
+
+```jsonc
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "condition": { "kicked": true } },
+  "effects": [ ... ] }
+```
+
+Worth knowing because of how this failed before: the card **loaded cleanly** —
+the half-a-kicker guard is satisfied, since something does read `kicked` — and
+the clause was then silently unreachable. You paid the extra {1}{U} and nothing
+happened. `{"kicked": ...}` now reads the resolution context *or* the object,
+which are the flag's two lifetimes and never overlap.
+
 ## Delayed triggers — "at the beginning of the next …"
 
 Every other trigger in the engine fires *from* an event that has just happened.

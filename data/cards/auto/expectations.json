@@ -1660,6 +1660,14 @@
   "slagwurm_armor": {
     "zone": "battlefield"
   },
+  "slinn_voda_the_rising_deep": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "slippery_karst": {
     "zone": "battlefield"
   },

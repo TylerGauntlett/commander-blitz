@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**28 cards** blocked by **23** capabilities.
+**27 cards** blocked by **22** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [emerge](#emerge) | 1 | 7681 | cost |
 | [evoke](#evoke) | 1 | 584 | cost, engine |
 | [investigate](#investigate) | 1 | 7272 | engine |
-| [kicker](#kicker) | 1 | 4628 | engine |
 | [landwalk](#landwalk) | 1 | 2833 | keyword |
 | [unless-pays](#unless-pays) | 1 | 44 | cost, decision, trigger_event |
 | [untap-during-each-untap-step](#untap-during-each-untap-step) | 1 | 2584 | static_effect, trigger_event |
@@ -384,20 +383,6 @@ Blocks **1** card.
 - **Bygone Bishop** (rank 7272) — `bygone_bishop`
   - Whenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
   - Scope: only the `investigate` half of this one printed line is blocked, and it is blocked on a single missing thing -- a Clue token in the shared token pool. The trigger half IS expressible today and needs nothing new; see `expressible_today` below. Because the residual gate reads a printed line as a whole, and because a trigger that fires and creates nothing is a strictly worse card than the one printed (Bygone Bishop's entire function is the Clues), the line goes here rather than being written half. The card already in the hand-written pool covers none of it: `data/cards/isperia.cards.json` has it as a vanilla 2/3 flier -- and with mana cost `{2}{W}{W}` where the packet and the printing say `{2}{W}`, which wants fixing when this is implemented.
-
-</details>
-
-## kicker
-
-Blocks **1** card.
-
-- **(engine)** The kicked flag has to survive the cast-to-battlefield zone change and reach a triggered ability, so a `self_enters` trigger whose intervening-if is `{"kicked": true}` is true exactly when the kicker cost was paid. Concretely, the same three-step plumbing that already exists for X: record it on the object as it resolves (`GameObject.cast_x` at objects.py:77, set at stack.py:193 by `obj.cast_x = item.x`), carry it into the trigger's bindings (triggers.py:380 already does `"x": obj.cast_x`), and set it on the ability's EffectContext (stack.py:250 `_resolve_ability`, mirroring the `kicked=item.kicked` that stack.py:185 `_resolve_spell` already passes). This is the whole of what this card needs -- every other piece is already shipped, including the `kicker` cost field, the `{"kicked": true}` condition, the `self_enters` trigger event and the `not_subtypes` selector key the bounce half wants.
-  <br>Why the existing vocabulary won't do: `{"kicked": true}` is the right condition and the loader will happily accept it here -- `_mentions_kicked` (loader.py:278-281) walks each ability's effects and its trigger condition, so the card passes the half-a-kicker check and loads clean. It is then silently inert: `stack._resolve_ability` builds its EffectContext without a `kicked=` argument, so `EffectContext.kicked` (context.py:37) falls back to its `False` default and `conditions.evaluate`'s `ctx.kicked == bool(cond["kicked"])` (conditions.py:62-63) is false on every resolution, kicked or not. The bounce would never happen, which is exactly the quietly-wrong card a gap record exists to prevent -- and gate verification, which casts a kicker card *kicked* (verify.py:498), would see an unchanged board. Putting the effect in `spell_effects`, where `kicked` genuinely works, is not open: Slinn Voda is a permanent and the loader routes a permanent's effects to `abilities`. Nothing else records how a permanent was cast either -- `StackItem.kicked` is documented as decided at cast time and read on resolution "because that is the only place it can be known: nothing about the object afterwards records what was paid for it" (structs.py:99-102), `zone_is` reads the source's current zone, and `cast_x` is the only cast-time value carried across the zone change. The bounce clause on its own is fully expressible -- `return_to_hand` over `{"zone": "battlefield", "types": ["Creature"], "not_subtypes": ["Merfolk", "Kraken", "Leviathan", "Octopus", "Serpent"], "count": "all"}`, the same shape already shipped on Whelming Wave -- but ungated it would fire on the unkicked {6}{U}{U} mode too, which is a strictly different card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Slinn Voda, the Rising Deep** (rank 4628) — `slinn_voda_the_rising_deep`
-  - When Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.
 
 </details>
 

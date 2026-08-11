@@ -60,7 +60,14 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         return obj is not None and obj.zone.value == cond["zone_is"]
     if "kicked" in cond:
-        return ctx.kicked == bool(cond["kicked"])
+        # Two sources, because the flag has two lifetimes. While the spell
+        # resolves the StackItem is authoritative and nothing is on the
+        # object yet; once it is a permanent the StackItem is gone and the
+        # object is. An ETB trigger only ever sees the second, which is why
+        # "if it was kicked" read False on every permanent before this.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was_kicked = ctx.kicked or (obj is not None and obj.cast_kicked)
+        return was_kicked == bool(cond["kicked"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:

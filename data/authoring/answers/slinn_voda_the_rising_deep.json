@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "slinn_voda_the_rising_deep",
+    "name": "Slinn Voda, the Rising Deep",
+    "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nWhen Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.",
+    "mana_cost": "{6}{U}{U}",
+    "kicker": "{1}{U}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Leviathan"],
+    "power": 8,
+    "toughness": 8,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.",
+        "trigger": {"event": "self_enters", "condition": {"kicked": true}},
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "objects": {
+              "zone": "battlefield",
+              "types": ["Creature"],
+              "not_subtypes": ["Merfolk", "Kraken", "Leviathan", "Octopus", "Serpent"],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 4,
+    "hand_size": {"0": 2}
+  }
+}
