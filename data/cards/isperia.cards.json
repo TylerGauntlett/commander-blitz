@@ -1721,10 +1721,39 @@
           },
           "effects": [
             {
-              "op": "draw",
+              "op": "may",
               "player": "you",
-              "amount": {
-                "const": 1
+              "prompt": "Draw a card?",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+          "cost": {
+            "mana": "{1}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "must_attack",
+              "duration": "this_turn",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "count": "all"
               }
             }
           ]
