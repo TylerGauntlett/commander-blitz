@@ -723,12 +723,38 @@ draws free is a better card than the printed one.
 A cost the player cannot afford is not offered at all, rather than asked and
 then failed. The full `Cost` shape is accepted, not just mana, and it is
 validated at load time through the same model an ability's cost uses, so a
-misspelled key is a load error rather than a cost silently dropped. `pay`
-without `effects` is refused: paying for nothing is not a card.
+misspelled key is a load error rather than a cost silently dropped.
 
-This is **not** `unless_pays` (Rhystic Study), which is still unimplemented and
-is a different mechanic — it routes the payment to *another* player and inverts
-the outcome.
+### "…unless that player pays {1}"
+
+The same op, with two things moved. `player` says *who is asked* — it has always
+taken a full player spec, so `{"controller_of": "subject"}` on a `spell_cast`
+trigger names the opponent who cast the spell — and the consequence goes in
+`else` rather than `effects`, because what the payer buys is the **absence** of
+the other branch:
+
+```jsonc
+// Rhystic Study: whenever an opponent casts a spell,
+//                you may draw a card unless that player pays {1}.
+{ "op": "may",
+  "player": { "controller_of": "subject" },
+  "prompt": "Pay {1} to stop Rhystic Study's draw?",
+  "pay": { "mana": "{1}" },
+  "else": [ { "op": "may", "player": "you",
+              "effects": [ { "op": "draw", "player": "you",
+                             "amount": { "const": 1 } } ] } ] }
+```
+
+Note the nesting: the outer `may` is the opponent's payment, the inner one is
+your own "you *may* draw". Two players, two questions, one op.
+
+Because the payer gets nothing when they pay, `effects` is empty here — so the
+guard is that a `pay` needs **`effects` or `else`**. Paying for nothing at all
+is still refused; paying to stop something is the card.
+
+"A cost they cannot afford is not offered" matters more in this direction than
+the other (rule 118.4): an opponent tapped out is not asked, and the draw simply
+happens.
 
 ## Modal spells with a target
 

@@ -21238,6 +21238,60 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Draw a card?"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Pay {1} to stop Rhystic Study's draw?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "rhystic_study",
+      "mana_cost": "{2}{U}",
+      "name": "Rhystic Study",
+      "oracle_text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

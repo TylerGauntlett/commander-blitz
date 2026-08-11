@@ -813,9 +813,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             CostModel.model_validate(effect["pay"])
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
-        if not effect.get("effects"):
+        # A payment has to buy *something*, but there are two things it can buy.
+        # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
+        # Study's "unless that player pays {1}" buys the **absence** of the
+        # `else` -- the payer gets nothing and that is the whole point, because
+        # what they are paying for is to stop the other branch happening. So
+        # `effects` alone is not the test; having neither branch is.
+        if not effect.get("effects") and not effect.get("else"):
             raise DslError(
-                f"{where}: 'pay' needs 'effects' -- paying for nothing is not a card"
+                f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
