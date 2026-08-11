@@ -1078,6 +1078,46 @@ divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
 
+## "Exile it until this permanent leaves the battlefield"
+
+Oblivion Ring, and the whole Banishing Light / Fiend Hunter family. Two
+abilities, and a link between them:
+
+```jsonc
+// When this enchantment enters, exile another target nonland permanent.
+{ "op": "exile", "objects": { "target": "t1" }, "until_leaves": true }
+
+// When this enchantment leaves the battlefield, return the exiled card
+// to the battlefield under its owner's control.
+{ "op": "put_onto_battlefield",
+  "objects": { "zone": "exile", "controller": "any", "exiled_with": "self" },
+  "controller": "owner" }
+```
+
+`snapshot` is the documented answer to last-known information and cannot do
+this: it writes into `EffectContext.bindings`, which lives for exactly one
+resolution, and these are two separate abilities with two separate contexts.
+
+**The link lives on the exiled card, not on the exiler.** That is the whole
+trick, because the exiler is the thing that goes away — the Ring is in a
+graveyard by the time the return happens, while its victim is sitting in exile
+untouched. And an oid survives every zone change here, so a leaves-trigger's
+`source_oid` still names the departed permanent and `exiled_with: "self"` is
+just a comparison.
+
+Two details that bite:
+
+- `controller: "any"` is required. An exiled card keeps its last controller,
+  which for O-Ring's victim is an opponent, and the selector language defaults
+  `controller` to `"you"`.
+- A plain `{"zone": "exile"}` would match every card in exile from every source,
+  so the return would hand back cards this permanent never touched — a
+  different card, and a better one.
+
+The link is written *after* the move (`move_object` runs
+`reset_permanent_state` on the way, which would wipe it) and cleared by that
+same reset when the card returns, which is right: it is spent once followed.
+
 ## Token copies
 
 ```jsonc

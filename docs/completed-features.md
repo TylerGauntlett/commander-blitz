@@ -1,3 +1,62 @@
+## Exile until it leaves — a link that outlives the thing that made it
+
+### Overview
+
+Oblivion Ring, and behind it the whole Banishing Light / Fiend Hunter / Angel of
+Sanctions family. All of them wait on one thing: a record, written when a
+permanent exiles something, readable by a *later and separate* resolution of
+that permanent's own leaves-trigger.
+
+The gap record was right that `snapshot` cannot do it — it writes into
+`EffectContext.bindings`, which lives for exactly one resolution, and the
+enters-trigger that exiles and the leaves-trigger that returns are two abilities
+with two contexts. It was wrong about how much machinery the answer needs.
+
+### What shipped
+
+`GameObject.exiled_by`, one integer, plus `until_leaves` on the `exile` op to
+write it and an `exiled_with` selector key to read it back.
+
+**The link lives on the exiled card, not on the exiler**, and that is the whole
+design. The exiler is the thing that goes away: the Ring is in a graveyard by
+the time the return happens. Its victim is sitting in exile, untouched. And an
+oid survives every zone change in this engine, so a leaves-trigger's
+`source_oid` still names the departed permanent — which means no snapshot is
+needed at all, just a comparison. The gap record had assumed the trigger would
+have to carry the link in its bindings the way `was_attacking` does; it does
+not.
+
+Written *after* the move, because `move_object` runs `reset_permanent_state` on
+the way and would wipe it, and cleared by that same reset when the card comes
+back — correct, since the link is spent once followed.
+
+### What the test pins
+
+That it returns **only its own victim**. A plain `{"zone": "exile"}` filter
+matches every card in exile from every source, so a return over it would hand
+back cards this permanent never touched — a different card, and a strictly
+better one. The test exiles a second creature by other means and checks it stays
+put.
+
+Also that the card comes back under its **owner's** control rather than the
+Ring controller's, which would be a small theft nobody would notice.
+
+### A detail worth knowing
+
+`controller: "any"` is required on the return selector. An exiled card keeps its
+last controller — for O-Ring's victim, an opponent — and the selector language
+defaults `controller` to `"you"`, so without it the filter silently matches
+nothing and the card never returns. That cost a debugging cycle.
+
+### Also repaired
+
+The incumbent restricted its target to `controller: "opponent"`, where the
+printing says "another target nonland permanent" — any controller. Now
+`controller: "any"` with `exclude_self`, matching the printed line.
+
+Angel of Sanctions is now blocked on **embalm alone**; its gap record has been
+narrowed rather than retired.
+
 ## Spell cost reduction — discounting somebody else's card
 
 ### Overview

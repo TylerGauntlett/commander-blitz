@@ -979,6 +979,13 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}: unknown must_attack duration {duration!r} "
                 f"(implemented: 'this_turn', 'next_combat')"
             )
+    # The link is written on the exiled card and points at the source of the
+    # ability that exiled it. With nothing to exile there is nothing to link,
+    # and the card would load as a permanent exile with no way to say so.
+    if op == "exile" and effect.get("until_leaves") and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
+        )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:

@@ -10,42 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **7** capabilities.
+**7 cards** blocked by **6** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [exile-until-leaves](#exile-until-leaves) | 2 | 4908 | engine, selector, trigger_event |
 | [flashback](#flashback) | 2 | 1442 | cost, replacement, value |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
 | [chosen-creature-type](#chosen-creature-type) | 1 | 369 | decision, selector, trigger_event |
 | [damaged-by-source-this-turn](#damaged-by-source-this-turn) | 1 | 18150 | engine, trigger_event |
 | [embalm](#embalm) | 1 | 8765 | engine, op |
-
-## exile-until-leaves
-
-Blocks **2** cards.
-
-- **(engine)** a persistent link recorded when a permanent exiles something -- on the exiler or on the exiled object -- naming which cards this source exiled, written by `exile` and readable by a later, separate resolution of a `leaves_battlefield` ability on the same source. Same one link Oblivion Ring, Banishing Light, Fiend Hunter and Angel of Sanctions all wait on; already filed on `data/authoring/gaps/oblivion_ring.json` under this exact capability slug
-  <br>Why the existing vocabulary won't do: `snapshot` is documented as the answer to last-known information, but it writes into `EffectContext.bindings`, which lives for exactly one resolution. The `self_enters` trigger that exiles and the `leaves_battlefield` trigger that would return are two separate abilities with two separate contexts, so a snapshot taken by the first is gone before the second runs. `exile` itself takes only `objects` and records nothing about who exiled what -- `zones.exile` just moves the object with `cause="exiled"` -- so once the Angel has left there is nothing anywhere saying which card in exile was hers. `delay` is the one op whose bindings are captured at scheduling time, but its `step` vocabulary is `upkeep`/`draw_step`/`begin_combat`/`end_step`, turn-based moments, not "when this permanent leaves".
-- **(selector)** a selector key naming the cards exiled by the source permanent, e.g. `{"zone": "exile", "exiled_with": "self"}`, resolvable from a `leaves_battlefield` trigger after the source has already gone
-  <br>Why the existing vocabulary won't do: `SELECTOR_KEYS` in `src/automtg/engine/effects/selectors.py` has no exile-linkage key (`zone`, `controller`, types/subtypes/colors/keywords, p/t/mana_value comparisons, `exclude_self`, `self_only`, `count`, `chooser`, `random`, `target`, `binding`, `object_kind`, `name`, `damaged`). `{"target": "t1"}` only reaches targets of the ability currently resolving, and `{"binding": ...}` only reaches that resolution's bindings -- a `leaves_battlefield` trigger binds `subject`, `self` and `was_attacking`, none of which is the exiled card. The only selector that reaches exile at all is a plain `{"zone": "exile", ...}` filter, which matches every card in exile from every source, so returning over it would hand back cards the Angel never exiled. That is a different card, not an approximation of this one.
-- **(engine)** a persistent link recorded on the exiling permanent (or on the exiled object) naming which cards it exiled, written by `exile` and readable by a later, separate ability resolution of the same permanent - the O-Ring / Banishing Light / Fiend Hunter family all need exactly this one link
-  <br>Why the existing vocabulary won't do: `snapshot` is the documented answer to last-known information, but it writes into `EffectContext.bindings`, which lives only for one resolution: the `self_enters` trigger and the `leaves_battlefield` trigger are two separate abilities with two separate contexts, so a snapshot taken by the first is gone before the second runs. `exile` itself takes only `objects` and stores nothing about who exiled what (`zones.exile` just calls `move_object` with `cause="exiled"`), so after the enchantment leaves there is nothing anywhere that says which card in exile was its victim.
-- **(selector)** a selector key that names the cards exiled by the source permanent, e.g. `{"zone": "exile", "exiled_with": "self"}`, resolvable from a `leaves_battlefield` trigger after the source has already left the battlefield
-  <br>Why the existing vocabulary won't do: `SELECTOR_KEYS` has no exile-linkage key. `{"target": "t1"}` only reaches targets chosen for the ability currently resolving, and `{"binding": ...}` only reaches that resolution's bindings - the leaves trigger binds `subject`, `self` and `was_attacking`, none of which is the exiled card. The only selector that reaches exile at all is a plain `{"zone": "exile", ...}` filter, which matches every card in exile from every source, so `put_onto_battlefield` over it would return cards this enchantment never exiled. That is a different card, not an approximation of this one.
-- **(trigger_event)** `leaves_battlefield` with `source: "self"` needs to carry the source's exile link into the trigger's bindings at the moment the permanent leaves, the way `was_attacking` is snapshotted for an object that has already gone
-  <br>Why the existing vocabulary won't do: `leaves_battlefield` fires correctly with `source: "self"`, but its bindings are built fresh per trigger and carry no memory of what the permanent did while it was on the battlefield. `delay` is the one op whose bindings are captured early, and its `step` vocabulary is `upkeep`/`draw_step`/`begin_combat`/`end_step` - turn-based moments, not "when this permanent leaves" - so it cannot schedule the return either.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oblivion Ring** (rank 4908) — `oblivion_ring`
-  - When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.
-- **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
-  - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
-  - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
-
-</details>
 
 ## flashback
 
@@ -149,7 +123,7 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Angel of Sanctions** (rank 8765) — `angel_of_sanctions`
-  - When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.
   - Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)
+  - Scope (updated): the exile-until-leaves half now ships -- the `exile` op takes `until_leaves`, and a leaves-trigger reads its victims back through `{"zone": "exile", "controller": "any", "exiled_with": "self"}` (see tests/unit/test_exile_until_leaves.py, and Oblivion Ring in the pool). So the first printed line is expressible today and this card is blocked on embalm alone: an activated ability offered from the GRAVEYARD, and a token copy that applies an 'except it's a white Zombie Angel with no mana cost' clause.
 
 </details>
