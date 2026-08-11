@@ -110,9 +110,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment:
-      name: production
-      url: http://${{ secrets.DROPLET_HOST }}
+    # No `url:` here. GitHub does not expose the `secrets` context to
+    # `environment.url`, and referencing it there is a startup failure that
+    # rejects the whole workflow before a single job runs.
+    environment: production
     steps:
       - uses: actions/checkout@v4
         with:
