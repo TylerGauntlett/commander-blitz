@@ -141,11 +141,28 @@ immutable `sha-<commit>` tag in GHCR.
 ```bash
 ssh deploy@<ip>
 cd /opt/automtg
-echo "IMAGE_TAG=sha-abc1234" > .env    # any earlier tag
+docker images ghcr.io/tylergauntlett/auto-mtg --format '{{.Tag}}'   # what is cached
+echo "IMAGE_TAG=sha-abc1234" > .env                                 # pick one of those
 docker compose up -d
 ```
 
 Confirm with `curl http://<ip>/health`.
+
+**This only works for a tag still in the droplet's local image cache** — which
+is every recent deploy, since the nightly prune keeps 168h. The deploy job logs
+out of `ghcr.io` when it finishes, deliberately, so nothing durable is left on
+the box; a tag that has been pruned therefore cannot be re-pulled and
+`docker compose up -d` fails with `denied`. `docker images` above is what tells
+you which tags are actually reachable.
+
+To go back further, re-run the pipeline at that commit instead — it rebuilds and
+redeploys with a valid short-lived token, and leaves the box in the same clean
+state:
+
+```powershell
+gh run list --workflow deploy.yml --limit 20     # find the run for that SHA
+gh run rerun <run-id>
+```
 
 ## Things to know
 
