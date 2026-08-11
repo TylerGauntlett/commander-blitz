@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **28** capabilities.
+**31 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-quantifier](#player-quantifier) | 2 | 21815 | op, value |
 | [return-to-hand-cost](#return-to-hand-cost) | 2 | 5792 | cost |
 | [spell-cost-reduction](#spell-cost-reduction) | 2 | 3804 | selector, static_effect |
-| [adapt](#adapt) | 1 | 14630 | op |
 | [ascend](#ascend) | 1 | 19289 | engine |
 | [cant-attack](#cant-attack) | 1 | 2833 | static_effect |
 | [cast-trigger](#cast-trigger) | 1 | 7681 | trigger_event |
@@ -235,20 +234,6 @@ Blocks **2** cards.
   - Creature spells with flying you cast cost {1} less to cast.
 - **Watcher of the Spheres** (rank 4342) — `watcher_of_the_spheres`
   - Creature spells with flying you cast cost {1} less to cast.
-
-</details>
-
-## adapt
-
-Blocks **1** card.
-
-- **(op)** An `adapt` op taking an amount N: put N +1/+1 counters on the source only if it currently has no +1/+1 counters on it, otherwise do nothing. Unlike a one-shot keyword action it must be repeatable -- the same ability can adapt again on a later turn once the counters are gone -- and the check is on the live counter count, not on a flag the op itself sets.
-  <br>Why the existing vocabulary won't do: `monstrosity` is the closest op but gates on a permanent one-way monstrous flag it sets itself, so it can never fire a second time and it ignores +1/+1 counters that arrived from any other source; a creature made monstrous can still adapt, and a creature given a counter by another card cannot. `add_counters` alone drops the whole conditional clause and would keep stacking counters. `if` is in the op list but the packet documents no condition vocabulary at all, so there is no stated way to test 'the source has no +1/+1 counters on it' -- and if such a condition exists it would still need a counter-count read on the source object, which is the same missing piece.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sharktocrab** (rank 14630) — `sharktocrab`
-  - {2}{G}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)
 
 </details>
 

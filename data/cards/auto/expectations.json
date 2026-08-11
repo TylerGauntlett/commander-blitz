@@ -1538,6 +1538,10 @@
   "shambling_vent": {
     "zone": "battlefield"
   },
+  "sharktocrab": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sharlayan_nation_of_scholars": {
     "zone": "battlefield"
   },
