@@ -34,7 +34,7 @@ silently producing a card that looks implemented and does nothing.
   "types": ["Creature"],          // required
   "subtypes": ["Serpent"],
   "power": 5, "toughness": 5,     // required for creatures
-  "keywords": ["trample"],
+  "keywords": ["trample"],       // the `Keyword` enum in engine/enums.py; see keywords.md
   "colors": ["G"],                // defaults to the colours in the cost
   "color_identity": ["G", "U"],   // defaults to derived; override for Command Tower etc.
   "targets": [ ... ],             // spell-level targets
@@ -964,6 +964,19 @@ Unlike `create_token` it names no token id, so nothing has to be pre-declared an
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
 
+## Which mechanism a printed keyword lands on
+
+The next several sections each answer one instance of a single question: a
+keyword takes no parameter and a rule reads it, so it is a `Keyword`; it takes a
+parameter, so it is a static; it must read *derived* characteristics, so it
+cannot be a static filter at all. The rule those instances share, and a census
+of every Magic keyword routed through it, is [keywords.md](keywords.md).
+
+Read it before adding a keyword. The sections below are the worked examples —
+they say why *this* card is shaped the way it is, which is what the residual
+gate needs, but they were each discovered separately and none of them
+generalises on its own.
+
 ## Landwalk, and global attack prohibitions
 
     Stormtide Leviathan — "Islandwalk. All lands are Islands in addition to
@@ -1083,6 +1096,47 @@ counter on either creature changes who may block. The comparison therefore sits
 in `combat.can_block` beside landwalk, which reads `chars` for the same reason.
 
 "Greater" is strictly greater: an equal-power creature blocks a skulker.
+
+### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
+
+    Shriekmaw — "Fear."
+    Guul Draz Vampire — "…has intimidate."
+    Lu Bu, Master-at-Arms — "Horsemanship."
+    Dauthi Voidwalker — "Shadow."
+    Dryad Sophisticate — "Nonbasic landwalk."
+
+Ordinary `keywords` entries, all five, and nothing else on the card:
+
+```jsonc
+"keywords": ["fear"]
+"keywords": ["shadow"]
+"keywords": ["nonbasic_landwalk"]
+```
+
+They are keywords for skulk's reason — the quality takes no parameter, because
+"artifact and/or black" *is* fear rather than an argument to it — and they could
+not have been `block_restriction`s for **two** independent reasons, either of
+which is sufficient:
+
+- A `blockers` filter is a **prohibition** and four of these are **exemptions**.
+  "Can't be blocked by Humans" is a positive conjunction the filter language can
+  state; "can't be blocked *except* by artifact creatures and/or black
+  creatures" is its negation, and adding a `not_colors` key would not get there.
+- A `blockers` filter reads **printed** characteristics. Fear and intimidate ask
+  about derived colors and types, so a land animated into a black creature may
+  block a fear creature and its printed card is not consulted.
+
+Three of them are worth stating individually, because each is a distinct shape:
+
+| | |
+|---|---|
+| `intimidate` | Compares the two creatures — skulk's shape, on colors. A **colorless** creature with intimidate shares a color with nothing, so only an artifact creature may block it; that is the boundary, and reading the clause as "is not a different color" would silently invert it |
+| `shadow` | The only evasion that is not an attacker-side rule. 702.28b is "can block **or** be blocked by only creatures with shadow", so `can_block` asks whether the two creatures *agree*, and a shadow creature may not block a normal one either |
+| `nonbasic_landwalk` | Landwalk with the test inverted — a **supertype the land must lack**, not a subtype it must have. That is why it is a sixth keyword and not a sixth `LANDWALK_SUBTYPE` row, and why "defending player controls eight Forests" is the case that separates it from "controls a land" |
+
+`horsemanship` is the plain one: the blocker must carry the same keyword. It is
+one-directional, unlike shadow — a creature with horsemanship may block
+anything.
 
 ## Protection
 

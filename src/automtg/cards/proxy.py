@@ -318,10 +318,15 @@ def lift_keywords(
     ``Flying`` in it.  Lifting that blindly gives the lord flying.
 
     So the oracle text is the authority: a keyword is lifted only from a line
-    that is *nothing but* comma-separated keywords.  Scryfall's array is used to
-    cross-check, never as a source.  Parameterised keywords -- "Ward {2}",
-    "Protection from red", "Annihilator 2" -- are not in ``Keyword`` at all, so
-    they fall out of this on their own and land in the residual.
+    that is *nothing but* keywords, separated by commas or semicolons.  Scryfall's
+    array is used to cross-check, never as a source.  Parameterised keywords --
+    "Ward {2}", "Protection from red", "Annihilator 2" -- are not in ``Keyword``
+    at all, so they fall out of this on their own and land in the residual.
+
+    The semicolon is Portal Three Kingdoms' house style -- "Haste; horsemanship"
+    -- and it widens nothing: the check is still all-or-nothing over every part,
+    so "Trample; rampage 2" and "First strike; banding" fail on their second
+    part exactly as they did when the line was unsplittable.
 
     ``strict`` changes who ``printed`` is and therefore what consuming a line
     means.  Generating a proxy, ``printed`` is Scryfall's array and the line is
@@ -340,7 +345,7 @@ def lift_keywords(
         bare = _strip_reminders(line).strip().rstrip(".")
         if not bare:
             continue
-        parts = [p.strip().casefold().replace(" ", "_") for p in bare.split(",")]
+        parts = [p.strip().casefold().replace(" ", "_") for p in re.split(r"[,;]", bare)]
         parts = [p for p in parts if p]
         if not parts or not all(p in KNOWN_KEYWORDS for p in parts):
             continue

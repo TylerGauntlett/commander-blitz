@@ -426,6 +426,150 @@
       ]
     },
     {
+      "id": "t_fearsome",
+      "name": "Test Fearsome",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "fear"
+      ]
+    },
+    {
+      "id": "t_intimidator",
+      "name": "Test Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_colorless_intimidator",
+      "name": "Test Colorless Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{3}",
+      "colors": [],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_horseman",
+      "name": "Test Horseman",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "horsemanship"
+      ]
+    },
+    {
+      "id": "t_shadow_lurker",
+      "name": "Test Shadow Lurker",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "shadow"
+      ]
+    },
+    {
+      "id": "t_nonbasic_walker",
+      "name": "Test Nonbasic Walker",
+      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dryad"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "nonbasic_landwalk"
+      ]
+    },
+    {
+      "id": "t_artifact_blocker",
+      "name": "Test Artifact Blocker",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_horsemanship_granter",
+      "name": "Test Horsemanship Granter",
+      "oracle_text": "Creatures you control have horsemanship.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have horsemanship.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "horsemanship"
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tide_lock",
       "name": "Test Tide Lock",
       "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",

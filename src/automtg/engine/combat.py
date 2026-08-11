@@ -212,6 +212,14 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
         if keyword in ac.keywords and _controls_land_type(state, defender, subtype):
             return False
 
+    # Nonbasic landwalk: the same rule with the test inverted. A supertype the
+    # land must *lack*, which is why it is its own keyword rather than a sixth
+    # `LANDWALK_SUBTYPE` row.
+    if Keyword.NONBASIC_LANDWALK.value in ac.keywords and _controls_nonbasic_land(
+        state, defender
+    ):
+        return False
+
     # Skulk (702.72): "can't be blocked by creatures with greater power". The
     # first evasion that *compares* the two creatures rather than testing a
     # fixed quality of one, which is why it could not be a `blockers` filter:
@@ -219,6 +227,35 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     # both sides at the moment blockers are declared.
     if Keyword.SKULK.value in ac.keywords and bc.power > ac.power:
         return False
+
+    # Horsemanship (702.32): "can't be blocked except by creatures with
+    # horsemanship". The plainest of the exemption-shaped evasions -- the
+    # blocker must carry the same keyword, and `chars` is read on both sides so
+    # a granted horsemanship blocks a printed one.
+    if Keyword.HORSEMANSHIP.value in ac.keywords and (
+        Keyword.HORSEMANSHIP.value not in bc.keywords
+    ):
+        return False
+
+    # Shadow (702.28): "can block or be blocked by only creatures with shadow".
+    # The only evasion that cuts *both* ways, so it is asked of the pair rather
+    # than of the attacker: a shadow creature may not block a normal one either,
+    # which is what makes shadow a separate combat rather than an evasion.
+    if (Keyword.SHADOW.value in ac.keywords) != (Keyword.SHADOW.value in bc.keywords):
+        return False
+
+    # Fear (702.36): "can't be blocked except by artifact creatures and/or black
+    # creatures". Intimidate (702.13) is the same sentence with "black" replaced
+    # by "creatures that share a color with it" -- a *relation*, so a colorless
+    # creature with intimidate shares a color with nothing and only an artifact
+    # creature may block it. Both read derived types and colors, which is why
+    # neither could be a `blockers` filter even before the exemption/prohibition
+    # mismatch: a creature made black by a static may block a fear creature.
+    if "Artifact" not in bc.types:
+        if Keyword.FEAR.value in ac.keywords and "B" not in bc.colors:
+            return False
+        if Keyword.INTIMIDATE.value in ac.keywords and not (ac.colors & bc.colors):
+            return False
 
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
@@ -250,6 +287,24 @@ def _controls_land_type(state: GameState, pid: int, subtype: str) -> bool:
             continue
         c = chars(state, oid)
         if "Land" in c.types and subtype in c.subtypes:
+            return True
+    return False
+
+
+def _controls_nonbasic_land(state: GameState, pid: int) -> bool:
+    """Does this player control a land without the Basic supertype, right now?
+
+    Read from `chars` for the same reason as :func:`_controls_land_type`, and
+    the supertype is the whole test: a Forest that some effect turned into an
+    Island is still basic, and a nonbasic land that gained a basic land type is
+    still nonbasic.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.controller != pid:
+            continue
+        c = chars(state, oid)
+        if "Land" in c.types and "Basic" not in c.supertypes:
             return True
     return False
 
