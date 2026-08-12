@@ -942,6 +942,109 @@
       ]
     },
     {
+      "id": "t_exploiter",
+      "name": "Test Exploiter",
+      "oracle_text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exploit a creature?",
+              "effects": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1,
+                    "chooser": "controller"
+                  }
+                },
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bloodrusher",
+      "name": "Test Bloodrusher",
+      "oracle_text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Minotaur"
+      ],
+      "power": 3,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{R}",
+            "discard_self": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "attacking": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "target": "t1"
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_detainer",
       "name": "Test Detainer",
       "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",
