@@ -38,6 +38,10 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         oid = player.library[0]
         move_object(state, oid, Zone.HAND, to_player=pid, cause="draw")
         drawn.append(oid)
+        # "…for each card you've drawn this turn." Counted here rather than off
+        # the DRAW event, so that every draw counts however it was caused and a
+        # card can never be drawn without the tally seeing it.
+        state.cards_drawn_this_turn[pid] = state.cards_drawn_this_turn.get(pid, 0) + 1
         fire(state, EventType.DRAW, player=pid, source=oid, oid=oid)
     return drawn
 

@@ -2200,6 +2200,46 @@
           ]
         }
       ]
+    },
+    {
+      "id": "kydele_chosen_of_kruphix",
+      "name": "Kydele, Chosen of Kruphix",
+      "oracle_text": "{T}: Add {C} for each card you've drawn this turn.\nPartner (You can have two commanders if both have partner.)",
+      "mana_cost": "{2}{G}{U}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "keywords": [
+        "partner"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C} for each card you've drawn this turn.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}",
+              "amount": {
+                "cards_drawn_this_turn": "you"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

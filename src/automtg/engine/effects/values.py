@@ -8,6 +8,7 @@ forms::
     {"count": {selector}}             how many objects match
     {"power_of": {"target": "t1"}}    a characteristic of an object or snapshot
     {"life_of": "you"}                a player quantity
+    {"cards_drawn_this_turn": "you"}  a per-turn tally of an event
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"sum": [a, b, ...]}              arithmetic
 """
@@ -41,6 +42,10 @@ VALUE_KEYS = frozenset(
         "min_life_of",
         "max_life_of",
         "cards_in_hand",
+        # "…for each card you've drawn this turn."  A tally of an event, not a
+        # count of objects, and the two stop agreeing the moment anything is
+        # played, discarded, or drawn on somebody else's turn.
+        "cards_drawn_this_turn",
         "creatures_you_control",
         "lands_you_control",
         "sum",
@@ -120,6 +125,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
+    if "cards_drawn_this_turn" in expr:
+        pids = _players(ctx, expr["cards_drawn_this_turn"])
+        return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:

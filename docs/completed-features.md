@@ -1,3 +1,75 @@
+## Cards drawn this turn — counting an event instead of the board
+
+### Overview
+
+"{T}: Add {C} for each card you've drawn this turn." Kydele, Chosen of Kruphix,
+and the last card in `unsupported-cards.md`.
+
+The mana half of it already worked. Variable mana abilities shipped one run
+earlier — an `add_mana` may carry an `amount`, evaluated at activation and
+threaded through `costs.mana_produced` so the offer and the payment cannot
+disagree. Kydele was the one card that change did not reach, for a reason that
+had nothing to do with mana: every multiplier the value language could express
+was a question about the **position**, and hers is not.
+
+### Why no existing leaf could stand in
+
+`{"count": …}` walks a zone and counts objects. `cards_in_hand` counts a hand.
+Both are the same number as "cards you've drawn this turn" only until something
+is played, discarded, bounced or drawn on an opponent's turn — and the
+divergence runs the wrong way, because the cards that make Kydele worth playing
+are precisely the ones you drew *and spent*. A Kydele built on `cards_in_hand`
+taps for less exactly when the deck is working.
+
+So it needed state that nothing on `PlayerState` had: life, zones, mana, land
+drops, commander tax and damage, the city's blessing — none of them a tally of
+an event.
+
+### Where it lives, and when it resets
+
+`GameState.cards_drawn_this_turn`: player id → draws this turn. Incremented in
+`primitives.draw_cards` rather than off the `draw` event, so there is no path by
+which a card travels from a library to a hand without the tally seeing it.
+
+Cleared by the **untap step**, which is the interesting decision. The obvious
+move was to copy `damage_ledger`, the per-turn ledger that shipped immediately
+before this one, and clear at cleanup. Two things make that wrong, and both
+produce a wrong number rather than an error:
+
+- **The opening hand is not drawn during a turn.** Rule 103 sets the game up
+  before turn 1 begins, and `_opening_sequence` draws seven cards — fourteen
+  after a mulligan — through the same `draw_cards`. Clearing at cleanup would
+  leave all of it in the tally for the whole first turn, so a Kydele in an
+  opening hand would tap for seven the moment she landed.
+- **Cleanup is still this turn.** Rule 514.3a hands priority back when cleanup
+  triggers something, and a Kydele activated in that window has still drawn what
+  she drew.
+
+And it is keyed by player but lives on the state rather than on `PlayerState`,
+because it clears **once per turn, not once per seat**. `lands_played` is the
+engine's other per-turn counter and it resets in the active player's own untap,
+which is right for a land drop and wrong here: you draw on other players' turns
+too, and a Kydele that forgot an instant-speed draw from an opponent's end step
+would be quietly the wrong size on your own turn.
+
+### The one way it differs from a board count
+
+Rule 605 says a mana ability never stops to ask, and this asks nothing — it only
+looks, which is the same standing `counters_on` has, so `MANA_AMOUNT_FORBIDDEN`
+lets it through where `x`, `binding` and `loop_value` are refused.
+
+But unlike a board count, this multiplier can *move at instant speed*: drawing a
+card is something a player can do with a payment already open. That makes "read
+the amount at activation, before the tap" load-bearing rather than merely tidy,
+and `test_cards_drawn_this_turn.py` pins it — the offer changes when a card is
+drawn between the two, and the tap pays what the tally says at that moment.
+
+### Ships
+
+Kydele, Chosen of Kruphix, into the hand-written pool with the rest of the
+Simic cards, through all six authoring gates. `unsupported-cards.md` is now
+empty: nothing in the queue is blocked on a capability the DSL cannot express.
+
 ## Ascend — the first per-player designation, and the last entry in the report
 
 ### Overview

@@ -176,10 +176,42 @@ Anywhere a number is expected:
 { "min_life_of": "each_opponent" }              // the lowest, one player at a time
 { "max_life_of": "each_opponent" }              // the highest
 { "cards_in_hand": "each_opponent" }
+{ "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+### Counting an event rather than the board
+
+Every leaf above except one is a question about the position: how many Vampires,
+how many counters, how much life. `cards_drawn_this_turn` is the exception, and
+it is the reason it needed engine state rather than a new selector.
+
+"Cards you've drawn this turn" cannot be recovered from the board. A card drawn
+this turn may since have been played, discarded, bounced or drawn again, so
+`{"cards_in_hand": "you"}` is a different number — and different in the
+direction that matters, because the cards that make Kydele, Chosen of Kruphix
+worth playing are the ones you drew *and spent*.
+
+So `GameState.cards_drawn_this_turn` is a tally: player id -> draws, incremented
+in `primitives.draw_cards` so that no route from a library to a hand can miss
+it, and **cleared by the untap step**. Two things force that timing, and both
+produce a wrong number rather than an error:
+
+- The opening hand is drawn before turn 1 exists (rule 103), through the same
+  `draw_cards`. Clearing at cleanup — where `damage_ledger` clears — would leave
+  seven draws, or fourteen after a mulligan, sitting in the tally for the whole
+  first turn.
+- Cleanup is still this turn. Rule 514.3a hands priority back when cleanup
+  triggers something, and a tally cleared there would read 0 while the turn was
+  still running.
+
+It is keyed by player but lives on the state and not on `PlayerState`, next to
+`damage_ledger`, because it is cleared **once per turn and not once per seat**.
+`lands_played` is the engine's other per-turn counter and it resets in the
+active player's own untap, which is right for a land drop and wrong here: you
+draw on other players' turns too.
 
 ## Costs
 
@@ -539,10 +571,19 @@ activated**, multiplying the symbols it produces:
 // Gaea's Cradle: {T}: Add {G} for each creature you control.
 { "op": "add_mana", "mana": "{G}",
   "amount": { "count": { "controller": "you", "types": ["Creature"] } } }
+
+// Kydele, Chosen of Kruphix: {T}: Add {C} for each card you've drawn this turn.
+{ "op": "add_mana", "mana": "{C}",
+  "amount": { "cards_drawn_this_turn": "you" } }
 ```
 
 This does not break rule 605's "a mana ability never stops to ask": evaluating
 the amount asks nothing, it only looks at the board.
+
+Kydele is the one whose multiplier can move at instant speed — drawing a card is
+something a player can do with a payment open — which makes "read it at
+activation" load-bearing rather than merely convenient. A board count settles
+between the offer and the tap; this one need not.
 
 Three constraints, each with a failure behind it:
 
