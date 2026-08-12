@@ -324,7 +324,7 @@ is ordinary, which is why most of this table is `free`.
 | Battalion | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control | — |
 | Chroma | routed | counting mana symbols in a zone; nothing reads a card's pips | — |
 | Domain | blocked | counts basic land *types*, not lands; no distinct-subtype count exists | — |
-| Enrage | routed | needs a "this was dealt damage" trigger event | — |
+| Enrage | free | the `dealt_damage` trigger, with `{"binding": "amount"}` for "that much" | — |
 | Fateful hour | free | condition `cmp` on `life_of` `"you"` | — |
 | Ferocious | free | condition `exists` with `power` `>=` 4 | — |
 | Grandeur | free | activated from hand, cost `discard_selector` by `name` | — |

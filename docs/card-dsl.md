@@ -390,8 +390,26 @@ batching work.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
-`deals_combat_damage_to_player` · `upkeep` · `draw_step` · `begin_combat` ·
-`end_step` · `you_gain_life` · `counter_placed` · `draw` · `discard` · `cycle`
+`deals_combat_damage_to_player` · `dealt_damage` · `upkeep` · `draw_step` ·
+`begin_combat` · `end_step` · `you_gain_life` · `counter_placed` · `draw` ·
+`discard` · `cycle`
+
+**`dealt_damage` is about the creature being hurt** — enrage, "whenever this
+creature is dealt damage". Sugar over `DAMAGE_DEALT` in the sense `creature_dies`
+is sugar over `DIES`: the engine fires one event for damage to a permanent and
+for damage to a player, and only the first has an object for a trigger to be
+about. Two things it does not do, both of which would be a wrong number rather
+than an error:
+
+- it does not fire on damage to a **player**, so a burn spell to the face does
+  not wake every enrage creature on the board;
+- `source: "self"` means *this creature was dealt damage*, never "this creature
+  dealt it". For every other trigger the event's subject and its source are one
+  object; here they are the victim and the attacker, so this is the one event
+  where the two have to be told apart.
+
+"…deals **that much** damage" needs nothing extra: `amount` was always copied
+into the trigger's bindings, so `{"binding": "amount"}` reads it.
 
 **`discard` names the player who discarded**, through the ordinary `controller`
 clause — which defaults to `"you"`, so Sangromancer's "whenever an *opponent*
