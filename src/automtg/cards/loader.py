@@ -1120,6 +1120,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "must_block" and not effect.get("objects"):
+        # Without `objects` the op resolves an empty pool and requires nothing
+        # of anybody, which is a provoke that loads clean and does nothing --
+        # the failure this whole pass exists to refuse.
+        raise DslError(
+            f"{where}: must_block needs 'objects' naming who has to block "
+            f"(the attacker defaults to the ability's own source)"
+        )
     if op == "counter" and "sid" in effect:
         # Ward's "counter it": the victim is named by value, not chosen. A
         # malformed expression here would evaluate to 0, match no stack item and

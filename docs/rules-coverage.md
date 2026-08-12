@@ -51,6 +51,7 @@ not a rewrite.
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
 | **Hybrid mana** | `{W/U}` and `{2/W}` parsed, paid and counted towards colour identity |
 | **Restricted mana** | "Spend this mana only to cast a creature spell", by filtering sources before the solver |
+| **Block requirements** | Provoke: "target creature blocks this creature this combat if able" — the `must_block` op, an oid on the blocker naming the attacker it owes, spent when blockers lock in. The mirror of `must_attack`, and it stops being a mirror at the enforcement point: attacking is not exclusive, so withholding "Done attacking" is enough, while a blocker that blocks the wrong creature cannot be retracted. So a block requirement narrows what `legal_blocks` **offers** as well as what `blocks_valid` accepts. Always "if able", checked with `can_block(..., ignore_existing=True)` — a creature that chose to block elsewhere was able to block this one, which is the whole thing provoke prevents |
 | **Attack requirements** | Both forms: the one-shot `must_attack` op ("attacks this turn / next combat if able") and the continuous `attacks_if_able` static ("attacks each combat if able", including the goad-shaped "creatures your opponents control"). Enforced at one point by withholding "Done attacking", and always subject to "if able", so a tapped or summoning-sick creature owes nothing and the step cannot deadlock |
 | **Variable mana abilities** | "Add {G} for each +1/+1 counter on this creature" / "for each creature you control" — an `amount` on `add_mana`, evaluated at activation and applied at the one point the payment solver and the payout already share, so the price offered and the mana made cannot differ. Rule 605 is intact: evaluating the amount asks nothing, it only looks |
 | **Token copies** | "A token that's a copy of target creature", copying the printed card and nothing accumulated on it |
@@ -154,7 +155,7 @@ whitelisted: enters tapped, enters with counters, the commander zone change, and
 tokens ceasing to exist)
 
 **Combat**
-Attacking planeswalkers or battles · banding · "must be blocked" · manual damage
+Attacking planeswalkers or battles · banding · manual damage
 division · attacking with creatures you do not control
 
 **Structural**
