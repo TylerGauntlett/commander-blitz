@@ -240,7 +240,7 @@ This is the long tail, and where the build order comes from.
 | Forecast | routed | an activated ability from hand that reveals rather than discarding — and so cannot use the cycling guard | — |
 | Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
-| Graft | routed | enters with counters, then moves them on another creature entering | — |
+| Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
 | Gravestorm | routed | the count shipped (`cards_to_graveyard_this_turn`); spell copying is the whole remaining half | — |
 | Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
 | Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
@@ -266,7 +266,7 @@ This is the long tail, and where the build order comes from.
 | Meld | refused | melding; see rules-coverage.md | — |
 | Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
 | Miracle | blocked | replaces the first draw of a turn, and needs the draw's ordinality | — |
-| Modular | routed | enters with counters, then moves them all on death | — |
+| Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
 | Morph / megamorph | blocked | face-down creatures | — |
 | Mutate | blocked | stacked permanents with merged abilities | — |

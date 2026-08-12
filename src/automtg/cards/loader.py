@@ -1145,6 +1145,19 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "move_counters":
+        # Without a destination the counters come off the source and go
+        # nowhere, which is a card that reads "move a +1/+1 counter onto it"
+        # and quietly shrinks its own creature.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: move_counters needs 'objects' naming where the counters go "
+                f"(the source is 'from', defaulting to this permanent)"
+            )
+        if "amount" in effect:
+            validate_value(effect["amount"], f"{where}.amount")
+        if "from" in effect:
+            validate_selector(effect["from"], f"{where}.from")
     if op == "must_block" and not effect.get("objects"):
         # Without `objects` the op resolves an empty pool and requires nothing
         # of anybody, which is a provoke that loads clean and does nothing --

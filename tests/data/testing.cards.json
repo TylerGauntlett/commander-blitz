@@ -942,6 +942,121 @@
       ]
     },
     {
+      "id": "t_modular",
+      "name": "Test Modular",
+      "oracle_text": "Modular 3 (This creature enters with three +1/+1 counters on it. When it dies, put its +1/+1 counters on target artifact creature.)",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 3
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When it dies, put its +1/+1 counters on target artifact creature.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "move_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "counters_had": "+1/+1"
+              },
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_grafter",
+      "name": "Test Grafter",
+      "oracle_text": "Graft 2 (This creature enters with two +1/+1 counters on it. Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Plant"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 2
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Move a +1/+1 counter?",
+              "effects": [
+                {
+                  "op": "move_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  },
+                  "from": {
+                    "self_only": true
+                  },
+                  "objects": {
+                    "binding": "subject"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_bolsterer",
       "name": "Test Bolsterer",
       "oracle_text": "When Test Bolsterer enters, bolster 2. (Choose a creature with the least toughness among creatures you control, then put two +1/+1 counters on it.)",
@@ -1172,10 +1287,6 @@
         {
           "kind": "triggered",
           "text": "Persist",
-          "active_zones": [
-            "battlefield",
-            "graveyard"
-          ],
           "trigger": {
             "event": "dies",
             "source": "self",
