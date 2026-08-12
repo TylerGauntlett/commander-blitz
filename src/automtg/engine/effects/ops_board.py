@@ -444,6 +444,42 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     return select_players(ctx, spec)
 
 
+@register("must_block")
+def op_must_block(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Provoke: "target creature blocks this creature this combat if able."
+
+    The mirror of `must_attack`, and deliberately not the same op with a flag.
+    A block requirement always names *what* to block -- an attacker chosen when
+    the requirement is placed -- where an attack requirement names nothing, so
+    the two carry different data and expire on different clocks.
+
+    ``attacker`` names which creature must be blocked, and defaults to the
+    ability's own source, which is every printed provoke. It is recorded as an
+    oid on the blocker rather than as a `TempEffect` for the same reason
+    `must_attack` is: it is not a characteristic, nothing reads it through
+    `chars`, and `combat.blocks_valid` is the one place it means anything.
+
+    Scoped to one combat -- `finish_blockers` spends every requirement whether
+    or not it was met, because "if able" excuses a creature that could not
+    block and leaving the flag set would compel the next combat as well.
+
+    This op does *not* untap its target. Provoke's own text untaps first and
+    then requires the block, which is two clauses and two ops -- and keeping
+    them apart is what lets the lure family, which requires without untapping,
+    say what it means.
+    """
+    attacker_oids = resolve_pool(ctx, spec["attacker"]) if "attacker" in spec else []
+    attacker = attacker_oids[0] if attacker_oids else ctx.source_oid
+    if attacker is None:
+        return
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.must_block = attacker
+    yield from ()
+
+
 @register("must_attack")
 def op_must_attack(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Target creature attacks during its controller's next combat phase if able."

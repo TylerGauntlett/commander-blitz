@@ -104,6 +104,13 @@ class GameObject:
     #: The turn the requirement was placed, which is what makes
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
+    #: The mirror: which attacker this creature must block, if able (provoke,
+    #: and the lure family).  An oid rather than a bool, because a block
+    #: requirement always names *what* to block -- "blocks this creature if
+    #: able" -- where an attack requirement names nothing.  Scoped to one
+    #: combat and cleared when blockers are locked in, so unlike
+    #: ``must_attack`` there is no duration to carry.
+    must_block: int | None = None
 
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
@@ -175,6 +182,7 @@ class GameObject:
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
+        self.must_block = None
         self.tapped = False
         self.damage = 0
         self.deathtouched = False

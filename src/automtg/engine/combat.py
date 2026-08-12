@@ -120,6 +120,52 @@ def discharge_attack_requirements(state: GameState) -> None:
         obj.must_attack = None
 
 
+def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
+    """Creatures of ``defender`` that must block something and are not.
+
+    The mirror of :func:`unmet_attack_requirements`, and "…if able" is the same
+    whole second half: a requirement never makes an illegal block legal, so a
+    creature that was tapped, or that cannot block the attacker at all, owes
+    nothing. That is why every candidate is run through `can_block` -- provoke
+    untaps its victim precisely because a tapped creature would otherwise be
+    excused.
+
+    A creature blocking *something else* has still not met this requirement:
+    the obligation names one attacker, and rule 509.1c requires the declaration
+    to satisfy the maximum number of requirements it can.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    unmet: list[int] = []
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.must_block is None or obj.controller != defender:
+            continue
+        attacker = obj.must_block
+        if attacker not in combat.attackers or attacker in combat.removed:
+            continue
+        if combat.blockers.get(oid) == attacker:
+            continue
+        if not can_block(state, oid, attacker, defender, ignore_existing=True):
+            continue
+        unmet.append(oid)
+    return unmet
+
+
+def discharge_block_requirements(state: GameState) -> None:
+    """Spend every block requirement once blockers are locked in.
+
+    Unconditionally, whether or not it was met -- "if able" means a creature
+    that could not block owed nothing, and leaving the flag set would compel
+    the *next* combat, which no printed provoke says.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is not None:
+            obj.must_block = None
+
+
 def legal_attackers(state: GameState) -> list[int]:
     return [oid for oid in state.battlefield if can_attack(state, oid)]
 
@@ -179,7 +225,24 @@ def finish_attackers(state: GameState) -> None:
 # ----------------------------------------------------------------------
 
 
-def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: int) -> bool:
+def can_block(
+    state: GameState,
+    blocker_oid: int,
+    attacker_oid: int,
+    defender: int,
+    *,
+    ignore_existing: bool = False,
+) -> bool:
+    """Whether this creature may be declared as a blocker of this attacker.
+
+    ``ignore_existing`` skips the "it is already blocking something" check, and
+    exists for block *requirements*. Rule 509.1c asks whether a declaration
+    satisfies the maximum number of requirements it can, which is a question
+    about what the creature is **able** to do -- and a creature that chose to
+    block a different attacker was able to block this one. Asking plain
+    `can_block` there would let any provoked creature excuse itself by blocking
+    anything else at all, which is the one thing provoke exists to prevent.
+    """
     combat = state.combat
     if combat is None or attacker_oid not in combat.attackers:
         return False
@@ -196,7 +259,7 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     bc = chars(state, blocker_oid)
     if "Creature" not in bc.types:
         return False
-    if blocker_oid in combat.blockers:
+    if not ignore_existing and blocker_oid in combat.blockers:
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked
@@ -324,10 +387,37 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
         return []
     out: list[tuple[int, int]] = []
     for blocker_oid in state.battlefield:
+        # A block requirement has to narrow what is *offered*, not merely what
+        # can be finished -- which is where it stops being a mirror of
+        # `must_attack`. Attacking is not exclusive, so a creature that must
+        # attack can always be added to a declaration that already has others
+        # in it, and withholding "Done attacking" is enough. Blocking is
+        # exclusive: a provoked creature that blocks something else first has
+        # no way back, `legal_blocks` then offers nothing, and the deadlock
+        # escape in `legality._blocker_actions` hands out "Done blocking"
+        # anyway -- so the requirement would be evadable by ignoring it early.
+        required = _required_block(state, blocker_oid, defender)
         for attacker_oid in sorted(combat.attackers):
+            if required is not None and attacker_oid != required:
+                continue
             if can_block(state, blocker_oid, attacker_oid, defender):
                 out.append((blocker_oid, attacker_oid))
     return out
+
+
+def _required_block(state: GameState, blocker_oid: int, defender: int) -> int | None:
+    """The attacker this creature must block, if it must and is able to."""
+    obj = state.objects.get(blocker_oid)
+    if obj is None or obj.must_block is None or obj.controller != defender:
+        return None
+    combat = state.combat
+    attacker = obj.must_block
+    if combat is None or attacker not in combat.attackers or attacker in combat.removed:
+        return None
+    if not can_block(state, blocker_oid, attacker, defender, ignore_existing=True):
+        # "…if able". It owes nothing, so it is free to block whatever it likes.
+        return None
+    return attacker
 
 
 def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
@@ -390,6 +480,12 @@ def blocks_valid(state: GameState, defender: int) -> bool:
     combat = state.combat
     if combat is None:
         return True
+    # Provoke and the lure family. Enforced here rather than by refusing to
+    # offer anything, for the same reason menace is: the declaration is legal
+    # or not *as a whole*, and a player part-way through building one has not
+    # broken a rule yet -- they have simply not finished.
+    if unmet_block_requirements(state, defender):
+        return False
     for attacker_oid, attacker_defender in combat.attackers.items():
         if attacker_defender != defender:
             continue
@@ -446,6 +542,7 @@ def finish_blockers(state: GameState) -> None:
     for defender in set(combat.attackers.values()):
         drop_illegal_blocks(state, defender)
     combat.blockers_declared = True
+    discharge_block_requirements(state)
 
     # Damage assignment order is sorted by effective toughness ascending -- the
     # engine never asks the attacking player to order blockers.  Documented

@@ -1,3 +1,53 @@
+## Block requirements — the mirror that is not quite a mirror
+
+### Overview
+
+Provoke, and the last of the five combat keywords `keywords.md` grouped as
+needing work the evasion family did not. It routes it precisely: "`must_attack`
+exists for requirements; this is the block-requirement mirror, which does not".
+
+The engine had exactly one shape for compelling a player in combat, and it
+compelled the attacking one. `must_block` is the other, and it is a separate op
+rather than the same one with a flag, because a block requirement always names
+*what* to block — "blocks this creature this combat if able" — where an attack
+requirement names nothing. So it records an oid on the blocker rather than a
+duration, and the two expire on different clocks: `must_attack` can outlive a
+turn, since Trench Behemoth binds an opponent's *next* combat, while a block
+requirement belongs to the combat that placed it.
+
+### Where the mirror breaks, and why it matters
+
+Attacking is not exclusive. A creature that must attack can always be added to a
+declaration that already has others in it, so withholding "Done attacking" is a
+complete enforcement.
+
+**Blocking is exclusive**, and that changes the answer. A provoked creature that
+blocks something else first cannot be retracted — declarations are built one
+block at a time here — so `legal_blocks` then offers nothing, and the deadlock
+escape in `legality._blocker_actions` hands out "Done blocking" anyway. That
+escape is right and predates this (a four-player rollout found the Tromokratis
+deadlock it exists for on turn 47), but it means enforcement at the finish alone
+is *evadable by ignoring the requirement early*. So a block requirement narrows
+what is **offered**: while a provoked creature is able to block the creature
+that provoked it, that is the only block it is offered.
+
+### "…if able", and the one subtlety in it
+
+The same second half as attacking: a requirement never makes an illegal block
+legal, so a tapped creature owes nothing. That is not decoration — provoke
+*untaps* its victim first, precisely because the creature you most want to
+provoke has just attacked and would otherwise be excused. The untap and the
+requirement are two clauses and two ops, which is also what leaves room for the
+lure family, which requires without untapping.
+
+The subtlety is that "able" must be asked *ignoring the block it already made*.
+Plain `can_block` returns false for a creature already blocking something, so
+asking it there would let any provoked creature excuse itself by blocking
+anything at all. `can_block` grew an `ignore_existing` flag for this, and rule
+509.1c is the argument: the declaration must satisfy the maximum number of
+requirements it can, and a creature that chose a different block was able to
+make this one.
+
 ## Becoming untapped — a keyword that would have shipped never firing
 
 ### Overview

@@ -279,7 +279,7 @@ This is the long tail, and where the build order comes from.
 | Poisonous | routed | poison counters are not a loss condition the engine checks | — |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | routed | needs "every object with any counter", and counter kinds are not enumerable off an object | — |
-| Provoke | routed | `must_attack` exists for requirements; this is the block-requirement mirror, which does not | — |
+| Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
 | Prowl | routed | the ledger shipped; what is left is an alternative cost gated on a condition, which `evoke` does not take | — |
 | Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
 | Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |

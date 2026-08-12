@@ -942,6 +942,57 @@
       ]
     },
     {
+      "id": "t_provoker",
+      "name": "Test Provoker",
+      "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Provoke",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "untap",
+              "objects": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "must_block",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_inspired",
       "name": "Test Inspired",
       "oracle_text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
