@@ -218,6 +218,13 @@ class CardModel(BaseModel):
     #: printed mana value is unchanged: a Mulldrifter evoked is still a
     #: five-drop for anything that counts mana value.
     evoke: str | None = None
+    #: What to call that cost on screen. ``evoke`` is the engine's name for a
+    #: general thing — an alternative mana cost offered from hand, plus a flag
+    #: the card can read back — and **dash** and **blitz** are the same
+    #: mechanism under different words. Without this the action list offers
+    #: "Cast Goblin Rabblemaster (evoked)" for a card that says dash, which is
+    #: a lie about what the player is doing.
+    evoke_label: str = "evoked"
     #: ``{"mana": "{R}", "condition": {...}}`` -- **prowl** and **spectacle**.
     #: An alternative cost like evoke, and unlike evoke it is only *offered*
     #: when the condition holds: "you may cast this for its spectacle cost if

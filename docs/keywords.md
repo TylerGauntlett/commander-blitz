@@ -191,7 +191,7 @@ This is the long tail, and where the build order comes from.
 | Banding | refused | see rules-coverage.md | — |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
 | Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
-| Blitz | routed | an alternative cost like `evoke`, plus haste and a delayed sacrifice | — |
+| Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
 | Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
 | Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
@@ -210,7 +210,7 @@ This is the long tail, and where the build order comes from.
 | Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
 | Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
-| Dash | routed | an alternative cost, plus haste and a delayed return | — |
+| Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
 | Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
 | Delve | routed | a cost exiling from the graveyard to pay generic mana | — |
 | Detain | routed | `lock_abilities` and `cant_attack` exist separately; needs them bundled until a player's next turn | — |

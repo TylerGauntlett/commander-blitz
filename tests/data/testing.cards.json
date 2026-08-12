@@ -942,6 +942,56 @@
       ]
     },
     {
+      "id": "t_dasher",
+      "name": "Test Dasher",
+      "oracle_text": "Dash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "evoke": "{1}{R}",
+      "evoke_label": "dash",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "If you do, it gains haste, and it's returned to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {
+              "evoked": true
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_spectacle",
       "name": "Test Spectacle",
       "oracle_text": "Test Spectacle deals 2 damage to target player.\nSpectacle {R} (You may cast this spell for its spectacle cost if an opponent lost life this turn.)",
