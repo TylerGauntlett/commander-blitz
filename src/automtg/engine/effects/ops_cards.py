@@ -7,7 +7,7 @@ from typing import Any
 
 from ..enums import Zone
 from ..events import EventType
-from ..primitives import discard_cards, draw_cards, mill_cards, shuffle_library
+from ..primitives import add_counters, discard_cards, draw_cards, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
 from .context import EffectContext, ask_objects, ask_yes_no
@@ -145,6 +145,17 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=bool(spec.get("tapped")),
             cause="recursion",
         )
+        # "…return it to the battlefield with a -1/-1 counter on it." Persist
+        # and undying, and the counter is not decoration: it is the whole loop
+        # guard, because the returned creature only persists again if it comes
+        # back without one.
+        #
+        # Placed immediately after the move rather than as an enters-with
+        # replacement, which is the same trade `zones._enter_battlefield`
+        # already documents for "as this enters, choose a type": the window is
+        # observable only by another trigger ordered between the two.
+        for kind, amount in (spec.get("counters") or {}).items():
+            add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
 
 
 @register("reveal")

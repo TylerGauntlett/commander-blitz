@@ -214,6 +214,7 @@ Anywhere a number is expected:
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
+{ "counters_had": "-1/-1" }                     // what a creature that just died had
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
 
