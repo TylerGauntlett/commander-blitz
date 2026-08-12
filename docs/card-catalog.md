@@ -34,14 +34,14 @@ data/catalog/
 │   ├── .gitignore                 ← the only thing between a refresh and a huge commit
 │   └── default_cards-*.jsonl.gz   ~74 MB, a download cache
 ├── cards.sqlite                 the built index          (committed, ~14 MB)
-└── registry_images.json         the engine's cards only  (committed, ~20 KB)
-data/art/{card_id}.jpg           owned image bytes        (committed, ~9 MB)
+└── registry_images.json         the engine's cards only  (committed, ~104 KB)
+data/art/{card_id}.jpg           owned image bytes        (committed, ~63 MB)
 ```
 
 **Two index artifacts, and the split matters.** `cards.sqlite` holds all ~32,700
 distinct English cards and is opened lazily, only by `/api/catalog`. Loading
 32k rows at import time would tax `scripts/train.py` and `run_arena.py` for a
-thing neither of them uses. `registry_images.json` holds only the ~149 cards the
+thing neither of them uses. `registry_images.json` holds only the ~877 cards the
 engine actually ships, and is what the server reads at boot.
 
 **The bundle stays gzipped.** `gzip` streams line by line perfectly well, so
@@ -81,7 +81,7 @@ curl -s localhost:8000/health | python -m json.tool
   "built_at": "2026-08-08T04:27:49+00:00",
   "rows": 32749
 },
-"art": { "cached": 144, "known": 149, "artless": 5 }
+"art": { "cached": 877, "known": 877, "artless": 0 }
 ```
 
 The `meta` table in the index records this at build time, so "where did this art
@@ -123,11 +123,17 @@ Then each engine card is matched to a printing (`src/automtg/cards/images.py`):
 3. the suffix strip, as a second chance;
 4. nothing — the client draws a deliberate "no art" plate.
 
-**144 of 149 resolve.** The five that do not are original designs with no
-printing anywhere (`aetherling_serpent`, `hydra_broodmaster`,
-`kiora_growth_surge`, `kraken_hatchling_swarm`, `overrun_lite`). That set is
-frozen in the tests: a *sixth* card appearing in it means a real card stopped
-resolving, which is a bug rather than a new custom card.
+**All of them resolve.** There used to be five that did not — original designs
+with no printing anywhere — and they were the hand-curated Aesi list's, so they
+went when the printed precon shipped. `KNOWN_ARTLESS` is now the empty set and
+the test asserts that rather than a frozen list of five: *any* card appearing in
+it means a real card stopped resolving.
+
+A **transforming** card is one catalog row under a joined name, "Bloodline
+Keeper // Lord of Lineage", which neither face matches on its own — so both
+faces look it up with `lookup(joined=True)` and take the same Scryfall id. Which
+*image* they take from it is `CardArt.back`, since the id names the card and not
+the face.
 
 ## Serving
 

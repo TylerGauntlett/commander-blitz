@@ -192,8 +192,48 @@ Every one of those lists is now derived from what the loader enforces, pinned by
 `tests/cards/test_authoring.py`. That is the single highest-leverage fix in the
 whole run.
 
-Still outstanding: **Crew** (74), **Flashback** (75), **Kicker**,
-**Convoke** (39), **Ward** (41), and **modal spells** (153).
+The same failure recurred twice more while the Edgar precon was being finished,
+and both times the packet was again the cause rather than the engine:
+
+- **`cost_keys` was missing entirely.** A worker shown `ops` but never the cost
+  vocabulary cannot tell a cost from an effect, so every "`<cost>`: `<effect>`"
+  card either guesses or files a gap for a cost that already ships. Captivating
+  Vampire's new `tap_permanents` would have been unreachable the day it landed.
+- **`static_condition_keys` was missing.** A static's "as long as…" clause is a
+  *third* language, neither `condition_keys` nor `static_filter_keys`, and a
+  worker shown neither in its place has no way to know a static can be
+  conditional at all.
+
+Both are now derived from what the loader enforces and pinned by the same test.
+The pattern is worth naming: **when a worker files a gap, suspect the packet
+before the engine.**
+
+*The Edgar Markov precon is done too, and it is the sharper lesson of the two.*
+It shipped with **seven** substitutions — cards whose text the DSL could not say,
+each replaced by something in the same colours and each recorded in the deck
+file. Clearing them took six capabilities, and the first thing the run found was
+that three of the seven needed **nothing at all**:
+
+| | |
+|---|---|
+| Needed no engine work | Mortify, Bedevil, Anguished Unmaking — `any_types` and `any_of` had shipped for other cards, and nothing re-read the note that said they could not be written |
+| Ops and a cost | `gain_control`, the `add_subtype` **op** (distinct from the static of the same name), and a `tap_permanents` cost — all three for Captivating Vampire alone |
+| Selectors that describe one object relative to another | `shares_a_type_with`, `exclude_binding` — Shared Animosity |
+| A static condition, and a static that changes no rule | `top_of_library` and `reveal_library_top` — Vampire Nocturnus |
+| A subsystem `rules-coverage.md` had listed as absent | transforming cards, plus "activate only if…" — Bloodline Keeper |
+
+**A substitution is a claim about the engine, written down once and never
+re-checked.** That is what `--check-substitutions` is for, and three stale swaps
+in one deck is the argument for running it rather than trusting the note.
+
+The transform work is worth reading for the opposite reason: it was listed as a
+missing *subsystem* and turned out to be one boolean and one branch, because
+`GameState.card_of` is a single choke point every reader of a card goes through.
+"Not implemented" in a coverage doc is a measurement of what was tried, not of
+what is hard.
+
+Still outstanding: **Crew** (74), **Convoke** (39), **Ward** (41), and
+**modal spells** (153).
 
 Modal is the one that looks cheap and is not. `choose_mode` exists, but modes are
 chosen *on resolution* while targets are chosen *at cast*, and a card whose first
@@ -343,3 +383,8 @@ shortcuts cluster on mechanics the engine does not have — cycling, flashback,
 evolve, threshold, ascend, investigate, skulk, intimidate — so a worker
 will correctly refuse them and write a gap record, and they surface through
 `scripts/report_gaps.py` as `/extend-dsl` work.
+
+`--open-deficits` also **closes** entries whose deficit is gone, which matters
+more than it sounds: a queue entry left `pending` after the card was repaired
+makes `--report` claim work that does not exist, and the whole point of the
+queue is that its ordering is trusted.
