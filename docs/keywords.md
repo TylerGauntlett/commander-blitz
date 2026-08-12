@@ -198,13 +198,13 @@ This is the long tail, and where the build order comes from.
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
 | Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
-| Casualty | routed | an additional cost that copies the spell; spell copying does not exist | — |
+| Casualty | routed | `copy_spell` ships; what is left is an additional cost that sacrifices a creature of a chosen power | — |
 | Champion | blocked | exile-and-return tied to the championing permanent leaving | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | routed | the cycling shape again: an activated ability from hand costing a discard | — |
 | Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
 | Connive | routed | draw-then-discard with a counter conditional on what was discarded; needs to read the discarded card | — |
-| Conspire | routed | `tap_permanents` ships; spell copying is the whole remaining half | — |
+| Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
 | Convoke | routed | the `tap_permanents` cost ships; what is missing is routing those taps into *mana* rather than charging them alongside it | — |
 | Coven | blocked | "three creatures with different powers" — no distinct-value count exists | — |
 | Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
@@ -241,7 +241,7 @@ This is the long tail, and where the build order comes from.
 | Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
-| Gravestorm | routed | the count shipped (`cards_to_graveyard_this_turn`); spell copying is the whole remaining half | — |
+| Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
 | Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
 | Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
@@ -286,7 +286,7 @@ This is the long tail, and where the build order comes from.
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
-| Replicate | routed | an additional cost paid repeatedly, plus spell copying | — |
+| Replicate | routed | `copy_spell` ships; what is left is an additional cost paid *any number of times*, which no cost kind repeats | — |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
 | Riot | routed | `self_enters` + `choose_mode`, but a `choose_mode` inside a trigger resolves late | — |
 | Ripple | blocked | free casts off a library scan, retriggering itself | — |
@@ -299,7 +299,7 @@ This is the long tail, and where the build order comes from.
 | Spectacle | routed | the ledger shipped (`life_lost_this_turn`); what is left is an alternative cost gated on a condition | — |
 | Splice | blocked | adding one card's effects to another spell as it is cast | — |
 | Split second | routed | a flag suppressing priority while the spell is on the stack | — |
-| Storm | routed | the count shipped (`spells_cast_this_turn`); spell copying is the whole remaining half | — |
+| Storm | free | `spell_cast` trigger on the stack, then `copy_spell` with `spells_cast_this_turn` minus one | `copy_spell` |
 | Sunburst | routed | enters with counters scaled by the colours actually spent, which payment does not report | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
@@ -374,7 +374,7 @@ still outstanding waits on one of six things:
 |---|---|
 | ~~A **per-turn ledger**~~ — shipped as `GameState.turn_ledger`. Morbid, raid and bloodthirst are now `free`; the other four turned out to want a *second* thing each | ~~morbid, raid, bloodthirst~~, spectacle and prowl (a cost gated on a condition), storm and gravestorm (spell copying) |
 | ~~**Casting from the graveyard**~~ — generalised as `graveyard_cost` plus a `graveyard_cast` destination. Escape needed one bit; jump-start needed nothing | ~~escape, jump-start~~, unearth (an *activated* ability, not a cast), disturb (arrives on its back face) |
-| **Spell copying** | casualty, conspire, replicate, storm, gravestorm, ripple |
+| ~~**Spell copying**~~ — shipped as the `copy_spell` op | ~~conspire, storm, gravestorm~~; casualty and replicate want an additional cost, ripple a library scan |
 | **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
 | **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, bestow, mutate, meld |
 | ~~A **"becomes the target of" trigger**~~ — shipped as `becomes_target`, and it cleared the cluster outright | ~~heroic, ward~~ |

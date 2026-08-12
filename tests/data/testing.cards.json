@@ -942,6 +942,58 @@
       ]
     },
     {
+      "id": "t_stormbolt",
+      "name": "Test Stormbolt",
+      "oracle_text": "Test Stormbolt deals 1 damage to target player.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Storm",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_fateseal",
       "name": "Test Fateseal",
       "oracle_text": "Fateseal 1. (Look at the top card of target opponent's library. You may put that card on the bottom of that player's library.)",

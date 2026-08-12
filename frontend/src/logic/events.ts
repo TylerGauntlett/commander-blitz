@@ -332,6 +332,15 @@ export function beatsFor(
         });
         return;
 
+      /*
+       * A copy going on the stack. Short, because storm puts several up at
+       * once and a full cast-length beat each would stall the turn -- but not
+       * silent, since a copy is the difference between one bolt and nine.
+       */
+      case "spell_copied":
+        push({ hold: 200, sound: "chime" });
+        return;
+
       case "ability_activated":
         push({
           hold: 320,
