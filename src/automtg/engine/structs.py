@@ -170,6 +170,64 @@ class DelayedTrigger:
 
 
 @dataclass
+class TurnLedger:
+    """Tallies of what has happened during the current turn.
+
+    Morbid asks "did a creature die this turn", raid "did you attack", spectacle
+    "did an opponent lose life", storm "how many spells have been cast".  Seven
+    mechanics, and not one of them can be answered by looking at the board:
+    every question is about an *event*, and the board keeps no record that one
+    happened.  A creature that died is in a graveyard it may have reached six
+    other ways, and a player who attacked looks exactly like one who did not
+    once combat is over.
+
+    Folded in :meth:`GameState.emit` rather than at each primitive.  Every tally
+    here counts something that already emits an event, and ``emit`` is the one
+    function all of them pass through, so a future effect that deals damage or
+    kills a creature by some new route is counted without anybody remembering to
+    count it.  That is the argument ``draw_cards`` makes for the draw tally,
+    made once at the only choke point wide enough to carry all six.
+
+    Cleared at cleanup alongside ``damage_ledger``, and deliberately *not* at
+    untap where ``cards_drawn_this_turn`` clears: that one has to survive its
+    own turn's cleanup because the opening hand is drawn before turn 1 exists.
+    Nothing counted here can happen before the game starts.
+    """
+
+    #: How many creatures have died this turn, keyed by the player who
+    #: controlled them.  "A creature died this turn" is the sum over every
+    #: player; "a creature you controlled died" is one entry.
+    creatures_died: dict[int, int] = field(default_factory=dict)
+    #: Players who have declared at least one attacker this turn.  A set rather
+    #: than a count because raid asks only whether it happened, and no printed
+    #: card cares how many times you were the attacking player in one turn.
+    attacked: set[int] = field(default_factory=set)
+    #: Damage dealt to each player this turn.
+    damage_taken: dict[int, int] = field(default_factory=dict)
+    #: Life *lost* by each player this turn, which is the wider question: a
+    #: drain, a Phyrexian payment and a card's own cost all lose life with no
+    #: damage dealt anywhere.  Damage to a player counts towards both, because
+    #: rule 118.2 says damage to a player causes that much life loss -- so
+    #: spectacle triggers off a Lightning Bolt, which is the whole point of it.
+    life_lost: dict[int, int] = field(default_factory=dict)
+    #: Spells cast this turn, per caster.  Storm counts every spell cast before
+    #: it by anybody, which is the sum.
+    spells_cast: dict[int, int] = field(default_factory=dict)
+    #: Cards put into any graveyard from anywhere this turn (gravestorm).
+    #: Tokens are excluded because they are not cards, and a token dying is the
+    #: single most common way this number would otherwise be wrong.
+    cards_to_graveyard: int = 0
+
+    def clear(self) -> None:
+        self.creatures_died.clear()
+        self.attacked.clear()
+        self.damage_taken.clear()
+        self.life_lost.clear()
+        self.spells_cast.clear()
+        self.cards_to_graveyard = 0
+
+
+@dataclass
 class CombatState:
     """Everything about the current combat phase."""
 

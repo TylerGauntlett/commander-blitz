@@ -9,6 +9,9 @@ forms::
     {"power_of": {"target": "t1"}}    a characteristic of an object or snapshot
     {"life_of": "you"}                a player quantity
     {"cards_drawn_this_turn": "you"}  a per-turn tally of an event
+    {"creatures_died_this_turn": "all"}   the rest of that ledger: morbid,
+    {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
+    {"spells_cast_this_turn": "all"}       storm and gravestorm
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"sum": [a, b, ...]}              arithmetic
 """
@@ -46,6 +49,17 @@ VALUE_KEYS = frozenset(
         # count of objects, and the two stop agreeing the moment anything is
         # played, discarded, or drawn on somebody else's turn.
         "cards_drawn_this_turn",
+        # The rest of the per-turn ledger (`structs.TurnLedger`).  All six are
+        # values rather than condition leaves, so morbid is an ordinary `cmp`
+        # against 1 and nothing new had to be added to the condition language:
+        # "did it happen" and "how many times" are the same question asked with
+        # a different threshold, and storm needs the number anyway.
+        "creatures_died_this_turn",
+        "attacked_this_turn",
+        "damage_taken_this_turn",
+        "life_lost_this_turn",
+        "spells_cast_this_turn",
+        "cards_to_graveyard_this_turn",
         "creatures_you_control",
         "lands_you_control",
         "sum",
@@ -128,6 +142,30 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
+    ledger = ctx.state.turn_ledger
+    if "creatures_died_this_turn" in expr:
+        # Keyed by who controlled the creature, so `"all"` is morbid's "a
+        # creature died this turn" and `"you"` is "a creature you controlled".
+        pids = _players(ctx, expr["creatures_died_this_turn"])
+        return sum(ledger.creatures_died.get(p, 0) for p in pids)
+    if "attacked_this_turn" in expr:
+        # How many of the named players attacked, which is 0 or 1 for raid's
+        # `"you"` and a headcount for "if two opponents attacked this turn".
+        pids = _players(ctx, expr["attacked_this_turn"])
+        return sum(1 for p in pids if p in ledger.attacked)
+    if "damage_taken_this_turn" in expr:
+        pids = _players(ctx, expr["damage_taken_this_turn"])
+        return sum(ledger.damage_taken.get(p, 0) for p in pids)
+    if "life_lost_this_turn" in expr:
+        pids = _players(ctx, expr["life_lost_this_turn"])
+        return sum(ledger.life_lost.get(p, 0) for p in pids)
+    if "spells_cast_this_turn" in expr:
+        pids = _players(ctx, expr["spells_cast_this_turn"])
+        return sum(ledger.spells_cast.get(p, 0) for p in pids)
+    if "cards_to_graveyard_this_turn" in expr:
+        # Every graveyard, so it takes no player spec: gravestorm counts cards
+        # put into *a* graveyard, not into yours.
+        return ledger.cards_to_graveyard
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:
