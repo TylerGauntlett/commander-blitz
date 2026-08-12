@@ -1013,6 +1013,9 @@
       ],
       "power": 6,
       "toughness": 6,
+      "keywords": [
+        "vigilance"
+      ],
       "abilities": [
         {
           "kind": "triggered",
@@ -1058,6 +1061,9 @@
       ],
       "power": 3,
       "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
       "abilities": [
         {
           "kind": "triggered",
