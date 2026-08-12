@@ -13,7 +13,7 @@ from .events import GameEvent
 from .objects import GameObject
 from .player import PlayerState
 from .rng import Rng
-from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance
+from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance, TurnLedger
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.cards.registry import CardRegistry
@@ -107,6 +107,10 @@ class GameState:
     #: per-turn counter there, reset by the active player's own untap. This one
     #: cannot live by that rule, because you draw on other players' turns too.
     cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
+    #: "…if a creature died this turn", "…if you attacked this turn". See
+    #: `structs.TurnLedger`: the other per-turn tallies, folded from the event
+    #: stream in `emit` rather than counted at six separate primitives.
+    turn_ledger: TurnLedger = field(default_factory=TurnLedger)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
@@ -285,7 +289,60 @@ class GameState:
             data=data,
         )
         self.events.append(event)
+        self._tally(event)
         return event
+
+    def _tally(self, event: GameEvent) -> None:
+        """Fold one event into :attr:`turn_ledger`.
+
+        Every branch reads the event that was going to be logged anyway, so no
+        emitter had to change and none can route around it.  It runs while the
+        object the event is about is still in ``self.objects`` -- ``emit`` is
+        called synchronously from inside the zone change, before anything is
+        forgotten -- which is why the controller of a dead creature and the
+        tokenhood of a card reaching a graveyard are both still askable here and
+        neither needed adding to a payload.
+        """
+        from .events import EventType
+
+        ledger = self.turn_ledger
+        data = event.data
+        pid = event.player
+
+        if event.type == EventType.DIES:
+            if data.get("was_creature"):
+                obj = self.objects.get(data.get("oid"))
+                # The *controller*, not `event.player`, which is the owner:
+                # a creature stolen with `gain_control` and then killed died
+                # under the thief, and "a creature you controlled died" has to
+                # agree with who was attacking with it a moment earlier.
+                who = obj.controller if obj is not None else pid
+                if who is not None:
+                    ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
+        elif event.type == EventType.ATTACKERS_DECLARED:
+            if pid is not None:
+                ledger.attacked.add(pid)
+        elif event.type == EventType.DAMAGE_DEALT:
+            # Two shapes share this event, and they say which they are: `to` is
+            # "player" or "permanent".  Only the first is life loss, and on the
+            # second `player` is the *controller of the creature that was hit*,
+            # so counting it would charge a player for their own bear taking a
+            # Shock.
+            if data.get("to") == "player" and pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.damage_taken[pid] = ledger.damage_taken.get(pid, 0) + amount
+                ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.LIFE_LOST:
+            if pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.SPELL_CAST:
+            if pid is not None:
+                ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
+        elif event.type == EventType.ZONE_CHANGE:
+            obj = self.objects.get(data.get("oid"))
+            if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
+                ledger.cards_to_graveyard += 1
 
     def bump_chars(self) -> None:
         """Invalidate the derived-characteristics cache."""

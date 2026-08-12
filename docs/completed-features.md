@@ -1,3 +1,83 @@
+## The per-turn ledger — six tallies the board cannot answer
+
+### Overview
+
+The first entry in the build order in [keywords.md](keywords.md), and it was
+chosen the way that page argues for: not because one card asked for it, but
+because *seven* keywords were waiting on the same missing piece of state, and no
+demand-driven report could have shown that. Morbid, raid, bloodthirst,
+spectacle, prowl, storm and gravestorm each want to know whether something
+happened during this turn, and the board keeps no record that it did.
+
+That is the whole justification. A creature in a graveyard may have been
+discarded or milled rather than having died, and one that died last turn is
+lying in exactly the same place. Once combat is over, a player who attacked
+looks precisely like one who did not. These are counts of *events*, which is the
+standing `cards_drawn_this_turn` already had, and adding a seventh selector
+would not have reached any of them.
+
+### The design decision: one fold, not six increments
+
+`GameState.turn_ledger` (`structs.TurnLedger`) holds six tallies — creatures
+died keyed by controller, the set of players who attacked, damage taken, life
+lost, spells cast per caster, and cards put into graveyards. They are folded in
+**`GameState.emit`**, in one method, rather than incremented at the six
+primitives that cause them.
+
+The draw tally makes the argument for the other placement — *"incremented in
+`draw_cards` so nothing routes around it"* — and `emit` is that argument taken
+one level further. Every tally here counts something that was already being
+logged as an event, and `emit` is the single function all of them pass through.
+So no emitter changed: not `combat.py`, not `primitives.py`, not `zones.py`. A
+future effect that kills a creature or deals damage by some new route is counted
+without anybody remembering to count it, and the ledger cannot drift from the
+event log the player is reading, because it *is* that log folded up.
+
+It also runs synchronously, while the object the event is about is still in
+`state.objects`. That is why a dying creature can still be asked who controlled
+it, and a card reaching a graveyard can still be asked whether it is a token —
+neither fact had to be added to an event payload.
+
+### Two boundaries that would have been silently wrong
+
+| | |
+|---|---|
+| **Damage to a player is life loss** | Rule 118.2. Spectacle is printed on cards you cast *after* hitting somebody with a burn spell, and `damage_player` does not call `lose_life` — it decrements life and fires `DAMAGE_DEALT` itself. A `life_lost_this_turn` that watched only `LIFE_LOST` would read false in the one case the mechanic exists for. Damage to a player now counts towards both tallies; damage to a *permanent* counts towards neither, and the two are told apart by the event's own `to` field rather than by guessing from `oid` |
+| **Cleared at cleanup, not at untap** | The opposite of `cards_drawn_this_turn`, and for the reason that one is the exception: the opening hand is drawn before turn 1 exists, so a draw tally cleared at cleanup would sit at seven all of turn 1. Nothing counted here can happen before the game starts, so it clears with `damage_ledger` — and it must, because "a creature died this turn" has to survive into the second main phase that reads it |
+
+### The read side
+
+Six value expressions rather than six condition leaves:
+`creatures_died_this_turn`, `attacked_this_turn`, `damage_taken_this_turn`,
+`life_lost_this_turn`, `spells_cast_this_turn` and
+`cards_to_graveyard_this_turn`. Morbid is then an ordinary `cmp` against 1, so
+the condition language needed nothing added to it at all — "did it happen" and
+"how many times" are one question at two thresholds, and storm needs the number
+anyway. Five take a player spec; `cards_to_graveyard_this_turn` does not,
+because gravestorm counts cards put into *a* graveyard rather than into yours.
+
+### What it unblocked
+
+Three keywords moved straight to `free` in the census — morbid, raid and
+bloodthirst are now a condition and a card, with no engine work left. The other
+four turned out to want a *second* thing each, which the census now says
+plainly: spectacle and prowl need an alternative cost that can be gated on a
+condition, and storm and gravestorm need spell copying. Their counting halves
+are done.
+
+### A note on the test
+
+`tests/unit/test_turn_ledger.py` could not use `pass_until` for any of its
+"this lasts the whole turn" claims. It returns silently when no decision is
+pending, and with nothing to respond to the engine auto-passes from combat
+damage into the following turn — so a test waiting for the postcombat main
+arrives two turns later, reads a ledger cleanup has correctly emptied, and
+reports the clearing as a failure to count. `test_combat.resolve_combat` carries
+a comment about the same problem. The fix is in two halves: a local helper that
+asserts the turn boundary instead of hoping for it, and positions that hold an
+instant and a land, so a legal cast exists and priority genuinely stops in each
+step.
+
 ## Transforming double-faced cards
 
 ### Overview

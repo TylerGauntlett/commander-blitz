@@ -144,13 +144,15 @@ Keywords that appear in almost every set and carry no reminder text.
 | Reach | shipped | `Keyword`, read by `combat.can_block` | `reach` |
 | Trample | shipped | `Keyword`, read by combat damage assignment | `trample` |
 | Vigilance | shipped | `Keyword`, suppresses the tap on attack | `vigilance` |
-| Ward | blocked | needs `unless_pays` — the same missing capability as Rhystic Study | — |
+| Ward | routed | `unless_pays` shipped with Rhystic Study; what is left is a "becomes the target of" trigger, the same gap as heroic | — |
 
-Ward is the interesting absence. It is evergreen, it has largely replaced
-hexproof on new creatures, and it is blocked on a capability that already has
-gap records filed against it under a different name. It routes a cost to a
-player who does not control the ability and inverts the outcome, and `may` — the
-only optional-effect op — asks the controller and attaches no cost.
+Ward is the interesting absence. It is evergreen and it has largely replaced
+hexproof on new creatures, and the half of it that looked hardest turned out to
+be free: routing a cost to a player who does not control the ability and
+inverting the outcome is exactly what `may` does with `player`, `pay` and
+`else`, which Rhystic Study shipped. What ward still waits on is much smaller
+and shared with heroic — a trigger for *becoming the target of* a spell, which
+no event covers.
 
 ## Keyword actions
 
@@ -191,7 +193,7 @@ This is the long tail, and where the build order comes from.
 | Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
 | Blitz | routed | an alternative cost like `evoke`, plus haste and a delayed sacrifice | — |
 | Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
-| Bloodthirst | blocked | "an opponent was dealt damage this turn" — a per-turn ledger the engine does not keep | — |
+| Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
 | Bolster | routed | needs "the creature with the lowest toughness", and no selector picks an extremum | — |
 | Bushido | routed | `blocks` trigger exists; "or is blocked" has no matching event | — |
 | Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
@@ -202,10 +204,10 @@ This is the long tail, and where the build order comes from.
 | Channel | routed | the cycling shape again: an activated ability from hand costing a discard | — |
 | Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
 | Connive | routed | draw-then-discard with a counter conditional on what was discarded; needs to read the discarded card | — |
-| Conspire | routed | a cost tapping creatures, plus spell copying | — |
-| Convoke | routed | a cost paid by tapping creatures — a cost kind, not an op | — |
+| Conspire | routed | `tap_permanents` ships; spell copying is the whole remaining half | — |
+| Convoke | routed | the `tap_permanents` cost ships; what is missing is routing those taps into *mana* rather than charging them alongside it | — |
 | Coven | blocked | "three creatures with different powers" — no distinct-value count exists | — |
-| Crew | routed | vehicles are not a supported type; the tap-for-power cost is the smaller half | — |
+| Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
 | Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | routed | an alternative cost, plus haste and a delayed return | — |
@@ -213,10 +215,10 @@ This is the long tail, and where the build order comes from.
 | Delve | routed | a cost exiling from the graveyard to pay generic mana | — |
 | Detain | routed | `lock_abilities` and `cant_attack` exist separately; needs them bundled until a player's next turn | — |
 | Devour | routed | `self_enters` + sacrifice + `for_each`; the scaling counters are the awkward half | — |
-| Disturb | blocked | transforming cards | — |
+| Disturb | routed | `transform` and `flashback` both ship; needs the graveyard cast to arrive on the **back** face | — |
 | Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |
-| Echo | routed | `upkeep` trigger with a `may` `pay` and a sacrifice `else` — close to the Karoo idiom | — |
-| Embalm | routed | activated from the graveyard, creating a token copy; `copy_permanent` exists | — |
+| Echo | routed | `upkeep` + `may` `pay` + a sacrifice `else` all exist; "came under your control since your last upkeep" is the missing per-object flag | — |
+| Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
 | Entwine | routed | an additional cost that takes *both* modes; `choose_mode` picks exactly `count` | — |
 | Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
@@ -227,19 +229,19 @@ This is the long tail, and where the build order comes from.
 | Exert | routed | `attacks` trigger plus a `may`; `skip_untap` already exists for the cost | — |
 | Exploit | routed | `self_enters` + an optional sacrifice; the "if you do" is an ordinary `may` `else` | — |
 | Explore | routed | `reveal` and `add_counters` exist; needs the revealed card routed by type | — |
-| Extort | routed | `spell_cast` trigger and `may` `pay` exist; the drain is `lose_life` plus `gain_life` | — |
+| Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |
 | Fabricate | free | `self_enters` trigger, then `choose_mode` between `add_counters` and `create_token` | — |
 | Fading | routed | `upkeep` + `remove_counters` + a sacrifice; needs "if you can't" to be askable | — |
 | Fateseal | routed | `scry` on another player's library — the op is hard-wired to the controller | — |
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
 | Flanking | routed | needs "whenever this becomes blocked", which no event covers | — |
-| Flashback | routed | casting from the graveyard, like `retrace`, then exiling instead of returning | — |
+| Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
 | Flip | refused | flip cards; see rules-coverage.md | — |
 | Forecast | routed | an activated ability from hand that reveals rather than discarding — and so cannot use the cycling guard | — |
 | Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
 | Frenzy | routed | needs "attacks and isn't blocked", which no event covers | — |
 | Graft | routed | enters with counters, then moves them on another creature entering | — |
-| Gravestorm | routed | spell copying, counted off a per-turn ledger | — |
+| Gravestorm | routed | the count shipped (`cards_to_graveyard_this_turn`); spell copying is the whole remaining half | — |
 | Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
 | Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
@@ -248,7 +250,7 @@ This is the long tail, and where the build order comes from.
 | Infect † | routed | poison counters, plus damage-as-counters — the wither half is the same replacement | — |
 | Inspired | routed | needs a "becomes untapped" event | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
-| Investigate | routed | `create_token` exists; the Clue needs a token with an activated ability | — |
+| Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
 | Jump-start | routed | casting from the graveyard with a discard cost — retrace, discarding any card rather than a land | — |
 | Kicker | shipped | card-level field, and the `kicked` condition, readable on the object after resolution | `kicker` |
 | Landwalk — plainswalk | shipped | `Keyword`, read by `combat.can_block` against the defender's board | `plainswalk` |
@@ -272,16 +274,16 @@ This is the long tail, and where the build order comes from.
 | Offering | routed | an alternative cost reduced by a sacrificed creature — this is `emerge`, restricted by type | — |
 | Overload | routed | a cost that swaps a targeted selector for a global one | — |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
-| Persist | routed | a dies-trigger return with a counter; the "if it had none" gate is `counters_on` | — |
+| Persist | routed | the dies-trigger return exists; the "if it had no -1/-1 counter" gate cannot be read, because `reset_permanent_state` wipes counters on the way to the graveyard | — |
 | Phasing | refused | phasing; see rules-coverage.md | — |
 | Poisonous | routed | poison counters are not a loss condition the engine checks | — |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | routed | needs "every object with any counter", and counter kinds are not enumerable off an object | — |
 | Provoke | routed | `must_attack` exists for requirements; this is the block-requirement mirror, which does not | — |
-| Prowl | blocked | an alternative cost gated on a per-turn damage ledger | — |
+| Prowl | routed | the ledger shipped; what is left is an alternative cost gated on a condition, which `evoke` does not take | — |
 | Rampage | routed | needs "becomes blocked" and the count of blockers | — |
 | Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
-| Recover | routed | `creature_dies` trigger plus `may` `pay`, with an exile `else` | — |
+| Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
 | Renown | routed | `deals_combat_damage_to_player` trigger plus a one-way flag, exactly like `monstrous` | — |
 | Replicate | routed | an additional cost paid repeatedly, plus spell copying | — |
@@ -294,19 +296,19 @@ This is the long tail, and where the build order comes from.
 | Skulk † | shipped | `Keyword`, compared on **derived** power inside `combat.can_block` | `skulk` |
 | Soulbond | blocked | a paired-permanent relationship with no representation | — |
 | Soulshift | free | `dies` trigger, then `return_from_graveyard` filtered by subtype and `mana_value` | — |
-| Spectacle | blocked | an alternative cost gated on a per-turn damage ledger | — |
+| Spectacle | routed | the ledger shipped (`life_lost_this_turn`); what is left is an alternative cost gated on a condition | — |
 | Splice | blocked | adding one card's effects to another spell as it is cast | — |
 | Split second | routed | a flag suppressing priority while the spell is on the stack | — |
-| Storm | routed | spell copying, counted off a per-turn spell ledger | — |
+| Storm | routed | the count shipped (`spells_cast_this_turn`); spell copying is the whole remaining half | — |
 | Sunburst | routed | enters with counters scaled by the colours actually spent, which payment does not report | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
 | Totem armor | routed | a destruction replacement on the enchanted creature | — |
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
-| Transform | refused | transforming cards; see rules-coverage.md | — |
+| Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |
 | Tribute | routed | `self_enters` with a choice belonging to an opponent; `two_piles` proves the shape is reachable | — |
-| Undying | routed | a dies-trigger return with a counter; the mirror of persist | — |
+| Undying | routed | the mirror of persist, and blocked on the same wiped counters | — |
 | Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
 | Unleash | routed | enters with a counter is whitelisted, but there is no `cant_block` static to pair with it | — |
 | Wither | blocked | a damage replacement, and the whitelist has no damage form | — |
@@ -332,9 +334,9 @@ is ordinary, which is why most of this table is `free`.
 | Kinship | routed | `upkeep` trigger; needs to look at the library top and read its subtypes | — |
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
 | Metalcraft | free | condition `cmp` on `count` of artifacts you control | — |
-| Morbid | blocked | "a creature died this turn" — a per-turn ledger the engine does not keep | — |
+| Morbid | free | condition `cmp` on `creatures_died_this_turn` over `all` — the per-turn ledger shipped | — |
 | Radiance | routed | widens a target to everything sharing a colour with it | — |
-| Raid | blocked | "you attacked this turn" — a per-turn ledger | — |
+| Raid | free | condition `cmp` on `attacked_this_turn` over `you` — the per-turn ledger shipped | — |
 | Rally | free | `permanent_enters` with `subtypes: ["Ally"]` | — |
 | Sweep | free | cost `return_to_hand` over a selector by `subtypes`, then a value off `count` | — |
 | Threshold | free | condition `cmp` on `count` of `zone: "graveyard"`, `controller: "you"` | — |
@@ -343,10 +345,11 @@ is ordinary, which is why most of this table is `free`.
 ## What the census says
 
 **The largest single finding is that ability words are nearly free.** Twelve of
-the twenty-two above need no engine work at all, and neither do a dozen entries
+the twenty-one above need no engine work at all, and neither do a dozen entries
 in the expansion table — adapt, affinity, afterlife, alliance, battle cry,
-fabricate, living weapon, populate, reinforce, scavenge, soulshift, support,
-transfigure, transmute. Those are `/author-cards` jobs, not `/extend-dsl` jobs,
+extort, fabricate, investigate, living weapon, populate, recover, reinforce,
+scavenge, soulshift, support, transfigure, transmute. Those are `/author-cards`
+jobs, not `/extend-dsl` jobs,
 and nothing in the demand-driven report would ever have surfaced them: a
 capability with no gap record does not appear there, and a capability that is
 already expressible never gets a gap record written for it.
@@ -359,21 +362,28 @@ not evasion at all: flanking, rampage, bushido, frenzy and provoke each want a
 *trigger event* the engine does not have ("becomes blocked", "attacks and isn't
 blocked"), which is a different tier of work with frontend consequences.
 
-**The blocked entries cluster, and the clusters are small.** Nearly everything
-marked `blocked` above waits on one of six things:
+**The unshipped entries cluster, and the clusters are small.** Nearly everything
+still outstanding waits on one of six things:
 
 | Blocker | Waiting on it |
 |---|---|
-| A **per-turn ledger** — did a player attack, take damage, lose a creature | morbid, raid, bloodthirst, spectacle, prowl, storm, gravestorm |
-| **Casting from the graveyard**, generalised past `retrace` | flashback, escape, jump-start, embalm, unearth, disturb |
+| ~~A **per-turn ledger**~~ — shipped as `GameState.turn_ledger`. Morbid, raid and bloodthirst are now `free`; the other four turned out to want a *second* thing each | ~~morbid, raid, bloodthirst~~, spectacle and prowl (a cost gated on a condition), storm and gravestorm (spell copying) |
+| **Casting from the graveyard**, generalised past `retrace`, `flashback` and `embalm` | escape, jump-start, unearth, disturb |
 | **Spell copying** | casualty, conspire, replicate, storm, gravestorm, ripple |
 | **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
-| **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, transform, disturb, meld |
-| **`unless_pays`** | ward, and Rhystic Study, which already has gap records |
+| **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, bestow, mutate, meld |
+| **A "becomes the target of" trigger** | heroic, and ward — which is `unless_pays` hung on that trigger, and `unless_pays` shipped with Rhystic Study |
 
 A per-turn ledger is one piece of state and unblocks seven mechanics. That is
 the shape of argument this page exists to make available, and it is not visible
 one gap record at a time.
+
+Two of those six have since had their first member shipped, and the shipping
+moved the rest of the cluster from `blocked` to `routed` rather than clearing
+it: `flashback` and `embalm` proved casting from the graveyard for one cost each,
+and `transform` proved two faces behind one `GameObject`. A cluster whose
+foundation exists is a vocabulary gap; that is the whole difference between the
+two statuses.
 
 ## Suggested build order
 
@@ -387,21 +397,28 @@ capability already has gap records, those cards are the real specification, and
    and both outcomes are useful.
 2. **A per-turn ledger.** One piece of state, cleared at cleanup, exposed as
    conditions. Seven mechanics, and it is the prerequisite most others assume.
-3. **Casting from the graveyard, generalised.** `retrace` already proved the
-   legality scan; flashback and escape differ only in the cost and where the
-   card goes afterwards.
-4. **`unless_pays`.** Ward is evergreen, so this compounds with every future
-   set, and the demand side already has records for it.
-5. **Spell copying.** A cluster of six, and the object model already copies
-   permanents.
+   Damage history and the draw tally are the two shapes to copy, and they differ
+   in *when they clear* — read why before adding a third.
+3. **The missing trigger events.** "Becomes blocked", "becomes untapped",
+   "becomes the target of", and the block-requirement mirror of `must_attack`.
+   The only tier of the six here with frontend consequences.
+4. **Costs and casting.** Starting with **`unless_pays`** — ward is evergreen,
+   so it compounds with every future set, and the demand side already has
+   records for it — then the graveyard-cast and from-hand generalisations, the
+   mana-paying cost kinds, and the alternative costs with delayed halves.
+5. **Counters.** ETB counts from a value expression, counter movement, the
+   dies-and-return pair, and the derived-power comparisons.
 6. **More replacement forms.** The whitelist is deliberate and widening it is a
    design decision, not just work — read [adr/0001-layers-lite.md](adr/0001-layers-lite.md)
    first.
+7. **Spell copying**, and then the long tail of one-off ops.
 
 Face-down and multi-faced cards are last on purpose: they are the only cluster
 that is a genuine rules subsystem rather than a missing vocabulary item, and
 `/extend-dsl` rule 4 says to stop and report rather than start one inside a
-card-unblocking run.
+card-unblocking run. `transform` shipping does not change that — it built the
+`card_of` choke point the rest of the cluster needs, which is the foundation and
+not the subsystem.
 
 ## Provenance
 

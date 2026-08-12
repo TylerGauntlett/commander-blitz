@@ -206,6 +206,12 @@ Anywhere a number is expected:
 { "max_life_of": "each_opponent" }              // the highest
 { "cards_in_hand": "each_opponent" }
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
+{ "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
+{ "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
+{ "damage_taken_this_turn": "each_opponent" }   // bloodthirst
+{ "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
+{ "spells_cast_this_turn": "all" }              // storm
+{ "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
@@ -213,9 +219,9 @@ Anywhere a number is expected:
 
 ### Counting an event rather than the board
 
-Every leaf above except one is a question about the position: how many Vampires,
-how many counters, how much life. `cards_drawn_this_turn` is the exception, and
-it is the reason it needed engine state rather than a new selector.
+Most leaves above are a question about the position: how many Vampires, how many
+counters, how much life. Seven are not, and they are the reason the engine keeps
+per-turn state at all rather than adding another selector.
 
 "Cards you've drawn this turn" cannot be recovered from the board. A card drawn
 this turn may since have been played, discarded, bounced or drawn again, so
@@ -241,6 +247,30 @@ It is keyed by player but lives on the state and not on `PlayerState`, next to
 `lands_played` is the engine's other per-turn counter and it resets in the
 active player's own untap, which is right for a land drop and wrong here: you
 draw on other players' turns too.
+
+The other six live together in `GameState.turn_ledger` (`structs.TurnLedger`),
+and every one is unanswerable from the board for the same kind of reason. A
+creature in a graveyard may have been discarded or milled rather than having
+died; a creature that died last turn is still lying in the same place. Nothing
+whatsoever records that a player attacked once combat is over.
+
+Two things about that ledger are load-bearing:
+
+- **It is folded in `GameState.emit`, not counted at six primitives.** Each
+  tally counts an event that is already being logged, and `emit` is the single
+  function every event passes through, so a new way to kill a creature or deal
+  damage is counted without anybody remembering to count it. No emitter needed
+  changing, and the fold runs while the object is still in `state.objects`,
+  which is how it can ask a dying creature who controlled it.
+- **Damage to a player counts as life lost** (rule 118.2), as well as as damage.
+  Spectacle is printed on cards you cast after hitting somebody with a burn
+  spell, so a `life_lost_this_turn` that only saw `lose_life` would read false
+  in exactly the case the mechanic exists for.
+
+It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
+— nothing it counts can happen before turn 1, so it has no opening hand to
+survive, and "a creature died this turn" has to stay true through the end step
+that reads it.
 
 ## Costs
 
