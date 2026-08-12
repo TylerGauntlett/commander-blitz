@@ -247,7 +247,7 @@ This is the long tail, and where the build order comes from.
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
-| Infect † | routed | poison counters, plus damage-as-counters — the wither half is the same replacement | — |
+| Infect † | routed | poison counters ship (`add_poison`); what is left is the damage *replacement* — to players as poison, to creatures as -1/-1 counters, which is the wither half too | — |
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
 | Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
@@ -276,7 +276,7 @@ This is the long tail, and where the build order comes from.
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
 | Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
 | Phasing | refused | phasing; see rules-coverage.md | — |
-| Poisonous | routed | poison counters are not a loss condition the engine checks | — |
+| Poisonous | free | `deals_combat_damage_to_player` trigger, then `add_poison`; ten is lethal in the state-based pass | `add_poison` |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |
 | Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |

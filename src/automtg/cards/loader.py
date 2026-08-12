@@ -1191,6 +1191,8 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             f"{where}: unknown grant_keyword duration {effect['duration']!r} "
             f"(use 'until_end_of_turn' or 'permanent')"
         )
+    if op == "add_poison" and "amount" in effect:
+        validate_value(effect["amount"], f"{where}.amount")
     if op == "detain" and not effect.get("objects"):
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.

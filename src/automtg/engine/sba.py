@@ -95,6 +95,10 @@ def _ascend(state: GameState) -> bool:
 # ----------------------------------------------------------------------
 
 
+#: Rule 704.5c: ten or more poison counters and the player loses.
+POISON_THRESHOLD = 10
+
+
 def _player_losses(state: GameState) -> bool:
     changed = False
     for player in state.players:
@@ -107,6 +111,11 @@ def _player_losses(state: GameState) -> bool:
             reason = LossReason.EMPTY_LIBRARY
         elif player.max_commander_damage() >= COMMANDER_DAMAGE_THRESHOLD:
             reason = LossReason.COMMANDER_DAMAGE
+        elif player.poison >= POISON_THRESHOLD:
+            # Rule 704.5c. Its own reason rather than folding into LIFE,
+            # because a player at 40 life who loses to poison did not run out
+            # of life, and a log that said so would be lying about the game.
+            reason = LossReason.POISON
         if reason is not None:
             _eliminate(state, player.pid, reason)
             changed = True
