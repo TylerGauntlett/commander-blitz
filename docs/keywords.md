@@ -231,7 +231,7 @@ This is the long tail, and where the build order comes from.
 | Explore | routed | `reveal` and `add_counters` exist; needs the revealed card routed by type | — |
 | Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |
 | Fabricate | free | `self_enters` trigger, then `choose_mode` between `add_counters` and `create_token` | — |
-| Fading | routed | `upkeep` + `remove_counters` + a sacrifice; needs "if you can't" to be askable | — |
+| Fading | free | `upkeep` trigger with an `if` on `counters_on` — "if you can't" is an ordinary comparison, and the sacrifice is the `else` | — |
 | Fateseal | free | `scry` with `player` naming whose library and `chooser` naming who decides | — |
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
 | Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |

@@ -2,6 +2,72 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_fader",
+      "name": "Test Fader",
+      "oracle_text": "Fading 2 (This creature enters with two fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "fade",
+          "amount": 2
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "fade",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": 1
+              },
+              "then": [
+                {
+                  "op": "remove_counters",
+                  "counter": "fade",
+                  "amount": 1,
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_bear",
       "name": "Test Bear",
       "mana_cost": "{1}{G}",
