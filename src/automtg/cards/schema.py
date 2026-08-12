@@ -241,6 +241,19 @@ class CardModel(BaseModel):
     #: charges life too. Card-level like ``retrace``, because it changes which
     #: zone the card may be cast from.
     flashback: CostModel | None = None
+    #: The same field under the name the general mechanic deserves. Flashback,
+    #: escape and jump-start are one capability -- an alternative cost offered
+    #: only from the owner's graveyard -- and only ``flashback`` shipped first,
+    #: so a card with escape on it should not have to say "flashback". Exactly
+    #: one of the two may be given.
+    graveyard_cost: CostModel | None = None
+    #: Where the card goes when it finishes resolving, having been cast from a
+    #: graveyard. The only thing that separates the three keywords:
+    #:
+    #: ``exile``      flashback and jump-start -- once only.
+    #: ``graveyard``  **escape**, which is reusable, and which is the whole
+    #:                reason this is a field rather than a hard-coded exile.
+    graveyard_cast: Literal["exile", "graveyard"] = "exile"
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

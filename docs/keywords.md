@@ -222,7 +222,7 @@ This is the long tail, and where the build order comes from.
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
 | Entwine | routed | an additional cost that takes *both* modes; `choose_mode` picks exactly `count` | — |
 | Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
-| Escape | routed | casting from the graveyard, like `retrace`, with an exile cost instead of a discard | — |
+| Escape | free | `graveyard_cost` with an `exile_from_graveyard` cost, and `graveyard_cast: "graveyard"` so it comes back | — |
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
 | Evolve | routed | `permanent_enters` + a comparison against *this* creature's derived power | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
@@ -251,7 +251,7 @@ This is the long tail, and where the build order comes from.
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
 | Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
-| Jump-start | routed | casting from the graveyard with a discard cost — retrace, discarding any card rather than a land | — |
+| Jump-start | free | `graveyard_cost` repeating the printed mana plus `discard: 1`; the exile rider is the default | — |
 | Kicker | shipped | card-level field, and the `kicked` condition, readable on the object after resolution | `kicker` |
 | Landwalk — plainswalk | shipped | `Keyword`, read by `combat.can_block` against the defender's board | `plainswalk` |
 | Landwalk — islandwalk | shipped | `Keyword` | `islandwalk` |
@@ -373,7 +373,7 @@ still outstanding waits on one of six things:
 | Blocker | Waiting on it |
 |---|---|
 | ~~A **per-turn ledger**~~ — shipped as `GameState.turn_ledger`. Morbid, raid and bloodthirst are now `free`; the other four turned out to want a *second* thing each | ~~morbid, raid, bloodthirst~~, spectacle and prowl (a cost gated on a condition), storm and gravestorm (spell copying) |
-| **Casting from the graveyard**, generalised past `retrace`, `flashback` and `embalm` | escape, jump-start, unearth, disturb |
+| ~~**Casting from the graveyard**~~ — generalised as `graveyard_cost` plus a `graveyard_cast` destination. Escape needed one bit; jump-start needed nothing | ~~escape, jump-start~~, unearth (an *activated* ability, not a cast), disturb (arrives on its back face) |
 | **Spell copying** | casualty, conspire, replicate, storm, gravestorm, ripple |
 | **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
 | **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, bestow, mutate, meld |

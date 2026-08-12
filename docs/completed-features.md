@@ -1,3 +1,49 @@
+## Casting from the graveyard, generalised — escape and jump-start
+
+### Overview
+
+`keywords.md` names "casting from the graveyard, generalised past `retrace`" as
+one of its six clusters, with six members. Three had already shipped separately
+— retrace, flashback, embalm — and the useful result of finally looking at the
+rest as a group is how little was left.
+
+**Jump-start needed nothing at all.** "Cast this from your graveyard by
+discarding a card in addition to paying its other costs, then exile it" is a
+graveyard cost whose mana half happens to equal the printed cost, plus a
+discard, plus the exile rider flashback already had. It has been expressible
+since the day flashback shipped, and stayed on the census as `routed` because it
+was filed under its own keyword rather than against the capability.
+
+**Escape needed exactly one bit.** Same alternative cost, same legality
+widening, same `exile_from_graveyard` cost kind — and one difference, which is
+the entire distinction between the two keywords: flashback exiles the card and
+escape does not, so escape is reusable and flashback is not.
+
+### What shipped
+
+`graveyard_cost`, which is the field's real name, and `graveyard_cast`, which
+says where the card goes when it finishes — `"exile"` (flashback, jump-start) or
+`"graveyard"` (escape). `flashback` stays as an accepted spelling, meaning
+exactly the same slot, so no shipped card file changed and no card with escape
+on it has to claim to have flashback.
+
+Two guards, both refusing rather than resolving. Both names at once is a card
+with two prices from the graveyard and no answer to what it costs from there. A
+`graveyard_cast` with no cost is a card that claims to escape and is never
+castable at all — the silently-inert card this pass exists to catch.
+
+The rider applies on fizzling as well as on resolution, and so does the escape
+exemption: an escape spell whose targets all left is back in the graveyard to be
+escaped again.
+
+### What is still in the cluster
+
+Unearth and disturb, and neither is really "casting from the graveyard" any
+more. Unearth is an *activated ability* from the graveyard that returns the
+creature to the battlefield with haste and exiles it at end of turn — closer to
+embalm than to flashback. Disturb is a cast that has to arrive on the card's
+**back** face, which is `transform`'s choke point rather than this one.
+
 ## Block requirements — the mirror that is not quite a mirror
 
 ### Overview

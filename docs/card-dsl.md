@@ -2064,9 +2064,40 @@ them where it is sitting:
 "evoke": "{2}{U}"                           // pay less instead, and it dies on arrival
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "retrace": true                             // cast from the graveyard, discarding a land
-"flashback": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard, then exile
+"graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
+"graveyard_cast": "exile"                   // …and where it goes afterwards
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 ```
+
+#### Casting from the graveyard
+
+One capability, three keywords, and the only thing separating them is the price
+and the destination:
+
+```jsonc
+\ Flashback -- once only.
+"graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }
+
+\ Jump-start -- the printed mana again, plus a discard. Also once only, so
+\ `graveyard_cast` is left at its default.
+"graveyard_cost": { "mana": "{2}{U}", "discard": 1 }
+
+\ Escape -- and this is the whole of it: the card comes back.
+"graveyard_cost": { "mana": "{1}{R}",
+                    "exile_from_graveyard": { "count": 2, "exclude_self": true } },
+"graveyard_cast": "graveyard"
+```
+
+The mana half **replaces** the printed cost and everything else is charged on
+top, so a jump-start card repeats its own mana cost rather than leaving it out.
+`exclude_self` matters on escape: the printed line says "exile N **other**
+cards", and without it a card in an otherwise-empty graveyard pays with itself.
+
+`flashback` is still accepted as the name the first keyword shipped under, and
+means exactly `graveyard_cost`. A card giving both is refused rather than
+resolved — two prices from the graveyard is no answer to what it costs from
+there. `graveyard_cast` without a cost is refused for the mirror reason: it
+would claim to be an escape card and never be castable at all.
 
 ### Ascend
 

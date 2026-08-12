@@ -348,6 +348,10 @@ class CardDef:
     #: exiled rather than put into a graveyard when it finishes, so it cannot be
     #: flashed back twice.
     flashback: Cost | None = None
+    #: Whether a spell cast from the graveyard for that cost is exiled when it
+    #: finishes. True for flashback and jump-start; **False for escape**, which
+    #: is reusable and is the only reason this is not a constant.
+    graveyard_cast_exiles: bool = True
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 
