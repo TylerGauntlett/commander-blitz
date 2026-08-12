@@ -61,6 +61,42 @@
       "is_token": true
     },
     {
+      "id": "clue_token",
+      "name": "Clue",
+      "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Clue"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, Sacrifice this artifact: Draw a card.",
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "elemental_2_2_g",
       "name": "Elemental Token",
       "oracle_text": "2/2 green Elemental creature token.",

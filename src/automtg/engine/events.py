@@ -33,6 +33,12 @@ class EventType:
     # cards and the stack
     DRAW = "draw"
     DISCARD = "discard"
+    #: "When you cycle this card…". Distinct from DISCARD, which every discard
+    #: emits: cycling is one specific activated ability, and a trigger reading
+    #: the broader event would fire on hand-size discards too.
+    CYCLED = "cycled"
+    #: A player got the city's blessing. Once per player per game.
+    CITY_S_BLESSING = "city_s_blessing"
     MILL = "mill"
     SPELL_CAST = "spell_cast"
     SPELL_RESOLVED = "spell_resolved"

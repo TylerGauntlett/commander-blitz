@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from .characteristics import (
+    attack_compelled,
     attack_forbidden,
     block_restrictions,
     chars,
@@ -76,10 +77,17 @@ def attack_required(state: GameState, oid: int) -> bool:
     not have to.  So this is the requirement AND `can_attack`, never one alone.
     """
     obj = state.objects.get(oid)
-    if obj is None or obj.must_attack is None:
+    if obj is None:
         return False
-    if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
-        return False
+    # Two sources, one enforcement point. The `must_attack` op writes a
+    # one-shot flag that `discharge_attack_requirements` spends; a printed
+    # "attacks each combat if able" is a static, read live and never spent.
+    # Both are "…if able", so both go through `can_attack` below.
+    if not attack_compelled(state, oid):
+        if obj.must_attack is None:
+            return False
+        if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
+            return False
     return can_attack(state, oid)
 
 
@@ -212,6 +220,14 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
         if keyword in ac.keywords and _controls_land_type(state, defender, subtype):
             return False
 
+    # Nonbasic landwalk: the same rule with the test inverted. A supertype the
+    # land must *lack*, which is why it is its own keyword rather than a sixth
+    # `LANDWALK_SUBTYPE` row.
+    if Keyword.NONBASIC_LANDWALK.value in ac.keywords and _controls_nonbasic_land(
+        state, defender
+    ):
+        return False
+
     # Skulk (702.72): "can't be blocked by creatures with greater power". The
     # first evasion that *compares* the two creatures rather than testing a
     # fixed quality of one, which is why it could not be a `blockers` filter:
@@ -219,6 +235,35 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     # both sides at the moment blockers are declared.
     if Keyword.SKULK.value in ac.keywords and bc.power > ac.power:
         return False
+
+    # Horsemanship (702.32): "can't be blocked except by creatures with
+    # horsemanship". The plainest of the exemption-shaped evasions -- the
+    # blocker must carry the same keyword, and `chars` is read on both sides so
+    # a granted horsemanship blocks a printed one.
+    if Keyword.HORSEMANSHIP.value in ac.keywords and (
+        Keyword.HORSEMANSHIP.value not in bc.keywords
+    ):
+        return False
+
+    # Shadow (702.28): "can block or be blocked by only creatures with shadow".
+    # The only evasion that cuts *both* ways, so it is asked of the pair rather
+    # than of the attacker: a shadow creature may not block a normal one either,
+    # which is what makes shadow a separate combat rather than an evasion.
+    if (Keyword.SHADOW.value in ac.keywords) != (Keyword.SHADOW.value in bc.keywords):
+        return False
+
+    # Fear (702.36): "can't be blocked except by artifact creatures and/or black
+    # creatures". Intimidate (702.13) is the same sentence with "black" replaced
+    # by "creatures that share a color with it" -- a *relation*, so a colorless
+    # creature with intimidate shares a color with nothing and only an artifact
+    # creature may block it. Both read derived types and colors, which is why
+    # neither could be a `blockers` filter even before the exemption/prohibition
+    # mismatch: a creature made black by a static may block a fear creature.
+    if "Artifact" not in bc.types:
+        if Keyword.FEAR.value in ac.keywords and "B" not in bc.colors:
+            return False
+        if Keyword.INTIMIDATE.value in ac.keywords and not (ac.colors & bc.colors):
+            return False
 
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
@@ -254,6 +299,24 @@ def _controls_land_type(state: GameState, pid: int, subtype: str) -> bool:
     return False
 
 
+def _controls_nonbasic_land(state: GameState, pid: int) -> bool:
+    """Does this player control a land without the Basic supertype, right now?
+
+    Read from `chars` for the same reason as :func:`_controls_land_type`, and
+    the supertype is the whole test: a Forest that some effect turned into an
+    Island is still basic, and a nonbasic land that gained a basic land type is
+    still nonbasic.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.controller != pid:
+            continue
+        c = chars(state, oid)
+        if "Land" in c.types and "Basic" not in c.supertypes:
+            return True
+    return False
+
+
 def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
     """Every legal (blocker, attacker) pair for this defending player."""
     combat = state.combat
@@ -265,6 +328,45 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
             if can_block(state, blocker_oid, attacker_oid, defender):
                 out.append((blocker_oid, attacker_oid))
     return out
+
+
+def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
+    """Retract blocks that can never become a legal declaration.
+
+    Declarations are made all at once in the rules and one block at a time
+    here, and `require_all` is the shape where that difference bites.
+    Tromokratis is "can't be blocked unless all creatures defending player
+    controls block it": a player who blocks it with one creature and then finds
+    no second legal block is **stuck forever** -- there is no `ADD_BLOCKER` left
+    to offer and `blocks_valid` withholds "Done blocking", so the game cannot
+    continue. A four-player rollout found exactly that on turn 47.
+
+    Blocks like these were never legal, so dropping them is not a concession:
+    "no creature blocks Tromokratis" is precisely what the rules would have
+    produced. Returns the blockers it retracted.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    dropped: list[int] = []
+    for attacker_oid, attacker_defender in combat.attackers.items():
+        if attacker_defender != defender:
+            continue
+        blockers = [
+            b
+            for b in combat.block_order.get(attacker_oid, [])
+            if state.objects.get(b) is not None
+            and state.objects[b].controller == defender
+        ]
+        if not blockers or _all_blockers_present(state, attacker_oid, defender, blockers):
+            continue
+        for b in blockers:
+            combat.blockers.pop(b, None)
+            dropped.append(b)
+        combat.block_order[attacker_oid] = [
+            b for b in combat.block_order.get(attacker_oid, []) if b not in dropped
+        ]
+    return dropped
 
 
 def add_blocker(state: GameState, blocker_oid: int, attacker_oid: int, defender: int) -> bool:
@@ -338,6 +440,11 @@ def finish_blockers(state: GameState) -> None:
     combat = state.combat
     if combat is None:
         return
+    # An incremental declaration can reach a state the rules would never have
+    # produced -- see `drop_illegal_blocks`. Retract those before locking in,
+    # so what gets recorded is a declaration that was actually legal.
+    for defender in set(combat.attackers.values()):
+        drop_illegal_blocks(state, defender)
     combat.blockers_declared = True
 
     # Damage assignment order is sorted by effective toughness ascending -- the

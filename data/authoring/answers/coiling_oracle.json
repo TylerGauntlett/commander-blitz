@@ -78,6 +78,10 @@
     ]
   },
   "expectation": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   }
 }

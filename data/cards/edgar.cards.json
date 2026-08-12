@@ -11,7 +11,7 @@
       "subtypes": ["Vampire", "Knight"],
       "power": 4,
       "toughness": 4,
-      "keywords": ["first_strike"],
+      "keywords": ["first_strike", "haste"],
       "abilities": [
         {
           "kind": "triggered",
@@ -197,7 +197,7 @@
       "subtypes": ["Vampire", "Rogue"],
       "power": 1,
       "toughness": 1,
-      "keywords": ["deathtouch", "lifelink"]
+      "keywords": ["skulk", "lifelink"]
     },
     
     {
@@ -208,7 +208,34 @@
       "types": ["Creature"],
       "subtypes": ["Vampire", "Rogue"],
       "power": 1,
-      "toughness": 1
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate.",
+          "effect": "buff",
+          "affects": { "self_only": true },
+          "power": { "const": 2 },
+          "toughness": { "const": 1 },
+          "condition": {
+            "cmp": "<=",
+            "left": { "min_life_of": "each_opponent" },
+            "right": { "const": 10 }
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as an opponent has 10 or less life, this creature gets +2/+1 and has intimidate.",
+          "effect": "grant_keyword",
+          "affects": { "self_only": true },
+          "keywords": ["intimidate"],
+          "condition": {
+            "cmp": "<=",
+            "left": { "min_life_of": "each_opponent" },
+            "right": { "const": 10 }
+          }
+        }
+      ]
     },
     {
       "id": "vampire_lacerator",
@@ -216,9 +243,29 @@
       "oracle_text": "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
       "mana_cost": "{B}",
       "types": ["Creature"],
-      "subtypes": ["Vampire"],
+      "subtypes": ["Vampire", "Warrior"],
       "power": 2,
-      "toughness": 2
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you lose 1 life unless an opponent has 10 or less life.",
+          "trigger": { "event": "upkeep", "controller": "you" },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">",
+                "left": { "min_life_of": "each_opponent" },
+                "right": { "const": 10 }
+              },
+              "then": [
+                { "op": "lose_life", "player": "you", "amount": { "const": 1 } }
+              ]
+            }
+          ]
+        }
+      ]
     },
     
     {
@@ -229,7 +276,18 @@
       "types": ["Creature"],
       "subtypes": ["Vampire", "Soldier"],
       "power": 2,
-      "toughness": 1
+      "toughness": 1,
+      "ascend": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature has flying as long as you have the city's blessing.",
+          "effect": "grant_keyword",
+          "affects": { "self_only": true },
+          "keywords": ["flying"],
+          "condition": { "has_city_s_blessing": "you" }
+        }
+      ]
     },
     {
       "id": "pulse_tracker",
@@ -261,6 +319,13 @@
       "power": 1,
       "toughness": 1,
       "abilities": [
+        {
+          "kind": "static",
+          "effect": "block_restriction",
+          "text": "This creature can't be blocked by Humans.",
+          "affects": { "self_only": true },
+          "blockers": { "subtypes": ["Human"] }
+        },
         {
           "kind": "triggered",
           "text": "Whenever this deals combat damage to a player, put a +1/+1 counter on it.",
@@ -703,6 +768,15 @@
             "filter": { "types": ["Creature"] }
           },
           "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a card, you may gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent"
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
         }
       ]
     },
@@ -715,7 +789,29 @@
       "subtypes": ["Vampire"],
       "power": 4,
       "toughness": 4,
-      "keywords": ["flying"]
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "any",
+            "filter": {
+              "controller": "any",
+              "damaged_by": "self"
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "objects": { "self_only": true },
+              "counter": "+1/+1",
+              "amount": { "const": 1 }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "champion_of_dusk",
@@ -857,7 +953,7 @@
       "subtypes": ["Vampire", "Wizard"],
       "power": 3,
       "toughness": 3,
-      "keywords": ["flying"],
+      "keywords": ["lifelink"],
       "abilities": [
         {
           "kind": "triggered",
@@ -989,20 +1085,33 @@
       "color_identity": [],
       "abilities": [
         {
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "choose_type", "prompt": "Choose a creature type" }]
+        },
+        {
           "kind": "static",
-          "text": "Vampires you control get +1/+1.",
+          "text": "Creatures you control of the chosen type get +1/+1.",
           "effect": "buff",
-          "affects": { "controller": "you", "subtypes": ["Vampire"] },
+          "affects": {
+            "controller": "you",
+            "types": ["Creature"],
+            "subtypes": [{ "chosen_type_of": "self" }]
+          },
           "power": { "const": 1 },
           "toughness": { "const": 1 }
         },
         {
           "kind": "triggered",
-          "text": "Whenever you cast a Vampire spell, draw a card.",
+          "text": "Whenever you cast a creature spell of the chosen type, draw a card.",
           "trigger": {
             "event": "spell_cast",
             "controller": "you",
-            "filter": { "subtypes": ["Vampire"] }
+            "filter": {
+              "types": ["Creature"],
+              "subtypes": [{ "chosen_type_of": "self" }]
+            }
           },
           "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
         }

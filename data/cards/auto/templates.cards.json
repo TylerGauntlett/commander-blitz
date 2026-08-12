@@ -107,6 +107,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "accursed_spirit",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Accursed Spirit",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -2195,6 +2219,32 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "barbarian_general",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Barbarian General",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Barbarian",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -2825,6 +2875,30 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bladetusk_boar",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Bladetusk Boar",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Boar"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -3829,6 +3903,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ]
+                }
+              },
               "mana": "{B}",
               "op": "add_mana"
             }
@@ -3888,7 +3970,7 @@
       ],
       "mana_cost": "{4}{U}{B}",
       "name": "Callidus Assassin",
-      "oracle_text": "Flash\nPolymorphine — You may have this creature enter tapped as a copy of any creature on the battlefield, except it has \"When this creature enters, destroy up to one other target creature with the same name as this creature.\"",
+      "oracle_text": "Flash\nPolymorphine \u2014 You may have this creature enter tapped as a copy of any creature on the battlefield, except it has \"When this creature enters, destroy up to one other target creature with the same name as this creature.\"",
       "power": 3,
       "replacements": [
         {
@@ -4515,6 +4597,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -4641,6 +4731,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "subtypes": [
+                    "Locus"
+                  ]
+                }
+              },
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -5953,6 +6051,31 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dauthi_marauder",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dauthi Marauder",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dauthi",
+        "Minion"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -6280,7 +6403,7 @@
       ],
       "mana_cost": "{1}{W}",
       "name": "Deep Gnome Terramancer",
-      "oracle_text": "Flash\nMold Earth — Whenever one or more lands enter under an opponent's control without being played, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle. Do this only once each turn.",
+      "oracle_text": "Flash\nMold Earth \u2014 Whenever one or more lands enter under an opponent's control without being played, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle. Do this only once each turn.",
       "power": 2,
       "replacements": [
         {
@@ -6976,6 +7099,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dross_prowler",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dross Prowler",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -7205,6 +7352,30 @@
       "toughness": 4,
       "types": [
         "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dryad_sophisticate",
+      "keywords": [
+        "nonbasic_landwalk"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Dryad Sophisticate",
+      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dryad"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -9272,6 +9443,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -9955,6 +10134,30 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gluttonous_zombie",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Gluttonous Zombie",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -10864,7 +11067,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+          "text": "Landfall \u2014 Whenever a land you control enters, create a 3/3 green Badger creature token.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -10885,7 +11088,7 @@
       "id": "greensleeves_maro_sorcerer",
       "mana_cost": "{3}{G}{G}",
       "name": "Greensleeves, Maro-Sorcerer",
-      "oracle_text": "Protection from planeswalkers and from Wizards\nGreensleeves's power and toughness are each equal to the number of lands you control.\nLandfall — Whenever a land you control enters, create a 3/3 green Badger creature token.",
+      "oracle_text": "Protection from planeswalkers and from Wizards\nGreensleeves's power and toughness are each equal to the number of lands you control.\nLandfall \u2014 Whenever a land you control enters, create a 3/3 green Badger creature token.",
       "power": 0,
       "source": "auto",
       "subtypes": [
@@ -11867,6 +12070,30 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "highborn_ghoul",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{B}{B}",
+      "name": "Highborn Ghoul",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -12794,7 +13021,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.",
+          "text": "Landfall \u2014 Whenever a land you control enters, you may put a quest counter on this enchantment.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -12838,7 +13065,7 @@
       "id": "ior_ruin_expedition",
       "mana_cost": "{1}{U}",
       "name": "Ior Ruin Expedition",
-      "oracle_text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Draw two cards.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Draw two cards.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -14029,7 +14256,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.",
+          "text": "Landfall \u2014 Whenever a land you control enters, you may put a quest counter on this enchantment.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -14083,7 +14310,7 @@
       "id": "khalni_heart_expedition",
       "mana_cost": "{1}{G}",
       "name": "Khalni Heart Expedition",
-      "oracle_text": "Landfall — Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, you may put a quest counter on this enchantment.\nRemove three quest counters from this enchantment and sacrifice it: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -14430,7 +14657,7 @@
               }
             }
           ],
-          "text": "Sacrifice another Serpent: Choose one — • Tap target permanent. Its activated abilities can't be activated this turn. • Koma gains indestructible until end of turn."
+          "text": "Sacrifice another Serpent: Choose one \u2014 \u2022 Tap target permanent. Its activated abilities can't be activated this turn. \u2022 Koma gains indestructible until end of turn."
         }
       ],
       "color_identity": [
@@ -14444,7 +14671,7 @@
       "id": "koma_cosmos_serpent",
       "mana_cost": "{3}{G}{G}{U}{U}",
       "name": "Koma, Cosmos Serpent",
-      "oracle_text": "This spell can't be countered.\nAt the beginning of each upkeep, create a 3/3 blue Serpent creature token named Koma's Coil.\nSacrifice another Serpent: Choose one —\n• Tap target permanent. Its activated abilities can't be activated this turn.\n• Koma gains indestructible until end of turn.",
+      "oracle_text": "This spell can't be countered.\nAt the beginning of each upkeep, create a 3/3 blue Serpent creature token named Koma's Coil.\nSacrifice another Serpent: Choose one \u2014\n\u2022 Tap target permanent. Its activated abilities can't be activated this turn.\n\u2022 Koma gains indestructible until end of turn.",
       "power": 6,
       "source": "auto",
       "subtypes": [
@@ -14520,42 +14747,50 @@
       ]
     },
     {
-      "abilities": [
-        {
-          "cost": {
-            "tap": true
-          },
-          "effects": [
-            {
-              "mana": "{C}",
-              "op": "add_mana"
-            }
-          ],
-          "is_mana_ability": true,
-          "kind": "activated",
-          "text": "{T}: Add {C} for each card you've drawn this turn."
-        }
-      ],
       "color_identity": [
-        "G",
-        "U"
+        "R"
       ],
       "colors": [
-        "G",
-        "U"
+        "R"
       ],
-      "id": "kydele_chosen_of_kruphix",
+      "id": "krenko_s_enforcer",
       "keywords": [
-        "partner"
+        "intimidate"
       ],
-      "mana_cost": "{2}{G}{U}",
-      "name": "Kydele, Chosen of Kruphix",
-      "oracle_text": "{T}: Add {C} for each card you've drawn this turn.\nPartner (You can have two commanders if both have partner.)",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Krenko's Enforcer",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
       "power": 2,
       "source": "auto",
       "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lady_zhurong_warrior_queen",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Lady Zhurong, Warrior Queen",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
         "Human",
-        "Wizard"
+        "Soldier",
+        "Warrior"
       ],
       "supertypes": [
         "Legendary"
@@ -15187,7 +15422,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, add one mana of any color.",
+          "text": "Landfall \u2014 Whenever a land you control enters, add one mana of any color.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -15208,7 +15443,7 @@
       "id": "lotus_cobra",
       "mana_cost": "{1}{G}",
       "name": "Lotus Cobra",
-      "oracle_text": "Landfall — Whenever a land you control enters, add one mana of any color.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, add one mana of any color.",
       "power": 2,
       "source": "auto",
       "subtypes": [
@@ -15331,7 +15566,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
+          "text": "Lieutenant \u2014 At the beginning of combat on your turn, if you control your commander, draw a card.",
           "trigger": {
             "condition": {
               "exists": {
@@ -15357,7 +15592,7 @@
       ],
       "mana_cost": "{2}{U}",
       "name": "Loyal Drake",
-      "oracle_text": "Flying\nLieutenant — At the beginning of combat on your turn, if you control your commander, draw a card.",
+      "oracle_text": "Flying\nLieutenant \u2014 At the beginning of combat on your turn, if you control your commander, draw a card.",
       "power": 2,
       "source": "auto",
       "subtypes": [
@@ -15393,6 +15628,64 @@
         "Dog"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "lu_bu_master_at_arms",
+      "keywords": [
+        "haste",
+        "horsemanship"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Lu Bu, Master-at-Arms",
+      "oracle_text": "Haste; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lu_meng_wu_general",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{U}{U}",
+      "name": "Lu Meng, Wu General",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -15709,6 +16002,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ]
+                }
+              },
               "mana": "{B}",
               "op": "add_mana"
             }
@@ -16899,7 +17200,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
+          "text": "Landfall \u2014 Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -16923,7 +17224,7 @@
       ],
       "mana_cost": "{2}{G}",
       "name": "Mossborn Hydra",
-      "oracle_text": "Trample\nThis creature enters with a +1/+1 counter on it.\nLandfall — Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
+      "oracle_text": "Trample\nThis creature enters with a +1/+1 counter on it.\nLandfall \u2014 Whenever a land you control enters, double the number of +1/+1 counters on this creature.",
       "power": 0,
       "replacements": [
         {
@@ -17914,7 +18215,7 @@
       "id": "nissas_pilgrimage",
       "mana_cost": "{2}{G}",
       "name": "Nissa's Pilgrimage",
-      "oracle_text": "Search your library for up to two basic Forest cards, reveal those cards, and put one onto the battlefield tapped and the rest into your hand. Then shuffle.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
+      "oracle_text": "Search your library for up to two basic Forest cards, reveal those cards, and put one onto the battlefield tapped and the rest into your hand. Then shuffle.\nSpell mastery \u2014 If there are two or more instant and/or sorcery cards in your graveyard, search your library for up to three basic Forest cards instead of two.",
       "source": "auto",
       "spell_effects": [
         {
@@ -18782,6 +19083,17 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "keywords": [
+                    "defender"
+                  ],
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -19396,6 +19708,31 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "prickly_boggart",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{B}",
+      "name": "Prickly Boggart",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -19403,6 +19740,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "subtypes": [
+                    "Elf"
+                  ]
+                }
+              },
               "mana": "{G}",
               "op": "add_mana"
             }
@@ -20566,6 +20911,30 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "razortooth_rats",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Razortooth Rats",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Rat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -20820,7 +21189,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, choose one — • Put a +1/+1 counter on target creature. • You gain 2 life.",
+          "text": "Landfall \u2014 Whenever a land you control enters, choose one \u2014 \u2022 Put a +1/+1 counter on target creature. \u2022 You gain 2 life.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -20841,7 +21210,7 @@
       "id": "retreat_to_kazandu",
       "mana_cost": "{2}{G}",
       "name": "Retreat to Kazandu",
-      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Put a +1/+1 counter on target creature.\n• You gain 2 life.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, choose one \u2014\n\u2022 Put a +1/+1 counter on target creature.\n\u2022 You gain 2 life.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -20877,6 +21246,60 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Draw a card?"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Pay {1} to stop Rhystic Study's draw?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "rhystic_study",
+      "mana_cost": "{2}{U}",
+      "name": "Rhystic Study",
+      "oracle_text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -22027,7 +22450,7 @@
       ],
       "mana_cost": "{2}{W}",
       "name": "Scouting Hawk",
-      "oracle_text": "Flying\nKeen Sight — When this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "Flying\nKeen Sight \u2014 When this creature enters, if an opponent controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
       "power": 1,
       "replacements": [
         {
@@ -22134,7 +22557,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
+          "text": "Landfall \u2014 Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -22155,7 +22578,7 @@
       "id": "scute_swarm",
       "mana_cost": "{2}{G}",
       "name": "Scute Swarm",
-      "oracle_text": "Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
       "power": 1,
       "source": "auto",
       "subtypes": [
@@ -22176,7 +22599,7 @@
       "id": "search_for_tomorrow",
       "mana_cost": "{2}{G}",
       "name": "Search for Tomorrow",
-      "oracle_text": "Search your library for a basic land card, put it onto the battlefield, then shuffle.\nSuspend 2—{G} (Rather than cast this card from your hand, you may pay {G} and exile it with two time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "oracle_text": "Search your library for a basic land card, put it onto the battlefield, then shuffle.\nSuspend 2\u2014{G} (Rather than cast this card from your hand, you may pay {G} and exile it with two time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
       "source": "auto",
       "spell_effects": [
         {
@@ -22414,7 +22837,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+          "text": "Landfall \u2014 Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -22431,7 +22854,7 @@
       "id": "seer_s_sundial",
       "mana_cost": "{4}",
       "name": "Seer's Sundial",
-      "oracle_text": "Landfall — Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
       "source": "auto",
       "types": [
         "Artifact"
@@ -22709,6 +23132,14 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Enchantment"
+                  ]
+                }
+              },
               "mana": "{W}",
               "op": "add_mana"
             }
@@ -22731,6 +23162,30 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "severed_legion",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Severed Legion",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -23659,6 +24114,82 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Shu Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_elite_companions",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Shu Elite Companions",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shu_general",
+      "keywords": [
+        "vigilance",
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Shu General",
+      "oracle_text": "Vigilance; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -23866,7 +24397,7 @@
       "id": "simic_charm",
       "mana_cost": "{G}{U}",
       "name": "Simic Charm",
-      "oracle_text": "Choose one —\n• Target creature gets +3/+3 until end of turn.\n• Permanents you control gain hexproof until end of turn.\n• Return target creature to its owner's hand.",
+      "oracle_text": "Choose one \u2014\n\u2022 Target creature gets +3/+3 until end of turn.\n\u2022 Permanents you control gain hexproof until end of turn.\n\u2022 Return target creature to its owner's hand.",
       "source": "auto",
       "spell_effects": [
         {
@@ -24731,6 +25262,31 @@
       "colors": [
         "W"
       ],
+      "id": "soltari_foot_soldier",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{W}",
+      "name": "Soltari Foot Soldier",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Soltari",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "space_marine_scout",
       "keywords": [
         "first_strike",
@@ -24738,7 +25294,7 @@
       ],
       "mana_cost": "{2}{W}",
       "name": "Space Marine Scout",
-      "oracle_text": "First strike, vigilance\nConcealed Position — When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+      "oracle_text": "First strike, vigilance\nConcealed Position \u2014 When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
       "power": 2,
       "replacements": [
         {
@@ -24839,6 +25395,31 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spectral_rider",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Spectral Rider",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -25050,7 +25631,7 @@
             }
           ],
           "kind": "triggered",
-          "text": "Landfall — Whenever a land you control enters, create a 1/1 green Saproling creature token.",
+          "text": "Landfall \u2014 Whenever a land you control enters, create a 1/1 green Saproling creature token.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -25071,13 +25652,37 @@
       "id": "sporemound",
       "mana_cost": "{3}{G}{G}",
       "name": "Sporemound",
-      "oracle_text": "Landfall — Whenever a land you control enters, create a 1/1 green Saproling creature token.",
+      "oracle_text": "Landfall \u2014 Whenever a land you control enters, create a 1/1 green Saproling creature token.",
       "power": 3,
       "source": "auto",
       "subtypes": [
         "Fungus"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "squirming_mass",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Squirming Mass",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -27234,6 +27839,31 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thalakos_sentry",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Thalakos Sentry",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Thalakos",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -28020,7 +28650,7 @@
               }
             }
           ],
-          "text": "Landfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+          "text": "Landfall \u2014 Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
           "trigger": {
             "controller": "you",
             "event": "permanent_enters",
@@ -28041,7 +28671,7 @@
       "id": "trench_behemoth",
       "mana_cost": "{5}{U}{U}",
       "name": "Trench Behemoth",
-      "oracle_text": "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.\nLandfall — Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+      "oracle_text": "Return a land you control to its owner's hand: Untap this creature. It gains hexproof until end of turn.\nLandfall \u2014 Whenever a land you control enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
       "power": 7,
       "source": "auto",
       "subtypes": [
@@ -30356,6 +30986,82 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_elite_companions",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Wei Elite Companions",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_scout",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Wei Scout",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wei_strike_force",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Wei Strike Force",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -31027,6 +31733,56 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wu_elite_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Wu Elite Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wu_light_cavalry",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Wu Light Cavalry",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -31400,6 +32156,36 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "zhang_fei_fierce_warrior",
+      "keywords": [
+        "vigilance",
+        "horsemanship"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Zhang Fei, Fierce Warrior",
+      "oracle_text": "Vigilance; horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

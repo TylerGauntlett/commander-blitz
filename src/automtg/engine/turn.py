@@ -117,6 +117,18 @@ def _untap_step(state: GameState) -> None:
     player = state.players[state.active_idx]
     player.lands_played = 0
     player.extra_land_drops = 0
+    # "…for each card you've drawn this turn." Reset at the *start* of the turn
+    # rather than at cleanup with `damage_ledger`, for two reasons that both
+    # produce a wrong number rather than an error.
+    #
+    # The opening hand is drawn by `draw_cards` before turn 1 exists, and a
+    # mulligan draws seven more; clearing at cleanup would leave all of that
+    # sitting in the tally for the whole first turn.
+    #
+    # And cleanup gets priority back when it triggers something (rule 514.3a).
+    # Draws made during that turn are still "this turn" in that window, so
+    # clearing before it would zero the count while the turn is still running.
+    state.cards_drawn_this_turn.clear()
     untap_all(state, player.pid)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.
@@ -191,6 +203,10 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
         )
         discard_cards(state, pid, picked)
     clear_until_eot(state)
+    # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
+    # permanents here; the ledger that remembers who dealt it goes with it, or
+    # a Sengir Vampire would keep growing off a creature it hurt last turn.
+    state.damage_ledger.clear()
     # Rule 514.3a: if anything happened, players get priority and cleanup repeats.
     state.cleanup_repeat = bool(state.pending_triggers)
 

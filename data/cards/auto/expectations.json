@@ -5,6 +5,9 @@
   "accorder_s_shield": {
     "zone": "battlefield"
   },
+  "accursed_spirit": {
+    "zone": "battlefield"
+  },
   "adanto_vanguard": {
     "zone": "battlefield"
   },
@@ -161,6 +164,9 @@
   "bant_panorama": {
     "zone": "battlefield"
   },
+  "barbarian_general": {
+    "zone": "battlefield"
+  },
   "baron_airship_kingdom": {
     "zone": "battlefield"
   },
@@ -198,6 +204,9 @@
     "zone": "battlefield"
   },
   "bladed_pinions": {
+    "zone": "battlefield"
+  },
+  "bladetusk_boar": {
     "zone": "battlefield"
   },
   "blasted_landscape": {
@@ -411,6 +420,9 @@
   "darkwater_catacombs": {
     "zone": "battlefield"
   },
+  "dauthi_marauder": {
+    "zone": "battlefield"
+  },
   "dawn_s_light_archer": {
     "zone": "battlefield"
   },
@@ -478,6 +490,9 @@
   "drifting_meadow": {
     "zone": "battlefield"
   },
+  "dross_prowler": {
+    "zone": "battlefield"
+  },
   "drossforge_bridge": {
     "zone": "battlefield"
   },
@@ -491,6 +506,9 @@
     "zone": "battlefield"
   },
   "dryad_of_the_ilysian_grove": {
+    "zone": "battlefield"
+  },
+  "dryad_sophisticate": {
     "zone": "battlefield"
   },
   "duskborne_skymarcher": {
@@ -686,6 +704,9 @@
   "glittering_massif": {
     "zone": "battlefield"
   },
+  "gluttonous_zombie": {
+    "zone": "battlefield"
+  },
   "godless_shrine": {
     "zone": "battlefield"
   },
@@ -811,6 +832,9 @@
         "indestructible"
       ]
     }
+  },
+  "highborn_ghoul": {
+    "zone": "battlefield"
   },
   "highland_forest": {
     "zone": "battlefield"
@@ -985,7 +1009,10 @@
   "kozilek_s_channeler": {
     "zone": "battlefield"
   },
-  "kydele_chosen_of_kruphix": {
+  "krenko_s_enforcer": {
+    "zone": "battlefield"
+  },
+  "lady_zhurong_warrior_queen": {
     "zone": "battlefield"
   },
   "lapis_orb_of_dragonkind": {
@@ -1049,6 +1076,12 @@
     "zone": "battlefield"
   },
   "loyal_warhound": {
+    "zone": "battlefield"
+  },
+  "lu_bu_master_at_arms": {
+    "zone": "battlefield"
+  },
+  "lu_meng_wu_general": {
     "zone": "battlefield"
   },
   "lumbering_falls": {
@@ -1324,6 +1357,9 @@
   "port_town": {
     "zone": "battlefield"
   },
+  "prickly_boggart": {
+    "zone": "battlefield"
+  },
   "priest_of_titania": {
     "zone": "battlefield"
   },
@@ -1402,6 +1438,9 @@
   "razortide_bridge": {
     "zone": "battlefield"
   },
+  "razortooth_rats": {
+    "zone": "battlefield"
+  },
   "reach_through_mists": {
     "hand_size": {
       "0": 1
@@ -1436,6 +1475,9 @@
     "life": {
       "0": 43
     }
+  },
+  "rhystic_study": {
+    "zone": "battlefield"
   },
   "rimewood_falls": {
     "zone": "battlefield"
@@ -1578,6 +1620,9 @@
   "serra_s_sanctum": {
     "zone": "battlefield"
   },
+  "severed_legion": {
+    "zone": "battlefield"
+  },
   "shadowblood_ridge": {
     "zone": "battlefield"
   },
@@ -1619,6 +1664,15 @@
     "zone": "battlefield"
   },
   "shrike_force": {
+    "zone": "battlefield"
+  },
+  "shu_cavalry": {
+    "zone": "battlefield"
+  },
+  "shu_elite_companions": {
+    "zone": "battlefield"
+  },
+  "shu_general": {
     "zone": "battlefield"
   },
   "shuko": {
@@ -1712,10 +1766,16 @@
   "solar_array": {
     "zone": "battlefield"
   },
+  "soltari_foot_soldier": {
+    "zone": "battlefield"
+  },
   "space_marine_scout": {
     "zone": "battlefield"
   },
   "spara_s_headquarters": {
+    "zone": "battlefield"
+  },
+  "spectral_rider": {
     "zone": "battlefield"
   },
   "sphinx_of_uthuun": {
@@ -1737,6 +1797,9 @@
     "zone": "graveyard"
   },
   "sporemound": {
+    "zone": "battlefield"
+  },
+  "squirming_mass": {
     "zone": "battlefield"
   },
   "steam_vents": {
@@ -1886,6 +1949,9 @@
     "zone": "battlefield"
   },
   "terrian_world_tyrant": {
+    "zone": "battlefield"
+  },
+  "thalakos_sentry": {
     "zone": "battlefield"
   },
   "thalia_heretic_cathar": {
@@ -2110,6 +2176,15 @@
   "watery_grave": {
     "zone": "battlefield"
   },
+  "wei_elite_companions": {
+    "zone": "battlefield"
+  },
+  "wei_scout": {
+    "zone": "battlefield"
+  },
+  "wei_strike_force": {
+    "zone": "battlefield"
+  },
   "whelming_wave": {
     "battlefield_count": 30,
     "hand_size": {
@@ -2168,6 +2243,12 @@
   "wreckage_wickerfolk": {
     "zone": "battlefield"
   },
+  "wu_elite_cavalry": {
+    "zone": "battlefield"
+  },
+  "wu_light_cavalry": {
+    "zone": "battlefield"
+  },
   "xander_s_lounge": {
     "zone": "battlefield"
   },
@@ -2191,6 +2272,9 @@
     "zone": "battlefield"
   },
   "zhalfirin_void": {
+    "zone": "battlefield"
+  },
+  "zhang_fei_fierce_warrior": {
     "zone": "battlefield"
   },
   "ziatora_s_proving_ground": {

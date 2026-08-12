@@ -674,7 +674,7 @@
       "id": "warden_of_evos_isle",
       "name": "Warden of Evos Isle",
       "oracle_text": "Flying\nCreature spells with flying you cast cost {1} less to cast.",
-      "mana_cost": "{3}{U}",
+      "mana_cost": "{2}{U}",
       "types": [
         "Creature"
       ],
@@ -686,6 +686,25 @@
       "toughness": 2,
       "keywords": [
         "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature spells with flying you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "flying"
+            ]
+          },
+          "amount": {
+            "const": 1
+          }
+        }
       ]
     },
     {
@@ -735,12 +754,64 @@
         "Creature"
       ],
       "subtypes": [
-        "Bird"
+        "Bird",
+        "Wizard"
       ],
       "power": 2,
       "toughness": 2,
       "keywords": [
         "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature spells with flying you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "flying"
+            ]
+          },
+          "amount": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ],
+              "keywords": [
+                "flying"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
       ]
     },
     
@@ -942,6 +1013,9 @@
       ],
       "power": 6,
       "toughness": 6,
+      "keywords": [
+        "vigilance"
+      ],
       "abilities": [
         {
           "kind": "triggered",
@@ -987,6 +1061,9 @@
       ],
       "power": 3,
       "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
       "abilities": [
         {
           "kind": "triggered",
@@ -1014,7 +1091,7 @@
       "id": "bygone_bishop",
       "name": "Bygone Bishop",
       "oracle_text": "Flying\nWhenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
-      "mana_cost": "{2}{W}{W}",
+      "mana_cost": "{2}{W}",
       "types": [
         "Creature"
       ],
@@ -1026,6 +1103,36 @@
       "toughness": 3,
       "keywords": [
         "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell with mana value 3 or less, investigate.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "clue_token",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
       ]
     },
     
@@ -1041,14 +1148,14 @@
         "Angel"
       ],
       "power": 3,
-      "toughness": 3,
+      "toughness": 4,
       "keywords": [
         "flying"
       ],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, exile target nonland permanent an opponent controls.",
+          "text": "When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.",
           "trigger": {
             "event": "self_enters",
             "source": "self"
@@ -1073,6 +1180,61 @@
               "op": "exile",
               "objects": {
                 "target": "t1"
+              },
+              "until_leaves": true
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may exile target nonland permanent an opponent controls until this creature leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              },
+              "controller": "owner"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{5}{W}",
+            "exile_from_graveyard": {
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "self_only": true
+              },
+              "controller": "you",
+              "except_": {
+                "colors": [
+                  "W"
+                ],
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "no_mana_cost": true
               }
             }
           ]
@@ -1678,7 +1840,8 @@
               "kind": "permanent",
               "selector": {
                 "zone": "battlefield",
-                "controller": "opponent",
+                "controller": "any",
+                "exclude_self": true,
                 "not_types": [
                   "Land"
                 ]
@@ -1692,13 +1855,33 @@
               "op": "exile",
               "objects": {
                 "target": "t1"
-              }
+              },
+              "until_leaves": true
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              },
+              "controller": "owner"
             }
           ]
         }
       ]
     },
-    
+
     {
       "id": "bident_of_thassa",
       "name": "Bident of Thassa",
@@ -1721,10 +1904,39 @@
           },
           "effects": [
             {
-              "op": "draw",
+              "op": "may",
               "player": "you",
-              "amount": {
-                "const": 1
+              "prompt": "Draw a card?",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+          "cost": {
+            "mana": "{1}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "must_attack",
+              "duration": "this_turn",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "count": "all"
               }
             }
           ]

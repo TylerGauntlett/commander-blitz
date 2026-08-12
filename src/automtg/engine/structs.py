@@ -101,6 +101,11 @@ class StackItem:
     #: known: nothing about the object afterwards records what was paid for it.
     kicked: bool = False
     evoked: bool = False
+    #: Cast from a graveyard for its flashback cost. Read on
+    #: resolution both by the `cast_from_graveyard` condition and by
+    #: the once-only rider that exiles the card instead of
+    #: returning it to the graveyard.
+    flashback: bool = False
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""

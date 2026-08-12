@@ -639,6 +639,13 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.kicker is not None and stripped.lower().startswith("kicker "):
         return True
 
+    # "Ascend (If you control ten or more permanents…)" is a *state trigger*
+    # checked in the state-based-action pass, not an ability: it uses no stack
+    # and cannot be responded to, so there is nothing for an ability's `text` to
+    # be attached to. Same shape as `kicker` above.
+    if card.ascend and stripped.lower().startswith("ascend"):
+        return True
+
     # "This spell costs {X} less to cast" is a property of the card read while
     # deciding what is castable -- there is no ability, because a spell on the
     # stack has already been paid for.

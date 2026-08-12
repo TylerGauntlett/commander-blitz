@@ -34,6 +34,7 @@ def push_spell(
     x: int = 0,
     kicked: bool = False,
     evoked: bool = False,
+    flashback: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -58,6 +59,7 @@ def push_spell(
         x=x,
         kicked=kicked,
         evoked=evoked,
+        flashback=flashback,
         modes=modes,
         description=card.name,
     )
@@ -114,9 +116,21 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
         pool = state.card_of(granter).grantable_abilities
     else:
         source = state.objects.get(item_or_trig.source_oid)
-        if source is None:
-            return None
-        pool = state.card_of(source).abilities
+        if source is not None:
+            pool = state.card_of(source).abilities
+        else:
+            # A token that paid for its own ability by sacrificing itself is
+            # *gone*: the token state-based action pops it out of
+            # `state.objects` rather than moving it to a graveyard, so unlike
+            # every other self-sacrificing permanent there is no object left to
+            # read the ability off. `_resolve_ability` already says resolution
+            # outlives the source; this is the one place that contradicted it.
+            # Without the fallback every "{cost}, Sacrifice this token: ..."
+            # ability -- a Clue's whole text -- resolves as a silent no-op.
+            def_id = getattr(item_or_trig, "def_id", None)
+            if def_id is None or def_id not in state.registry:
+                return None
+            pool = state.registry.get(def_id).abilities
     return pool[index] if index < len(pool) else None
 
 
@@ -174,8 +188,15 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
             EventType.SPELL_FIZZLED, player=item.controller, source=item.oid, card=card.id
         )
         obj.stack_id = None
-        move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="fizzled")
+        obj.cast_from_graveyard = item.flashback
+        destination = Zone.EXILE if item.flashback else Zone.GRAVEYARD
+        move_object(state, item.oid, destination, to_player=obj.owner, cause="fizzled")
         return
+
+    # Set before the effects run, not after: "if this spell was cast from a
+    # graveyard, create ten of those tokens instead" is read *during*
+    # `spell_effects`, so a flag written afterwards would always read False.
+    obj.cast_from_graveyard = item.flashback
 
     ctx = EffectContext(
         state=state,
@@ -206,6 +227,12 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     filtering the (already popped) stack list, so no cleanup is needed here.
     """
     destination = Zone.BATTLEFIELD if card.is_permanent else Zone.GRAVEYARD
+    # "Then exile it." Flashback is once-only, and this is what makes it so: a
+    # spell cast from a graveyard for its flashback cost goes to exile instead
+    # of back to the graveyard it came from. A permanent still enters the
+    # battlefield -- the rider only replaces the graveyard.
+    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD:
+        destination = Zone.EXILE
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
 
 

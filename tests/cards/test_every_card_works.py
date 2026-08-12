@@ -190,12 +190,15 @@ class TestActivatedAbilities:
             # Where the card has to *be* to activate this. Cycling is played
             # from hand, so putting every card on the battlefield reported all
             # 44 cycling lands as broken when they were only in the wrong place.
+            # Embalm added a third zone -- the graveyard -- so this puts the card
+            # wherever the ability says rather than assuming hand is the only
+            # alternative to the battlefield.
             zone = _home_zone(ability)
             oid = new_object(game.state, card_id, owner=0, zone=zone).oid
             if zone is Zone.BATTLEFIELD:
                 game.state.battlefield.append(oid)
             else:
-                game.state.players[0].hand.append(oid)
+                game.state.players[0].zone_list(zone).append(oid)
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
             _stock_the_hand(game, ability)

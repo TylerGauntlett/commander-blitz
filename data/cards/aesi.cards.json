@@ -496,12 +496,72 @@
         "Elf",
         "Druid"
       ],
-      "power": 0,
+      "power": 1,
       "toughness": 2,
       "abilities": [
         {
+          "kind": "triggered",
+          "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "power_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "power_of": {
+                        "self": true
+                      }
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "toughness_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "toughness_of": {
+                        "self": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "then": [
+                {
+                  "op": "add_counters",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "kind": "activated",
-          "text": "{T}: Add {G}.",
+          "text": "{T}: Add {G} for each +1/+1 counter on this creature.",
           "is_mana_ability": true,
           "cost": {
             "tap": true
@@ -509,7 +569,15 @@
           "effects": [
             {
               "op": "add_mana",
-              "mana": "{G}"
+              "mana": "{G}",
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
             }
           ]
         }
@@ -1988,7 +2056,71 @@
         "Beast"
       ],
       "power": 6,
-      "toughness": 5
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.)",
+          "active_zones": [
+            "hand"
+          ],
+          "is_cycling": true,
+          "cost": {
+            "mana": "{2}{G}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this before you draw.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a basic land?",
+              "effects": [
+                {
+                  "op": "search_library",
+                  "player": "you",
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "reveal": true,
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                },
+                {
+                  "op": "shuffle",
+                  "player": "you"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "deep_analysis",
@@ -1998,15 +2130,31 @@
       "types": [
         "Sorcery"
       ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "count": 1
+        }
+      ],
       "spell_effects": [
         {
           "op": "draw",
-          "player": "you",
+          "player": {
+            "target": "t1"
+          },
           "amount": {
             "const": 2
           }
         }
-      ]
+      ],
+      "flashback": {
+        "mana": "{1}{U}",
+        "pay_life": 3
+      }
     },
     {
       "id": "garruks_packleader",
@@ -2047,6 +2195,46 @@
               "player": "you",
               "amount": {
                 "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kydele_chosen_of_kruphix",
+      "name": "Kydele, Chosen of Kruphix",
+      "oracle_text": "{T}: Add {C} for each card you've drawn this turn.\nPartner (You can have two commanders if both have partner.)",
+      "mana_cost": "{2}{G}{U}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "keywords": [
+        "partner"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C} for each card you've drawn this turn.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}",
+              "amount": {
+                "cards_drawn_this_turn": "you"
               }
             }
           ]

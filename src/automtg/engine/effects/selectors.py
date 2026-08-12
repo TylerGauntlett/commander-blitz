@@ -74,6 +74,13 @@ SELECTOR_KEYS = frozenset(
         "object_kind",
         "name",
         "damaged",
+        # "…until this permanent leaves the battlefield." Cards in exile that
+        # *this* source put there, read back by its own leaves-trigger.
+        "exiled_with",
+        # "…dealt damage by this creature this turn." A trigger filter rather
+        # than an object filter: answered from the per-turn damage ledger,
+        # because the creature it asks about has usually just died.
+        "damaged_by",
     }
 )
 
@@ -197,6 +204,16 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     if "damaged" in selector and bool(obj.damage > 0) != bool(selector["damaged"]):
         return False
+    if "exiled_with" in selector:
+        # "Return the exiled card" -- the cards *this* permanent exiled, and no
+        # others. A plain `{"zone": "exile"}` filter matches every card in exile
+        # from every source, so returning over it would hand back cards this
+        # card never touched, which is a different card rather than an
+        # approximation of this one.
+        who = selector["exiled_with"]
+        want = ctx.source_oid if who == "self" else who
+        if obj.exiled_by is None or obj.exiled_by != want:
+            return False
 
     combat = state.combat
     if "attacking" in selector and bool(combat and combat.attacking(oid)) != bool(
