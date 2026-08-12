@@ -223,8 +223,14 @@ class TestTheLoaderRefusesWhatCannotWork:
         with pytest.raises(DslError, match="both 'left' and 'right'"):
             compile_card(self._with({"cmp": ">=", "left": {"const": 1}}))
 
-    def test_a_static_value_is_still_only_const_or_count(self):
-        with pytest.raises(DslError, match="only use 'const' or 'count'"):
+    def test_the_summing_life_leaf_is_still_refused(self):
+        """`min_life_of`/`max_life_of` joined this list; `life_of` did not.
+
+        It sums over its player spec, so inside a static it would ask about the
+        whole table as one number -- see `test_player_quantifier.py`. The value
+        language here is still a whitelist, and this is what keeps it one.
+        """
+        with pytest.raises(DslError, match="static values may only use"):
             compile_card(
                 self._with(
                     {"cmp": ">=", "left": {"life_of": "you"}, "right": {"const": 1}}

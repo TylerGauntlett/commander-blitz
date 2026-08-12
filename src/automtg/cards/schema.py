@@ -95,6 +95,12 @@ class AbilityModel(BaseModel):
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
     mana_restriction: str | None = None
     sorcery_speed_only: bool = False
+    #: This activated ability *is* the cycling ability, so paying for it emits
+    #: the `cycle` event a "When you cycle this card" trigger listens for.
+    #: Declared rather than inferred: "Discard this card: draw" is a shape other
+    #: cards print without being cycling, and a trigger firing on those would be
+    #: a different card.
+    is_cycling: bool = False
 
     # triggered
     trigger: TriggerModel | None = None
@@ -111,6 +117,10 @@ class AbilityModel(BaseModel):
     # static
     effect: str | None = None
     affects: dict[str, Any] | None = None
+    #: "Creature spells with flying you cast cost {1} less." Filters a *card
+    #: being cast* by its printed face, which is a different question from
+    #: `affects` (which picks out permanents on the battlefield).
+    affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     power: Any = None
     toughness: Any = None
@@ -201,6 +211,15 @@ class CardModel(BaseModel):
     #: land card in addition to paying its other costs."  A whole extra way to
     #: cast the card, so it is a card-level field rather than an ability.
     retrace: bool = False
+    #: Ascend: "If you control ten or more permanents, you get the
+    #: city's blessing for the rest of the game." A bare keyword with
+    #: no parameters, so a card-level flag rather than an ability.
+    ascend: bool = False
+    #: "Flashback {1}{U}, Pay 3 life" -- an alternative cost offered only from
+    #: the owner's graveyard. A full cost, not just mana, because Deep Analysis
+    #: charges life too. Card-level like ``retrace``, because it changes which
+    #: zone the card may be cast from.
+    flashback: CostModel | None = None
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

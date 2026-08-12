@@ -1,3 +1,969 @@
+## The discard trigger — an event that was fired but never listened to
+
+### Overview
+
+"Whenever an opponent discards a card, you may gain 3 life." Sangromancer, and
+the last entry in `precon_deficits.json`.
+
+Nothing was missing from the rules engine. Discarding has always been modelled —
+rule 701.8, `primitives.discard_cards`, an `EventType.DISCARD` fired once per
+card since the beginning, narrated in the frontend log. What was missing was a
+name for it in `TRIGGER_EVENTS`, so no card could listen: the event was emitted
+into a log that only the UI read.
+
+One row in `TRIGGER_EVENTS`, one entry in `OBJECT_SUBJECT_TRIGGERS`, one name in
+`_actor`'s list. The card was then expressible with no new op, no new effect and
+no new event.
+
+### Which player the clause is about
+
+`controller` names the player who **discarded**, and it defaults to `"you"` —
+the trap the Sengir Vampire run wrote down, where an unqualified trigger loads,
+looks implemented and watches the wrong seat forever. Sangromancer needs
+`"opponent"`, and the test asserts both directions, because a trigger that fires
+on everything passes a one-sided test by accident.
+
+The actor is read off the *event* rather than off the discarded card, which is
+why `discard` appears in `_actor`'s explicit list even though it also has an
+object subject. By the time the trigger is collected the card is in a graveyard
+and its controller has been through `reset_permanent_state`; `discard_cards`
+puts the discarding player on the event, so that is the copy to trust.
+
+### Every discard is a discard
+
+The two that matter and are easy to miss, because a version that missed them
+would still pass a test written around a discard *spell*:
+
+- The cleanup step's trim to hand size (rule 514.1) — the commonest discard
+  there is at a real table.
+- A cycling cost (rule 702.29a), which pays by discarding the card.
+
+Both run through `discard_cards`, so both fire it, and both are pinned. And one
+trigger per **card**: `discard_cards` fires per oid, so an effect that takes two
+cards is two triggers and six life.
+
+### Ships
+
+Sangromancer's second printed line. `precon_deficits.json` is now **empty** —
+every hand-written card in the pool clears all six authoring gates, which is the
+first time that has been true since the audit started running over
+`data/cards/`.
+
+## Cards drawn this turn — counting an event instead of the board
+
+### Overview
+
+"{T}: Add {C} for each card you've drawn this turn." Kydele, Chosen of Kruphix,
+and the last card in `unsupported-cards.md`.
+
+The mana half of it already worked. Variable mana abilities shipped one run
+earlier — an `add_mana` may carry an `amount`, evaluated at activation and
+threaded through `costs.mana_produced` so the offer and the payment cannot
+disagree. Kydele was the one card that change did not reach, for a reason that
+had nothing to do with mana: every multiplier the value language could express
+was a question about the **position**, and hers is not.
+
+### Why no existing leaf could stand in
+
+`{"count": …}` walks a zone and counts objects. `cards_in_hand` counts a hand.
+Both are the same number as "cards you've drawn this turn" only until something
+is played, discarded, bounced or drawn on an opponent's turn — and the
+divergence runs the wrong way, because the cards that make Kydele worth playing
+are precisely the ones you drew *and spent*. A Kydele built on `cards_in_hand`
+taps for less exactly when the deck is working.
+
+So it needed state that nothing on `PlayerState` had: life, zones, mana, land
+drops, commander tax and damage, the city's blessing — none of them a tally of
+an event.
+
+### Where it lives, and when it resets
+
+`GameState.cards_drawn_this_turn`: player id → draws this turn. Incremented in
+`primitives.draw_cards` rather than off the `draw` event, so there is no path by
+which a card travels from a library to a hand without the tally seeing it.
+
+Cleared by the **untap step**, which is the interesting decision. The obvious
+move was to copy `damage_ledger`, the per-turn ledger that shipped immediately
+before this one, and clear at cleanup. Two things make that wrong, and both
+produce a wrong number rather than an error:
+
+- **The opening hand is not drawn during a turn.** Rule 103 sets the game up
+  before turn 1 begins, and `_opening_sequence` draws seven cards — fourteen
+  after a mulligan — through the same `draw_cards`. Clearing at cleanup would
+  leave all of it in the tally for the whole first turn, so a Kydele in an
+  opening hand would tap for seven the moment she landed.
+- **Cleanup is still this turn.** Rule 514.3a hands priority back when cleanup
+  triggers something, and a Kydele activated in that window has still drawn what
+  she drew.
+
+And it is keyed by player but lives on the state rather than on `PlayerState`,
+because it clears **once per turn, not once per seat**. `lands_played` is the
+engine's other per-turn counter and it resets in the active player's own untap,
+which is right for a land drop and wrong here: you draw on other players' turns
+too, and a Kydele that forgot an instant-speed draw from an opponent's end step
+would be quietly the wrong size on your own turn.
+
+### The one way it differs from a board count
+
+Rule 605 says a mana ability never stops to ask, and this asks nothing — it only
+looks, which is the same standing `counters_on` has, so `MANA_AMOUNT_FORBIDDEN`
+lets it through where `x`, `binding` and `loop_value` are refused.
+
+But unlike a board count, this multiplier can *move at instant speed*: drawing a
+card is something a player can do with a payment already open. That makes "read
+the amount at activation, before the tap" load-bearing rather than merely tidy,
+and `test_cards_drawn_this_turn.py` pins it — the offer changes when a card is
+drawn between the two, and the tap pays what the tally says at that moment.
+
+### Ships
+
+Kydele, Chosen of Kruphix, into the hand-written pool with the rest of the
+Simic cards, through all six authoring gates. `unsupported-cards.md` is now
+empty: nothing in the queue is blocked on a capability the DSL cannot express.
+
+## Ascend — the first per-player designation, and the last entry in the report
+
+### Overview
+
+"Ascend (If you control ten or more permanents, you get the city's blessing for
+the rest of the game.)" plus "This creature has flying as long as you have the
+city's blessing." Skymarcher Aspirant, and both printed lines were blocked: one
+because there was nothing to grant, the other because there was nothing to ask.
+
+This reverses a documented decision. `rules-coverage.md` listed "the monarch,
+initiative, day/night, and other designated-player mechanics" under Not
+implemented, and the city's blessing is exactly one of those. It is the only run
+in this sequence built against the plan's own advice — the recommendation was to
+refuse it, and the instruction was to build it.
+
+### A state trigger, not a triggered ability
+
+Rule 702.131a, and it is the whole design. Ascend is not an *event*: a player at
+nine permanents who plays a land gets the blessing at the instant of the tenth,
+with nothing having fired, and gets it on an opponent's turn just as readily.
+State triggers are checked whenever state-based actions are, use no stack and
+cannot be responded to — so `_ascend` lives in the SBA pass beside the legend
+rule. A trigger-plus-counter version would be a different card in the direction
+that matters, because a re-checked trigger would come and go and the blessing
+never does.
+
+### Player state, not object state
+
+`PlayerState.has_city_s_blessing` is the engine's first genuinely per-player
+designation. `monstrous` is the closest existing one-way flag and is wrong in
+all three respects that matter: it lives on a `GameObject`, so
+`reset_permanent_state` clears it on any zone change; it is set by an op
+resolving from the stack rather than by a continuous check; and it cannot be
+shared between two cards.
+
+The blessing has to survive the permanents leaving, survive the Ascend card
+leaving, and be visible to every card the player controls — so a second Ascend
+card printed later reads the blessing a first one granted. All three are tests.
+
+`ascend` is a card-level field rather than a `Keyword`, because the enum's
+members are read off *derived characteristics* by `grant_keyword` and the
+evasion checks, and Ascend is neither granted nor evasive.
+
+### The residual gate needed telling
+
+"Ascend" is a printed line no ability carries, exactly like "Kicker {1}{U}" — the
+mechanic is a state trigger, so there is nothing for an ability's `text` to hang
+on. `verify._covered` has one clause per card-level field of that shape, and now
+has one more.
+
+## Flashback — three pieces, and the third does not fall out of the other two
+
+### Overview
+
+"Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for
+its flashback cost. Then exile it.)" Deep Analysis and Increasing Devotion are
+the witnesses, and between them they need every piece.
+
+This reverses a documented decision: `rules-coverage.md` listed "flashback and
+other graveyard casting" under Not implemented. That line is retired.
+
+`retrace` is the near miss and is wrong in every particular. It is the only
+field that widens legality to the graveyard, but it is a bare boolean whose cost
+is hardcoded to a discarded land and charged *in addition* to the printed cost,
+so it can name no alternative price at all — Increasing Devotion would cost
+`{3}{W}{W}` plus a land instead of `{7}{W}{W}`. It is also deliberately
+reusable, which is the opposite of flashback. A card may now not have both.
+
+### The three pieces
+
+**The cost.** `CardDef.flashback` is a full `Cost`, not a `ManaCost` like
+`evoke`, because Deep Analysis charges life too. The mana half replaces the
+printed cost and everything else is an additional cost paid after it, in the
+order rule 601.2g gives — the same two-step `retrace` already used, and
+`Cost.without_mana()` is what splits them so legality can test the halves
+separately.
+
+**The once-only rider.** A spell cast this way is exiled rather than put into a
+graveyard, on resolution *and* on fizzling. Without it the card is flashed back
+forever, which is a different card and one that wins the game.
+
+**`cast_from_graveyard`.** An engine could implement flashback casting perfectly
+and Increasing Devotion would still be wrong, making five tokens where it prints
+ten. `zone_is` cannot answer it: it reports the source's *current* zone, which
+for any resolving sorcery is the stack, identically whether it was cast from
+hand or from a graveyard. So it is a flag on the object, following the `cast_x`
+/ `cast_kicked` / `cast_evoked` precedent exactly.
+
+### The ordering that had to be right
+
+The flag is written **before** `spell_effects` run, not after. Every sibling
+flag (`cast_x`, `cast_kicked`, `cast_evoked`) is set after resolution, because
+they are read by *enters-the-battlefield* triggers on the permanent that arrives
+— by which time the spell is done. `cast_from_graveyard` is read by the spell's
+own effects while they run, so copying the sibling placement would have made the
+condition always false and Increasing Devotion always make five.
+
+### Also repaired
+
+Deep Analysis printed "Target player draws two cards" and the pool had it
+drawing for its controller unconditionally. It now has the target.
+
+## The chosen creature type — a Tier C run that was Tier A
+
+### Overview
+
+Vanquisher's Banner, EDHREC rank 369 and the second-best-ranked card the report
+ever carried. It asks the same question from both filter languages:
+"Creatures you control **of the chosen type** get +1/+1" is a static filter,
+"whenever you cast a creature spell **of the chosen type**" is a trigger filter.
+
+### The part that did not need building
+
+The gap record asked for a new `DecisionKind.CHOOSE_TYPE` and the whole Tier C
+chain behind it — `enums`, `actions.GENERATOR_DECISIONS`,
+`legality._choice_actions`, `game.apply`, a new `ask_*`, and the authoring
+verifier's auto-answer table, which the skill warns is not optional because an
+unanswerable kind hangs the verifier for every card.
+
+None of it was needed. `ask_mode` already asks "pick one of these labels" and
+returns the index, which is exactly this question — so `_choice_actions` (generic
+over `decision.options`) and the verifier's `_answer` (which falls through to
+"take a real choice") both worked untouched. A `CHOOSE_TYPE` kind would have
+been the same decision wearing a different name.
+
+That is the Fact-or-Fiction lesson the skill opens with, and this is the second
+time in the sequence it turned a run into a much smaller one — the first was
+Rhystic Study.
+
+### What shipped
+
+`GameObject.chosen_type`, a `choose_type` op, and
+`characteristics.resolve_chosen_subtypes` — one substitution applied wherever a
+filter is about to be matched, in the static path and the trigger path both.
+
+Not at load time: the choice does not exist until the permanent is on the
+battlefield. And **before a type is chosen the filter matches nothing**, which
+is the half that matters — falling back to "match everything" would make the
+Banner a global anthem while the choice was pending, the same failure the
+spell-cost-reduction run hit for real.
+
+The choice lives on the object rather than the card, so two Banners choose
+independently and a Banner that leaves and returns chooses again.
+
+The prompt offers every creature subtype the card pool contains (119 of them),
+sorted. The rules say any creature type; a type no card in the game has is a
+choice with no consequence, and the full Comprehensive Rules list would make the
+prompt unusable without changing how any card plays.
+
+### A deadlock this run happened to find
+
+`tests/ai` went red, and not for any reason to do with chosen types: a
+four-player rollout reached turn 47 with **zero legal actions** at a
+declare-blockers decision.
+
+The cause is `require_all` — Tromokratis' "can't be blocked unless all
+creatures defending player controls block it". Declarations are made all at once
+in the rules and one block at a time here, so a player who blocks it with one
+creature and then finds no second legal block is stuck forever: no
+`ADD_BLOCKER` left to offer, and `blocks_valid` withholding "Done blocking".
+
+Pre-existing and latent; the Banner only changed the random trajectory enough to
+walk into it. Fixed at the escape rather than at the rule: when nothing can be
+added and the declaration is still invalid, "Done" is offered, and
+`finish_blockers` retracts the blocks that were never legal. "No creature blocks
+Tromokratis" is exactly what the rules would have produced, so nothing is
+conceded — and `blocks_valid` keeps its meaning, which is what let the existing
+`TestRequireAll` tests stand unchanged.
+
+A first attempt refused the uncompletable block up front instead, in
+`legal_blocks`. It broke two passing tests and was reverted: it changed what is
+*legal*, where the bug is only about what is *reachable*.
+
+### The divergence
+
+The printed line is "**as** this artifact enters" — a replacement effect that
+cannot be responded to. `zones._enter_battlefield` applies enter-replacements
+synchronously and cannot stop to ask, so this is a `self_enters` trigger and the
+type is chosen a moment after the permanent arrives. Recorded in
+`rules-coverage.md` rather than papered over; the window is observable only by
+another trigger ordered between the two.
+
+## Embalm — the graveyard as a place you activate from
+
+### Overview
+
+Angel of Sanctions, and the last card in the report that two earlier runs had
+already half-built. Cycling made `active_zones` real for activated abilities and
+gave `legality` a walk over zones other than the battlefield; the
+exile-until-leaves run three commits ago shipped the card's other printed line.
+What was left was the graveyard itself, and the copy.
+
+### The zone half
+
+`legality._activate_zones` now walks the player's graveyard as well as their
+hand. The safety rule is the same one cycling introduced and now has two ways to
+be satisfied: an activated ability offered outside the battlefield **must** have
+a cost that removes its source from that zone, or it is an infinite engine —
+a card whose ability costs only mana could be activated forever without leaving.
+Cycling discards itself; embalm exiles itself from the graveyard. The loader
+checks both and accepts either.
+
+`Cost.exile_from_graveyard` and `sorcery_speed_only` already existed, which is
+why this was one zone rather than a mechanic.
+
+### The copy half
+
+A token copy is a token whose `def_id` is the original's — right, because a copy
+copies the printed card and not the counters and damage piled on it, but it
+leaves "except it's a white Zombie Angel with no mana cost" nowhere to live: the
+token has no card of its own.
+
+So the exception rides on the **object**, as `copy_overrides`, deliberately
+small: replacement `colors`, *added* `add_subtypes`, and `no_mana_cost`. Applied
+to the printed face before any layer, because the exception is part of what the
+token is rather than an effect on it — an anthem afterwards layers on top
+exactly as it would on a real card. Anything richer belongs in a real
+copiable-values layer, which this engine does not have and did not need here.
+
+`no_mana_cost` is not decoration: the token's `def_id` is the Angel's, so
+without it a mana-value query reports 5 for a token that has no cost at all.
+
+### A test helper that had aged
+
+`tests/cards/test_every_card_works.py` places a card in "the zone the ability is
+offered from", and was written when that was battlefield-or-hand — so it put the
+embalm card in *hand*, found no activation, and failed. It now uses
+`zone_list(zone)` and puts the card wherever the ability actually says. That is
+the pool-wide gate doing its job: the change was fine, the harness's assumption
+about how many zones exist was not.
+
+## A damage ledger — remembering who hurt what
+
+### Overview
+
+"Whenever a creature dealt damage by this creature this turn dies, put a +1/+1
+counter on this creature." Sengir Vampire, and the clause is a *relationship*
+between two objects across a span of time rather than a characteristic of
+either. Nothing recorded one: `damage` applied damage and remembered nothing
+about who dealt it.
+
+### Where it had to live
+
+The awkward part is **when** the question is asked — about a creature that has
+already died. So anything stored on the victim is wrong by construction, because
+`reset_permanent_state` wipes it on the way to the graveyard, which is the exact
+moment the trigger needs it.
+
+Hence `GameState.damage_ledger`: victim oid → the oids of everything that has
+damaged it this turn. Written by `damage_permanent`, cleared during cleanup
+next to rule 514.2's "remove all damage from permanents" — a ledger that
+outlived the turn would let Sengir grow off a creature it hurt yesterday.
+
+This is the second of the two ledger-shaped capabilities in this sequence, and
+they were deliberately kept as separate runs. The other, `exiled_by`, sits on
+the *object* because the thing that goes away there is the source, not the
+victim; here it is the victim that goes away, so the storage had to invert. Two
+different lifetimes, two different survivors, and merging them would have hidden
+that.
+
+### Read back through a filter
+
+`{"damaged_by": "self"}` on the trigger. Bare `creature_dies` fires on **every**
+creature death anywhere, which is a strictly stronger card — and one that looks
+right in almost every game where Sengir is the one doing the killing.
+
+### Two traps the test now pins
+
+`TriggerModel.controller` defaults to `"you"`, so an unqualified `creature_dies`
+only sees your *own* creatures dying. Sengir's victims are usually an
+opponent's, so the default made the ability load, look implemented, and never
+fire. That cost a debugging cycle and is now written down in card-dsl.md.
+
+And the blocker has to be able to block: Sengir flies, a ground bear never
+blocks it, nothing dies, and a test built that way passes for the wrong reason.
+The first version of this test did exactly that.
+
+## Exile until it leaves — a link that outlives the thing that made it
+
+### Overview
+
+Oblivion Ring, and behind it the whole Banishing Light / Fiend Hunter / Angel of
+Sanctions family. All of them wait on one thing: a record, written when a
+permanent exiles something, readable by a *later and separate* resolution of
+that permanent's own leaves-trigger.
+
+The gap record was right that `snapshot` cannot do it — it writes into
+`EffectContext.bindings`, which lives for exactly one resolution, and the
+enters-trigger that exiles and the leaves-trigger that returns are two abilities
+with two contexts. It was wrong about how much machinery the answer needs.
+
+### What shipped
+
+`GameObject.exiled_by`, one integer, plus `until_leaves` on the `exile` op to
+write it and an `exiled_with` selector key to read it back.
+
+**The link lives on the exiled card, not on the exiler**, and that is the whole
+design. The exiler is the thing that goes away: the Ring is in a graveyard by
+the time the return happens. Its victim is sitting in exile, untouched. And an
+oid survives every zone change in this engine, so a leaves-trigger's
+`source_oid` still names the departed permanent — which means no snapshot is
+needed at all, just a comparison. The gap record had assumed the trigger would
+have to carry the link in its bindings the way `was_attacking` does; it does
+not.
+
+Written *after* the move, because `move_object` runs `reset_permanent_state` on
+the way and would wipe it, and cleared by that same reset when the card comes
+back — correct, since the link is spent once followed.
+
+### What the test pins
+
+That it returns **only its own victim**. A plain `{"zone": "exile"}` filter
+matches every card in exile from every source, so a return over it would hand
+back cards this permanent never touched — a different card, and a strictly
+better one. The test exiles a second creature by other means and checks it stays
+put.
+
+Also that the card comes back under its **owner's** control rather than the
+Ring controller's, which would be a small theft nobody would notice.
+
+### A detail worth knowing
+
+`controller: "any"` is required on the return selector. An exiled card keeps its
+last controller — for O-Ring's victim, an opponent — and the selector language
+defaults `controller` to `"you"`, so without it the filter silently matches
+nothing and the card never returns. That cost a debugging cycle.
+
+### Also repaired
+
+The incumbent restricted its target to `controller: "opponent"`, where the
+printing says "another target nonland permanent" — any controller. Now
+`controller: "any"` with `exclude_self`, matching the printed line.
+
+Angel of Sanctions is now blocked on **embalm alone**; its gap record has been
+narrowed rather than retired.
+
+## Spell cost reduction — discounting somebody else's card
+
+### Overview
+
+"Creature spells with flying you cast cost {1} less to cast." Warden of Evos
+Isle and Watcher of the Spheres print the same line, and the near miss made it
+worse rather than better: the card-level `cost_reduction` field points the other
+way. It discounts the card that *carries* it, choosing by counting permanents —
+Ghalta's "this spell costs {X} less". Writing it on Warden would have made
+Warden cheaper, a different card that would have looked implemented.
+
+### What shipped
+
+A `spell_cost_reduction` static with its own filter, `affects_spells`, matched
+against the printed face of the card being cast plus who is casting it —
+`characteristics._matches_printed`, the same helper the counting filters use.
+
+`affects` could not be reused: it names permanents and carries board state
+(`tapped`, `attacking`, `attached`), and a spell being priced is still in hand
+and has none of it. The loader refuses those keys in `affects_spells` and
+refuses `affects` on this effect entirely.
+
+**Where it is applied is the whole design.** It goes inside
+`costs.cost_reduction` — the one function both `legality` (deciding what is
+castable, and what the client shows) and `game.cast` (actually charging) already
+call. So a spell offered at the reduced price is paid at the reduced price by
+construction, which is the same argument the variable-mana run made about
+`mana_produced` two commits earlier. A `spell_cast` trigger could not stand in:
+it fires after the spell is paid for, so at best it refunds mana into the pool,
+which is not the same as being able to afford the spell.
+
+### The bug, and why the guard is shaped as it is
+
+The first implementation compiled cleanly and discounted **every spell in the
+game**. `_compile_static` assembles the static into a plain dict field by field,
+and `affects_spells` was not among the fields it copied — so the filter arrived
+empty, and an empty filter matches everything.
+
+Two changes came out of that. The loader now requires `affects_spells` and an
+`amount`, and `spell_cost_reduction` skips a static whose filter is missing
+rather than defaulting to `{}`: a compile bug should discount nothing, not the
+whole game. `test_it_does_not_discount_everything` is that failure, kept.
+
+### Also repaired
+
+Warden's mana cost was `{3}{U}` where the printing says `{2}{U}`, and Watcher
+was missing the Wizard subtype and its third printed line ("Whenever another
+creature you control with flying enters, this creature gets +1/+1 until end of
+turn"), which needed nothing new.
+
+## The cycle trigger — an event, and two orderings
+
+### Overview
+
+"When you cycle this card, you may search your library for a basic land card …
+**(Do this before you draw.)**" Krosan Tusker is the witness, and plain cycling
+had already shipped, so the cost half was expressible and only the event was
+not.
+
+The first Tier D change in this sequence — a new `EventType` — and so the only
+one that touched `frontend/`.
+
+### Why it needed its own event
+
+Both near misses already exist and both are wrong rather than merely absent.
+`draw` fires on every draw, including the draw step and every other draw spell,
+so a Tusker sitting in the graveyard would fetch a land each time its controller
+drew anything — and it fires *after* the draw, which the parenthetical
+explicitly forbids. `discard` fires on hand-size discards and on every discard
+cost, so a Tusker pitched to a Wheel would fetch.
+
+So `EventType.CYCLED`, and cycling is **declared** rather than inferred:
+`is_cycling` on the ability, refused by the loader unless the cost actually
+discards the card. "Discard this card:" is a shape other cards print without
+being cycling, and inferring from `discard_self` would make those a different
+card.
+
+### Two orderings, both load-bearing
+
+The event fires **after** the cycling ability is pushed onto the stack, so the
+trigger drains on top of it and resolves first. That is the whole of "(Do this
+before you draw.)", and it falls out of the stack's ordinary
+last-on-first-off behaviour rather than any special case. Firing it a few lines
+earlier — before the push — reverses it silently, and the card still looks like
+it works.
+
+And the card is **already in the graveyard** when it fires, because paying the
+cost discarded it. The trigger declares `active_zones: ["graveyard"]` and is
+collected by the walk `_candidate_abilities` already does over that zone, so the
+zone machinery needed nothing.
+
+### The bug in the middle of it
+
+The first implementation used `state.emit`, which only writes the log — the
+`cycled` event appeared in the event stream, the ticker would have narrated it,
+and no trigger ever fired. `triggers.fire` is the one that queues abilities. An
+event nothing listens for is exactly the silent no-op this run exists to remove,
+and it took the ordering test to notice.
+
+### Frontend
+
+`labels.ts::describeEvent` and `events.ts::beatsFor`, both of which have `default`
+fallthroughs — an unnarrated event is dropped with nothing reporting it, which
+is why the skill calls this the only tier that genuinely forces UI work.
+
+## "Attacks each combat if able" — the continuous half of a requirement
+
+### Overview
+
+The `attack-requirement` entry opened with two cards and closed with one. Bident
+of Thassa was already expressible the day the report was regenerated — the
+`must_attack` op names it as its own `this_turn` witness — and was repaired at
+the start of this sequence. Marauding Maulhorn is what actually needed building.
+
+`must_attack` writes a one-shot flag that `discharge_attack_requirements` spends
+once attackers are locked in. Right for "attacks this turn if able", wrong for a
+printed line: that is true again next turn, true for a creature that entered
+after any op would have resolved, and false the moment its source leaves. So the
+continuous form is a static, read live off the battlefield.
+
+### What shipped
+
+`attacks_if_able` in `STATIC_EFFECTS`, read by `characteristics.attack_compelled`
+— written as the exact mirror of `attack_forbidden` (Stormtide Leviathan's
+`cant_attack`), down to the `affects` filter routinely naming creatures the
+source's controller does not control.
+
+Both forms meet at `combat.attack_required`, so there is still exactly one place
+deciding whether "Done attacking" is offered. Tier B in shape but small in
+practice, because the enforcement half — the part the gap record called an
+engine need — shipped with `must_attack` and needed nothing.
+
+One effect covers every printed variant, since they differ only in `affects`:
+`self_only` for "This creature…", `controller: opponent` for the goad-shaped
+"Creatures your opponents control…", `attached` for "Enchanted creature…".
+
+### `name` in a condition, not in a filter
+
+The "unless" clause needed a static condition able to ask whether a card with a
+particular name is on the battlefield. `name` was already in `SELECTOR_KEYS` and
+absent from the static ones; it is now allowed in the **counting** filters
+(`exists`, `count`, and their off-battlefield form) and still refused in
+`affects`. "Unless you control a creature named Advocate of the Beast" is a
+question about the board; "each creature named X gets +1/+1" is not a card, and
+allowing it in `affects` would only invite one. A name is as printed as a type
+and nothing in the pipeline can change one, so it is safe where a type is.
+
+### What the test corrected
+
+Two claims written first and found wrong by the engine, both kept as tests
+because the real behaviour is the more interesting one: a goaded creature owes
+nothing on its goader's turn (it cannot attack then, so "if able" excuses it —
+otherwise the goading player could never finish a declaration), and a lone
+summoning-sick compelled creature does not deadlock the step because the engine
+skips declare-attackers entirely when nothing is able.
+
+## Variable mana abilities — nine cards that were tapping for one
+
+### Overview
+
+"{T}: Add {G} for each +1/+1 counter on this creature." Gyre Sage was the card
+in the gap report; the run's real weight was elsewhere. Gaea's Cradle, Cabal
+Coffers, Serra's Sanctum, Priest of Titania, Circle of Dreams Druid, Overgrown
+Battlement, Magus of the Coffers and Cloudpost were all already **shipped**,
+each tapping for exactly one mana, each recorded in the queue as
+`template:proxy:complete` — marked correct while being wrong.
+
+Everything else about a mana ability is a constant folded at load time, for a
+good reason: rule 605 says a mana ability resolves immediately without the
+stack, so it may never stop to ask. `loader._sum_mana` folds the symbols into a
+fixed 6-tuple and `costs.activate_mana_ability` pays that tuple out without ever
+running the ability's effects. A count of counters cannot be folded — but it
+also asks nothing. It only looks.
+
+### What shipped
+
+`Ability.mana_amount`: an optional value expression on the single `add_mana`
+inside a mana ability, evaluated at activation. `costs.mana_amount` reads it
+through the ordinary value language, which already computes exactly this.
+
+The multiplier is threaded through `costs.mana_produced` — the one function both
+the solver's `_sources_of` and `activate_mana_ability` already call, and whose
+docstring already said the two must not be able to disagree. That is the whole
+design: the price a spell is **offered** at and the mana a tap actually **makes**
+come from the same arithmetic, so they cannot drift. A spell offered on mana
+that does not materialise strands the payment mid-cast, and nothing on screen
+would say why. `activate_mana_ability` was also reordered to measure *before*
+tapping, because the solver enumerates sources while they are still untapped.
+
+Three load-time constraints, each with a failure behind it: one `add_mana` per
+amount (nothing else is single enough to scale); no `x` / `binding` /
+`loop_value` (a mana ability is activated during payment, so each reads 0 and
+makes a card that silently taps for nothing); and the amount is read before the
+tap.
+
+### The nine, and the one that got away
+
+`proxy._mana_effects` read `Add {C}{C}` correctly and fell through to
+one-of-each-symbol for anything else — **with no note**, which is why nine cards
+shipped as `complete`. It now parses "for each &lt;noun&gt; you control / on the
+battlefield", optionally with a trailing keyword ("creature you control with
+defender"), into a counting selector. Eight of the nine were re-authored through
+the ordinary template tier and are now correct.
+
+Kydele, Chosen of Kruphix is the ninth and does not fall out of this. Its
+multiplier is "for each card you've drawn this turn" — not a board count at all,
+but a per-turn tally of an *event*, which nothing in the engine keeps. Per rule
+3 it now **refuses** rather than shipping a strictly worse card, so it has left
+the pool and gained a gap record under a new `cards-drawn-this-turn` capability.
+That is a card fewer in the registry and a card more in the report, and it is
+the honest direction: it was previously in the pool tapping for a sixth of what
+it prints, with nothing recorded to say so.
+
+An unreadable "for each" clause now emits a note rather than falling through
+silently, so the next one cannot repeat this.
+
+## Per-opponent life — the leaf that makes a pod question answerable
+
+### Overview
+
+Two cards, one printed clause: "an opponent has 10 or less life". Vampire
+Lacerator asks it from an `if` inside a triggered ability, Guul Draz Vampire
+from a static's "as long as" clause — so the leaf had to land in both condition
+languages, which are deliberately separate.
+
+The engine could already read a life total, and that was the trap rather than
+the solution. `life_of` **sums** over its player spec, and `"opponent"` and
+`"each_opponent"` are the same set, so the obvious spelling asks whether the
+opponents' *combined* life is 10 or less. In a duel that is the printed card
+exactly. At a Commander table it is a different card and the wrong way round:
+three opponents at 4 life sum to 12, so a summing Lacerator drains its
+controller against a table that is nearly dead, and a summing Guul Draz stays a
+1/1 while every opponent is in burn range. This repo is Commander-first, so that
+is a divergence, not a rounding error.
+
+### What shipped
+
+`min_life_of` and `max_life_of` — the existential and the universal — in
+`VALUE_KEYS`, in `characteristics._static_value`, and mirrored in
+`loader._validate_static_value` with their own player-spec whitelist.
+
+Tier A, and the narrow form on purpose. The gap record also proposed the general
+shape, `{"any_player": {"players": …, "condition": …}}`, and named the min/max
+leaves as its special case. The narrow one expresses both printed cards exactly
+— "an opponent has" is `min <= 10`, "each opponent has" is `max <= 10` — and a
+quantifier over players inside the *static* condition language would be new
+machinery in the one place the repo guards hardest. `min`/`max` already existed
+as value expressions and could not stand in: they take a literal list written
+into the card, and no player spec enumerates opponents one at a time.
+
+A life total is safe inside a static for the same reason a zone count is: it is
+a pipeline **input**. Nothing in the fixed-order characteristics pipeline can
+change one, so no static can come to depend on another's output through it.
+
+### The empty set has a right answer and a wrong one
+
+With no opponents left, "an opponent has 10 or less life" must be **false**. A
+minimum over nothing that returned 0 would make it vacuously true and switch
+Lacerator's drawback off at the instant the last opponent died — so
+`NO_PLAYERS_LIFE` is a life total nothing reaches. `max_life_of` takes the
+opposite bias deliberately: "each opponent has 10 or less" over nobody *is*
+vacuously true, and 0 is the correct reading there. Statics are evaluated during
+state-based-action passes, so this is observable rather than theoretical.
+
+### A latent bug fixed on the way
+
+`characteristics._static_players` spelled `"opponent"` but not
+`"each_opponent"`, so the latter fell through to *every* player including the
+static's own controller. Nothing reached it today — the loader restricts
+`controller` on zone filters to `you`/`opponent`/`any` — but the new leaf takes
+a full player spec, and the effect-side `select_players` has always treated the
+two as synonyms. Now both do.
+
+### Also repaired
+
+Vampire Lacerator's printed subtypes are "Vampire Warrior"; the pool had it as a
+Vampire only. Checked against `data/catalog/cards.sqlite`, like every printed
+characteristic touched in this sequence.
+
+## "Unless that player pays" — the best-ranked card in the report, for one guard
+
+### Overview
+
+Rhystic Study is EDHREC rank 44, the best-ranked card the gap report has ever
+carried, and it was blocked by a single load-time check.
+
+Its gap record is the oldest in the repo and asked for three things: a decision
+routed to another player, a cost payable mid-resolution by someone who does not
+control the ability, and a `spell_cast` trigger that can name the caster. All
+three had shipped in the meantime, and the record says "reference" throughout —
+it was written against a design document rather than the engine. `op_may`
+already resolves an arbitrary `player` through `select_players` (which has taken
+`{"controller_of": ...}` all along), already pays a `Cost` out of the pool
+mid-resolution on behalf of whoever is asked, and already branches to `else` on
+a refusal.
+
+This is the same lesson as the Bident repair one commit earlier, and the reason
+the re-triage step exists: a gap record is a snapshot, nothing retires one
+automatically, and the report drifts in exactly one direction.
+
+### What shipped
+
+One guard, narrowed. `loader._validate_effect` refused a `may` carrying `pay`
+without `effects`, on the grounds that "paying for nothing is not a card". That
+is right when there is no `else` and exactly backwards when there is: what
+Rhystic Study's opponent buys for their {1} is the *absence* of the else branch.
+They get nothing, and that is the mechanic. The guard now asks for `effects`
+**or** `else`, so a payment that buys nothing at all is still refused — with a
+test pinning each of the three shapes.
+
+Tier: below A. No new op, no new decision kind, no engine change. The skill
+warns that the common way to over-build is reaching for a new `DecisionKind`
+when an existing `ask_*` composes, and this is that warning's sharpest case so
+far — the card reads like it needs a bespoke subsystem and needed one word of
+validation.
+
+### What the test pins
+
+That the *opponent* is asked to pay and the *controller* is asked to draw. A
+Rhystic Study whose controller decided whether the opponent paid would be
+unbeatable and would look entirely normal on screen — the same property
+`test_two_piles.py` pins for Fact or Fiction, and free for the same reason.
+
+Also that an opponent who cannot afford the {1} is not prompted at all (rule
+118.4) and the draw simply happens; that "you may draw" stays optional after
+they decline; and that your own spells do not trigger it.
+
+The turn cap in that test is load-bearing rather than decoration. With nothing
+left to do the engine runs on into the next turn, and player 0's draw *step*
+would be counted as the trigger's card — every branch would read one card too
+high, and the "they paid, so no draw" case would pass while being wrong.
+
+### A gate regression caught on the way
+
+`--collect` re-verifies every answer on disk and rewrites `expectations.json`
+from them, which silently weakened two unrelated cards: `coiling_oracle` and
+`search_for_tomorrow` had `battlefield_count` and `library_size` assertions
+committed that their answer files did not carry, so collecting dropped them back
+to a bare `zone` check.
+
+Fixed at the source — the stronger expectations now live in the answer files,
+where the next `--collect` will preserve rather than clobber them, and both
+cards re-verified against them. Worth knowing before the next run: strengthening
+`data/cards/auto/expectations.json` by hand does not survive.
+
+## Investigate — a keyword action that was one missing token
+
+### Overview
+
+The cheapest capability in the report, and the only one so far whose gap record
+asked for no vocabulary whatsoever. Investigate's reminder text is its whole
+specification — *(Create a Clue token. It's an artifact with "{2}, Sacrifice
+this token: Draw a card.")* — and every piece of that was already expressible:
+`create_token` names any token in the pool, `Cost` carries mana and a
+`self_only` sacrifice together (Mind Stone pays exactly that shape), and `draw`
+is an op. The only thing missing was a Clue for `create_token` to point at.
+
+That is a real constraint rather than an oversight. `validate_token_references`
+refuses to load a card naming a token nobody defined, so Bygone Bishop could not
+be written half; and `data/cards/` is off-limits to authoring workers, so the
+token had to come from an `/extend-dsl` run even though no engine change was
+behind it. Adding it unblocks every investigate card at once.
+
+### What shipped
+
+`clue_token` in `data/cards/tokens.cards.json` — an artifact with the Clue
+subtype and one activated ability costing `{2}` plus a `self_only` sacrifice.
+Bygone Bishop repaired in `data/cards/isperia.cards.json`: it had been a vanilla
+2/3 flier, and its mana cost had been `{2}{W}{W}` where the printing (and
+`data/catalog/cards.sqlite`) say `{2}{W}`.
+
+### The bug the test found
+
+The gap record predicted "a data addition with no engine change behind it", and
+that was wrong — but only findably wrong. `stack.ability_of` resolved an
+ability by looking it up *through the source object*, returning `None` when the
+object was gone. A permanent that sacrifices itself as a cost still has an
+object, in the graveyard, so every self-sacrificing card in the pool worked. A
+**token** does not: the token state-based action pops it out of `state.objects`
+entirely. So the Clue's ability went on the stack, found no source, and resolved
+as a silent no-op — the token vanished and no card was drawn.
+
+`_resolve_ability` already carried the comment *"the ability resolves even if
+its source has left the battlefield"*; `ability_of` was the one place that
+contradicted it. It now falls back to the stack item's `def_id`.
+
+Nothing in the pool had caught this because the only other artifact token,
+`treasure_token`, is itself an approximation: its printed cost is "{T},
+Sacrifice this artifact" and it is implemented with `{"tap": true}` alone, so it
+never sacrifices and never took the broken path. That approximation is still
+there and is a separate repair.
+
+This is the argument for §3 of the skill in one case: the behaviour gate could
+not have found it either, because nothing casts a spell after the card under
+test in the verification sandbox, so Bygone Bishop's trigger never fires there.
+`tests/unit/test_investigate.py` is the only coverage the Clue has, and the
+claim that earned its keep was "it draws a card", not "the token appears".
+
+## Evasion — the five questions `can_block` could not ask
+
+### Overview
+
+Five keywords in one run, which reads like a violation of "one capability per
+run" and is the opposite of one. Fear, intimidate, horsemanship, shadow and
+nonbasic landwalk are not five mechanics; they are five instances of a mechanism
+`can_block` already had, and skulk had already paid for. That is the landwalk
+precedent exactly — five keywords, one rule, one test file — and the argument is
+in [keywords.md](keywords.md), which is what made this sizeable in the first
+place.
+
+The demand-driven report could not have surfaced this. Only intimidate had a gap
+record (Guul Draz Vampire's, filed against `blocking-restriction`, which the
+skulk run had already narrowed to this one card). The census is what showed that
+the *other four* were sitting behind the same rule with 108 pending cards
+between them, and that once they shipped the evasion family would be closed —
+everything left in combat (flanking, rampage, bushido, frenzy, provoke) wants a
+trigger event rather than a block rule, which is a different tier of work.
+
+### What shipped
+
+Five `Keyword` members and five checks in `combat.can_block`, plus one helper.
+Each is two or three lines:
+
+```python
+if Keyword.HORSEMANSHIP.value in ac.keywords and (
+    Keyword.HORSEMANSHIP.value not in bc.keywords
+):
+    return False
+
+if (Keyword.SHADOW.value in ac.keywords) != (Keyword.SHADOW.value in bc.keywords):
+    return False
+
+if "Artifact" not in bc.types:
+    if Keyword.FEAR.value in ac.keywords and "B" not in bc.colors:
+        return False
+    if Keyword.INTIMIDATE.value in ac.keywords and not (ac.colors & bc.colors):
+        return False
+```
+
+Keywords rather than `block_restriction` statics, and this run added a **second**
+reason to the one skulk established. The derived-versus-printed argument covers
+fear and intimidate — a land animated into a black creature may block a fear
+creature, and a static filter reads printed characteristics by design. But
+horsemanship's quality is printed, so that argument alone would not have settled
+it. The one that does is structural: a `blockers` filter is a **prohibition**
+("can't be blocked by Humans") and all four of these are **exemptions** ("can't
+be blocked *except* by …"). The filter language is a positive conjunction and
+its negation is not another key. That corollary is now written down in
+`keywords.md` beside the other two.
+
+Three of the five are their own shape and each has a boundary that a plausible
+implementation gets wrong:
+
+- **intimidate** compares the two creatures, on colors. A **colorless** creature
+  with intimidate shares a color with nothing, so only an artifact creature may
+  block it. Read as "is not a different color" it inverts into nearly the
+  opposite card.
+- **shadow** is the only evasion that is not an attacker-side rule at all.
+  702.28b is "can block **or** be blocked by only creatures with shadow", so the
+  check asks whether the two creatures *agree*. Hung on the attacker it would be
+  half a mechanic, and the missing half is the one that stops a Dauthi
+  Voidwalker from blocking.
+- **nonbasic landwalk** is 702.14 with the test inverted: a supertype the
+  defending player's land must *lack*. So it could not be a sixth
+  `LANDWALK_SUBTYPE` row, and "the defender controls eight Forests" is the case
+  that separates it from a naive "controls a land".
+
+One importer change, because Portal Three Kingdoms prints horsemanship as
+"Haste; horsemanship" and `proxy.lift_keywords` split on commas only. It now
+splits on semicolons too, which widens nothing: the check is still all-or-nothing
+over every part, so "Trample; rampage 2" and "First strike; banding" still fail
+on their second part exactly as they did when the line was unsplittable.
+
+Nothing else. `KNOWN_KEYWORDS` derives from the enum, so the loader, the
+residual gate and the importer picked all five up unprompted; `grant_keyword`
+carries them because the checks read the characteristic layer. Server and
+frontend: no change.
+
+### Harvested
+
+**28 cards**, across all five keywords — thirteen horsemanship, six fear, five
+intimidate, three shadow, and Dryad Sophisticate. Three of those (Lu Bu, Shu
+General, Zhang Fei) exist only because of the semicolon fix.
+
+The other 94 pending cards printing one of these keywords have no template,
+because they print something else as well; they stay in the agent tier for the
+next `/author-cards`, which is the ordinary outcome.
+
+`blocking-restriction` is retired from `unsupported-cards.md` entirely. Guul
+Draz Vampire's record survives with **one** need instead of three — the `+2/+1`
+and the `intimidate` halves are both expressible now, and what is left is a
+condition leaf that can ask about *one* opponent's life total rather than the
+sum. That is `player-quantifier`, which two cards now share.
+
+### Guarded by
+
+`tests/unit/test_evasion_keywords.py`. One class per keyword, plus a class for
+the claim they share. Every class carries its pair — a creature *without* the
+keyword being blocked normally — because a rule that refused every block would
+otherwise look identical from the refusals alone. The boundaries are tested in
+preference to the happy paths: the colorless intimidator against three different
+blockers, shadow refused in **both** directions, and nonbasic landwalk against a
+board of basics and against a dual on the *attacker's* side. The derived half is
+pinned with `animate`, which is the only way to change a creature's colour — a
+Forest cannot block a fear creature until it is animated into a black one, and
+then it can.
+
 ## Static conditions — "as long as", widened past its own counters
 
 ### Overview

@@ -85,6 +85,16 @@ class GameObject:
     #: "it's sacrificed when it enters" is an ETB trigger, so the flag has to
     #: outlive the spell.
     cast_evoked: bool = False
+    #: Whether this object was cast from a graveyard for its flashback cost.
+    #: Same contract as the two above, and it does two jobs: Increasing
+    #: Devotion's "if this spell was cast from a graveyard" reads it, and the
+    #: once-only rider reads it to send the card to exile instead of back to
+    #: the graveyard.
+    #:
+    #: `zone_is` cannot answer either question: it reports the source's
+    #: *current* zone, which for any resolving sorcery is the stack, identically
+    #: whether it was cast from hand or from the graveyard.
+    cast_from_graveyard: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -94,6 +104,43 @@ class GameObject:
     #: The turn the requirement was placed, which is what makes
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
+
+    #: "As this artifact enters, choose a creature type." The type this
+    #: permanent's controller named, read back by its own abilities through
+    #: ``{"chosen_type_of": "self"}``.
+    #:
+    #: Reset with the rest of the battlefield state: a permanent that leaves and
+    #: comes back is a new object as far as the rules are concerned, and chooses
+    #: again.
+    chosen_type: str | None = None
+
+    #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
+    #: no mana cost." Embalm and eternalize.
+    #:
+    #: A copy is a token whose ``def_id`` is the original's, so the "except"
+    #: clause has nowhere to live on the card -- it is a property of this one
+    #: object. Kept deliberately small: added subtypes, replacement colours, and
+    #: whether the mana cost is gone. Anything richer belongs in a real
+    #: copiable-values layer, which this engine does not have.
+    #:
+    #: Preserved across zone changes for the same reason ``is_token`` is: it is
+    #: part of what the object *is*, not something that happened to it.
+    copy_overrides: dict[str, Any] | None = None
+
+    #: "…exile it until this permanent leaves the battlefield." The oid of the
+    #: permanent that exiled *this* card, so its own leaves-trigger can find it
+    #: again.
+    #:
+    #: It lives on the exiled card rather than on the exiler because the exiler
+    #: is the thing that goes away: Oblivion Ring is in a graveyard by the time
+    #: the return happens. The exiled card is sitting in exile, unchanged, and
+    #: an oid survives every zone change, so this is the end of the link that
+    #: still exists when it is needed.
+    #:
+    #: Set *after* the move to exile, since `reset_permanent_state` runs during
+    #: it. Cleared by that same reset when the card comes back, which is right:
+    #: the link is spent once it has been followed.
+    exiled_by: int | None = None
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
@@ -107,6 +154,8 @@ class GameObject:
         self.monstrous = False
         self.frozen_by = None
         self.skip_next_untap = False
+        self.exiled_by = None
+        self.chosen_type = None
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.

@@ -426,6 +426,150 @@
       ]
     },
     {
+      "id": "t_fearsome",
+      "name": "Test Fearsome",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "fear"
+      ]
+    },
+    {
+      "id": "t_intimidator",
+      "name": "Test Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_colorless_intimidator",
+      "name": "Test Colorless Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{3}",
+      "colors": [],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_horseman",
+      "name": "Test Horseman",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "horsemanship"
+      ]
+    },
+    {
+      "id": "t_shadow_lurker",
+      "name": "Test Shadow Lurker",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "shadow"
+      ]
+    },
+    {
+      "id": "t_nonbasic_walker",
+      "name": "Test Nonbasic Walker",
+      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dryad"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "nonbasic_landwalk"
+      ]
+    },
+    {
+      "id": "t_artifact_blocker",
+      "name": "Test Artifact Blocker",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_horsemanship_granter",
+      "name": "Test Horsemanship Granter",
+      "oracle_text": "Creatures you control have horsemanship.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have horsemanship.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "horsemanship"
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tide_lock",
       "name": "Test Tide Lock",
       "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
@@ -1873,6 +2017,195 @@
               }
             ]
           }
+        }
+      ]
+    },
+    {
+      "id": "t_compelled_beast",
+      "name": "Test Compelled Beast",
+      "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+      "mana_cost": "{2}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "name": "Advocate of the Beast"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_flier",
+      "name": "Test Flier",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_flying_artifact",
+      "name": "Test Flying Artifact",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_advocate_of_the_beast",
+      "name": "Advocate of the Beast",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "power": 2,
+      "toughness": 3
+    },
+    {
+      "id": "t_goading_banner",
+      "name": "Test Goading Banner",
+      "oracle_text": "Creatures your opponents control attack each combat if able.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control attack each combat if able.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_discard_watcher",
+      "name": "Test Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_own_discard_watcher",
+      "name": "Test Own Discard Watcher",
+      "oracle_text": "Whenever you discard a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_creature_discard_watcher",
+      "name": "Test Creature Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a creature card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a creature card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent",
+            "filter": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
         }
       ]
     }

@@ -18,26 +18,34 @@ not a rewrite.
 | **Casting** | Timing restrictions (sorcery speed vs instant vs flash), targets chosen at cast time and re-checked on resolution |
 | **Mana** | Cost parsing, mana pools emptying per step, automatic payment with a backtracking solver, `X` costs |
 | **Combat** | Attacker/blocker declaration, evasion, damage assignment order, simultaneous damage, first and double strike as separate sub-steps |
-| **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, shroud, indestructible, flash, the five landwalks, skulk. `partner` is accepted but inert — see below |
-| **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed. Intervening-if clauses re-checked on resolution. Delayed triggers ("at the beginning of the next end step, …") via the `delay` op |
+| **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, shroud, indestructible, flash, the six landwalks (five basic types plus nonbasic), skulk, fear, intimidate, horsemanship, shadow. `partner` is accepted but inert — see below. Every Magic keyword, routed to a mechanism and marked shipped / free / routed / blocked, is censused in [keywords.md](keywords.md) |
+| **Triggers** | ETB, dies, leaves-the-battlefield, landfall, land-played, spell-cast, attacks, blocks, combat damage to a player, upkeep, draw step, begin combat, end step, life gain, counters placed, draws, discards (every one of them: a discard effect, the cleanup trim to hand size, and a cycling cost). Intervening-if clauses re-checked on resolution. Delayed triggers ("at the beginning of the next end step, …") via the `delay` op |
 | **Command zone** | Abilities that work from the command zone (Edgar Markov's eminence), commander tax, commander damage, the zone-change replacement |
 | **Static abilities** | Anthems, keyword grants, P/T setting (including `*/*` read off the board), subtype grants, type replacement, "as long as" conditions (a boolean tree over counters, board and zone counts, and whose turn it is — Threshold), and the player-wide ones: extra land drops, no hand limit, playing lands from the graveyard or the top of the library, doubling land triggers, doubling land *mana*, and freezing the lands an opponent taps |
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
 | **Costs** | Mana, tap, untap, sacrifice, discard, discard *this card*, pay life, remove counters, exile from graveyard |
-| **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself. Plain cycling only: typecycling fetches instead of drawing, and "when you cycle this card" needs a trigger event the engine does not have |
+| **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself, plus "When you cycle this card…" as its own `cycle` event, fired after the cycling ability is on the stack so the trigger resolves *before* the draw (the printed "Do this before you draw"). Typecycling is still out: it fetches instead of drawing, which is a different ability |
 | **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads — readable by the permanent's own enters trigger, not just during resolution |
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
 | **Emerge** | The alternative cost whose price depends on the creature sacrificed for it — one cast line per creature, reduced by its mana value |
 | **Cast triggers** | "When you cast this spell", via `active_zones: ["stack"]` — an ability firing while its own card is the spell |
-| **Cost reduction** | "This spell costs {X} less to cast", read off the board by both legality and payment |
+| **Ascend / the city's blessing** | "If you control ten or more permanents, you get the city's blessing for the rest of the game", as a **state trigger** in the state-based-action pass -- no stack, no response, checked continuously -- plus a `has_city_s_blessing` condition leaf in both condition languages. Player state, so it survives the permanents leaving, survives the Ascend card leaving, and is shared by every card that player controls |
+| **Flashback** | "Flashback—{1}{U}, Pay 3 life" — an alternative cost offered only from the owner's graveyard, replacing the printed mana cost, with the rest of it paid as an additional cost. Once-only: the spell is exiled instead of returning to the graveyard, on resolution and on fizzling alike. `cast_from_graveyard` is readable inside `if`, so Increasing Devotion makes ten tokens rather than five |
+| **Embalm** | An activated ability offered from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause (replacement colours, added subtypes, no mana cost). The same infinite-engine guard cycling introduced, now satisfiable by either self-discard or self-exile |
+| **Damage history** | "Whenever a creature dealt damage by this creature this turn dies" — a per-turn ledger of victim → sources, cleared at cleanup with the damage itself, read by a `damaged_by` trigger filter. On the state rather than the object, because the creature it asks about has just died |
+| **Draw history** | "Add {C} for each card you've drawn this turn" — a per-turn tally of draws per player, incremented in `draw_cards` so nothing routes around it, read as the `cards_drawn_this_turn` value expression. Cleared by the **untap step** and not by cleanup: the opening hand is drawn before turn 1 exists, and cleanup can still hand priority back inside the turn it is ending |
+| **Exile until it leaves** | "Exile it until this permanent leaves the battlefield" — the O-Ring family. A link written on the *exiled card* naming the permanent that exiled it, so the exiler's own leaves-trigger returns its victims and nobody else's |
+| **Cost reduction** | Both directions: "This spell costs {X} less to cast" as a card-level field (Ghalta), and "Creature spells with flying you cast cost {1} less" as a `spell_cost_reduction` static discounting *other* cards, filtered on the printed face of the spell being cast. Both go through one function, so legality and payment cannot disagree |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
 | **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants. The condition is a boolean tree (`all`/`any`/`not`/`exists`/`cmp`/`is_your_turn`) over counters on the source, printed characteristics of the board, and how many cards sit in a zone, so **Threshold** works: Nimble Mongoose is a 1/1 at six cards in the graveyard and a 3/3 at seven, in either direction |
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
 | **Hybrid mana** | `{W/U}` and `{2/W}` parsed, paid and counted towards colour identity |
 | **Restricted mana** | "Spend this mana only to cast a creature spell", by filtering sources before the solver |
+| **Attack requirements** | Both forms: the one-shot `must_attack` op ("attacks this turn / next combat if able") and the continuous `attacks_if_able` static ("attacks each combat if able", including the goad-shaped "creatures your opponents control"). Enforced at one point by withholding "Done attacking", and always subject to "if able", so a tapped or summoning-sick creature owes nothing and the step cannot deadlock |
+| **Variable mana abilities** | "Add {G} for each +1/+1 counter on this creature" / "for each creature you control" — an `amount` on `add_mana`, evaluated at activation and applied at the one point the payment solver and the payout already share, so the price offered and the mana made cannot differ. Rule 605 is intact: evaluating the amount asks nothing, it only looks |
 | **Token copies** | "A token that's a copy of target creature", copying the printed card and nothing accumulated on it |
 | **Protection** | From a type, subtype or colour, across all four of damage, enchant/equip, block and target |
 | **Granted abilities** | "…and 'Whenever this creature deals combat damage to a player, draw a card'", until end of turn. Triggered abilities only |
@@ -60,6 +68,7 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | **Automatic trigger ordering** | Simultaneous triggers you control resolve in a fixed order rather than one you choose | Matters only for a handful of interactions, none of them in these decks |
 | **Modes chosen before targets** | A modal spell now picks its mode as it is cast (rule 601.2b), but its *targets* are enumerated as part of the action, so they are chosen first — the reverse of the printed order. A **nested** `choose_mode`, and any `choose_mode` inside a **triggered** ability, still resolve late: neither has a single cast-time question to answer | Cast-time modes were the observable half — an opponent can now see the mode they are responding to. Target-before-mode is what the shared `optional: true` idiom in [card-dsl.md](card-dsl.md) exists to paper over, and closing it means moving target enumeration behind a decision |
 | **X capped for the policy** | A human is offered every X from 0 up to what the board can pay. The RL policy sees X ∈ 0..9, because `CHOICE_CAP` in `ai/action_space.py` is 10 and `IDX_CHOOSE` sits below `IDX_YES` in the index layout | Raising the cap shifts every index above it and invalidates trained checkpoints, for a ceiling that only bites above ten spare mana |
+| **"As this enters, choose…" is a trigger** | Vanquisher's Banner's "as this artifact enters, choose a creature type" is implemented as a `self_enters` trigger, so the type is chosen a moment *after* the permanent arrives rather than as it does. Until it is chosen, the filters it feeds match nothing | `zones._enter_battlefield` applies enter-replacements synchronously and cannot yield a decision. The window is observable only by another trigger ordered between the two, and closing it means making the replacement whitelist generator-driven |
 | **Object identity survives zone changes** | The `oid` is preserved where the rules would create a new object; permanent state is reset instead | Simpler and equivalent for everything except effects that track "the new object" |
 | **Last-known information is explicit** | A card that needs a value after its target has left declares a `snapshot` op (see Swords to Plowshares) | A global LKI system for two cards is not worth it; the explicit form is also easier to read |
 | **Commander replacement is automatic** | A commander always returns to the command zone rather than being asked | It is what players choose in practice, and it keeps zone changes out of the decision system |
@@ -86,11 +95,13 @@ current count is in `tests/cards/precon_deficits.json`, which is generated, and
 the whole picture is `python scripts/audit_cards.py`. They are not new bugs —
 they are the cost of building the precons before the gates existed, measured for
 the first time. Repair one with `/author-cards <name>`; the mechanics they are
-waiting on (flashback, evolve, ascend, investigate, intimidate — none of the 15
-keywords in `engine/enums.py` covers them) are `/extend-dsl` jobs. Cycling was
-one of them and now ships; the cards that print "when you cycle this card" still
-wait on the trigger event. Skulk and threshold have both shipped since, and
-Nimble Mongoose is off this list.
+waiting on are `/extend-dsl` jobs, and as of this sequence there are none left
+in the report except Kydele's per-turn draw tally. Cycling was
+one of them and now ships in full, trigger included, so Krosan Tusker is off
+this list. Evolve went with it, on Gyre Sage. Skulk and threshold have both shipped since, and
+Nimble Mongoose is off this list. So are intimidate (with the rest of the
+evasion family) and investigate — the latter needed no vocabulary at all, only a
+Clue in the token pool, and Bygone Bishop is off this list with it.
 
 ## Imported cards, which are simplified further
 
@@ -122,13 +133,12 @@ keyword: it is a deck-construction rule, and the engine is handed a finished dec
 
 **Costs and casting**
 Alternative costs in general (evoke is implemented) · phyrexian and snow mana ·
-convoke and similar · flashback and other graveyard casting (retrace is
-implemented) · overload
+convoke and similar · overload
 
 **Effects**
 Copying a permanent as anything but a token · gaining control of a permanent ·
 damage prevention or redirection other than protection · regeneration · ward ·
-"unless that player pays" · granting a *static* or *activated* ability to
+granting a *static* or *activated* ability to
 another permanent (triggered ones work) · general replacement effects (only four are
 whitelisted: enters tapped, enters with counters, the commander zone change, and
 tokens ceasing to exist)
@@ -138,8 +148,9 @@ Attacking planeswalkers or battles · banding · "must be blocked" · manual dam
 division · attacking with creatures you do not control
 
 **Structural**
-Multiplayer politics (voting, goad) · sideboards and companions · the monarch,
-initiative, day/night, and other designated-player mechanics
+Multiplayer politics (voting) · sideboards and companions · the monarch,
+initiative, day/night and the other designated-player mechanics (the city's
+blessing is implemented; the rest are not)
 
 ## How this is enforced
 

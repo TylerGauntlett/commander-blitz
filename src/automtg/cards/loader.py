@@ -79,6 +79,37 @@ STATIC_EFFECTS = frozenset(
         # prohibition, so unlike every other static here its `affects`
         # routinely names creatures its own controller does not control.
         "cant_attack",
+        # Marauding Maulhorn.  The obligation to `cant_attack`'s prohibition,
+        # read by `combat.attack_required` at the same enforcement point the
+        # `must_attack` op uses.  A static rather than that op because a
+        # printed "attacks each combat if able" is true again every turn, where
+        # the op writes a one-shot flag that is spent on declaration.
+        "attacks_if_able",
+        # Warden of Evos Isle.  Read by `costs.cost_reduction`, not by the
+        # characteristics pipeline: it prices a card that is still in hand, so
+        # its filter (`affects_spells`) matches a printed face rather than a
+        # permanent, and is a different list from `affects`.
+        "spell_cost_reduction",
+    }
+)
+
+#: Keys a ``spell_cost_reduction`` static's ``affects_spells`` filter may use.
+#:
+#: Deliberately not `STATIC_FILTER_KEYS`: that list describes *permanents* and
+#: carries board state (`tapped`, `attacking`, `attached`) which a card in hand
+#: does not have.  These are the printed face plus who is casting it, which is
+#: all `characteristics._matches_printed` reads.
+SPELL_FILTER_KEYS = frozenset(
+    {
+        "controller",
+        "types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "keywords",
+        "not_keywords",
+        "name",
     }
 )
 
@@ -258,6 +289,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    flashback = Cost.from_spec(model.flashback.model_dump()) if model.flashback else None
+    if flashback is not None:
+        if not flashback.mana.text:
+            # The mana half *replaces* the printed cost, so without it the card
+            # would be castable from the graveyard for free.
+            raise DslError(f"{where}: a flashback cost needs mana")
+        if flashback.mana.x_count:
+            raise DslError(f"{where}: a flashback cost with X is not implemented")
+        if model.retrace:
+            # Both widen legality to the graveyard and each replaces the other's
+            # answer to "what does it cost from there".
+            raise DslError(f"{where}: a card may not have both 'flashback' and 'retrace'")
+    reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
+    if reads_from_graveyard and flashback is None:
+        raise DslError(
+            f"{where}: reads the 'cast_from_graveyard' condition but has no "
+            f"'flashback' cost, so it could never be true"
+        )
+
     colors = (
         frozenset(model.colors)
         if model.colors is not None
@@ -303,6 +353,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
+        flashback=flashback,
+        ascend=model.ascend,
         suspend=suspend,
     )
 
@@ -372,7 +424,19 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         # again without ever leaving. Cycling pays for itself by discarding
         # itself, which is exactly the property that makes it safe and is why
         # the two arrived together.
-        if set(active_zones) - {Zone.BATTLEFIELD} and not cost.discard_self:
+        if model.is_cycling and not cost.discard_self:
+            # Rule 702.29: cycling *is* "Discard this card:". Without the
+            # discard the `cycle` event would fire for an ability that never
+            # cycled anything, and Krosan Tusker would fetch a land every time.
+            raise DslError(
+                f"{where}: 'is_cycling' needs a cost that discards this card "
+                f"(got {cost.describe()!r})"
+            )
+        # Two costs remove the source from a non-battlefield zone: cycling
+        # discards this card from hand, embalm exiles it from the graveyard.
+        # Either satisfies the rule; neither is optional.
+        removes_source = cost.discard_self or cost.exile_from_graveyard is not None
+        if set(active_zones) - {Zone.BATTLEFIELD} and not removes_source:
             raise DslError(
                 f"{where}: an activated ability outside the battlefield needs a cost "
                 f"that removes its source from that zone (got {cost.describe()!r}); "
@@ -437,12 +501,14 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         active_zones = tuple(Zone(z) for z in model.active_zones)
 
     mana_options: tuple[tuple[int, ...], ...] = ()
+    mana_amount: Mapping[str, Any] | None = None
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
         mana_options = _mana_options(model.effects, where)
+        mana_amount = _mana_amount(model.effects, where)
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
@@ -459,8 +525,10 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
+        mana_amount=mana_amount,
         mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
+        is_cycling=model.is_cycling,
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,
@@ -507,6 +575,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
+    if model.effect == "spell_cost_reduction":
+        # `affects_spells`, not `affects`: this filter is matched against a card
+        # in hand while legality prices it, so it may only read the printed
+        # face. A static that reduced nothing would load clean and show
+        # nothing, so both halves are required.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: spell_cost_reduction filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(f"{where}: spell_cost_reduction needs 'affects_spells'")
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell has a printed face and a caster "
+                f"and no board state; unsupported keys {sorted(unknown)}"
+            )
+        if model.amount is None:
+            raise DslError(
+                f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "
+                f"of nothing is not a card"
+            )
+        _validate_static_value(model.amount, f"{where}.amount")
+    elif model.affects_spells is not None:
+        raise DslError(
+            f"{where}: 'affects_spells' only means anything on a "
+            f"spell_cost_reduction static, not on {model.effect!r}"
+        )
     if model.effect in (
         "extra_land_drops",
         "no_hand_limit",
@@ -518,6 +615,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     ):
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+    elif model.effect == "spell_cost_reduction":
+        # Picks out *spells*, through `affects_spells`, checked above. There are
+        # no permanents for `affects` to name.
+        pass
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
 
@@ -556,6 +657,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["condition"] = dict(model.condition)
     if model.affects is not None:
         static["affects"] = dict(model.affects)
+    if model.affects_spells is not None:
+        static["affects_spells"] = dict(model.affects_spells)
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     for field_name in ("power", "toughness", "amount"):
@@ -603,7 +706,10 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
 STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
 
 #: The forms a static's condition may take, one per node.
-STATIC_CONDITION_HEADS = ("counters", "all", "any", "not", "exists", "is_your_turn", "cmp")
+STATIC_CONDITION_HEADS = (
+    "counters", "all", "any", "not", "exists", "is_your_turn",
+    "has_city_s_blessing", "cmp",
+)
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static
 #: is read while the pipeline computes characteristics, including for objects
@@ -615,7 +721,12 @@ STATIC_COUNT_ZONES = frozenset({"battlefield", "graveyard", "hand", "exile", "li
 #: zone.  ``affects`` and ``blockers`` deliberately do not get ``zone``: they
 #: pick out permanents the static applies to, and there are no permanents
 #: outside the battlefield, so a zone there would load and match nothing.
-STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone"}
+#: ``name`` is here and deliberately *not* in ``STATIC_FILTER_KEYS``. "…unless
+#: you control a creature named Advocate of the Beast" is a question the
+#: condition asks about the board; "each creature named X gets +1/+1" is not a
+#: card, so `affects` has no use for it and allowing it there would only invite
+#: one.
+STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone", "name"}
 
 #: ...and once it names a zone other than the battlefield, only these.  A card
 #: in a graveyard has a printed face and an owner; it is not tapped, attacking,
@@ -625,6 +736,8 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
     {
         "zone",
         "controller",
+        # A card in a graveyard has no board state, but it does have a name.
+        "name",
         "types",
         "not_types",
         "subtypes",
@@ -707,6 +820,13 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "has_city_s_blessing":
+        who = condition["has_city_s_blessing"]
+        if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
+            raise DslError(
+                f"{where}.has_city_s_blessing: must name one of "
+                f"{sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+            )
     elif head == "cmp":
         op = str(condition["cmp"])
         if op not in STATIC_CONDITION_OPS:
@@ -717,18 +837,36 @@ def _validate_static_condition(condition: Any, where: str) -> None:
             _validate_static_value(condition[side], f"{where}.{side}")
 
 
+#: Player specs a static's per-player life leaf may name.  Smaller than the
+#: effect-side list: `active_player` and the binding forms read something that
+#: is not settled while characteristics are being computed.
+STATIC_LIFE_PLAYERS = frozenset({"you", "opponent", "each_opponent", "each_player", "all"})
+
+#: The per-player life leaves.  Safe inside a static for the same reason a zone
+#: count is: a life total is a pipeline *input*, and nothing in the fixed-order
+#: characteristics pipeline can change one.
+STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
+
+
 def _validate_static_value(value: Any, where: str) -> None:
-    """Static abilities allow only ``{"const": n}`` and ``{"count": filter}``."""
+    """Static abilities allow ``const``, ``count`` and the per-player life leaves."""
+    allowed = {"const", "count"} | STATIC_LIFE_KEYS
     if isinstance(value, int):
         return
     if not isinstance(value, Mapping):
         raise DslError(f"{where}: static values must be an int, 'const' or 'count'")
-    if set(value) - {"const", "count"}:
+    if set(value) - allowed:
         raise DslError(
-            f"{where}: static values may only use 'const' or 'count', got {sorted(value)}"
+            f"{where}: static values may only use {sorted(allowed)}, got {sorted(value)}"
         )
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    for key in STATIC_LIFE_KEYS & set(value):
+        who = value[key]
+        if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
+            raise DslError(
+                f"{where}.{key}: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+            )
 
 
 def _compile_cost(model, where: str) -> Cost:
@@ -757,6 +895,29 @@ def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int,
     return (_sum_mana(effects, where),)
 
 
+#: Value forms a mana ability's ``amount`` may NOT use.
+#:
+#: A mana ability is activated inside cost payment, with nothing on the stack:
+#: there is no X, no target, no trigger binding and no enclosing loop. Each of
+#: these would evaluate to 0 and make a card that silently produces no mana, so
+#: they are refused at load rather than at the table.
+MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
+
+
+def _validate_mana_amount(amount: Any, where: str) -> None:
+    validate_value(amount, where)
+    if isinstance(amount, str) and amount == "x":
+        raise DslError(f"{where}: a mana ability has no X to read")
+    if not isinstance(amount, Mapping):
+        return
+    bad = MANA_AMOUNT_FORBIDDEN & set(amount)
+    if bad:
+        raise DslError(
+            f"{where}: a mana ability is activated during payment, with no X, "
+            f"targets, bindings or loop -- {sorted(bad)} would always read 0"
+        )
+
+
 def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
     total = [0] * 6
     for effect in effects:
@@ -770,6 +931,27 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
     if not any(total):
         raise DslError(f"{where}: mana ability produces no mana")
     return tuple(total)
+
+
+def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any] | None:
+    """The ``amount`` on a variable mana ability -- "Add {G} for each ...".
+
+    Deliberately narrow. The amount scales *one* symbol tuple, so a card that
+    carried one would be ambiguous if it also summed several `add_mana`s or
+    offered modes: "for each counter" would have no single thing to multiply.
+    One `add_mana`, or no amount at all.
+    """
+    carriers = [e for e in effects if isinstance(e, Mapping) and "amount" in e]
+    if not carriers:
+        return None
+    if len(effects) != 1:
+        raise DslError(
+            f"{where}: a mana ability with an 'amount' must be a single 'add_mana' "
+            f"-- there is otherwise no one symbol for the amount to scale"
+        )
+    amount = carriers[0]["amount"]
+    _validate_mana_amount(amount, f"{where}.amount")
+    return dict(amount) if isinstance(amount, Mapping) else amount
 
 
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
@@ -813,9 +995,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             CostModel.model_validate(effect["pay"])
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
-        if not effect.get("effects"):
+        # A payment has to buy *something*, but there are two things it can buy.
+        # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
+        # Study's "unless that player pays {1}" buys the **absence** of the
+        # `else` -- the payer gets nothing and that is the whole point, because
+        # what they are paying for is to stop the other branch happening. So
+        # `effects` alone is not the test; having neither branch is.
+        if not effect.get("effects") and not effect.get("else"):
             raise DslError(
-                f"{where}: 'pay' needs 'effects' -- paying for nothing is not a card"
+                f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
@@ -826,6 +1014,29 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}: unknown must_attack duration {duration!r} "
                 f"(implemented: 'this_turn', 'next_combat')"
             )
+    # The link is written on the exiled card and points at the source of the
+    # ability that exiled it. With nothing to exile there is nothing to link,
+    # and the card would load as a permanent exile with no way to say so.
+    if op == "exile" and effect.get("until_leaves") and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
+        )
+    if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
+        # "…except it's a white Zombie Angel with no mana cost." A misspelled
+        # key here would be silently dropped, and the token would come back a
+        # plain copy -- which is a different card and looks identical until
+        # somebody reads its colour.
+        if not isinstance(overrides, Mapping):
+            raise DslError(f"{where}: 'except_' must be an object")
+        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost"}
+        if unknown:
+            raise DslError(
+                f"{where}.except_: unsupported keys {sorted(unknown)} "
+                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost')"
+            )
+        for color in overrides.get("colors") or ():
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:

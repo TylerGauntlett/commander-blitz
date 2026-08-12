@@ -42,6 +42,26 @@ from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
 
+#: What ``min_life_of`` reports when its player spec selects nobody.
+#:
+#: Not zero, and the direction matters. "An opponent has 10 or less life" with
+#: no opponents left must be **false**, and a minimum of 0 would make it
+#: vacuously true -- turning Vampire Lacerator's drawback off at the exact
+#: moment the last opponent died. So the minimum over an empty set is a life
+#: total nothing reaches. ``max_life_of`` has the opposite bias and uses a plain
+#: 0, because "each opponent has 10 or less" over nobody *is* vacuously true and
+#: that is the correct reading.
+#:
+#: It lives here rather than next to the rest of the value language because
+#: ``effects/values.py`` already imports this module, and both languages need
+#: the same answer.
+NO_PLAYERS_LIFE = 1_000_000
+
+
+def min_life(lives: list[int]) -> int:
+    """The lowest of several life totals, biased away from vacuous truth."""
+    return min(lives, default=NO_PLAYERS_LIFE)
+
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
@@ -84,6 +104,16 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     supertypes = set(card.supertypes)
     keywords = set(card.keywords)
     colors = set(card.colors)
+
+    # "…a copy of it, except it's a white Zombie Angel with no mana cost."
+    # Applied to the *printed* face, before any layer: the exception is part of
+    # what this object is, not an effect on it, so an anthem or an animate
+    # afterwards should layer on top exactly as it would on a printed card.
+    if obj.copy_overrides:
+        if (added := obj.copy_overrides.get("add_subtypes")):
+            subtypes.update(added)
+        if (repaint := obj.copy_overrides.get("colors")) is not None:
+            colors = set(repaint)
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -239,6 +269,13 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "has_city_s_blessing" in cond:
+        # Player state, so a pipeline *input* exactly as a zone count is:
+        # nothing in the fixed-order characteristics pipeline can change whether
+        # a player has the blessing, so no static can come to depend on another
+        # static's output through it.
+        pids = _static_players(state, source, cond["has_city_s_blessing"])
+        return any(state.players[p].has_city_s_blessing for p in pids)
     if "cmp" in cond:
         left = _static_value(state, cond.get("left"), source)
         right = _static_value(state, cond.get("right"), source)
@@ -257,9 +294,15 @@ def _compare(op: str, left: int, right: int) -> bool:
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     """Evaluate the restricted value language allowed inside static abilities.
 
-    Only ``{"const": n}`` and ``{"count": <filter>}`` are permitted here -- the
-    full value language would need the selector engine, which needs derived
-    characteristics, which would reintroduce recursion.
+    ``{"const": n}``, ``{"count": <filter>}`` and the two per-player life leaves
+    are permitted here -- the full value language would need the selector
+    engine, which needs derived characteristics, which would reintroduce
+    recursion.
+
+    A life total is safe for the same reason a zone count is: it is a *pipeline
+    input*. Nothing in the fixed-order characteristics pipeline can change what
+    a player's life is, so reading one cannot make a static depend on another
+    static's output.
     """
     if expr is None:
         return 0
@@ -271,6 +314,12 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "min_life_of" in expr:
+        pids = _static_players(state, source, expr["min_life_of"])
+        return min_life([state.players[p].life for p in pids])
+    if "max_life_of" in expr:
+        pids = _static_players(state, source, expr["max_life_of"])
+        return max([state.players[p].life for p in pids], default=0)
     return 0
 
 
@@ -314,9 +363,43 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     who = str(spec or "you")
     if who == "you":
         return [source.controller]
-    if who == "opponent":
+    # "opponent" and "each_opponent" are the same set, as they are in the
+    # effect-side `select_players`. Spelling only one of them here meant
+    # "each_opponent" fell through to *every* player including yourself.
+    if who in ("opponent", "each_opponent"):
         return state.opponents(source.controller)
     return state.alive()
+
+
+def resolve_chosen_subtypes(
+    selector: Mapping[str, Any], source: GameObject | None
+) -> Mapping[str, Any]:
+    """Turn ``[{"chosen_type_of": "self"}]`` into the type that was chosen.
+
+    Vanquisher's Banner's anthem and its draw trigger both say "of the chosen
+    type", and a filter is a plain list of literal names everywhere else. This
+    is the one substitution, done wherever a filter is about to be matched
+    rather than at load time -- the choice does not exist until the permanent is
+    on the battlefield.
+
+    A source that has chosen nothing yet matches **nothing**, which is right: an
+    anthem for "the chosen type" before a type is chosen should pump nobody, not
+    everybody.
+    """
+    wanted = selector.get("subtypes")
+    if not wanted or not any(isinstance(s, Mapping) for s in wanted):
+        return selector
+    out: list[str] = []
+    for entry in wanted:
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_type_of") == "self":
+            chosen = source.chosen_type if source is not None else None
+            if chosen is None:
+                return {**selector, "subtypes": ["\0none"]}
+            out.append(chosen)
+    return {**selector, "subtypes": out}
 
 
 def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
@@ -347,6 +430,14 @@ def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
     not_keywords = selector.get("not_keywords")
     if not_keywords and set(not_keywords) & card.keywords:
         return False
+    # "…unless you control a creature named Advocate of the Beast." A name is
+    # the most printed characteristic there is and nothing in the pipeline can
+    # change one, so it is safe here for the same reason `types` is. Allowed
+    # only in a *counting* filter, never in `affects`: "each creature named X
+    # gets +1/+1" is not a card, and the name test belongs in the condition.
+    name = selector.get("name")
+    if name is not None and card.name != name:
+        return False
     return True
 
 
@@ -365,6 +456,7 @@ def _matches(
         return False
     if not obj.on_battlefield:
         return False
+    selector = resolve_chosen_subtypes(selector, source)
     card = state.card_of(obj)
 
     if selector.get("exclude_self") and obj.oid == source.oid:
@@ -566,6 +658,72 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
         return False
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_attack":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
+def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+    """How much less ``pid`` pays for ``card`` because of statics on the board.
+
+    "Creature spells with flying you cast cost {1} less to cast." The card-level
+    `cost_reduction` field points the other way -- it discounts the card that
+    *carries* it, by counting permanents -- so Warden of Evos Isle cannot be
+    written with it. This discounts a **different** card, picked out by that
+    card's own printed characteristics.
+
+    The filter is matched against the printed face rather than a permanent,
+    which is why it reuses `_matches_printed` and nothing else: the spell is
+    still in hand while legality prices it, so there is no board state to read
+    and no derived characteristics to recurse into.
+
+    Returns a total, clamped and applied by `costs.cost_reduction` -- the one
+    function both legality and payment already call, so a spell offered at the
+    reduced price is also paid at it.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spell_cost_reduction":
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` here would make an
+            # empty filter match *every* spell, so a compile bug would silently
+            # discount the whole game rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        if not _matches_printed(card, filt):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
+def attack_compelled(state: GameState, oid: int) -> bool:
+    """Is this creature under a continuous "attacks each combat if able"?
+
+    The permanent counterpart of the `must_attack` op. That op writes a
+    one-shot flag on the object -- Bident of Thassa's "this turn", Trench
+    Behemoth's "next combat" -- and is spent once the declaration is locked in.
+    A printed "This creature attacks each combat if able" is not spent: it is
+    true again next turn, and it stops being true the moment its source leaves
+    or its condition turns off. That is a static, so it is read live off the
+    battlefield rather than stored.
+
+    One effect covers all the printed variants -- "This creature…", "Creatures
+    your opponents control…", "Enchanted creature…" -- because they differ only
+    in `affects`. Like `cant_attack`, that filter routinely names creatures the
+    static's own controller does not control.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "attacks_if_able":
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return True

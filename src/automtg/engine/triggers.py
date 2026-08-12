@@ -44,6 +44,8 @@ TRIGGER_EVENTS: dict[str, str] = {
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     "draw": EventType.DRAW,
+    "discard": EventType.DISCARD,
+    "cycle": EventType.CYCLED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -61,11 +63,25 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "counter_placed",
         "land_played",
         "becomes_monstrous",
+        # The cycled card itself, so `source: "self"` scopes the trigger to the
+        # card that was cycled rather than to every cycling anywhere.
+        "cycle",
+        # The discarded card, so a filter may ask what it was -- "whenever an
+        # opponent discards a *creature* card". It is in the graveyard by the
+        # time the event fires and `matches_card_filter` reads the printed face,
+        # so the subject is still there to be asked about.
+        "discard",
     }
 )
 
 #: Triggers that keep working while their source is in the graveyard, because the
 #: source has just left the battlefield.
+#:
+#: ``cycle`` is deliberately absent. This set drives one special path, keyed on
+#: DIES/LEAVES_BATTLEFIELD, for an object no zone list holds any more. A cycled
+#: card *is* in a zone list -- the graveyard, which `_candidate_abilities`
+#: already walks -- so it is found by declaring `active_zones: ["graveyard"]`
+#: like any other graveyard trigger.
 LEAVE_TRIGGERS = frozenset({"dies", "creature_dies", "leaves_battlefield"})
 
 
@@ -280,7 +296,12 @@ def _actor(
     state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
 ) -> int | None:
     """The player the ``controller`` clause is compared against."""
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "begin_combat"):
+    # `discard` is listed here even though it also has an object subject. The
+    # clause asks *who discarded*, and the discarded card is in a graveyard by
+    # now -- reading the actor off the object would be reading a controller that
+    # `reset_permanent_state` has already been through. `discard_cards` puts the
+    # discarding player on the event, so take it from there.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
@@ -310,10 +331,27 @@ def matches_card_filter(
         return False
     card = state.card_of(obj)
 
+    # "…a creature spell of the chosen type." The same substitution the static
+    # filters do, because Vanquisher's Banner asks the question from both.
+    from .characteristics import resolve_chosen_subtypes
+
+    filt = resolve_chosen_subtypes(filt, ability_source)
+
     if filt.get("exclude_self") and oid == ability_source.oid:
         return False
     if filt.get("self_only") and oid != ability_source.oid:
         return False
+
+    # "Whenever a creature dealt damage by this creature this turn dies…"
+    # Sengir Vampire. A relationship rather than a characteristic, so it is
+    # answered from the per-turn ledger on the state rather than from the card
+    # face -- and it has to be, because the subject has already died and
+    # anything stored on it is gone.
+    damaged_by = filt.get("damaged_by")
+    if damaged_by is not None:
+        who = ability_source.oid if damaged_by == "self" else damaged_by
+        if who not in state.damage_ledger.get(oid, ()):
+            return False
 
     controller = filt.get("controller")
     if controller == "you" and obj.controller != ability_source.controller:

@@ -12,7 +12,7 @@ loader has already validated every key and op name against the registries.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
@@ -92,6 +92,15 @@ class Cost:
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
         )
+
+    def without_mana(self) -> Cost:
+        """This cost with its mana removed -- the *additional* half.
+
+        Flashback's mana replaces the printed cost and everything else is paid
+        on top, the way `retrace_cost` is, so the two halves are charged at
+        different moments and legality has to test them separately.
+        """
+        return replace(self, mana=ManaCost.parse(""))
 
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
@@ -191,10 +200,20 @@ class Ability:
     cost: Cost | None = None
     is_mana_ability: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
+    #: "Add {G} for each +1/+1 counter on this creature."  A value expression
+    #: evaluated **when the ability is activated**, multiplying the single
+    #: option in ``mana_options``.  ``None`` means the ordinary fixed output.
+    #:
+    #: It cannot be folded into ``mana_options`` at load time, which is the
+    #: whole difficulty: those tuples are constants, and this one is a question
+    #: about the board.
+    mana_amount: Mapping[str, Any] | None = None
     #: "Spend this mana only to cast a creature spell" -- the card type the mana
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None
     sorcery_speed_only: bool = False
+    #: This ability is cycling, so activating it emits ``EventType.CYCLED``.
+    is_cycling: bool = False
     # triggered
     trigger: TriggerSpec | None = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
@@ -279,6 +298,23 @@ class CardDef:
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.
     retrace: bool = False
+    #: Ascend. Deliberately *not* a `Keyword`: the enum's members are
+    #: read by `grant_keyword` and the evasion checks off derived
+    #: characteristics, and Ascend is neither granted nor evasive --
+    #: it is a state trigger watching a permanent count.
+    ascend: bool = False
+    #: "Flashback {1}{U}, Pay 3 life" -- an alternative cost offered only for a
+    #: copy in the owner's *graveyard*, replacing the printed mana cost.
+    #:
+    #: A full `Cost` rather than a `ManaCost` like ``evoke``, because Deep
+    #: Analysis charges life as well: the mana half replaces the printed cost
+    #: and everything else is an additional cost paid after it, exactly as
+    #: `retrace_cost` is.
+    #:
+    #: Once-only, and that is enforced elsewhere: a spell cast this way is
+    #: exiled rather than put into a graveyard when it finishes, so it cannot be
+    #: flashed back twice.
+    flashback: Cost | None = None
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 

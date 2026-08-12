@@ -8,7 +8,7 @@ that is the effect layer's job.
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .characteristics import chars
 from .enums import Keyword, Zone
@@ -38,6 +38,10 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         oid = player.library[0]
         move_object(state, oid, Zone.HAND, to_player=pid, cause="draw")
         drawn.append(oid)
+        # "…for each card you've drawn this turn." Counted here rather than off
+        # the DRAW event, so that every draw counts however it was caused and a
+        # card can never be drawn without the tally seeing it.
+        state.cards_drawn_this_turn[pid] = state.cards_drawn_this_turn.get(pid, 0) + 1
         fire(state, EventType.DRAW, player=pid, source=oid, oid=oid)
     return drawn
 
@@ -164,6 +168,11 @@ def damage_permanent(
         )
         return 0
     obj.damage += amount
+    if source_oid is not None:
+        # Recorded here rather than on the object: Sengir Vampire asks the
+        # question about a creature that has already died, and anything stored
+        # on the victim is wiped by `reset_permanent_state` on the way out.
+        state.damage_ledger.setdefault(oid, set()).add(source_oid)
     if source_oid is not None and _has(state, source_oid, Keyword.DEATHTOUCH):
         obj.deathtouched = True
     fire(
@@ -262,6 +271,7 @@ def create_token(
     *,
     tapped: bool = False,
     attacking: int | None = None,
+    overrides: dict[str, Any] | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -269,12 +279,18 @@ def create_token(
     the battlefield attacking was **never declared** as an attacker, so it does
     not trigger anything that fires on attacking -- that is the actual rule, and
     it is also what stops a mobilize token making another mobilize token forever.
+
+    ``overrides`` is embalm's "except it's a white Zombie Angel with no mana
+    cost".  Set *before* the token enters, so its enters-trigger and every
+    characteristic read afterwards see the token it actually is.
     """
     made: list[int] = []
     for _ in range(max(0, count)):
         obj = new_object(
             state, def_id, owner=controller, zone=Zone.EXILE, controller=controller, is_token=True
         )
+        if overrides:
+            obj.copy_overrides = dict(overrides)
         # The token is created "nowhere" and then enters the battlefield, so ETB
         # triggers and enters-tapped replacements run through the normal path.
         state.players[controller].exile.append(obj.oid)

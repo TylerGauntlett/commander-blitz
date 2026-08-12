@@ -244,13 +244,33 @@
       ],
       "spell_effects": [
         {
-          "op": "create_token",
-          "token": "human_1_1_w",
-          "amount": {
-            "const": 5
-          }
+          "op": "if",
+          "condition": {
+            "cast_from_graveyard": true
+          },
+          "then": [
+            {
+              "op": "create_token",
+              "token": "human_1_1_w",
+              "amount": {
+                "const": 10
+              }
+            }
+          ],
+          "else": [
+            {
+              "op": "create_token",
+              "token": "human_1_1_w",
+              "amount": {
+                "const": 5
+              }
+            }
+          ]
         }
-      ]
+      ],
+      "flashback": {
+        "mana": "{7}{W}{W}"
+      }
     },
     {
       "id": "secure_the_wastes",
@@ -600,7 +620,7 @@
       "id": "marauding_maulhorn",
       "name": "Marauding Maulhorn",
       "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
-      "mana_cost": "{2}{R}",
+      "mana_cost": "{2}{R}{R}",
       "types": [
         "Creature"
       ],
@@ -608,7 +628,28 @@
         "Beast"
       ],
       "power": 5,
-      "toughness": 3
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "name": "Advocate of the Beast"
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dictate_of_erebos",
@@ -617,6 +658,9 @@
       "mana_cost": "{3}{B}{B}",
       "types": [
         "Enchantment"
+      ],
+      "keywords": [
+        "flash"
       ],
       "abilities": [
         {

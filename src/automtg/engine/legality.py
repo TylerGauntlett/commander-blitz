@@ -121,6 +121,12 @@ def _blocker_actions(state: GameState, pid: int) -> list[Action]:
         )
     if combat_mod.blocks_valid(state, pid):
         out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done blocking"))
+    elif not out:
+        # Nothing left to add and the declaration is still invalid: a
+        # `require_all` block the player can no longer complete. Offering
+        # nothing at all is a game that cannot continue, so "Done" is offered
+        # and `finish_blockers` retracts the blocks that were never legal.
+        out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done blocking"))
     return out
 
 
@@ -233,11 +239,30 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
 
     for oid in state.players[pid].graveyard:
         card = state.card(oid)
-        if not card.retrace or not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(card, sorcery_speed):
             continue
-        if not can_pay(state, pid, card.retrace_cost, oid):
-            continue
-        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+        if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
+            out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+        # Flashback is the same widening with a different price: an alternative
+        # cost that *replaces* the printed one, so it is offered as its own
+        # variant rather than folded into the ordinary cast.
+        if card.flashback is not None and can_pay(
+            state, pid, card.flashback.without_mana(), oid
+        ):
+            out.extend(
+                _cast_variant(
+                    state,
+                    pid,
+                    oid,
+                    card,
+                    enumerate_target_tuples(
+                        state, pid, card.targets, oid,
+                        exclude_sid=state.objects[oid].stack_id,
+                    ),
+                    extra_generic=0,
+                    flashback=True,
+                )
+            )
 
     for oid in state.players[pid].command:
         obj = state.objects[oid]
@@ -339,6 +364,7 @@ def _cast_variant(
     kicked: bool = False,
     evoked: bool = False,
     emerge_oid: int | None = None,
+    flashback: bool = False,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
 
@@ -348,7 +374,9 @@ def _cast_variant(
     sources = mana_sources(state, pid, purpose=spell_purpose(card))
     pool = state.players[pid].mana_pool
 
-    if emerge_oid is not None and card.emerge is not None:
+    if flashback and card.flashback is not None:
+        cost = card.flashback.mana
+    elif emerge_oid is not None and card.emerge is not None:
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
@@ -393,6 +421,8 @@ def _cast_variant(
         label_base += " (kicked)"
     if evoked:
         label_base += " (evoked)"
+    if flashback:
+        label_base += " (flashback)"
     if emerge_oid is not None:
         label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
     if extra_generic:
@@ -410,6 +440,7 @@ def _cast_variant(
                 x=x,
                 kicked=kicked,
                 evoked=evoked,
+                flashback=flashback,
                 emerge_oid=emerge_oid,
                 label=label,
                 base_label=label_base,
@@ -508,6 +539,10 @@ def _activate_zones(state: GameState, pid: int) -> list[tuple[int, Zone]]:
     """
     pairs: list[tuple[int, Zone]] = [(oid, Zone.BATTLEFIELD) for oid in state.battlefield]
     pairs += [(oid, Zone.HAND) for oid in state.players[pid].hand]
+    # …and this player's graveyard, for embalm and its relatives. Public, unlike
+    # the hand, but still only this player's: the ability belongs to the card's
+    # owner and nobody else may activate it.
+    pairs += [(oid, Zone.GRAVEYARD) for oid in state.players[pid].graveyard]
     return pairs
 
 
@@ -679,13 +714,19 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
         return ""
 
     from .characteristics import player_doubles_land_mana
-    from .costs import mana_produced
+    from .costs import mana_amount, mana_produced
     from .mana import format_symbols
 
     doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
         state, state.objects[oid].controller
     )
-    return format_symbols(mana_produced(ability.mana_options[mana_option], doubled=doubled))
+    return format_symbols(
+        mana_produced(
+            ability.mana_options[mana_option],
+            doubled=doubled,
+            times=mana_amount(state, oid, ability),
+        )
+    )
 
 
 def _describe_ref(state: GameState, ref: TargetRef) -> str:

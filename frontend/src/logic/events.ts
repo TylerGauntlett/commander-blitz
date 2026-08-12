@@ -278,6 +278,16 @@ export function beatsFor(
         push({ hold: 200 });
         return;
 
+      /*
+       * Cycling reads as one action even though it is a discard, a draw and
+       * often a trigger. A slightly longer hold than a plain discard, because
+       * what usually follows it is a trigger going on the stack and the two
+       * running together is what makes "(Do this before you draw)" invisible.
+       */
+      case "cycled":
+        push({ hold: 260 });
+        return;
+
       case "mill":
         push({ hold: 200 });
         return;

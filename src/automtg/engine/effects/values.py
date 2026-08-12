@@ -8,6 +8,8 @@ forms::
     {"count": {selector}}             how many objects match
     {"power_of": {"target": "t1"}}    a characteristic of an object or snapshot
     {"life_of": "you"}                a player quantity
+    {"cards_drawn_this_turn": "you"}  a per-turn tally of an event
+    {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"sum": [a, b, ...]}              arithmetic
 """
 
@@ -16,7 +18,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import chars
+from ..characteristics import chars, min_life
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from .context import EffectContext
@@ -31,7 +33,19 @@ VALUE_KEYS = frozenset(
         "toughness_of",
         "mana_value_of",
         "life_of",
+        # "…unless an opponent has 10 or less life."  `life_of` SUMS over its
+        # player spec, which is the printed card in a duel and a different card
+        # at a pod: three opponents at 4 life sum to 12, so a summing test would
+        # say nobody is low against a table that is nearly dead.  These two ask
+        # about ONE player -- `min_life_of` is the existential ("an opponent
+        # has…"), `max_life_of` the universal ("each opponent has…").
+        "min_life_of",
+        "max_life_of",
         "cards_in_hand",
+        # "…for each card you've drawn this turn."  A tally of an event, not a
+        # count of objects, and the two stop agreeing the moment anything is
+        # played, discarded, or drawn on somebody else's turn.
+        "cards_drawn_this_turn",
         "creatures_you_control",
         "lands_you_control",
         "sum",
@@ -102,9 +116,18 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_of" in expr:
         pids = _players(ctx, expr["life_of"])
         return sum(ctx.state.players[p].life for p in pids)
+    if "min_life_of" in expr:
+        pids = _players(ctx, expr["min_life_of"])
+        return min_life([ctx.state.players[p].life for p in pids])
+    if "max_life_of" in expr:
+        pids = _players(ctx, expr["max_life_of"])
+        return max([ctx.state.players[p].life for p in pids], default=0)
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
+    if "cards_drawn_this_turn" in expr:
+        pids = _players(ctx, expr["cards_drawn_this_turn"])
+        return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:
@@ -165,6 +188,11 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     if obj is None:
         return 0
     if which == "mana_value":
+        # "…except it's a white Zombie Angel with **no mana cost**." An embalm
+        # token's def_id is the original card's, so without this it would still
+        # report the printed cost's mana value.
+        if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+            return 0
         return ctx.state.card_of(obj).mana_value
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness
