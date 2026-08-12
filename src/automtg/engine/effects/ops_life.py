@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..events import EventType
 from ..primitives import damage_permanent, damage_player, gain_life, lose_life
 from . import register
 from .context import EffectContext
@@ -24,6 +25,33 @@ def op_lose_life(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
     for pid in select_players(ctx, spec.get("player", "you")):
         lose_life(ctx.state, pid, amount, source=ctx.source_oid)
+
+
+@register("add_poison")
+def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"That player gets N poison counters." Poisonous, and infect's other half.
+
+    A counter on the *player*, not a second life total. Ten of them is lethal
+    (704.5c) and the loss has its own reason, because a player eliminated at 40
+    life did not run out of life and a log saying so would be lying about how
+    the game ended.
+
+    Poison only goes up in the cards this engine has, so there is no
+    `remove_poison` yet -- and adding one speculatively would be a vocabulary
+    item with no card behind it.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    if amount <= 0:
+        return
+    for pid in select_players(ctx, spec.get("player", "opponent")):
+        ctx.state.players[pid].poison += amount
+        ctx.state.emit(
+            EventType.POISON_ADDED,
+            player=pid,
+            source=ctx.source_oid,
+            amount=amount,
+            total=ctx.state.players[pid].poison,
+        )
 
 
 @register("damage")

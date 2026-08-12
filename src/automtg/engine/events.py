@@ -85,6 +85,10 @@ class EventType:
     # life and damage
     LIFE_GAINED = "life_gained"
     LIFE_LOST = "life_lost"
+    #: Poison counters given to a player (704.5c). Its own event rather than a
+    #: life-loss: poison is a counter on the player, and ten of them end the
+    #: game at any life total.
+    POISON_ADDED = "poison_added"
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"

@@ -942,6 +942,41 @@
       ]
     },
     {
+      "id": "t_poisonous",
+      "name": "Test Poisonous",
+      "oracle_text": "Poisonous 2 (Whenever this creature deals combat damage to a player, that player gets two poison counters.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Poisonous 2",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_poison",
+              "player": {
+                "binding": "event_player"
+              },
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tributer",
       "name": "Test Tributer",
       "oracle_text": "Tribute 2 (As this creature enters, an opponent of your choice may place two +1/+1 counters on it.)\nWhen Test Tributer enters, if tribute wasn't paid, each opponent loses 3 life.",

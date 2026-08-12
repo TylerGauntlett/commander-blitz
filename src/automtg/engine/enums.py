@@ -269,4 +269,5 @@ class LossReason(str, Enum):
     LIFE = "life"
     EMPTY_LIBRARY = "empty_library"
     COMMANDER_DAMAGE = "commander_damage"
+    POISON = "poison"
     CONCEDE = "concede"

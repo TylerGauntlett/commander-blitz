@@ -114,6 +114,7 @@ const LOSS_REASONS: Record<string, string> = {
   life: "life total hit zero",
   empty_library: "drew from an empty library",
   commander_damage: "21 commander damage",
+  poison: "ten poison counters",
   concede: "conceded",
 };
 
@@ -301,6 +302,13 @@ export function describeEvent(
       return event.data.to === "player"
         ? `${who} ${v("take", "takes")} ${amount} damage`
         : `${amount} damage to ${card ?? "a permanent"}`;
+    // Ten poison ends the game at any life total, so a player quietly
+    // accruing them with a healthy life total needs saying out loud.
+    case "poison_added": {
+      const total = typeof event.data.total === "number" ? event.data.total : null;
+      const got = `${who} ${v("get", "gets")} ${amount ?? 1} poison`;
+      return total === null ? got : `${got} (${total} total)`;
+    }
     case "life_gained":
       return amount === null ? null : `${who} ${v("gain", "gains")} ${amount} life`;
     case "life_lost":

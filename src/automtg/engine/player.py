@@ -44,6 +44,11 @@ class PlayerState:
     commander_tax: dict[int, int] = field(default_factory=dict)
     #: source player id -> combat damage their commander has dealt to me
     commander_damage_taken: dict[int, int] = field(default_factory=dict)
+    #: Poison counters (704.5c). Ten is lethal, and unlike life they only ever
+    #: go up in the cards this engine has -- but they are a *counter on the
+    #: player*, not a second life total, which is why they are their own field
+    #: and their own loss reason rather than life paid in a different currency.
+    poison: int = 0
     #: the oids this player owns as commanders
     commanders: list[int] = field(default_factory=list)
 
@@ -128,6 +133,7 @@ class PlayerState:
             "extra_land_drops": self.extra_land_drops,
             "commander_tax": dict(self.commander_tax),
             "commander_damage_taken": dict(self.commander_damage_taken),
+            "poison": self.poison,
             "has_lost": self.has_lost,
             "has_city_s_blessing": self.has_city_s_blessing,
             "loss_reason": self.loss_reason.value if self.loss_reason else None,
