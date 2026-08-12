@@ -308,10 +308,57 @@ def _matches(
     if spec.condition is not None:
         from .effects.conditions import evaluate_condition
 
-        if not evaluate_condition(state, spec.condition, controller=obj.controller, source=obj.oid):
+        if not evaluate_condition(
+            state,
+            spec.condition,
+            controller=obj.controller,
+            source=obj.oid,
+            bindings=event_bindings(obj, spec, event),
+        ):
             return False
 
     return True
+
+
+def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:
+    """What the event carried, for a condition or a queued trigger to read.
+
+    Shared by `_matches` and `_queue` so an intervening-if and the ability it
+    gates cannot disagree about what "that creature" means. They used to: the
+    condition was evaluated with no bindings at all, so evolve's comparison
+    against the creature that entered read zero and the ability never fired --
+    quietly, and only for the conditions that ask about the event rather than
+    about the board.
+    """
+    bindings: dict[str, Any] = {
+        "self": obj.oid,
+        "event_player": event.player,
+        "event_type": event.type,
+        "x": obj.cast_x,
+    }
+    subject = _subject_oid(spec.event, event)
+    if subject is not None:
+        bindings["subject"] = subject
+    for key in EVENT_BINDING_KEYS:
+        if key in event.data:
+            bindings[key] = event.data[key]
+    return bindings
+
+
+#: Event payload keys carried into a trigger's bindings.
+EVENT_BINDING_KEYS = (
+    "amount",
+    "damage",
+    "life",
+    "sid",
+    "defender",
+    "was_attacking",
+    "counter",
+    "blockers",
+    # Persist and undying: what was on the creature before it died, which
+    # nothing can read off the object afterwards.
+    "had_counters",
+)
 
 
 def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
@@ -488,25 +535,11 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         )
     spec = ability.trigger
     assert spec is not None
-    bindings: dict[str, Any] = {
-        "self": obj.oid,
-        "event_player": event.player,
-        "event_type": event.type,
-        # Carried through so "enters with X counters" can read the X that was paid.
-        "x": obj.cast_x,
-    }
-    subject = _subject_oid(spec.event, event)
-    if subject is not None:
-        bindings["subject"] = subject
-    for key in (
-        "amount", "damage", "life", "sid", "defender", "was_attacking", "counter",
-        "blockers",
-        # Persist and undying: what was on the creature before it died, which
-        # nothing can read off the object afterwards.
-        "had_counters",
-    ):
-        if key in event.data:
-            bindings[key] = event.data[key]
+    # The same bindings the intervening-if was evaluated against, so a
+    # condition and the ability it gates cannot read "that creature"
+    # differently. `x` is carried through so "enters with X counters" can read
+    # what was paid.
+    bindings = event_bindings(obj, spec, event)
 
     card = state.card_of(obj)
     state.pending_triggers.append(

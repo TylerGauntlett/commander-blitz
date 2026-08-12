@@ -194,7 +194,7 @@ This is the long tail, and where the build order comes from.
 | Blitz | routed | an alternative cost like `evoke`, plus haste and a delayed sacrifice | — |
 | Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
-| Bolster | routed | needs "the creature with the lowest toughness", and no selector picks an extremum | — |
+| Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
 | Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
@@ -224,7 +224,7 @@ This is the long tail, and where the build order comes from.
 | Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
 | Escape | free | `graveyard_cost` with an `exile_from_graveyard` cost, and `graveyard_cast: "graveyard"` so it comes back | — |
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
-| Evolve | routed | `permanent_enters` + a comparison against *this* creature's derived power | — |
+| Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
 | Exert | routed | `attacks` trigger plus a `may`; `skip_untap` already exists for the cost | — |
 | Exploit | routed | `self_enters` + an optional sacrifice; the "if you do" is an ordinary `may` `else` | — |
@@ -264,7 +264,7 @@ This is the long tail, and where the build order comes from.
 | Madness | blocked | replaces a discard, and the replacement whitelist has no discard form | — |
 | Manifest | blocked | face-down creatures | — |
 | Meld | refused | melding; see rules-coverage.md | — |
-| Mentor | routed | `attacks` trigger; the target filter must compare against this creature's derived power | — |
+| Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
 | Miracle | blocked | replaces the first draw of a turn, and needs the draw's ordinality | — |
 | Modular | routed | enters with counters, then moves them all on death | — |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |

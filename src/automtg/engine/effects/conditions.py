@@ -119,14 +119,32 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
 
 
 def evaluate_condition(
-    state: GameState, cond: Any, *, controller: int, source: int | None = None
+    state: GameState,
+    cond: Any,
+    *,
+    controller: int,
+    source: int | None = None,
+    bindings: Any = None,
 ) -> bool:
     """Evaluate a condition without an effect already running.
 
     Used by trigger intervening-if clauses, which are checked both when the
     ability would trigger and again as it resolves.
+
+    ``bindings`` are what the *event* carried -- the creature that entered, the
+    land that was played, how many blockers there were. Without them a
+    condition may only ask about the board and about its own source, which is
+    enough for Threshold and not for evolve: "if that creature has greater
+    power than this creature" is a comparison between the trigger's source and
+    the object the event was about, and with no bindings the second half reads
+    zero and the ability silently never fires.
     """
-    ctx = EffectContext(state=state, controller=controller, source_oid=source)
+    ctx = EffectContext(
+        state=state,
+        controller=controller,
+        source_oid=source,
+        bindings=dict(bindings) if bindings else {},
+    )
     return evaluate(ctx, cond)
 
 
