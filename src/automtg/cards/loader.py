@@ -300,6 +300,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    if model.emerge_subtype is not None and model.emerge is None:
+        # A narrowing with nothing to narrow. The card would look like an
+        # offering card and have no alternative cast line at all.
+        raise DslError(
+            f"{where}: 'emerge_subtype' needs an 'emerge' cost to narrow"
+        )
     alternative_cost = None
     alternative_condition = None
     if model.alternative_cost is not None:
@@ -411,6 +417,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         retrace=model.retrace,
         flashback=flashback,
         evoke_label=model.evoke_label,
+        emerge_subtype=model.emerge_subtype,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
         graveyard_cast_exiles=model.graveyard_cast == "exile",

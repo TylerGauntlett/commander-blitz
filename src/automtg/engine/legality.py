@@ -352,13 +352,19 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
     stop. The biggest mana values come first, since those are the lines a player
     is actually looking for.
     """
+    # "Sacrifice a **Goblin**" -- offering, which is emerge with the fodder
+    # narrowed to one creature type. Read off *derived* subtypes, so a
+    # changeling or a granted type is legal fodder, which is the rule and is
+    # also the only reason anybody plays those two cards together.
+    subtype = state.card(oid).emerge_subtype
     creatures = [
         other
         for other in state.battlefield
         if (obj := state.objects.get(other)) is not None
         and obj.controller == pid
         and other != oid
-        and "Creature" in chars(state, other).types
+        and "Creature" in (c := chars(state, other)).types
+        and (subtype is None or subtype in c.subtypes)
     ]
     creatures.sort(key=lambda c: (-state.card(c).mana_cost.mana_value(), c))
     return creatures[:4]

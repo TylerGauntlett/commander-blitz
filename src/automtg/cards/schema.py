@@ -240,6 +240,11 @@ class CardModel(BaseModel):
     #: replaces the printed cost; unlike it, how much you pay depends on
     #: what you sacrifice, which is why it cannot be a fixed ManaCost alone.
     emerge: str | None = None
+    #: **Offering**: the creature type the emerge sacrifice must be —
+    #: "sacrifice a Goblin". Offering is emerge with the fodder narrowed and
+    #: the timing widened, so it is a qualifier on that field rather than a
+    #: field of its own.
+    emerge_subtype: str | None = None
     #: "This spell costs {X} less to cast, where X is the total power of
     #: creatures you control."  Reduces the *generic* part of the cost only,
     #: never below zero and never the coloured pips -- which is what the rules
