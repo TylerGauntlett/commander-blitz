@@ -319,6 +319,55 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     return True
 
 
+def change_control(state: GameState, oid: int, pid: int, source: int | None = None) -> bool:
+    """"Gain control of target creature." Rule 800.4a, permanently.
+
+    The object does not move: ``GameObject.controller`` is a field and
+    ``state.battlefield`` is one shared list, so the whole change is that field
+    plus the three things the rules hang off it.
+
+    - **Rule 302.6.** It has not been under its new controller since their most
+      recent turn began, so it is summoning sick.  ``entered_turn`` is what
+      ``summoning_sick`` reads, so setting it to the current turn is both the
+      record of when control changed and the sickness itself -- a stolen
+      creature cannot attack or tap for its new controller this turn.
+    - **Rule 506.4.** Changing control removes a permanent from combat.  Without
+      this, a creature stolen mid-combat goes on dealing damage for the player
+      who no longer controls it.
+    - Every static filtered on ``controller`` now reads differently, so the
+      characteristics cache has to be dropped.
+
+    Zone destinations are unaffected on purpose: ``move_object`` sends a card to
+    its **owner**, so a stolen creature that dies still goes to the graveyard of
+    the player who brought it.
+
+    There is deliberately no until-end-of-turn form. That would need a
+    continuous-effect layer and a cleanup-step handback, and half of it -- a
+    permanent steal wearing Act of Treason's text -- is a strictly better card
+    than the printed one.  ``loader`` refuses a ``duration`` key rather than
+    ignoring it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.controller == pid:
+        return False
+    previous = obj.controller
+    obj.controller = pid
+    obj.entered_turn = state.turn
+    if state.combat is not None:
+        state.combat.remove(oid)
+    state.bump_chars()
+    fire(
+        state,
+        EventType.CONTROL_CHANGED,
+        player=pid,
+        source=oid,
+        card=obj.def_id,
+        by=source,
+        **{"from": previous, "to": pid},
+    )
+    return True
+
+
 def pump(
     state: GameState, oid: int, power: int, toughness: int, source: int | None = None
 ) -> None:

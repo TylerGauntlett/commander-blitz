@@ -12,6 +12,7 @@ from ..primitives import (
     add_counters,
     animate,
     attach,
+    change_control,
     create_token,
     grant_ability,
     grant_keyword,
@@ -204,6 +205,26 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     if aura is not None:
         for oid in oids[:1]:
             attach(ctx.state, aura, oid)
+
+
+@register("gain_control")
+def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Gain control of target creature." Captivating Vampire.
+
+    ``player`` says who gains it and defaults to the ability's controller, which
+    is what every "*you* gain control" line means; the spec exists because "target
+    opponent gains control of" is the same effect pointed elsewhere.
+
+    Permanent only -- see :func:`automtg.engine.primitives.change_control` for
+    why there is no until-end-of-turn form and why the loader refuses to let a
+    card ask for one silently.
+    """
+    players = _players(ctx, spec.get("player", "you"))
+    if not players:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
+    for oid in oids:
+        change_control(ctx.state, oid, players[0], source=ctx.source_oid)
 
 
 @register("pump")

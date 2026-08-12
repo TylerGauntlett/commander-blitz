@@ -1037,6 +1037,19 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+    if op == "gain_control":
+        # "Gain control of" with nothing named is a card that reads like removal
+        # and does nothing at all.
+        if "objects" not in effect:
+            raise DslError(f"{where}: gain_control needs 'objects' -- there is nothing to take")
+        # Only the permanent form exists. A `duration` would be read as "until
+        # end of turn" by whoever wrote it and ignored by the engine, which
+        # turns Act of Treason into a strictly better card than the printed one.
+        if "duration" in effect:
+            raise DslError(
+                f"{where}: gain_control has no duration; only a permanent control "
+                f"change is implemented (see docs/rules-coverage.md)"
+            )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "add_mana" and "mana" not in effect:

@@ -191,6 +191,20 @@ export function beatsFor(
         });
         return;
 
+      // The card slides from one battlefield row to the other with no zone
+      // change behind it, which reads as a rendering glitch unless something
+      // marks the moment. Held longer than an ETB for that reason.
+      case "control_changed":
+        push({
+          hold: 480,
+          sound: "chime",
+          flash:
+            event.source === null
+              ? undefined
+              : { anchor: { kind: "object", oid: event.source }, tone: "good" },
+        });
+        return;
+
       case "dies":
         push({
           hold: 380,
