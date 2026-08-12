@@ -239,6 +239,13 @@ class Game:
         else:
             cost = card.mana_cost
 
+        # Convoke and delve. Netted into `extra` alongside the commander tax
+        # and emerge's sacrifice, so it goes through the same clamp: `pay`
+        # floors the generic part at zero, and no amount of convoking makes a
+        # spell free of its coloured pips.
+        if action.pay_generic and card.pay_generic_with is not None:
+            extra -= action.pay_generic
+
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
         # becomes a real number. The ceiling is computed with the same `extra`
@@ -284,6 +291,34 @@ class Game:
         # help pay for the spell it is about to be eaten by.
         if action.emerge_oid is not None:
             sacrifice_object(state, action.emerge_oid)
+
+        # Convoke and delve, for the same reason and at the same moment: the
+        # creature that tapped for mana above may still be convoked, which is
+        # wrong, so the tap is charged *after* payment and only untapped
+        # creatures are eligible. Expressed as an ordinary `Cost` so the player
+        # picks which ones, through the machinery every other selector cost
+        # already uses.
+        if action.pay_generic and card.pay_generic_with is not None:
+            if card.pay_generic_with == "tap_creatures":
+                spend = Cost(
+                    tap_permanents={
+                        "controller": "you",
+                        "types": ["Creature"],
+                        "tapped": False,
+                        "count": action.pay_generic,
+                    }
+                )
+            else:
+                spend = Cost(
+                    exile_from_graveyard={
+                        "controller": "you",
+                        "count": action.pay_generic,
+                        "exclude_self": True,
+                    }
+                )
+            ok = yield from pay(state, pid, spend, oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         if from_command:
             player = state.players[obj.owner]

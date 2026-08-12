@@ -341,7 +341,53 @@ def _cast_options(
                 extra_generic=extra_generic,
                 emerge_oid=victim,
             )
+    # Convoke and delve. One line per *number* spent, for the reason emerge
+    # offers one per victim: the number changes the price, and it is the
+    # player's to choose. Zero is the printed line already offered above.
+    if card.pay_generic_with is not None and state.objects[oid].zone is Zone.HAND:
+        for spend in range(1, _pay_generic_ceiling(state, pid, oid, card) + 1):
+            out += _cast_variant(
+                state,
+                pid,
+                oid,
+                card,
+                tuples,
+                extra_generic=extra_generic,
+                pay_generic=spend,
+            )
     return out
+
+
+#: How many creatures a convoke line may tap, or cards a delve line may exile.
+#: Capped for the reason `_emerge_fodder` is capped: every one is a separate
+#: cast action multiplied by every legal target tuple.
+MAX_PAY_GENERIC = 6
+
+
+def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+    """The most a convoke or delve line could usefully spend.
+
+    Never more than the spell's own generic cost -- "pays for {1}" and a spell
+    with two generic in it cannot absorb a third creature -- and never more
+    than the player actually has to spend.
+    """
+    generic = card.mana_cost.generic
+    if generic <= 0:
+        return 0
+    if card.pay_generic_with == "tap_creatures":
+        available = sum(
+            1
+            for other in state.battlefield
+            if (obj := state.objects.get(other)) is not None
+            and obj.controller == pid
+            and not obj.tapped
+            and "Creature" in chars(state, other).types
+        )
+    else:
+        # Delve exiles from the graveyard, and the spell being cast is not in
+        # it -- it is on the stack by the time this is paid.
+        available = sum(1 for other in state.players[pid].graveyard if other != oid)
+    return min(generic, available, MAX_PAY_GENERIC)
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
@@ -383,6 +429,7 @@ def _cast_variant(
     emerge_oid: int | None = None,
     flashback: bool = False,
     alternative: bool = False,
+    pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
 
@@ -405,6 +452,10 @@ def _cast_variant(
     else:
         cost = card.mana_cost
     discount = cost_reduction(state, pid, card)
+    # Convoke and delve reduce the generic part, exactly as a cost reduction
+    # does -- and go through the same clamp, so neither can make a spell free
+    # of its coloured pips.
+    discount += pay_generic
     if emerge_oid is not None:
         # The sacrifice pays for part of the spell. Generic-only and clamped by
         # `pay`, like every other reduction here.
@@ -446,6 +497,9 @@ def _cast_variant(
         label_base += f" ({card.evoke_label})"
     if alternative:
         label_base += " (alternative cost)"
+    if pay_generic:
+        word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
+        label_base += f" ({word} {pay_generic})"
     if flashback:
         label_base += " (flashback)"
     if emerge_oid is not None:
@@ -466,6 +520,7 @@ def _cast_variant(
                 kicked=kicked,
                 evoked=evoked,
                 alternative=alternative,
+                pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,
                 label=label,
