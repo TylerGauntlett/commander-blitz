@@ -68,6 +68,13 @@ class GameObject:
     #: it lasts as long as the permanent does, which is the only reason suspend
     #: is ever better than simply waiting.
     hasted_by_suspend: bool = False
+    #: Keywords granted for as long as this permanent lasts -- riot's "or with
+    #: haste". Deliberately *not* an `until_eot` `TempEffect`: those are wiped
+    #: at cleanup, and a riot creature that lost its haste at end of turn would
+    #: be indistinguishable from one that took the counter. Reset with the rest
+    #: of the battlefield state, because a permanent that leaves and returns
+    #: makes the choice again.
+    granted_keywords: set[str] = field(default_factory=set)
     #: "That land doesn't untap during its controller's next untap step."  A
     #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
     #: which holds for as long as its source is on the battlefield.  Two
@@ -203,6 +210,7 @@ class GameObject:
         self.must_attack = None
         self.must_block = None
         self.detained_by = None
+        self.granted_keywords = set()
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
@@ -290,6 +298,7 @@ class GameObject:
             "monstrous": self.monstrous,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
+            "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,

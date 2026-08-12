@@ -199,6 +199,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         if obj.hasted_by_suspend:
             keywords.add(Keyword.HASTE.value)
 
+        # 8. Keywords granted for as long as the permanent lasts -- riot's "or
+        #    with haste", which is not a pump that wears off but part of what
+        #    the creature is from the moment it arrives. `hasted_by_suspend`
+        #    above is the same idea for one specific keyword; this is the
+        #    general form, and the two stay separate because suspend's is set
+        #    while the card is still in exile.
+        keywords.update(obj.granted_keywords)
+
     return Characteristics(
         power=power,
         toughness=toughness,

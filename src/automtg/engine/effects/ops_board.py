@@ -280,11 +280,22 @@ def op_pump(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("grant_keyword")
 def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Grant keywords until end of turn, or -- with ``duration: "permanent"`` --
+    for as long as the permanent lasts.
+
+    Riot's "enters with haste" is the second: a haste that wore off at cleanup
+    would let the creature attack the turn it arrived and be indistinguishable
+    from the counter mode ever after, which is not a smaller version of the
+    card, it is the wrong one half the time.
+    """
     keywords = spec.get("keywords") or ([spec["keyword"]] if "keyword" in spec else [])
+    permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant")
     for oid in oids:
         for keyword in keywords:
-            grant_keyword(ctx.state, oid, str(keyword), source=ctx.source_oid)
+            grant_keyword(
+                ctx.state, oid, str(keyword), source=ctx.source_oid, permanent=permanent
+            )
 
 
 @register("animate")
