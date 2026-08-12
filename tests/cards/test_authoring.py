@@ -275,6 +275,15 @@ class TestThePacketCarriesTheWholeVocabulary:
         assert static - selector == {"attached"}
         assert len(selector - static) > 10, "the selector language is the larger one"
 
+    def test_the_cost_vocabulary_is_shown(self):
+        """A worker shown `ops` but not `cost_keys` cannot tell a cost from an
+        effect, so every "<cost>: <effect>" card either guesses or files a gap
+        for a cost that already exists. Derived, so it cannot go stale."""
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.schema import CostModel
+
+        assert set(reference()["cost_keys"]) == set(CostModel.model_fields)
+
     def test_counters_on_is_reachable(self):
         """The specific omission that cost a card."""
         from automtg.cards.authoring.packet import reference

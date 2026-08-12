@@ -98,6 +98,7 @@ def reference() -> dict:
     from automtg.engine.triggers import TRIGGER_EVENTS
 
     from ..loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
+    from ..schema import CostModel
 
     return {
         "ops": sorted(known_ops()),
@@ -121,6 +122,13 @@ def reference() -> dict:
         "selector_keys": sorted(SELECTOR_KEYS),
         "condition_keys": sorted(CONDITION_KEYS),
         "value_keys": sorted(VALUE_KEYS),
+        # What an activated ability may charge. Omitted entirely until
+        # `tap_permanents` shipped and nothing could use it: a worker shown
+        # `ops` but not `cost_keys` has no way to tell a cost from an effect,
+        # so every "<cost>: <effect>" card either guesses or files a gap for a
+        # cost that already exists. Derived from the model the loader
+        # validates against, for the same reason `static_effects` is.
+        "cost_keys": sorted(CostModel.model_fields),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
@@ -138,6 +146,11 @@ def reference() -> dict:
             " unclaimed means the card is only half implemented.",
             "An instant or sorcery puts its effects in `spell_effects`; a"
             " permanent puts them in `abilities`.",
+            "`cost_keys` is what an activated ability's `cost` may contain."
+            " A printed \"<cost>: <effect>\" line splits into a `cost` from"
+            " that list and `effects` from `ops` -- paying with an op instead"
+            " moves the payment to resolution and lets the ability be"
+            " activated when it could not be paid for.",
             "A static ability's filter may only read printed characteristics.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",

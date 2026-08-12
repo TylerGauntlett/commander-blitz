@@ -65,6 +65,18 @@ SELECTOR_KEYS = frozenset(
         "toughness",
         "mana_value",
         "exclude_self",
+        #: "each **other** attacking creature" -- exclude whichever object a
+        #: trigger bound under this name.  `exclude_self` cannot do it: it
+        #: compares against the *ability source*, which for Shared Animosity is
+        #: the enchantment, so it removes nothing from a set of attackers and
+        #: the count is over by exactly one.
+        "exclude_binding",
+        #: "…that shares a creature type with it".  Matches when the candidate's
+        #: subtypes intersect those of the object bound under this name, read
+        #: from *derived* characteristics on both sides so changelings and
+        #: granted types count.  Not expressible with `subtypes`, which takes a
+        #: literal list fixed when the card is written.
+        "shares_a_type_with",
         "self_only",
         "count",
         "chooser",
@@ -99,10 +111,8 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         if "target" in selector:
             seeded = ctx.target_oids(str(selector["target"]))
         else:
-            value = ctx.bindings.get(str(selector["binding"]))
-            if isinstance(value, dict):
-                value = value.get("oid")
-            seeded = [int(value)] if value is not None else []
+            bound = _bound_oid(ctx, str(selector["binding"]))
+            seeded = [bound] if bound is not None else []
         if set(selector) <= {"target", "binding"}:
             return seeded
         return [oid for oid in seeded if matches(ctx, oid, selector)]
@@ -123,6 +133,19 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             candidates.extend(state.players[pid].zone_list(zone))
 
     return [oid for oid in candidates if matches(ctx, oid, selector)]
+
+
+def _bound_oid(ctx: EffectContext, name: str) -> int | None:
+    """The oid a trigger bound under ``name``, if it bound an object at all.
+
+    A binding is sometimes an oid and sometimes a snapshot dict (see the
+    ``snapshot`` op), so both spellings are read here rather than at each of the
+    three call sites that need them.
+    """
+    value = ctx.bindings.get(name)
+    if isinstance(value, Mapping):
+        value = value.get("oid")
+    return int(value) if isinstance(value, int) else None
 
 
 def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
@@ -159,6 +182,17 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     if selector.get("self_only") and oid != ctx.source_oid:
         return False
+    if (name := selector.get("exclude_binding")) is not None and oid == _bound_oid(
+        ctx, str(name)
+    ):
+        return False
+    if (name := selector.get("shares_a_type_with")) is not None:
+        other = _bound_oid(ctx, str(name))
+        if other is None:
+            return False
+        theirs = chars(state, other).subtypes if state.objects.get(other) else frozenset()
+        if not (subtypes & theirs):
+            return False
 
     controller = selector.get("controller")
     if controller == "you" and obj.controller != ctx.controller:

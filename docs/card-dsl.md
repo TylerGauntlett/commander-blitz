@@ -100,6 +100,8 @@ Every key is optional; all present keys must match.
   "toughness":  { "op": "<=", "value": { "const": 2 } },
   "mana_value": { "op": "<=", "value": { "const": 3 } },
   "exclude_self": true,           // "other ... you control"
+  "exclude_binding": "subject",   // "each OTHER attacking creature"
+  "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "self_only": true,              // this permanent only
   "count": 1,                     // an int, or "all"
   "chooser": "controller",        // controller|owner|none
@@ -135,6 +137,33 @@ A union narrows nothing on its own and every key beside it still filters, so
 these", not "either a creature or these". A branch may not name a `zone` — that
 would read as "or anything over there" and is not what it does — and a union of
 one is refused, since that is a filter written the long way.
+
+### Describing objects relative to *another* object
+
+Every key above compares a candidate against something written into the card.
+Shared Animosity cannot be said that way — "Whenever a creature you control
+attacks, it gets +1/+0 until end of turn **for each other attacking creature
+that shares a creature type with it**". Both halves of that clause point at
+whatever attacked, which is different on every trigger.
+
+| | |
+|---|---|
+| `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
+| `exclude_binding` | drops the bound object from the pool |
+
+`subtypes` cannot stand in for the first: it takes a literal list, fixed when
+the card is written. Reaching for `{"count": {"attacking": true}}` instead
+counts *every* attacker regardless of type, which is a different card that
+loads and resolves without complaint.
+
+`exclude_self` cannot stand in for the second, and this is the subtle one:
+`exclude_self` compares against the **ability's source**, which for Shared
+Animosity is the enchantment — not a creature, never attacking. It removes
+nothing from a set of attackers, so every pump would be over by exactly one.
+
+An unbound name matches **nothing** rather than everything. A trigger that did
+not bind what the card thought it did is a bug, and the failure should be a card
+that does nothing rather than one that pumps the whole board.
 
 Two shorthands name a pool directly instead of searching a zone:
 
