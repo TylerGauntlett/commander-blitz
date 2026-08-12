@@ -366,9 +366,9 @@ def choose_objects(
 ) -> Generator[Any, list[int], list[int]]:
     """Resolve a selector all the way to a concrete list of oids.
 
-    Honours ``count`` (an integer or ``"all"``), ``chooser`` (``controller``,
-    ``owner`` or ``none``) and ``random``.  When a choice is genuinely required
-    this suspends and asks; otherwise it returns immediately.
+    Honours ``count`` (an integer, ``"all"`` or ``"any"``), ``chooser``
+    (``controller``, ``owner`` or ``none``) and ``random``.  When a choice is
+    genuinely required this suspends and asks; otherwise it returns immediately.
     """
     pool = resolve_pool(ctx, selector)
     if not pool or selector is None:
@@ -378,26 +378,37 @@ def choose_objects(
     if count_spec == "all":
         return pool
 
-    from .values import evaluate_value
+    # "…put **any number of** creature cards from your hand onto the
+    # battlefield."  A free subset: none of them, all of them, or anything
+    # between, and the chooser decides.  Neither existing form says it --
+    # `"all"` makes it mandatory, and a fixed number forces exactly that many --
+    # so Last March of the Ents could not let you keep a creature in hand.
+    # `ask_objects` always took distinct min/max bounds; only the spelling that
+    # reaches them was missing, which is why this is a `count` form and not an op.
+    if count_spec == "any":
+        min_count, max_count = 0, len(pool)
+    else:
+        from .values import evaluate_value
 
-    count = evaluate_value(ctx, count_spec)
-    count = max(0, min(int(count), len(pool)))
-    if count == 0:
-        return []
-    if count >= len(pool):
-        return pool
+        count = evaluate_value(ctx, count_spec)
+        count = max(0, min(int(count), len(pool)))
+        if count == 0:
+            return []
+        if count >= len(pool):
+            return pool
+        min_count = max_count = count
 
     if selector.get("random"):
-        return ctx.state.rng.shuffled(pool)[:count]
+        return ctx.state.rng.shuffled(pool)[:max_count]
 
     chooser_spec = selector.get("chooser", "controller")
     if chooser_spec == "none":
-        return pool[:count]
+        return pool[:max_count]
     chooser = ctx.controller
     if chooser_spec == "owner" and pool:
         chooser = ctx.state.objects[pool[0]].owner
 
-    picked = yield from ask_objects(ctx, prompt, pool, count, count, chooser, purpose)
+    picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked
 
 
@@ -459,6 +470,17 @@ def validate_selector(selector: Any, where: str) -> None:
     controller = selector.get("controller")
     if controller is not None and controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
+    count = selector.get("count")
+    if isinstance(count, str) and count not in ("all", "any"):
+        raise DslError(f"{where}: unknown count {count!r}; use 'all', 'any' or a value")
+    # "Any number" is a choice by definition, and both of these take the choice
+    # away -- they would silently resolve the whole pool, which is `count: "all"`
+    # wearing the wrong name.  A card that means "all" should say so.
+    if count == "any":
+        if selector.get("random"):
+            raise DslError(f"{where}: count 'any' is a free choice; it cannot be random")
+        if selector.get("chooser") == "none":
+            raise DslError(f"{where}: count 'any' needs a chooser; use 'all' for no choice")
     # A misspelled type in an any-of clause matches nothing and narrows the
     # selector silently -- "target artifact or enchantmnet" would quietly become
     # "target artifact".  Checked here rather than in the loader's per-op guards

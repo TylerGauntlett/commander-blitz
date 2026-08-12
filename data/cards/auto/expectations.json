@@ -284,6 +284,13 @@
   "bronze_walrus": {
     "zone": "battlefield"
   },
+  "burgeoning": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "cabal_coffers": {
     "zone": "battlefield"
   },
@@ -566,6 +573,16 @@
   },
   "elvish_pioneer": {
     "zone": "battlefield"
+  },
+  "entish_restoration": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "esper_panorama": {
     "zone": "battlefield"
@@ -1039,6 +1056,15 @@
   "lapis_orb_of_dragonkind": {
     "zone": "battlefield"
   },
+  "last_march_of_the_ents": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "leaden_myr": {
     "zone": "battlefield"
   },
@@ -1304,6 +1330,13 @@
   "obelisk_of_grixis": {
     "zone": "battlefield"
   },
+  "oboro_palace_in_the_clouds": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "omen_hawker": {
     "zone": "battlefield"
   },
@@ -1344,6 +1377,21 @@
   },
   "overgrown_tomb": {
     "zone": "battlefield"
+  },
+  "overprotect": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample",
+        "hexproof",
+        "indestructible"
+      ]
+    },
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
+    },
+    "zone": "graveyard"
   },
   "palladium_myr": {
     "zone": "battlefield"
@@ -1492,6 +1540,16 @@
   },
   "rendmaw_creaking_nest": {
     "zone": "battlefield"
+  },
+  "reshape_the_earth": {
+    "battlefield_count": 42,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 30
+    },
+    "zone": "graveyard"
   },
   "retreat_to_kazandu": {
     "zone": "battlefield"

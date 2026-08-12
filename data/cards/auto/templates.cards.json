@@ -3984,6 +3984,61 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a land card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent plays a land, you may put a land card from your hand onto the battlefield.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "land_played"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "burgeoning",
+      "mana_cost": "{G}",
+      "name": "Burgeoning",
+      "oracle_text": "Whenever an opponent plays a land, you may put a land card from your hand onto the battlefield.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}",
             "tap": true
@@ -7940,6 +7995,87 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "entish_restoration",
+      "mana_cost": "{2}{G}",
+      "name": "Entish Restoration",
+      "oracle_text": "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "else": [
+            {
+              "count": 2,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "count": 3,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -15007,6 +15143,60 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "last_march_of_the_ents",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Last March of the Ents",
+      "oracle_text": "This spell can't be countered.\nDraw cards equal to the greatest toughness among creatures you control, then put any number of creature cards from your hand onto the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "toughest",
+          "objects": {
+            "controller": "you",
+            "extreme": {
+              "of": "toughness",
+              "pick": "greatest"
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "snapshot"
+        },
+        {
+          "amount": {
+            "toughness_of": {
+              "binding": "toughest"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "hand"
+          },
+          "op": "put_onto_battlefield"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ],
+      "uncounterable": true
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -18822,6 +19012,53 @@
           },
           "effects": [
             {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}: Return Oboro to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "oboro_palace_in_the_clouds",
+      "name": "Oboro, Palace in the Clouds",
+      "oracle_text": "{T}: Add {U}.\n{1}: Return Oboro to its owner's hand.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}{U}",
               "op": "add_mana"
             }
@@ -19394,6 +19631,61 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "overprotect",
+      "mana_cost": "{1}{G}",
+      "name": "Overprotect",
+      "oracle_text": "Target creature you control gets +3/+3 and gains trample, hexproof, and indestructible until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": 3
+          },
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "keywords": [
+            "trample",
+            "hexproof",
+            "indestructible"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -21356,6 +21648,37 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "reshape_the_earth",
+      "mana_cost": "{6}{G}{G}{G}",
+      "name": "Reshape the Earth",
+      "oracle_text": "Search your library for up to ten land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 10,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "shuffle": true,
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

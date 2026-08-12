@@ -703,6 +703,12 @@
     "file": "bronze_walrus.jpg",
     "scryfall_id": "b2cfd2c0-2110-47f1-809e-487b9b0a1043"
   },
+  "burgeoning": {
+    "artist": "Stephen Andrade",
+    "bytes": 58251,
+    "file": "burgeoning.jpg",
+    "scryfall_id": "a53c6a0e-9bbc-4a7b-8059-bc20806823d9"
+  },
   "bygone_bishop": {
     "artist": "Jason A. Engle",
     "bytes": 66765,
@@ -1407,6 +1413,12 @@
     "bytes": 58737,
     "file": "empyrean_eagle.jpg",
     "scryfall_id": "577e99a7-4a55-4314-8f08-2ae0c33b85c7"
+  },
+  "entish_restoration": {
+    "artist": "Calder Moore",
+    "bytes": 69548,
+    "file": "entish_restoration.jpg",
+    "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
   },
   "epicure_of_blood": {
     "artist": "Anna Steinbauer",
@@ -2571,6 +2583,12 @@
     "file": "lapis_orb_of_dragonkind.jpg",
     "scryfall_id": "26ed684b-e3a1-421d-8cfd-c5eee673a3a1"
   },
+  "last_march_of_the_ents": {
+    "artist": "Wayne Reynolds",
+    "bytes": 80231,
+    "file": "last_march_of_the_ents.jpg",
+    "scryfall_id": "2d7097c9-2076-4ebc-8c9e-aa596351588c"
+  },
   "leaden_myr": {
     "artist": "Alan Pollack",
     "bytes": 88837,
@@ -3134,6 +3152,12 @@
     "file": "oblivion_ring.jpg",
     "scryfall_id": "33330c04-4e61-4993-ba26-d2316d1e845c"
   },
+  "oboro_palace_in_the_clouds": {
+    "artist": "Jonas De Ro",
+    "bytes": 38475,
+    "file": "oboro_palace_in_the_clouds.jpg",
+    "scryfall_id": "84065219-b902-41fa-9a5a-7312e5103b78"
+  },
   "omen_hawker": {
     "artist": "Josh Hass",
     "bytes": 88661,
@@ -3223,6 +3247,12 @@
     "bytes": 59012,
     "file": "overgrown_tomb.jpg",
     "scryfall_id": "ad7e18e2-c033-4b6c-86e8-d0e5cc824cfd"
+  },
+  "overprotect": {
+    "artist": "Pavel Kolomeyets",
+    "bytes": 64063,
+    "file": "overprotect.jpg",
+    "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a"
   },
   "palladium_myr": {
     "artist": "Alan Pollack",
@@ -3571,6 +3601,12 @@
     "bytes": 70855,
     "file": "rendmaw_creaking_nest.jpg",
     "scryfall_id": "4dc2d415-fdf7-4f2d-95d0-a793ffc26491"
+  },
+  "reshape_the_earth": {
+    "artist": "Adam Paquette",
+    "bytes": 72470,
+    "file": "reshape_the_earth.jpg",
+    "scryfall_id": "1ffa9a70-1221-4dba-8c2c-9872913021cd"
   },
   "retreat_to_kazandu": {
     "artist": "Kieran Yanner",

@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "last_march_of_the_ents",
+    "name": "Last March of the Ents",
+    "oracle_text": "This spell can't be countered.\nDraw cards equal to the greatest toughness among creatures you control, then put any number of creature cards from your hand onto the battlefield.",
+    "mana_cost": "{6}{G}{G}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "uncounterable": true,
+    "spell_effects": [
+      {
+        "op": "snapshot",
+        "as": "toughest",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "extreme": {
+            "of": "toughness",
+            "pick": "greatest"
+          }
+        }
+      },
+      {
+        "op": "draw",
+        "player": "you",
+        "amount": {
+          "toughness_of": {
+            "binding": "toughest"
+          }
+        }
+      },
+      {
+        "op": "put_onto_battlefield",
+        "objects": {
+          "zone": "hand",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "any"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    }
+  }
+}

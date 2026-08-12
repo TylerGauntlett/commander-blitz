@@ -1,0 +1,92 @@
+{
+  "card": {
+    "id": "entish_restoration",
+    "name": "Entish Restoration",
+    "oracle_text": "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{2}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "sacrifice",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Land"
+          ],
+          "count": 1
+        }
+      },
+      {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "power": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            }
+          }
+        },
+        "then": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 3,
+            "destination": "battlefield",
+            "tapped": true,
+            "selector": {
+              "types": [
+                "Land"
+              ],
+              "supertypes": [
+                "Basic"
+              ]
+            }
+          }
+        ],
+        "else": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 2,
+            "destination": "battlefield",
+            "tapped": true,
+            "selector": {
+              "types": [
+                "Land"
+              ],
+              "supertypes": [
+                "Basic"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 38
+    },
+    "battlefield_count": 33
+  }
+}

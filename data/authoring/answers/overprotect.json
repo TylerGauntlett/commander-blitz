@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "overprotect",
+    "name": "Overprotect",
+    "oracle_text": "Target creature you control gets +3/+3 and gains trample, hexproof, and indestructible until end of turn.",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ],
+          "controller": "you"
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "pump",
+        "objects": {
+          "target": "t1"
+        },
+        "power": {
+          "const": 3
+        },
+        "toughness": {
+          "const": 3
+        }
+      },
+      {
+        "op": "grant_keyword",
+        "objects": {
+          "target": "t1"
+        },
+        "keywords": [
+          "trample",
+          "hexproof",
+          "indestructible"
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
+    },
+    "granted": {
+      "keywords": [
+        "trample",
+        "hexproof",
+        "indestructible"
+      ],
+      "count": 1
+    }
+  }
+}

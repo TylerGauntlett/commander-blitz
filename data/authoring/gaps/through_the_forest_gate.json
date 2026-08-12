@@ -1,0 +1,18 @@
+{
+  "card_id": "through_the_forest_gate",
+  "name": "Through the Forest Gate",
+  "oracle_text": "Look at the top twenty cards of your library, put any number of land cards from among them onto the battlefield tapped, then shuffle. You gain 8 life.",
+  "blocked_sentences": [
+    "Look at the top twenty cards of your library, put any number of land cards from among them onto the battlefield tapped, then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "look_at_top_n",
+      "kind": "op",
+      "what": "an effect that bounds a pool to the top N cards of a library and then lets the chooser take any number of the cards in that pool that match a selector to a named destination, leaving the rest where they were. Wanted here as something like {\"op\": \"look_at_top\", \"amount\": {\"const\": 20}, \"selector\": {\"types\": [\"Land\"]}, \"count\": \"any\", \"destination\": \"battlefield\", \"tapped\": true, \"shuffle\": true}. The free-subset decision this needs already exists -- `scry` and `surveil` both call `ask_objects(..., 0, len(top), ...)` over `library[:amount]` -- so the missing piece is a top-N pool whose destination is not fixed to the bottom of the library or the graveyard.",
+      "why_existing_wont_do": "`search_library` is the only op that moves library cards to the battlefield tapped, and it builds its pool from the *entire* library (`for oid in ctx.state.players[pid].library`), with no amount/depth clause. Written with it, this card would be an unconditional tutor for every land in a 40+ card deck rather than a look at twenty, which is a strictly stronger card and not the printed line -- the difference is exactly what makes the card a gamble. The three ops that do read `library[:amount]` -- `scry`, `surveil`, `two_piles` -- each hard-wire where the looked-at cards may go (bottom of library, graveyard, hand-or-graveyard); none accepts a destination or a selector, so none can put lands onto the battlefield tapped. The selector language cannot close the gap either: `resolve_pool` maps `zone: \"library\"` to the whole `zone_list(Zone.LIBRARY)`, and `SELECTOR_KEYS` has no depth/top-of-library key, so `put_onto_battlefield` over a library selector would also see every card in the deck. Also note `count` in a selector is \"all\" or a fixed number, so the printed \"any number\" needs the free-subset spelling tracked under `any_number_of` unless this op bakes it in the way `scry` and `surveil` do."
+    }
+  ],
+  "closest_existing": ["search_library", "scry", "surveil", "two_piles", "any_number_of"],
+  "confidence": "high"
+}
