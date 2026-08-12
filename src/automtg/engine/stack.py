@@ -293,6 +293,12 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     # difference between the two keywords.
     if obj.cast_from_graveyard and destination is Zone.GRAVEYARD and card.graveyard_cast_exiles:
         destination = Zone.EXILE
+    # Buyback: "put it into your hand instead of your graveyard as it
+    # resolves". The same shape as the flashback rider pointing the other way,
+    # and it only ever replaces the *graveyard* -- a buyback permanent spell
+    # still enters the battlefield.
+    if card.buyback and obj.cast_kicked and destination is Zone.GRAVEYARD:
+        destination = Zone.HAND
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
 
 
