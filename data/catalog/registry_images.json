@@ -391,6 +391,10 @@
     "artist": "Ron Spencer",
     "scryfall_id": "49195d90-de0c-4290-aa1c-9f4d948b5521"
   },
+  "bloodline_keeper": {
+    "artist": "Jason Chan",
+    "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00"
+  },
   "bloodline_necromancer": {
     "artist": "J.P. Targete",
     "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92"
@@ -1735,6 +1739,11 @@
     "artist": "Heather Hudson",
     "scryfall_id": "001908da-70cc-4a53-9372-eb75c0721442"
   },
+  "lord_of_lineage": {
+    "artist": "Jason Chan",
+    "back": true,
+    "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00"
+  },
   "lotus_cobra": {
     "artist": "Sam Rowan",
     "scryfall_id": "9c3f861f-0f46-4360-970e-a5cfc5ef194b"
@@ -2555,6 +2564,10 @@
     "artist": "Mark Poole",
     "scryfall_id": "2fd26d73-0aa4-4169-9a6a-522a5a9519c7"
   },
+  "shared_animosity": {
+    "artist": "Chuck Lukacs",
+    "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c"
+  },
   "sharktocrab": {
     "artist": "Jehan Choo",
     "scryfall_id": "ec7933b5-15de-4ed7-af0c-626f81726338"
@@ -3171,6 +3184,10 @@
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
+  "vampire_2_2_b_flying": {
+    "artist": "Volkan Ba\u01f5a",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
   "vampire_aristocrat": {
     "artist": "Austin Hsu",
     "scryfall_id": "7f9a6d22-2e87-410c-b42a-6b54d83a7d30"
@@ -3190,6 +3207,10 @@
   "vampire_nighthawk": {
     "artist": "Jason Chan",
     "scryfall_id": "7aff07f9-9528-4149-9af0-f4e3c66c9dc5"
+  },
+  "vampire_nocturnus": {
+    "artist": "Raymond Swanland",
+    "scryfall_id": "b0d8588f-7986-4c35-b230-375287b4f475"
   },
   "vampire_of_the_dire_moon": {
     "artist": "Anna Podedworna",

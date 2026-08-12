@@ -95,6 +95,10 @@
       "0": 41
     }
   },
+  "bloodline_keeper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodline_necromancer": {
     "zone": "battlefield"
   },
@@ -381,6 +385,10 @@
     "zone": "graveyard"
   },
   "llanowar_elves": {
+    "zone": "battlefield"
+  },
+  "lord_of_lineage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lyra_dawnbringer": {

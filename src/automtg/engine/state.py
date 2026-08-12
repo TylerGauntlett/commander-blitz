@@ -131,7 +131,17 @@ class GameState:
         return self.registry.get(self.objects[oid].def_id)
 
     def card_of(self, obj: GameObject) -> CardDef:
-        return self.registry.get(obj.def_id)
+        """The face this object is currently showing.
+
+        The one place transforming double-faced cards are implemented. Every
+        other reader of a card -- the characteristics layers, legality, combat,
+        the serializer -- goes through here, so a transformed permanent shows
+        its back face everywhere at once and none of them needed changing.
+        """
+        card = self.registry.get(obj.def_id)
+        if obj.transformed and card.back_face is not None:
+            return self.registry.get(card.back_face)
+        return card
 
     def player(self, pid: int) -> PlayerState:
         return self.players[pid]

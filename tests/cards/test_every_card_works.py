@@ -46,7 +46,16 @@ def expectations() -> dict:
 
 
 def all_cards(registry: CardRegistry) -> list[CardDef]:
-    return [card for card in registry if not card.is_token]
+    """Every card a game can actually put into play from a deck.
+
+    Tokens are excluded because nobody casts one. Back faces are excluded for
+    the same reason and a stronger one: a back face has no mana cost and is
+    never in a hand, a library or a deck -- it only ever exists as the face a
+    permanent that is already on the battlefield turned over to. Casting one is
+    not a thing that can happen, so "it cannot be cast" is not a defect.
+    ``TestTransformingCards`` covers them where they do exist.
+    """
+    return [card for card in registry if not card.is_token and card.front_face is None]
 
 
 def card_ids(registry: CardRegistry) -> list[str]:
@@ -202,6 +211,7 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
+            _satisfy_the_activation_condition(game, registry, ability)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
@@ -320,6 +330,50 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
     if match is None:
         return
     for _ in range(int(spec.get("count", 1) or 1)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
+
+
+def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
+    """Put out whatever an "activate only if..." clause is counting.
+
+    Sixth of the same family, and added for the same reason as the other five:
+    the sandbox's job is that "not activatable" only ever means the ability is
+    broken. Bloodline Keeper says "activate only if you control five or more
+    Vampires" and the generic board has none.
+
+    Deliberately dumb, exactly as `_provide_the_target` is. It reads one shape --
+    ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}`` --
+    and adds permanents until the count is satisfied. A helper clever enough to
+    solve an arbitrary condition would be a second implementation of `evaluate`
+    living in the tests, and the first thing it would hide is a bug in the first.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or "cmp" not in condition:
+        return
+    left = condition.get("left") or {}
+    right = condition.get("right") or {}
+    if "count" not in left or "const" not in right:
+        return
+    selector = left["count"]
+    if selector.get("zone", "battlefield") != "battlefield":
+        return
+    subtypes = {str(s) for s in selector.get("subtypes") or []}
+    types = {str(t) for t in selector.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and c.front_face is None
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    for _ in range(int(right["const"])):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
 

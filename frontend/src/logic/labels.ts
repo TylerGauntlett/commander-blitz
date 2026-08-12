@@ -256,6 +256,10 @@ export function describeEvent(
     // The permanent does not change zones, so no zone_change line covers this.
     // Without a line of its own a creature simply appears on the other side of
     // the board with nothing in the log to say why.
+    // Same reason as control_changed: no zone change happens, so the card on
+    // the board becomes a different card with nothing in the log to say why.
+    case "transformed":
+      return `${card ?? "A permanent"} transforms`;
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":

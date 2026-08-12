@@ -241022,12 +241022,12 @@
     },
     "Shared Animosity": {
       "edhrec_rank": 677,
-      "gate": "template",
+      "gate": null,
       "name": "Shared Animosity",
-      "reason": "no template for: Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other at",
+      "reason": "",
       "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shared Discovery": {
@@ -298432,12 +298432,12 @@
     },
     "Vampire Nocturnus": {
       "edhrec_rank": 8835,
-      "gate": "template",
+      "gate": null,
       "name": "Vampire Nocturnus",
-      "reason": "no template for: Play with the top card of your library revealed",
+      "reason": "",
       "scryfall_id": "b0d8588f-7986-4c35-b230-375287b4f475",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vampire Opportunist": {

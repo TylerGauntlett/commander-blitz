@@ -30,7 +30,14 @@ def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
     simplified = sum(
         qty
         for card_id, qty in (*deck.cards, *((c, 1) for c in deck.commanders))
-        if coverage.get(card_id) == "partial"
+        # `card_id not in data.registry` is the load-bearing half. The coverage
+        # map is written by an *import* and describes the proxies that import
+        # generated; a card that has since been authored is played from the
+        # authored pool and its proxy is dropped. Without this check, a card
+        # implemented after somebody imported a deck containing it goes on being
+        # reported as simplified forever -- and it reported three cards of a
+        # *precon* as simplified the moment they were authored.
+        if card_id not in data.registry and coverage.get(card_id) == "partial"
     )
     return DeckSummary(
         id=deck.id,

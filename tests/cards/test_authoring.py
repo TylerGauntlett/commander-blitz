@@ -275,6 +275,15 @@ class TestThePacketCarriesTheWholeVocabulary:
         assert static - selector == {"attached"}
         assert len(selector - static) > 10, "the selector language is the larger one"
 
+    def test_the_static_condition_vocabulary_is_shown(self):
+        """A third language, and the packet showed neither of the other two in
+        its place: a worker who cannot see that a static may be conditional
+        files a gap for "as long as" clauses that already work."""
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.loader import STATIC_CONDITION_HEADS
+
+        assert set(reference()["static_condition_keys"]) == set(STATIC_CONDITION_HEADS)
+
     def test_the_cost_vocabulary_is_shown(self):
         """A worker shown `ops` but not `cost_keys` cannot tell a cost from an
         effect, so every "<cost>: <effect>" card either guesses or files a gap

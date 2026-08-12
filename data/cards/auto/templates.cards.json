@@ -23596,6 +23596,54 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "attacking": true,
+                  "exclude_binding": "subject",
+                  "shares_a_type_with": "subject",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "shared_animosity",
+      "mana_cost": "{2}{R}",
+      "name": "Shared Animosity",
+      "oracle_text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}{G}{U}"
           },
@@ -29969,6 +30017,88 @@
       "name": "Vampire Neonate",
       "oracle_text": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
       "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "reveal_library_top",
+          "kind": "static",
+          "text": "Play with the top card of your library revealed."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "top_of_library": {
+              "colors": [
+                "B"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "As long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "top_of_library": {
+              "colors": [
+                "B"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "As long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vampire_nocturnus",
+      "mana_cost": "{1}{B}{B}{B}",
+      "name": "Vampire Nocturnus",
+      "oracle_text": "Play with the top card of your library revealed.\nAs long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.",
+      "power": 3,
       "source": "auto",
       "subtypes": [
         "Vampire"

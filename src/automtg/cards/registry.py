@@ -11,7 +11,7 @@ from pathlib import Path
 from automtg.engine.carddef import CardDef
 from automtg.engine.errors import DeckError, DslError
 
-from .loader import load_card_file, load_deck_file, validate_token_references
+from .loader import link_faces, load_card_file, load_deck_file, validate_token_references
 from .schema import DeckModel
 
 #: Repo-root ``data/`` directory, overridable for tests via ``AUTOMTG_DATA_DIR``.
@@ -101,6 +101,7 @@ class CardRegistry:
                 if card.id in cards:
                     raise DslError(f"duplicate card id {card.id!r} in {path.name}")
                 cards[card.id] = card
+        link_faces(cards)
         validate_token_references(cards)
         return cls(cards)
 
@@ -115,6 +116,7 @@ class CardRegistry:
         for path in paths:
             for card in load_card_file(path):
                 cards.setdefault(card.id, card)
+        link_faces(cards)
         validate_token_references(cards)
         return CardRegistry(cards)
 
@@ -231,6 +233,13 @@ def validate_deck(deck: DeckList, registry: CardRegistry) -> list[str]:
             problems.append(f"{card_id!r} appears {qty} times but is not a basic land")
         if card.is_token:
             problems.append(f"{card_id!r} is a token and cannot be in a deck")
+        if card.front_face is not None:
+            # The back face of a transforming card is not a card you own a copy
+            # of. A deck listing one would be 100 cards with a free 5/5 lord in
+            # it, and every other check here would pass.
+            problems.append(
+                f"{card_id!r} is the back face of {card.front_face!r} and cannot be in a deck"
+            )
 
     seen: set[str] = set()
     for card_id, _ in deck.cards:

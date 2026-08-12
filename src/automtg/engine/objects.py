@@ -144,6 +144,19 @@ class GameObject:
     #: comes back is a new object, and arrives with its printed type line.
     added_subtypes: tuple[str, ...] = ()
 
+    #: Which face of a transforming double-faced card this permanent is showing.
+    #:
+    #: The whole of the mechanic, because `GameState.card_of` is a single choke
+    #: point: flip this and every reader of the card's characteristics -- the
+    #: layers, legality, combat, the serializer -- sees the other face with no
+    #: change of its own.
+    #:
+    #: Reset with the rest of the battlefield state, which is rule 712.13a: a
+    #: permanent that leaves and comes back is a new object and enters with its
+    #: **front** face up. Getting this wrong hands somebody a 5/5 lord for a
+    #: blink.
+    transformed: bool = False
+
     #: "…exile it until this permanent leaves the battlefield." The oid of the
     #: permanent that exiled *this* card, so its own leaves-trigger can find it
     #: again.
@@ -174,6 +187,7 @@ class GameObject:
         self.exiled_by = None
         self.chosen_type = None
         self.added_subtypes = ()
+        self.transformed = False
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.
@@ -234,6 +248,7 @@ class GameObject:
             "damage": self.damage,
             "counters": dict(self.counters),
             "added_subtypes": list(self.added_subtypes),
+            "transformed": self.transformed,
             "attached_to": self.attached_to,
             "is_token": self.is_token,
             "is_commander": self.is_commander,

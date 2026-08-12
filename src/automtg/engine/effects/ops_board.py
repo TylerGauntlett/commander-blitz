@@ -21,6 +21,7 @@ from ..primitives import (
     pump,
     remove_counters,
     tap_permanent,
+    transform,
     untap_permanent,
 )
 from ..zones import destroy, exile, move_object, sacrifice
@@ -206,6 +207,24 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     if aura is not None:
         for oid in oids[:1]:
             attach(ctx.state, aura, oid)
+
+
+@register("transform")
+def op_transform(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Transform this creature." Bloodline Keeper.
+
+    ``objects`` defaults to the ability's own source, which is what every
+    printed line of this shape means -- "transform **this**". ``to_back``
+    forces a direction for the rare card that says "turn it face up" rather
+    than "turn it over".
+    """
+    to_back = spec.get("to_back")
+    if "objects" in spec:
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Transform")
+    else:
+        oids = [ctx.source_oid] if ctx.source_oid is not None else []
+    for oid in oids:
+        transform(ctx.state, oid, to_back=None if to_back is None else bool(to_back))
 
 
 @register("gain_control")

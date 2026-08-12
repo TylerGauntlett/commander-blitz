@@ -657,6 +657,10 @@ def _ability_aims(
         return None
     if ability.sorcery_speed_only and not sorcery_speed:
         return None
+    if ability.activation_condition is not None and not _activation_allowed(
+        state, pid, oid, ability
+    ):
+        return None
     if ability.cost is not None and ability.cost.mana.x_count:
         from .costs import mana_sources
 
@@ -672,6 +676,20 @@ def _ability_aims(
     if not can_pay(state, pid, ability.cost, oid, x=0):
         return None
     return enumerate_target_tuples(state, pid, ability.targets, oid) or None
+
+
+def _activation_allowed(state: GameState, pid: int, oid: int, ability) -> bool:
+    """"Activate only if you control five or more Vampires." Rule 602.5c.
+
+    A *legality* question and nothing more: an ability that was legal when
+    activated still resolves if the board changes while it is on the stack, so
+    this is asked here and nowhere else.
+    """
+    from .effects.conditions import evaluate
+    from .effects.context import EffectContext
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    return bool(evaluate(ctx, ability.activation_condition))
 
 
 def _offers_something_else(

@@ -39,6 +39,8 @@ not a rewrite.
 | **Exile until it leaves** | "Exile it until this permanent leaves the battlefield" — the O-Ring family. A link written on the *exiled card* naming the permanent that exiled it, so the exiler's own leaves-trigger returns its victims and nobody else's |
 | **Cost reduction** | Both directions: "This spell costs {X} less to cast" as a card-level field (Ghalta), and "Creature spells with flying you cast cost {1} less" as a `spell_cost_reduction` static discounting *other* cards, filtered on the printed face of the spell being cast. Both go through one function, so legality and payment cannot disagree |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
+| **Transforming double-faced cards** | Two `CardDef`s and one `GameObject`: `transformed` picks which face `GameState.card_of` returns, which is a single choke point, so the layers, legality, combat and the serializer all follow with no changes of their own. Enters front face up (712.13a). A back face is never cast, drawn or put in a deck, and the front→back link is authored while back→front is derived. Both faces share one Scryfall id and differ by `CardArt.back`. **Modal** double-faced cards are still absent — a back face here is a face, not a second castable card |
+| **Activation restrictions** | "Activate only if you control five or more Vampires" — a `condition` on an activated ability, in the full `if`-effect language, checked by `legality` before the ability is offered and nowhere else (602.5c). Distinct from `sorcery_speed_only`, which is a timing restriction rather than a board one |
 | **The top card of a library** | Both halves of Vampire Nocturnus: `reveal_library_top`, a player-wide static that changes no rule and only makes one card public (sent to every seat, since "revealed" means revealed), and a `top_of_library` condition leaf reading that one card's printed face. A pipeline input like any zone count — and a strictly sharper question than `exists` over the library, which asks whether *any* black card is anywhere in ninety-nine |
 | **Relative selectors** | "…for each other attacking creature that **shares a creature type with it**" — `shares_a_type_with` and `exclude_binding`, both naming a trigger binding rather than a list written into the card. Derived subtypes on both sides, so changelings and granted types count; an unbound name matches nothing rather than everything |
 | **One-shot type changes** | "It becomes a Vampire in addition to its other types" — the `add_subtype` **op**, distinct from the static of the same name: written onto one object and outliving the permanent that converted it. Recorded on the object, so a static's filter may read it without any static coming to depend on another's output |
@@ -132,7 +134,9 @@ These are absent, and the curated decks avoid them. Adding any one is additive.
 
 **Card types and mechanics**
 Planeswalkers · battles · sagas · modal double-faced cards · split and adventure cards ·
-transforming cards · companions · vehicles.  **Partner** is accepted as an inert
+companions · vehicles. **Transforming** cards are implemented (above); the modal
+kind, whose back face is a second card you may cast rather than a face you turn
+over to, is not.  **Partner** is accepted as an inert
 keyword: it is a deck-construction rule, and the engine is handed a finished deck
 
 **Costs and casting**

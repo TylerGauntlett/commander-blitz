@@ -392,6 +392,29 @@
         "W"
       ],
       "is_token": true
+    },
+    {
+      "id": "vampire_2_2_b_flying",
+      "name": "Vampire Flying Token",
+      "oracle_text": "2/2 black Vampire creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
     }
   ]
 }

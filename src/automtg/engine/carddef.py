@@ -225,6 +225,15 @@ class Ability:
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None
     sorcery_speed_only: bool = False
+    #: "Activate only if you control five or more Vampires." An *activation
+    #: restriction*, checked by `legality` before the ability is offered, and
+    #: re-checked nowhere else: rule 602.5c makes it a legality question, not a
+    #: resolution one, so an ability that was legal when activated still
+    #: resolves if the board changes underneath it.
+    #:
+    #: Deliberately not `sorcery_speed_only` with extra steps -- that is a
+    #: timing restriction and this is a board one, and a card can print both.
+    activation_condition: Mapping[str, Any] | None = None
     #: This ability is cycling, so activating it emits ``EventType.CYCLED``.
     is_cycling: bool = False
     # triggered
@@ -289,6 +298,17 @@ class CardDef:
     grantable_abilities: tuple[Ability, ...] = ()
     type_line: str = ""
     is_token: bool = False
+    #: The id of this card's back face -- a transforming double-faced card.
+    #: The two faces are two ``CardDef``s and one ``GameObject``: ``transformed``
+    #: on the object decides which one ``GameState.card_of`` returns, so every
+    #: reader of a card's characteristics gets the right face with no changes at
+    #: all. See ``docs/card-dsl.md``.
+    back_face: str | None = None
+    #: Set by the registry on the *back* face, naming the front. A back face is
+    #: not a card anybody may cast, draw or put in a deck, and this is what the
+    #: guards test. Derived rather than authored so the link cannot be written
+    #: in one direction only.
+    front_face: str | None = None
     #: "This spell can't be countered."  A printed property of the card
     #: rather than a granted one, read by the `counter` op -- a spell is on
     #: the stack, where static abilities do not reach it.

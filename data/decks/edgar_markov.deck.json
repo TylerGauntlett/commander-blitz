@@ -1,131 +1,327 @@
 {
   "id": "edgar",
   "name": "Edgar Markov",
-  "commanders": ["edgar_markov"],
-  "color_identity": ["W", "B", "R"],
+  "commanders": [
+    "edgar_markov"
+  ],
+  "color_identity": [
+    "W",
+    "B",
+    "R"
+  ],
   "notes": "Mardu vampire aggro. Eminence makes a token every time a Vampire is cast, lords make the swarm lethal, and drain effects convert every death and life gain into damage.",
   "cards": [
-    { "id": "plains", "qty": 8 },
-    { "id": "swamp", "qty": 12 },
-    { "id": "mountain", "qty": 9 },
-    { "id": "command_tower", "qty": 1 },
-    { "id": "nomad_outpost", "qty": 1 },
-    { "id": "savai_triome", "qty": 1 },
-    { "id": "scoured_barrens", "qty": 1 },
-    { "id": "bloodfell_caves", "qty": 1 },
-    { "id": "wind_scarred_crag", "qty": 1 },
-    { "id": "evolving_wilds", "qty": 1 },
-    { "id": "terramorphic_expanse", "qty": 1 },
-
-    { "id": "sol_ring", "qty": 1 },
-    { "id": "arcane_signet", "qty": 1 },
-    { "id": "commanders_sphere", "qty": 1 },
-    { "id": "mind_stone", "qty": 1 },
-    { "id": "wayfarers_bauble", "qty": 1 },
-
-    { "id": "vampire_of_the_dire_moon", "qty": 1 },
-    { "id": "vampire_cutthroat", "qty": 1 },
-    { "id": "vicious_conquistador", "qty": 1 },
-    { "id": "guul_draz_vampire", "qty": 1 },
-    { "id": "vampire_lacerator", "qty": 1 },
-    { "id": "duskborne_skymarcher", "qty": 1 },
-    { "id": "skymarcher_aspirant", "qty": 1 },
-    { "id": "pulse_tracker", "qty": 1 },
-    { "id": "stromkirk_noble", "qty": 1 },
-    { "id": "martyr_of_dusk", "qty": 1 },
-    { "id": "child_of_night", "qty": 1 },
-    { "id": "gifted_aetherborn", "qty": 1 },
-    { "id": "legion_lieutenant", "qty": 1 },
-    { "id": "stromkirk_captain", "qty": 1 },
-    { "id": "indulgent_aristocrat", "qty": 1 },
-    { "id": "bloodthrone_vampire", "qty": 1 },
-    { "id": "vampire_aristocrat", "qty": 1 },
-    { "id": "blood_artist", "qty": 1 },
-    { "id": "kalastria_highborn", "qty": 1 },
-    { "id": "dusk_legion_zealot", "qty": 1 },
-    { "id": "cruel_celebrant", "qty": 1 },
-    { "id": "adanto_vanguard", "qty": 1 },
-    { "id": "markov_patrician", "qty": 1 },
-    { "id": "bloodrite_invoker", "qty": 1 },
-    { "id": "rakish_heir", "qty": 1 },
-    { "id": "vampire_nighthawk", "qty": 1 },
-    { "id": "drana_liberator_of_malakir", "qty": 1 },
-    { "id": "mavren_fein_dusk_apostle", "qty": 1 },
-    { "id": "falkenrath_noble", "qty": 1 },
-    { "id": "sangromancer", "qty": 1 },
-    { "id": "sengir_vampire", "qty": 1 },
-    { "id": "champion_of_dusk", "qty": 1 },
-    { "id": "sanctum_seeker", "qty": 1 },
-    { "id": "bishop_of_rebirth", "qty": 1 },
-    { "id": "bishop_of_the_bloodstained", "qty": 1 },
-    { "id": "bloodline_necromancer", "qty": 1 },
-    { "id": "epicure_of_blood", "qty": 1 },
-    { "id": "necropolis_regent", "qty": 1 },
-    { "id": "vampire_sovereign", "qty": 1 },
-    { "id": "vampire_neonate", "qty": 1 },
-    { "id": "angel_of_despair", "qty": 1 },
-
-    { "id": "vanquishers_banner", "qty": 1 },
-    { "id": "sanguine_bond", "qty": 1 },
-    { "id": "vampiric_rites", "qty": 1 },
-    { "id": "phyrexian_arena", "qty": 1 },
-    { "id": "read_the_bones", "qty": 1 },
-    { "id": "nights_whisper", "qty": 1 },
-    { "id": "swords_to_plowshares", "qty": 1 },
-    { "id": "path_to_exile", "qty": 1 },
-    { "id": "terminate", "qty": 1 },
-    { "id": "go_for_the_throat", "qty": 1 },
-    { "id": "heros_downfall", "qty": 1 },
-    { "id": "dreadbore", "qty": 1 },
-    { "id": "vindicate", "qty": 1 },
-    { "id": "disfigure", "qty": 1 },
-    { "id": "zealous_persecution", "qty": 1 },
-    { "id": "lightning_strike", "qty": 1 }
-  ],
-  "substitutions": [
     {
-      "slot": "captivating_vampire",
-      "replaced_with": "sanctum_seeker",
-      "reason": "gaining control of a creature is not implemented"
+      "id": "plains",
+      "qty": 8
     },
     {
-      "slot": "vampire_nocturnus",
-      "replaced_with": "necropolis_regent",
-      "reason": "reading the top card of the library needs continuous reveal effects"
+      "id": "swamp",
+      "qty": 12
     },
     {
-      "slot": "bloodline_keeper",
-      "replaced_with": "mavren_fein_dusk_apostle",
-      "reason": "transforming double-faced cards are not implemented"
+      "id": "mountain",
+      "qty": 9
     },
     {
-      "slot": "shared_animosity",
-      "replaced_with": "vanquishers_banner",
-      "reason": "power boosts that count other attackers need dependent static effects"
+      "id": "command_tower",
+      "qty": 1
     },
     {
-      "slot": "anguished_unmaking",
-      "replaced_with": "vindicate",
-      "reason": "same effect at sorcery speed; exile-vs-destroy is the only difference"
+      "id": "nomad_outpost",
+      "qty": 1
     },
     {
-      "slot": "mortify",
-      "replaced_with": "heros_downfall",
-      "reason": "selectors cannot express \"creature or enchantment\" as a single target"
+      "id": "savai_triome",
+      "qty": 1
     },
     {
-      "slot": "bedevil",
-      "replaced_with": "dreadbore",
-      "reason": "selectors cannot express \"artifact, creature, or planeswalker\" as a single target"
+      "id": "scoured_barrens",
+      "qty": 1
+    },
+    {
+      "id": "bloodfell_caves",
+      "qty": 1
+    },
+    {
+      "id": "wind_scarred_crag",
+      "qty": 1
+    },
+    {
+      "id": "evolving_wilds",
+      "qty": 1
+    },
+    {
+      "id": "terramorphic_expanse",
+      "qty": 1
+    },
+    {
+      "id": "sol_ring",
+      "qty": 1
+    },
+    {
+      "id": "arcane_signet",
+      "qty": 1
+    },
+    {
+      "id": "commanders_sphere",
+      "qty": 1
+    },
+    {
+      "id": "mind_stone",
+      "qty": 1
+    },
+    {
+      "id": "wayfarers_bauble",
+      "qty": 1
+    },
+    {
+      "id": "vampire_of_the_dire_moon",
+      "qty": 1
+    },
+    {
+      "id": "vampire_cutthroat",
+      "qty": 1
+    },
+    {
+      "id": "vicious_conquistador",
+      "qty": 1
+    },
+    {
+      "id": "guul_draz_vampire",
+      "qty": 1
+    },
+    {
+      "id": "vampire_lacerator",
+      "qty": 1
+    },
+    {
+      "id": "duskborne_skymarcher",
+      "qty": 1
+    },
+    {
+      "id": "skymarcher_aspirant",
+      "qty": 1
+    },
+    {
+      "id": "pulse_tracker",
+      "qty": 1
+    },
+    {
+      "id": "stromkirk_noble",
+      "qty": 1
+    },
+    {
+      "id": "martyr_of_dusk",
+      "qty": 1
+    },
+    {
+      "id": "child_of_night",
+      "qty": 1
+    },
+    {
+      "id": "gifted_aetherborn",
+      "qty": 1
+    },
+    {
+      "id": "legion_lieutenant",
+      "qty": 1
+    },
+    {
+      "id": "stromkirk_captain",
+      "qty": 1
+    },
+    {
+      "id": "indulgent_aristocrat",
+      "qty": 1
+    },
+    {
+      "id": "bloodthrone_vampire",
+      "qty": 1
+    },
+    {
+      "id": "vampire_aristocrat",
+      "qty": 1
+    },
+    {
+      "id": "blood_artist",
+      "qty": 1
+    },
+    {
+      "id": "kalastria_highborn",
+      "qty": 1
+    },
+    {
+      "id": "dusk_legion_zealot",
+      "qty": 1
+    },
+    {
+      "id": "cruel_celebrant",
+      "qty": 1
+    },
+    {
+      "id": "adanto_vanguard",
+      "qty": 1
+    },
+    {
+      "id": "markov_patrician",
+      "qty": 1
+    },
+    {
+      "id": "bloodrite_invoker",
+      "qty": 1
+    },
+    {
+      "id": "rakish_heir",
+      "qty": 1
+    },
+    {
+      "id": "vampire_nighthawk",
+      "qty": 1
+    },
+    {
+      "id": "drana_liberator_of_malakir",
+      "qty": 1
+    },
+    {
+      "id": "bloodline_keeper",
+      "qty": 1
+    },
+    {
+      "id": "falkenrath_noble",
+      "qty": 1
+    },
+    {
+      "id": "sangromancer",
+      "qty": 1
+    },
+    {
+      "id": "sengir_vampire",
+      "qty": 1
+    },
+    {
+      "id": "champion_of_dusk",
+      "qty": 1
+    },
+    {
+      "id": "captivating_vampire",
+      "qty": 1
+    },
+    {
+      "id": "bishop_of_rebirth",
+      "qty": 1
+    },
+    {
+      "id": "bishop_of_the_bloodstained",
+      "qty": 1
+    },
+    {
+      "id": "bloodline_necromancer",
+      "qty": 1
+    },
+    {
+      "id": "epicure_of_blood",
+      "qty": 1
+    },
+    {
+      "id": "vampire_nocturnus",
+      "qty": 1
+    },
+    {
+      "id": "vampire_sovereign",
+      "qty": 1
+    },
+    {
+      "id": "vampire_neonate",
+      "qty": 1
+    },
+    {
+      "id": "angel_of_despair",
+      "qty": 1
+    },
+    {
+      "id": "shared_animosity",
+      "qty": 1
+    },
+    {
+      "id": "sanguine_bond",
+      "qty": 1
+    },
+    {
+      "id": "vampiric_rites",
+      "qty": 1
+    },
+    {
+      "id": "phyrexian_arena",
+      "qty": 1
+    },
+    {
+      "id": "read_the_bones",
+      "qty": 1
+    },
+    {
+      "id": "nights_whisper",
+      "qty": 1
+    },
+    {
+      "id": "swords_to_plowshares",
+      "qty": 1
+    },
+    {
+      "id": "path_to_exile",
+      "qty": 1
+    },
+    {
+      "id": "terminate",
+      "qty": 1
+    },
+    {
+      "id": "go_for_the_throat",
+      "qty": 1
+    },
+    {
+      "id": "mortify",
+      "qty": 1
+    },
+    {
+      "id": "bedevil",
+      "qty": 1
+    },
+    {
+      "id": "anguished_unmaking",
+      "qty": 1
+    },
+    {
+      "id": "disfigure",
+      "qty": 1
+    },
+    {
+      "id": "zealous_persecution",
+      "qty": 1
+    },
+    {
+      "id": "lightning_strike",
+      "qty": 1
     }
   ],
-  "tags": ["Aggro", "Tokens", "Drain"],
-  "ratings": {"speed": 4, "complexity": 2, "interaction": 3, "resilience": 2, "pilot": 2},
-  "strategy": "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast - every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Sanctum Seeker turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
+  "substitutions": [],
+  "tags": [
+    "Aggro",
+    "Tokens",
+    "Drain"
+  ],
+  "ratings": {
+    "speed": 4,
+    "complexity": 2,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 2
+  },
+  "strategy": "Eminence works from the command zone, so the deck is attacking before Edgar is ever cast - every one- and two-drop Vampire brings a token with it. Twenty-one two-drops is not an accident; the curve is built to empty a hand by turn four and then find lords. Legion Lieutenant and Shared Animosity turn a wide board into a lethal one, and Blood Artist means chump blocks do not save anybody. It is the fastest clock of the four and the least able to recover if the board is swept.",
   "signature": [
     {
-      "card_id": "sanctum_seeker",
-      "why": "Every attacking Vampire drains, whether or not it connects."
+      "card_id": "bloodline_keeper",
+      "why": "A token every turn, and a 5/5 lord once the swarm is five wide."
     },
     {
       "card_id": "legion_lieutenant",

@@ -61,6 +61,10 @@ class EventType:
     #: log built from zone changes alone would show a creature silently swapping
     #: sides. ``data`` carries ``from`` and ``to`` player ids.
     CONTROL_CHANGED = "control_changed"
+    #: A double-faced permanent turned over. Its own type for the same reason
+    #: CONTROL_CHANGED is: no zone change happens, so nothing else in the log
+    #: would say that the card on the board is now a different card.
+    TRANSFORMED = "transformed"
     BECAME_MONSTROUS = "became_monstrous"
     SUSPENDED = "suspended"
     TIME_COUNTER_REMOVED = "time_counter_removed"

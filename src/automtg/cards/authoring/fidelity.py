@@ -411,6 +411,23 @@ def audit_card(
     return out
 
 
+
+def printed_row(card, index):
+    """The catalog row for a card, including one *face* of a double-faced card.
+
+    The index reduces every card to one row, and a transforming card's row is
+    stored under the joined name -- "Bloodline Keeper // Lord of Lineage" -- so
+    neither face finds it by its own name. The **front** face is what that row's
+    ``oracle_text`` actually holds, so only the front is looked up this way; a
+    back face has no printed text in the catalog at all and is honestly reported
+    as having nothing to check against.
+    """
+    if card.back_face is not None:
+        return index.lookup(card.name, joined=True)
+    if card.front_face is not None:
+        return None
+    return index.lookup(card.name, token=False)
+
 def audit(
     registry: CardRegistry,
     index: CardIndex,
@@ -424,7 +441,7 @@ def audit(
     """
     out: list[Deficit] = []
     for card in sorted(registry, key=lambda c: c.id):
-        catalog = index.lookup(card.name, token=False)
+        catalog = printed_row(card, index)
         out.extend(audit_card(card, catalog, expectations.get(card.id)))
     return sorted(out, key=lambda d: (KINDS.index(d.kind), d.card_id))
 
