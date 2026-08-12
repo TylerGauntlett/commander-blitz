@@ -222,6 +222,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "pay_life": 3,
   "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
+  "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
@@ -235,9 +236,28 @@ drop, and in a landfall deck another trigger. Written as a sacrifice they are no
 worse cards or better ones, they are a different engine, and nothing on screen
 would say so.
 
-Both take a selector over the battlefield defaulting to `controller: "you"`, and
-both make the ability **unavailable** when nothing matches rather than free: an
-ability whose bounce cost has nothing to bounce would cost only its mana.
+`tap_permanents` is the third of that family — "Tap five untapped Vampires you
+control", Captivating Vampire — and the one thing that separates it from the
+other two is that the permanents **stay**. They untap on the next untap step, so
+a cost of this shape is repeatable in a way a sacrifice is not.
+
+It is not `tap`. `tap` is the `{T}` symbol and only ever taps the source. Nor is
+it the `tap` **op**: paying with the op would put the taps on resolution rather
+than on activation, and would let the ability be activated with no untapped
+Vampires at all — which makes it free.
+
+`tapped: false` is forced on the pool and the loader **refuses** a card that
+spells `tapped` itself, because "untapped" is in every printed line of this
+shape and a cost that could re-tap something already tapped costs nothing.
+
+Summoning sickness deliberately does not apply: rule 302.6 restricts the `{T}`
+symbol in a permanent's *own* cost, and Captivating Vampire's ruling is explicit
+that a Vampire which just arrived may be tapped for it — the source included.
+
+All three take a selector over the battlefield defaulting to `controller: "you"`,
+and all three make the ability **unavailable** when too little matches rather
+than cheaper: an ability whose bounce cost has nothing to bounce would cost only
+its mana, and a cost of five that settled for four would be a different card.
 
 ## Player specs
 

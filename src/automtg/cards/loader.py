@@ -874,8 +874,18 @@ def _compile_cost(model, where: str) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    validate_selector(model.tap_permanents, f"{where}.cost.tap_permanents")
     if model.discard_selector is not None and not model.discard:
         raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
+    if model.tap_permanents is not None and "tapped" in model.tap_permanents:
+        # The pool forces `tapped: False` -- "untapped" is part of every printed
+        # line of this shape, and a cost that could re-tap something already
+        # tapped is free. Spelling it in the card would read as a knob that
+        # works, so it is refused rather than overridden in silence.
+        raise DslError(
+            f"{where}.cost.tap_permanents: 'tapped' is implied and may not be set; "
+            f"this cost always taps untapped permanents"
+        )
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())

@@ -25,7 +25,7 @@ not a rewrite.
 | **State-based actions** | All nine listed in [engine-rules.md](engine-rules.md) |
 | **Multiplayer** | N players, turn order that skips eliminated players, elimination mid-combat and mid-resolution, per-source commander damage |
 | **Mulligans** | London mulligan with the bottoming step |
-| **Costs** | Mana, tap, untap, sacrifice, discard, discard *this card*, pay life, remove counters, exile from graveyard |
+| **Costs** | Mana, tap, untap, sacrifice, discard, discard *this card*, pay life, remove counters, exile from graveyard, and tapping *other* permanents — "Tap five untapped Vampires you control", a selector with a count, charged at activation and leaving the permanents on the battlefield to untap next turn |
 | **Cycling** | "Cycling {2}" — an activated ability offered from your **hand**, whose cost discards the card itself, plus "When you cycle this card…" as its own `cycle` event, fired after the cycling ability is on the stack so the trigger resolves *before* the draw (the printed "Do this before you draw"). Typecycling is still out: it fetches instead of drawing, which is a different ability |
 | **Kicker** | The additional cost, offered as a second way to cast the same card, and the `kicked` condition its text reads — readable by the permanent's own enters trigger, not just during resolution |
 | **Evoke** | The alternative cost, replacing the printed one and offered from hand only, and the `evoked` condition behind "it's sacrificed when it enters". Mana value stays what is printed |
