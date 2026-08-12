@@ -1,3 +1,46 @@
+## Bolster, mentor, evolve — and the condition that could not see the event
+
+### Overview
+
+The census groups these three as wanting "derived-power comparisons in filters,
+plus an extremum selector". Building them split the group in an unexpected
+place: two were already expressible, one needed a genuine addition, and a
+*fourth* thing was broken underneath all of them.
+
+**Mentor was already expressible.** `_compare` in the selector language has
+always evaluated a full value expression on the right, so "target attacking
+creature with lesser power" is
+`{"power": {"op": "<", "value": {"power_of": {"self": true}}}}`, read off
+derived characteristics on both sides. The census row described the *shape* of
+the question and was never checked against the comparison vocabulary that
+existed.
+
+**Bolster needed `extreme`.** "The creature with the least toughness among
+creatures you control" cannot be a `_compare` clause: those test a candidate
+against a value known in advance, and an extremum is only knowable once the
+whole pool is in hand. So it narrows the pool after every other clause, and it
+keeps ties — rule 701.36a has the player choose among equals, `choose_objects`
+is already what asks, and breaking the tie by oid would make the answer depend
+on the order permanents happened to arrive in.
+
+### The bug under all of it
+
+**Evolve did not work, and could not have.** A trigger's intervening-`if` was
+evaluated with an `EffectContext` carrying no bindings at all, so
+`{"power_of": {"binding": "subject"}}` — "that creature" — read **zero**. Evolve
+compares the creature that entered against itself; with one side stuck at zero
+the condition was false for anything with positive power, and the ability
+silently never fired.
+
+Nothing would have reported it. The card loads, the trigger matches, the
+condition evaluates without error and returns the wrong answer.
+
+`evaluate_condition` now takes the event's bindings, and `_matches` and `_queue`
+build them from **one function**, so an intervening-`if` and the ability it
+gates cannot disagree about what "that creature" refers to. That shared
+construction is the actual fix; passing bindings to one of the two callers would
+have been a subtler version of the same bug.
+
 ## Casting from the graveyard, generalised — escape and jump-start
 
 ### Overview

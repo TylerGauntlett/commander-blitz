@@ -103,11 +103,32 @@ Every key is optional; all present keys must match.
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "self_only": true,              // this permanent only
+  "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
   "count": 1,                     // an int, or "all"
   "chooser": "controller",        // controller|owner|none
   "random": false,
   "name": "Forest"
 }
+```
+
+`extreme` is bolster's "a creature with the **least toughness** among creatures
+you control", and it is the one clause that is not a test on a candidate. Every
+other key here can be answered by looking at one object; an extremum is a fact
+about the *pool*, so it is applied last, after everything else has filtered.
+`of` is `power`, `toughness` or `mana_value` and is read off derived
+characteristics; `pick` is `greatest` or `least`.
+
+Ties are all kept. Rule 701.36a has the player choose among equals and
+`choose_objects` is already what asks, so narrowing to one here would take that
+choice away — and breaking the tie by oid would make the answer depend on the
+order permanents happened to arrive in.
+
+The comparison keys (`power`, `toughness`, `mana_value`) take a full **value
+expression** on the right, which is how mentor says "target attacking creature
+with lesser power" without any extremum at all:
+
+```jsonc
+"power": { "op": "<", "value": { "power_of": { "self": true } } }
 ```
 
 `types` and `any_types` are the two halves of the same question and the

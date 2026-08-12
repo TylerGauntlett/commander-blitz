@@ -78,6 +78,11 @@ SELECTOR_KEYS = frozenset(
         #: literal list fixed when the card is written.
         "shares_a_type_with",
         "self_only",
+        #: "…with the least toughness among creatures you control" -- bolster.
+        #: Narrows the pool to whatever is tied for the extreme *after* every
+        #: other clause has filtered it, because an extremum is a fact about the
+        #: pool and not about any one candidate.
+        "extreme",
         "count",
         "chooser",
         "random",
@@ -115,7 +120,7 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             seeded = [bound] if bound is not None else []
         if set(selector) <= {"target", "binding"}:
             return seeded
-        return [oid for oid in seeded if matches(ctx, oid, selector)]
+        return _narrow_to_extreme(ctx, [oid for oid in seeded if matches(ctx, oid, selector)], selector)
 
     state = ctx.state
     zone_name = selector.get("zone", "battlefield")
@@ -132,7 +137,52 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         for pid in _zone_owners(ctx, selector):
             candidates.extend(state.players[pid].zone_list(zone))
 
-    return [oid for oid in candidates if matches(ctx, oid, selector)]
+    return _narrow_to_extreme(ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector)
+
+
+#: What `extreme` may rank on. Derived characteristics only, and read through
+#: `chars` -- "the creature with the least toughness" means the toughness it
+#: actually has, counters and anthems included.
+EXTREME_KEYS = frozenset({"power", "toughness", "mana_value"})
+
+
+def _narrow_to_extreme(
+    ctx: EffectContext, pool: list[int], selector: Mapping[str, Any]
+) -> list[int]:
+    """Keep only the objects tied for the highest or lowest of some quantity.
+
+    "Choose a creature with the **least toughness** among creatures you
+    control" -- bolster, and the shape every "greatest/least" line on a card
+    wants. It cannot be a `_compare` clause: those test each candidate against a
+    value known in advance, and an extremum is only knowable once the whole pool
+    is in hand.
+
+    Ties are all kept rather than broken here. Rule 701.36a has the *player*
+    choose among equals, and `choose_objects` is already the thing that asks --
+    so narrowing to one would silently take that choice away, and picking by oid
+    would make it depend on the order permanents happened to arrive in.
+    """
+    spec = selector.get("extreme")
+    if spec is None or not pool:
+        return pool
+    if not isinstance(spec, Mapping):
+        raise DslError(f"bad extreme spec {spec!r}")
+    of = str(spec.get("of", "power"))
+    if of not in EXTREME_KEYS:
+        raise DslError(f"cannot rank on {of!r}; extreme allows {sorted(EXTREME_KEYS)}")
+    pick = str(spec.get("pick", "greatest"))
+    if pick not in ("greatest", "least"):
+        raise DslError(f"unknown extreme pick {pick!r}; use 'greatest' or 'least'")
+
+    def rank(oid: int) -> int:
+        if of == "mana_value":
+            obj = ctx.state.objects.get(oid)
+            return ctx.state.card_of(obj).mana_value if obj is not None else 0
+        c = chars(ctx.state, oid)
+        return c.power if of == "power" else c.toughness
+
+    best = (max if pick == "greatest" else min)(rank(oid) for oid in pool)
+    return [oid for oid in pool if rank(oid) == best]
 
 
 def _bound_oid(ctx: EffectContext, name: str) -> int | None:
