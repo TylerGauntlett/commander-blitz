@@ -192,7 +192,7 @@ This is the long tail, and where the build order comes from.
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
 | Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
 | Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
-| Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
+| Bloodrush | free | `activated` + `active_zones: ["hand"]` + a `discard_self` cost, then `pump` — the cycling shape | — |
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
 | Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
@@ -227,7 +227,7 @@ This is the long tail, and where the build order comes from.
 | Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
 | Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py` | — |
-| Exploit | routed | `self_enters` + an optional sacrifice; the "if you do" is an ordinary `may` `else` | — |
+| Exploit | free | `self_enters` trigger, `may`, then `sacrifice` and whatever the card does — cashed by `test_exploit_and_bloodrush.py` | — |
 | Explore | routed | `reveal` and `add_counters` exist; needs the revealed card routed by type | — |
 | Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |
 | Fabricate | free | `self_enters` trigger, then `choose_mode` between `add_counters` and `create_token` | — |
