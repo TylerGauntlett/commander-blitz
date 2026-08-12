@@ -1,3 +1,46 @@
+## `add_subtype`, the op — one printed noun, two mechanisms
+
+### Overview
+
+"Gain control of target creature. **It becomes a Vampire in addition to its
+other types.**" The second half of Captivating Vampire, and the half that makes
+the first half worth doing: the stolen creature joins the swarm the deck is
+already buffing.
+
+`add_subtype` already existed — as a **static effect**. That is why the gap
+record for this card called it "add_subtype exists only in `static_effects`",
+and the distinction is the whole feature:
+
+| | |
+|---|---|
+| the static | "Creatures you control are Vampires" — continuous, applies to whatever currently matches its filter, and ends the instant its source leaves |
+| the op | "It becomes a Vampire" — written onto one object, and it stays there after the permanent that converted it is dead |
+
+### The interesting part: a static that reads it
+
+`characteristics._matches` matches a static's `affects` filter against the
+**printed** card face, on purpose — it is what guarantees that no static can
+come to depend on another static's output and reintroduce recursion into a
+fixed-order pipeline.
+
+That rule would have made this card do nothing visible. Captivating Vampire's
+own anthem is "other Vampire creatures you control get +1/+1", so a creature
+converted by the op has to be seen by the filter, or the conversion buys
+nothing.
+
+The resolution is that `added_subtypes` is object state, not a static's output.
+Nothing in the pipeline can change it, so it is a pipeline *input* in exactly
+the sense a counter or a tapped flag is — safe to read, for the same reason
+`counters` has always been readable there. `_matches_printed` takes it as an
+explicit argument so the battlefield path and the zone-counting path cannot
+drift into disagreeing about it.
+
+### Refused
+
+`types` on the op raises rather than being dropped. "Becomes an artifact in
+addition to its other types" is a different sentence, and a card that asked for
+it and silently got only its subtypes would load clean and be wrong.
+
 ## Gaining control of a permanent
 
 ### Overview

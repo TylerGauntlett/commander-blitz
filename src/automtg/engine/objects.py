@@ -127,6 +127,23 @@ class GameObject:
     #: part of what the object *is*, not something that happened to it.
     copy_overrides: dict[str, Any] | None = None
 
+    #: "It becomes a Vampire in addition to its other types." Captivating
+    #: Vampire — a *one-shot* type change with no duration, which is a different
+    #: thing from the `add_subtype` **static** even though they read alike: the
+    #: static applies continuously to whatever currently matches its filter,
+    #: while this is written onto one object and stays there.
+    #:
+    #: Object state rather than a static's output, which is what makes it safe
+    #: for a static's `affects` filter to read: nothing in the characteristics
+    #: pipeline can change it, so no static comes to depend on another static.
+    #: That matters for the card it was built for — Captivating Vampire's own
+    #: "other Vampire creatures you control get +1/+1" has to see the creature
+    #: it just converted.
+    #:
+    #: Reset with the rest of the battlefield state: a permanent that leaves and
+    #: comes back is a new object, and arrives with its printed type line.
+    added_subtypes: tuple[str, ...] = ()
+
     #: "…exile it until this permanent leaves the battlefield." The oid of the
     #: permanent that exiled *this* card, so its own leaves-trigger can find it
     #: again.
@@ -156,6 +173,7 @@ class GameObject:
         self.skip_next_untap = False
         self.exiled_by = None
         self.chosen_type = None
+        self.added_subtypes = ()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.
@@ -215,6 +233,7 @@ class GameObject:
             "tapped": self.tapped,
             "damage": self.damage,
             "counters": dict(self.counters),
+            "added_subtypes": list(self.added_subtypes),
             "attached_to": self.attached_to,
             "is_token": self.is_token,
             "is_commander": self.is_commander,
