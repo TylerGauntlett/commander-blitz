@@ -1181,6 +1181,10 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "detain" and not effect.get("objects"):
+        # Detain with no selector restricts nobody: the card resolves, the log
+        # says nothing, and the creature attacks anyway.
+        raise DslError(f"{where}: detain needs 'objects' naming what is detained")
     if op == "set_flag" and not effect.get("flag"):
         # A flag with no name writes nothing, so renown's once-only guard never
         # closes and the creature grows on every combat damage for ever.

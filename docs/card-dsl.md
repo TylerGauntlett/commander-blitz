@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>57 ops"]
+    ctx --> ops["op registry<br/>58 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -78,7 +78,7 @@ They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
 the entire difference between the two keywords. Omitting `chooser` asks the
 library's owner, which is what every scry card in the pool wants.
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `gain_control` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |

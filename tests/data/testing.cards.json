@@ -942,6 +942,35 @@
       ]
     },
     {
+      "id": "t_detainer",
+      "name": "Test Detainer",
+      "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "detain",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
       "id": "t_exerter",
       "name": "Test Exerter",
       "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",

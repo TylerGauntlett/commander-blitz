@@ -213,7 +213,7 @@ This is the long tail, and where the build order comes from.
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
 | Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
 | Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
-| Detain | routed | `lock_abilities` and `cant_attack` exist separately; needs them bundled until a player's next turn | — |
+| Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
 | Devour | routed | `self_enters` + sacrifice + `for_each`; the scaling counters are the awkward half | — |
 | Disturb | routed | `transform` and `flashback` both ship; needs the graveyard cast to arrive on the **back** face | — |
 | Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |

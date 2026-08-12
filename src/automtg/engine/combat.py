@@ -66,6 +66,11 @@ def can_attack(state: GameState, oid: int) -> bool:
         return False
     if attack_forbidden(state, oid):
         return False
+    # Detain: "can't attack or block until your next turn". Read here rather
+    # than through a static, because it is written onto the one permanent and
+    # outlives the turn that wrote it.
+    if obj.detained_by is not None:
+        return False
     combat = state.combat
     return combat is None or oid not in combat.attackers
 
@@ -267,6 +272,9 @@ def can_block(
     # -- checked here rather than in `blocks_valid` because it is a fact about
     # one creature, not about the shape of the whole declaration.
     if block_forbidden(state, blocker_oid):
+        return False
+
+    if blocker.detained_by is not None:
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked
