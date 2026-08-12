@@ -1,3 +1,63 @@
+## The top card of a library, read and shown
+
+### Overview
+
+"Play with the top card of your library revealed. As long as the top card of
+your library is black, this creature and other Vampire creatures you control get
++2/+1 and have flying." Vampire Nocturnus — two sentences, two separate
+absences, and neither is worth anything without the other.
+
+### The condition, and the near miss that would have shipped
+
+A static may ask about pipeline *inputs* only, so that no static can come to
+depend on another's output. The top card of a library is such an input: nothing
+in the characteristics pipeline can change what is on top of a library.
+
+The nearest thing the condition language already had was `exists` over
+`{"zone": "library", "colors": ["B"]}`. That asks whether **any** black card is
+anywhere in ninety-nine, which in a mono-black deck is true essentially always.
+Written that way, Vampire Nocturnus is a permanent +2/+1 and flying — a strictly
+better card than the printed one, and one that compiles, resolves, and passes
+every gate looking exactly right.
+
+`top_of_library` reads the one card. Its filter is a printed face and an owner
+and nothing else, the same rule every off-battlefield filter follows; `zone` is
+refused, since the zone is the whole of what the leaf names. An empty library
+matches nothing, so the static is off.
+
+### The reveal, which is not flavour
+
+`reveal_library_top` is the only static in the table that changes **nothing**
+about the rules. It grants no permission and moves no card — that is the whole
+of what separates it from `play_lands_from_library_top`. It makes one card
+public.
+
+It is still load-bearing. Whether your team has flying is a fact you are meant
+to know *before* declaring attackers, and the condition that decides it is
+otherwise invisible: the card would work perfectly and be unpilotable.
+
+So this is the rare static read by `serialize` and by nothing else, and the rare
+engine change whose whole point is the UI:
+
+- `library_top` on every player, `null` unless something reveals it, so the
+  client needs no separate flag;
+- sent to **every** seat rather than its controller's, because "revealed" means
+  revealed and an opponent who cannot see it is playing against information they
+  are entitled to;
+- `findCard` searches it — a zone of one — or the preview rail blanks on the
+  single card the whole mechanic exists to show;
+- the library pile, normally the one inert pile on the orb, gets a gold rim, the
+  card's name, and a hover that fills the preview rail.
+
+### A harness gap found on the way
+
+`tests/cards/test_every_card_works.py` reported Captivating Vampire's ability as
+unusable. It was not: the sandbox had no way to pay a `tap_permanents` cost, so
+"could not pay for it" had become indistinguishable from "the ability is
+broken". `_provide_the_tap_fodder` joins `_provide_the_sacrifice`,
+`_pay_the_counters`, `_stock_the_hand` and `_provide_the_target` — the same
+family, added for the same reason each time.
+
 ## Selectors that describe one object in terms of another
 
 ### Overview

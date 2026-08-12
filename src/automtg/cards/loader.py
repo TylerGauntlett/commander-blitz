@@ -54,6 +54,11 @@ STATIC_EFFECTS = frozenset(
         "no_hand_limit",
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
+        # "Play with the top card of your library revealed." Player-wide, and
+        # the only static here that changes nothing about the rules: it grants
+        # no permission and moves no card, it makes one card public. Read by
+        # `serialize`, and by nothing else.
+        "reveal_library_top",
         # Parameterised, so it cannot be a keyword: "protection from Wizards"
         # names a quality, and four separate rules (damage, enchant/equip,
         # block, target) ask about it.
@@ -609,6 +614,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         "no_hand_limit",
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
+        "reveal_library_top",
         "double_land_triggers",
         "double_land_mana",
         "freeze_opponent_lands",
@@ -709,6 +715,12 @@ STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
 STATIC_CONDITION_HEADS = (
     "counters", "all", "any", "not", "exists", "is_your_turn",
     "has_city_s_blessing", "cmp",
+    # "As long as the top card of your library is black". A pipeline *input*
+    # for the same reason a zone count is -- nothing in the characteristics
+    # pipeline can change what is on top of a library -- but a strictly
+    # sharper question than `exists` over the library, which asks whether any
+    # black card is anywhere in ninety-nine and is nearly always true.
+    "top_of_library",
 )
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static
@@ -820,6 +832,26 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "top_of_library":
+        spec = condition["top_of_library"]
+        if not isinstance(spec, Mapping):
+            raise DslError(f"{where}.top_of_library: must be an object")
+        # The same printed-face-and-owner rule every off-battlefield filter
+        # follows: the top card of a library is not tapped, attacking or
+        # attached to anything, and a key that loads and matches nothing is
+        # how a card comes to do less than it prints.
+        unknown = set(spec) - (STATIC_ZONE_FILTER_KEYS - {"zone"})
+        if unknown:
+            raise DslError(
+                f"{where}.top_of_library: a card in a library has a printed face and "
+                f"an owner and nothing else; unsupported keys {sorted(unknown)}"
+            )
+        controller = spec.get("controller", "you")
+        if controller not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.top_of_library.controller: must be 'you', 'opponent' or "
+                f"'any', got {controller!r}"
+            )
     elif head == "has_city_s_blessing":
         who = condition["has_city_s_blessing"]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:

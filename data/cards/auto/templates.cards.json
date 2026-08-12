@@ -4154,6 +4154,93 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Vampire creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "captivating_vampire",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Captivating Vampire",
+      "oracle_text": "Other Vampire creatures you control get +1/+1.\nTap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
