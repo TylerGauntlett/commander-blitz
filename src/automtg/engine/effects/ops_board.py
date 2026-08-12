@@ -444,6 +444,68 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     return select_players(ctx, spec)
 
 
+@register("move_counters")
+def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Take counters off one permanent and put them on another.
+
+    Graft ("move a +1/+1 counter from this creature onto it") and modular
+    ("put its +1/+1 counters on target artifact creature"). Not `remove_counters`
+    beside `add_counters`, for one reason that matters and one that does not:
+
+    - **The amount is whatever was there.** Modular moves *all* of them, and the
+      number is not knowable when the card is written. Two ops would need the
+      count threaded between them through a binding that nothing sets.
+    - It is one printed sentence, so the authoring verifier's residual gate sees
+      one ability implementing one clause.
+
+    ``amount`` defaults to every counter of that kind on the source. It is
+    clamped to what is actually there, so a graft creature with one counter left
+    moves one and not the two the card asked for -- moving counters that do not
+    exist would create them out of nothing.
+
+    The source is `from`, defaulting to this permanent, and the destination is
+    `objects`. A move to nowhere still takes nothing off the source: with no
+    legal destination the counters stay put, which is what "move ... onto it"
+    says when "it" is gone.
+    """
+    kind = str(spec.get("counter", PLUS_ONE))
+    if "from" in spec:
+        sources = resolve_pool(ctx, spec["from"])
+    else:
+        # This permanent, wherever it is -- deliberately *not* the selector
+        # `{"self_only": true}`, which resolves through a battlefield scan and
+        # therefore finds nothing for a modular creature that has just died.
+        # "Its +1/+1 counters" is about the card the ability came from, and by
+        # the time that ability resolves the card is in a graveyard.
+        sources = [ctx.source_oid] if ctx.source_oid is not None else []
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    if not sources or not destinations:
+        return
+    for source_oid in sources:
+        source = ctx.state.objects.get(source_oid)
+        if source is None:
+            continue
+        available = source.counter(kind)
+        wanted = evaluate_value(ctx, spec["amount"]) if "amount" in spec else available
+        if source.on_battlefield:
+            # Clamped: moving counters that are not there would create them.
+            moving = max(0, min(available, wanted))
+        else:
+            # Modular. The source is in a graveyard and `reset_permanent_state`
+            # emptied its counters on the way, so `available` is zero and the
+            # clamp would move nothing -- the same trap persist fell into. The
+            # count comes from the card's own `amount`, which says
+            # `{"counters_had": "+1/+1"}` and reads the dies event's snapshot,
+            # and there is nothing left on the source to remove.
+            moving = max(0, wanted)
+        if not moving:
+            continue
+        if source.on_battlefield:
+            remove_counters(ctx.state, source_oid, kind, moving)
+        for dest_oid in destinations:
+            add_counters(ctx.state, dest_oid, kind, moving, source=ctx.source_oid)
+
+
 @register("must_block")
 def op_must_block(ctx: EffectContext, spec: Mapping[str, Any]):
     """Provoke: "target creature blocks this creature this combat if able."
