@@ -334,6 +334,9 @@ class CardDef:
     #: generic-only and clamped at zero, like every other cost reduction
     #: here: it never reaches the coloured pips however large the sacrifice.
     emerge: ManaCost | None = None
+    #: Offering: the creature type the sacrifice must be. ``None`` is emerge
+    #: proper, which takes any creature.
+    emerge_subtype: str | None = None
     #: "This spell costs {X} less to cast."  See `costs.cost_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.

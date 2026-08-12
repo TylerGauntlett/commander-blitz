@@ -2110,6 +2110,7 @@ them where it is sitting:
 "evoke": "{2}{U}", "evoke_label": "dash"    // an alternative cost, and its printed name
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
+"emerge_subtype": "Goblin"                  // offering: only that type may be eaten
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards

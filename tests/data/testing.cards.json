@@ -942,6 +942,39 @@
       ]
     },
     {
+      "id": "t_offering",
+      "name": "Test Offering",
+      "oracle_text": "Goblin offering (You may cast this card any time you could cast an instant by sacrificing a Goblin and paying the difference in mana costs between this and the sacrificed Goblin.)",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flash"
+      ],
+      "emerge": "{4}{R}",
+      "emerge_subtype": "Goblin"
+    },
+    {
+      "id": "t_goblin",
+      "name": "Test Goblin",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
       "id": "t_dasher",
       "name": "Test Dasher",
       "oracle_text": "Dash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
