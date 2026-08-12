@@ -8582,12 +8582,12 @@
     },
     "Angel of Sanctions": {
       "edhrec_rank": 8765,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Angel of Sanctions",
-      "reason": "Embalm {5}{W} ({5}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Angel with no mana cost. Embalm only as a sorcery.)",
+      "reason": "",
       "scryfall_id": "546b6ffc-44e3-4994-b84b-6282c6474a1a",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Angel of Serenity": {
@@ -28642,12 +28642,12 @@
     },
     "Bloodline Necromancer": {
       "edhrec_rank": 4006,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Bloodline Necromancer",
-      "reason": "Lifelink",
+      "reason": "",
       "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Bloodline Pretender": {
@@ -64192,12 +64192,12 @@
     },
     "Deep Analysis": {
       "edhrec_rank": 1442,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Deep Analysis",
-      "reason": "Flashback—{1}{U}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "reason": "",
       "scryfall_id": "1a297bae-f259-4fc7-b76a-285f972d69e3",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Deep Forest Hermit": {
@@ -68042,12 +68042,12 @@
     },
     "Dictate of Erebos": {
       "edhrec_rank": 990,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Dictate of Erebos",
-      "reason": "Flash",
+      "reason": "",
       "scryfall_id": "93789500-bcc5-40b0-991d-84d17cef95a6",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Dictate of Heliod": {
@@ -78882,12 +78882,12 @@
     },
     "Edgar Markov": {
       "edhrec_rank": 3118,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Edgar Markov",
-      "reason": "First strike, haste",
+      "reason": "",
       "scryfall_id": "089b6e6f-c178-4612-866f-da9cbc01b442",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Edgar's Awakening": {
@@ -120062,12 +120062,12 @@
     },
     "Gyre Sage": {
       "edhrec_rank": 829,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Gyre Sage",
-      "reason": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+      "reason": "",
       "scryfall_id": "236c4e0d-1a54-4024-85ef-4d73028bfb87",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Gyruda, Doom of Depths": {
@@ -134512,12 +134512,12 @@
     },
     "Increasing Devotion": {
       "edhrec_rank": 3292,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Increasing Devotion",
-      "reason": "Flashback {7}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "reason": "",
       "scryfall_id": "400bbab4-4ecf-4875-b356-1164d3a29092",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Increasing Savagery": {
@@ -151492,12 +151492,12 @@
     },
     "Krosan Tusker": {
       "edhrec_rank": 10668,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Krosan Tusker",
-      "reason": "Cycling {2}{G} ({2}{G}, Discard this card: Draw a card.) / When you cycle this card, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. (Do this…",
+      "reason": "",
       "scryfall_id": "e2a49801-9838-4487-9ec6-cf087e1bb053",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Krosan Verge": {
@@ -165852,12 +165852,12 @@
     },
     "Marauding Maulhorn": {
       "edhrec_rank": 30863,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Marauding Maulhorn",
-      "reason": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+      "reason": "",
       "scryfall_id": "b7d5e3dc-f307-4f91-a5ee-e7c5d03d8102",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Marauding Raptor": {
@@ -189072,12 +189072,12 @@
     },
     "Oblivion Ring": {
       "edhrec_rank": 4908,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Oblivion Ring",
-      "reason": "When this enchantment leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "reason": "",
       "scryfall_id": "33330c04-4e61-4993-ba26-d2316d1e845c",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Oblivion Sower": {
@@ -238192,12 +238192,12 @@
     },
     "Sengir Vampire": {
       "edhrec_rank": 18150,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Sengir Vampire",
-      "reason": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+      "reason": "",
       "scryfall_id": "8801740a-c54d-4686-9b5e-fccd6d7699f5",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Sengir, the Dark Baron": {
@@ -248752,12 +248752,12 @@
     },
     "Skyknight Vanguard": {
       "edhrec_rank": 3813,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Skyknight Vanguard",
-      "reason": "Flying",
+      "reason": "",
       "scryfall_id": "e570f4d4-5235-4ee8-a00f-8c327637c493",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Skylasher": {
@@ -248822,12 +248822,12 @@
     },
     "Skymarcher Aspirant": {
       "edhrec_rank": 19289,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Skymarcher Aspirant",
-      "reason": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.) / This creature has flying as long as you have the city's blessing.",
+      "reason": "",
       "scryfall_id": "e5d3a158-659e-4d25-ae73-54b566521e8b",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Skymark Roc": {
@@ -265412,12 +265412,12 @@
     },
     "Stromkirk Noble": {
       "edhrec_rank": 13287,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Stromkirk Noble",
-      "reason": "This creature can't be blocked by Humans.",
+      "reason": "",
       "scryfall_id": "0f306c7e-cacc-4c26-a3f1-fad4f3ff7cf3",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Stromkirk Occultist": {
@@ -267212,12 +267212,12 @@
     },
     "Sun Titan": {
       "edhrec_rank": 296,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Sun Titan",
-      "reason": "Vigilance",
+      "reason": "",
       "scryfall_id": "3d6eacf2-f6c7-4ede-b5a5-7463602699ae",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Sun Warriors": {
@@ -298342,12 +298342,12 @@
     },
     "Vampire Cutthroat": {
       "edhrec_rank": 6728,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Vampire Cutthroat",
-      "reason": "Skulk (This creature can't be blocked by creatures with greater power.)",
+      "reason": "",
       "scryfall_id": "954d53f3-ebbe-48e0-9e1a-7019d2b0740c",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Vampire Envoy": {
@@ -308182,12 +308182,12 @@
     },
     "Warden of Evos Isle": {
       "edhrec_rank": 3804,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Warden of Evos Isle",
-      "reason": "Creature spells with flying you cast cost {1} less to cast.",
+      "reason": "",
       "scryfall_id": "40d26ee1-5264-4f5a-ac01-8304888589aa",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Warden of Geometries": {
@@ -309202,12 +309202,12 @@
     },
     "Watcher of the Spheres": {
       "edhrec_rank": 4342,
-      "gate": "fidelity",
+      "gate": null,
       "name": "Watcher of the Spheres",
-      "reason": "Creature spells with flying you cast cost {1} less to cast. / Whenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",
+      "reason": "",
       "scryfall_id": "354b9ea4-3d55-48cc-b426-c46b1d1bb397",
       "source": "",
-      "status": "pending",
+      "status": "done",
       "wanted": false
     },
     "Watcher of the Wayside": {

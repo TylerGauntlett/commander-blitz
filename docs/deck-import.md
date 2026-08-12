@@ -1,7 +1,8 @@
 # Importing a deck
 
 Paste a public Moxfield link on the setup screen and you get a playable deck.
-The engine hand-implements about 149 cards; a real Commander deck contains a
+The engine plays about 880 cards — 219 hand-written, the rest authored by the
+[card pipeline](card-authoring.md); a real Commander deck contains a
 hundred, most of which say something nobody has written rules for. So the deal
 this feature makes is:
 
@@ -37,7 +38,7 @@ adapter, not a second card pipeline.
 
 | | What it means |
 |---|---|
-| **native** | A hand-written card in `data/cards/`. Reused whole — real rules, existing art, and the id every precon already uses. An imported deck's Forests are `forest`. |
+| **native** | A card the engine already plays — hand-written in `data/cards/` or authored into `data/cards/auto/`. Reused whole: real rules, existing art, and the id every precon already uses. An imported deck's Forests are `forest`. |
 | **full** | Generated, and nothing was lost. Vanilla and french-vanilla creatures, basic lands, taplands, duals, Signets. |
 | **partial** | Generated, non-keyword rules text inert. Every simplification is listed. |
 
