@@ -444,6 +444,34 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     return select_players(ctx, spec)
 
 
+@register("detain")
+def op_detain(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until your next turn, that permanent can't attack or block and its
+    activated abilities can't be activated." (701.30a)
+
+    Three restrictions in one op rather than three, because detain is one
+    printed word and the authoring verifier's residual gate asks each *ability*
+    which sentence it implements. Splitting it would read as three claims on
+    one line, and a card that got two of the three would look implemented.
+
+    It records **who** detained rather than when it ends. "Your next turn" is
+    not a fixed turn number: eliminate a player and it moves. `turn._untap_step`
+    clears the detain belonging to whoever is untapping, which is that sentence
+    said once, in the one place it can be right.
+
+    Not a `TempEffect` for the reason `must_attack` is not: `until_eot` is wiped
+    at cleanup, and detain has to survive the turn it was cast in -- usually a
+    whole turn cycle. A detain that expired at end of turn would be a strictly
+    worse card than the printed one, and nothing would say so.
+    """
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.detained_by = ctx.controller
+    ctx.state.bump_chars()
+    yield from ()
+
+
 @register("proliferate")
 def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Choose any number of permanents and/or players with a counter on them,

@@ -129,6 +129,13 @@ def _untap_step(state: GameState) -> None:
     # Draws made during that turn are still "this turn" in that window, so
     # clearing before it would zero the count while the turn is still running.
     state.cards_drawn_this_turn.clear()
+    # Detain ends at the start of the *detaining* player's next turn (701.30a),
+    # so it is cleared here and keyed by who placed it -- naming the player
+    # rather than a turn number is what keeps it right when somebody is
+    # eliminated and "your next turn" moves.
+    for obj in state.objects.values():
+        if obj.detained_by == player.pid:
+            obj.detained_by = None
     untap_all(state, player.pid)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.

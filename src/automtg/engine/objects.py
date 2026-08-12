@@ -120,6 +120,16 @@ class GameObject:
     #: combat and cleared when blockers are locked in, so unlike
     #: ``must_attack`` there is no duration to carry.
     must_block: int | None = None
+    #: Detain (701.30a): "until **your** next turn, that permanent can't attack
+    #: or block and its activated abilities can't be activated". The pid of the
+    #: player who detained it, cleared by that player's own untap step.
+    #:
+    #: Not a `TempEffect`, for the reason `must_attack` is not: `until_eot` is
+    #: wiped at cleanup, and detain has to outlive the turn it was cast in --
+    #: usually by a whole turn cycle. Not a turn *number* either, because
+    #: "your next turn" moves when a player is eliminated; the player is the
+    #: durable thing to name, exactly as `frozen_by` names a permanent.
+    detained_by: int | None = None
 
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
@@ -192,6 +202,7 @@ class GameObject:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
         self.must_block = None
+        self.detained_by = None
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
@@ -255,7 +266,9 @@ class GameObject:
         well as legality: a locked land that still taps for mana would make the
         whole effect worth nothing against the only decks that mind it.
         """
-        return any(t.kind == "lock_abilities" for t in self.until_eot)
+        return self.detained_by is not None or any(
+            t.kind == "lock_abilities" for t in self.until_eot
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -276,6 +289,7 @@ class GameObject:
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
             "flags": sorted(self.flags),
+            "detained_by": self.detained_by,
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
