@@ -85,6 +85,11 @@ STATIC_EFFECTS = frozenset(
         # prohibition, so unlike every other static here its `affects`
         # routinely names creatures its own controller does not control.
         "cant_attack",
+        # Unleash, and the "can't block" printed on aggressive commons. The
+        # mirror of `cant_attack`, read by `combat.can_block`, and a static
+        # rather than a keyword for the same reason `block_restriction` is: a
+        # keyword is a characteristic and this is a permission.
+        "cant_block",
         # Marauding Maulhorn.  The obligation to `cant_attack`'s prohibition,
         # read by `combat.attack_required` at the same enforcement point the
         # `must_attack` op uses.  A static rather than that op because a

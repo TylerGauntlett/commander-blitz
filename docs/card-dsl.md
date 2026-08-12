@@ -1729,6 +1729,24 @@ difference between a lock on the table and a drawback on yourself.
 static one until this card needed it. And it is why landwalk had to be a real
 keyword rather than another static: a static cannot be *filtered on*.
 
+**`cant_block`** is its mirror, read by `combat.can_block` — unleash, and the
+"can't block" printed on a hundred aggressive commons:
+
+```jsonc
+{ "kind": "static", "effect": "cant_block",
+  "affects": { "self_only": true },
+  "condition": { "counters": { "counter": "+1/+1", "amount": 1, "op": ">=" } } }
+```
+
+Checked inside `can_block` rather than in `blocks_valid`, which is the whole
+difference between it and menace: this is a fact about one creature, so a
+creature under it is never offered as a blocker at all, where menace is a fact
+about the shape of the finished declaration.
+
+Both are statics rather than keywords for the reason `lock_abilities` is one: a
+keyword is a *characteristic*, and these are permissions. Listing "can't block"
+among a creature's keywords would be a lie about what the card says.
+
 ## Attack requirements
 
     Trench Behemoth — "Landfall — Whenever a land you control enters, target
