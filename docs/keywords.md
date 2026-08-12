@@ -310,7 +310,7 @@ This is the long tail, and where the build order comes from.
 | Tribute | routed | `self_enters` with a choice belonging to an opponent; `two_piles` proves the shape is reachable | — |
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
-| Unleash | routed | enters with a counter is whitelisted, but there is no `cant_block` static to pair with it | — |
+| Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
 | Wither | blocked | a damage replacement, and the whitelist has no damage form | — |
 
 ## Ability words

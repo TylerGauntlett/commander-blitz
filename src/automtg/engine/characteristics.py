@@ -701,6 +701,30 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def block_forbidden(state: GameState, oid: int) -> bool:
+    """Is this creature under a "can't block" static?
+
+    Unleash's "this creature can't block as long as it has a +1/+1 counter on
+    it", and the plain "can't block" printed on a hundred aggressive commons.
+    The exact mirror of `attack_forbidden`, down to reusing `_matches`, and a
+    static rather than a `Keyword` for the reason `block_restriction` is one:
+    a keyword is a characteristic and this is a permission.
+
+    Unlike `attack_forbidden` this is nearly always self-referential -- the
+    static sits on the creature it stops -- but the filter is the same one, so
+    a global "creatures your opponents control can't block" costs nothing extra.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_block":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
 def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 

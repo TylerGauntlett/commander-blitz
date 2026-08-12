@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 from .characteristics import (
     attack_compelled,
     attack_forbidden,
+    block_forbidden,
     block_restrictions,
     chars,
     matches_static,
@@ -260,6 +261,12 @@ def can_block(
     if "Creature" not in bc.types:
         return False
     if not ignore_existing and blocker_oid in combat.blockers:
+        return False
+
+    # "This creature can't block." Unleash, and the mirror of `attack_forbidden`
+    # -- checked here rather than in `blocks_valid` because it is a fact about
+    # one creature, not about the shape of the whole declaration.
+    if block_forbidden(state, blocker_oid):
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked
