@@ -444,6 +444,28 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     return select_players(ctx, spec)
 
 
+@register("set_flag")
+def op_set_flag(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…and it becomes renowned." A one-way word written onto a permanent.
+
+    Renown's whole content is that it happens once: "if it isn't renowned, put
+    N +1/+1 counters on it and it becomes renowned". Without somewhere to
+    record the word, the trigger fires on every combat damage and the creature
+    grows for ever -- and the counters alone cannot stand in for it, because
+    anything else that removes them would make the creature renewably renowned.
+
+    Generic rather than a `renowned` boolean beside `monstrous`, because the
+    shape repeats: each new adjective would otherwise be a field, a condition
+    leaf and an op to say one word. Read back with `{"has_flag": "renowned"}`.
+    """
+    flag = str(spec["flag"])
+    for oid in resolve_pool(ctx, spec.get("objects") or {"self_only": True}):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.flags.add(flag)
+    yield from ()
+
+
 @register("move_counters")
 def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """Take counters off one permanent and put them on another.

@@ -46,6 +46,15 @@ class GameObject:
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False
+    #: One-way words a permanent has become: ``renowned``, and whatever the next
+    #: set prints. Generic where `monstrous` is a field of its own, because the
+    #: pattern turned out to repeat and each new adjective would otherwise be a
+    #: boolean, a condition leaf and an op -- three edits to say one word.
+    #:
+    #: `monstrous` is deliberately *not* folded in here: it carries a
+    #: `became_monstrous` event and an op that reads it, and rewriting a shipped
+    #: mechanic to prove a point about tidiness is not what this is for.
+    flags: set[str] = field(default_factory=set)
     #: "Those creatures don't untap during their controllers' untap steps for as
     #: long as you control this creature" -- the oid of the permanent holding
     #: them down.  The untap step clears it once that permanent is gone, which is
@@ -190,6 +199,9 @@ class GameObject:
         self.attached_to = None
         self.until_eot = []
         self.monstrous = False
+        # A permanent that left and came back is a new object as far as the
+        # rules are concerned, so it is no longer renowned either.
+        self.flags = set()
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
@@ -263,6 +275,7 @@ class GameObject:
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
+            "flags": sorted(self.flags),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,

@@ -35,6 +35,8 @@ CONDITION_KEYS = frozenset(
         "evoked",
         "cast_from_graveyard",
         "has_city_s_blessing",
+        # "…if it isn't renowned". A one-way word written by `set_flag`.
+        "has_flag",
     }
 )
 
@@ -90,6 +92,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
+    if "has_flag" in cond:
+        # Renown's "if it isn't renowned", written as `{"not": {"has_flag":
+        # "renowned"}}`. Asked of the ability's own source, which is the only
+        # thing that can have become the word.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        return obj is not None and str(cond["has_flag"]) in obj.flags
     if "has_city_s_blessing" in cond:
         from .selectors import select_players
 

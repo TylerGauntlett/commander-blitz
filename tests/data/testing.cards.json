@@ -942,6 +942,51 @@
       ]
     },
     {
+      "id": "t_renowned",
+      "name": "Test Renowned",
+      "oracle_text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Renown 2",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self",
+            "condition": {
+              "not": {
+                "has_flag": "renowned"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "self_only": true
+              }
+            },
+            {
+              "op": "set_flag",
+              "flag": "renowned"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_modular",
       "name": "Test Modular",
       "oracle_text": "Modular 3 (This creature enters with three +1/+1 counters on it. When it dies, put its +1/+1 counters on target artifact creature.)",
