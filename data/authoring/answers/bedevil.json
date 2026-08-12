@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "bedevil",
+    "name": "Bedevil",
+    "oracle_text": "Destroy target artifact, creature, or planeswalker.",
+    "mana_cost": "{B}{B}{R}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "B",
+      "R"
+    ],
+    "color_identity": [
+      "B",
+      "R"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "any_types": [
+            "Artifact",
+            "Creature",
+            "Planeswalker"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {
+          "target": "t1"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    }
+  }
+}

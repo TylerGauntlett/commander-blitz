@@ -127,6 +127,10 @@
     "artist": "Allen Williams",
     "scryfall_id": "7fe8f88e-8a51-494b-a008-fbfe624f97f7"
   },
+  "anguished_unmaking": {
+    "artist": "Wesley Burt",
+    "scryfall_id": "407183c6-c962-4f8c-867e-abc309b6c573"
+  },
   "animal_attendant": {
     "artist": "Phima",
     "scryfall_id": "a3e6ff4d-bf7d-488f-a02f-f40e7f8761ca"
@@ -330,6 +334,10 @@
   "beastcaller_savant": {
     "artist": "Anthony Palumbo",
     "scryfall_id": "cca9f5da-986c-43ab-a2ec-efb8b098c17c"
+  },
+  "bedevil": {
+    "artist": "Bj\u00f6rn Barends",
+    "scryfall_id": "38498fb1-b3ca-4dd4-8605-92a859b875ba"
   },
   "behemoth_sledge": {
     "artist": "Nakamura8",
@@ -1890,6 +1898,10 @@
   "monastery_swiftspear": {
     "artist": "Toru Terada",
     "scryfall_id": "adadb18e-cd71-4049-9d4a-4ecab2db3a39"
+  },
+  "mortify": {
+    "artist": "Thanh Tu\u1ea5n",
+    "scryfall_id": "5f4fa21b-4733-49a6-b751-779b8325c4d2"
   },
   "moss_diamond": {
     "artist": "Phil Stone",

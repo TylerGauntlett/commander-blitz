@@ -75,6 +75,13 @@
   "angelic_wall": {
     "zone": "battlefield"
   },
+  "anguished_unmaking": {
+    "battlefield_count": 31,
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "animal_attendant": {
     "zone": "battlefield"
   },
@@ -196,6 +203,13 @@
   },
   "beastcaller_savant": {
     "zone": "battlefield"
+  },
+  "bedevil": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "behemoth_sledge": {
     "zone": "battlefield"
@@ -1177,6 +1191,13 @@
   },
   "monastery_swiftspear": {
     "zone": "battlefield"
+  },
+  "mortify": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "moss_diamond": {
     "zone": "battlefield"
