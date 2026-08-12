@@ -10,23 +10,5 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **1** capability.
-
-| capability | cards | best EDHREC rank | kind |
-|---|---:|---:|---|
-| [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 12219 | value |
-
-## cards-drawn-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-turn tally of how many cards a player has drawn, readable as a value expression -- e.g. `{"cards_drawn_this_turn": "you"}` -- reset during cleanup, and incremented by every draw whatever caused it (draw step, spell, ability, or a replacement that draws). Kydele spells it `{"op": "add_mana", "mana": "{C}", "amount": {"cards_drawn_this_turn": "you"}}` and needs nothing else, because the variable mana ability machinery it plugs into already ships.
-  <br>Why the existing vocabulary won't do: `VALUE_KEYS` has no event tally of any kind. `count` walks a zone and counts objects, so the closest spelling -- counting the hand -- is a different number the moment anything is played, discarded or drawn on an opponent's turn. `cards_in_hand` has the same problem for the same reason. Nothing on `PlayerState` records draws: the fields are life, zones, mana, land drops, commander tax/damage, loss and UI flags, and none of them is a per-turn counter. The `draw` EventType exists and is emitted, so the tally has a natural place to be incremented, but no state to be incremented into and no cleanup hook resetting it. This is the same shape of missing bookkeeping as `damaged-by-source-this-turn` -- a per-turn ledger keyed by player rather than by object -- and whichever ships first should decide where per-turn counters live.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kydele, Chosen of Kruphix** (rank 12219) — `kydele_chosen_of_kruphix`
-  - {T}: Add {C} for each card you've drawn this turn.
-  - Scope: variable mana ABILITIES now ship -- an `add_mana` inside a mana ability may carry an `amount` value expression, evaluated at activation (see `tests/unit/test_variable_mana_ability.py`). Eight sibling cards were repaired by that change. Kydele is the one it does not reach, and for a different reason: its multiplier is not a board count. `{"count": <selector>}` counts objects, and "cards you've drawn this turn" is a per-turn tally of an *event*, which the engine does not keep. This card was previously in the pool tapping for a flat {C} with no note recorded against it; it now refuses rather than shipping a Kydele that is strictly worse than the printed one.
-
-</details>
+No gap records. Either nothing has been triaged yet, or the DSL
+covers everything attempted so far.

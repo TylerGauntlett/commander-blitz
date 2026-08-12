@@ -94,6 +94,19 @@ class GameState:
     #: object would be wiped by `reset_permanent_state` on the way to the
     #: graveyard, which is exactly the moment it is needed.
     damage_ledger: dict[int, set[int]] = field(default_factory=dict)
+    #: "…for each card you've drawn this turn." (Kydele, Chosen of Kruphix.)
+    #:
+    #: player id -> how many cards they have drawn during the current turn,
+    #: whatever caused the draw. Cleared by the untap step, not by cleanup --
+    #: see `turn._untap_step` for why the opening hand forces that.
+    #:
+    #: Alongside `damage_ledger` rather than on `PlayerState` because it is the
+    #: same shape of thing: a tally of *events* that the current turn owns and
+    #: the next turn must not see. `PlayerState` holds what a player *is* --
+    #: life, zones, the city's blessing -- and `lands_played` is the one
+    #: per-turn counter there, reset by the active player's own untap. This one
+    #: cannot live by that rule, because you draw on other players' turns too.
+    cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
