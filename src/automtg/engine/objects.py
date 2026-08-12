@@ -80,6 +80,17 @@ class GameObject:
     #: which holds for as long as its source is on the battlefield.  Two
     #: different lifetimes, so two different fields.
     skip_next_untap: bool = False
+    #: Seats that have been *shown* this card while it sits in a hidden zone.
+    #: "Look at target player's hand" (Glasses of Urza) is private information:
+    #: it is not `reveal`, which is public and tells the whole table. Recorded
+    #: on the card rather than as an event, because what a player is entitled to
+    #: see has to be answerable every time `player_view` is built, not only in
+    #: the instant the ability resolved.
+    #:
+    #: Cleared by `reset_permanent_state`: a card that changes zones is a new
+    #: object, and having seen a card in somebody's hand does not entitle you to
+    #: keep seeing it after it has been played and bounced back.
+    revealed_to: set[int] = field(default_factory=set)
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -227,6 +238,7 @@ class GameObject:
         self.chosen_type = None
         self.added_subtypes = ()
         self.transformed = False
+        self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.

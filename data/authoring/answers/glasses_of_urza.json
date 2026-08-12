@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "glasses_of_urza",
+    "name": "Glasses of Urza",
+    "oracle_text": "{T}: Look at target player's hand.",
+    "mana_cost": "{1}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Look at target player's hand.",
+        "cost": { "tap": true },
+        "targets": [
+          { "id": "t1", "kind": "player", "selector": {}, "count": 1 }
+        ],
+        "effects": [
+          { "op": "look_at_hand", "player": { "target": "t1" } }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 0 }
+  }
+}

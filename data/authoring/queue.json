@@ -94492,12 +94492,12 @@
     },
     "Finale of Devastation": {
       "edhrec_rank": 330,
-      "gate": "template",
+      "gate": null,
       "name": "Finale of Devastation",
-      "reason": "no template for: Search your library and/or graveyard for a creature card with mana value X or less and put",
+      "reason": "",
       "scryfall_id": "721ea98f-4150-4fde-a0af-4f454695e927",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finale of Eternity": {
@@ -109592,12 +109592,12 @@
     },
     "Glasses of Urza": {
       "edhrec_rank": 9424,
-      "gate": "template",
+      "gate": null,
       "name": "Glasses of Urza",
-      "reason": "no template for: {T}: Look at target player's hand",
+      "reason": "",
       "scryfall_id": "abc743ec-4845-4e2e-8918-7e7854ecccfc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glasspool Mimic // Glasspool Shore": {
@@ -235432,12 +235432,12 @@
     },
     "Scythecat Cub": {
       "edhrec_rank": 2924,
-      "gate": "template",
+      "gate": null,
       "name": "Scythecat Cub",
-      "reason": "no template for: Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you ",
+      "reason": "",
       "scryfall_id": "b3dd3c7d-4685-4579-b483-14ddaaaddf5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scytheclaw": {
@@ -283472,12 +283472,12 @@
     },
     "Through the Forest Gate": {
       "edhrec_rank": 24945,
-      "gate": "template",
+      "gate": null,
       "name": "Through the Forest Gate",
-      "reason": "no template for: Look at the top twenty cards of your library, put any number of land cards from among them",
+      "reason": "",
       "scryfall_id": "880adfc8-69cf-4062-a804-e65b6cb6056d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Throw from the Saddle": {

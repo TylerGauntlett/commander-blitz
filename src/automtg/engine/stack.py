@@ -369,6 +369,12 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         return
 
     del source  # the ability resolves even if its source has left the battlefield
+    # Counted here, on the way in, and not in the `ABILITY_RESOLVED` fold: that
+    # event is emitted below, after the effects have run, and a card asking "is
+    # this the second time this ability has resolved" has to count the one it is
+    # in.  Both early returns above are past -- a fizzled trigger and one whose
+    # intervening-if failed (603.4) never resolve, so neither may advance it.
+    ctx.resolutions = state.turn_ledger.resolving(item.source_oid, item.ability_index)
     yield from execute(ctx, ability.effects)
     state.emit(
         EventType.ABILITY_RESOLVED,

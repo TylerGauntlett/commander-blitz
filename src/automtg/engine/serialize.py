@@ -192,6 +192,19 @@ def _player(
         ),
         "hand_count": len(player.hand),
         "hand": [card_view(state, oid) for oid in player.hand] if own else None,
+        # "Look at target player's hand." Private information, so it is sent to
+        # the one seat entitled to it and nobody else -- the `seat in
+        # revealed_to` test is what keeps this from being `reveal`. Empty for
+        # your own hand, which `hand` already sends in full.
+        "hand_revealed": (
+            []
+            if own
+            else [
+                card_view(state, oid)
+                for oid in player.hand
+                if seat in state.objects[oid].revealed_to
+            ]
+        ),
         # Only the gates that are actually closed, keyed by oid.  A card absent
         # from this map is playable; see legality.unplayable_reason.
         "hand_reasons": (

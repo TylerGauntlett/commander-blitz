@@ -11,7 +11,13 @@ from ..primitives import add_counters, discard_cards, draw_cards, mill_cards, sh
 from ..zones import move_object
 from . import register
 from .context import EffectContext, ask_objects, ask_yes_no
-from .selectors import choose_objects, resolve_pool, select_players
+from .selectors import (
+    ZONE_NAMES,
+    choose_objects,
+    pick_from_pool,
+    resolve_pool,
+    select_players,
+)
 from .values import evaluate_value
 
 DESTINATIONS = {
@@ -60,57 +66,151 @@ def op_shuffle(ctx: EffectContext, spec: Mapping[str, Any]):
         shuffle_library(ctx.state, pid)
 
 
+#: Zones a card may be searched out of.  The battlefield and the stack are not
+#: hidden, so "searching" them is just a selector; these are the four a card
+#: means when it says "search".
+SEARCHABLE = ("library", "graveyard", "hand", "exile")
+
+
 @register("search_library")
 def op_search_library(ctx: EffectContext, spec: Mapping[str, Any]):
     """Search a library for cards matching a selector and move them somewhere.
 
     Always shuffles afterwards unless ``"shuffle": false`` is given.
     """
+    yield from _search(ctx, spec, ("library",))
+
+
+@register("search_zones")
+def op_search_zones(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Search more than one of your own zones as a **single** pool.
+
+    "Search your library and/or graveyard for a creature card" (Finale of
+    Devastation). Running a `search_library` and a `return_from_graveyard` in
+    sequence is a different card: each carries its own count, so Finale would
+    fetch up to two creatures instead of one. The count here is over the union,
+    which is what "and/or" means -- you look through both and take one.
+
+    The shuffle is not conditional. Finale prints "If you search your library
+    this way, shuffle", and the `if` exists because a player at a table may
+    announce they are searching only the graveyard. This implementation always
+    offers both zones, so it has always searched the library and always shuffles.
+    The only reachable difference is a player who wanted to decline the search to
+    preserve a stacked top of library, which is recorded in rules-coverage.md.
+    """
+    zones = tuple(spec.get("zones") or ("library",))
+    yield from _search(ctx, spec, zones)
+
+
+def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...]):
     count = evaluate_value(ctx, spec.get("count", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
+    selector = spec.get("selector") or {}
+    # A search of a hidden zone ends in a shuffle (701.19c), and the library is
+    # the only zone here that is ordered enough for it to matter.
+    shuffles = "library" in zones and spec.get("shuffle", True)
     for pid in select_players(ctx, spec.get("player", "you")):
-        pool = [
-            oid
-            for oid in ctx.state.players[pid].library
-            if _matches_library(ctx, oid, spec.get("selector") or {})
-        ]
-        if not pool:
-            if spec.get("shuffle", True):
-                shuffle_library(ctx.state, pid)
-            continue
-        take = min(count, len(pool))
-        picked = yield from ask_objects(ctx, "Search your library", pool, 0, take, pid, "search")
-        for oid in picked:
-            if destination is Zone.BATTLEFIELD:
-                # to_player only picks the destination zone list; the battlefield
-                # is global, so controller has to be set explicitly or the
-                # `controller: "you"` clause on landfall reads the owner.
-                obj = ctx.state.objects.get(oid)
-                if obj is not None:
-                    obj.controller = pid
-            move_object(
-                ctx.state,
-                oid,
-                destination,
-                to_player=pid,
-                to_top=spec.get("destination") == "library_top",
-                tapped=tapped,
-                cause="search",
+        pool: list[int] = []
+        for zone_name in zones:
+            zone = ZONE_NAMES[zone_name]
+            pool.extend(
+                oid
+                for oid in ctx.state.players[pid].zone_list(zone)
+                if _matches_in_zone(ctx, oid, selector, zone_name)
             )
-        if spec.get("shuffle", True):
+        if pool:
+            take = min(count, len(pool))
+            prompt = "Search your library" if zones == ("library",) else "Search"
+            picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
+            _move_found(ctx, picked, pid, destination, spec, tapped, "search")
+        if shuffles:
             shuffle_library(ctx.state, pid)
 
 
-def _matches_library(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
+def _move_found(
+    ctx: EffectContext,
+    picked: list[int],
+    pid: int,
+    destination: Zone,
+    spec: Mapping[str, Any],
+    tapped: bool,
+    cause: str,
+) -> None:
+    """Send the cards a library lookup turned up to their destination."""
+    for oid in picked:
+        if destination is Zone.BATTLEFIELD:
+            # to_player only picks the destination zone list; the battlefield
+            # is global, so controller has to be set explicitly or the
+            # `controller: "you"` clause on landfall reads the owner.
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.controller = pid
+        move_object(
+            ctx.state,
+            oid,
+            destination,
+            to_player=pid,
+            to_top=spec.get("destination") == "library_top",
+            tapped=tapped,
+            cause=cause,
+        )
+
+
+@register("look_at_top")
+def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Look at the top N cards of a library and take some of what is there.
+
+    Not a narrower ``search_library``: the pool is bounded to ``amount`` cards
+    off the top, which is the whole of what makes Through the Forest Gate a
+    gamble rather than a tutor.  Written with ``search_library`` it would find
+    every land in the deck.
+
+    Two other differences follow from the same distinction. Nothing is shuffled
+    unless the card says so -- the cards you did not take stay on top, in order,
+    which is what "look at" means and the opposite of rule 701.19's mandatory
+    shuffle after a search. And ``objects`` carries the count, so "any number of
+    land cards from among them" is the ordinary ``count: "any"`` rather than a
+    second spelling that only this op understands.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    destination = DESTINATIONS[spec.get("destination", "hand")]
+    tapped = bool(spec.get("tapped"))
+    selector = spec.get("objects") or spec.get("selector") or {}
+    for pid in select_players(ctx, spec.get("player", "you")):
+        top = list(ctx.state.players[pid].library[: max(0, int(amount))])
+        pool = [oid for oid in top if _matches_library(ctx, oid, selector)]
+        if pool:
+            picked = yield from pick_from_pool(
+                ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
+            )
+            _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+        if spec.get("shuffle", False):
+            shuffle_library(ctx.state, pid)
+
+
+def _matches_in_zone(
+    ctx: EffectContext, oid: int, selector: Mapping[str, Any], zone: str = "library"
+) -> bool:
+    """Does this card match, tested as a card sitting in ``zone``?
+
+    The zone is forced rather than read off the selector, because the op has
+    already decided which zone it is looking in -- and a union search must test
+    each half against the zone that half actually came from, or a graveyard
+    creature would be judged as though it were in a library.
+    """
     from .selectors import matches
 
     probe = dict(selector)
-    probe["zone"] = "library"
+    probe["zone"] = zone
     probe.pop("controller", None)
     probe.pop("count", None)
     probe.pop("chooser", None)
     return matches(ctx, oid, probe)
+
+
+def _matches_library(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
+    return _matches_in_zone(ctx, oid, selector, "library")
 
 
 @register("return_to_hand")
@@ -167,6 +267,34 @@ def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
             player=ctx.controller,
             source=ctx.source_oid,
             cards=[ctx.state.objects[o].def_id for o in oids if o in ctx.state.objects],
+        )
+
+
+@register("look_at_hand")
+def op_look_at_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Look at target player's hand." Private information, to one seat.
+
+    Not ``reveal``, and the difference is the card. Revealing is public: a card
+    that revealed an opponent's hand would tell that opponent's *other*
+    opponents everything too, which Glasses of Urza does not do and which
+    changes who is winning at a four-player table.
+
+    Recorded on each card as an entitlement rather than emitted as an event,
+    because ``player_view`` is rebuilt on every request and has to be able to
+    answer "may this seat see this card?" long after the ability resolved.
+    """
+    for pid in select_players(ctx, spec.get("player", "opponent")):
+        hand = ctx.state.players[pid].hand
+        for oid in hand:
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.revealed_to.add(ctx.controller)
+        ctx.state.emit(
+            "hand_looked_at",
+            player=ctx.controller,
+            source=ctx.source_oid,
+            target_player=pid,
+            cards=len(hand),
         )
 
 

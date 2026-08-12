@@ -217,6 +217,25 @@ class TurnLedger:
     #: Tokens are excluded because they are not cards, and a token dying is the
     #: single most common way this number would otherwise be wrong.
     cards_to_graveyard: int = 0
+    #: How many times each ability has *resolved* this turn, keyed by the object
+    #: it belongs to and its index on that card.  Scythecat Cub's "if this is the
+    #: second time this ability has resolved this turn" is a question about one
+    #: ability of one permanent, so two copies of the card count separately.
+    #:
+    #: The odd one out here, in two ways.  It is keyed by ability rather than by
+    #: player, because "this ability" is not a fact about a seat.  And it is the
+    #: only tally not folded in :meth:`GameState.emit`: ``ABILITY_RESOLVED`` is
+    #: emitted *after* the effects run, and the card has to count the resolution
+    #: it is in the middle of, so ``stack.resolve_top`` bumps it on the way in --
+    #: past the fizzle and intervening-if returns, neither of which resolves.
+    ability_resolutions: dict[tuple[int, int], int] = field(default_factory=dict)
+
+    def resolving(self, oid: int, ability_index: int) -> int:
+        """Count this resolution and return how many there have now been."""
+        key = (oid, ability_index)
+        count = self.ability_resolutions.get(key, 0) + 1
+        self.ability_resolutions[key] = count
+        return count
 
     def clear(self) -> None:
         self.creatures_died.clear()
@@ -225,6 +244,7 @@ class TurnLedger:
         self.life_lost.clear()
         self.spells_cast.clear()
         self.cards_to_graveyard = 0
+        self.ability_resolutions.clear()
 
 
 @dataclass

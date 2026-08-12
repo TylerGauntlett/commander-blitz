@@ -66,18 +66,80 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-51 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+62 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
 the entire difference between the two keywords. Omitting `chooser` asks the
 library's owner, which is what every scry card in the pool wants.
+`look_at_hand` is the one op that moves **private** information:
+
+```jsonc
+{ "op": "look_at_hand", "player": { "target": "t1" } }
+```
+
+"Look at target player's hand" (Glasses of Urza). `reveal` cannot stand in — it
+emits a public event, so at a pod it would tell the victim's *other* opponents
+everything too, which is a different card. The seats entitled to see a card are
+recorded on it as `GameObject.revealed_to`, and `player_view` sends those cards
+to that seat alone under `hand_revealed`; every other seat still sees
+`hand: null` and a count. It is written on the card rather than emitted because
+the view is rebuilt on every request and has to answer "may this seat see this?"
+long after the ability resolved. The entitlement is cleared by
+`reset_permanent_state`, so a card that leaves and returns is hidden again.
+
+`search_zones` searches more than one of your own zones as a **single** pool:
+
+```jsonc
+{ "op": "search_zones", "zones": ["library", "graveyard"], "count": 1,
+  "destination": "battlefield",
+  "selector": { "types": ["Creature"],
+                "mana_value": { "op": "<=", "value": { "x": true } } } }
+```
+
+That is Finale of Devastation's "search your library **and/or** graveyard for a
+creature card". A `search_library` followed by a `return_from_graveyard` is a
+different card: each carries its own count, so it would fetch up to *two*
+creatures. The count here is over the union, which is what "and/or" means — you
+look through both and take one. `choose_mode` is the near miss: it gets the
+count right, but a mode is chosen blind and locks out the other zone.
+
+`zones` needs at least two of `library`, `graveyard`, `hand`, `exile` — one zone
+is `search_library` spelled the long way. A `zone` in the `selector` is refused,
+because each half is matched in the zone it actually came from and a `zone`
+written there would be overridden rather than honoured. `search_library` is now
+this op with `zones: ["library"]`, so the two cannot drift apart.
+
+The shuffle is **not** conditional. Finale prints "If you search your library
+this way, shuffle", and that `if` exists because a player may announce they are
+searching only the graveyard; this op always offers both zones, so it has always
+searched the library and always shuffles. See
+[rules-coverage.md](rules-coverage.md).
+
+`look_at_top` is `search_library` with the pool bounded to the top `amount`
+cards, and the bound is the card:
+
+```jsonc
+{ "op": "look_at_top", "amount": { "const": 20 },
+  "objects": { "types": ["Land"], "count": "any" },
+  "destination": "battlefield", "tapped": true, "shuffle": true }
+```
+
+That is Through the Forest Gate. Written as a `search_library` it would find
+every land in the deck rather than whatever the top twenty happened to hold,
+which is a different and much better card. Two things follow from *look* rather
+than *search*: nothing shuffles unless the card says `"shuffle": true` (701.19c's
+mandatory shuffle belongs to searching a hidden zone, and the cards you declined
+stay on top in order), and the count is the ordinary selector `count` on
+`objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
+required — defaulted it would look at one card and say nothing about it.
+
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
@@ -262,6 +324,7 @@ Anywhere a number is expected:
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
+{ "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
@@ -322,6 +385,22 @@ It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn
 — nothing it counts can happen before turn 1, so it has no opening hand to
 survive, and "a creature died this turn" has to stay true through the end step
 that reads it.
+
+`resolutions_this_turn` joined the ledger later and breaks both of those rules,
+for reasons worth stating. Scythecat Cub's "if this is the second time this
+ability has resolved this turn" is not a fact about a *seat*, so it is keyed by
+`(object, ability index)` — two Cats count separately. And it is **not** folded
+in `emit`: `ABILITY_RESOLVED` is emitted after the effects have run, which is one
+resolution too late for the effect that has to read it, so `stack.resolve_top`
+bumps it on the way in. That placement is past the fizzle and intervening-if
+returns and before the effects, which is the only spot that counts a real
+resolution, counts the one in progress, and counts neither of the two ways an
+ability leaves the stack without resolving (608.2b, 603.4).
+
+A flag cannot stand in for it. `set_flag` is one-way — there is no `clear_flag`
+and nothing empties `obj.flags` at end of turn — so a mark written on the first
+landfall would still be there next turn and would double the *third* resolution
+as well as the second.
 
 ## Costs
 

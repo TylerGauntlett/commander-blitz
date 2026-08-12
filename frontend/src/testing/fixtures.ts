@@ -79,6 +79,7 @@ export function player(overrides: Partial<PlayerView> = {}): PlayerView {
     hand_count: 0,
     hand: [],
     hand_reasons: {},
+    hand_revealed: [],
     graveyard: [],
     exile: [],
     command: [],
