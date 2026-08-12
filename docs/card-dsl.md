@@ -72,6 +72,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
+
+`scry` takes `player` (whose library) and `chooser` (who decides) separately.
+They are the same person for scry and different people for **fateseal** —
+`{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
+the entire difference between the two keywords. Omitting `chooser` asks the
+library's owner, which is what every scry card in the pool wants.
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `gain_control` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` |
