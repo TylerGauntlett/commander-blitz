@@ -253,6 +253,11 @@ export function describeEvent(
       return `${who} ${v("activate", "activates")} ${card ?? "an ability"}`;
     case "token_created":
       return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
+    // The permanent does not change zones, so no zone_change line covers this.
+    // Without a line of its own a creature simply appears on the other side of
+    // the board with nothing in the log to say why.
+    case "control_changed":
+      return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":
       return `${card ?? "A permanent"} gets ${amount ?? 1} ${
         typeof event.data.counter === "string" ? event.data.counter : "counter"

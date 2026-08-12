@@ -66,13 +66,13 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-48 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+49 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `gain_control` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -978,6 +978,36 @@ mechanic: without it the ability is a repeatable pump and the
 this creature." The frozen permanent records the **oid of the source** rather
 than a flag with a lifetime of its own, because the hold has to end when the
 source leaves and pointing at it is the only way the untap step can tell.
+
+## Gaining control of a permanent
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" } }
+```
+
+"Gain control of target creature." `player` says who gains it and defaults to
+the ability's controller, which is what every "*you* gain control" line means.
+
+The object does not move. `controller` is a field on `GameObject` and
+`state.battlefield` is one shared list, so the change is that field plus the
+three rules that hang off it:
+
+| | |
+|---|---|
+| **302.6** | it has not been under the new controller since their turn began, so it is summoning sick for them — `entered_turn` is reset, which is both the record and the sickness |
+| **506.4** | changing control removes a permanent from combat, or a creature stolen mid-combat goes on dealing damage for the player who no longer controls it |
+| **400.3** | zone destinations still follow the **owner**, so a stolen creature that dies goes to its owner's graveyard. This needed no code — `move_object` was always owner-based |
+
+Every static filtered on `controller` reads differently afterwards, so the
+characteristics cache is dropped with it.
+
+**There is no until-end-of-turn form**, and the loader *refuses* a `duration`
+key rather than ignoring one. Act of Treason written as a permanent steal is a
+strictly better card than the printed one, and it would load clean.
+
+`control_changed` is its own event for the same reason: every other way a
+permanent arrives on somebody's side of the board is a zone change, and a log
+built from zone changes alone would show a creature silently swapping sides.
 
 ## "Its activated abilities can't be activated this turn"
 

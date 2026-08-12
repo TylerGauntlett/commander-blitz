@@ -55,6 +55,12 @@ class EventType:
     COUNTER_PLACED = "counter_placed"
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
+    #: A permanent changed controller without changing zones. Its own type,
+    #: because every other way a permanent arrives on somebody's side of the
+    #: board is a ZONE_CHANGE and this one is not: the object never moves, so a
+    #: log built from zone changes alone would show a creature silently swapping
+    #: sides. ``data`` carries ``from`` and ``to`` player ids.
+    CONTROL_CHANGED = "control_changed"
     BECAME_MONSTROUS = "became_monstrous"
     SUSPENDED = "suspended"
     TIME_COUNTER_REMOVED = "time_counter_removed"

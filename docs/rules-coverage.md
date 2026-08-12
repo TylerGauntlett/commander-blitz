@@ -39,6 +39,7 @@ not a rewrite.
 | **Exile until it leaves** | "Exile it until this permanent leaves the battlefield" — the O-Ring family. A link written on the *exiled card* naming the permanent that exiled it, so the exiler's own leaves-trigger returns its victims and nobody else's |
 | **Cost reduction** | Both directions: "This spell costs {X} less to cast" as a card-level field (Ghalta), and "Creature spells with flying you cast cost {1} less" as a `spell_cost_reduction` static discounting *other* cards, filtered on the printed face of the spell being cast. Both go through one function, so legality and payment cannot disagree |
 | **Ability locks** | "Its activated abilities can't be activated this turn", covering mana abilities |
+| **Gaining control** | "Gain control of target creature" — permanently, via the `gain_control` op. The object never changes zones, so it is `controller` plus the three rules hanging off it: summoning sickness for the new controller (302.6), removal from combat (506.4), and zone destinations that still follow the **owner** (400.3). Its own `control_changed` event, because no zone change happens and the log would otherwise show a creature swapping sides in silence. The until-end-of-turn form (Act of Treason) is **not** implemented and the loader refuses a `duration` rather than ignoring it |
 | **Monstrosity** | The counters, the one-way flag, and the "becomes monstrous" trigger |
 | **Conditional statics** | "As long as this has a slumber counter on it, it's a land" — including type *replacement*, not just grants. The condition is a boolean tree (`all`/`any`/`not`/`exists`/`cmp`/`is_your_turn`) over counters on the source, printed characteristics of the board, and how many cards sit in a zone, so **Threshold** works: Nimble Mongoose is a 1/1 at six cards in the graveyard and a 3/3 at seven, in either direction |
 | **Trigger doubling** | Ancient Greenwarden's "that ability triggers an additional time", for lands entering |
@@ -136,7 +137,8 @@ Alternative costs in general (evoke is implemented) · phyrexian and snow mana �
 convoke and similar · overload
 
 **Effects**
-Copying a permanent as anything but a token · gaining control of a permanent ·
+Copying a permanent as anything but a token · gaining control of a permanent
+*temporarily* (the permanent form is implemented; Act of Treason is not) ·
 damage prevention or redirection other than protection · regeneration · ward ·
 granting a *static* or *activated* ability to
 another permanent (triggered ones work) · general replacement effects (only four are

@@ -1,3 +1,44 @@
+## Gaining control of a permanent
+
+### Overview
+
+"Gain control of target creature." Captivating Vampire, and one of the seven
+slots the Edgar Markov precon shipped with a substitution in. `rules-coverage.md`
+had listed control change under **Not implemented** since the beginning.
+
+It turned out to be the smallest of the four Edgar gaps by a wide margin, and for
+a structural reason: `GameObject.controller` is already a field, and
+`state.battlefield` is **one shared list** rather than a list per player. Nothing
+had to move. The whole change is that field plus the three rules that read it.
+
+### What actually needed building
+
+| | |
+|---|---|
+| Rule 302.6 | the creature has not been under its new controller since their most recent turn began, so `entered_turn` is reset — which is simultaneously the record of when control changed and the summoning sickness itself |
+| Rule 506.4 | changing control removes a permanent from combat, or a creature stolen mid-combat goes on dealing damage for the player who no longer controls it |
+| Rule 400.3 | **no code at all** — `move_object` was always owner-based, so a stolen creature that dies already goes to its owner's graveyard |
+
+Plus the characteristics cache, because every static filtered on `controller`
+now reads differently.
+
+### The event, and why it needed one
+
+`control_changed` is the first `EventType` added in a while, and it is the only
+part of this that reached the frontend. Every other way a permanent arrives on
+somebody's side of the board is a zone change; this one is not, so a log built
+from zone changes alone would show a creature silently swapping sides. The card
+slides between battlefield rows with nothing behind it, which reads as a
+rendering glitch rather than a play.
+
+### What was deliberately refused
+
+**There is no until-end-of-turn form**, and `loader` raises on a `duration` key
+rather than ignoring one. A `duration` that loads and does nothing turns Act of
+Treason into a permanent steal — a strictly better card than the printed one,
+and one that would pass every gate. The temporary form needs a continuous-effect
+layer and a cleanup-step handback, and it is still listed as not implemented.
+
 ## The discard trigger — an event that was fired but never listened to
 
 ### Overview
