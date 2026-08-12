@@ -315,6 +315,17 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
+    # Prowl and spectacle: the same alternative-cost shape, offered only while
+    # its condition holds. Checked here rather than at payment because the
+    # condition is *permission to cast this way at all* -- offering the line and
+    # then refusing it would show a price the player can never pay.
+    if card.alternative_cost is not None and state.objects[oid].zone is Zone.HAND:
+        from .effects.conditions import evaluate_condition
+
+        if evaluate_condition(state, card.alternative_condition, controller=pid, source=oid):
+            out += _cast_variant(
+                state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
+            )
     # Emerge offers one line *per sacrificeable creature*, because the price
     # depends on which one goes: the cost is reduced by that creature's mana
     # value. Same reason kicked and unkicked are two actions rather than one
@@ -365,6 +376,7 @@ def _cast_variant(
     evoked: bool = False,
     emerge_oid: int | None = None,
     flashback: bool = False,
+    alternative: bool = False,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
 
@@ -380,6 +392,8 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif alternative and card.alternative_cost is not None:
+        cost = card.alternative_cost
     elif kicked:
         cost = card.mana_cost.plus(card.kicker)
     else:
@@ -421,6 +435,8 @@ def _cast_variant(
         label_base += " (kicked)"
     if evoked:
         label_base += " (evoked)"
+    if alternative:
+        label_base += " (alternative cost)"
     if flashback:
         label_base += " (flashback)"
     if emerge_oid is not None:
@@ -440,6 +456,7 @@ def _cast_variant(
                 x=x,
                 kicked=kicked,
                 evoked=evoked,
+                alternative=alternative,
                 flashback=flashback,
                 emerge_oid=emerge_oid,
                 label=label,

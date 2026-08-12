@@ -228,6 +228,12 @@ class Game:
             cost = card.flashback.mana
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
+        elif action.alternative and card.alternative_cost is not None:
+            # Prowl and spectacle. The condition that let this line be offered
+            # is not re-checked: legality asked it a moment ago, and a spell
+            # whose price changed between being offered and being paid is the
+            # bug `spell_purpose` exists to prevent elsewhere.
+            cost = card.alternative_cost
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
         else:

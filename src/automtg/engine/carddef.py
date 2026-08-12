@@ -322,6 +322,11 @@ class CardDef:
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
     evoke: ManaCost | None = None
+    #: Prowl and spectacle: an alternative mana cost offered from hand only
+    #: *while* ``alternative_condition`` holds.
+    alternative_cost: ManaCost | None = None
+    #: The condition gating it, in the ordinary `if`-effect language.
+    alternative_condition: Any = None
     #: "Emerge {5}{U}{U}".  An alternative cost paid by sacrificing a
     #: creature, reduced by that creature's mana value.  The reduction is
     #: generic-only and clamped at zero, like every other cost reduction

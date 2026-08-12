@@ -280,7 +280,7 @@ This is the long tail, and where the build order comes from.
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |
 | Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
-| Prowl | routed | the ledger shipped; what is left is an alternative cost gated on a condition, which `evoke` does not take | — |
+| Prowl | routed | `alternative_cost` ships; prowl's own condition is narrower than the ledger keeps — "damage by a creature that **shares a type** with it" | — |
 | Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
 | Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
@@ -296,7 +296,7 @@ This is the long tail, and where the build order comes from.
 | Skulk † | shipped | `Keyword`, compared on **derived** power inside `combat.can_block` | `skulk` |
 | Soulbond | blocked | a paired-permanent relationship with no representation | — |
 | Soulshift | free | `dies` trigger, then `return_from_graveyard` filtered by subtype and `mana_value` | — |
-| Spectacle | routed | the ledger shipped (`life_lost_this_turn`); what is left is an alternative cost gated on a condition | — |
+| Spectacle | free | `alternative_cost` with a condition on `life_lost_this_turn` over `each_opponent` | — |
 | Splice | blocked | adding one card's effects to another spell as it is cast | — |
 | Split second | routed | a flag suppressing priority while the spell is on the stack | — |
 | Storm | free | `spell_cast` trigger on the stack, then `copy_spell` with `spells_cast_this_turn` minus one | `copy_spell` |
