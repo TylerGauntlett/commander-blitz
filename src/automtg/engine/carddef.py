@@ -313,6 +313,8 @@ class CardDef:
     #: rather than a granted one, read by the `counter` op -- a spell is on
     #: the stack, where static abilities do not reach it.
     uncounterable: bool = False
+    #: Split second: read off the stack by `legality.split_second_active`.
+    split_second: bool = False
     #: "Kicker {1}{U}" -- an additional cost the caster may choose to pay.  It is
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.

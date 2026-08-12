@@ -209,6 +209,11 @@ class CardModel(BaseModel):
     back_face: str | None = None
     #: "This spell can't be countered."
     uncounterable: bool = False
+    #: Split second (702.61a): "As long as this spell is on the stack, players
+    #: can't cast spells or activate abilities that aren't mana abilities."
+    #: A card-level flag rather than an ability, because it is true of the
+    #: *spell on the stack* and there is no permanent for it to sit on.
+    split_second: bool = False
     #: "Kicker {1}{U}" -- an additional cost that may be paid as the spell is
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.

@@ -410,6 +410,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         is_token=model.is_token,
         back_face=model.back_face,
         uncounterable=model.uncounterable,
+        split_second=model.split_second,
         kicker=kicker,
         evoke=evoke,
         emerge=emerge,

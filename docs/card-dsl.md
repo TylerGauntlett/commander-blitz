@@ -2131,6 +2131,7 @@ them where it is sitting:
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
+"split_second": true                        // nobody may respond while it is on the stack
 ```
 
 #### Casting from the graveyard
