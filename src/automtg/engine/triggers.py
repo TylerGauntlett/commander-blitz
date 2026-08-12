@@ -46,6 +46,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     "draw": EventType.DRAW,
     "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
+    #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
+    #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
+    #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
+    #: the event covers damage to players as well, and this half of it is the
+    #: half with an object to hang a trigger on.
+    "dealt_damage": EventType.DAMAGE_DEALT,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -71,6 +77,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # time the event fires and `matches_card_filter` reads the printed face,
         # so the subject is still there to be asked about.
         "discard",
+        # The permanent that was dealt the damage, not the source dealing it:
+        # enrage is a fact about the creature being hurt, and `source: "self"`
+        # has to scope it to that creature rather than to everything it hits.
+        "dealt_damage",
     }
 )
 
@@ -224,6 +234,22 @@ def _matches(
     # "creature_dies" is sugar for a dies trigger filtered to creatures.
     if spec.event == "creature_dies" and not event.data.get("was_creature", False):
         return False
+
+    if spec.event == "dealt_damage":
+        # `DAMAGE_DEALT` covers both shapes and says which it is. Damage to a
+        # player has no permanent for the trigger to be about, and `player` on
+        # that event is the one being hit rather than a controller, so letting
+        # it through would fire every enrage on the board off a Lightning Bolt
+        # to the face.
+        if event.data.get("to") != "permanent":
+            return False
+        # `source: "self"` here means *this creature was dealt damage*, never
+        # "this creature dealt it". The generic check above accepts either,
+        # because for most events the subject and the source are the same
+        # object -- for this one they are the victim and the attacker, so a
+        # bear would trigger its own enrage every time it hit something.
+        if spec.source == "self" and subject_oid != obj.oid:
+            return False
 
     # "…if it wasn't put onto the battlefield with this ability." The loop guard,
     # and it has to be checked here rather than as a condition, because by the
