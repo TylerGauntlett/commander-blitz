@@ -292,8 +292,12 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
     have, and that under-implementation is caught by gate 5 instead.
 
     That last part holds only where gate 5 runs, and in the hand-written pool it
-    mostly does not -- 179 of 213 cards have no expectation at all. So Deep
-    Analysis ships with its flashback line doing nothing and no gate objects.
+    mostly does not -- 148 of 192 cards have no expectation at all. So a Deep
+    Analysis could ship with its flashback line doing nothing and no gate would
+    object. (It no longer does: flashback shipped, and `declared` below has to
+    list every card-level alternative cast or this reports the implemented ones
+    as missing -- which is exactly what it did to Deep Analysis and Increasing
+    Devotion between flashback landing and this line being added.)
 
     This does not try to re-derive per-line attribution. It asks the one question
     that can be answered from the text alone: does a printed line *announce a
@@ -313,6 +317,8 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
         declared.add("suspend")
     if card.cost_reduction is not None:
         declared.add("affinity")
+    if card.flashback is not None:
+        declared.add("flashback")
 
     out: list[str] = []
     for line in printed.split("\n"):
