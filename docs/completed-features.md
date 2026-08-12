@@ -1,3 +1,42 @@
+## Becoming untapped — a keyword that would have shipped never firing
+
+### Overview
+
+Inspired looked like the cheapest row in the census: "needs a 'becomes
+untapped' event", and `UNTAPPED` had existed since combat was written.
+`untap_permanent` has always fired it. One row in `TRIGGER_EVENTS` and done.
+
+It was not, and the way it was not is the interesting part. **Inspired fires in
+the untap step, and the untap step did not say what it untapped.** `untap_all`
+emitted a single aggregate carrying a `count` and no `oid`, through
+`state.emit` rather than `triggers.fire` — so it never reached the trigger bus,
+and even if it had there was no permanent named for `source: "self"` to match.
+
+Every other route to becoming untapped goes through `untap_permanent`, one event
+per permanent. The untap step was the single exception, and it is the one that
+matters: a creature that attacked untaps in its controller's next untap step and
+almost nowhere else. Shipping the one-line version would have produced a keyword
+that loads clean, reads as printed, and never triggers in a real game — which is
+the exact failure this repo's gates exist to refuse, arriving through the one
+door they do not watch.
+
+### What changed
+
+`untap_all` now fires per permanent, exactly as `untap_permanent` does. Nothing
+on the frontend needed touching, which is worth stating because a new event
+usually would: `untapped` is in the `SILENT` set in `logic/events.ts` and
+`describeEvent` has never had a case for it, so the aggregate's `count` had no
+consumer to lose.
+
+### The sandbox detail the test needed
+
+`GameBuilder.build` leaves `step_started` true — a position built at a step is
+described as already *being* in it, turn-based actions notionally done. For
+every other step that is invisible. For the untap step it means the untap does
+not happen, so every position in `test_becomes_untapped.py` would have read
+"nothing untapped" and the tests would have failed for a reason that has nothing
+to do with the change. The file arms each position explicitly and says why.
+
 ## Becoming blocked — the four combat keywords with no event
 
 ### Overview

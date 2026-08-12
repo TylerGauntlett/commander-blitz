@@ -588,7 +588,24 @@ def untap_all(state: GameState, pid: int) -> list[int]:
         untapped.append(oid)
     if untapped:
         state.bump_chars()
-        state.emit(EventType.UNTAPPED, player=pid, count=len(untapped))
+        # One event per permanent, through the trigger bus, exactly as
+        # `untap_permanent` has always done for the single case. It used to be
+        # one aggregate `emit` carrying a `count` -- which meant the untap step
+        # was the only way a permanent could become untapped without saying
+        # which permanent it was, and it went through `emit` rather than `fire`
+        # so nothing could have heard it anyway. Inspired ("whenever this
+        # creature becomes untapped") fires almost exclusively here, so a
+        # subscription to the aggregate would have been a keyword that never
+        # triggered in a real game.
+        for oid in untapped:
+            obj = state.objects.get(oid)
+            fire(
+                state,
+                EventType.UNTAPPED,
+                player=obj.controller if obj else pid,
+                source=oid,
+                oid=oid,
+            )
     return untapped
 
 

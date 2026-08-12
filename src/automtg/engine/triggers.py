@@ -62,6 +62,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: instant either becomes knowable.
     "becomes_blocked": EventType.BECAME_BLOCKED,
     "attacks_unblocked": EventType.ATTACKED_UNBLOCKED,
+    #: Inspired (702.117): "Whenever this creature becomes untapped, …". The
+    #: event existed; what did not was the untap *step* saying which permanents
+    #: it untapped, which is where inspired fires nearly every time.
+    "becomes_untapped": EventType.UNTAPPED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -100,6 +104,8 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # scopes them to the creature that was, or was not, blocked.
         "becomes_blocked",
         "attacks_unblocked",
+        # The permanent that untapped.
+        "becomes_untapped",
     }
 )
 

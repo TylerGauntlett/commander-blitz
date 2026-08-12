@@ -248,7 +248,7 @@ This is the long tail, and where the build order comes from.
 | Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
 | Infect † | routed | poison counters, plus damage-as-counters — the wither half is the same replacement | — |
-| Inspired | routed | needs a "becomes untapped" event | — |
+| Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
 | Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
 | Jump-start | routed | casting from the graveyard with a discard cost — retrace, discarding any card rather than a land | — |

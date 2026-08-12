@@ -391,9 +391,17 @@ batching work.
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `upkeep` · `draw_step` ·
-`begin_combat` · `end_step` · `you_gain_life` · `counter_placed` · `draw` ·
-`discard` · `cycle`
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
+`draw_step` · `begin_combat` · `end_step` · `you_gain_life` · `counter_placed` ·
+`draw` · `discard` · `cycle`
+
+**`becomes_untapped`** is inspired, and it is nearly all untap step. The event
+had always existed — `untap_permanent` fires it — but `untap_all` emitted one
+aggregate carrying a `count` and no `oid`, through `emit` rather than `fire`, so
+it never reached the trigger bus and named no permanent for `source: "self"` to
+match. The untap step now fires one event per permanent like every other path
+does. A permanent that was already untapped does not *become* untapped, and one
+held down by `skip_untap` never untapped at all.
 
 **`becomes_blocked` and `attacks_unblocked` are told from the attacker's side**,
 and they are a pair rather than two features: both are decided when the block
