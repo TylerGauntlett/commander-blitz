@@ -1,0 +1,16 @@
+{
+  "card_id": "glasses_of_urza",
+  "name": "Glasses of Urza",
+  "oracle_text": "{T}: Look at target player's hand.",
+  "blocked_sentences": ["{T}: Look at target player's hand."],
+  "needs": [
+    {
+      "capability": "look_at_hand",
+      "kind": "op",
+      "what": "An effect op that shows the cards in a targeted player's hand privately to the ability's controller only, leaving them hidden from everyone else and leaving them in hand -- e.g. `{\"op\": \"look_at_hand\", \"player\": {\"target\": ...}}`",
+      "why_existing_wont_do": "`reveal` is the closest op in `ops`, but revealing is public information shown to all players, which is a strictly different game action from looking; a card that reveals an opponent's hand tells the opponent's opponents things Glasses of Urza does not. `reveal` also takes an `objects` selector over cards and has no `player` argument, so it cannot be pointed at a hand at all."
+    }
+  ],
+  "closest_existing": ["reveal", "discard_selector"],
+  "confidence": "high"
+}

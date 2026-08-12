@@ -1,0 +1,63 @@
+{
+  "card": {
+    "id": "burgeoning",
+    "name": "Burgeoning",
+    "oracle_text": "Whenever an opponent plays a land, you may put a land card from your hand onto the battlefield.",
+    "mana_cost": "{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent plays a land, you may put a land card from your hand onto the battlefield.",
+        "trigger": {
+          "event": "land_played",
+          "controller": "opponent"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a land card from your hand onto the battlefield?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

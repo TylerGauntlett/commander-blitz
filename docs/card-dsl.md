@@ -110,7 +110,7 @@ Every key is optional; all present keys must match.
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "self_only": true,              // this permanent only
   "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
-  "count": 1,                     // an int, or "all"
+  "count": 1,                     // an int, or "all", or "any" -- see below
   "chooser": "controller",        // controller|owner|none
   "random": false,
   "name": "Forest"
@@ -128,6 +128,29 @@ Ties are all kept. Rule 701.36a has the player choose among equals and
 `choose_objects` is already what asks, so narrowing to one here would take that
 choice away — and breaking the tie by oid would make the answer depend on the
 order permanents happened to arrive in.
+
+`count` has three spellings and they are three different cards. `"all"` takes
+every match and asks nothing — mandatory. A **value expression** forces exactly
+that many, because the one number becomes both the minimum and the maximum of
+the question. `"any"` is the free subset: the chooser may take none of them, all
+of them, or anything between.
+
+```jsonc
+{ "op": "put_onto_battlefield",
+  "objects": { "zone": "hand", "controller": "you",
+               "types": ["Creature"], "count": "any" } }
+```
+
+That is Last March of the Ents, and neither of the other two says it — `"all"`
+empties your hand whether you wanted that or not, and any fixed number is
+decided when the card is written rather than when it resolves. Nothing under the
+decision layer needed building: `ask_objects` always took distinct `min_count`
+and `max_count` bounds and `PendingDecision.min_count` was always honoured, so
+`"any"` is only the spelling that reaches them.
+
+`"any"` is refused at load time alongside `random` or `chooser: "none"`. Both
+would resolve the whole pool without asking, which is `"all"` under another name;
+a card that means "all" should say "all".
 
 The comparison keys (`power`, `toughness`, `mana_value`) take a full **value
 expression** on the right, which is how mentor says "target attacking creature

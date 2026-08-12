@@ -36102,12 +36102,12 @@
     },
     "Burgeoning": {
       "edhrec_rank": 905,
-      "gate": "template",
+      "gate": null,
       "name": "Burgeoning",
-      "reason": "no template for: Whenever an opponent plays a land, you may put a land card from your hand onto the battlef",
+      "reason": "",
       "scryfall_id": "a53c6a0e-9bbc-4a7b-8059-bc20806823d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Burglar Rat": {
@@ -84222,12 +84222,12 @@
     },
     "Entish Restoration": {
       "edhrec_rank": 441,
-      "gate": "template",
+      "gate": null,
       "name": "Entish Restoration",
-      "reason": "no template for: Sacrifice a land. Search your library for up to two basic land cards, put them onto the ba",
+      "reason": "",
       "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Entity Tracker": {
@@ -153522,12 +153522,12 @@
     },
     "Last March of the Ents": {
       "edhrec_rank": 989,
-      "gate": "template",
+      "gate": null,
       "name": "Last March of the Ents",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "2d7097c9-2076-4ebc-8c9e-aa596351588c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Last Night Together": {
@@ -189152,12 +189152,12 @@
     },
     "Oboro, Palace in the Clouds": {
       "edhrec_rank": 5115,
-      "gate": "template",
+      "gate": null,
       "name": "Oboro, Palace in the Clouds",
-      "reason": "no template for: {1}: Return Oboro to its owner's hand",
+      "reason": "",
       "scryfall_id": "84065219-b902-41fa-9a5a-7312e5103b78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obosh, the Preypiercer": {
@@ -194582,12 +194582,12 @@
     },
     "Overprotect": {
       "edhrec_rank": 1581,
-      "gate": "template",
+      "gate": null,
       "name": "Overprotect",
-      "reason": "no template for: Target creature you control gets +3/+3 and gains trample, hexproof, and indestructible unt",
+      "reason": "",
       "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Override": {
@@ -219442,12 +219442,12 @@
     },
     "Reshape the Earth": {
       "edhrec_rank": 3351,
-      "gate": "template",
+      "gate": null,
       "name": "Reshape the Earth",
-      "reason": "no template for: Search your library for up to ten land cards, put them onto the battlefield tapped, then s",
+      "reason": "",
       "scryfall_id": "1ffa9a70-1221-4dba-8c2c-9872913021cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Resilient Khenra": {
@@ -283472,9 +283472,9 @@
     },
     "Through the Forest Gate": {
       "edhrec_rank": 24945,
-      "gate": null,
+      "gate": "template",
       "name": "Through the Forest Gate",
-      "reason": "",
+      "reason": "no template for: Look at the top twenty cards of your library, put any number of land cards from among them",
       "scryfall_id": "880adfc8-69cf-4062-a804-e65b6cb6056d",
       "source": "",
       "status": "pending",

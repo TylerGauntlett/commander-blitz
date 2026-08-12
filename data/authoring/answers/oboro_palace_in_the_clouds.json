@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "oboro_palace_in_the_clouds",
+    "name": "Oboro, Palace in the Clouds",
+    "oracle_text": "{T}: Add {U}.\n{1}: Return Oboro to its owner's hand.",
+    "types": [
+      "Land"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}: Return Oboro to its owner's hand.",
+        "cost": {
+          "mana": "{1}"
+        },
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "objects": {
+              "self_only": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

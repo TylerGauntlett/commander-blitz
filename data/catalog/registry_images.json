@@ -467,6 +467,10 @@
     "artist": "James Paick",
     "scryfall_id": "b2cfd2c0-2110-47f1-809e-487b9b0a1043"
   },
+  "burgeoning": {
+    "artist": "Stephen Andrade",
+    "scryfall_id": "a53c6a0e-9bbc-4a7b-8059-bc20806823d9"
+  },
   "bygone_bishop": {
     "artist": "Jason A. Engle",
     "scryfall_id": "cf879fc7-9f84-40a7-a7be-9cc98a720af5"
@@ -930,6 +934,10 @@
   "empyrean_eagle": {
     "artist": "Jason A. Engle",
     "scryfall_id": "577e99a7-4a55-4314-8f08-2ae0c33b85c7"
+  },
+  "entish_restoration": {
+    "artist": "Calder Moore",
+    "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
   },
   "epicure_of_blood": {
     "artist": "Anna Steinbauer",
@@ -1683,6 +1691,10 @@
     "artist": "Olena Richards",
     "scryfall_id": "26ed684b-e3a1-421d-8cfd-c5eee673a3a1"
   },
+  "last_march_of_the_ents": {
+    "artist": "Wayne Reynolds",
+    "scryfall_id": "2d7097c9-2076-4ebc-8c9e-aa596351588c"
+  },
   "leaden_myr": {
     "artist": "Alan Pollack",
     "scryfall_id": "3a709559-fec3-44f4-a2bf-3396989b9189"
@@ -2048,6 +2060,10 @@
     "artist": "Wayne England",
     "scryfall_id": "33330c04-4e61-4993-ba26-d2316d1e845c"
   },
+  "oboro_palace_in_the_clouds": {
+    "artist": "Jonas De Ro",
+    "scryfall_id": "84065219-b902-41fa-9a5a-7312e5103b78"
+  },
   "omen_hawker": {
     "artist": "Josh Hass",
     "scryfall_id": "d0749c3c-e3f7-4c96-8c5b-4fd2401544c4"
@@ -2107,6 +2123,10 @@
   "overgrown_tomb": {
     "artist": "Pavel Kolomeyets",
     "scryfall_id": "ad7e18e2-c033-4b6c-86e8-d0e5cc824cfd"
+  },
+  "overprotect": {
+    "artist": "Pavel Kolomeyets",
+    "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a"
   },
   "palladium_myr": {
     "artist": "Alan Pollack",
@@ -2331,6 +2351,10 @@
   "rendmaw_creaking_nest": {
     "artist": "Ryan Pancoast",
     "scryfall_id": "4dc2d415-fdf7-4f2d-95d0-a793ffc26491"
+  },
+  "reshape_the_earth": {
+    "artist": "Adam Paquette",
+    "scryfall_id": "1ffa9a70-1221-4dba-8c2c-9872913021cd"
   },
   "retreat_to_kazandu": {
     "artist": "Kieran Yanner",

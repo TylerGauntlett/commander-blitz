@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "reshape_the_earth",
+    "name": "Reshape the Earth",
+    "oracle_text": "Search your library for up to ten land cards, put them onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{6}{G}{G}{G}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 10,
+        "destination": "battlefield",
+        "tapped": true,
+        "shuffle": true,
+        "selector": {
+          "types": [
+            "Land"
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 42,
+    "library_size": {
+      "0": 30
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}
