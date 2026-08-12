@@ -300,6 +300,31 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    alternative_cost = None
+    alternative_condition = None
+    if model.alternative_cost is not None:
+        spec = dict(model.alternative_cost)
+        unknown = set(spec) - {"mana", "condition"}
+        if unknown:
+            raise DslError(
+                f"{where}.alternative_cost: unsupported keys {sorted(unknown)}"
+            )
+        if not spec.get("mana"):
+            # It *replaces* the printed cost, so without mana the card would be
+            # castable for free whenever the condition happened to hold.
+            raise DslError(f"{where}.alternative_cost: needs 'mana'")
+        alternative_cost = ManaCost.parse(str(spec["mana"]))
+        alternative_condition = spec.get("condition")
+        if alternative_condition is None:
+            # Unconditional is what `evoke` already is. A card spelling it this
+            # way would be offered twice at two prices with nothing to choose
+            # between them.
+            raise DslError(
+                f"{where}.alternative_cost: needs a 'condition' -- an "
+                f"unconditional alternative cost is 'evoke'"
+            )
+        validate_condition(alternative_condition, f"{where}.alternative_cost.condition")
+
     # `flashback` and `graveyard_cost` are one slot under two names -- the
     # keyword that shipped first, and the mechanic it turned out to be. Escape
     # and jump-start are the same capability with a different price and a
@@ -385,6 +410,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         flashback=flashback,
+        alternative_cost=alternative_cost,
+        alternative_condition=alternative_condition,
         graveyard_cast_exiles=model.graveyard_cast == "exile",
         ascend=model.ascend,
         suspend=suspend,

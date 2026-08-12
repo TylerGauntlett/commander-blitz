@@ -218,6 +218,16 @@ class CardModel(BaseModel):
     #: printed mana value is unchanged: a Mulldrifter evoked is still a
     #: five-drop for anything that counts mana value.
     evoke: str | None = None
+    #: ``{"mana": "{R}", "condition": {...}}`` -- **prowl** and **spectacle**.
+    #: An alternative cost like evoke, and unlike evoke it is only *offered*
+    #: when the condition holds: "you may cast this for its spectacle cost if
+    #: an opponent lost life this turn".
+    #:
+    #: A field of its own rather than a condition bolted onto ``evoke``,
+    #: because evoke's flag is read back on the permanent by "it's sacrificed
+    #: when it enters" -- a spectacle spell reporting `cast_evoked` would be a
+    #: card quietly claiming to have been evoked.
+    alternative_cost: dict[str, Any] | None = None
     #: "Emerge {5}{U}{U}" -- an alternative cost that sacrifices a creature
     #: and is then reduced by that creature's mana value. Like ``evoke`` it
     #: replaces the printed cost; unlike it, how much you pay depends on

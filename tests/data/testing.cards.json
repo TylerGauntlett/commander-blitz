@@ -942,6 +942,40 @@
       ]
     },
     {
+      "id": "t_spectacle",
+      "name": "Test Spectacle",
+      "oracle_text": "Test Spectacle deals 2 damage to target player.\nSpectacle {R} (You may cast this spell for its spectacle cost if an opponent lost life this turn.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "alternative_cost": {
+        "mana": "{R}",
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": 1
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_stormbolt",
       "name": "Test Stormbolt",
       "oracle_text": "Test Stormbolt deals 1 damage to target player.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
