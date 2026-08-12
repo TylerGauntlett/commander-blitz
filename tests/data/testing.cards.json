@@ -942,6 +942,66 @@
       ]
     },
     {
+      "id": "t_rioter",
+      "name": "Test Rioter",
+      "oracle_text": "Riot (This creature enters with a +1/+1 counter on it or with haste.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Riot",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "A +1/+1 counter",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 1
+                      },
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Haste",
+                  "effects": [
+                    {
+                      "op": "grant_keyword",
+                      "keyword": "haste",
+                      "duration": "permanent",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_exploiter",
       "name": "Test Exploiter",
       "oracle_text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",

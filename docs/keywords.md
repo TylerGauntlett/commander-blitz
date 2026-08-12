@@ -288,7 +288,7 @@ This is the long tail, and where the build order comes from.
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
 | Replicate | routed | `copy_spell` ships; what is left is an additional cost paid *any number of times*, which no cost kind repeats | — |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
-| Riot | routed | `self_enters` + `choose_mode`, but a `choose_mode` inside a trigger resolves late | — |
+| Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
 | Ripple | blocked | free casts off a library scan, retriggering itself | — |
 | Scavenge | free | activated from the graveyard with an exile cost, then `add_counters` | — |
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |

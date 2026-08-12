@@ -1988,6 +1988,21 @@ Granting it needs no extra work: `grant_keyword`, as an op or as a static,
 already carries the whole "equipped creature has shroud" family, because the
 check reads the characteristic layer rather than the printed card.
 
+### How long a granted keyword lasts
+
+```jsonc
+{ "op": "grant_keyword", "keyword": "haste", "objects": { "target": "t1" } }
+{ "op": "grant_keyword", "keyword": "haste", "duration": "permanent",
+  "objects": { "self_only": true } }          // riot: for as long as it lasts
+```
+
+The default is until end of turn, which is what almost every pump spell wants.
+`permanent` is riot's "enters with haste", and the difference is invisible on
+the turn the creature arrives and total afterwards: an until-end-of-turn haste
+evaporates at cleanup, so from the next turn a riot creature that chose haste
+looks exactly like one that chose the counter. A misspelled duration is refused
+rather than defaulted, because defaulting means shipping the wrong half.
+
 ## Granting an ability
 
 The quoted half of `gains trample and "Whenever this creature deals combat damage

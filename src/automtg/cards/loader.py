@@ -1181,6 +1181,16 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    # A misspelled duration would silently fall back to until-end-of-turn,
+    # which is the *wrong half* of riot rather than a smaller version of it.
+    if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
+        "until_end_of_turn",
+        "permanent",
+    ):
+        raise DslError(
+            f"{where}: unknown grant_keyword duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn' or 'permanent')"
+        )
     if op == "detain" and not effect.get("objects"):
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.

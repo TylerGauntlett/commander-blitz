@@ -481,13 +481,32 @@ def animate(
     state.bump_chars()
 
 
-def grant_keyword(state: GameState, oid: int, keyword: str, source: int | None = None) -> None:
+def grant_keyword(
+    state: GameState,
+    oid: int,
+    keyword: str,
+    source: int | None = None,
+    *,
+    permanent: bool = False,
+) -> None:
+    """Give a permanent a keyword, until end of turn or for as long as it lasts.
+
+    ``permanent`` is riot's "or with **haste**", and the distinction is not
+    cosmetic: an until-end-of-turn haste on a creature that entered this turn
+    does the same thing today and nothing ever after, so a riot creature that
+    took haste would be indistinguishable from one that took the counter by the
+    following turn. The two durations are stored in different places because
+    only one of them is swept by `clear_until_eot`.
+    """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
+    if permanent:
+        obj.granted_keywords.add(keyword)
+    else:
+        obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
     state.bump_chars()
 
 
