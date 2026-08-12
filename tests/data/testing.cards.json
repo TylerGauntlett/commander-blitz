@@ -2118,6 +2118,96 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_discard_watcher",
+      "name": "Test Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_own_discard_watcher",
+      "name": "Test Own Discard Watcher",
+      "oracle_text": "Whenever you discard a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_creature_discard_watcher",
+      "name": "Test Creature Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a creature card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a creature card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent",
+            "filter": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -44,6 +44,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     "draw": EventType.DRAW,
+    "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
 }
 
@@ -65,6 +66,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # The cycled card itself, so `source: "self"` scopes the trigger to the
         # card that was cycled rather than to every cycling anywhere.
         "cycle",
+        # The discarded card, so a filter may ask what it was -- "whenever an
+        # opponent discards a *creature* card". It is in the graveyard by the
+        # time the event fires and `matches_card_filter` reads the printed face,
+        # so the subject is still there to be asked about.
+        "discard",
     }
 )
 
@@ -290,7 +296,12 @@ def _actor(
     state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
 ) -> int | None:
     """The player the ``controller`` clause is compared against."""
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "begin_combat"):
+    # `discard` is listed here even though it also has an object subject. The
+    # clause asks *who discarded*, and the discarded card is in a graveyard by
+    # now -- reading the actor off the object would be reading a controller that
+    # `reset_permanent_state` has already been through. `discard_cards` puts the
+    # discarding player on the event, so take it from there.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
