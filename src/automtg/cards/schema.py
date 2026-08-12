@@ -29,6 +29,12 @@ class CostModel(BaseModel):
     #: deliberately not that one: sacrificing graveyards the land, which
     #: breaks the replay-for-landfall loop those cards are built on.
     return_to_hand: dict[str, Any] | None = None
+    #: "Tap five untapped Vampires you control" -- Captivating Vampire. A
+    #: selector over the battlefield with a ``count``, and the permanents come
+    #: back untapped next untap step, which is what separates it from
+    #: ``sacrifice`` and ``return_to_hand``. Not the same as ``tap``, which is
+    #: the ``{T}`` symbol and only ever taps the source.
+    tap_permanents: dict[str, Any] | None = None
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.

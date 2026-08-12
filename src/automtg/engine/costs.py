@@ -357,6 +357,8 @@ def can_pay(
         return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
         return False
+    if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
+        return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         kind = str(cost.remove_counters.get("counter", "+1/+1"))
@@ -425,6 +427,33 @@ def _return_pool(
     spec = dict(cost.return_to_hand or {})
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
+    count = int(spec.pop("count", 1) or 1)
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = resolve_pool(ctx, spec)
+    return pool if len(pool) >= count else []
+
+
+def _tap_cost_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """Which permanents this cost may tap -- "five untapped Vampires you control".
+
+    ``tapped: False`` is forced rather than defaulted, because "untapped" is
+    part of every printed line of this shape and a cost that could re-tap an
+    already-tapped Vampire would be free.
+
+    **Summoning sickness does not apply**, and that is not an oversight: rule
+    302.6 restricts the ``{T}`` *symbol in a permanent's own cost*, and this is
+    a cost that taps other permanents. Captivating Vampire's ruling is explicit
+    that a Vampire which just arrived may be tapped for it, and the source
+    itself counts among the five.
+    """
+    from .effects.selectors import resolve_pool
+
+    spec = dict(cost.tap_permanents or {})
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    spec["tapped"] = False
     count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = resolve_pool(ctx, spec)
@@ -528,6 +557,14 @@ def pay(
         )
         for oid in picked:
             bounce_object(state, oid)
+
+    if cost.tap_permanents is not None:
+        spec = dict(cost.tap_permanents)
+        count = int(spec.pop("count", 1) or 1)
+        pool = _tap_cost_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(ctx, "Tap", pool, count, count, pid, "tap_cost")
+        for oid in picked:
+            tap_permanent(state, oid)
 
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters

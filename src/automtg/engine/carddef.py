@@ -45,6 +45,13 @@ class Cost:
     #: battlefield. Distinct from ``sacrifice`` because the permanent comes
     #: back -- Meloku and Trench Behemoth both replay it for landfall.
     return_to_hand: Mapping[str, Any] | None = None
+    #: "Tap five untapped Vampires you control": a selector over the
+    #: battlefield with a ``count``.  Distinct from ``tap``, which is the
+    #: ``{T}`` symbol and only ever taps the source, and from ``sacrifice`` and
+    #: ``return_to_hand``, because the permanents stay where they are and untap
+    #: on the next untap step -- so a cost of this shape is repeatable in a way
+    #: neither of those is.
+    tap_permanents: Mapping[str, Any] | None = None
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -79,6 +86,9 @@ class Cost:
             return_to_hand=(
                 dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
             ),
+            tap_permanents=(
+                dict(spec["tap_permanents"]) if spec.get("tap_permanents") else None
+            ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
@@ -110,6 +120,7 @@ class Cost:
             and not self.untap
             and self.sacrifice is None
             and self.return_to_hand is None
+            and self.tap_permanents is None
             and self.discard == 0
             and not self.discard_self
             and self.pay_life == 0
@@ -129,6 +140,8 @@ class Cost:
             parts.append("Sacrifice")
         if self.return_to_hand:
             parts.append("Return to hand")
+        if self.tap_permanents:
+            parts.append(f"Tap {self.tap_permanents.get('count', 1)} untapped permanents")
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:

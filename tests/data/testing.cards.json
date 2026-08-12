@@ -2208,6 +2208,43 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_tapper",
+      "name": "Test Tapper",
+      "oracle_text": "Tap two untapped Bears you control: Draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Tap two untapped Bears you control: Draw a card.",
+          "cost": {
+            "tap_permanents": {
+              "subtypes": [
+                "Bear"
+              ],
+              "count": 2
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

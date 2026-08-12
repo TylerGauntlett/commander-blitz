@@ -1,3 +1,48 @@
+## Tapping other permanents as a cost
+
+### Overview
+
+"**Tap five untapped Vampires you control**: Gain control of target creature."
+The first half of Captivating Vampire, and the last of its three gaps.
+
+`tap` already existed and is a different thing: it is the `{T}` symbol, and it
+taps the source. Nothing could charge a player for tapping *other* permanents.
+
+### Why the `tap` op is not a substitute
+
+It is the obvious workaround and it fails twice over:
+
+- the taps would land on **resolution** rather than on activation, so they could
+  be responded to and could fizzle while the ability still resolved;
+- `can_pay` would never consult them, so the ability would be offered with no
+  untapped Vampires on the board at all — which is the same as it being free.
+
+### The shape it copied, and the one way it differs
+
+`sacrifice` and `return_to_hand` are the same design: a selector over the
+battlefield with a `count`, defaulting to `controller: "you"`, pooled by one
+function that both `can_pay` and `pay` call so they cannot disagree about
+whether the cost is affordable.
+
+The difference is that the permanents **stay**. They untap on the next untap
+step, which makes a cost of this shape repeatable in a way neither of the other
+two is — and is exactly why it has to be charged at activation.
+
+### Two rules that had to be got right
+
+- **`tapped: false` is forced**, and the loader refuses a card that spells
+  `tapped` itself rather than overriding it in silence. "Untapped" is in every
+  printed line of this shape, and a cost that could re-tap an already-tapped
+  Vampire costs nothing.
+- **Summoning sickness does not apply.** Rule 302.6 restricts the `{T}` symbol
+  in a permanent's *own* cost; this taps other permanents, and Captivating
+  Vampire's ruling says explicitly that a Vampire which just arrived may be
+  tapped for it. Getting this backwards would make the card unplayable on the
+  turn it matters.
+
+`is_tap_only` grew a clause with it, which is what keeps the mana solver from
+treating a Springleaf Drum as a source it can tap without paying the rest.
+
 ## `add_subtype`, the op — one printed noun, two mechanisms
 
 ### Overview
