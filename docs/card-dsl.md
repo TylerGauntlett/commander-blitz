@@ -390,9 +390,43 @@ batching work.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
-`deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` · `upkeep` ·
-`draw_step` · `begin_combat` · `end_step` · `you_gain_life` · `counter_placed` ·
-`draw` · `discard` · `cycle`
+`deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
+`becomes_blocked` · `attacks_unblocked` · `upkeep` · `draw_step` ·
+`begin_combat` · `end_step` · `you_gain_life` · `counter_placed` · `draw` ·
+`discard` · `cycle`
+
+**`becomes_blocked` and `attacks_unblocked` are told from the attacker's side**,
+and they are a pair rather than two features: both are decided when the block
+declaration closes, and "isn't blocked" is not an event that happens but the
+absence of one, which only becomes a fact once the declaration is over. Flanking,
+rampage, bushido and frenzy.
+
+`blocks` cannot stand in for either. It fires once per *blocker* and is about
+the blocker, so an attacker blocked by three creatures sees three unrelated
+events concerning somebody else, and an attacker blocked by nobody sees none at
+all.
+
+`blockers` on the event is the count — rampage is "+N/+N for each creature
+blocking it **beyond the first**", so the card does that arithmetic:
+
+```jsonc
+{ "op": "pump", "objects": { "self_only": true },
+  "power": { "times": [ { "const": 2 },
+                        { "minus": [ { "binding": "blockers" }, { "const": 1 } ] } ] } }
+```
+
+Flanking needs *which* creatures are blocking, not how many, so the `blocking`
+selector takes a binding as well as a boolean:
+
+```jsonc
+{ "blocking": true }                      // blocking anything
+{ "blocking": { "binding": "self" } }     // blocking the creature bound here
+```
+
+The boolean form cannot say flanking: on a board with two attackers it matches
+every blocker in both combats, so flanking would shrink creatures blocking
+somebody else — and on a one-attacker board, which is the obvious test to write,
+it looks perfect.
 
 **`becomes_target` fires as the spell goes on the stack**, not as it resolves
 (rule 603.2d) — heroic and ward. That timing is the whole of ward: the point is

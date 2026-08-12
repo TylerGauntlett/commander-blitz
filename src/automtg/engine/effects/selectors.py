@@ -254,10 +254,19 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         selector["attacking"]
     ):
         return False
-    if "blocking" in selector and bool(combat and combat.blocking(oid)) != bool(
-        selector["blocking"]
-    ):
-        return False
+    if (blocking := selector.get("blocking")) is not None:
+        if isinstance(blocking, Mapping) and "binding" in blocking:
+            # "…blocked by a creature without flanking": *which* attacker it is
+            # blocking, not merely that it is blocking something. The plain
+            # boolean cannot say it -- on a board with two combats it matches
+            # every blocker in both -- so this names a trigger binding, the way
+            # `shares_a_type_with` and `exclude_binding` do.
+            bound = ctx.bindings.get(str(blocking["binding"]))
+            attacker = bound if isinstance(bound, int) else None
+            if attacker is None or combat is None or combat.blockers.get(oid) != attacker:
+                return False
+        elif bool(combat and combat.blocking(oid)) != bool(blocking):
+            return False
 
     if (spec := selector.get("power")) is not None:
         value = c.power if c else (card.power or 0)

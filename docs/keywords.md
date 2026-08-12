@@ -195,7 +195,7 @@ This is the long tail, and where the build order comes from.
 | Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
 | Bolster | routed | needs "the creature with the lowest toughness", and no selector picks an extremum | — |
-| Bushido | routed | `blocks` trigger exists; "or is blocked" has no matching event | — |
+| Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
 | Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
 | Casualty | routed | an additional cost that copies the spell; spell copying does not exist | — |
@@ -234,12 +234,12 @@ This is the long tail, and where the build order comes from.
 | Fading | routed | `upkeep` + `remove_counters` + a sacrifice; needs "if you can't" to be askable | — |
 | Fateseal | routed | `scry` on another player's library — the op is hard-wired to the controller | — |
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
-| Flanking | routed | needs "whenever this becomes blocked", which no event covers | — |
+| Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |
 | Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
 | Flip | refused | flip cards; see rules-coverage.md | — |
 | Forecast | routed | an activated ability from hand that reveals rather than discarding — and so cannot use the cycling guard | — |
 | Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
-| Frenzy | routed | needs "attacks and isn't blocked", which no event covers | — |
+| Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | routed | enters with counters, then moves them on another creature entering | — |
 | Gravestorm | routed | the count shipped (`cards_to_graveyard_this_turn`); spell copying is the whole remaining half | — |
 | Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
@@ -281,7 +281,7 @@ This is the long tail, and where the build order comes from.
 | Proliferate | routed | needs "every object with any counter", and counter kinds are not enumerable off an object | — |
 | Provoke | routed | `must_attack` exists for requirements; this is the block-requirement mirror, which does not | — |
 | Prowl | routed | the ledger shipped; what is left is an alternative cost gated on a condition, which `evoke` does not take | — |
-| Rampage | routed | needs "becomes blocked" and the count of blockers | — |
+| Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
 | Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
@@ -358,9 +358,14 @@ already expressible never gets a gap record written for it.
 nonbasic landwalk shipped together, because they are one capability and not five
 — every one is a question `combat.can_block` asks of `chars` on both creatures,
 and the rest of `can_block` was already the answer. What is left of combat is
-not evasion at all: flanking, rampage, bushido, frenzy and provoke each want a
-*trigger event* the engine does not have ("becomes blocked", "attacks and isn't
-blocked"), which is a different tier of work with frontend consequences.
+not evasion at all: flanking, rampage, bushido, frenzy and provoke each wanted a
+*trigger event* the engine did not have ("becomes blocked", "attacks and isn't
+blocked"), which is a different tier of work with frontend consequences. Four of
+those five have since shipped as `becomes_blocked` and `attacks_unblocked` —
+one capability rather than four, because both events are decided at the same
+instant and neither is knowable a moment earlier. Provoke is the one left, and
+it is not a trigger at all: it is a block *requirement*, the mirror of
+`must_attack`.
 
 **The unshipped entries cluster, and the clusters are small.** Nearly everything
 still outstanding waits on one of six things:

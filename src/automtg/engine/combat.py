@@ -471,6 +471,34 @@ def finish_blockers(state: GameState) -> None:
                 attacker=combat.blockers[blocker_oid],
             )
 
+    # Rule 509.1h, from the *attacker's* side. `BLOCKS` is one event per
+    # blocker and says nothing to the creature being blocked -- an attacker
+    # blocked by three creatures sees three unrelated events about somebody
+    # else, and an attacker blocked by nobody sees none at all.
+    #
+    # Outside the `if combat.blockers` guard on purpose: the unblocked half is
+    # the case where that guard is false, and frenzy is printed for exactly it.
+    for attacker_oid in sorted(combat.attackers):
+        if attacker_oid in combat.removed:
+            continue
+        obj = state.objects.get(attacker_oid)
+        if obj is None:
+            continue
+        blocking_it = [b for b in combat.block_order.get(attacker_oid, []) if b in combat.blockers]
+        fire(
+            state,
+            EventType.BECAME_BLOCKED if blocking_it else EventType.ATTACKED_UNBLOCKED,
+            player=obj.controller,
+            source=attacker_oid,
+            attacker=attacker_oid,
+            oid=attacker_oid,
+            card=state.card_of(obj).id,
+            # Rampage is "for each creature blocking it **beyond the first**",
+            # so the count is the number and the card does the arithmetic.
+            blockers=len(blocking_it),
+            defender=combat.attackers[attacker_oid],
+        )
+
 
 def _effective_toughness(state: GameState, oid: int) -> int:
     obj = state.objects.get(oid)

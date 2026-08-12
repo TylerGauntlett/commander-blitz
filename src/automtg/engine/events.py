@@ -89,6 +89,14 @@ class EventType:
     BLOCKERS_DECLARED = "blockers_declared"
     ATTACKS = "attacks"
     BLOCKS = "blocks"
+    #: Rule 509.1h. An attacker became blocked, or was declared and nobody
+    #: blocked it -- flanking, rampage, bushido and frenzy, which is every
+    #: combat keyword the engine had no event for. Both are decided at the same
+    #: instant, when blockers are declared, so they are one pair and not two
+    #: features: "isn't blocked" is only knowable once the declaration closes.
+    #: ``blockers`` carries how many, for rampage.
+    BECAME_BLOCKED = "became_blocked"
+    ATTACKED_UNBLOCKED = "attacked_unblocked"
 
     # turn structure
     TURN_BEGAN = "turn_began"
