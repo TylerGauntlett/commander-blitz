@@ -942,6 +942,56 @@
       ]
     },
     {
+      "id": "t_exerter",
+      "name": "Test Exerter",
+      "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exert Test Exerter?",
+              "effects": [
+                {
+                  "op": "skip_untap",
+                  "objects": {
+                    "self_only": true
+                  }
+                },
+                {
+                  "op": "pump",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_convoker",
       "name": "Test Convoker",
       "oracle_text": "Convoke (Your creatures can help cast this spell.)\nTest Convoker deals 2 damage to target player.",
