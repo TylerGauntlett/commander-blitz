@@ -144,7 +144,7 @@ Keywords that appear in almost every set and carry no reminder text.
 | Reach | shipped | `Keyword`, read by `combat.can_block` | `reach` |
 | Trample | shipped | `Keyword`, read by combat damage assignment | `trample` |
 | Vigilance | shipped | `Keyword`, suppresses the tap on attack | `vigilance` |
-| Ward | routed | `unless_pays` shipped with Rhystic Study; what is left is a "becomes the target of" trigger, the same gap as heroic | — |
+| Ward | free | `becomes_target` trigger with `controller: "opponent"`, then `may` with `player` the caster, a `pay` cost and a `counter` `sid` in the `else` | — |
 
 Ward is the interesting absence. It is evergreen and it has largely replaced
 hexproof on new creatures, and the half of it that looked hardest turned out to
@@ -329,7 +329,7 @@ is ordinary, which is why most of this table is `free`.
 | Ferocious | free | condition `exists` with `power` `>=` 4 | — |
 | Grandeur | free | activated from hand, cost `discard_selector` by `name` | — |
 | Hellbent | free | condition `cmp` on `cards_in_hand` equals 0 | — |
-| Heroic | routed | needs a "becomes the target of a spell" trigger event | — |
+| Heroic | free | `becomes_target` trigger with `controller: "you"`, then whatever the card does | — |
 | Join forces | routed | mana contributed by several players; every cost is paid by one | — |
 | Kinship | routed | `upkeep` trigger; needs to look at the library top and read its subtypes | — |
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
@@ -372,7 +372,7 @@ still outstanding waits on one of six things:
 | **Spell copying** | casualty, conspire, replicate, storm, gravestorm, ripple |
 | **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
 | **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, bestow, mutate, meld |
-| **A "becomes the target of" trigger** | heroic, and ward — which is `unless_pays` hung on that trigger, and `unless_pays` shipped with Rhystic Study |
+| ~~A **"becomes the target of" trigger**~~ — shipped as `becomes_target`, and it cleared the cluster outright | ~~heroic, ward~~ |
 
 A per-turn ledger is one piece of state and unblocks seven mechanics. That is
 the shape of argument this page exists to make available, and it is not visible

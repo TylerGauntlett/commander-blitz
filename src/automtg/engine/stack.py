@@ -66,7 +66,55 @@ def push_spell(
     obj.stack_id = item.sid
     state.stack.append(item)
     state.bump_chars()
+    announce_targets(state, item)
     return item
+
+
+def announce_targets(state: GameState, item: StackItem) -> None:
+    """Fire `BECAME_TARGET` for everything this stack item targets.
+
+    Rule 603.2d: "becomes the target of" triggers fire as the spell or ability
+    is *put on the stack*, not as it resolves. That timing is the whole of ward
+    -- the point is to make the opponent pay before the removal spell does
+    anything -- and it is why this is here rather than in `resolve`.
+
+    Called from all three push sites, so nothing that reaches the stack with
+    targets can miss it. `push_triggered_ability` chooses its targets after
+    building the item, so it calls this itself once they are set.
+    """
+    from .triggers import fire
+
+    source = item.oid if item.is_spell else item.source_oid
+    for ref in item.targets:
+        if ref.kind == "object":
+            target = state.objects.get(ref.id)
+            fire(
+                state,
+                EventType.BECAME_TARGET,
+                # The caster. See `EventType.BECAME_TARGET`.
+                player=item.controller,
+                source=source,
+                oid=ref.id,
+                # The card *being targeted*, not the spell doing it: the log
+                # line is "Alice targets Test Warded", and the spell already
+                # named itself on the cast line above.
+                card=state.card_of(target).id if target is not None else None,
+                sid=item.sid,
+                is_spell=1 if item.is_spell else 0,
+            )
+        elif ref.kind == "player":
+            # No object, so no permanent's trigger can be about it -- but the
+            # event is still worth logging, and a future "whenever you become
+            # the target" reads the same shape.
+            fire(
+                state,
+                EventType.BECAME_TARGET,
+                player=item.controller,
+                source=source,
+                target_player=ref.id,
+                sid=item.sid,
+                is_spell=1 if item.is_spell else 0,
+            )
 
 
 def push_activated_ability(
@@ -94,6 +142,7 @@ def push_activated_ability(
         description=f"{card.name}: {ability.text or 'activated ability'}",
     )
     state.stack.append(item)
+    announce_targets(state, item)
     return item
 
 
@@ -159,6 +208,7 @@ def push_triggered_ability(state: GameState, trig: TriggerInstance) -> StackItem
         )
         item.targets = options[0] if options else ()
     state.stack.append(item)
+    announce_targets(state, item)
     return item
 
 

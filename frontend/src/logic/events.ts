@@ -343,6 +343,25 @@ export function beatsFor(
         return;
 
       /*
+       * Targeting, which is where ward happens.
+       *
+       * The flash is on the permanent being *targeted*, not on the spell doing
+       * it, and the tone is "danger" because from the board's point of view
+       * this is a thing being aimed at. It matters more than a normal beat: ward
+       * raises a payment prompt off this event, so without a flash the dialog
+       * arrives with nothing on screen saying which creature it is about.
+       */
+      case "became_target": {
+        const oid = typeof event.data.oid === "number" ? event.data.oid : null;
+        if (oid === null) return; // the player-target form; the cast beat covers it
+        push({
+          hold: 300,
+          flash: { anchor: { kind: "object", oid }, tone: "danger" },
+        });
+        return;
+      }
+
+      /*
        * Mana payment, which used to be entirely invisible: lands tapped during
        * auto-payment with no indication of what was spent. `tapped` flashes the
        * specific permanent that paid; `mana_spent` names the total.

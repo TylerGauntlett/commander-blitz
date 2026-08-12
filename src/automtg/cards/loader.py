@@ -1120,6 +1120,18 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "counter" and "sid" in effect:
+        # Ward's "counter it": the victim is named by value, not chosen. A
+        # malformed expression here would evaluate to 0, match no stack item and
+        # counter nothing -- a ward that reads as printed and never protects
+        # anything, which is the failure this whole pass exists to refuse.
+        validate_value(effect["sid"], f"{where}.sid")
+        if "target" in effect:
+            raise DslError(
+                f"{where}: counter takes 'sid' or 'target', not both -- one names "
+                f"the spell that targeted this permanent, the other lets its "
+                f"controller pick a different spell"
+            )
     if op == "add_mana" and "mana" not in effect:
         raise DslError(f"{where}: add_mana needs 'mana'")
     if op == "animate":

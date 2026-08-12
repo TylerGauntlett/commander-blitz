@@ -18,10 +18,24 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
 
     A countered spell is removed from the stack and put into its owner's
     graveyard; abilities on the stack simply cease to exist.
+
+    ``sid`` names the victim by value rather than by target, which is what ward
+    needs: "counter **it** unless that player pays" is not a targeted ability,
+    and the spell it means is the one that just targeted this permanent. The
+    `becomes_target` trigger carries that spell's `sid` in its bindings, so
+    ``{"sid": {"binding": "sid"}}`` says it without inventing a target the
+    printed card does not have -- which would also let the ward creature's
+    controller point it somewhere else.
     """
     state = ctx.state
     target_id = str(spec.get("target", "t1"))
-    for sid in ctx.target_sids(target_id):
+    if "sid" in spec:
+        from .values import evaluate_value
+
+        sids = [evaluate_value(ctx, spec["sid"])]
+    else:
+        sids = list(ctx.target_sids(target_id))
+    for sid in sids:
         item = state.stack_item(sid)
         if item is None:
             continue

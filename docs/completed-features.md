@@ -1,3 +1,68 @@
+## Becoming a target — heroic, and ward, which was never the hard one
+
+### Overview
+
+The census had ward marked `blocked`, on this reasoning: *"it routes a cost to a
+player who does not control the ability and inverts the outcome, and `may` — the
+only optional-effect op — asks the controller and attaches no cost."* Every
+clause of that was true when it was written and none of it was true any more.
+`may` grew a `player` for Fact or Fiction and a `pay` cost for Seer's Sundial,
+and Rhystic Study shipped the two together as `unless_pays`.
+
+So the whole of ward's supposed blocker had already been built for a different
+card, and what both it and heroic were actually waiting on was much smaller: an
+event for *becoming a target*.
+
+That is the census earning its keep in the direction it was written for — it
+routes a keyword to a mechanism, and the routing was re-checked against an
+engine that had moved. It is also the census being wrong, which is exactly what
+its own "only `shipped` is machine-checked" caveat predicts.
+
+### The timing is the mechanic
+
+Rule 603.2d: these fire as the spell or ability is **put on the stack**, not as
+it resolves. Ward exists to tax the opponent *before* the removal spell does
+anything; a version firing on resolution is a refund, not a tax, and it would
+still pass a test that only checked a counter appeared. So `announce_targets`
+is called from all three push sites in `stack.py` — spells, activated abilities
+and triggered abilities — rather than from `resolve`. Triggered abilities pick
+their targets after the item is built, so that one calls it itself once they are
+set.
+
+### Two things `_matches` had to be told
+
+Both are silent when wrong, and both are wrong in the direction that looks
+plausible:
+
+| | |
+|---|---|
+| **`player` on the event is the caster** | Every `controller` clause on this trigger asks *whose spell it is*. Read off the subject as most triggers are, the actor would be the controller of the creature being targeted — which is nearly always the trigger's own controller. Heroic would fire on the opponent's removal spell, and ward would never fire at all |
+| **`source: "self"` is the target, not the spell** | For almost every other trigger the event's subject and its source are one object, so `_matches` accepts either. Here they are the thing being aimed at and the thing aiming |
+
+### `counter` by `sid`
+
+"Counter **it** unless that player pays" is not a targeted ability, and writing
+it as one would let the ward creature's controller point it at a different
+spell. The `becomes_target` trigger already carried the spell's `sid` in its
+bindings — `_queue` has copied `sid` across for a long time — so `counter` grew
+a `sid` form beside its `target` form, and the loader refuses a card carrying
+both. Ward is then four lines of ordinary DSL with no new op behind it.
+
+### The frontend half
+
+The only tier of `/extend-dsl` work that genuinely forces it, and the only one
+that fails no test if skipped. `describeEvent` gains "Alice targets Test
+Warded", carrying the name of the *targeted* card rather than the spell, since
+the cast line above already named the spell. `beatsFor` flashes the targeted
+permanent in the `danger` tone. Without both, a ward payment dialog appears with
+nothing on screen saying which creature it is about — the prompt arrives before
+anything has visibly happened, which is precisely what the 603.2d timing
+guarantees.
+
+The player-targeting form of the event returns `null` from one and returns early
+from the other: "targets a permanent" would be a lie, and the cast line covers
+it.
+
 ## The per-turn ledger — six tallies the board cannot answer
 
 ### Overview
