@@ -942,6 +942,33 @@
       ]
     },
     {
+      "id": "t_fateseal",
+      "name": "Test Fateseal",
+      "oracle_text": "Fateseal 1. (Look at the top card of target opponent's library. You may put that card on the bottom of that player's library.)",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "scry",
+          "amount": {
+            "const": 1
+          },
+          "player": {
+            "target": "t1"
+          },
+          "chooser": "you"
+        }
+      ]
+    },
+    {
       "id": "t_proliferator",
       "name": "Test Proliferator",
       "oracle_text": "Proliferate.",

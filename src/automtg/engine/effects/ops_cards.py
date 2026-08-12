@@ -172,14 +172,33 @@ def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("scry")
 def op_scry(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Look at the top N cards; put any number on the bottom in the chosen order."""
+    """Look at the top N cards; put any number on the bottom in the chosen order.
+
+    ``player`` names whose library, and ``chooser`` names who decides. They are
+    the same person for scry and **different people for fateseal** — "look at
+    the top card of target player's library. You may put that card on the
+    bottom" — which is the whole of that keyword and the only reason it is not
+    scry with a different player spec.
+
+    The census said the op was "hard-wired to the controller"; it was the other
+    way round. `player` had always been a spec, and it was the *asker* that was
+    hard-wired — to the library's owner. So fateseal written without this would
+    have let the opponent decide what to leave on top of their own deck, which
+    is worse than not implementing it.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    chooser_spec = spec.get("chooser")
     for pid in select_players(ctx, spec.get("player", "you")):
         library = ctx.state.players[pid].library
         top = list(library[:amount])
         if not top:
             continue
-        to_bottom = yield from ask_objects(ctx, "Put on the bottom", top, 0, len(top), pid, "scry_bottom")
+        if chooser_spec is None:
+            who = pid
+        else:
+            picked = select_players(ctx, chooser_spec)
+            who = picked[0] if picked else ctx.controller
+        to_bottom = yield from ask_objects(ctx, "Put on the bottom", top, 0, len(top), who, "scry_bottom")
         for oid in to_bottom:
             library.remove(oid)
             library.append(oid)
