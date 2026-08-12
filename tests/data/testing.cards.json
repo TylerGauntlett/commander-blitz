@@ -942,6 +942,35 @@
       ]
     },
     {
+      "id": "t_split_second",
+      "name": "Test Split Second",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nDestroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Instant"
+      ],
+      "split_second": true,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
       "id": "t_poisonous",
       "name": "Test Poisonous",
       "oracle_text": "Poisonous 2 (Whenever this creature deals combat damage to a player, that player gets two poison counters.)",

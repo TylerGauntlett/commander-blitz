@@ -298,7 +298,7 @@ This is the long tail, and where the build order comes from.
 | Soulshift | free | `dies` trigger, then `return_from_graveyard` filtered by subtype and `mana_value` | — |
 | Spectacle | free | `alternative_cost` with a condition on `life_lost_this_turn` over `each_opponent` | — |
 | Splice | blocked | adding one card's effects to another spell as it is cast | — |
-| Split second | routed | a flag suppressing priority while the spell is on the stack | — |
+| Split second | free | the `split_second` card field — priority is *not* suppressed; casting and non-mana activations are withheld while it is on the stack | `split_second` |
 | Storm | free | `spell_cast` trigger on the stack, then `copy_spell` with `spells_cast_this_turn` minus one | `copy_spell` |
 | Sunburst | routed | enters with counters scaled by the colours actually spent, which payment does not report | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |

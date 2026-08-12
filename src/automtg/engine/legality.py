@@ -142,10 +142,58 @@ def _priority_actions(state: GameState, pid: int) -> list[Action]:
     if sorcery_speed and land_drops_available(state, pid) > 0:
         out.extend(_land_actions(state, pid))
 
+    # Split second (702.61a): while such a spell is on the stack, players may
+    # not cast spells or activate abilities that aren't mana abilities.
+    #
+    # Enforced by *withholding the actions*, which is the only lever legality
+    # has and is also the honest one: there is no "you may not respond" action
+    # to offer. Special actions -- playing a land, suspending -- are neither
+    # casting nor activating, so 702.61a leaves them alone and so does this.
+    if split_second_active(state):
+        out.extend(_mana_ability_actions(state, pid))
+        return out
+
     out.extend(_cast_actions(state, pid, sorcery_speed))
     out.extend(_suspend_actions(state, pid, sorcery_speed))
     out.extend(_activate_actions(state, pid, sorcery_speed))
     return out
+
+
+def split_second_active(state: GameState) -> bool:
+    """Is a spell with split second waiting on the stack?
+
+    Read off the stack rather than written as a flag somewhere, so it ends
+    exactly when the spell leaves -- countered, resolved or fizzled alike --
+    with nothing to remember to clear.
+    """
+    for item in state.stack:
+        if not item.is_spell:
+            continue
+        if state.registry.get(item.def_id).split_second:
+            return True
+    return False
+
+
+def _mana_ability_actions(state: GameState, pid: int) -> list[Action]:
+    """Only the mana abilities out of the full activated list.
+
+    Filtered from `_activate_actions` rather than re-derived, so the two can
+    never disagree about what a mana ability is or what it costs.
+    """
+    return [
+        action
+        for action in _activate_actions(state, pid, sorcery_speed=False)
+        if _is_mana_ability(state, action)
+    ]
+
+
+def _is_mana_ability(state: GameState, action: Action) -> bool:
+    if action.kind is not ActionKind.ACTIVATE or action.source is None:
+        return False
+    card = state.card(action.source)
+    if action.ability_index is None or action.ability_index >= len(card.abilities):
+        return False
+    return bool(card.abilities[action.ability_index].is_mana_ability)
 
 
 def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
