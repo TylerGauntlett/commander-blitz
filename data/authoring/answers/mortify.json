@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "mortify",
+    "name": "Mortify",
+    "oracle_text": "Destroy target creature or enchantment.",
+    "mana_cost": "{1}{W}{B}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W",
+      "B"
+    ],
+    "color_identity": [
+      "W",
+      "B"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "any_types": [
+            "Creature",
+            "Enchantment"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {
+          "target": "t1"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    }
+  }
+}

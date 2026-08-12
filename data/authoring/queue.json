@@ -9212,12 +9212,12 @@
     },
     "Anguished Unmaking": {
       "edhrec_rank": 158,
-      "gate": "template",
+      "gate": null,
       "name": "Anguished Unmaking",
-      "reason": "no template for: Exile target nonland permanent. You lose 3 life",
+      "reason": "",
       "scryfall_id": "407183c6-c962-4f8c-867e-abc309b6c573",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angus Mackenzie": {
@@ -22842,12 +22842,12 @@
     },
     "Bedevil": {
       "edhrec_rank": 480,
-      "gate": "template",
+      "gate": null,
       "name": "Bedevil",
-      "reason": "no template for: Destroy target artifact, creature, or planeswalker",
+      "reason": "",
       "scryfall_id": "38498fb1-b3ca-4dd4-8605-92a859b875ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bedhead Beastie": {
@@ -178222,12 +178222,12 @@
     },
     "Mortify": {
       "edhrec_rank": 565,
-      "gate": "template",
+      "gate": null,
       "name": "Mortify",
-      "reason": "no template for: Destroy target creature or enchantment",
+      "reason": "",
       "scryfall_id": "5f4fa21b-4733-49a6-b751-779b8325c4d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortipede": {

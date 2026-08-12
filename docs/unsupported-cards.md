@@ -10,5 +10,87 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**3 cards** blocked by **5** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [add-subtype](#add-subtype) | 1 | 2468 | op |
+| [gain-control](#gain-control) | 1 | 2468 | op |
+| [shares-a-type](#shares-a-type) | 1 | 677 | selector |
+| [tap-creatures-cost](#tap-creatures-cost) | 1 | 2468 | cost |
+| [top-of-library-revealed](#top-of-library-revealed) | 1 | 8835 | selector, static_effect |
+
+## add-subtype
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect that adds a creature type to a target permanent in addition to its existing types, for as long as the granting source stays on the battlefield
+  <br>Why the existing vocabulary won't do: `add_subtype` exists only in `static_effects`, where it applies continuously to a filtered set read off printed characteristics -- it cannot name the one creature an activated ability targeted. Among the ops, `animate` and `choose_type` set a body or pick a type wholesale rather than appending a subtype to an existing permanent, and `set_types` (a static effect) replaces the type line instead of adding to it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Captivating Vampire** (rank 2468) — `captivating_vampire`
+  - Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.
+
+</details>
+
+## gain-control
+
+Blocks **1** card.
+
+- **(op)** an effect that moves a permanent's controller to the ability's controller for as long as the source remains on the battlefield -- it must retarget an object already on the battlefield rather than move it between zones, take the creature under the new controller's turn/attack timing, and hand control back if the source leaves
+  <br>Why the existing vocabulary won't do: No op in `ops` changes controller. The nearest reaches are `put_onto_battlefield`, which only brings an object in from another zone and so cannot touch a creature already in play, and `lock_abilities` / `must_attack` / `freeze`, which constrain an opponent's creature while leaving it theirs. `static_effects` likewise has no controller-changing entry -- `set_types`, `set_pt` and `buff` all rewrite characteristics, never controller.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Captivating Vampire** (rank 2468) — `captivating_vampire`
+  - Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.
+
+</details>
+
+## shares-a-type
+
+Blocks **1** card.
+
+- **(selector)** a selector predicate that matches objects whose creature types intersect the type line of another object named in the same scope -- here the trigger's `subject` binding -- so the set is resolved per trigger against whatever attacked, rather than against a subtype list fixed when the card was written. It must intersect on any shared creature type (a Goblin Rogue counts a Goblin and counts a Rogue, but is counted only once) and must read the referent's current types, changelings and type-granting effects included
+  <br>Why the existing vocabulary won't do: `subtypes` (and `any_types`) in `selector_keys` take a literal list of type names, as in Edgar's `"subtypes": ["Vampire"]` -- they can only name a type known at authoring time, and there is no form that takes a binding or another object as the referent to compare against. `binding` names one bound object for an effect to act on; it cannot be used as the source of a filter's type list, and `value_keys` are all numeric, so an amount cannot smuggle a subtype list through either. That leaves the count in `for each other attacking creature that shares a creature type with it` inexpressible: `{"count": {"attacking": true}}` would count every attacker regardless of type, which is a different card.
+- **(selector)** a way to exclude the trigger's subject from a selector -- an `exclude_binding`-style key, or extending `exclude_self` to honor the bound object -- so `each OTHER attacking creature` does not count the attacker whose trigger is resolving
+  <br>Why the existing vocabulary won't do: `exclude_self` compares an object against the ability's source oid (`selectors.py` line 158, `triggers.py` line 340), which for this card is the enchantment, never the attacking creature that triggered it. Since the enchantment is not a creature and is not attacking, `exclude_self` removes nothing from a set of attackers, and the trigger's own creature would be counted -- inflating every pump by exactly 1.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shared Animosity** (rank 677) — `shared_animosity`
+  - Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.
+
+</details>
+
+## tap-creatures-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that taps N untapped permanents the player controls matching a filter (here: five untapped Vampires, the source itself eligible among them), chosen by the activating player at activation time and tapped as a cost rather than as an effect
+  <br>Why the existing vocabulary won't do: Cost supports tapping the source itself ({T}) but has no form that taps other permanents, and no way to require a count or a subtype filter on what is tapped. The `tap` op is an effect, not a cost: paying it as an effect would let the ability be activated with no untapped Vampires available and would put the taps on resolution instead of on activation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Captivating Vampire** (rank 2468) — `captivating_vampire`
+  - Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.
+
+</details>
+
+## top-of-library-revealed
+
+Blocks **1** card.
+
+- **(static_effect)** a continuous ability that keeps the top card of its controller's library face up and known to all players for as long as the source is on the battlefield, re-revealing automatically whenever the top card changes (draw, mill, shuffle, put_on_top, surveil, scry)
+  <br>Why the existing vocabulary won't do: `static_effects` has no revealing entry at all. `play_lands_from_library_top` is the only static that mentions the top of the library, but it grants a play permission and never exposes the card, so a card using it still cannot see what is on top. The `reveal` op is a one-shot on resolution -- it would show the card once as an enters-the-battlefield effect and never again, so the information would be stale the moment anything moved the library, and it is an effect rather than the continuous game-state change the printed line describes.
+- **(selector)** a way to name the single card on top of a player's library and read its printed characteristics (here: whether it is black), usable inside an `if`/condition so a card can ask "the top card of your library is black"
+  <br>Why the existing vocabulary won't do: `selector_keys` has `zone` and `colors` but nothing positional -- no `top`, `from_top`, `index` or count-limited ordering key -- so the nearest expression, `exists` over `{zone: library, controller: you, colors: [B]}`, asks whether any black card is anywhere in the 40-card library. That is true almost always and is a different question from the printed one, which is why this cannot be approximated. `static_filter_keys` is narrower still and carries no `zone` key whatsoever, so a static ability's filter cannot reach outside the battlefield even if the positional key existed.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vampire Nocturnus** (rank 8835) — `vampire_nocturnus`
+  - Play with the top card of your library revealed.
+  - As long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.
+
+</details>

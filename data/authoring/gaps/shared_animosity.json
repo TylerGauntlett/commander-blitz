@@ -1,0 +1,31 @@
+{
+  "card_id": "shared_animosity",
+  "name": "Shared Animosity",
+  "oracle_text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
+  "blocked_sentences": [
+    "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it."
+  ],
+  "needs": [
+    {
+      "capability": "shares-a-type",
+      "kind": "selector",
+      "what": "a selector predicate that matches objects whose creature types intersect the type line of another object named in the same scope -- here the trigger's `subject` binding -- so the set is resolved per trigger against whatever attacked, rather than against a subtype list fixed when the card was written. It must intersect on any shared creature type (a Goblin Rogue counts a Goblin and counts a Rogue, but is counted only once) and must read the referent's current types, changelings and type-granting effects included",
+      "why_existing_wont_do": "`subtypes` (and `any_types`) in `selector_keys` take a literal list of type names, as in Edgar's `\"subtypes\": [\"Vampire\"]` -- they can only name a type known at authoring time, and there is no form that takes a binding or another object as the referent to compare against. `binding` names one bound object for an effect to act on; it cannot be used as the source of a filter's type list, and `value_keys` are all numeric, so an amount cannot smuggle a subtype list through either. That leaves the count in `for each other attacking creature that shares a creature type with it` inexpressible: `{\"count\": {\"attacking\": true}}` would count every attacker regardless of type, which is a different card."
+    },
+    {
+      "capability": "shares-a-type",
+      "kind": "selector",
+      "what": "a way to exclude the trigger's subject from a selector -- an `exclude_binding`-style key, or extending `exclude_self` to honor the bound object -- so `each OTHER attacking creature` does not count the attacker whose trigger is resolving",
+      "why_existing_wont_do": "`exclude_self` compares an object against the ability's source oid (`selectors.py` line 158, `triggers.py` line 340), which for this card is the enchantment, never the attacking creature that triggered it. Since the enchantment is not a creature and is not attacking, `exclude_self` removes nothing from a set of attackers, and the trigger's own creature would be counted -- inflating every pump by exactly 1."
+    }
+  ],
+  "closest_existing": [
+    "subtypes",
+    "any_types",
+    "exclude_self",
+    "binding",
+    "count",
+    "pump"
+  ],
+  "confidence": "high"
+}

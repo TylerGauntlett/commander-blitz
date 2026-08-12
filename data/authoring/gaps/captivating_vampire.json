@@ -1,0 +1,35 @@
+{
+  "card_id": "captivating_vampire",
+  "name": "Captivating Vampire",
+  "oracle_text": "Other Vampire creatures you control get +1/+1.\nTap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.",
+  "blocked_sentences": [
+    "Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types."
+  ],
+  "needs": [
+    {
+      "capability": "gain-control",
+      "kind": "op",
+      "what": "an effect that moves a permanent's controller to the ability's controller for as long as the source remains on the battlefield -- it must retarget an object already on the battlefield rather than move it between zones, take the creature under the new controller's turn/attack timing, and hand control back if the source leaves",
+      "why_existing_wont_do": "No op in `ops` changes controller. The nearest reaches are `put_onto_battlefield`, which only brings an object in from another zone and so cannot touch a creature already in play, and `lock_abilities` / `must_attack` / `freeze`, which constrain an opponent's creature while leaving it theirs. `static_effects` likewise has no controller-changing entry -- `set_types`, `set_pt` and `buff` all rewrite characteristics, never controller."
+    },
+    {
+      "capability": "tap-creatures-cost",
+      "kind": "cost",
+      "what": "an activated-ability cost that taps N untapped permanents the player controls matching a filter (here: five untapped Vampires, the source itself eligible among them), chosen by the activating player at activation time and tapped as a cost rather than as an effect",
+      "why_existing_wont_do": "Cost supports tapping the source itself ({T}) but has no form that taps other permanents, and no way to require a count or a subtype filter on what is tapped. The `tap` op is an effect, not a cost: paying it as an effect would let the ability be activated with no untapped Vampires available and would put the taps on resolution instead of on activation."
+    },
+    {
+      "capability": "add-subtype",
+      "kind": "op",
+      "what": "a one-shot effect that adds a creature type to a target permanent in addition to its existing types, for as long as the granting source stays on the battlefield",
+      "why_existing_wont_do": "`add_subtype` exists only in `static_effects`, where it applies continuously to a filtered set read off printed characteristics -- it cannot name the one creature an activated ability targeted. Among the ops, `animate` and `choose_type` set a body or pick a type wholesale rather than appending a subtype to an existing permanent, and `set_types` (a static effect) replaces the type line instead of adding to it."
+    }
+  ],
+  "closest_existing": [
+    "add_subtype",
+    "animate",
+    "put_onto_battlefield",
+    "lock_abilities"
+  ],
+  "confidence": "high"
+}
