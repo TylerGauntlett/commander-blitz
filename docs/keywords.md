@@ -186,7 +186,7 @@ This is the long tail, and where the build order comes from.
 | Aftermath | blocked | split cards | — |
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
 | Amplify | routed | `self_enters_with_counters` takes a fixed integer, not a value expression | — |
-| Annihilator | routed | `attacks` trigger; needs a sacrifice chosen by the defending player | — |
+| Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
 | Aura swap | blocked | swapping an attached aura with one in hand; one card in the game | — |
 | Banding | refused | see rules-coverage.md | — |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
@@ -201,7 +201,7 @@ This is the long tail, and where the build order comes from.
 | Casualty | routed | `copy_spell` ships; what is left is an additional cost that sacrifices a creature of a chosen power | — |
 | Champion | blocked | exile-and-return tied to the championing permanent leaving | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
-| Channel | routed | the cycling shape again: an activated ability from hand costing a discard | — |
+| Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
 | Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
 | Connive | routed | draw-then-discard with a counter conditional on what was discarded; needs to read the discarded card | — |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |

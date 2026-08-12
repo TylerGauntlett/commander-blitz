@@ -942,6 +942,76 @@
       ]
     },
     {
+      "id": "t_annihilator",
+      "name": "Test Annihilator",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents.)",
+      "mana_cost": "{6}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Annihilator 2",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "objects": {
+                "controller": "opponent",
+                "count": 2,
+                "chooser": "owner"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_channeler",
+      "name": "Test Channeler",
+      "oracle_text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{G}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_rioter",
       "name": "Test Rioter",
       "oracle_text": "Riot (This creature enters with a +1/+1 counter on it or with haste.)",
