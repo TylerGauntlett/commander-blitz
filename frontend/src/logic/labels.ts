@@ -236,6 +236,11 @@ export function describeEvent(
       return `${who} ${v("cast", "casts")} ${card ?? "a spell"}`;
     case "spell_countered":
       return `${card ?? "A spell"} is countered`;
+    // A copy is never *cast*, so no `spell_cast` line covers it -- a storm
+    // count of nine would otherwise show as one spell in the log and eight
+    // unexplained resolutions.
+    case "spell_copied":
+      return `${card ?? "A spell"} is copied`;
     case "spell_fizzled":
       return `${card ?? "A spell"} fizzles (no legal targets)`;
     case "land_played":

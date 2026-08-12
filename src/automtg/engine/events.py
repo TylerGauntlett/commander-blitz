@@ -43,6 +43,11 @@ class EventType:
     SPELL_CAST = "spell_cast"
     SPELL_RESOLVED = "spell_resolved"
     SPELL_COUNTERED = "spell_countered"
+    #: A spell was copied on the stack (706.10) -- storm, replicate, conspire,
+    #: casualty. Its own event because a copy is never *cast*, so `SPELL_CAST`
+    #: would be a lie, and a log built from casts alone would show a storm
+    #: count of nine as one spell.
+    SPELL_COPIED = "spell_copied"
     SPELL_FIZZLED = "spell_fizzled"
     ABILITY_ACTIVATED = "ability_activated"
     ABILITY_TRIGGERED = "ability_triggered"

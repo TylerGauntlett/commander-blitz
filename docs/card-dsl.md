@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>56 ops"]
+    ctx --> ops["op registry<br/>57 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -82,7 +82,7 @@ library's owner, which is what every scry card in the pool wants.
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` |
+| Stack | `counter` `copy_spell` |
 | Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` `delay` |
 
 ## Selectors — "which objects"

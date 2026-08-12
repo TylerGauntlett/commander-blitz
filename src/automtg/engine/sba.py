@@ -172,8 +172,14 @@ def _tokens_and_attachments(state: GameState) -> bool:
     changed = False
 
     # A token that has left the battlefield ceases to exist.
+    #
+    # **Except on the stack.** A copy of a spell is a token object sitting on
+    # the stack (706.10), and it is a legal object there until it resolves --
+    # 704.5e removes it *after*. Popping it here deletes the copy before it can
+    # do anything, which is silent: the copy is announced, the log says the
+    # spell was copied, and then nothing happens.
     for oid, obj in list(state.objects.items()):
-        if not obj.is_token or obj.zone is Zone.BATTLEFIELD:
+        if not obj.is_token or obj.zone in (Zone.BATTLEFIELD, Zone.STACK):
             continue
         lst = None
         if obj.zone in (Zone.HAND, Zone.GRAVEYARD, Zone.EXILE, Zone.LIBRARY, Zone.COMMAND):
