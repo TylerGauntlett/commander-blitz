@@ -362,6 +362,29 @@ export function beatsFor(
       }
 
       /*
+       * The outcome of the block declaration, per attacker. Short holds: these
+       * fire in a batch, one per attacker, immediately after the per-blocker
+       * `blocks` beats, and a full-length hold each would stall the step on a
+       * wide board. The tones are from the attacking player's point of view --
+       * getting through is good, being blocked is not.
+       */
+      case "became_blocked":
+      case "attacked_unblocked": {
+        const oid = typeof event.data.oid === "number" ? event.data.oid : null;
+        push({
+          hold: 160,
+          flash:
+            oid === null
+              ? undefined
+              : {
+                  anchor: { kind: "object", oid },
+                  tone: event.type === "became_blocked" ? "danger" : "good",
+                },
+        });
+        return;
+      }
+
+      /*
        * Mana payment, which used to be entirely invisible: lands tapped during
        * auto-payment with no indication of what was spent. `tapped` flashes the
        * specific permanent that paid; `mana_spent` names the total.

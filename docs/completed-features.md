@@ -1,3 +1,55 @@
+## Becoming blocked — the four combat keywords with no event
+
+### Overview
+
+`keywords.md` grouped flanking, rampage, bushido and frenzy and said why: each
+"wants a *trigger event* the engine does not have ('becomes blocked', 'attacks
+and isn't blocked'), which is a different tier of work with frontend
+consequences". They are one capability and not four, for the same reason the
+evasion family was one and not five: both events are decided at the same
+instant, when the block declaration closes, and neither is knowable a moment
+earlier. "Isn't blocked" in particular is not an event that happens — it is the
+absence of one, and it only becomes a fact once the declaration is over.
+
+### Why `BLOCKS` could not stand in
+
+It fires once per *blocker*, and it is about the blocker. An attacker blocked by
+three creatures sees three unrelated events concerning somebody else; an
+attacker blocked by nobody sees nothing at all. Everything these four keywords
+ask is about the attacker, so the new pair is fired per attacker, from
+`finish_blockers`, deliberately **outside** the `if combat.blockers` guard — the
+unblocked half is precisely the case where that guard is false.
+
+### Flanking needed one thing more
+
+"Blocked by a creature without flanking" asks *which* creatures are blocking
+this attacker. The `blocking` selector was a bare boolean, true of every
+creature blocking anything — so on a board with two attackers flanking would
+shrink the creature blocking somebody else. It now also takes a binding naming
+the attacker, the shape `shares_a_type_with` and `exclude_binding` established.
+
+That failure is worth naming because of how it hides: on a one-attacker board —
+which is the obvious test to write, and the one that would have been written —
+the boolean form is indistinguishable from the correct one. The test that
+catches it needs two attackers and two blockers, one block each.
+
+### The test harness, twice
+
+Both rounds of failures in this run were the test lying, not the engine, and
+both were the same lie in different clothes. Everything these keywords do is
+"until end of turn", and the engine auto-passes out of combat into the next turn
+when nobody has a response — so an assertion made after `apply` returns reads a
+board `clear_until_eot` has correctly wiped. Rampage then looks like it did
+nothing, which is exactly what a *broken* rampage looks like.
+
+The fix is the one `test_turn_ledger.py` arrived at independently: assert the
+turn boundary rather than hoping for it, and give the position an instant and a
+land so priority genuinely stops. The second round was smaller and more
+embarrassing: with no creatures to block with, the test skipped the block
+declaration entirely — but the defending player is still *asked*, and
+`finish_blockers` runs only once that declaration closes. No event fired, and it
+read as the engine refusing to say "unblocked".
+
 ## Becoming a target — heroic, and ward, which was never the hard one
 
 ### Overview

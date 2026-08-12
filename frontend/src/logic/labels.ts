@@ -259,6 +259,15 @@ export function describeEvent(
       // who was aimed at, and "targets a permanent" would be a lie.
       if (event.data.oid === undefined || event.data.oid === null) return null;
       return `${who} ${v("target", "targets")} ${card ?? "a permanent"}`;
+    // Told from the attacker's side. The per-blocker `blocks` events say who
+    // blocked; neither says anything to the creature being blocked, and
+    // nothing at all is said when a creature goes unblocked.
+    case "became_blocked": {
+      const n = typeof event.data.blockers === "number" ? event.data.blockers : 1;
+      return `${card ?? "An attacker"} is blocked${n > 1 ? ` by ${n} creatures` : ""}`;
+    }
+    case "attacked_unblocked":
+      return `${card ?? "An attacker"} is unblocked`;
     case "token_created":
       return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
     // The permanent does not change zones, so no zone_change line covers this.

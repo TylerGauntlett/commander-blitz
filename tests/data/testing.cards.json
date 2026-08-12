@@ -942,6 +942,150 @@
       ]
     },
     {
+      "id": "t_rampager",
+      "name": "Test Rampager",
+      "oracle_text": "Rampage 2 (Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.)",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Rampage 2",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true
+              },
+              "power": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "minus": [
+                      {
+                        "binding": "blockers"
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "minus": [
+                      {
+                        "binding": "blockers"
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_frenzied",
+      "name": "Test Frenzied",
+      "oracle_text": "Frenzy 3 (Whenever this creature attacks and isn't blocked, it gets +3/+0 until end of turn.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Frenzy 3",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_flanker",
+      "name": "Test Flanker",
+      "oracle_text": "Flanking (Whenever this creature becomes blocked by a creature without flanking, that creature gets -1/-1 until end of turn.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Flanking",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "blocking": {
+                  "binding": "self"
+                }
+              },
+              "power": {
+                "const": -1
+              },
+              "toughness": {
+                "const": -1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_hero",
       "name": "Test Hero",
       "oracle_text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",

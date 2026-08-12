@@ -56,6 +56,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: a spell…".  Fired as the spell goes on the stack (603.2d), which is the
     #: timing that makes ward mean anything.
     "becomes_target": EventType.BECAME_TARGET,
+    #: Flanking (702.25), rampage (702.23), bushido (702.45) and frenzy
+    #: (702.35), which between them are every combat keyword the engine had no
+    #: event for. Both fire when blockers are declared, because that is the
+    #: instant either becomes knowable.
+    "becomes_blocked": EventType.BECAME_BLOCKED,
+    "attacks_unblocked": EventType.ATTACKED_UNBLOCKED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -89,6 +95,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # on heroic means "a spell targeting *me*", and the event's `source` is
         # the spell doing the targeting.
         "becomes_target",
+        # The attacker. Both of these are told from the attacking creature's
+        # side -- `blocks` already covers the blocker's -- so `source: "self"`
+        # scopes them to the creature that was, or was not, blocked.
+        "becomes_blocked",
+        "attacks_unblocked",
     }
 )
 
@@ -481,7 +492,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     subject = _subject_oid(spec.event, event)
     if subject is not None:
         bindings["subject"] = subject
-    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking", "counter"):
+    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking", "counter", "blockers"):
         if key in event.data:
             bindings[key] = event.data[key]
 
