@@ -942,6 +942,58 @@
       ]
     },
     {
+      "id": "t_tributer",
+      "name": "Test Tributer",
+      "oracle_text": "Tribute 2 (As this creature enters, an opponent of your choice may place two +1/+1 counters on it.)\nWhen Test Tributer enters, if tribute wasn't paid, each opponent loses 3 life.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Tribute 2. When this enters, if tribute wasn't paid, each opponent loses 3 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "opponent",
+              "prompt": "Pay tribute (two +1/+1 counters)?",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_life",
+                  "player": "each_opponent",
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_annihilator",
       "name": "Test Annihilator",
       "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents.)",

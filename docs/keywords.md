@@ -307,7 +307,7 @@ This is the long tail, and where the build order comes from.
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
 | Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |
-| Tribute | routed | `self_enters` with a choice belonging to an opponent; `two_piles` proves the shape is reachable | — |
+| Tribute | free | one `may` with `player: "opponent"` and an `else` — the shape was not merely reachable, it was already spelled | — |
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
 | Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
