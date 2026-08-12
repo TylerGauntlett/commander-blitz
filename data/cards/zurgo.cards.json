@@ -659,6 +659,9 @@
       "types": [
         "Enchantment"
       ],
+      "keywords": [
+        "flash"
+      ],
       "abilities": [
         {
           "kind": "triggered",

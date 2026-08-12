@@ -11,7 +11,7 @@
       "subtypes": ["Vampire", "Knight"],
       "power": 4,
       "toughness": 4,
-      "keywords": ["first_strike"],
+      "keywords": ["first_strike", "haste"],
       "abilities": [
         {
           "kind": "triggered",
@@ -197,7 +197,7 @@
       "subtypes": ["Vampire", "Rogue"],
       "power": 1,
       "toughness": 1,
-      "keywords": ["deathtouch", "lifelink"]
+      "keywords": ["skulk", "lifelink"]
     },
     
     {
@@ -319,6 +319,13 @@
       "power": 1,
       "toughness": 1,
       "abilities": [
+        {
+          "kind": "static",
+          "effect": "block_restriction",
+          "text": "This creature can't be blocked by Humans.",
+          "affects": { "self_only": true },
+          "blockers": { "subtypes": ["Human"] }
+        },
         {
           "kind": "triggered",
           "text": "Whenever this deals combat damage to a player, put a +1/+1 counter on it.",
@@ -937,7 +944,7 @@
       "subtypes": ["Vampire", "Wizard"],
       "power": 3,
       "toughness": 3,
-      "keywords": ["flying"],
+      "keywords": ["lifelink"],
       "abilities": [
         {
           "kind": "triggered",
