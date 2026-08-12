@@ -52,6 +52,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: the event covers damage to players as well, and this half of it is the
     #: half with an object to hang a trigger on.
     "dealt_damage": EventType.DAMAGE_DEALT,
+    #: Heroic (702.109) and ward (702.21): "whenever this becomes the target of
+    #: a spell…".  Fired as the spell goes on the stack (603.2d), which is the
+    #: timing that makes ward mean anything.
+    "becomes_target": EventType.BECAME_TARGET,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -81,6 +85,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # enrage is a fact about the creature being hurt, and `source: "self"`
         # has to scope it to that creature rather than to everything it hits.
         "dealt_damage",
+        # The permanent that was targeted, for the same reason: `source: "self"`
+        # on heroic means "a spell targeting *me*", and the event's `source` is
+        # the spell doing the targeting.
+        "becomes_target",
     }
 )
 
@@ -327,7 +335,13 @@ def _actor(
     # now -- reading the actor off the object would be reading a controller that
     # `reset_permanent_state` has already been through. `discard_cards` puts the
     # discarding player on the event, so take it from there.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat"):
+    # `becomes_target` is listed here for the same reason `discard` is, and it
+    # matters more: the clause asks *whose spell it is*. Heroic is "whenever you
+    # cast a spell that targets this creature" and ward is "whenever an opponent
+    # casts one", so reading the actor off the subject -- the creature being
+    # targeted, whose controller is nearly always the trigger's own controller
+    # -- would make heroic fire on everything and ward on nothing.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")

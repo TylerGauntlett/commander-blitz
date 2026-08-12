@@ -251,6 +251,14 @@ export function describeEvent(
       return `${card ?? "An ability"} triggers`;
     case "ability_activated":
       return `${who} ${v("activate", "activates")} ${card ?? "an ability"}`;
+    // Heroic and ward both fire as the spell goes on the stack, so a ward
+    // prompt appears before anything has visibly happened. Without a line
+    // saying what was targeted, the payment dialog arrives unexplained.
+    case "became_target":
+      // The player-target form needs no line: the cast above it already says
+      // who was aimed at, and "targets a permanent" would be a lie.
+      if (event.data.oid === undefined || event.data.oid === null) return null;
+      return `${who} ${v("target", "targets")} ${card ?? "a permanent"}`;
     case "token_created":
       return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
     // The permanent does not change zones, so no zone_change line covers this.

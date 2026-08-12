@@ -47,6 +47,14 @@ class EventType:
     ABILITY_ACTIVATED = "ability_activated"
     ABILITY_TRIGGERED = "ability_triggered"
     ABILITY_RESOLVED = "ability_resolved"
+    #: Something was chosen as a target, as the spell or ability went on the
+    #: stack (rule 603.2d) -- heroic and ward, which both fire *then* and not on
+    #: resolution, because the whole point of ward is to answer before the spell
+    #: does anything. Fired once per target, so a spell hitting two creatures
+    #: wakes both. ``player`` is the **caster**, not the target's controller:
+    #: "an opponent casts a spell that targets this" asks about whose spell it
+    #: is, and the target's controller is already known from the target.
+    BECAME_TARGET = "became_target"
 
     # permanents
     LAND_PLAYED = "land_played"

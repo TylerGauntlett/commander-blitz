@@ -942,6 +942,89 @@
       ]
     },
     {
+      "id": "t_hero",
+      "name": "Test Hero",
+      "oracle_text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "becomes_target",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_warded",
+      "name": "Test Warded",
+      "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Ward {2}",
+          "trigger": {
+            "event": "becomes_target",
+            "source": "self",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay {2} for ward?",
+              "pay": {
+                "mana": "{2}"
+              },
+              "else": [
+                {
+                  "op": "counter",
+                  "sid": {
+                    "binding": "sid"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_enrager",
       "name": "Test Enrager",
       "oracle_text": "Whenever Test Enrager is dealt damage, put a +1/+1 counter on it.",

@@ -390,9 +390,38 @@ batching work.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
-`deals_combat_damage_to_player` · `dealt_damage` · `upkeep` · `draw_step` ·
-`begin_combat` · `end_step` · `you_gain_life` · `counter_placed` · `draw` ·
-`discard` · `cycle`
+`deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` · `upkeep` ·
+`draw_step` · `begin_combat` · `end_step` · `you_gain_life` · `counter_placed` ·
+`draw` · `discard` · `cycle`
+
+**`becomes_target` fires as the spell goes on the stack**, not as it resolves
+(rule 603.2d) — heroic and ward. That timing is the whole of ward: the point is
+to tax the opponent *before* the removal spell does anything, and a version
+firing on resolution would be a refund. One event per target, so a spell hitting
+two creatures wakes both.
+
+Its `controller` clause asks **whose spell it is**, not who controls the thing
+being targeted — heroic is "whenever *you* cast a spell that targets this", ward
+is "whenever an *opponent* does". The two are easy to confuse and the confusion
+is silent: read the other way round, heroic would grow off the removal aimed at
+killing it. `source: "self"` likewise means the permanent *being* targeted; the
+event's `source` is the spell.
+
+Ward needs nothing else. `may` has taken an arbitrary `player` since Fact or
+Fiction and a `pay` cost since Rhystic Study, `{"binding": "event_player"}` is
+the caster, and `counter` takes a `sid`:
+
+```jsonc
+{ "op": "may", "player": { "binding": "event_player" },
+  "pay": { "mana": "{2}" },
+  "else": [ { "op": "counter", "sid": { "binding": "sid" } } ] }
+```
+
+`counter`'s `sid` form exists because "counter **it**" is not a targeted
+ability. The spell it means is the one that just targeted this permanent, which
+the trigger's bindings already carried; written as a `target` instead, the ward
+creature's controller would get to point it at a different spell. The loader
+refuses a card carrying both.
 
 **`dealt_damage` is about the creature being hurt** — enrage, "whenever this
 creature is dealt damage". Sugar over `DAMAGE_DEALT` in the sense `creature_dies`
