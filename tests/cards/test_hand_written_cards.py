@@ -144,7 +144,7 @@ class TestEveryHandWrittenCardClearsTheGates:
         against the catalog is what stops that from silently coming back.
         """
         card = POOL.get(card_id)
-        entry = catalog.lookup(card.name, token=False)
+        entry = F.printed_row(card, catalog)
         if entry is None or not entry.oracle_text:
             pytest.skip(f"{card.name} is not in the catalog")
         printed = F.canonical(entry.oracle_text, card.name)

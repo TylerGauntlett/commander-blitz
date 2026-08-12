@@ -343,6 +343,40 @@ def add_subtypes(state: GameState, oid: int, subtypes: Sequence[str]) -> tuple[s
     return added
 
 
+def transform(state: GameState, oid: int, *, to_back: bool | None = None) -> bool:
+    """"Transform this creature." Rule 701.28.
+
+    Turning the permanent over is one boolean, because ``GameState.card_of`` is
+    a single choke point: every reader of a card's characteristics goes through
+    it, so the layers, legality, combat and the serializer all see the other
+    face at once and none of them needed changing.
+
+    ``to_back`` forces a direction; the default is "turn it over", which is what
+    every printed "transform this" says. A card with no back face does nothing
+    rather than raising -- rule 701.28d, and it keeps a blanket "transform each
+    creature" effect honest on a board of ordinary cards.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if state.registry.get(obj.def_id).back_face is None:
+        return False
+    want = (not obj.transformed) if to_back is None else bool(to_back)
+    if want == obj.transformed:
+        return False
+    obj.transformed = want
+    state.bump_chars()
+    fire(
+        state,
+        EventType.TRANSFORMED,
+        player=obj.controller,
+        source=oid,
+        card=state.card_of(obj).id,
+        face="back" if want else "front",
+    )
+    return True
+
+
 def change_control(state: GameState, oid: int, pid: int, source: int | None = None) -> bool:
     """"Gain control of target creature." Rule 800.4a, permanently.
 

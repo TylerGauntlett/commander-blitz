@@ -14,6 +14,7 @@ Anything that fails raises :class:`~automtg.engine.errors.DslError` at load time
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from collections.abc import Iterable, Mapping
 from pathlib import Path
@@ -352,6 +353,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         grantable_abilities=grantable,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
+        back_face=model.back_face,
         uncounterable=model.uncounterable,
         kicker=kicker,
         evoke=evoke,
@@ -417,6 +419,12 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     if kind is AbilityKind.ACTIVATED:
         if cost is None:
             raise DslError(f"{where}: activated abilities need a cost")
+        if model.condition is not None:
+            # "Activate only if you control five or more Vampires." The full
+            # condition language, not the static one: nothing is being computed
+            # here that another condition could come to depend on, so the
+            # narrowing that protects the characteristics pipeline buys nothing.
+            validate_condition(model.condition, f"{where}.condition")
         active_zones = tuple(Zone(z) for z in model.active_zones)
         # Cycling is an ability you activate *from your hand*, so the zone list
         # has to be read here as well as on the triggered branch -- it was
@@ -533,6 +541,9 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_amount=mana_amount,
         mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
+        activation_condition=(
+            dict(model.condition) if kind is AbilityKind.ACTIVATED and model.condition else None
+        ),
         is_cycling=model.is_cycling,
         trigger=trigger,
         active_zones=active_zones,
@@ -1167,6 +1178,36 @@ def _derive_color_identity(
                     if amount:
                         identity.add(("W", "U", "B", "R", "G")[i])
     return frozenset(identity)
+
+
+def link_faces(cards: dict[str, CardDef]) -> None:
+    """Point every back face at its front, and refuse a half-written link.
+
+    The two faces of a transforming card are two ``CardDef``s and one
+    ``GameObject``; ``GameState.card_of`` picks between them. That works only if
+    the link is complete in both directions, so the *back* pointer is derived
+    here rather than authored -- a card file that named a front face by hand
+    could name a different one than the front names, and nothing would say so.
+
+    A back face is never cast, drawn or shuffled into a deck. The guards that
+    enforce that all ask ``front_face is not None``, so an unlinked back face
+    would quietly become a playable card with no mana cost.
+    """
+    for card in cards.values():
+        if card.back_face is None:
+            continue
+        back = cards.get(card.back_face)
+        if back is None:
+            raise DslError(f"{card.id}: back_face references unknown card {card.back_face!r}")
+        if back.back_face is not None:
+            # Two-faced, not three. A cycle here would make `card_of` a walk
+            # rather than a lookup.
+            raise DslError(f"{card.id}: back face {back.id!r} may not have a back face of its own")
+        if back.front_face is not None and back.front_face != card.id:
+            raise DslError(
+                f"{back.id}: is the back face of both {back.front_face!r} and {card.id!r}"
+            )
+        cards[back.id] = dataclasses.replace(back, front_face=card.id)
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:

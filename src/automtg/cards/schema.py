@@ -134,9 +134,19 @@ class AbilityModel(BaseModel):
     subtypes: list[str] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
-    #: A static's "as long as..." clause.  A condition tree over pipeline
-    #: *inputs* only -- counters on the source, printed characteristics, zone
-    #: contents, whose turn it is -- see ``characteristics._condition_met``.
+    #: Two different clauses sharing one field, because the card files read
+    #: better for it and the two can never collide -- an ability is static or
+    #: activated, never both.
+    #:
+    #: On a **static**: the "as long as..." clause. A condition tree over
+    #: pipeline *inputs* only -- counters on the source, printed
+    #: characteristics, zone contents, whose turn it is. See
+    #: ``characteristics._condition_met``.
+    #:
+    #: On an **activated** ability: "Activate only if you control five or more
+    #: Vampires." Checked by ``legality`` before the ability is offered, in the
+    #: *full* condition language, because nothing is being computed here that
+    #: another condition could depend on.
     condition: dict[str, Any] | None = None
     #: The qualities a ``protection`` static protects from.  Three lists rather
     #: than one so the card file reads like the card: "protection from
@@ -192,6 +202,11 @@ class CardModel(BaseModel):
     #: card itself does not have them.
     grantable_abilities: list[AbilityModel] = Field(default_factory=list)
     is_token: bool = False
+    #: The id of this card's **back face**, for a transforming double-faced
+    #: card. The back face is an ordinary card entry in the same pool, marked
+    #: with no mana cost -- it is never cast, never shuffled into a deck, and
+    #: exists only as the face a permanent shows once it has transformed.
+    back_face: str | None = None
     #: "This spell can't be countered."
     uncounterable: bool = False
     #: "Kicker {1}{U}" -- an additional cost that may be paid as the spell is

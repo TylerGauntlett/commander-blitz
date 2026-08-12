@@ -95,21 +95,41 @@ class TestDerivedFields:
         # 15 Islands and 14 others.
         assert client.get("/api/decks/aesi").json()["lands"] == 44
 
-    def test_swaps_come_from_the_substitutions(self, client, decks):
-        # Was `aesi`, which had five. It has none now -- it is the precon as
-        # printed -- so the case is carried by `edgar`, which still does.
-        detail = client.get("/api/decks/edgar").json()
-        assert detail["swaps"] == len(decks["edgar"].substitutions) == 7
-        assert "Captivating Vampire" in detail["swap_note"]
+    def test_no_shipped_deck_has_a_substitution_left(self, client, decks):
+        """All four are the printed precons now.
 
-    def test_a_deck_with_no_substitutions_says_nothing(self, client):
-        detail = client.get("/api/decks/aesi").json()
-        assert detail["swaps"] == 0
-        assert detail["swap_note"] == ""
+        `aesi` got there first; `edgar` was the last, and its seven swaps came
+        out one mechanic at a time -- gain-control, tap-permanents, add-subtype,
+        shares-a-type, top-of-library-revealed and transform. A swap reappearing
+        here means a card stopped being expressible, which is worth a failing
+        test even though the field is derived and would report it honestly.
+        """
+        for deck_id in decks:
+            detail = client.get(f"/api/decks/{deck_id}").json()
+            assert detail["swaps"] == len(decks[deck_id].substitutions) == 0, deck_id
+            assert detail["swap_note"] == "", deck_id
+
+    def test_the_note_still_says_what_a_swap_would_mean(self, game_data):
+        """The derivation outlives the last deck that needed it.
+
+        `swap_note` exists so that deleting a substitution from a deck file is
+        the *only* edit needed when a card becomes expressible -- which is
+        exactly what just happened seven times. With no shipped deck left to
+        exercise it, it is tested against a synthetic pair rather than deleted.
+        """
+        from automtg.server.deckinfo import swap_note
+
+        one = swap_note([{"slot": "mortify"}], game_data)
+        assert "1 card swapped" in one
+        assert "Mortify" in one
+
+        two = swap_note([{"slot": "mortify"}, {"slot": "bedevil"}], game_data)
+        assert "2 cards swapped" in two
+        assert "Mortify and Bedevil" in two
 
     def test_signature_cards_carry_a_name_and_art(self, client):
         signature = client.get("/api/decks/edgar").json()["signature"]
-        assert next(row["name"] for row in signature) == "Sanctum Seeker"
+        assert next(row["name"] for row in signature) == "Bloodline Keeper"
         assert all(row["art_url"] for row in signature)
 
     def test_the_summary_list_stays_light(self, client):

@@ -97,7 +97,7 @@ def reference() -> dict:
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.triggers import TRIGGER_EVENTS
 
-    from ..loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
+    from ..loader import STATIC_CONDITION_HEADS, STATIC_EFFECTS, STATIC_FILTER_KEYS
     from ..schema import CostModel
 
     return {
@@ -112,6 +112,12 @@ def reference() -> dict:
         # blocked on a mechanic that already shipped.  Tromokratis was.
         "static_effects": sorted(STATIC_EFFECTS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        # What a static's "as long as ..." clause may ask. A *third* language,
+        # neither `condition_keys` (which is the effect-side `if`) nor
+        # `static_filter_keys` -- and absent from the packet until Vampire
+        # Nocturnus, so a worker had no way to know a static could be
+        # conditional at all, let alone what it could be conditional on.
+        "static_condition_keys": sorted(STATIC_CONDITION_HEADS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know
         #: "if this creature has no +1/+1 counters on it" is sayable, and files
@@ -136,6 +142,10 @@ def reference() -> dict:
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
             " against `{\"const\": 0}` and needs no new op.",
+            "`static_condition_keys` is what a static ability's optional"
+            " `condition` may ask -- an \"as long as ...\" clause that switches"
+            " the whole static on and off as the board moves. It is a third"
+            " language, neither `condition_keys` nor `static_filter_keys`.",
             "`selector_keys` is what an effect's `objects` or a target spec's"
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"

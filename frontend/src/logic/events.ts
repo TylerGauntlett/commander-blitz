@@ -191,9 +191,10 @@ export function beatsFor(
         });
         return;
 
-      // The card slides from one battlefield row to the other with no zone
-      // change behind it, which reads as a rendering glitch unless something
-      // marks the moment. Held longer than an ETB for that reason.
+      // Both of these change what a card *is* without moving it, so the frame
+      // redraws in place. Held longer than an ETB so the change reads as a play
+      // rather than as a rendering glitch.
+      case "transformed":
       case "control_changed":
         push({
           hold: 480,

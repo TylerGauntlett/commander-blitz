@@ -589,6 +589,12 @@
     "file": "bloodfell_caves.jpg",
     "scryfall_id": "49195d90-de0c-4290-aa1c-9f4d948b5521"
   },
+  "bloodline_keeper": {
+    "artist": "Jason Chan",
+    "bytes": 44691,
+    "file": "bloodline_keeper.jpg",
+    "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00"
+  },
   "bloodline_necromancer": {
     "artist": "J.P. Targete",
     "bytes": 70662,
@@ -2649,6 +2655,12 @@
     "file": "lonely_sandbar.jpg",
     "scryfall_id": "001908da-70cc-4a53-9372-eb75c0721442"
   },
+  "lord_of_lineage": {
+    "artist": "Jason Chan",
+    "bytes": 54324,
+    "file": "lord_of_lineage.jpg",
+    "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00"
+  },
   "lotus_cobra": {
     "artist": "Sam Rowan",
     "bytes": 60978,
@@ -3914,6 +3926,12 @@
     "file": "shambling_vent.jpg",
     "scryfall_id": "2fd26d73-0aa4-4169-9a6a-522a5a9519c7"
   },
+  "shared_animosity": {
+    "artist": "Chuck Lukacs",
+    "bytes": 79469,
+    "file": "shared_animosity.jpg",
+    "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c"
+  },
   "sharktocrab": {
     "artist": "Jehan Choo",
     "bytes": 67102,
@@ -4896,6 +4914,12 @@
     "file": "vampire_1_1_bw.jpg",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
+  "vampire_2_2_b_flying": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 86766,
+    "file": "vampire_2_2_b_flying.jpg",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
   "vampire_aristocrat": {
     "artist": "Austin Hsu",
     "bytes": 73733,
@@ -4925,6 +4949,12 @@
     "bytes": 23505,
     "file": "vampire_nighthawk.jpg",
     "scryfall_id": "7aff07f9-9528-4149-9af0-f4e3c66c9dc5"
+  },
+  "vampire_nocturnus": {
+    "artist": "Raymond Swanland",
+    "bytes": 70028,
+    "file": "vampire_nocturnus.jpg",
+    "scryfall_id": "b0d8588f-7986-4c35-b230-375287b4f475"
   },
   "vampire_of_the_dire_moon": {
     "artist": "Anna Podedworna",

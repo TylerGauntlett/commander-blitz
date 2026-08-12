@@ -1,3 +1,71 @@
+## Transforming double-faced cards
+
+### Overview
+
+Bloodline Keeper // Lord of Lineage — the last of the seven cards the Edgar
+Markov precon shipped a substitution for, and the one `rules-coverage.md` listed
+under **Not implemented** in its own right rather than as a missing op.
+
+It turned out to be far smaller than its reputation, for one structural reason:
+`GameState.card_of` is a **single choke point**. Every reader of a card's
+characteristics — the layers, legality, combat, the serializer — goes through
+it. So a permanent showing its other face is one boolean on the object and one
+branch in one function, and the rest of the engine followed with no changes at
+all.
+
+### The model
+
+Two `CardDef`s, one `GameObject`. The back face is an ordinary entry in the same
+card pool; `GameObject.transformed` decides which one `card_of` returns.
+
+The three things that would each have been silently wrong:
+
+| | |
+|---|---|
+| **712.13a** | a permanent that leaves and comes back enters **front face up**, so `transformed` is reset with the rest of the battlefield state. Otherwise a blink is a free upgrade to the 5/5 |
+| **A back face is not a card** | no mana cost, never in a hand, a library or a deck. `validate_deck` refuses one and `test_every_card_works` skips casting it — "it cannot be cast" is not a defect for a thing nobody casts |
+| **The link is derived** | the front names the back; the registry writes `front_face` on the back. Every guard asks `front_face is not None`, so a link authored in one direction only would quietly make a free 5/5 castable |
+
+### The art, which is a face and not a card
+
+Both faces share one Scryfall id — the id names the card. `image_url` had taken
+a `back` flag since it was written and nothing had ever passed it; `CardArt.back`
+is what does now, and it is the difference between Lord of Lineage showing its
+own illustration and showing the one it just turned away from.
+
+The catalog stores the card under its joined name, "Bloodline Keeper // Lord of
+Lineage", which neither face matches on its own, so `CardIndex.lookup` grew a
+`joined=True` mode anchored on either side of the `//`.
+
+### Activation restrictions, which came with it
+
+"Activate only if you control five or more Vampires." A `condition` on an
+activated ability, checked by `legality` before the ability is offered and
+nowhere else — rule 602.5c makes it a legality question, so an ability that was
+legal when activated still resolves if the board changes underneath it.
+
+It shares the `condition` field with a static's "as long as…" clause, since an
+ability is static or activated and never both. The languages differ: a static
+gets the narrow one so that no static can depend on another's output, and this
+gets the full `if`-effect language, because nothing computed here is something
+another condition could depend on.
+
+### Two more sandbox gaps
+
+`_satisfy_the_activation_condition` joins `_provide_the_tap_fodder` and the four
+helpers before it. The sandbox's job is that "not activatable" only ever means
+the ability is broken, and an activation condition nothing satisfies breaks that
+the same way an unpayable cost did. It reads exactly one condition shape and
+refuses to be clever: a helper general enough to solve an arbitrary condition
+would be a second `evaluate` living in the tests, and the first thing it would
+hide is a bug in the first one.
+
+Separately, restoring the precon exposed a real bug in `deck_summary`. The
+coverage map is written by an *import* and describes the proxies that import
+generated; a card authored afterwards is played from the authored pool and its
+proxy is dropped. Nothing said so here, so three cards of a **precon** reported
+as "simplified" the moment they were implemented.
+
 ## The top card of a library, read and shown
 
 ### Overview

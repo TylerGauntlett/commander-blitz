@@ -66,14 +66,14 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-50 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+51 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `gain_control` |
-| Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` |
+| Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` |
@@ -1100,6 +1100,78 @@ creatures you control get +1/+1" is the reason to convert the creature at all.
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
+
+## Transforming double-faced cards
+
+```jsonc
+// data/cards/edgar.cards.json -- the front face
+{ "id": "bloodline_keeper", "name": "Bloodline Keeper",
+  "back_face": "lord_of_lineage",
+  "abilities": [{
+    "kind": "activated",
+    "text": "{B}: Transform this creature. Activate only if you control five or more Vampires.",
+    "cost": { "mana": "{B}" },
+    "condition": { "cmp": ">=",
+                   "left":  { "count": { "controller": "you", "types": ["Creature"],
+                                         "subtypes": ["Vampire"] } },
+                   "right": { "const": 5 } },
+    "effects": [{ "op": "transform" }] }] }
+```
+
+**Two `CardDef`s, one `GameObject`.** The back face is an ordinary card entry in
+the same pool, and `GameObject.transformed` decides which one
+`GameState.card_of` returns. That is the whole mechanic, because `card_of` is a
+single choke point: the characteristics layers, legality, combat and the
+serializer all go through it, so a transformed permanent shows its back face
+everywhere at once and none of them needed changing.
+
+`transform` defaults its `objects` to the ability's own source — "transform
+**this**" — and takes `to_back` for the rare card that says "turn it face up"
+rather than "turn it over". A permanent with no back face does nothing rather
+than raising (rule 701.28d), which keeps a blanket "transform each creature"
+honest on a board of ordinary cards.
+
+**A back face is not a card.** It has no mana cost, is never in a hand, a
+library or a deck, and exists only as the face a permanent already in play
+turned over to. `validate_deck` refuses one, and `test_every_card_works` skips
+casting it — "it cannot be cast" is not a defect for something nobody casts.
+
+The link is written on the **front** face only; the registry derives
+`front_face` on the back. A hand-written back-pointer could name a different
+card than the front names, and every guard here asks `front_face is not None`,
+so a half-written link would quietly make a free 5/5 castable.
+
+**It enters front face up.** Rule 712.13a — `transformed` is reset with the
+rest of the battlefield state, so a permanent that leaves and comes back is the
+front face again. Without it, blinking a Bloodline Keeper is a free upgrade.
+
+Both faces share one Scryfall id, because the id names the *card* and not the
+face; `CardArt.back` is what makes the back download the back illustration. The
+catalog stores the card under its joined name ("Bloodline Keeper // Lord of
+Lineage"), which neither face matches on its own, so `CardIndex.lookup` grew a
+`joined=True` mode.
+
+## "Activate only if…"
+
+```jsonc
+{ "kind": "activated", "cost": { "mana": "{B}" },
+  "condition": { "cmp": ">=", "left": { "count": { … } }, "right": { "const": 5 } },
+  "effects": [ … ] }
+```
+
+An **activation restriction** (rule 602.5c), checked by `legality` before the
+ability is offered and re-checked nowhere else — an ability that was legal when
+activated still resolves if the board changes while it is on the stack.
+
+It shares the `condition` field with a static's "as long as…" clause, which is
+safe because an ability is static or activated and never both. The *languages*
+differ, though: a static gets the narrow one, because anything reading a derived
+characteristic would let one static depend on another's output. Nothing is being
+computed here that another condition could depend on, so this gets the full
+`if`-effect language.
+
+It is deliberately not `sorcery_speed_only` with extra steps. That is a timing
+restriction and this is a board one, and a card can print both.
 
 ## Gaining control of a permanent
 
