@@ -434,7 +434,10 @@ def _cast_variant(
     if kicked:
         label_base += " (kicked)"
     if evoked:
-        label_base += " (evoked)"
+        # The card's own word for the cost: "evoked", "dash", "blitz". They are
+        # one mechanism, and only the label tells the player which they are
+        # buying.
+        label_base += f" ({card.evoke_label})"
     if alternative:
         label_base += " (alternative cost)"
     if flashback:

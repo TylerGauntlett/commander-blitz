@@ -410,6 +410,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         flashback=flashback,
+        evoke_label=model.evoke_label,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
         graveyard_cast_exiles=model.graveyard_cast == "exile",

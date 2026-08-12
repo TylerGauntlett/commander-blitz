@@ -322,6 +322,8 @@ class CardDef:
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
     evoke: ManaCost | None = None
+    #: What that cost is called on the card -- "evoked", "dash", "blitz".
+    evoke_label: str = "evoked"
     #: Prowl and spectacle: an alternative mana cost offered from hand only
     #: *while* ``alternative_condition`` holds.
     alternative_cost: ManaCost | None = None

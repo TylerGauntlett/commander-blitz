@@ -2107,7 +2107,7 @@ them where it is sitting:
 
 ```jsonc
 "kicker": "{1}{U}"                          // pay more as you cast it
-"evoke": "{2}{U}"                           // pay less instead, and it dies on arrival
+"evoke": "{2}{U}", "evoke_label": "dash"    // an alternative cost, and its printed name
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "retrace": true                             // cast from the graveyard, discarding a land
