@@ -942,6 +942,39 @@
       ]
     },
     {
+      "id": "t_inspired",
+      "name": "Test Inspired",
+      "oracle_text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
+          "trigger": {
+            "event": "becomes_untapped",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_rampager",
       "name": "Test Rampager",
       "oracle_text": "Rampage 2 (Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.)",
