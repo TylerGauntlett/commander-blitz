@@ -239,7 +239,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         )
         obj.stack_id = None
         obj.cast_from_graveyard = item.flashback
-        destination = Zone.EXILE if item.flashback else Zone.GRAVEYARD
+        # A fizzled spell is still a spell that was cast, so the same rider
+        # applies -- and the same exemption: an escape spell whose targets all
+        # left is back in the graveyard to be escaped again.
+        destination = (
+            Zone.EXILE if item.flashback and card.graveyard_cast_exiles else Zone.GRAVEYARD
+        )
         move_object(state, item.oid, destination, to_player=obj.owner, cause="fizzled")
         return
 
@@ -277,11 +282,16 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     filtering the (already popped) stack list, so no cleanup is needed here.
     """
     destination = Zone.BATTLEFIELD if card.is_permanent else Zone.GRAVEYARD
-    # "Then exile it." Flashback is once-only, and this is what makes it so: a
-    # spell cast from a graveyard for its flashback cost goes to exile instead
-    # of back to the graveyard it came from. A permanent still enters the
-    # battlefield -- the rider only replaces the graveyard.
-    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD:
+    # "Then exile it." Flashback and jump-start are once-only, and this is what
+    # makes them so: a spell cast from a graveyard goes to exile instead of back
+    # to the graveyard it came from. A permanent still enters the battlefield --
+    # the rider only replaces the graveyard.
+    #
+    # **Escape does not.** It is the same alternative cost with the same
+    # legality widening, and the one thing that separates it is that the card
+    # comes back for another go, so `graveyard_cast_exiles` is the whole
+    # difference between the two keywords.
+    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD and card.graveyard_cast_exiles:
         destination = Zone.EXILE
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
 

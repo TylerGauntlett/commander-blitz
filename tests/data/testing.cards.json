@@ -942,6 +942,60 @@
       ]
     },
     {
+      "id": "t_escapist",
+      "name": "Test Escapist",
+      "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "graveyard_cost": {
+        "mana": "{1}{R}",
+        "exile_from_graveyard": {
+          "count": 2,
+          "exclude_self": true
+        }
+      },
+      "graveyard_cast": "graveyard",
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_jumpstarter",
+      "name": "Test Jumpstarter",
+      "oracle_text": "Draw two cards.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "graveyard_cost": {
+        "mana": "{2}{U}",
+        "discard": 1
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_provoker",
       "name": "Test Provoker",
       "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",

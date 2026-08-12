@@ -295,23 +295,42 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
-    flashback = Cost.from_spec(model.flashback.model_dump()) if model.flashback else None
+    # `flashback` and `graveyard_cost` are one slot under two names -- the
+    # keyword that shipped first, and the mechanic it turned out to be. Escape
+    # and jump-start are the same capability with a different price and a
+    # different destination, and neither should have to say "flashback".
+    if model.flashback is not None and model.graveyard_cost is not None:
+        raise DslError(
+            f"{where}: give 'graveyard_cost' or 'flashback', not both -- they are "
+            f"the same field, and a card with two prices from the graveyard has "
+            f"no answer to what it costs from there"
+        )
+    graveyard_spec = model.graveyard_cost or model.flashback
+    flashback = Cost.from_spec(graveyard_spec.model_dump()) if graveyard_spec else None
     if flashback is not None:
         if not flashback.mana.text:
             # The mana half *replaces* the printed cost, so without it the card
             # would be castable from the graveyard for free.
-            raise DslError(f"{where}: a flashback cost needs mana")
+            raise DslError(f"{where}: a graveyard cost needs mana")
         if flashback.mana.x_count:
-            raise DslError(f"{where}: a flashback cost with X is not implemented")
+            raise DslError(f"{where}: a graveyard cost with X is not implemented")
         if model.retrace:
             # Both widen legality to the graveyard and each replaces the other's
             # answer to "what does it cost from there".
-            raise DslError(f"{where}: a card may not have both 'flashback' and 'retrace'")
+            raise DslError(
+                f"{where}: a card may not have both a graveyard cost and 'retrace'"
+            )
+    if graveyard_spec is None and model.graveyard_cast != "exile":
+        # A destination with nothing to send there. Silently ignoring it would
+        # let a card claim to be an escape card and never be castable at all.
+        raise DslError(
+            f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe"
+        )
     reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
     if reads_from_graveyard and flashback is None:
         raise DslError(
             f"{where}: reads the 'cast_from_graveyard' condition but has no "
-            f"'flashback' cost, so it could never be true"
+            f"'graveyard_cost', so it could never be true"
         )
 
     colors = (
@@ -361,6 +380,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
         flashback=flashback,
+        graveyard_cast_exiles=model.graveyard_cast == "exile",
         ascend=model.ascend,
         suspend=suspend,
     )
