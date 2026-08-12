@@ -942,6 +942,53 @@
       ]
     },
     {
+      "id": "t_persister",
+      "name": "Test Persister",
+      "oracle_text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Persist",
+          "active_zones": [
+            "battlefield",
+            "graveyard"
+          ],
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": 0
+            }
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "objects": {
+                "self_only": true
+              },
+              "destination": "battlefield",
+              "counters": {
+                "-1/-1": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_escapist",
       "name": "Test Escapist",
       "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",

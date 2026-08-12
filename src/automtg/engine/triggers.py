@@ -498,7 +498,13 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     subject = _subject_oid(spec.event, event)
     if subject is not None:
         bindings["subject"] = subject
-    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking", "counter", "blockers"):
+    for key in (
+        "amount", "damage", "life", "sid", "defender", "was_attacking", "counter",
+        "blockers",
+        # Persist and undying: what was on the creature before it died, which
+        # nothing can read off the object afterwards.
+        "had_counters",
+    ):
         if key in event.data:
             bindings[key] = event.data[key]
 

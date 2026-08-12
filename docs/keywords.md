@@ -274,7 +274,7 @@ This is the long tail, and where the build order comes from.
 | Offering | routed | an alternative cost reduced by a sacrificed creature — this is `emerge`, restricted by type | — |
 | Overload | routed | a cost that swaps a targeted selector for a global one | — |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
-| Persist | routed | the dies-trigger return exists; the "if it had no -1/-1 counter" gate cannot be read, because `reset_permanent_state` wipes counters on the way to the graveyard | — |
+| Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
 | Phasing | refused | phasing; see rules-coverage.md | — |
 | Poisonous | routed | poison counters are not a loss condition the engine checks | — |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
@@ -308,7 +308,7 @@ This is the long tail, and where the build order comes from.
 | Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |
 | Tribute | routed | `self_enters` with a choice belonging to an opponent; `two_piles` proves the shape is reachable | — |
-| Undying | routed | the mirror of persist, and blocked on the same wiped counters | — |
+| Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
 | Unleash | routed | enters with a counter is whitelisted, but there is no `cant_block` static to pair with it | — |
 | Wither | blocked | a damage replacement, and the whitelist has no damage form | — |

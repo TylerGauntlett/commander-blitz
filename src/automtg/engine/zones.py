@@ -62,6 +62,12 @@ def move_object(
     # is nothing left to ask.  This is the engine's explicit-LKI pattern, in the
     # one place a card cannot reach with a `snapshot` op of its own.
     was_attacking = was_on_battlefield and state.combat is not None and state.combat.attacking(oid)
+    # Snapshotted for the same reason, and it is the whole of persist and
+    # undying: "if it had no -1/-1 counters on it" is asked *about a creature
+    # that has just died*, and `reset_permanent_state` empties `counters` on the
+    # way out. Read afterwards it is always zero, so both keywords would return
+    # every creature for ever.
+    had_counters = dict(obj.counters) if was_on_battlefield else {}
 
     _remove_from_zone(state, obj)
 
@@ -97,6 +103,7 @@ def move_object(
             # `{"binding": "was_attacking"}` value expression and no new
             # condition vocabulary has to exist for it.
             was_attacking=1 if was_attacking else 0,
+            had_counters=had_counters,
         )
         if to_zone is Zone.GRAVEYARD:
             fire(
@@ -107,6 +114,7 @@ def move_object(
                 oid=oid,
                 card=card.id,
                 was_creature=was_creature,
+                had_counters=had_counters,
             )
 
     if to_zone is Zone.BATTLEFIELD:

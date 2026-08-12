@@ -70,6 +70,12 @@ VALUE_KEYS = frozenset(
         "loop_value",
         "binding",
         "counters_on",
+        # "…if it had no -1/-1 counters on it" -- persist and undying. Not
+        # `counters_on`, which reads a live object: this asks about a creature
+        # that has just died, and `reset_permanent_state` emptied its counters
+        # on the way to the graveyard. Answered from the dies trigger's
+        # `had_counters` binding, snapshotted before the wipe.
+        "counters_had",
     }
 )
 
@@ -139,6 +145,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
+    if "counters_had" in expr:
+        # The kind, as a bare string: {"counters_had": "-1/-1"}.
+        kind = str(expr["counters_had"])
+        had = ctx.bindings.get("had_counters")
+        return int(had.get(kind, 0)) if isinstance(had, Mapping) else 0
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
