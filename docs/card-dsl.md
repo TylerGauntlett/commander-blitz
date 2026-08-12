@@ -312,7 +312,17 @@ batching work.
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `upkeep` · `draw_step` · `begin_combat` ·
-`end_step` · `you_gain_life` · `counter_placed` · `draw`
+`end_step` · `you_gain_life` · `counter_placed` · `draw` · `discard` · `cycle`
+
+**`discard` names the player who discarded**, through the ordinary `controller`
+clause — which defaults to `"you"`, so Sangromancer's "whenever an *opponent*
+discards a card" must say so or it watches the wrong seat and never fires. One
+trigger per card, because `discard_cards` fires per card, so an effect taking
+two is two triggers. It fires for every discard there is: a discard effect, the
+cleanup step's trim to hand size (rule 514.1), and a cycling cost (rule
+702.29a) — a version that missed the last two would be quiet in almost every
+real game. The discarded card is the trigger's subject, so a `filter` may ask
+what it was, and it reads the printed face out of the graveyard.
 
 **Landfall is not `land_played`.** "Whenever a land you control enters" is
 `permanent_enters` with a `{"types": ["Land"]}` filter, and it fires however the

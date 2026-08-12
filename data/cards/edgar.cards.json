@@ -768,6 +768,15 @@
             "filter": { "types": ["Creature"] }
           },
           "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a card, you may gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent"
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
         }
       ]
     },

@@ -1,3 +1,54 @@
+## The discard trigger — an event that was fired but never listened to
+
+### Overview
+
+"Whenever an opponent discards a card, you may gain 3 life." Sangromancer, and
+the last entry in `precon_deficits.json`.
+
+Nothing was missing from the rules engine. Discarding has always been modelled —
+rule 701.8, `primitives.discard_cards`, an `EventType.DISCARD` fired once per
+card since the beginning, narrated in the frontend log. What was missing was a
+name for it in `TRIGGER_EVENTS`, so no card could listen: the event was emitted
+into a log that only the UI read.
+
+One row in `TRIGGER_EVENTS`, one entry in `OBJECT_SUBJECT_TRIGGERS`, one name in
+`_actor`'s list. The card was then expressible with no new op, no new effect and
+no new event.
+
+### Which player the clause is about
+
+`controller` names the player who **discarded**, and it defaults to `"you"` —
+the trap the Sengir Vampire run wrote down, where an unqualified trigger loads,
+looks implemented and watches the wrong seat forever. Sangromancer needs
+`"opponent"`, and the test asserts both directions, because a trigger that fires
+on everything passes a one-sided test by accident.
+
+The actor is read off the *event* rather than off the discarded card, which is
+why `discard` appears in `_actor`'s explicit list even though it also has an
+object subject. By the time the trigger is collected the card is in a graveyard
+and its controller has been through `reset_permanent_state`; `discard_cards`
+puts the discarding player on the event, so that is the copy to trust.
+
+### Every discard is a discard
+
+The two that matter and are easy to miss, because a version that missed them
+would still pass a test written around a discard *spell*:
+
+- The cleanup step's trim to hand size (rule 514.1) — the commonest discard
+  there is at a real table.
+- A cycling cost (rule 702.29a), which pays by discarding the card.
+
+Both run through `discard_cards`, so both fire it, and both are pinned. And one
+trigger per **card**: `discard_cards` fires per oid, so an effect that takes two
+cards is two triggers and six life.
+
+### Ships
+
+Sangromancer's second printed line. `precon_deficits.json` is now **empty** —
+every hand-written card in the pool clears all six authoring gates, which is the
+first time that has been true since the audit started running over
+`data/cards/`.
+
 ## Cards drawn this turn — counting an event instead of the board
 
 ### Overview
