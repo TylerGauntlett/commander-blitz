@@ -285,7 +285,7 @@ This is the long tail, and where the build order comes from.
 | Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
-| Renown | routed | `deals_combat_damage_to_player` trigger plus a one-way flag, exactly like `monstrous` | — |
+| Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
 | Replicate | routed | an additional cost paid repeatedly, plus spell copying | — |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
 | Riot | routed | `self_enters` + `choose_mode`, but a `choose_mode` inside a trigger resolves late | — |
