@@ -615,6 +615,19 @@
   "fetid_pools": {
     "zone": "battlefield"
   },
+  "finale_of_devastation": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "fire_diamond": {
     "zone": "battlefield"
   },
@@ -731,6 +744,13 @@
     "zone": "battlefield"
   },
   "gladecover_scout": {
+    "zone": "battlefield"
+  },
+  "glasses_of_urza": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "glasswing_grace_age_graced_chapel": {
@@ -1663,6 +1683,19 @@
   "scute_swarm": {
     "zone": "battlefield"
   },
+  "scythecat_cub": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "search_for_tomorrow": {
     "battlefield_count": 33,
     "library_size": {
@@ -2064,6 +2097,16 @@
   },
   "three_tree_rootweaver": {
     "zone": "battlefield"
+  },
+  "through_the_forest_gate": {
+    "battlefield_count": 52,
+    "library_size": {
+      "0": 20
+    },
+    "life": {
+      "0": 48
+    },
+    "zone": "graveyard"
   },
   "thundering_falls": {
     "zone": "battlefield"

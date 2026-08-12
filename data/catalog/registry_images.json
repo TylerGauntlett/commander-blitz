@@ -1019,6 +1019,10 @@
     "artist": "Jonas De Ro",
     "scryfall_id": "5fa4556f-2fdc-42e6-98cb-291cee2ca3ac"
   },
+  "finale_of_devastation": {
+    "artist": "Naoki Saito",
+    "scryfall_id": "721ea98f-4150-4fde-a0af-4f454695e927"
+  },
   "fire_diamond": {
     "artist": "Gaboleps",
     "scryfall_id": "5a561484-438b-4ce9-911e-97078ac5b0fa"
@@ -1186,6 +1190,10 @@
   "gladecover_scout": {
     "artist": "Allen Williams",
     "scryfall_id": "e112d77d-f019-4709-b31a-b02952df0e35"
+  },
+  "glasses_of_urza": {
+    "artist": "Douglas Shuler",
+    "scryfall_id": "abc743ec-4845-4e2e-8918-7e7854ecccfc"
   },
   "glasswing_grace_age_graced_chapel": {
     "artist": "Craig Elliott & Maxime Minard",
@@ -2508,6 +2516,10 @@
     "artist": "Jason Loik & Matthew Cohen",
     "scryfall_id": "62c19f87-1bbc-4309-8781-4519db8b91a2"
   },
+  "scythecat_cub": {
+    "artist": "Gabor Szikszai",
+    "scryfall_id": "b3dd3c7d-4685-4579-b483-14ddaaaddf5b"
+  },
   "search_for_tomorrow": {
     "artist": "Eddie Schillo",
     "scryfall_id": "857818d8-454b-4c2c-8cf2-7aa9c2898b18"
@@ -3055,6 +3067,10 @@
   "three_tree_rootweaver": {
     "artist": "Chris Seaman",
     "scryfall_id": "d1ab6e14-26e0-4174-b5c6-bc0f5c26b177"
+  },
+  "through_the_forest_gate": {
+    "artist": "Leon Tukker",
+    "scryfall_id": "880adfc8-69cf-4062-a804-e65b6cb6056d"
   },
   "thundering_falls": {
     "artist": "Grady Frederick",

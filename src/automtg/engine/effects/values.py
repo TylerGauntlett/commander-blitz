@@ -60,6 +60,11 @@ VALUE_KEYS = frozenset(
         "life_lost_this_turn",
         "spells_cast_this_turn",
         "cards_to_graveyard_this_turn",
+        # "…if this is the second time this ability has resolved this turn."
+        # Keyed by ability rather than by player, and counting the resolution in
+        # progress, so it is the one ledger tally read off the effect context
+        # rather than off the ledger -- see `structs.TurnLedger`.
+        "resolutions_this_turn",
         "creatures_you_control",
         "lands_you_control",
         "sum",
@@ -153,6 +158,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
+    if "resolutions_this_turn" in expr:
+        # "If this is the second time this ability has resolved this turn."
+        # Read off the context rather than the ledger: only `resolve_top` knows
+        # which ability is resolving, and the count has to include this one.
+        return ctx.resolutions
     ledger = ctx.state.turn_ledger
     if "creatures_died_this_turn" in expr:
         # Keyed by who controlled the creature, so `"all"` is morbid's "a

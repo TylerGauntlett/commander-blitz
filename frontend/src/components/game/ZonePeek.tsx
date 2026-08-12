@@ -4,6 +4,11 @@
  * Graveyards, exile and command zones are public, so they are shown in full.
  * An opponent's hand is not: the server sends `hand: null` with only a count,
  * and this says so rather than pretending the zone is empty.
+ *
+ * The one exception is `hand_revealed` -- cards this seat has been *shown* by
+ * "look at target player's hand". The server has already decided who is
+ * entitled to those, so showing them here leaks nothing, and a Glasses of Urza
+ * that changed no pixel would be an ability the player could not use.
  */
 
 import { AnimatePresence, motion } from "motion/react";
@@ -16,6 +21,11 @@ import { StaticCard } from "./Card";
 
 /** Ratio of `--card-w-base`; see logic/cardSize.ts. */
 const NO_ACTIONS: ReadonlySet<number> = new Set();
+
+/** The cards of someone else's hand this seat has been shown, or null. */
+function shown(player: GameView["players"][number]): CardView[] | null {
+  return player.hand_revealed.length > 0 ? player.hand_revealed : null;
+}
 
 const TITLES: Record<string, string> = {
   graveyard: "Graveyard",
@@ -35,10 +45,16 @@ export function ZonePeek({ state }: Props) {
   const player = peek ? state.players[peek.pid] : null;
   let cards: CardView[] | null = null;
   if (player && peek) {
-    if (peek.zone === "hand") cards = player.hand;
+    if (peek.zone === "hand") cards = player.hand ?? shown(player);
     else cards = player[peek.zone];
   }
   const hidden = peek?.zone === "hand" && cards === null;
+  // Some of the hand may be visible without all of it: you looked, and then
+  // they drew. The count is what is still unaccounted for, not the whole hand.
+  const stillHidden =
+    peek?.zone === "hand" && player && player.hand === null
+      ? player.hand_count - (cards?.length ?? 0)
+      : 0;
   // Duplicates collapse here too -- eight Swamps in a graveyard is one entry.
   const groups = cards
     ? stackCards(cards).flatMap((group) => splitActionable(group, NO_ACTIONS))
@@ -83,6 +99,11 @@ export function ZonePeek({ state }: Props) {
                 <p className="peek__hidden">
                   Hidden &mdash; {player.hand_count} card
                   {player.hand_count === 1 ? "" : "s"}
+                </p>
+              )}
+              {stillHidden > 0 && (
+                <p className="peek__hidden">
+                  &hellip;and {stillHidden} more you have not seen
                 </p>
               )}
               {cards?.length === 0 && <p className="peek__hidden">Empty</p>}

@@ -373,6 +373,28 @@ def choose_objects(
     pool = resolve_pool(ctx, selector)
     if not pool or selector is None:
         return []
+    return (yield from pick_from_pool(ctx, pool, selector, prompt, purpose))
+
+
+def pick_from_pool(
+    ctx: EffectContext,
+    pool: list[int],
+    selector: Mapping[str, Any],
+    prompt: str = "Choose",
+    purpose: str = "choose",
+    chooser: int | None = None,
+) -> Generator[Any, list[int], list[int]]:
+    """Apply a selector's ``count``/``chooser``/``random`` to a pool already built.
+
+    Split out of ``choose_objects`` because not every pool comes from a zone.
+    ``look_at_top`` bounds its own pool to the top N cards of a library and then
+    wants exactly this narrowing, so the two share the ``count`` vocabulary
+    rather than each inventing one -- which is what keeps ``"any"`` meaning the
+    same thing wherever it is written.  ``chooser`` overrides the selector's own
+    clause, for an op that already knows whose decision it is.
+    """
+    if not pool:
+        return []
 
     count_spec = selector.get("count", "all")
     if count_spec == "all":
@@ -404,9 +426,10 @@ def choose_objects(
     chooser_spec = selector.get("chooser", "controller")
     if chooser_spec == "none":
         return pool[:max_count]
-    chooser = ctx.controller
-    if chooser_spec == "owner" and pool:
-        chooser = ctx.state.objects[pool[0]].owner
+    if chooser is None:
+        chooser = ctx.controller
+        if chooser_spec == "owner" and pool:
+            chooser = ctx.state.objects[pool[0]].owner
 
     picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked

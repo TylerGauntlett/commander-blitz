@@ -2,6 +2,460 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_advocate_of_the_beast",
+      "name": "Advocate of the Beast",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "power": 2,
+      "toughness": 3
+    },
+    {
+      "id": "t_animosity",
+      "name": "Test Animosity",
+      "oracle_text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "binding": "subject"
+              },
+              "power": {
+                "count": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Creature"
+                  ],
+                  "attacking": true,
+                  "shares_a_type_with": "subject",
+                  "exclude_binding": "subject"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_annihilator",
+      "name": "Test Annihilator",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents.)",
+      "mana_cost": "{6}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Annihilator 2",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "objects": {
+                "controller": "opponent",
+                "count": 2,
+                "chooser": "owner"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_anthem",
+      "name": "Test Anthem",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_any_counter_watcher",
+      "name": "Test Any Counter Watcher",
+      "oracle_text": "Whenever a counter is put on this creature, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a counter is put on this creature, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_artifact_blocker",
+      "name": "Test Artifact Blocker",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_avenger",
+      "name": "Test Avenger",
+      "oracle_text": "Whenever Test Avenger is dealt damage, it deals that much damage to any target.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test Avenger is dealt damage, it deals that much damage to target player.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "effects": [
+            {
+              "op": "damage",
+              "target": "t1",
+              "amount": {
+                "binding": "amount"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bear",
+      "name": "Test Bear",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_big",
+      "name": "Test Giant",
+      "mana_cost": "{5}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Giant"
+      ],
+      "power": 6,
+      "toughness": 6
+    },
+    {
+      "id": "t_bloodrusher",
+      "name": "Test Bloodrusher",
+      "oracle_text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Minotaur"
+      ],
+      "power": 3,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{R}",
+            "discard_self": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "attacking": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "target": "t1"
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bolsterer",
+      "name": "Test Bolsterer",
+      "oracle_text": "When Test Bolsterer enters, bolster 2. (Choose a creature with the least toughness among creatures you control, then put two +1/+1 counters on it.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When Test Bolsterer enters, bolster 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "extreme": {
+                  "of": "toughness",
+                  "pick": "least"
+                },
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bolt",
+      "name": "Test Bolt",
+      "oracle_text": "Test Bolt deals 3 damage to any target.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_bounce_land",
+      "name": "Test Bounce Land",
+      "oracle_text": "Test Bounce Land enters tapped. When it enters, return a land you control to its owner's hand. {T}: Add {G}{U}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}{U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            },
+            {
+              "op": "add_mana",
+              "mana": "{U}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bouncer",
+      "name": "Test Bouncer",
+      "oracle_text": "{1}, Return a land you control to its owner's hand: Draw a card.",
+      "mana_cost": "{4}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Return a land you control to its owner's hand: Draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "return_to_hand": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_buyback",
       "name": "Test Buyback",
       "oracle_text": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nTest Buyback deals 2 damage to any target.",
@@ -26,293 +480,6 @@
             "const": 2
           }
         }
-      ]
-    },
-    {
-      "id": "t_fader",
-      "name": "Test Fader",
-      "oracle_text": "Fading 2 (This creature enters with two fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Illusion"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "replacements": [
-        {
-          "event": "self_enters_with_counters",
-          "counter": "fade",
-          "amount": 2
-        }
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.",
-          "trigger": {
-            "event": "upkeep",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "if",
-              "condition": {
-                "cmp": ">=",
-                "left": {
-                  "counters_on": {
-                    "counter": "fade",
-                    "objects": {
-                      "self_only": true
-                    }
-                  }
-                },
-                "right": 1
-              },
-              "then": [
-                {
-                  "op": "remove_counters",
-                  "counter": "fade",
-                  "amount": 1,
-                  "objects": {
-                    "self_only": true
-                  }
-                }
-              ],
-              "else": [
-                {
-                  "op": "sacrifice",
-                  "objects": {
-                    "self_only": true
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_bear",
-      "name": "Test Bear",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bear"
-      ],
-      "power": 2,
-      "toughness": 2
-    },
-    {
-      "id": "t_flyer",
-      "name": "Test Flyer",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bird"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "t_reacher",
-      "name": "Test Reacher",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Spider"
-      ],
-      "power": 1,
-      "toughness": 3,
-      "keywords": [
-        "reach"
-      ]
-    },
-    {
-      "id": "t_deathtoucher",
-      "name": "Test Deathtoucher",
-      "mana_cost": "{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Rat"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "keywords": [
-        "deathtouch"
-      ]
-    },
-    {
-      "id": "t_trampler",
-      "name": "Test Trampler",
-      "mana_cost": "{3}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 5,
-      "toughness": 5,
-      "keywords": [
-        "trample"
-      ]
-    },
-    {
-      "id": "t_first_striker",
-      "name": "Test First Striker",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Knight"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "first_strike"
-      ]
-    },
-    {
-      "id": "t_double_striker",
-      "name": "Test Double Striker",
-      "mana_cost": "{2}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Knight"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "double_strike"
-      ]
-    },
-    {
-      "id": "t_menacer",
-      "name": "Test Menacer",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Ogre"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "keywords": [
-        "menace"
-      ]
-    },
-    {
-      "id": "t_lifelinker",
-      "name": "Test Lifelinker",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Cleric"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "lifelink"
-      ]
-    },
-    {
-      "id": "t_vigilant",
-      "name": "Test Vigilant",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Soldier"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "vigilance"
-      ]
-    },
-    {
-      "id": "t_hasty",
-      "name": "Test Hasty",
-      "mana_cost": "{1}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 2,
-      "toughness": 1,
-      "keywords": [
-        "haste"
-      ]
-    },
-    {
-      "id": "t_indestructible",
-      "name": "Test Indestructible",
-      "mana_cost": "{2}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Golem"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "indestructible"
-      ]
-    },
-    {
-      "id": "t_hexproof",
-      "name": "Test Hexproof",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Elf"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "hexproof"
-      ]
-    },
-    {
-      "id": "t_shrouded",
-      "name": "Test Shrouded",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Serpent"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "shroud"
       ]
     },
     {
@@ -362,10 +529,63 @@
       ]
     },
     {
-      "id": "t_stack_trigger",
-      "name": "Test Stack Trigger",
-      "oracle_text": "Whenever you cast a Bear spell, create a 1/1 Vampire token. (Works from the command zone.)",
-      "mana_cost": "{2}{B}",
+      "id": "t_channeler",
+      "name": "Test Channeler",
+      "oracle_text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{G}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_intimidator",
+      "name": "Test Colorless Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{3}",
+      "colors": [],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_commander",
+      "name": "Test Commander",
+      "mana_cost": "{2}{G}{U}",
       "supertypes": [
         "Legendary"
       ],
@@ -373,35 +593,576 @@
         "Creature"
       ],
       "subtypes": [
-        "Vampire"
+        "Serpent"
       ],
-      "power": 3,
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
+      "id": "t_compelled_beast",
+      "name": "Test Compelled Beast",
+      "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+      "mana_cost": "{2}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
       "toughness": 3,
       "abilities": [
         {
+          "kind": "static",
+          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "name": "Advocate of the Beast"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_compeller",
+      "name": "Test Compeller",
+      "oracle_text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
           "kind": "triggered",
-          "text": "Whenever you cast a Bear spell, create a 1/1 Vampire.",
-          "active_zones": [
-            "battlefield",
-            "command"
-          ],
+          "text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
           "trigger": {
-            "event": "spell_cast",
-            "controller": "you",
+            "event": "self_enters"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "must_attack",
+              "objects": {
+                "target": "t1"
+              },
+              "duration": "next_combat"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_convoker",
+      "name": "Test Convoker",
+      "oracle_text": "Convoke (Your creatures can help cast this spell.)\nTest Convoker deals 2 damage to target player.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "pay_generic_with": "tap_creatures",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_counter_watcher",
+      "name": "Test Counter Watcher",
+      "oracle_text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "source": "self",
+            "counter": "+1/+1"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_counterspell",
+      "name": "Test Counterspell",
+      "oracle_text": "Counter target spell.",
+      "mana_cost": "{U}{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ]
+    },
+    {
+      "id": "t_creature_discard_watcher",
+      "name": "Test Creature Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a creature card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a creature card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent",
             "filter": {
-              "subtypes": [
-                "Bear"
+              "controller": "any",
+              "types": [
+                "Creature"
               ]
             }
           },
           "effects": [
             {
-              "op": "create_token",
-              "token": "vampire_1_1_bw",
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cycler",
+      "name": "Test Cycler",
+      "oracle_text": "Cycling {2} ({2}, Discard this card: Draw a card.)",
+      "mana_cost": "{4}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{2}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
               "amount": {
                 "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dasher",
+      "name": "Test Dasher",
+      "oracle_text": "Dash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "evoke": "{1}{R}",
+      "evoke_label": "dash",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "If you do, it gains haste, and it's returned to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {
+              "evoked": true
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_deathtoucher",
+      "name": "Test Deathtoucher",
+      "mana_cost": "{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
+      "id": "t_defensive_wall",
+      "name": "Test Defensive Wall",
+      "oracle_text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "const": 0
+          },
+          "toughness": {
+            "const": 3
+          },
+          "condition": {
+            "all": [
+              {
+                "is_your_turn": false
               },
-              "controller": "you"
+              {
+                "not": {
+                  "exists": {
+                    "zone": "graveyard",
+                    "controller": "opponent",
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_delver",
+      "name": "Test Delver",
+      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nDraw two cards.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "pay_generic_with": "exile_from_graveyard",
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_detainer",
+      "name": "Test Detainer",
+      "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "detain",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_dies_gain",
+      "name": "Test Dies Gain",
+      "oracle_text": "When Test Dies Gain dies, you gain 2 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this dies, you gain 2 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_discard_watcher",
+      "name": "Test Discard Watcher",
+      "oracle_text": "Whenever an opponent discards a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent discards a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dork",
+      "name": "Test Dork",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_double_striker",
+      "name": "Test Double Striker",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "double_strike"
+      ]
+    },
+    {
+      "id": "t_draw_spell",
+      "name": "Test Divination",
+      "oracle_text": "Draw two cards.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_dual_land",
+      "name": "Test Dual",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -460,380 +1221,103 @@
       ]
     },
     {
-      "id": "t_islandwalker",
-      "name": "Test Islandwalker",
-      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)",
-      "mana_cost": "{2}{U}",
+      "id": "t_enrager",
+      "name": "Test Enrager",
+      "oracle_text": "Whenever Test Enrager is dealt damage, put a +1/+1 counter on it.",
+      "mana_cost": "{2}{G}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Merfolk"
+        "Dinosaur"
       ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "islandwalk"
-      ]
-    },
-    {
-      "id": "t_skulker",
-      "name": "Test Skulker",
-      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)",
-      "mana_cost": "{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Rogue"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "skulk"
-      ]
-    },
-    {
-      "id": "t_skulk_granter",
-      "name": "Test Skulk Granter",
-      "oracle_text": "Creatures you control have skulk.",
-      "mana_cost": "{1}{B}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Creatures you control have skulk.",
-          "effect": "grant_keyword",
-          "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ]
-          },
-          "keywords": [
-            "skulk"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_fearsome",
-      "name": "Test Fearsome",
-      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Horror"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "fear"
-      ]
-    },
-    {
-      "id": "t_intimidator",
-      "name": "Test Intimidator",
-      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "intimidate"
-      ]
-    },
-    {
-      "id": "t_colorless_intimidator",
-      "name": "Test Colorless Intimidator",
-      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
-      "mana_cost": "{3}",
-      "colors": [],
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Eldrazi"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "intimidate"
-      ]
-    },
-    {
-      "id": "t_horseman",
-      "name": "Test Horseman",
-      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Human",
-        "Soldier"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "horsemanship"
-      ]
-    },
-    {
-      "id": "t_shadow_lurker",
-      "name": "Test Shadow Lurker",
-      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
-      "mana_cost": "{1}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Rogue"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "shadow"
-      ]
-    },
-    {
-      "id": "t_nonbasic_walker",
-      "name": "Test Nonbasic Walker",
-      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Dryad"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "nonbasic_landwalk"
-      ]
-    },
-    {
-      "id": "t_artifact_blocker",
-      "name": "Test Artifact Blocker",
-      "oracle_text": "",
-      "mana_cost": "{3}",
-      "types": [
-        "Artifact",
-        "Creature"
-      ],
-      "subtypes": [
-        "Golem"
-      ],
-      "power": 2,
-      "toughness": 2
-    },
-    {
-      "id": "t_horsemanship_granter",
-      "name": "Test Horsemanship Granter",
-      "oracle_text": "Creatures you control have horsemanship.",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Creatures you control have horsemanship.",
-          "effect": "grant_keyword",
-          "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ]
-          },
-          "keywords": [
-            "horsemanship"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_tide_lock",
-      "name": "Test Tide Lock",
-      "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
-      "mana_cost": "{5}{U}{U}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Leviathan"
-      ],
-      "power": 8,
-      "toughness": 8,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "All lands are Islands in addition to their other types.",
-          "effect": "add_subtype",
-          "affects": {
-            "controller": "any",
-            "types": [
-              "Land"
-            ]
-          },
-          "subtypes": [
-            "Island"
-          ]
-        },
-        {
-          "kind": "static",
-          "text": "Creatures without flying or islandwalk can't attack.",
-          "effect": "cant_attack",
-          "affects": {
-            "controller": "any",
-            "types": [
-              "Creature"
-            ],
-            "not_keywords": [
-              "flying",
-              "islandwalk"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_vigil_liege",
-      "name": "Test Vigil Liege",
-      "oracle_text": "Untap all green creatures you control during each other player's untap step.",
-      "mana_cost": "{2}{G}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Horror"
-      ],
-      "power": 4,
+      "power": 3,
       "toughness": 4,
       "abilities": [
         {
-          "kind": "static",
-          "text": "Untap all green creatures you control during each other player's untap step.",
-          "effect": "untap_during_each_untap_step",
-          "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ],
-            "colors": [
-              "G"
-            ]
+          "kind": "triggered",
+          "text": "Whenever Test Enrager is dealt damage, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_escapist",
+      "name": "Test Escapist",
+      "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "graveyard_cost": {
+        "mana": "{1}{R}",
+        "exile_from_graveyard": {
+          "count": 2,
+          "exclude_self": true
+        }
+      },
+      "graveyard_cast": "graveyard",
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
           }
         }
       ]
     },
     {
-      "id": "t_compeller",
-      "name": "Test Compeller",
-      "oracle_text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+      "id": "t_etb_draw",
+      "name": "Test ETB Draw",
+      "oracle_text": "When Test ETB Draw enters, draw a card.",
       "mana_cost": "{2}{U}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Wizard"
+        "Scout"
       ],
       "power": 1,
       "toughness": 1,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this creature enters, target creature an opponent controls attacks during its controller's next combat phase if able.",
+          "text": "When this enters, draw a card.",
           "trigger": {
-            "event": "self_enters"
+            "event": "self_enters",
+            "source": "self"
           },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "count": 1,
-              "selector": {
-                "zone": "battlefield",
-                "controller": "opponent",
-                "types": [
-                  "Creature"
-                ]
-              }
-            }
-          ],
           "effects": [
             {
-              "op": "must_attack",
-              "objects": {
-                "target": "t1"
-              },
-              "duration": "next_combat"
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "t_tromokratis",
-      "name": "Test Unblockable Unless All",
-      "oracle_text": "This creature can't be blocked unless all creatures defending player controls block it.",
-      "mana_cost": "{5}{U}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Kraken"
-      ],
-      "power": 8,
-      "toughness": 8,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "This creature can't be blocked unless all creatures defending player controls block it.",
-          "effect": "block_restriction",
-          "affects": {
-            "self_only": true
-          },
-          "require_all": true
-        }
-      ]
-    },
-    {
-      "id": "t_no_bears",
-      "name": "Test No Bears",
-      "oracle_text": "This creature can't be blocked by Bears.",
-      "mana_cost": "{1}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "This creature can't be blocked by Bears.",
-          "effect": "block_restriction",
-          "affects": {
-            "self_only": true
-          },
-          "blockers": {
-            "subtypes": [
-              "Bear"
-            ]
-          }
         }
       ]
     },
@@ -885,1095 +1369,6 @@
               "op": "sacrifice",
               "objects": {
                 "self_only": true
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_kicker_creature",
-      "name": "Test Kicker Creature",
-      "oracle_text": "Kicker {2}\nWhen this creature enters, if it was kicked, you gain 5 life.",
-      "mana_cost": "{2}{U}",
-      "kicker": "{2}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Leviathan"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When this creature enters, if it was kicked, you gain 5 life.",
-          "trigger": {
-            "event": "self_enters",
-            "condition": {
-              "kicked": true
-            }
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 5
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_bouncer",
-      "name": "Test Bouncer",
-      "oracle_text": "{1}, Return a land you control to its owner's hand: Draw a card.",
-      "mana_cost": "{4}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Wizard"
-      ],
-      "power": 2,
-      "toughness": 4,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{1}, Return a land you control to its owner's hand: Draw a card.",
-          "cost": {
-            "mana": "{1}",
-            "return_to_hand": {
-              "types": [
-                "Land"
-              ]
-            }
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_sundial",
-      "name": "Test Sundial",
-      "oracle_text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
-      "mana_cost": "{4}",
-      "types": [
-        "Artifact"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
-          "trigger": {
-            "event": "land_played",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "may",
-              "pay": {
-                "mana": "{2}"
-              },
-              "effects": [
-                {
-                  "op": "draw",
-                  "player": "you",
-                  "amount": {
-                    "const": 1
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_counter_watcher",
-      "name": "Test Counter Watcher",
-      "oracle_text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Wizard"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever a +1/+1 counter is put on this creature, draw a card.",
-          "trigger": {
-            "event": "counter_placed",
-            "source": "self",
-            "counter": "+1/+1"
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_split_second",
-      "name": "Test Split Second",
-      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nDestroy target creature.",
-      "mana_cost": "{1}{B}",
-      "types": [
-        "Instant"
-      ],
-      "split_second": true,
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "permanent",
-          "selector": {
-            "types": [
-              "Creature"
-            ]
-          }
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "destroy",
-          "objects": {
-            "target": "t1"
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_poisonous",
-      "name": "Test Poisonous",
-      "oracle_text": "Poisonous 2 (Whenever this creature deals combat damage to a player, that player gets two poison counters.)",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Snake"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Poisonous 2",
-          "trigger": {
-            "event": "deals_combat_damage_to_player",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "add_poison",
-              "player": {
-                "binding": "event_player"
-              },
-              "amount": {
-                "const": 2
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_tributer",
-      "name": "Test Tributer",
-      "oracle_text": "Tribute 2 (As this creature enters, an opponent of your choice may place two +1/+1 counters on it.)\nWhen Test Tributer enters, if tribute wasn't paid, each opponent loses 3 life.",
-      "mana_cost": "{3}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Horror"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Tribute 2. When this enters, if tribute wasn't paid, each opponent loses 3 life.",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "may",
-              "player": "opponent",
-              "prompt": "Pay tribute (two +1/+1 counters)?",
-              "effects": [
-                {
-                  "op": "add_counters",
-                  "counter": "+1/+1",
-                  "amount": {
-                    "const": 2
-                  },
-                  "objects": {
-                    "self_only": true
-                  }
-                }
-              ],
-              "else": [
-                {
-                  "op": "lose_life",
-                  "player": "each_opponent",
-                  "amount": {
-                    "const": 3
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_annihilator",
-      "name": "Test Annihilator",
-      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents.)",
-      "mana_cost": "{6}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Eldrazi"
-      ],
-      "power": 5,
-      "toughness": 5,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Annihilator 2",
-          "trigger": {
-            "event": "attacks",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "sacrifice",
-              "objects": {
-                "controller": "opponent",
-                "count": 2,
-                "chooser": "owner"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_channeler",
-      "name": "Test Channeler",
-      "oracle_text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
-      "mana_cost": "{3}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Spirit"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
-          "active_zones": [
-            "hand"
-          ],
-          "cost": {
-            "mana": "{1}{G}",
-            "discard_self": true
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 3
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_rioter",
-      "name": "Test Rioter",
-      "oracle_text": "Riot (This creature enters with a +1/+1 counter on it or with haste.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Riot",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                {
-                  "label": "A +1/+1 counter",
-                  "effects": [
-                    {
-                      "op": "add_counters",
-                      "counter": "+1/+1",
-                      "amount": {
-                        "const": 1
-                      },
-                      "objects": {
-                        "self_only": true
-                      }
-                    }
-                  ]
-                },
-                {
-                  "label": "Haste",
-                  "effects": [
-                    {
-                      "op": "grant_keyword",
-                      "keyword": "haste",
-                      "duration": "permanent",
-                      "objects": {
-                        "self_only": true
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_exploiter",
-      "name": "Test Exploiter",
-      "oracle_text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Zombie"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "may",
-              "prompt": "Exploit a creature?",
-              "effects": [
-                {
-                  "op": "sacrifice",
-                  "objects": {
-                    "controller": "you",
-                    "types": [
-                      "Creature"
-                    ],
-                    "count": 1,
-                    "chooser": "controller"
-                  }
-                },
-                {
-                  "op": "draw",
-                  "player": "you",
-                  "amount": {
-                    "const": 1
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_bloodrusher",
-      "name": "Test Bloodrusher",
-      "oracle_text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Minotaur"
-      ],
-      "power": 3,
-      "toughness": 1,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
-          "active_zones": [
-            "hand"
-          ],
-          "cost": {
-            "mana": "{1}{R}",
-            "discard_self": true
-          },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "selector": {
-                "types": [
-                  "Creature"
-                ],
-                "attacking": true
-              }
-            }
-          ],
-          "effects": [
-            {
-              "op": "pump",
-              "objects": {
-                "target": "t1"
-              },
-              "power": {
-                "const": 3
-              },
-              "toughness": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_detainer",
-      "name": "Test Detainer",
-      "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Sorcery"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "permanent",
-          "selector": {
-            "controller": "opponent",
-            "types": [
-              "Creature"
-            ]
-          }
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "detain",
-          "objects": {
-            "target": "t1"
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_exerter",
-      "name": "Test Exerter",
-      "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",
-      "mana_cost": "{2}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Soldier"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn.",
-          "trigger": {
-            "event": "attacks",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "may",
-              "prompt": "Exert Test Exerter?",
-              "effects": [
-                {
-                  "op": "skip_untap",
-                  "objects": {
-                    "self_only": true
-                  }
-                },
-                {
-                  "op": "pump",
-                  "objects": {
-                    "self_only": true
-                  },
-                  "power": {
-                    "const": 2
-                  },
-                  "toughness": {
-                    "const": 2
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_convoker",
-      "name": "Test Convoker",
-      "oracle_text": "Convoke (Your creatures can help cast this spell.)\nTest Convoker deals 2 damage to target player.",
-      "mana_cost": "{3}{R}",
-      "types": [
-        "Sorcery"
-      ],
-      "pay_generic_with": "tap_creatures",
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "player"
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "damage",
-          "target": "t1",
-          "amount": {
-            "const": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_delver",
-      "name": "Test Delver",
-      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nDraw two cards.",
-      "mana_cost": "{3}{U}",
-      "types": [
-        "Sorcery"
-      ],
-      "pay_generic_with": "exile_from_graveyard",
-      "spell_effects": [
-        {
-          "op": "draw",
-          "player": "you",
-          "amount": {
-            "const": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_offering",
-      "name": "Test Offering",
-      "oracle_text": "Goblin offering (You may cast this card any time you could cast an instant by sacrificing a Goblin and paying the difference in mana costs between this and the sacrificed Goblin.)",
-      "mana_cost": "{4}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 4,
-      "toughness": 4,
-      "keywords": [
-        "flash"
-      ],
-      "emerge": "{4}{R}",
-      "emerge_subtype": "Goblin"
-    },
-    {
-      "id": "t_goblin",
-      "name": "Test Goblin",
-      "oracle_text": "",
-      "mana_cost": "{1}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 1,
-      "toughness": 1
-    },
-    {
-      "id": "t_dasher",
-      "name": "Test Dasher",
-      "oracle_text": "Dash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Goblin"
-      ],
-      "power": 3,
-      "toughness": 2,
-      "evoke": "{1}{R}",
-      "evoke_label": "dash",
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "If you do, it gains haste, and it's returned to its owner's hand at the beginning of the next end step.",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self",
-            "condition": {
-              "evoked": true
-            }
-          },
-          "effects": [
-            {
-              "op": "grant_keyword",
-              "keyword": "haste",
-              "objects": {
-                "self_only": true
-              }
-            },
-            {
-              "op": "delay",
-              "step": "end_step",
-              "effects": [
-                {
-                  "op": "return_to_hand",
-                  "objects": {
-                    "self_only": true
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_spectacle",
-      "name": "Test Spectacle",
-      "oracle_text": "Test Spectacle deals 2 damage to target player.\nSpectacle {R} (You may cast this spell for its spectacle cost if an opponent lost life this turn.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "player"
-        }
-      ],
-      "alternative_cost": {
-        "mana": "{R}",
-        "condition": {
-          "cmp": ">=",
-          "left": {
-            "life_lost_this_turn": "each_opponent"
-          },
-          "right": 1
-        }
-      },
-      "spell_effects": [
-        {
-          "op": "damage",
-          "target": "t1",
-          "amount": {
-            "const": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_stormbolt",
-      "name": "Test Stormbolt",
-      "oracle_text": "Test Stormbolt deals 1 damage to target player.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "player"
-        }
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Storm",
-          "active_zones": [
-            "stack"
-          ],
-          "trigger": {
-            "event": "spell_cast",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "copy_spell",
-              "amount": {
-                "minus": [
-                  {
-                    "spells_cast_this_turn": "all"
-                  },
-                  {
-                    "const": 1
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "damage",
-          "target": "t1",
-          "amount": {
-            "const": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_fateseal",
-      "name": "Test Fateseal",
-      "oracle_text": "Fateseal 1. (Look at the top card of target opponent's library. You may put that card on the bottom of that player's library.)",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Sorcery"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "player"
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "scry",
-          "amount": {
-            "const": 1
-          },
-          "player": {
-            "target": "t1"
-          },
-          "chooser": "you"
-        }
-      ]
-    },
-    {
-      "id": "t_proliferator",
-      "name": "Test Proliferator",
-      "oracle_text": "Proliferate.",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Sorcery"
-      ],
-      "spell_effects": [
-        {
-          "op": "proliferate"
-        }
-      ]
-    },
-    {
-      "id": "t_renowned",
-      "name": "Test Renowned",
-      "oracle_text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Knight"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Renown 2",
-          "trigger": {
-            "event": "deals_combat_damage_to_player",
-            "source": "self",
-            "condition": {
-              "not": {
-                "has_flag": "renowned"
-              }
-            }
-          },
-          "effects": [
-            {
-              "op": "add_counters",
-              "counter": "+1/+1",
-              "amount": {
-                "const": 2
-              },
-              "objects": {
-                "self_only": true
-              }
-            },
-            {
-              "op": "set_flag",
-              "flag": "renowned"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_modular",
-      "name": "Test Modular",
-      "oracle_text": "Modular 3 (This creature enters with three +1/+1 counters on it. When it dies, put its +1/+1 counters on target artifact creature.)",
-      "mana_cost": "{3}",
-      "types": [
-        "Artifact",
-        "Creature"
-      ],
-      "subtypes": [
-        "Construct"
-      ],
-      "power": 0,
-      "toughness": 0,
-      "replacements": [
-        {
-          "event": "self_enters_with_counters",
-          "counter": "+1/+1",
-          "amount": 3
-        }
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When it dies, put its +1/+1 counters on target artifact creature.",
-          "trigger": {
-            "event": "dies",
-            "source": "self"
-          },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "selector": {
-                "controller": "any",
-                "types": [
-                  "Artifact",
-                  "Creature"
-                ]
-              }
-            }
-          ],
-          "effects": [
-            {
-              "op": "move_counters",
-              "counter": "+1/+1",
-              "amount": {
-                "counters_had": "+1/+1"
-              },
-              "objects": {
-                "target": "t1"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_grafter",
-      "name": "Test Grafter",
-      "oracle_text": "Graft 2 (This creature enters with two +1/+1 counters on it. Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.)",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Plant"
-      ],
-      "power": 0,
-      "toughness": 0,
-      "replacements": [
-        {
-          "event": "self_enters_with_counters",
-          "counter": "+1/+1",
-          "amount": 2
-        }
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.",
-          "trigger": {
-            "event": "permanent_enters",
-            "controller": "any",
-            "filter": {
-              "types": [
-                "Creature"
-              ],
-              "exclude_self": true
-            }
-          },
-          "effects": [
-            {
-              "op": "may",
-              "prompt": "Move a +1/+1 counter?",
-              "effects": [
-                {
-                  "op": "move_counters",
-                  "counter": "+1/+1",
-                  "amount": {
-                    "const": 1
-                  },
-                  "from": {
-                    "self_only": true
-                  },
-                  "objects": {
-                    "binding": "subject"
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_bolsterer",
-      "name": "Test Bolsterer",
-      "oracle_text": "When Test Bolsterer enters, bolster 2. (Choose a creature with the least toughness among creatures you control, then put two +1/+1 counters on it.)",
-      "mana_cost": "{2}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Soldier"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When Test Bolsterer enters, bolster 2.",
-          "trigger": {
-            "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "add_counters",
-              "counter": "+1/+1",
-              "amount": {
-                "const": 2
-              },
-              "objects": {
-                "controller": "you",
-                "types": [
-                  "Creature"
-                ],
-                "extreme": {
-                  "of": "toughness",
-                  "pick": "least"
-                },
-                "count": 1,
-                "chooser": "controller"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_mentor",
-      "name": "Test Mentor",
-      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Soldier"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Mentor",
-          "trigger": {
-            "event": "attacks",
-            "source": "self"
-          },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "selector": {
-                "controller": "you",
-                "types": [
-                  "Creature"
-                ],
-                "attacking": true,
-                "exclude_self": true,
-                "power": {
-                  "op": "<",
-                  "value": {
-                    "power_of": {
-                      "self": true
-                    }
-                  }
-                }
-              },
-              "optional": true
-            }
-          ],
-          "effects": [
-            {
-              "op": "add_counters",
-              "counter": "+1/+1",
-              "amount": {
-                "const": 1
-              },
-              "objects": {
-                "target": "t1"
               }
             }
           ]
@@ -2053,10 +1448,60 @@
       ]
     },
     {
-      "id": "t_unleashed",
-      "name": "Test Unleashed",
-      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
-      "mana_cost": "{1}{B}",
+      "id": "t_exerter",
+      "name": "Test Exerter",
+      "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exert Test Exerter?",
+              "effects": [
+                {
+                  "op": "skip_untap",
+                  "objects": {
+                    "self_only": true
+                  }
+                },
+                {
+                  "op": "pump",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_exploiter",
+      "name": "Test Exploiter",
+      "oracle_text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
+      "mana_cost": "{2}{B}",
       "types": [
         "Creature"
       ],
@@ -2065,81 +1510,136 @@
       ],
       "power": 2,
       "toughness": 2,
-      "replacements": [
-        {
-          "event": "self_enters_with_counters",
-          "counter": "+1/+1",
-          "amount": 1
-        }
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "It can't block as long as it has a +1/+1 counter on it.",
-          "effect": "cant_block",
-          "affects": {
-            "self_only": true
-          },
-          "condition": {
-            "counters": {
-              "counter": "+1/+1",
-              "amount": 1,
-              "op": ">="
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_persister",
-      "name": "Test Persister",
-      "oracle_text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Horror"
-      ],
-      "power": 3,
-      "toughness": 3,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Persist",
+          "text": "When Test Exploiter enters, you may sacrifice a creature. When you sacrifice a creature this way, draw a card.",
           "trigger": {
-            "event": "dies",
-            "source": "self",
-            "condition": {
-              "cmp": "=",
-              "left": {
-                "counters_had": "-1/-1"
-              },
-              "right": 0
-            }
+            "event": "self_enters",
+            "source": "self"
           },
           "effects": [
             {
-              "op": "return_from_graveyard",
-              "objects": {
-                "self_only": true
-              },
-              "destination": "battlefield",
-              "counters": {
-                "-1/-1": 1
-              }
+              "op": "may",
+              "prompt": "Exploit a creature?",
+              "effects": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1,
+                    "chooser": "controller"
+                  }
+                },
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
             }
           ]
         }
       ]
     },
     {
-      "id": "t_escapist",
-      "name": "Test Escapist",
-      "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
-      "mana_cost": "{2}{R}",
+      "id": "t_extra_land",
+      "name": "Test Explorer",
+      "oracle_text": "You may play an additional land on each of your turns.",
+      "mana_cost": "{2}{G}",
       "types": [
-        "Instant"
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns.",
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_fader",
+      "name": "Test Fader",
+      "oracle_text": "Fading 2 (This creature enters with two fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "fade",
+          "amount": 2
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "fade",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": 1
+              },
+              "then": [
+                {
+                  "op": "remove_counters",
+                  "counter": "fade",
+                  "amount": 1,
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_fateseal",
+      "name": "Test Fateseal",
+      "oracle_text": "Fateseal 1. (Look at the top card of target opponent's library. You may put that card on the bottom of that player's library.)",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
       ],
       "targets": [
         {
@@ -2147,232 +1647,50 @@
           "kind": "player"
         }
       ],
-      "graveyard_cost": {
-        "mana": "{1}{R}",
-        "exile_from_graveyard": {
-          "count": 2,
-          "exclude_self": true
-        }
-      },
-      "graveyard_cast": "graveyard",
       "spell_effects": [
         {
-          "op": "damage",
-          "target": "t1",
+          "op": "scry",
           "amount": {
-            "const": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_jumpstarter",
-      "name": "Test Jumpstarter",
-      "oracle_text": "Draw two cards.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Sorcery"
-      ],
-      "graveyard_cost": {
-        "mana": "{2}{U}",
-        "discard": 1
-      },
-      "spell_effects": [
-        {
-          "op": "draw",
-          "player": "you",
-          "amount": {
-            "const": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_provoker",
-      "name": "Test Provoker",
-      "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Provoke",
-          "trigger": {
-            "event": "attacks",
-            "source": "self"
+            "const": 1
           },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "permanent",
-              "selector": {
-                "controller": "opponent",
-                "types": [
-                  "Creature"
-                ]
-              },
-              "optional": true
-            }
-          ],
-          "effects": [
-            {
-              "op": "untap",
-              "objects": {
-                "target": "t1"
-              }
-            },
-            {
-              "op": "must_block",
-              "objects": {
-                "target": "t1"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_inspired",
-      "name": "Test Inspired",
-      "oracle_text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Rogue"
-      ],
-      "power": 1,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
-          "trigger": {
-            "event": "becomes_untapped",
-            "source": "self"
+          "player": {
+            "target": "t1"
           },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
+          "chooser": "you"
         }
       ]
     },
     {
-      "id": "t_rampager",
-      "name": "Test Rampager",
-      "oracle_text": "Rampage 2 (Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.)",
-      "mana_cost": "{3}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Rampage 2",
-          "trigger": {
-            "event": "becomes_blocked",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "pump",
-              "objects": {
-                "self_only": true
-              },
-              "power": {
-                "times": [
-                  {
-                    "const": 2
-                  },
-                  {
-                    "minus": [
-                      {
-                        "binding": "blockers"
-                      },
-                      {
-                        "const": 1
-                      }
-                    ]
-                  }
-                ]
-              },
-              "toughness": {
-                "times": [
-                  {
-                    "const": 2
-                  },
-                  {
-                    "minus": [
-                      {
-                        "binding": "blockers"
-                      },
-                      {
-                        "const": 1
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_frenzied",
-      "name": "Test Frenzied",
-      "oracle_text": "Frenzy 3 (Whenever this creature attacks and isn't blocked, it gets +3/+0 until end of turn.)",
+      "id": "t_fearsome",
+      "name": "Test Fearsome",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
       "mana_cost": "{2}{B}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Zombie"
+        "Horror"
       ],
       "power": 2,
       "toughness": 2,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Frenzy 3",
-          "trigger": {
-            "event": "attacks_unblocked",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "pump",
-              "objects": {
-                "self_only": true
-              },
-              "power": {
-                "const": 3
-              },
-              "toughness": {
-                "const": 0
-              }
-            }
-          ]
-        }
+      "keywords": [
+        "fear"
+      ]
+    },
+    {
+      "id": "t_first_striker",
+      "name": "Test First Striker",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "first_strike"
       ]
     },
     {
@@ -2416,6 +1734,223 @@
       ]
     },
     {
+      "id": "t_flier",
+      "name": "Test Flier",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_flyer",
+      "name": "Test Flyer",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_flying_artifact",
+      "name": "Test Flying Artifact",
+      "oracle_text": "Flying",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_flying_granter",
+      "name": "Test Flying Granter",
+      "oracle_text": "Creatures you control have flying.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have flying.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "flying"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_frenzied",
+      "name": "Test Frenzied",
+      "oracle_text": "Frenzy 3 (Whenever this creature attacks and isn't blocked, it gets +3/+0 until end of turn.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Frenzy 3",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_goading_banner",
+      "name": "Test Goading Banner",
+      "oracle_text": "Creatures your opponents control attack each combat if able.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control attack each combat if able.",
+          "effect": "attacks_if_able",
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_goblin",
+      "name": "Test Goblin",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_grafter",
+      "name": "Test Grafter",
+      "oracle_text": "Graft 2 (This creature enters with two +1/+1 counters on it. Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Plant"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 2
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Move a +1/+1 counter?",
+              "effects": [
+                {
+                  "op": "move_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  },
+                  "from": {
+                    "self_only": true
+                  },
+                  "objects": {
+                    "binding": "subject"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_hasty",
+      "name": "Test Hasty",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
       "id": "t_hero",
       "name": "Test Hero",
       "oracle_text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
@@ -2454,144 +1989,99 @@
       ]
     },
     {
-      "id": "t_warded",
-      "name": "Test Warded",
-      "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)",
+      "id": "t_hexproof",
+      "name": "Test Hexproof",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    {
+      "id": "t_horseman",
+      "name": "Test Horseman",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "horsemanship"
+      ]
+    },
+    {
+      "id": "t_horsemanship_granter",
+      "name": "Test Horsemanship Granter",
+      "oracle_text": "Creatures you control have horsemanship.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have horsemanship.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "horsemanship"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_indestructible",
+      "name": "Test Indestructible",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    {
+      "id": "t_inspired",
+      "name": "Test Inspired",
+      "oracle_text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
       "mana_cost": "{2}{U}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Merfolk"
+        "Rogue"
       ],
-      "power": 2,
+      "power": 1,
       "toughness": 3,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Ward {2}",
+          "text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
           "trigger": {
-            "event": "becomes_target",
-            "source": "self",
-            "controller": "opponent"
-          },
-          "effects": [
-            {
-              "op": "may",
-              "player": {
-                "binding": "event_player"
-              },
-              "prompt": "Pay {2} for ward?",
-              "pay": {
-                "mana": "{2}"
-              },
-              "else": [
-                {
-                  "op": "counter",
-                  "sid": {
-                    "binding": "sid"
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_enrager",
-      "name": "Test Enrager",
-      "oracle_text": "Whenever Test Enrager is dealt damage, put a +1/+1 counter on it.",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Dinosaur"
-      ],
-      "power": 3,
-      "toughness": 4,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever Test Enrager is dealt damage, put a +1/+1 counter on it.",
-          "trigger": {
-            "event": "dealt_damage",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "add_counters",
-              "counter": "+1/+1",
-              "objects": {
-                "self_only": true
-              },
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_avenger",
-      "name": "Test Avenger",
-      "oracle_text": "Whenever Test Avenger is dealt damage, it deals that much damage to any target.",
-      "mana_cost": "{3}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Dinosaur"
-      ],
-      "power": 4,
-      "toughness": 4,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever Test Avenger is dealt damage, it deals that much damage to target player.",
-          "trigger": {
-            "event": "dealt_damage",
-            "source": "self"
-          },
-          "targets": [
-            {
-              "id": "t1",
-              "kind": "player"
-            }
-          ],
-          "effects": [
-            {
-              "op": "damage",
-              "target": "t1",
-              "amount": {
-                "binding": "amount"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_any_counter_watcher",
-      "name": "Test Any Counter Watcher",
-      "oracle_text": "Whenever a counter is put on this creature, draw a card.",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Wizard"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever a counter is put on this creature, draw a card.",
-          "trigger": {
-            "event": "counter_placed",
+            "event": "becomes_untapped",
             "source": "self"
           },
           "effects": [
@@ -2607,338 +2097,127 @@
       ]
     },
     {
-      "id": "t_shroud_granter",
-      "name": "Test Shroud Granter",
-      "oracle_text": "Creatures you control have shroud.",
-      "mana_cost": "{2}{U}",
+      "id": "t_intimidator",
+      "name": "Test Intimidator",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)",
+      "mana_cost": "{2}{R}",
       "types": [
-        "Enchantment"
+        "Creature"
       ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    {
+      "id": "t_island_flier",
+      "name": "Test Island Flier",
+      "oracle_text": "Test Island Flier has flying as long as you control an Island.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 3,
       "abilities": [
         {
           "kind": "static",
-          "text": "Creatures you control have shroud.",
+          "text": "Test Island Flier has flying as long as you control an Island.",
           "effect": "grant_keyword",
           "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ]
+            "self_only": true
           },
           "keywords": [
-            "shroud"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_wall",
-      "name": "Test Wall",
-      "mana_cost": "{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Wall"
-      ],
-      "power": 0,
-      "toughness": 4,
-      "keywords": [
-        "defender"
-      ]
-    },
-    {
-      "id": "t_big",
-      "name": "Test Giant",
-      "mana_cost": "{5}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Giant"
-      ],
-      "power": 6,
-      "toughness": 6
-    },
-    {
-      "id": "t_dork",
-      "name": "Test Dork",
-      "mana_cost": "{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Elf",
-        "Druid"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{T}: Add {G}.",
-          "is_mana_ability": true,
-          "cost": {
-            "tap": true
-          },
-          "effects": [
-            {
-              "op": "add_mana",
-              "mana": "{G}"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_dual_land",
-      "name": "Test Dual",
-      "types": [
-        "Land"
-      ],
-      "color_identity": [
-        "G",
-        "U"
-      ],
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{T}: Add {G} or {U}.",
-          "is_mana_ability": true,
-          "cost": {
-            "tap": true
-          },
-          "effects": [
-            {
-              "op": "choose_mode",
-              "count": 1,
-              "modes": [
-                {
-                  "label": "Green",
-                  "effects": [
-                    {
-                      "op": "add_mana",
-                      "mana": "{G}"
-                    }
-                  ]
-                },
-                {
-                  "label": "Blue",
-                  "effects": [
-                    {
-                      "op": "add_mana",
-                      "mana": "{U}"
-                    }
-                  ]
-                }
+            "flying"
+          ],
+          "condition": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Island"
               ]
             }
-          ]
+          }
         }
       ]
     },
     {
-      "id": "t_bounce_land",
-      "name": "Test Bounce Land",
-      "oracle_text": "Test Bounce Land enters tapped. When it enters, return a land you control to its owner's hand. {T}: Add {G}{U}.",
+      "id": "t_islandwalker",
+      "name": "Test Islandwalker",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)",
+      "mana_cost": "{2}{U}",
       "types": [
-        "Land"
+        "Creature"
       ],
-      "color_identity": [
-        "G",
-        "U"
+      "subtypes": [
+        "Merfolk"
       ],
-      "replacements": [
-        {
-          "event": "self_enters_tapped"
-        }
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "islandwalk"
+      ]
+    },
+    {
+      "id": "t_judge",
+      "name": "Test Judge",
+      "oracle_text": "Whenever a creature attacks you, draw a card. (Isperia's shape.)",
+      "mana_cost": "{2}{W}{U}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 3,
+      "toughness": 5,
+      "keywords": [
+        "flying"
       ],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, return a land you control to its owner's hand.",
+          "text": "Whenever a creature attacks you, draw a card.",
           "trigger": {
-            "event": "self_enters",
-            "source": "self"
+            "event": "attacks",
+            "controller": "any",
+            "defending": "you"
           },
           "effects": [
             {
-              "op": "return_to_hand",
-              "objects": {
-                "zone": "battlefield",
-                "controller": "you",
-                "types": [
-                  "Land"
-                ],
-                "count": 1,
-                "chooser": "controller"
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
               }
             }
           ]
-        },
-        {
-          "kind": "activated",
-          "text": "{T}: Add {G}{U}.",
-          "is_mana_ability": true,
-          "cost": {
-            "tap": true
-          },
-          "effects": [
-            {
-              "op": "add_mana",
-              "mana": "{G}"
-            },
-            {
-              "op": "add_mana",
-              "mana": "{U}"
-            }
-          ]
         }
       ]
     },
     {
-      "id": "t_counterspell",
-      "name": "Test Counterspell",
-      "oracle_text": "Counter target spell.",
-      "mana_cost": "{U}{U}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "spell",
-          "selector": {},
-          "count": 1
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "counter",
-          "target": "t1"
-        }
-      ]
-    },
-    {
-      "id": "t_removal",
-      "name": "Test Removal",
-      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
-      "mana_cost": "{W}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "permanent",
-          "selector": {
-            "zone": "battlefield",
-            "types": [
-              "Creature"
-            ]
-          },
-          "count": 1
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "snapshot",
-          "target": "t1",
-          "as": "victim"
-        },
-        {
-          "op": "exile",
-          "objects": {
-            "target": "t1"
-          }
-        },
-        {
-          "op": "gain_life",
-          "player": {
-            "controller_of": "victim"
-          },
-          "amount": {
-            "power_of": {
-              "var": "victim"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_bolt",
-      "name": "Test Bolt",
-      "oracle_text": "Test Bolt deals 3 damage to any target.",
-      "mana_cost": "{R}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "any",
-          "selector": {
-            "types": [
-              "Creature"
-            ]
-          },
-          "count": 1
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "damage",
-          "target": "t1",
-          "amount": {
-            "const": 3
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_pump_spell",
-      "name": "Test Pump",
-      "oracle_text": "Target creature gets +3/+3 until end of turn.",
-      "mana_cost": "{G}",
-      "types": [
-        "Instant"
-      ],
-      "targets": [
-        {
-          "id": "t1",
-          "kind": "permanent",
-          "selector": {
-            "zone": "battlefield",
-            "types": [
-              "Creature"
-            ]
-          },
-          "count": 1
-        }
-      ],
-      "spell_effects": [
-        {
-          "op": "pump",
-          "objects": {
-            "target": "t1"
-          },
-          "power": {
-            "const": 3
-          },
-          "toughness": {
-            "const": 3
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_draw_spell",
-      "name": "Test Divination",
-      "oracle_text": "Draw two cards.",
+      "id": "t_jumpstarter",
+      "name": "Test Jumpstarter",
+      "oracle_text": "Draw two cards.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)",
       "mana_cost": "{2}{U}",
       "types": [
         "Sorcery"
       ],
+      "graveyard_cost": {
+        "mana": "{2}{U}",
+        "discard": 1
+      },
       "spell_effects": [
         {
           "op": "draw",
@@ -2950,152 +2229,35 @@
       ]
     },
     {
-      "id": "t_anthem",
-      "name": "Test Anthem",
-      "oracle_text": "Creatures you control get +1/+1.",
-      "mana_cost": "{1}{W}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Creatures you control get +1/+1.",
-          "effect": "buff",
-          "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ]
-          },
-          "power": {
-            "const": 1
-          },
-          "toughness": {
-            "const": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_lord",
-      "name": "Test Lord",
-      "oracle_text": "Other Bears you control get +1/+1.",
-      "mana_cost": "{1}{G}",
+      "id": "t_kicker_creature",
+      "name": "Test Kicker Creature",
+      "oracle_text": "Kicker {2}\nWhen this creature enters, if it was kicked, you gain 5 life.",
+      "mana_cost": "{2}{U}",
+      "kicker": "{2}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Bear"
+        "Leviathan"
       ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Other Bears you control get +1/+1.",
-          "effect": "buff",
-          "affects": {
-            "controller": "you",
-            "subtypes": [
-              "Bear"
-            ],
-            "exclude_self": true
-          },
-          "power": {
-            "const": 1
-          },
-          "toughness": {
-            "const": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_flying_granter",
-      "name": "Test Flying Granter",
-      "oracle_text": "Creatures you control have flying.",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Creatures you control have flying.",
-          "effect": "grant_keyword",
-          "affects": {
-            "controller": "you",
-            "types": [
-              "Creature"
-            ]
-          },
-          "keywords": [
-            "flying"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_etb_draw",
-      "name": "Test ETB Draw",
-      "oracle_text": "When Test ETB Draw enters, draw a card.",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Scout"
-      ],
-      "power": 1,
-      "toughness": 1,
+      "power": 3,
+      "toughness": 3,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "When this enters, draw a card.",
+          "text": "When this creature enters, if it was kicked, you gain 5 life.",
           "trigger": {
             "event": "self_enters",
-            "source": "self"
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
+            "condition": {
+              "kicked": true
             }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_dies_gain",
-      "name": "Test Dies Gain",
-      "oracle_text": "When Test Dies Gain dies, you gain 2 life.",
-      "mana_cost": "{1}{B}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Zombie"
-      ],
-      "power": 2,
-      "toughness": 1,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "When this dies, you gain 2 life.",
-          "trigger": {
-            "event": "dies",
-            "source": "self"
           },
           "effects": [
             {
               "op": "gain_life",
               "player": "you",
               "amount": {
-                "const": 2
+                "const": 5
               }
             }
           ]
@@ -3103,19 +2265,24 @@
       ]
     },
     {
-      "id": "t_upkeep_draw",
-      "name": "Test Upkeep Draw",
-      "oracle_text": "At the beginning of your upkeep, draw a card.",
-      "mana_cost": "{2}{U}",
+      "id": "t_land_draw",
+      "name": "Test Land Draw",
+      "oracle_text": "Whenever you play a land, draw a card.",
+      "mana_cost": "{3}{U}",
       "types": [
-        "Enchantment"
+        "Creature"
       ],
+      "subtypes": [
+        "Serpent"
+      ],
+      "power": 3,
+      "toughness": 3,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "At the beginning of your upkeep, draw a card.",
+          "text": "Whenever you play a land, draw a card.",
           "trigger": {
-            "event": "upkeep",
+            "event": "land_played",
             "controller": "you"
           },
           "effects": [
@@ -3173,59 +2340,6 @@
       ]
     },
     {
-      "id": "t_land_draw",
-      "name": "Test Land Draw",
-      "oracle_text": "Whenever you play a land, draw a card.",
-      "mana_cost": "{3}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Serpent"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever you play a land, draw a card.",
-          "trigger": {
-            "event": "land_played",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_extra_land",
-      "name": "Test Explorer",
-      "oracle_text": "You may play an additional land on each of your turns.",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "You may play an additional land on each of your turns.",
-          "effect": "extra_land_drops",
-          "affects_player": "you",
-          "amount": {
-            "const": 1
-          }
-        }
-      ]
-    },
-    {
       "id": "t_legend",
       "name": "Test Legend",
       "mana_cost": "{1}{W}",
@@ -3242,150 +2356,129 @@
       "toughness": 2
     },
     {
-      "id": "t_sac_outlet",
-      "name": "Test Sac Outlet",
-      "oracle_text": "Sacrifice a creature: You gain 1 life.",
-      "mana_cost": "{1}{B}",
+      "id": "t_lifelinker",
+      "name": "Test Lifelinker",
+      "mana_cost": "{1}{W}",
       "types": [
-        "Enchantment"
+        "Creature"
       ],
+      "subtypes": [
+        "Cleric"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    {
+      "id": "t_lord",
+      "name": "Test Lord",
+      "oracle_text": "Other Bears you control get +1/+1.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
       "abilities": [
         {
-          "kind": "activated",
-          "text": "Sacrifice a creature: You gain 1 life.",
-          "cost": {
-            "sacrifice": {
-              "zone": "battlefield",
-              "controller": "you",
-              "types": [
-                "Creature"
-              ],
-              "count": 1
-            }
+          "kind": "static",
+          "text": "Other Bears you control get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Bear"
+            ],
+            "exclude_self": true
           },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
         }
       ]
     },
     {
-      "id": "t_commander",
-      "name": "Test Commander",
-      "mana_cost": "{2}{G}{U}",
-      "supertypes": [
-        "Legendary"
-      ],
+      "id": "t_menacer",
+      "name": "Test Menacer",
+      "mana_cost": "{2}{R}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Serpent"
+        "Ogre"
       ],
-      "power": 4,
-      "toughness": 4,
+      "power": 3,
+      "toughness": 3,
       "keywords": [
-        "trample"
+        "menace"
       ]
     },
     {
-      "id": "t_x_spell",
-      "name": "Test Hydra",
-      "oracle_text": "Test Hydra enters with X +1/+1 counters on it.",
-      "mana_cost": "{X}{G}",
+      "id": "t_mentor",
+      "name": "Test Mentor",
+      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)",
+      "mana_cost": "{2}{R}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Hydra"
+        "Soldier"
       ],
-      "power": 0,
-      "toughness": 1,
+      "power": 3,
+      "toughness": 3,
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Enters with X +1/+1 counters.",
+          "text": "Mentor",
           "trigger": {
-            "event": "self_enters",
+            "event": "attacks",
             "source": "self"
           },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "attacking": true,
+                "exclude_self": true,
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                }
+              },
+              "optional": true
+            }
+          ],
           "effects": [
             {
               "op": "add_counters",
               "counter": "+1/+1",
               "amount": {
-                "x": true
+                "const": 1
               },
               "objects": {
-                "zone": "battlefield",
-                "self_only": true
+                "target": "t1"
               }
             }
           ]
         }
       ]
-    },
-    {
-      "id": "t_judge",
-      "name": "Test Judge",
-      "oracle_text": "Whenever a creature attacks you, draw a card. (Isperia's shape.)",
-      "mana_cost": "{2}{W}{U}",
-      "supertypes": [
-        "Legendary"
-      ],
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Sphinx"
-      ],
-      "power": 3,
-      "toughness": 5,
-      "keywords": [
-        "flying"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever a creature attacks you, draw a card.",
-          "trigger": {
-            "event": "attacks",
-            "controller": "any",
-            "defending": "you"
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_warrior_token",
-      "name": "Warrior Token",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Warrior"
-      ],
-      "colors": [
-        "R"
-      ],
-      "power": 1,
-      "toughness": 1,
-      "is_token": true
     },
     {
       "id": "t_mobilizer",
@@ -3425,354 +2518,56 @@
       ]
     },
     {
-      "id": "t_stormrender",
-      "name": "Test Stormrender",
-      "oracle_text": "Whenever a creature token you control leaves the battlefield, draw a card if it was attacking. Otherwise, each opponent loses 1 life. (Zurgo shape.)",
-      "mana_cost": "{R}{W}{B}",
-      "supertypes": [
-        "Legendary"
-      ],
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Orc",
-        "Warrior"
-      ],
-      "power": 3,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Token leaves: draw if it was attacking, else drain.",
-          "trigger": {
-            "event": "leaves_battlefield",
-            "controller": "you",
-            "filter": {
-              "types": [
-                "Creature"
-              ],
-              "is_token": true
-            }
-          },
-          "effects": [
-            {
-              "op": "if",
-              "condition": {
-                "cmp": ">=",
-                "left": {
-                  "binding": "was_attacking"
-                },
-                "right": {
-                  "const": 1
-                }
-              },
-              "then": [
-                {
-                  "op": "draw",
-                  "player": "you",
-                  "amount": {
-                    "const": 1
-                  }
-                }
-              ],
-              "else": [
-                {
-                  "op": "lose_life",
-                  "player": "each_opponent",
-                  "amount": {
-                    "const": 1
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_cycler",
-      "name": "Test Cycler",
-      "oracle_text": "Cycling {2} ({2}, Discard this card: Draw a card.)",
-      "mana_cost": "{4}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 5,
-      "toughness": 5,
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)",
-          "active_zones": [
-            "hand"
-          ],
-          "cost": {
-            "mana": "{2}",
-            "discard_self": true
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_threshold_bear",
-      "name": "Test Threshold Bear",
-      "oracle_text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bear"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
-          "effect": "buff",
-          "affects": {
-            "self_only": true
-          },
-          "power": {
-            "const": 2
-          },
-          "toughness": {
-            "const": 2
-          },
-          "condition": {
-            "cmp": ">=",
-            "left": {
-              "count": {
-                "zone": "graveyard",
-                "controller": "you"
-              }
-            },
-            "right": {
-              "const": 7
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_island_flier",
-      "name": "Test Island Flier",
-      "oracle_text": "Test Island Flier has flying as long as you control an Island.",
-      "mana_cost": "{1}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bird"
-      ],
-      "power": 1,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Test Island Flier has flying as long as you control an Island.",
-          "effect": "grant_keyword",
-          "affects": {
-            "self_only": true
-          },
-          "keywords": [
-            "flying"
-          ],
-          "condition": {
-            "exists": {
-              "zone": "battlefield",
-              "controller": "you",
-              "subtypes": [
-                "Island"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_defensive_wall",
-      "name": "Test Defensive Wall",
-      "oracle_text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
-      "mana_cost": "{2}{W}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Wall"
-      ],
-      "power": 0,
-      "toughness": 4,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "Test Defensive Wall gets +0/+3 as long as it's not your turn and no creature card is in an opponent's graveyard.",
-          "effect": "buff",
-          "affects": {
-            "self_only": true
-          },
-          "power": {
-            "const": 0
-          },
-          "toughness": {
-            "const": 3
-          },
-          "condition": {
-            "all": [
-              {
-                "is_your_turn": false
-              },
-              {
-                "not": {
-                  "exists": {
-                    "zone": "graveyard",
-                    "controller": "opponent",
-                    "types": [
-                      "Creature"
-                    ]
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_compelled_beast",
-      "name": "Test Compelled Beast",
-      "oracle_text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
-      "mana_cost": "{2}{R}{R}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Beast"
-      ],
-      "power": 5,
-      "toughness": 3,
-      "abilities": [
-        {
-          "kind": "static",
-          "text": "This creature attacks each combat if able unless you control a creature named Advocate of the Beast.",
-          "effect": "attacks_if_able",
-          "affects": {
-            "self_only": true
-          },
-          "condition": {
-            "not": {
-              "exists": {
-                "controller": "you",
-                "types": [
-                  "Creature"
-                ],
-                "name": "Advocate of the Beast"
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "t_flier",
-      "name": "Test Flier",
-      "mana_cost": "{2}{U}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Bird"
-      ],
-      "power": 2,
-      "toughness": 2,
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "t_flying_artifact",
-      "name": "Test Flying Artifact",
-      "oracle_text": "Flying",
-      "mana_cost": "{2}",
-      "types": [
-        "Artifact"
-      ],
-      "keywords": [
-        "flying"
-      ]
-    },
-    {
-      "id": "t_advocate_of_the_beast",
-      "name": "Advocate of the Beast",
-      "mana_cost": "{2}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Elf",
-        "Shaman"
-      ],
-      "power": 2,
-      "toughness": 3
-    },
-    {
-      "id": "t_goading_banner",
-      "name": "Test Goading Banner",
-      "oracle_text": "Creatures your opponents control attack each combat if able.",
+      "id": "t_modular",
+      "name": "Test Modular",
+      "oracle_text": "Modular 3 (This creature enters with three +1/+1 counters on it. When it dies, put its +1/+1 counters on target artifact creature.)",
       "mana_cost": "{3}",
       "types": [
-        "Artifact"
+        "Artifact",
+        "Creature"
       ],
-      "abilities": [
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
         {
-          "kind": "static",
-          "text": "Creatures your opponents control attack each combat if able.",
-          "effect": "attacks_if_able",
-          "affects": {
-            "controller": "opponent",
-            "types": [
-              "Creature"
-            ]
-          }
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 3
         }
-      ]
-    },
-    {
-      "id": "t_discard_watcher",
-      "name": "Test Discard Watcher",
-      "oracle_text": "Whenever an opponent discards a card, you gain 3 life.",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Enchantment"
       ],
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Whenever an opponent discards a card, you gain 3 life.",
+          "text": "When it dies, put its +1/+1 counters on target artifact creature.",
           "trigger": {
-            "event": "discard",
-            "controller": "opponent"
+            "event": "dies",
+            "source": "self"
           },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ]
+              }
+            }
+          ],
           "effects": [
             {
-              "op": "gain_life",
-              "player": "you",
+              "op": "move_counters",
+              "counter": "+1/+1",
               "amount": {
-                "const": 3
+                "counters_had": "+1/+1"
+              },
+              "objects": {
+                "target": "t1"
               }
             }
           ]
@@ -3780,142 +2575,31 @@
       ]
     },
     {
-      "id": "t_own_discard_watcher",
-      "name": "Test Own Discard Watcher",
-      "oracle_text": "Whenever you discard a card, you gain 3 life.",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever you discard a card, you gain 3 life.",
-          "trigger": {
-            "event": "discard",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 3
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_creature_discard_watcher",
-      "name": "Test Creature Discard Watcher",
-      "oracle_text": "Whenever an opponent discards a creature card, you gain 3 life.",
-      "mana_cost": "{2}{B}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever an opponent discards a creature card, you gain 3 life.",
-          "trigger": {
-            "event": "discard",
-            "controller": "opponent",
-            "filter": {
-              "controller": "any",
-              "types": [
-                "Creature"
-              ]
-            }
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 3
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_tapper",
-      "name": "Test Tapper",
-      "oracle_text": "Tap two untapped Bears you control: Draw a card.",
-      "mana_cost": "{2}{B}",
+      "id": "t_no_bears",
+      "name": "Test No Bears",
+      "oracle_text": "This creature can't be blocked by Bears.",
+      "mana_cost": "{1}{R}",
       "types": [
         "Creature"
       ],
       "subtypes": [
-        "Vampire"
+        "Goblin"
       ],
       "power": 2,
       "toughness": 2,
       "abilities": [
         {
-          "kind": "activated",
-          "text": "Tap two untapped Bears you control: Draw a card.",
-          "cost": {
-            "tap_permanents": {
-              "subtypes": [
-                "Bear"
-              ],
-              "count": 2
-            }
+          "kind": "static",
+          "text": "This creature can't be blocked by Bears.",
+          "effect": "block_restriction",
+          "affects": {
+            "self_only": true
           },
-          "effects": [
-            {
-              "op": "draw",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_animosity",
-      "name": "Test Animosity",
-      "oracle_text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
-      "mana_cost": "{2}{R}",
-      "types": [
-        "Enchantment"
-      ],
-      "abilities": [
-        {
-          "kind": "triggered",
-          "text": "Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it.",
-          "trigger": {
-            "event": "attacks",
-            "controller": "you"
-          },
-          "effects": [
-            {
-              "op": "pump",
-              "objects": {
-                "binding": "subject"
-              },
-              "power": {
-                "count": {
-                  "zone": "battlefield",
-                  "types": [
-                    "Creature"
-                  ],
-                  "attacking": true,
-                  "shares_a_type_with": "subject",
-                  "exclude_binding": "subject"
-                }
-              },
-              "toughness": {
-                "const": 0
-              }
-            }
-          ]
+          "blockers": {
+            "subtypes": [
+              "Bear"
+            ]
+          }
         }
       ]
     },
@@ -3990,6 +2674,1394 @@
           },
           "keywords": [
             "flying"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nonbasic_walker",
+      "name": "Test Nonbasic Walker",
+      "oracle_text": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dryad"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "nonbasic_landwalk"
+      ]
+    },
+    {
+      "id": "t_offering",
+      "name": "Test Offering",
+      "oracle_text": "Goblin offering (You may cast this card any time you could cast an instant by sacrificing a Goblin and paying the difference in mana costs between this and the sacrificed Goblin.)",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flash"
+      ],
+      "emerge": "{4}{R}",
+      "emerge_subtype": "Goblin"
+    },
+    {
+      "id": "t_own_discard_watcher",
+      "name": "Test Own Discard Watcher",
+      "oracle_text": "Whenever you discard a card, you gain 3 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you gain 3 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_persister",
+      "name": "Test Persister",
+      "oracle_text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Persist",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": 0
+            }
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "objects": {
+                "self_only": true
+              },
+              "destination": "battlefield",
+              "counters": {
+                "-1/-1": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_poisonous",
+      "name": "Test Poisonous",
+      "oracle_text": "Poisonous 2 (Whenever this creature deals combat damage to a player, that player gets two poison counters.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Poisonous 2",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_poison",
+              "player": {
+                "binding": "event_player"
+              },
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_proliferator",
+      "name": "Test Proliferator",
+      "oracle_text": "Proliferate.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "proliferate"
+        }
+      ]
+    },
+    {
+      "id": "t_provoker",
+      "name": "Test Provoker",
+      "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it this combat if able.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Provoke",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "op": "untap",
+              "objects": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "must_block",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pump_spell",
+      "name": "Test Pump",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "mana_cost": "{G}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": {
+            "target": "t1"
+          },
+          "power": {
+            "const": 3
+          },
+          "toughness": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_rampager",
+      "name": "Test Rampager",
+      "oracle_text": "Rampage 2 (Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.)",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Rampage 2",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true
+              },
+              "power": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "minus": [
+                      {
+                        "binding": "blockers"
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "minus": [
+                      {
+                        "binding": "blockers"
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_reacher",
+      "name": "Test Reacher",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spider"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "keywords": [
+        "reach"
+      ]
+    },
+    {
+      "id": "t_removal",
+      "name": "Test Removal",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "snapshot",
+          "target": "t1",
+          "as": "victim"
+        },
+        {
+          "op": "exile",
+          "objects": {
+            "target": "t1"
+          }
+        },
+        {
+          "op": "gain_life",
+          "player": {
+            "controller_of": "victim"
+          },
+          "amount": {
+            "power_of": {
+              "var": "victim"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_renowned",
+      "name": "Test Renowned",
+      "oracle_text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Renown 2",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self",
+            "condition": {
+              "not": {
+                "has_flag": "renowned"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "self_only": true
+              }
+            },
+            {
+              "op": "set_flag",
+              "flag": "renowned"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rioter",
+      "name": "Test Rioter",
+      "oracle_text": "Riot (This creature enters with a +1/+1 counter on it or with haste.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Riot",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "A +1/+1 counter",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 1
+                      },
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Haste",
+                  "effects": [
+                    {
+                      "op": "grant_keyword",
+                      "keyword": "haste",
+                      "duration": "permanent",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sac_outlet",
+      "name": "Test Sac Outlet",
+      "oracle_text": "Sacrifice a creature: You gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: You gain 1 life.",
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_scythe",
+      "name": "Test Scythe Cat",
+      "oracle_text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "then": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  },
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_shadow_lurker",
+      "name": "Test Shadow Lurker",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "shadow"
+      ]
+    },
+    {
+      "id": "t_shroud_granter",
+      "name": "Test Shroud Granter",
+      "oracle_text": "Creatures you control have shroud.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have shroud.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "shroud"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_shrouded",
+      "name": "Test Shrouded",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Serpent"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "shroud"
+      ]
+    },
+    {
+      "id": "t_skulk_granter",
+      "name": "Test Skulk Granter",
+      "oracle_text": "Creatures you control have skulk.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have skulk.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "skulk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_skulker",
+      "name": "Test Skulker",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)",
+      "mana_cost": "{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "skulk"
+      ]
+    },
+    {
+      "id": "t_spectacle",
+      "name": "Test Spectacle",
+      "oracle_text": "Test Spectacle deals 2 damage to target player.\nSpectacle {R} (You may cast this spell for its spectacle cost if an opponent lost life this turn.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "alternative_cost": {
+        "mana": "{R}",
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": 1
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_split_second",
+      "name": "Test Split Second",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nDestroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Instant"
+      ],
+      "split_second": true,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_stack_trigger",
+      "name": "Test Stack Trigger",
+      "oracle_text": "Whenever you cast a Bear spell, create a 1/1 Vampire token. (Works from the command zone.)",
+      "mana_cost": "{2}{B}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a Bear spell, create a 1/1 Vampire.",
+          "active_zones": [
+            "battlefield",
+            "command"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Bear"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "vampire_1_1_bw",
+              "amount": {
+                "const": 1
+              },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_stormbolt",
+      "name": "Test Stormbolt",
+      "oracle_text": "Test Stormbolt deals 1 damage to target player.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Storm",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_stormrender",
+      "name": "Test Stormrender",
+      "oracle_text": "Whenever a creature token you control leaves the battlefield, draw a card if it was attacking. Otherwise, each opponent loses 1 life. (Zurgo shape.)",
+      "mana_cost": "{R}{W}{B}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Orc",
+        "Warrior"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Token leaves: draw if it was attacking, else drain.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "is_token": true
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "binding": "was_attacking"
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "then": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_life",
+                  "player": "each_opponent",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sundial",
+      "name": "Test Sundial",
+      "oracle_text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Landfall - Whenever a land you control enters, you may pay {2}. If you do, draw a card.",
+          "trigger": {
+            "event": "land_played",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tapper",
+      "name": "Test Tapper",
+      "oracle_text": "Tap two untapped Bears you control: Draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Tap two untapped Bears you control: Draw a card.",
+          "cost": {
+            "tap_permanents": {
+              "subtypes": [
+                "Bear"
+              ],
+              "count": 2
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_threshold_bear",
+      "name": "Test Threshold Bear",
+      "oracle_text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "zone": "graveyard",
+                "controller": "you"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_tide_lock",
+      "name": "Test Tide Lock",
+      "oracle_text": "All lands are Islands in addition to their other types.\nCreatures without flying or islandwalk can't attack.",
+      "mana_cost": "{5}{U}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Leviathan"
+      ],
+      "power": 8,
+      "toughness": 8,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All lands are Islands in addition to their other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "subtypes": [
+            "Island"
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Creatures without flying or islandwalk can't attack.",
+          "effect": "cant_attack",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "not_keywords": [
+              "flying",
+              "islandwalk"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_trampler",
+      "name": "Test Trampler",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
+      "id": "t_tributer",
+      "name": "Test Tributer",
+      "oracle_text": "Tribute 2 (As this creature enters, an opponent of your choice may place two +1/+1 counters on it.)\nWhen Test Tributer enters, if tribute wasn't paid, each opponent loses 3 life.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Tribute 2. When this enters, if tribute wasn't paid, each opponent loses 3 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "opponent",
+              "prompt": "Pay tribute (two +1/+1 counters)?",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_life",
+                  "player": "each_opponent",
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tromokratis",
+      "name": "Test Unblockable Unless All",
+      "oracle_text": "This creature can't be blocked unless all creatures defending player controls block it.",
+      "mana_cost": "{5}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kraken"
+      ],
+      "power": 8,
+      "toughness": 8,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked unless all creatures defending player controls block it.",
+          "effect": "block_restriction",
+          "affects": {
+            "self_only": true
+          },
+          "require_all": true
+        }
+      ]
+    },
+    {
+      "id": "t_unleashed",
+      "name": "Test Unleashed",
+      "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 1
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "It can't block as long as it has a +1/+1 counter on it.",
+          "effect": "cant_block",
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "counters": {
+              "counter": "+1/+1",
+              "amount": 1,
+              "op": ">="
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_upkeep_draw",
+      "name": "Test Upkeep Draw",
+      "oracle_text": "At the beginning of your upkeep, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, draw a card.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vigil_liege",
+      "name": "Test Vigil Liege",
+      "oracle_text": "Untap all green creatures you control during each other player's untap step.",
+      "mana_cost": "{2}{G}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Untap all green creatures you control during each other player's untap step.",
+          "effect": "untap_during_each_untap_step",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "colors": [
+              "G"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_vigilant",
+      "name": "Test Vigilant",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    {
+      "id": "t_wall",
+      "name": "Test Wall",
+      "mana_cost": "{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "keywords": [
+        "defender"
+      ]
+    },
+    {
+      "id": "t_warded",
+      "name": "Test Warded",
+      "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Ward {2}",
+          "trigger": {
+            "event": "becomes_target",
+            "source": "self",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay {2} for ward?",
+              "pay": {
+                "mana": "{2}"
+              },
+              "else": [
+                {
+                  "op": "counter",
+                  "sid": {
+                    "binding": "sid"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_warrior_token",
+      "name": "Warrior Token",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warrior"
+      ],
+      "colors": [
+        "R"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "is_token": true
+    },
+    {
+      "id": "t_x_spell",
+      "name": "Test Hydra",
+      "oracle_text": "Test Hydra enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hydra"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Enters with X +1/+1 counters.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "x": true
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
           ]
         }
       ]

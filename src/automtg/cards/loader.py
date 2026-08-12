@@ -23,6 +23,7 @@ from typing import Any
 from automtg.engine.carddef import Ability, CardDef, Cost, TargetSpec, TriggerSpec, build_type_line
 from automtg.engine.effects import known_ops
 from automtg.engine.effects.conditions import validate_condition
+from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import validate_selector
 from automtg.engine.effects.values import validate_value
 from automtg.engine.enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
@@ -1129,6 +1130,47 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         if not effect.get("effects") and not effect.get("else"):
             raise DslError(
                 f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
+            )
+    if op == "look_at_hand" and "player" not in effect:
+        # Whose hand is the whole ability. Defaulted, Glasses of Urza would
+        # silently pick a player instead of targeting one.
+        raise DslError(f"{where}: look_at_hand needs a 'player' -- whose hand")
+    if op == "search_zones":
+        zones = effect.get("zones")
+        # A missing or single-zone list is `search_library` spelled the long way,
+        # and the whole point of this op is that the count is over the *union*.
+        if not isinstance(zones, (list, tuple)) or len(zones) < 2:
+            raise DslError(
+                f"{where}: search_zones needs 'zones' with at least two of "
+                f"{list(SEARCHABLE)}; use search_library for one"
+            )
+        unknown = [z for z in zones if z not in SEARCHABLE]
+        if unknown:
+            raise DslError(
+                f"{where}: cannot search {unknown} (searchable: {list(SEARCHABLE)})"
+            )
+        if len(set(zones)) != len(zones):
+            # A repeated zone would put every card in it into the pool twice.
+            raise DslError(f"{where}: search_zones lists a zone twice: {list(zones)}")
+        # The op builds its pool one zone at a time and tests each half against
+        # the zone that half came from, so a `zone` written here is overridden
+        # rather than honoured -- a card asking for one would not get it.
+        if isinstance(effect.get("selector"), Mapping) and "zone" in effect["selector"]:
+            raise DslError(
+                f"{where}.selector: drop 'zone' -- search_zones takes its zones "
+                f"from 'zones', and each half is matched in its own"
+            )
+    if op == "look_at_top":
+        # The depth is the card. Without an amount the op would look at one
+        # card and Through the Forest Gate would silently become a cantrip,
+        # so it is required rather than defaulted.
+        if "amount" not in effect:
+            raise DslError(f"{where}: look_at_top needs an 'amount' -- how deep it looks")
+        destination = str(effect.get("destination", "hand"))
+        if destination not in DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown look_at_top destination {destination!r} "
+                f"(implemented: {sorted(DESTINATIONS)})"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))

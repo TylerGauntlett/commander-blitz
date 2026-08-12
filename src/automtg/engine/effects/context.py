@@ -40,6 +40,11 @@ class EffectContext:
     loop_value: Any = None
     #: Card id of the source, for log messages.
     source_name: str = ""
+    #: How many times this ability has resolved this turn, *counting this one*.
+    #: Set by ``stack.resolve_top``; 0 for a spell, which has no ability index
+    #: and cannot ask.  Carried here rather than looked up from the ledger
+    #: because the ability index is not otherwise part of an effect's world.
+    resolutions: int = 0
 
     def target_refs(self, target_id: str) -> tuple[TargetRef, ...]:
         return self.targets.get(target_id, ())

@@ -8597,6 +8597,90 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "finale_of_devastation",
+      "mana_cost": "{X}{G}{G}",
+      "name": "Finale of Devastation",
+      "oracle_text": "Search your library and/or graveyard for a creature card with mana value X or less and put it onto the battlefield. If you search your library this way, shuffle. If X is 10 or more, creatures you control get +X/+X and gain haste until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_zones",
+          "player": "you",
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "zones": [
+            "library",
+            "graveyard"
+          ]
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "x": true
+              },
+              "toughness": {
+                "x": true
+              }
+            },
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -10307,6 +10391,43 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "look_at_hand",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "{T}: Look at target player's hand."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "glasses_of_urza",
+      "mana_cost": "{1}",
+      "name": "Glasses of Urza",
+      "oracle_text": "{T}: Look at target player's hand.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -23127,6 +23248,102 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "t1"
+                      }
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on that creature instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "scythecat_cub",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Scythecat Cub",
+      "oracle_text": "Trample\nLandfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on that creature instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -28700,6 +28917,45 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "through_the_forest_gate",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Through the Forest Gate",
+      "oracle_text": "Look at the top twenty cards of your library, put any number of land cards from among them onto the battlefield tapped, then shuffle. You gain 8 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 20
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "op": "look_at_top",
+          "shuffle": true,
+          "tapped": true
+        },
+        {
+          "amount": {
+            "const": 8
+          },
+          "op": "gain_life"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

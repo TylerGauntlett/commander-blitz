@@ -1552,6 +1552,12 @@
     "file": "fetid_pools.jpg",
     "scryfall_id": "5fa4556f-2fdc-42e6-98cb-291cee2ca3ac"
   },
+  "finale_of_devastation": {
+    "artist": "Naoki Saito",
+    "bytes": 81490,
+    "file": "finale_of_devastation.jpg",
+    "scryfall_id": "721ea98f-4150-4fde-a0af-4f454695e927"
+  },
   "fire_diamond": {
     "artist": "Gaboleps",
     "bytes": 75674,
@@ -1821,6 +1827,12 @@
     "bytes": 64266,
     "file": "gladecover_scout.jpg",
     "scryfall_id": "e112d77d-f019-4709-b31a-b02952df0e35"
+  },
+  "glasses_of_urza": {
+    "artist": "Douglas Shuler",
+    "bytes": 77762,
+    "file": "glasses_of_urza.jpg",
+    "scryfall_id": "abc743ec-4845-4e2e-8918-7e7854ecccfc"
   },
   "glasswing_grace_age_graced_chapel": {
     "artist": "Craig Elliott & Maxime Minard",
@@ -3842,6 +3854,12 @@
     "file": "scute_swarm.jpg",
     "scryfall_id": "62c19f87-1bbc-4309-8781-4519db8b91a2"
   },
+  "scythecat_cub": {
+    "artist": "Gabor Szikszai",
+    "bytes": 71606,
+    "file": "scythecat_cub.jpg",
+    "scryfall_id": "b3dd3c7d-4685-4579-b483-14ddaaaddf5b"
+  },
   "search_for_tomorrow": {
     "artist": "Eddie Schillo",
     "bytes": 27849,
@@ -4709,6 +4727,12 @@
     "bytes": 65691,
     "file": "thriving_moor.jpg",
     "scryfall_id": "5d5eea5f-b9e8-4a10-8e7f-c42493a728cd"
+  },
+  "through_the_forest_gate": {
+    "artist": "Leon Tukker",
+    "bytes": 58337,
+    "file": "through_the_forest_gate.jpg",
+    "scryfall_id": "880adfc8-69cf-4062-a804-e65b6cb6056d"
   },
   "thundering_falls": {
     "artist": "Grady Frederick",
