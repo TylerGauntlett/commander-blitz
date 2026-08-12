@@ -1,3 +1,53 @@
+## Selectors that describe one object in terms of another
+
+### Overview
+
+"Whenever a creature you control attacks, it gets +1/+0 until end of turn **for
+each other attacking creature that shares a creature type with it**." Shared
+Animosity, the third of the four Edgar Markov gaps, and the highest-ranked of
+them on EDHREC by a wide margin.
+
+The trigger was already sayable. `pump` on `{"binding": "subject"}` was already
+the way to say "it". What was missing was the *amount*, and the reason it was
+missing is structural: every selector key the DSL had compares a candidate
+against something written into the card at authoring time. Both halves of this
+clause point at whatever happened to attack, which is different every trigger.
+
+### The two keys
+
+| | |
+|---|---|
+| `shares_a_type_with` | the candidate's subtypes intersect those of the bound object. Derived on both sides, so changelings and granted types count |
+| `exclude_binding` | drop the bound object from the pool |
+
+### Why neither had a substitute
+
+`subtypes` takes a literal list. The nearest reachable expression was
+`{"count": {"attacking": true}}`, which counts every attacker regardless of type
+— a materially different card that would have loaded, resolved, and looked
+right.
+
+`exclude_self` is the subtler trap, and it is why "each **other**" needed a key
+of its own. It compares a candidate against the **ability's source**. For Shared
+Animosity that source is the enchantment: not a creature, never attacking. It
+would have removed nothing from a set of attackers, and every pump would have
+been over by exactly one — the kind of wrongness nobody notices until a game is
+decided by it.
+
+### An unbound name matches nothing
+
+Not everything. A trigger that did not bind what the card thought it did is a
+bug either way, and the two failure modes are not equivalent: a card that pumps
+nobody gets investigated, and a card that pumps the entire board wins a game
+first.
+
+### Tested end to end
+
+`t_animosity` in the test pool carries Shared Animosity's printed text verbatim.
+The unit tests hand `resolve_pool` a binding directly; the card test attacks
+with three Bears and a Bird and reads the board, which is the only way to check
+that the binding actually arrives from a real `attacks` trigger.
+
 ## Tapping other permanents as a cost
 
 ### Overview

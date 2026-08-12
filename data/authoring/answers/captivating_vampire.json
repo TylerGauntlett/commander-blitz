@@ -1,0 +1,95 @@
+{
+  "card": {
+    "id": "captivating_vampire",
+    "name": "Captivating Vampire",
+    "oracle_text": "Other Vampire creatures you control get +1/+1.\nTap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.",
+    "mana_cost": "{1}{B}{B}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other Vampire creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "subtypes": [
+            "Vampire"
+          ],
+          "exclude_self": true
+        },
+        "power": {
+          "const": 1
+        },
+        "toughness": {
+          "const": 1
+        }
+      },
+      {
+        "kind": "activated",
+        "text": "Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.",
+        "cost": {
+          "tap_permanents": {
+            "controller": "you",
+            "subtypes": [
+              "Vampire"
+            ],
+            "count": 5
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ]
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "gain_control",
+            "objects": {
+              "target": "t1"
+            }
+          },
+          {
+            "op": "add_subtype",
+            "subtypes": [
+              "Vampire"
+            ],
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}
