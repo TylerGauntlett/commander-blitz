@@ -66,14 +66,14 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-49 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+50 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
 | Cards | `draw` `discard` `mill` `search_library` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `gain_control` |
-| Modify | `pump` `grant_keyword` `set_pt` `animate` |
+| Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` |
 | Life & damage | `gain_life` `lose_life` `damage` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` |
@@ -978,6 +978,36 @@ mechanic: without it the ability is a repeatable pump and the
 this creature." The frozen permanent records the **oid of the source** rather
 than a flag with a lifetime of its own, because the hold has to end when the
 source leaves and pointing at it is the only way the untap step can tell.
+
+## "It becomes a Vampire in addition to its other types"
+
+```jsonc
+{ "op": "add_subtype", "subtypes": ["Vampire"], "objects": { "target": "t1" } }
+```
+
+The **op** and the `add_subtype` **static effect** share a name and read alike
+in English. They are different mechanisms and the printed lines differ the same
+way:
+
+| | |
+|---|---|
+| static | "Creatures you control are Vampires" — continuous, applies to whatever currently matches the filter, ends when its source leaves |
+| op | "It becomes a Vampire" — written onto **one object**, and it stays there after the permanent that converted it is dead |
+
+The subtype lives on `GameObject.added_subtypes` and is cleared by
+`reset_permanent_state`, so a permanent that leaves and comes back arrives with
+its printed type line — the same contract counters and `chosen_type` have.
+
+**A static's `affects` filter can see it**, which is unusual and deliberate.
+`_matches` reads the *printed* face precisely so that no static can depend on
+another static's output; a subtype recorded on the object is a pipeline **input**
+rather than an output, so letting it through introduces no such dependency. It
+has to be let through, because Captivating Vampire's own "other Vampire
+creatures you control get +1/+1" is the reason to convert the creature at all.
+
+Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
+addition to its other types" is a different sentence, and `animate` and the
+`set_types` static are what change a card type.
 
 ## Gaining control of a permanent
 

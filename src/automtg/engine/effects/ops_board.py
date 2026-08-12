@@ -10,6 +10,7 @@ from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..primitives import (
     add_counters,
+    add_subtypes,
     animate,
     attach,
     change_control,
@@ -225,6 +226,28 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
     for oid in oids:
         change_control(ctx.state, oid, players[0], source=ctx.source_oid)
+
+
+@register("add_subtype")
+def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"It becomes a Vampire in addition to its other types." Captivating Vampire.
+
+    The same two words as the `add_subtype` **static**, and a different
+    mechanism: the static applies continuously to whatever currently matches its
+    filter and stops when its source leaves, while this is written onto the one
+    permanent it was pointed at and stays until that permanent changes zones.
+    The printed lines differ the same way -- "creatures you control are
+    Vampires" against "it becomes a Vampire".
+
+    Types are always *added*.  Replacing a type line is `animate` or the
+    `set_types` static.
+    """
+    subtypes = [str(t) for t in spec.get("subtypes", ())]
+    if not subtypes:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
+    for oid in oids:
+        add_subtypes(ctx.state, oid, subtypes)
 
 
 @register("pump")

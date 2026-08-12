@@ -142,7 +142,13 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             if _matches(state, obj, source_obj, static.get("affects")):
                 types = set(static.get("types", ()))
 
-        # 1. subtype / type grants
+        # 1. subtype / type grants.  The object's own recorded subtypes come
+        #    first -- "it becomes a Vampire in addition to its other types" is
+        #    written onto the permanent, so it is an input to this pipeline
+        #    rather than a product of it, and a static's `add_subtype` layering
+        #    on top of it is the ordinary case.
+        subtypes.update(obj.added_subtypes)
+
         for source_obj, static in statics:
             if static.get("effect") != "add_subtype":
                 continue
@@ -402,12 +408,21 @@ def resolve_chosen_subtypes(
     return {**selector, "subtypes": out}
 
 
-def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
+def _matches_printed(
+    card: CardDef, selector: Mapping[str, Any], added_subtypes: tuple[str, ...] = ()
+) -> bool:
     """The half of a static filter that reads the printed card face.
 
     Split out so the two counting paths cannot drift: a permanent on the
     battlefield is matched on this *plus* its board state, and a card in a
     graveyard or hand -- which has no board state -- on this alone.
+
+    ``added_subtypes`` is the one non-printed thing allowed in, and only on the
+    battlefield path.  "It becomes a Vampire in addition to its other types" is
+    recorded on the object, so it is a pipeline *input* exactly as a counter or
+    a tapped flag is -- reading it cannot make one static depend on another's
+    output.  Without it, Captivating Vampire's own anthem would not see the
+    creature it had just converted, which is most of the card.
     """
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
@@ -416,7 +431,7 @@ def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
     if not_types and set(not_types) & card.types:
         return False
     subtypes = selector.get("subtypes")
-    if subtypes and not (set(subtypes) & card.subtypes):
+    if subtypes and not (set(subtypes) & (card.subtypes | set(added_subtypes))):
         return False
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
@@ -477,7 +492,7 @@ def _matches(
     if controller == "opponent" and obj.controller == source.controller:
         return False
 
-    if not _matches_printed(card, selector):
+    if not _matches_printed(card, selector, obj.added_subtypes):
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):

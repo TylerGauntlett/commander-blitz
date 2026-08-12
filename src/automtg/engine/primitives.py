@@ -319,6 +319,30 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     return True
 
 
+def add_subtypes(state: GameState, oid: int, subtypes: Sequence[str]) -> tuple[str, ...]:
+    """"It becomes a Vampire in addition to its other types." Captivating Vampire.
+
+    A one-shot with no duration, written onto the object.  The `add_subtype`
+    *static* reads the same in English and is a different mechanism: a static
+    applies continuously to whatever currently matches its filter and stops the
+    moment its source leaves, while this stays on the one permanent it was
+    pointed at until that permanent changes zones.
+
+    "In addition to its other types" is the only reading offered, because it is
+    what every printed line of this shape says.  Wholesale type *replacement* is
+    what `animate` and the `set_types` static are for.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ()
+    added = tuple(t for t in subtypes if t not in obj.added_subtypes)
+    if not added:
+        return ()
+    obj.added_subtypes = obj.added_subtypes + added
+    state.bump_chars()
+    return added
+
+
 def change_control(state: GameState, oid: int, pid: int, source: int | None = None) -> bool:
     """"Gain control of target creature." Rule 800.4a, permanently.
 

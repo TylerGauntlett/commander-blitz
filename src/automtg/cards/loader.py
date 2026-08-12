@@ -1037,6 +1037,21 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+    if op == "add_subtype":
+        # An op that names no subtype is a printed sentence that does nothing,
+        # and it would load and resolve exactly like one that works.
+        if not effect.get("subtypes"):
+            raise DslError(f"{where}: add_subtype needs 'subtypes'")
+        if "objects" not in effect:
+            raise DslError(f"{where}: add_subtype needs 'objects' -- there is nothing to change")
+        if "types" in effect:
+            # Only subtypes. "Becomes an artifact in addition to its other
+            # types" is a different sentence and would need the type to reach
+            # the same places subtypes do; accepting the key and dropping it is
+            # how a card silently half-works.
+            raise DslError(
+                f"{where}: add_subtype changes subtypes only; use 'animate' for card types"
+            )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
         # and does nothing at all.
