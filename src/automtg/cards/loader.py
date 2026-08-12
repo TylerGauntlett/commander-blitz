@@ -417,6 +417,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         retrace=model.retrace,
         flashback=flashback,
         evoke_label=model.evoke_label,
+        pay_generic_with=model.pay_generic_with,
         emerge_subtype=model.emerge_subtype,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,

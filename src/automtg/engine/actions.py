@@ -50,6 +50,12 @@ class Action:
     #: enters" condition: a spectacle spell reporting `cast_evoked` would be a
     #: card quietly claiming to have been evoked.
     alternative: bool = False
+    #: How much of the generic cost is paid with something other than mana --
+    #: convoke (creatures tapped) and delve (cards exiled from the graveyard).
+    #: Part of the action's identity: convoking two creatures and convoking
+    #: three are two different things to do with the same card, at two
+    #: different prices.
+    pay_generic: int = 0
     #: The creature sacrificed to emerge, chosen as part of the action: how
     #: much the spell costs depends on which one, so two emerge lines with
     #: different sacrifices are two different things to do.
@@ -93,6 +99,7 @@ class Action:
             evoked=self.evoked,
             flashback=self.flashback,
             alternative=self.alternative,
+            pay_generic=self.pay_generic,
             emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
             label=label,
@@ -114,6 +121,7 @@ class Action:
             self.evoked,
             self.flashback,
             self.alternative,
+            self.pay_generic,
             -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
         )
@@ -129,6 +137,7 @@ class Action:
             "kicked": self.kicked,
             "evoked": self.evoked,
             "alternative": self.alternative,
+            "pay_generic": self.pay_generic,
             "emerge_oid": self.emerge_oid,
             "mana_option": self.mana_option,
             "label": self.label,

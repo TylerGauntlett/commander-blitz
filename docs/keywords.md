@@ -205,14 +205,14 @@ This is the long tail, and where the build order comes from.
 | Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
 | Connive | routed | draw-then-discard with a counter conditional on what was discarded; needs to read the discarded card | — |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
-| Convoke | routed | the `tap_permanents` cost ships; what is missing is routing those taps into *mana* rather than charging them alongside it | — |
+| Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
 | Coven | blocked | "three creatures with different powers" — no distinct-value count exists | — |
 | Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
 | Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
 | Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
-| Delve | routed | a cost exiling from the graveyard to pay generic mana | — |
+| Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
 | Detain | routed | `lock_abilities` and `cant_attack` exist separately; needs them bundled until a player's next turn | — |
 | Devour | routed | `self_enters` + sacrifice + `for_each`; the scaling counters are the awkward half | — |
 | Disturb | routed | `transform` and `flashback` both ship; needs the graveyard cast to arrive on the **back** face | — |

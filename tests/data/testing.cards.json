@@ -942,6 +942,50 @@
       ]
     },
     {
+      "id": "t_convoker",
+      "name": "Test Convoker",
+      "oracle_text": "Convoke (Your creatures can help cast this spell.)\nTest Convoker deals 2 damage to target player.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "pay_generic_with": "tap_creatures",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_delver",
+      "name": "Test Delver",
+      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nDraw two cards.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "pay_generic_with": "exile_from_graveyard",
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_offering",
       "name": "Test Offering",
       "oracle_text": "Goblin offering (You may cast this card any time you could cast an instant by sacrificing a Goblin and paying the difference in mana costs between this and the sacrificed Goblin.)",

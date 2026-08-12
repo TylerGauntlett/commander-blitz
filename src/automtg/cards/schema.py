@@ -240,6 +240,18 @@ class CardModel(BaseModel):
     #: replaces the printed cost; unlike it, how much you pay depends on
     #: what you sacrifice, which is why it cannot be a fixed ManaCost alone.
     emerge: str | None = None
+    #: **Convoke** and **delve**: a way to pay part of the *generic* cost with
+    #: something other than mana. ``"tap_creatures"`` taps creatures you
+    #: control; ``"exile_from_graveyard"`` exiles cards from your graveyard.
+    #: One cast line per number spent, the way ``emerge`` offers one per
+    #: victim, because the number changes the price and is the player's to
+    #: choose.
+    #:
+    #: Generic only, and clamped at what the spell actually costs. Convoke's
+    #: "or one mana of that creature's colour" is a documented simplification:
+    #: it is the same trade `cost_reduction` already makes, and it bites only
+    #: on a spell whose coloured pips a creature could have paid.
+    pay_generic_with: Literal["tap_creatures", "exile_from_graveyard"] | None = None
     #: **Offering**: the creature type the emerge sacrifice must be —
     #: "sacrifice a Goblin". Offering is emerge with the fodder narrowed and
     #: the timing widened, so it is a qualifier on that field rather than a

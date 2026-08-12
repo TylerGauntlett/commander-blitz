@@ -2111,6 +2111,7 @@ them where it is sitting:
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
+"pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards

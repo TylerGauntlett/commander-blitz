@@ -334,6 +334,8 @@ class CardDef:
     #: generic-only and clamped at zero, like every other cost reduction
     #: here: it never reaches the coloured pips however large the sacrifice.
     emerge: ManaCost | None = None
+    #: Convoke and delve: `"tap_creatures"` or `"exile_from_graveyard"`.
+    pay_generic_with: str | None = None
     #: Offering: the creature type the sacrifice must be. ``None`` is emerge
     #: proper, which takes any creature.
     emerge_subtype: str | None = None
