@@ -315,6 +315,11 @@ class CardDef:
     uncounterable: bool = False
     #: Split second: read off the stack by `legality.split_second_active`.
     split_second: bool = False
+    #: Buyback: a kicked spell returns to its owner's hand instead of the
+    #: graveyard when it finishes resolving.
+    buyback: bool = False
+    #: What the kicker is called on screen -- "kicked", "buyback".
+    kicker_label: str = "kicked"
     #: "Kicker {1}{U}" -- an additional cost the caster may choose to pay.  It is
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.

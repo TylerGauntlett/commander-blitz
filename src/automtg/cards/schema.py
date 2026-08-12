@@ -214,6 +214,18 @@ class CardModel(BaseModel):
     #: A card-level flag rather than an ability, because it is true of the
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
+    #: **Buyback**: "You may pay an additional cost as you cast this spell. If
+    #: you do, put it into your hand instead of your graveyard as it resolves."
+    #:
+    #: The additional cost is the ordinary `kicker` -- buyback *is* a kicker
+    #: with a rider -- and this is the rider. Set it and the card's kicker
+    #: becomes a buyback cost.
+    buyback: bool = False
+    #: What that additional cost is called on screen. `kicker` is the engine's
+    #: name for the general thing; "buyback" and "kicker" are two words for it,
+    #: and an action reading "(kicked)" on a buyback card is wrong about what
+    #: the player is buying -- the same problem `evoke_label` solves.
+    kicker_label: str = "kicked"
     #: "Kicker {1}{U}" -- an additional cost that may be paid as the spell is
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.

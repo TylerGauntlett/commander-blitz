@@ -2121,7 +2121,8 @@ Each a card-level field rather than an ability, because the card does not have
 them where it is sitting:
 
 ```jsonc
-"kicker": "{1}{U}"                          // pay more as you cast it
+"kicker": "{1}{U}", "kicker_label": "buyback"  // pay more as you cast it
+"buyback": true                             // …and it returns to hand instead of the graveyard
 "evoke": "{2}{U}", "evoke_label": "dash"    // an alternative cost, and its printed name
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature

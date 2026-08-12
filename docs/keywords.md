@@ -196,7 +196,7 @@ This is the long tail, and where the build order comes from.
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
 | Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
-| Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
+| Buyback | free | `kicker` plus `buyback: true` — the rider returns it to hand instead of the graveyard; `kicker_label` names the cost | `buyback` |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
 | Casualty | routed | `copy_spell` ships; what is left is an additional cost that sacrifices a creature of a chosen power | — |
 | Champion | blocked | exile-and-return tied to the championing permanent leaving | — |

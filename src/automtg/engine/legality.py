@@ -537,7 +537,8 @@ def _cast_variant(
 
     label_base = f"Cast {card.name}"
     if kicked:
-        label_base += " (kicked)"
+        # The card's own word: "kicked", "buyback".
+        label_base += f" ({card.kicker_label})"
     if evoked:
         # The card's own word for the cost: "evoked", "dash", "blitz". They are
         # one mechanism, and only the label tells the player which they are

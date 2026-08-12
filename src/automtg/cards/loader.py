@@ -268,8 +268,11 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # an `if` that reads it.  Half a kicker is the failure this pass exists to
     # catch -- a spell that charges more and does the same thing, or one whose
     # kicked clause can never fire, and nothing on the board would say so.
-    reads_kicked = _mentions_kicked(model)
-    if reads_kicked and kicker is None:
+    # `buyback` reads it too, and not through an effect: the rider in
+    # `_place_after_resolution` is what the extra mana buys, so a buyback card
+    # has no `kicked` clause anywhere in its effects and is not half a kicker.
+    reads_kicked = _mentions_kicked(model) or model.buyback
+    if _mentions_kicked(model) and kicker is None:
         raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")
     if kicker is not None and not reads_kicked:
         raise DslError(f"{where}: has a 'kicker' cost that no effect reads via 'kicked'")
@@ -300,6 +303,11 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    if model.buyback and model.kicker is None:
+        # Buyback *is* a kicker with a rider. Without the cost there is nothing
+        # to pay and the rider never fires, so the card reads "buyback" and
+        # goes to the graveyard like anything else.
+        raise DslError(f"{where}: 'buyback' needs a 'kicker' cost to attach to")
     if model.emerge_subtype is not None and model.emerge is None:
         # A narrowing with nothing to narrow. The card would look like an
         # offering card and have no alternative cast line at all.
@@ -411,6 +419,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         back_face=model.back_face,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
+        buyback=model.buyback,
+        kicker_label=model.kicker_label,
         kicker=kicker,
         evoke=evoke,
         emerge=emerge,

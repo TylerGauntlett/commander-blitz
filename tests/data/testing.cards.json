@@ -2,6 +2,33 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_buyback",
+      "name": "Test Buyback",
+      "oracle_text": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nTest Buyback deals 2 damage to any target.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Instant"
+      ],
+      "kicker": "{3}",
+      "kicker_label": "buyback",
+      "buyback": true,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_fader",
       "name": "Test Fader",
       "oracle_text": "Fading 2 (This creature enters with two fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)",
