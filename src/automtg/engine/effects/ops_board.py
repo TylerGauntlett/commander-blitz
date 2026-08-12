@@ -444,6 +444,38 @@ def _players(ctx: EffectContext, spec: Any) -> list[int]:
     return select_players(ctx, spec)
 
 
+@register("proliferate")
+def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Choose any number of permanents and/or players with a counter on them,
+    then give each another counter of each kind already there." (701.27a)
+
+    The census called this blocked because "counter kinds are not enumerable
+    off an object". They always were -- `GameObject.counters` is a dict keyed by
+    kind -- and what was actually missing is that proliferate is not an
+    add-counters with a filter. It is *"of each kind already there"*, so the
+    kinds are read per permanent at resolution and differ between them: the
+    same proliferate adds a +1/+1 here and a loyalty counter there.
+
+    Simplified in one way, and it is the documented kind. Rule 701.27a lets the
+    player choose *any number*; this proliferates every permanent they control
+    that has a counter. The choice only ever matters for counters you would
+    rather not grow -- a -1/-1 counter on your own creature -- and offering a
+    free multi-select over the whole board is a large decision for a rare
+    downside. `objects` narrows it when a card wants that.
+    """
+    selector = dict(spec.get("objects") or {"controller": "you"})
+    for oid in resolve_pool(ctx, selector):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        # Snapshotted: `add_counters` mutates the dict being read, and the
+        # kinds are "already there" as of the moment proliferate resolves.
+        for kind, amount in list(obj.counters.items()):
+            if amount > 0:
+                add_counters(ctx.state, oid, kind, 1, source=ctx.source_oid)
+    yield from ()
+
+
 @register("set_flag")
 def op_set_flag(ctx: EffectContext, spec: Mapping[str, Any]):
     """"…and it becomes renowned." A one-way word written onto a permanent.
