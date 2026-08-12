@@ -942,6 +942,20 @@
       ]
     },
     {
+      "id": "t_proliferator",
+      "name": "Test Proliferator",
+      "oracle_text": "Proliferate.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "proliferate"
+        }
+      ]
+    },
+    {
       "id": "t_renowned",
       "name": "Test Renowned",
       "oracle_text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)",
