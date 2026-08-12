@@ -75,6 +75,7 @@ export function player(overrides: Partial<PlayerView> = {}): PlayerView {
     commander_cost: {},
     commander_damage_taken: {},
     library_count: 60,
+    library_top: null,
     hand_count: 0,
     hand: [],
     hand_reasons: {},

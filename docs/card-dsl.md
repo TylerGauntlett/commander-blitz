@@ -461,6 +461,7 @@ Each node names **exactly one** form:
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
+| `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 
 This is a **mirror** of the `if`-effect condition language in
 `engine/effects/conditions.py`, not that language. The keys it does not have —
@@ -478,6 +479,33 @@ too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
 can change what a player's life is.
 
 `life_of` itself is deliberately *not*, and the difference is the whole point.
+
+#### "The top card of your library is black"
+
+```jsonc
+// Vampire Nocturnus
+{ "kind": "static", "effect": "grant_keyword",
+  "affects": { "controller": "you", "types": ["Creature"], "subtypes": ["Vampire"] },
+  "keywords": ["flying"],
+  "condition": { "top_of_library": { "controller": "you", "colors": ["B"] } } }
+```
+
+Safe here for the same reason a zone count is: nothing in the characteristics
+pipeline can change what is on top of a library, so it is an input.
+
+`exists` over `{"zone": "library", "colors": ["B"]}` is the near miss, and it is
+a different card. It asks whether *any* black card is anywhere in ninety-nine,
+which in a mono-black deck is true essentially always — so Vampire Nocturnus
+would have read as a permanent +2/+1 and flying, and it would have passed every
+gate looking correct.
+
+The filter reads a printed face and an owner and nothing else, the same rule
+every off-battlefield filter follows: a library card is not tapped, attacking or
+attached to anything, and a key that loads and matches nothing is how a card
+comes to do less than it prints. `zone` is refused too — the zone is the whole
+of what the leaf names.
+
+An empty library matches nothing, so the static is simply off.
 
 #### "An opponent has 10 or less life"
 
@@ -801,7 +829,7 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Seven static effects describe the *player* rather than a characteristic, so they
+Eight static effects describe the *player* rather than a characteristic, so they
 take `affects_player` instead of `affects`:
 
 ```jsonc
@@ -810,6 +838,7 @@ take `affects_player` instead of `affects`:
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
@@ -836,6 +865,20 @@ different lifetimes, so two different fields.
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
 Dryad of the Ilysian Grove is two drops from anywhere, which is correct.
+
+`reveal_library_top` is "play with the top card of your library revealed", and
+it is the only static here that changes **nothing** about the rules: it grants no
+permission and moves no card. It makes one card public, and is read by
+`serialize` and by nothing else.
+
+It is still load-bearing rather than flavour. Vampire Nocturnus cannot be piloted
+without it — whether your team has flying is a fact you are meant to know before
+declaring attackers, and the condition that decides it is otherwise invisible. So
+`library_top` goes to **every** seat rather than its controller's: the card is
+public, and an opponent who cannot see it is playing against information they are
+entitled to. It is `null` whenever nothing reveals it, so the client needs no
+separate flag, and `findCard` searches it — a zone of one — or the preview rail
+blanks on the single card the whole mechanic exists to show.
 
 `play_lands_from_library_top` offers the top card only. That is what the cards
 say, and it is also the only part of a hidden zone anybody is entitled to see.

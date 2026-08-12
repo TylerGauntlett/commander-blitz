@@ -112,6 +112,16 @@ export interface PlayerView {
    */
   commander_damage_taken: Record<string, number>;
   library_count: number;
+  /**
+   * "Play with the top card of your library revealed." Vampire Nocturnus.
+   *
+   * Null unless something on the battlefield reveals it, so there is no
+   * separate flag to check. Sent to **every** seat rather than the viewer's,
+   * because that is what the printed line does -- the card is public, and an
+   * opponent who cannot see it is playing against information they are
+   * entitled to.
+   */
+  library_top: CardView | null;
   hand_count: number;
   /** Null for everyone but the viewing seat. */
   hand: CardView[] | null;

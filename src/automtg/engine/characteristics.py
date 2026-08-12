@@ -282,6 +282,18 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         # static's output through it.
         pids = _static_players(state, source, cond["has_city_s_blessing"])
         return any(state.players[p].has_city_s_blessing for p in pids)
+    if "top_of_library" in cond:
+        # "As long as the top card of your library is black." A pipeline input
+        # exactly as a zone count is -- nothing in the fixed-order pipeline can
+        # change what is on top of a library -- and a sharper question than
+        # `exists` over the library, which asks whether *any* black card is
+        # anywhere in ninety-nine and is nearly always true.
+        spec = cond["top_of_library"] or {}
+        for pid in _static_players(state, source, spec.get("controller", "you")):
+            top = top_of_library(state, pid)
+            if top is not None and _matches_printed(state.card_of(top), spec):
+                return True
+        return False
     if "cmp" in cond:
         left = _static_value(state, cond.get("left"), source)
         right = _static_value(state, cond.get("right"), source)
@@ -357,6 +369,16 @@ def _count_matching(state: GameState, selector: Mapping[str, Any], source: GameO
             if obj is not None and _matches_printed(state.card_of(obj), selector):
                 count += 1
     return count
+
+
+def top_of_library(state: GameState, pid: int) -> GameObject | None:
+    """The card on top of a player's library, or None for an empty one.
+
+    Index 0 is the top -- `draw_cards` and `mill_cards` both take from there,
+    so this reads the same end they do and cannot drift from them.
+    """
+    library = state.players[pid].library
+    return state.objects.get(library[0]) if library else None
 
 
 def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int]:
@@ -793,6 +815,22 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
                 continue
             return True
     return False
+
+
+def player_reveals_library_top(state: GameState, pid: int) -> bool:
+    """"Play with the top card of your library revealed." Vampire Nocturnus.
+
+    Purely a *visibility* change -- it grants no permission and moves no card,
+    which is what separates it from `play_lands_from_library_top`. The whole of
+    it is that the client is allowed to draw the card, so this is read by
+    `serialize` and by nothing in the rules.
+
+    It matters anyway, and not only as flavour: Vampire Nocturnus is a card you
+    cannot pilot without it. Whether your team has flying is a fact you are
+    supposed to know before declaring attackers, and the condition that decides
+    it is otherwise invisible.
+    """
+    return _player_static(state, pid, "reveal_library_top")
 
 
 def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:

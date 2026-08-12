@@ -2286,6 +2286,81 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_nocturnus",
+      "name": "Test Nocturnus",
+      "oracle_text": "Play with the top card of your library revealed.\nAs long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.",
+      "mana_cost": "{2}{B}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Play with the top card of your library revealed.",
+          "effect": "reveal_library_top",
+          "affects_player": "you"
+        },
+        {
+          "kind": "static",
+          "text": "As long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "subtypes": [
+              "Vampire"
+            ]
+          },
+          "condition": {
+            "top_of_library": {
+              "controller": "you",
+              "colors": [
+                "B"
+              ]
+            }
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as the top card of your library is black, this creature and other Vampire creatures you control get +2/+1 and have flying.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "subtypes": [
+              "Vampire"
+            ]
+          },
+          "condition": {
+            "top_of_library": {
+              "controller": "you",
+              "colors": [
+                "B"
+              ]
+            }
+          },
+          "keywords": [
+            "flying"
+          ]
+        }
+      ]
     }
   ]
 }

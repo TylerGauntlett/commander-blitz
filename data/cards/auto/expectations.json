@@ -296,6 +296,13 @@
   "canyon_slough": {
     "zone": "battlefield"
   },
+  "captivating_vampire": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "carnelian_orb_of_dragonkind": {
     "zone": "battlefield"
   },

@@ -1084,6 +1084,29 @@
   opacity: 0.4;
 }
 
+/* "Play with the top card of your library revealed."
+ *
+ * The library pile is the one that is normally inert -- hidden information, no
+ * peek, no hover. When a card reveals the top it stops being hidden, and the
+ * pile has to say so loudly enough to be believed: a gold rim, and the card's
+ * name spelled out under the label. Hovering it fills the preview rail, which
+ * is where the rules text and the colour actually get read. */
+.pile--revealed .pile__leaf--top {
+  border-color: rgb(216 166 60 / 0.7);
+  color: var(--gold);
+}
+
+.pile__revealed {
+  max-width: 64px;
+  overflow: hidden;
+  color: var(--gold);
+  font-size: 8px;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pile:hover .pile__leaf--top {
   border-color: var(--astral-hi);
   color: #fff;

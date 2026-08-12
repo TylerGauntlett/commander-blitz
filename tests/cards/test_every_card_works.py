@@ -201,6 +201,7 @@ class TestActivatedAbilities:
                 game.state.players[0].zone_list(zone).append(oid)
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
+            _provide_the_tap_fodder(game, registry, ability)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
@@ -285,6 +286,42 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
     game.state.battlefield.append(fodder.oid)
+
+
+def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
+    """Put out enough untapped permanents for a `tap_permanents` cost.
+
+    Same family as `_provide_the_sacrifice`, and needed for the same reason:
+    the sandbox's job is to make "could not pay for it" impossible, so that
+    "not activatable" only ever means the ability is broken. Captivating
+    Vampire's cost is *five untapped Vampires* and the generic board has none,
+    which reported a working card as unusable.
+
+    The source itself is eligible among them -- it is a Vampire, and the
+    printed ruling says so -- but it arrives after this runs, so the count is
+    filled without relying on that.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "tap_permanents", None) if cost else None
+    if not spec:
+        return
+    subtypes = {str(s) for s in spec.get("subtypes") or []}
+    types = {str(t) for t in spec.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    for _ in range(int(spec.get("count", 1) or 1)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
 
 
 def _stock_the_hand(game: Game, ability) -> None:
