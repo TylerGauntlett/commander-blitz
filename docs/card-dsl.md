@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>71 ops"]
+    ctx --> ops["op registry<br/>73 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-71 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+73 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2058,6 +2058,30 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+## Aura swap — an exchange, not two moves
+
+```jsonc
+{ "kind": "activated", "text": "Aura swap {2}",
+  "cost": { "mana": "{2}" }, "effects": [ { "op": "aura_swap" } ] }
+```
+
+Written as a bounce beside a put-onto-the-battlefield it loads, looks right, and
+goes wrong twice where no board would show it:
+
+- **The new Aura arrives enchanting nothing.** It is not cast, so it has no
+  targeting clause to carry a creature, and `_attach_aura` — which reads a
+  spell's first target — never runs. A state-based action then bins it, and the
+  ability reads "exchange" while being a slow Naturalize on your own card.
+- **The exchange is not atomic.** Between the two the enchanted creature is
+  unenchanted, which matters on exactly the cards this is printed alongside.
+
+The attach happens *after* the move, because `reset_permanent_state` clears
+`attached_to` on the way onto the battlefield — the same trap an Aura attaching
+itself during `spell_effects` falls into.
+
+A hand with no Aura in it does nothing, rather than bouncing the one on the
+battlefield for free.
 
 ## Soulbond — a relationship that is not attachment
 

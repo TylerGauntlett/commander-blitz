@@ -2,6 +2,100 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_big_aura",
+      "name": "Test Heavy Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +5/+0.",
+      "mana_cost": "{4}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +5/+0.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 5
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_swap_aura",
+      "name": "Test Swapping Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+0.\nAura swap {2} ({2}: Exchange this Aura with an Aura card in your hand.)",
+      "mana_cost": "{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+0.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "Aura swap {2}",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "aura_swap"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_soulbond",
       "name": "Test Soulbound Elder",
       "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both.)\nAs long as this creature is paired with another creature, both creatures get +1/+1.",

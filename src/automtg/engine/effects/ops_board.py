@@ -328,6 +328,57 @@ def op_regenerate(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("aura_swap")
+def op_aura_swap(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Aura swap — "Exchange this Aura with an Aura card in your hand."
+
+    An **exchange**, which is why it is one op rather than a bounce beside a
+    put-onto-the-battlefield. Two things follow from that and neither is
+    reachable by composing the halves:
+
+    - **The new Aura arrives attached to what the old one was on.** It is not
+      cast, so there is no targeting clause to carry the creature, and
+      `_attach_aura` -- which reads a spell's first target -- never runs.
+    - **The exchange is atomic.** Written as two effects the old Aura is in hand
+      and the new one is not yet down, and a state-based action in between would
+      see the enchanted creature unenchanted; more to the point, the creature
+      could have died to that gap on a card that stops it dying.
+
+    A hand with no Aura to swap in does nothing, rather than bouncing the one on
+    the battlefield for free.
+    """
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if source is None or not source.on_battlefield:
+        return
+    host = source.attached_to
+    selector = dict(spec.get("objects") or {})
+    selector.setdefault("zone", "hand")
+    selector.setdefault("controller", "you")
+    selector.setdefault("subtypes", ["Aura"])
+    pool = resolve_pool(ctx, selector)
+    if not pool:
+        return
+    picked = yield from pick_from_pool(
+        ctx, pool, {**selector, "count": 1}, "Swap in which Aura?", "aura_swap"
+    )
+    if not picked:
+        return
+    incoming = picked[0]
+
+    move_object(ctx.state, ctx.source_oid, Zone.HAND, to_player=source.owner, cause="aura_swap")
+    obj = ctx.state.objects[incoming]
+    obj.controller = ctx.controller
+    move_object(ctx.state, incoming, Zone.BATTLEFIELD, cause="aura_swap")
+    if host is not None:
+        # Attached *after* the move: `reset_permanent_state` clears
+        # `attached_to` on the way onto the battlefield, which is the same trap
+        # an Aura attaching itself during `spell_effects` falls into.
+        attach(ctx.state, incoming, host)
+    ctx.state.emit(
+        "aura_swap", player=ctx.controller, source=ctx.source_oid, oid=incoming
+    )
+
+
 @register("pair")
 def op_pair(ctx: EffectContext, spec: Mapping[str, Any]):
     """Soulbond — "you may pair this creature with another unpaired creature".
