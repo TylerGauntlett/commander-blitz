@@ -345,6 +345,16 @@ class GameState:
                 amount = int(data.get("amount") or 0)
                 ledger.damage_taken[pid] = ledger.damage_taken.get(pid, 0) + amount
                 ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.COMBAT_DAMAGE_TO_PLAYER:
+            # Prowl. Recorded here rather than at the primitive for the reason
+            # every other tally is, and read off *derived* subtypes while the
+            # creature is still on the battlefield -- by the time a prowl spell
+            # is cast the attacker may be dead, bounced, or no longer a Faerie.
+            from .characteristics import chars
+
+            attacker = data.get("source") or event.source
+            if attacker is not None and attacker in self.objects:
+                ledger.combat_damage_types.update(chars(self, attacker).subtypes)
         elif event.type == EventType.LIFE_LOST:
             if pid is not None:
                 amount = int(data.get("amount") or 0)

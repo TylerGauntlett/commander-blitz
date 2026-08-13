@@ -37,6 +37,10 @@ CONDITION_KEYS = frozenset(
         "has_city_s_blessing",
         # "…if it isn't renowned". A one-way word written by `set_flag`.
         "has_flag",
+        # Prowl: "…if a player was dealt combat damage this turn by a Faerie or
+        # a Rogue". A list of creature subtypes, true when *any* of them dealt
+        # combat damage to a player this turn.
+        "combat_damage_by",
     }
 )
 
@@ -92,6 +96,14 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
+    if "combat_damage_by" in cond:
+        # Prowl. Answered from the turn ledger rather than from the board,
+        # because by the time the spell is cast the creature that got through
+        # may be dead, bounced or no longer a Faerie -- and none of those undo
+        # the damage the condition is about.
+        wanted = cond["combat_damage_by"]
+        names = {str(wanted)} if isinstance(wanted, str) else {str(w) for w in wanted}
+        return bool(names & ctx.state.turn_ledger.combat_damage_types)
     if "has_flag" in cond:
         # Renown's "if it isn't renowned", written as `{"not": {"has_flag":
         # "renowned"}}`. Asked of the ability's own source, which is the only
@@ -181,3 +193,17 @@ def validate_condition(cond: Any, where: str) -> None:
     if "cmp" in cond:
         validate_value(cond.get("left"), f"{where}.left")
         validate_value(cond.get("right"), f"{where}.right")
+    if "combat_damage_by" in cond:
+        wanted = cond["combat_damage_by"]
+        names = [wanted] if isinstance(wanted, str) else wanted
+        if not isinstance(names, (list, tuple)) or not names:
+            raise DslError(
+                f"{where}.combat_damage_by: needs a creature subtype, or a list of them"
+            )
+        if not all(isinstance(n, str) and n for n in names):
+            # An empty or non-string entry would match nothing, and prowl's whole
+            # content is which types got through -- so the alternative cost would
+            # simply never be offered, on a card that reads as though it is.
+            raise DslError(
+                f"{where}.combat_damage_by: every entry must be a subtype name, got {names!r}"
+            )

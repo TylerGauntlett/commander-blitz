@@ -280,7 +280,7 @@ This is the long tail, and where the build order comes from.
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |
 | Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
-| Prowl | routed | `alternative_cost` ships; prowl's own condition is narrower than the ledger keeps — "damage by a creature that **shares a type** with it" | — |
+| Prowl | free | `alternative_cost` with a `{"combat_damage_by": [...]}` condition, off a seventh ledger tally | — |
 | Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
 | Rebound | shipped | card-level field: the exile rider on resolution, then suspend's free cast at your next upkeep | `rebound` |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |

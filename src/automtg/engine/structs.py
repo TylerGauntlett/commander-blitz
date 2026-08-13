@@ -217,6 +217,17 @@ class TurnLedger:
     #: Tokens are excluded because they are not cards, and a token dying is the
     #: single most common way this number would otherwise be wrong.
     cards_to_graveyard: int = 0
+    #: Every creature **subtype** that has dealt combat damage to a player this
+    #: turn -- prowl, and the one tally here that is not a number.
+    #:
+    #: "A player was dealt combat damage by a Faerie or a Rogue" cannot be
+    #: recovered from any of the tallies above: `damage_taken` says how much and
+    #: to whom and nothing about the source, and the source itself may be dead,
+    #: bounced or no longer a Faerie by the time a prowl spell is cast. Read off
+    #: **derived** subtypes at the moment the damage lands, so a changeling and
+    #: a creature granted the type both count -- which is most of what the decks
+    #: printing prowl are built on.
+    combat_damage_types: set[str] = field(default_factory=set)
     #: How many times each ability has *resolved* this turn, keyed by the object
     #: it belongs to and its index on that card.  Scythecat Cub's "if this is the
     #: second time this ability has resolved this turn" is a question about one
@@ -243,6 +254,7 @@ class TurnLedger:
         self.damage_taken.clear()
         self.life_lost.clear()
         self.spells_cast.clear()
+        self.combat_damage_types.clear()
         self.cards_to_graveyard = 0
         self.ability_resolutions.clear()
 

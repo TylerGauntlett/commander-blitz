@@ -635,7 +635,23 @@ its mana, and a cost of five that settled for four would be a different card.
 { "exists": { selector } }
 { "zone_is": "battlefield" }
 { "is_your_turn": true }
+{ "combat_damage_by": ["Faerie", "Rogue"] }   // prowl
 ```
+
+`combat_damage_by` is prowl: "…if a player was dealt combat damage this turn by
+a Faerie or a Rogue". A seventh entry in the per-turn ledger, and the only one
+that is not a number — the other six say how much and to whom, and none says
+**who dealt it**.
+
+The board cannot stand in, which is the argument the whole ledger rests on: by
+the time a prowl spell is cast the Faerie that got through may be dead, bounced,
+or no longer a Faerie, and none of those undo the damage. `exists` over Faeries
+you control is the near miss and is a different card — true with one sitting at
+home that never attacked, false after the one that connected traded in combat.
+
+Read off **derived** subtypes at the moment the damage lands, so a changeling
+and a creature granted the type both count. Combat damage only, and cleared at
+cleanup with the rest of the ledger.
 
 ## Triggers
 
