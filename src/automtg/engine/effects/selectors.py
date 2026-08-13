@@ -77,6 +77,14 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "…and each other creature that shares a color with it" -- radiance.
+        #: The colour twin of the clause above, and it needs its own key for the
+        #: same reason: `colors` takes a literal list written into the card, and
+        #: which colour matters is decided by whatever was targeted. Read from
+        #: **derived** colours on both sides, so a creature made black by
+        #: another spell is caught. A colorless object shares a colour with
+        #: nothing, itself included.
+        "shares_a_color_with",
         "self_only",
         #: "…with the least toughness among creatures you control" -- bolster.
         #: Narrows the pool to whatever is tied for the extreme *after* every
@@ -242,6 +250,17 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
             return False
         theirs = chars(state, other).subtypes if state.objects.get(other) else frozenset()
         if not (subtypes & theirs):
+            return False
+    if (name := selector.get("shares_a_color_with")) is not None:
+        # Radiance. The colour twin of the clause above, and the boundary is the
+        # same one intimidate has: a **colorless** object shares a colour with
+        # nothing, itself included, so an intersection is the right test and
+        # "is not a different colour" would be its opposite.
+        other = _bound_oid(ctx, str(name))
+        if other is None:
+            return False
+        theirs = chars(state, other).colors if state.objects.get(other) else frozenset()
+        if not (colors & theirs):
             return False
 
     controller = selector.get("controller")
