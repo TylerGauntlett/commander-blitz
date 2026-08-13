@@ -4100,6 +4100,33 @@
       ]
     },
     {
+      "id": "t_prowler",
+      "name": "Test Prowling Faerie",
+      "oracle_text": "Flying\nProwl {1}{U} (You may cast this spell for its prowl cost if a player was dealt combat damage this turn by a Faerie or a Rogue.)",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "alternative_cost": {
+        "mana": "{1}{U}",
+        "condition": {
+          "combat_damage_by": [
+            "Faerie",
+            "Rogue"
+          ]
+        }
+      }
+    },
+    {
       "id": "t_sunburst",
       "name": "Test Sunburst Golem",
       "oracle_text": "Sunburst (This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.)",
