@@ -290,6 +290,7 @@ Two shorthands name a pool directly instead of searching a zone:
 ```jsonc
 { "target": "t1" }       // whatever was chosen for target spec t1
 { "binding": "subject" } // the object a trigger bound (the land that was played, ...)
+{ "binding": "eaten" }   // …or the whole *set* an op recorded with `as`
 ```
 
 On their own they *are* the whole selector. Combined with other keys they are the
@@ -309,6 +310,45 @@ Without that, the nearest thing a card could ask was "is there a land *somewhere
 in my library", which is true almost always and would have made the branch a
 formality. Note the explicit `"zone": "library"` — filtering defaults to the
 battlefield, and a card being asked about anywhere else has to say so.
+
+### Recording what an op consumed — amplify and devour
+
+```jsonc
+// Amplify 2 — "…for each Beast card you reveal in your hand."
+{ "op": "reveal", "as": "shown",
+  "objects": { "zone": "hand", "controller": "you",
+               "subtypes": ["Beast"], "count": "any" } },
+{ "op": "add_counters", "counter": "+1/+1",
+  "objects": { "zone": "battlefield", "self_only": true },
+  "amount": { "times": [ { "const": 2 }, { "count": { "binding": "shown" } } ] } }
+
+// Devour 2 — "…you may sacrifice any number of creatures."
+{ "op": "sacrifice", "as": "eaten",
+  "objects": { "zone": "battlefield", "controller": "you",
+               "types": ["Creature"], "exclude_self": true, "count": "any" } }
+```
+
+Both keywords are "twice **that** many", and *that* is a set the player chose a
+moment ago in this same resolution. Nothing can name it afterwards, and the two
+fail differently — which is why one `as` covers both:
+
+| | why it cannot be recovered |
+|---|---|
+| amplify | the revealed cards are back in a hand full of other Beasts; no filter tells them apart |
+| devour | the eaten creatures are in a graveyard, and `creatures_died_this_turn` also counts combat and removal — a plausible number, and the wrong one |
+
+`as` writes the chosen oids into the binding, and `{"binding": …}` now seeds a
+**list** as readily as a single object. Every trigger binding before this held
+exactly one, so nothing else changed.
+
+`reveal` also goes through `choose_objects` now, which is what makes "reveal
+**any number**" sayable at all: it used to resolve its pool and show the whole
+hand without asking. `count` still defaults to `"all"`, so every reveal already
+in the pool is unchanged.
+
+*Divergence*: both keywords print "**as** this creature enters", a replacement.
+They are `self_enters` triggers here, for the reason
+["as this enters, choose a creature type"](rules-coverage.md) is one.
 
 ## Value expressions
 

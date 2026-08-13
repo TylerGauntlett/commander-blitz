@@ -67,9 +67,23 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("sacrifice")
 def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Sacrifice permanents, optionally recording which ones.
+
+    ``as`` is devour: "as this creature enters, you may sacrifice any number of
+    creatures. It enters with twice that many +1/+1 counters on it." The number
+    is not knowable when the card is written and is not recoverable afterwards
+    either -- the creatures are in a graveyard among everything else that has
+    died, and `creatures_died_this_turn` counts combat and removal too. So the
+    list is written down as the op consumes it, and read back with
+    ``{"count": {"binding": …}}``.
+    """
     selector = dict(spec.get("objects") or {})
     selector.setdefault("controller", "you")
     oids = yield from choose_objects(ctx, selector, "Sacrifice", "sacrifice")
+    if name := spec.get("as"):
+        # Written before the sacrifice, so the binding is a record of the choice
+        # rather than of what survived it.
+        ctx.bindings[str(name)] = list(oids)
     for oid in oids:
         sacrifice(ctx.state, oid, by=ctx.source_oid)
 
