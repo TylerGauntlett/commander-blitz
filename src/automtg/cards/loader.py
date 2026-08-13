@@ -318,6 +318,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'bestow' on a card that is already an Aura -- bestow is "
                 f"what makes it one, and this card would be an Aura twice"
             )
+    # Meld needs both halves of its own sentence: a partner with nothing to
+    # become, or a result with no partner to meld with, is a trigger that can
+    # never fire and a card that looks implemented.
+    if (model.melds_with is None) != (model.melds_into is None):
+        raise DslError(
+            f"{where}: 'melds_with' and 'melds_into' come as a pair -- one alone is "
+            f"a meld that can never happen"
+        )
     # Mutate (702.140a). A creature card, for bestow's reason and one more: the
     # merged permanent *is* the top card, so a non-creature on top would make a
     # creature stop being one -- which is a different keyword.
@@ -615,6 +623,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         evoke=evoke,
         bestow=bestow,
         mutate=mutate,
+        melds_with=model.melds_with,
+        melds_into=model.melds_into,
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,
@@ -1765,6 +1775,7 @@ def link_faces(cards: dict[str, CardDef]) -> None:
             )
         cards[back.id] = dataclasses.replace(back, front_face=card.id)
     link_second_faces(cards)
+    link_meld_results(cards)
 
 
 def link_second_faces(cards: dict[str, CardDef]) -> None:
@@ -1814,6 +1825,36 @@ def link_second_faces(cards: dict[str, CardDef]) -> None:
                     f"a permanent one never reaches the exile it is cast from"
                 )
         cards[face.id] = dataclasses.replace(face, parent_face=card.id)
+
+
+def link_meld_results(cards: dict[str, CardDef]) -> None:
+    """Point every melded card back at the half that names it.
+
+    701.37's result is an oversized card that exists only as something two
+    permanents *become*, so it is kept out of decks the same way a back face
+    and a second castable face are: with a derived back-link that the deck
+    guard already tests. Reusing ``parent_face`` rather than inventing a third
+    field, because the guard's question is the same one -- "is this a card
+    anybody owns a copy of?" -- and three fields answering it would be three
+    places to forget.
+    """
+    for card in cards.values():
+        if card.melds_into is None or card.melds_with is None:
+            continue
+        if card.melds_with not in cards:
+            raise DslError(
+                f"{card.id}: melds_with references unknown card {card.melds_with!r}"
+            )
+        result = cards.get(card.melds_into)
+        if result is None:
+            raise DslError(
+                f"{card.id}: melds_into references unknown card {card.melds_into!r}"
+            )
+        if result.parent_face is not None and result.parent_face != card.id:
+            raise DslError(
+                f"{result.id}: is claimed by both {result.parent_face!r} and {card.id!r}"
+            )
+        cards[result.id] = dataclasses.replace(result, parent_face=card.id)
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:

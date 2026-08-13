@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>79 ops"]
+    ctx --> ops["op registry<br/>80 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-79 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+80 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2145,6 +2145,47 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 `self_only` out. Ninjutsu is the shape that makes that satisfier obviously
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
+
+## Meld — mutate's merged permanent, with the pair fixed by the card
+
+```jsonc
+{ "id": "bruna_the_fading_light",
+  "melds_with": "gisela_the_broken_blade",
+  "melds_into": "brisela_voice_of_nightmares",
+  "abilities": [ { "kind": "triggered", "trigger": { "event": "end_step" },
+                   "condition": { … },
+                   "effects": [ { "op": "meld" } ] } ] }
+```
+
+Meld was `refused` as needing "a card-wide designated state the engine has no
+place to keep". By the time mutate shipped, the place existed: a permanent whose
+identity is a `CardDef` read through `card_of`, with the other card in
+`merged_under` so `move_object` sends the pair wherever it goes.
+
+Two things change, and both are simplifications:
+
+| | mutate | meld |
+|---|---|---|
+| which two cards | the caster targets one | fixed by `melds_with` |
+| what the result is | the top card plus the abilities under it | a **third** card entry, `melds_into` |
+
+The one thing that is genuinely harder is that meld makes a **new** permanent.
+701.37c exiles both cards and returns them melded, so the melded permanent
+*enters the battlefield*: its enter triggers fire and it is summoning sick. That
+is why `op_meld` exiles and re-enters rather than writing the identity onto a
+permanent already standing, which is all mutate has to do. `merged_card` and
+`merged_under` are set **after** the move, because `reset_permanent_state`
+clears both on the way in — the same ordering disturb's `cast_transformed`
+needs.
+
+The melded card entry is not a card anybody owns a copy of, and it is kept out
+of decks by `parent_face` — the same derived back-link a back face and a second
+castable face use. Three fields answering "is this a card anybody owns?" would
+be three places to forget, so there is one.
+
+"If you both own and control" is **not** implemented in the op. It is the card's
+own intervening-if `condition`, checked twice by `triggers` as 603.4 requires; a
+third check inside the effect would be a different rule wearing the same words.
 
 ## Mutate — two cards, one permanent, and one synthesised `CardDef`
 

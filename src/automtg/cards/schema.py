@@ -316,6 +316,15 @@ class CardModel(BaseModel):
     #: what the spell **targets**: the "enchant creature" is fixed by the rule,
     #: not by the card, so no bestow card writes a target of its own.
     bestow: str | None = None
+    #: **Meld** (701.37): "exile them, then meld them into <name>". The id of the
+    #: card this one melds *with*, and the id of the single oversized card the
+    #: two become. The melded entry is an ordinary card in the same pool, and
+    #: like a back face it is not a card anybody owns a copy of.
+    #:
+    #: Only the half that prints the meld trigger needs these -- Bruna carries
+    #: it and Gisela does not -- so they are not required to be symmetric.
+    melds_with: str | None = None
+    melds_into: str | None = None
     #: **Mutate {1}{G}** (702.140a): "If you cast this spell for its mutate cost,
     #: put it over or under target non-Human creature you own. They mutate into
     #: the creature on top plus all abilities from under it."

@@ -263,7 +263,7 @@ This is the long tail, and where the build order comes from.
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
 | Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
 | Manifest | shipped | the `manifest` op, plus the face-down shell in `chars` and the turn-face-up activation | `manifest` |
-| Meld | refused | melding; see rules-coverage.md | — |
+| Meld | shipped | the `meld` op: mutate's merged permanent with the pair fixed by `melds_with` and the result a third card entry, `melds_into` | `meld` |
 | Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
 | Miracle | shipped | the `miracle` card field, read off `cards_drawn_this_turn` *before* the draw bumps it | `miracle` |
 | Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
@@ -401,11 +401,16 @@ with exactly one.
 
 ### The refused
 
-`refused` is a recorded decision rather than a difficulty, and **two have been
+`refused` is a recorded decision rather than a difficulty, and **three have been
 reversed**:
 
 - **Regeneration** was refused as "a destruction-replacement shield" and now
   ships, because `zones.destroy` is a single choke point.
+- **Meld** was refused for the same words as flip — "a card-wide designated
+  state the engine has no place to keep" — and by the time mutate shipped, the
+  place existed. It is the merged permanent again, with the pair fixed by the
+  card rather than chosen by the caster, and one thing genuinely harder: 701.37c
+  exiles both cards and returns them melded, so the melded permanent *enters*.
 - **Flip** was refused as needing "a card-wide designated state the engine has
   no place to keep", and needed *nothing*. Rule 711 is `back_face` plus the
   `transform` op, both of which shipped for Bloodline Keeper, and every
@@ -414,10 +419,9 @@ reversed**:
   `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
   status nobody should trust.
 
-The remaining four hold for reasons the reversals did not have. Banding and
+The remaining three hold for reasons the reversals did not have. Banding and
 phasing change how combat and the untap step work for *every* permanent in the
-game; daybound / nightbound needs a game-wide designated state; meld needs two
-specific cards to become one oversized permanent. They belong in
+game; daybound / nightbound needs a game-wide designated state. They belong in
 [rules-coverage.md](rules-coverage.md) and should be re-argued there rather than
 reclassified here.
 
