@@ -1,3 +1,45 @@
+## Domain and coven — one leaf, because `count` fails them opposite ways
+
+### Overview
+
+The census filed both as `blocked`, separately, with almost the same sentence:
+domain "counts basic land *types*, not lands", coven wants "three creatures with
+different powers" and "no distinct-value count exists". They are one capability,
+and the thing that shows it is *how* `count` gets each of them wrong.
+
+| board | `count` | the card |
+|---|---|---|
+| five Forests | 5 | 1 basic land type |
+| three 2/2s | 3 | 1 power |
+
+Domain over-counts and coven over-counts, and neither is fixable by filtering:
+`count` counts the objects that matched, and both cards want the number of
+distinct *values* those objects carry. So one leaf, `{"distinct": {"of": …,
+"objects": …}}`, with two `of` values — and exactly two, because those are the
+two printed cards. A third would be vocabulary with nothing asking for it, and a
+misspelling has to be a load error rather than a quiet fall back to powers.
+
+### Coven needed nothing else
+
+"If you control three or more creatures with different powers" is an ordinary
+`cmp` against `{"const": 3}` once the left side exists. That is worth stating
+because the census's phrasing — "no distinct-value count exists" — reads like a
+condition-language gap and is a *value*-language gap; adding a condition leaf
+would have been the over-build, and it would not compose into the "for each"
+form domain needs.
+
+### Why it may never be a static
+
+Both readings are of **derived** characteristics, and deliberately so: an anthem
+changes who has coven, and "all lands are Islands" changes what counts for
+domain. That makes the leaf illegal in a static's `condition` for the reason
+[layers-lite](adr/0001-layers-lite.md) gives — a static switched on by another
+static's output is the dependency the fixed-order pipeline cannot have.
+
+The static value language is a whitelist, so it already refused it and no code
+changed. There is a test pinning that it stays refused, because the thing that
+would break it is somebody widening the whitelist for an unrelated reason.
+
 ## Clash — a comparison across two libraries, and a binding to carry it
 
 ### Overview
