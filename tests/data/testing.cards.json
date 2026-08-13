@@ -2,6 +2,50 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_hideaway",
+      "name": "Test Hideaway Vault",
+      "oracle_text": "Hideaway 4 (When this permanent enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\n{2}, Sacrifice this artifact: You may play the exiled card without paying its mana cost.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Hideaway 4",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "hideaway",
+              "amount": {
+                "const": 4
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{2}, Sacrifice this artifact: You may play the exiled card without paying its mana cost.",
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "op": "play_exiled"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_manifester",
       "name": "Test Manifesting Rite",
       "oracle_text": "Manifest the top card of your library.",

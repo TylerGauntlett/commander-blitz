@@ -1434,6 +1434,12 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}: unknown look_at_top destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+    # Same argument as look_at_top, and the printed keyword is *named* for the
+    # number -- "hideaway 4". Defaulted it would look at one card, and the
+    # ability that later plays it would still work, so nothing downstream would
+    # ever complain.
+    if op == "hideaway" and "amount" not in effect:
+        raise DslError(f"{where}: hideaway needs an 'amount' -- hideaway N")
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
         if duration not in ("this_turn", "next_combat"):

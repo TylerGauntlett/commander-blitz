@@ -631,6 +631,63 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     return len(ctx.state.stack) > before
 
 
+@register("hideaway")
+def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 702.75a — "look at the top N cards, exile one face down, and put the
+    rest on the bottom of your library in a random order."
+
+    Three things the engine already had, in an order nothing had needed before:
+    `look_at_top`'s bounded pool, foretell's "face down in exile" (which is
+    `revealed_to`, not a characteristics shell -- nobody may interact with it),
+    and cascade's random bottoming.
+
+    The link to the hideaway permanent is `exiled_by`, the O-Ring direction,
+    because it is the *permanent* that later says "you may play the exiled
+    card" and so the permanent is what has to find it.
+    """
+    amount = max(1, evaluate_value(ctx, spec.get("amount", 4)))
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    top = list(library[:amount])
+    if not top:
+        return
+    picked = yield from ask_objects(
+        ctx, "Exile one face down", top, 1, 1, pid, "hideaway"
+    )
+    if not picked:
+        return
+    chosen = picked[0]
+    move_object(ctx.state, chosen, Zone.EXILE, to_player=pid, cause="hideaway")
+    obj = ctx.state.objects[chosen]
+    obj.exiled_by = ctx.source_oid
+    obj.revealed_to.add(pid)
+    ctx.state.emit("hideaway", player=pid, source=ctx.source_oid, oid=chosen)
+    _bottom_in_random_order(ctx, pid, [oid for oid in top if oid != chosen])
+
+
+@register("play_exiled")
+def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"You may play the exiled card without paying its mana cost."
+
+    The permission half of hideaway, and the one thing the keyword genuinely
+    needed: the engine could exile a card and could cast one for free, and had
+    no way to say "that one, from there".
+
+    Shares `suspend.cast_for_free`, so it is a real cast -- it uses the stack
+    and can be countered -- and shares its documented simplification: the
+    targets are the first legal tuple rather than a choice.
+    """
+    from ..suspend import cast_for_free
+
+    selector = dict(spec.get("objects") or {})
+    selector.setdefault("zone", "exile")
+    selector.setdefault("controller", "any")
+    selector.setdefault("exiled_with", "self")
+    oids = yield from choose_objects(ctx, selector, "Play the exiled card", "play_exiled")
+    for oid in oids:
+        cast_for_free(ctx.state, ctx.controller, oid)
+
+
 @register("cascade")
 def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.85a — exile from the top until something cheaper turns up.
