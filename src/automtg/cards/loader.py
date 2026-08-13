@@ -304,6 +304,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
         )
 
+    if model.rebound and set(model.types) & {"Creature", "Land", "Artifact", "Enchantment"}:
+        # Rebound replaces the *graveyard* a spell would go to, so a permanent
+        # spell never reaches the rider -- it enters the battlefield instead.
+        # A permanent card carrying it would load, look implemented and never
+        # rebound once. No printing has it, either: 702.87 is instants and
+        # sorceries only.
+        raise DslError(
+            f"{where}: 'rebound' only means anything on an instant or sorcery -- "
+            f"a permanent spell enters the battlefield and never reaches the rider"
+        )
     if model.buyback and model.kicker is None:
         # Buyback *is* a kicker with a rider. Without the cost there is nothing
         # to pay and the rider never fires, so the card reads "buyback" and
@@ -439,6 +449,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         buyback=model.buyback,
+        rebound=model.rebound,
         kicker_label=model.kicker_label,
         kicker=kicker,
         evoke=evoke,

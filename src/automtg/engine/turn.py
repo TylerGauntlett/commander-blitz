@@ -44,6 +44,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # card, and a spell cast this upkeep should be on the stack under
         # anything that triggers from the upkeep itself.
         suspend.tick(state, state.active_player)
+        suspend.rebound_tick(state, state.active_player)
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
         _draw_step(state)

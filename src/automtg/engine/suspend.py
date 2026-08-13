@@ -98,6 +98,32 @@ def tick(state: GameState, pid: int) -> None:
             cast_for_free(state, pid, oid)
 
 
+def rebound_tick(state: GameState, pid: int) -> None:
+    """Rebound (702.87a): the free cast a rebounded spell is owed.
+
+    Lives beside suspend because it *is* suspend's second half -- "you may cast
+    this card from exile without paying its mana cost" is the same sentence, and
+    :func:`cast_for_free` is the same code. What differs is only how the card got
+    to exile and how long it waits: a time counter each upkeep, or exactly one.
+
+    The mark is cleared **before** the cast rather than after, and that is the
+    loop guard's second half: the free cast is itself a cast, so a spell that
+    resolved again with the flag still set would owe another one next upkeep.
+    (The first half is `cast_from_hand`, checked when the rider fires.)
+
+    A rebounded spell with no legal target stays in exile, unmarked -- the same
+    outcome suspend has, and what 702.87b says: the cast is optional and simply
+    does not happen.
+    """
+    for oid in [o for o in state.players[pid].exile if state.objects[o].rebound_by == pid]:
+        obj = state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            continue
+        obj.rebound_by = None
+        state.emit(EventType.TIME_COUNTER_REMOVED, player=pid, source=oid, card=obj.def_id, remaining=0)
+        cast_for_free(state, pid, oid)
+
+
 def cast_for_free(state: GameState, pid: int, oid: int) -> None:
     """Put a suspended card on the stack having paid nothing for it.
 

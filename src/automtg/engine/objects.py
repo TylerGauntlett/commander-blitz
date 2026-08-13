@@ -40,6 +40,15 @@ class GameObject:
     damage: int = 0
     #: Set when damage from a deathtouch source was dealt this turn.
     deathtouched: bool = False
+    #: Which zone this card was cast from, recorded by `stack.push_spell`.
+    #: Rebound is "if you cast this spell **from your hand**", and that clause
+    #: is the loop guard: a rebounded spell is cast from exile, so without it
+    #: the card would rebound again every upkeep for ever.
+    cast_from_hand: bool = False
+    #: The player owed a free cast at their next upkeep -- rebound (702.87a).
+    #: Written on the *exiled card* rather than anywhere else, the way
+    #: `suspended_by` is, because the thing waiting is the card itself.
+    rebound_by: int | None = None
     #: Regeneration shields (701.15): "the **next** time this permanent would be
     #: destroyed this turn, instead …". A count rather than a boolean, because
     #: "regenerate it twice" is two shields and each is spent by one
