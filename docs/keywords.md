@@ -188,7 +188,7 @@ This is the long tail, and where the build order comes from.
 | Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
 | Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
 | Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
-| Banding | refused | see rules-coverage.md | — |
+| Banding | refused | needs player-chosen combat damage assignment, which the engine automates for *every* creature — see rules-coverage.md | — |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
 | Bestow | shipped | an alternative cost like evoke, plus the one target list the *rules* supply (`BESTOW_TARGET`), plus a type change in `chars` switched on `attached_to` | `bestow` |
 | Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
@@ -345,10 +345,13 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**Nine rows are blocked and five refused. The other 169 are shipped or free.**
+**One row is refused. The other 183 are shipped or free** — 90 shipped, 93 free.
+`routed` and `blocked` are both empty, and the one refusal (banding) names its
+blocker rather than pointing at a document.
 
-The single most useful finding, made over and over, is that **`blocked` was
-usually a routing error rather than a size estimate**. Eleven keywords filed
+The single most useful finding, made over and over, is that **`blocked` was a
+routing error rather than a size estimate** — every one of the twenty-five rows
+that started there has shipped. Eleven keywords filed
 against a subsystem turned out to need something that already existed, or
 something small in a place nobody had looked:
 
@@ -437,15 +440,24 @@ have been reversed**:
   status nobody should trust.
 
 **Banding** is the one that still stands, and it stands on a different footing
-from the four that fell. The others were each *one* mechanism the engine turned
-out to have a place for. Banding is two rules that share a word: attacking as a
-band, which changes the shape of the attack declaration, and 702.21's transfer
-of combat **damage assignment** from the defending player to the attacking one.
-The second half is where the refusal holds — it is a change to who decides,
-inside the one part of combat the engine currently gives nobody a choice about —
-and half of banding shipped is a card that reads right and plays wrong.
-It belongs in [rules-coverage.md](rules-coverage.md) and should be re-argued
-there rather than reclassified here.
+from the five that fell. Each of those was *one* mechanism the engine turned out
+to have a place for. Banding is two rules sharing a word:
+
+| half | rule | status |
+|---|---|---|
+| attacking as a band, blocked as a unit | 702.21b, 702.21e | buildable — it is a shape change in the attack declaration |
+| combat **damage assignment** moves to the banding creature's controller | 702.21 | **nothing to move** |
+
+The second half is the point of the keyword, and the engine has no chooser to
+hand over: combat damage is assigned automatically, blockers ordered by effective
+toughness and paid lethal in order, with nobody asked. That is *manual damage
+division*, already a recorded simplification in
+[rules-coverage.md](rules-coverage.md), and banding sits behind it.
+
+Shipping the band declaration alone would be a card that reads right and plays
+wrong — which is `/extend-dsl` rule 3, refuse what you cannot do exactly. So the
+refusal is re-argued rather than reversed, and it now names its blocker instead
+of pointing at the document.
 
 ## Suggested build order
 
