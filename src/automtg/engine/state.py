@@ -156,6 +156,13 @@ class GameState:
         its back face everywhere at once and none of them needed changing.
         """
         card = self.registry.get(obj.def_id)
+        # A second castable face -- adventure, aftermath, a split half -- is
+        # asked first, because it is the face the card is *currently being cast
+        # as* and that is a narrower window than being transformed. Nothing
+        # prints both, and if anything did, the spell on the stack is the more
+        # specific claim.
+        if obj.showing_second_face and card.second_face is not None:
+            return self.registry.get(card.second_face)
         if obj.transformed and card.back_face is not None:
             return self.registry.get(card.back_face)
         return card

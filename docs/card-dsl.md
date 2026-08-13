@@ -2146,6 +2146,56 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## A second castable face — adventure, aftermath and split cards
+
+```jsonc
+{ "id": "brazen_borrower", "types": ["Creature"],
+  "second_face": "petty_theft", "adventure": true }
+
+{ "id": "driven",  "types": ["Sorcery"],
+  "second_face": "despair", "second_face_zone": "graveyard" }   // aftermath
+```
+
+The engine already had **two `CardDef`s over one `GameObject`**, because that is
+what `back_face` is. What it did not have is a second face that is *cast*, and
+that difference is the whole of the design:
+
+| | back face | second face |
+|---|---|---|
+| how you get it | you **turn the permanent over** | you **cast the card as it** |
+| when it is showing | while the permanent is transformed | only while it is a spell |
+| may it be in a deck | no | no — and it is castable alone, so it matters more |
+
+`card_of` is asked the second-face question **first**, because "the card is
+currently being cast as this" is a narrower claim than "the permanent is
+transformed". Everything downstream — the cost, the type line, the targets, the
+effects, the name in the log — is that face's, with nothing else changed.
+
+Three keywords share the field and differ in two words:
+
+| | cast from | after it resolves |
+|---|---|---|
+| a split half | hand | graveyard, like any spell |
+| **adventure** | hand | exile — *and the front face may be cast from there* |
+| **aftermath** | graveyard, and nowhere else | exile, finished |
+
+Aftermath's "cast this spell only from your graveyard" is expressed as **where
+the half is offered** rather than as a condition on the cast, because there is
+no hand line to refuse. Adventure's exile is the **fifth rider** on the
+destination a resolving spell goes to, beside flashback's exile, buyback's hand,
+rebound's exile and cipher's — and it is the only one that has to read the
+*printed* card rather than the one that just resolved, since the flags belong to
+the card as a whole and `card_of` is answering with the half.
+
+Both timings are asked separately, off each face's own type line. Brazen
+Borrower is a flash creature whose Adventure is an **instant**, so a card gated
+on one face's types would be castable at the wrong speed in one direction or the
+other.
+
+The rider fires **as the spell resolves** (715.3c), which is what the boundary
+tests are about: an Adventure that is countered or whose target vanished is an
+ordinary card in an ordinary graveyard, not a free spell waiting in exile.
+
 ## Face-down permanents — morph, megamorph and manifest
 
 ```jsonc

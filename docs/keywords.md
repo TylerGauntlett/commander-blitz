@@ -180,10 +180,10 @@ This is the long tail, and where the build order comes from.
 |---|---|---|---|
 | Absorb | shipped | the `prevent_damage` static -- parameterised on N, applied per source in `damage_permanent` | `prevent_damage` |
 | Adapt | free | activated ability: `if` `counters_on` is 0, then `add_counters` | — |
-| Adventure | blocked | split cards — one card, two castable halves | — |
+| Adventure | shipped | `second_face` plus `adventure`: `card_of`'s second branch while it is a spell, then a fifth destination rider that exiles it and a fourth zone it may be cast from | `second_face` |
 | Affinity | free | `cost_reduction` already takes `{"count": filter}`; generic-only, clamped at zero, which is exactly affinity | — |
 | Afterlife | free | `dies` trigger, then `create_token` | — |
-| Aftermath | blocked | split cards | — |
+| Aftermath | shipped | the same `second_face`, with `second_face_zone: "graveyard"` — the restriction is *where the half is offered*, and the exile is the same rider adventure uses | `second_face_zone` |
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
 | Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
 | Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
@@ -369,16 +369,24 @@ above it.
 
 ### What is genuinely left
 
-**Four blocked rows, and they are one cluster.** Every one-off is done.
+**Two blocked rows, and they no longer share a cluster.** Every one-off is done, and so is the second-castable-face mechanism the census grouped four keywords under: adventure and aftermath ship on it, and they took split cards with them.
 
-| cluster | keywords | what it needs |
-|---|---|---|
-| **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes afterwards. `back_face` is a face you *turn over*, and this also needs the authoring pipeline to emit two card entries from one answer |
+| keyword | what it needs |
+|---|---|
+| **Bestow** | a creature card cast as an **Aura**, which is one card with two type lines on the *battlefield* rather than on the stack. `second_face` cannot carry it: the two faces there are two spells, and this is one spell that lands as two different permanents depending on whether what it enchanted is still there |
+| **Mutate** | two permanents merged into one, with the abilities of both and one set of characteristics. The only genuine subsystem left in the census: a `GameObject` is one card, and every choke point the other reversals leaned on — `card_of`, `chars`, `zones.move_object` — assumes that |
 
-Hideaway was listed here as the one row waiting on *two* clusters, and it needed
-neither of them whole. "Face down in exile" is `revealed_to`, which foretell had
-already shipped — the 2/2 shell is only needed on the **battlefield**, where
-somebody can point at it. What was actually missing was the second half,
+The census grouped these two with adventure and aftermath under "a second
+castable face", and that grouping was wrong in the way `blocked` usually was.
+Adventure and aftermath *are* one mechanism, and it is a small one, because
+`back_face` had already built two `CardDef`s over one `GameObject`. Bestow and
+mutate are not that mechanism at all: neither is about which spell you cast,
+both are about what the permanent turns out to be.
+
+Hideaway was likewise listed as waiting on *two* clusters and needed neither
+whole. "Face down in exile" is `revealed_to`, which foretell had already
+shipped — the 2/2 shell is only needed on the **battlefield**, where somebody
+can point at it. What was actually missing was the second half,
 play-from-exile, and that is one op reading back the `exiled_by` link.
 
 ### The five refused
@@ -396,8 +404,16 @@ reclassified here.
 
 ## Suggested build order
 
-1. **A second castable face**, the last of the buildable work: it is the only
-   cluster needing the *authoring pipeline* changed as well as the engine.
+1. **Bestow**, which is the smaller of the two: one spell, two things it can
+   land as, and the "becomes a creature when the enchanted one leaves" half is
+   an ordinary state-based check rather than a new zone rule.
+2. **Mutate** last, and only after deciding whether merged permanents belong in
+   the engine at all — [rules-coverage.md](rules-coverage.md) is where that
+   argument goes, not here.
+
+Both still need the *authoring pipeline* to emit two card entries from one
+answer file, which the shipped second-face cards work around by being
+hand-written — the same way `bloodline_keeper` / `lord_of_lineage` are.
 
 Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a
 capability already has gap records, those cards are the real specification.

@@ -231,6 +231,30 @@ class CardModel(BaseModel):
     #: with no mana cost -- it is never cast, never shuffled into a deck, and
     #: exists only as the face a permanent shows once it has transformed.
     back_face: str | None = None
+    #: The id of this card's **second castable face** — the Adventure half, the
+    #: Aftermath half, the other half of a split card. An ordinary card entry in
+    #: the same pool with its own name, mana cost, type line and effects,
+    #: exactly as ``back_face`` is.
+    #:
+    #: The difference from a back face is the whole reason this is a second
+    #: field rather than a reuse: a back face is one you **turn over**, and it
+    #: is never cast, never drawn and never shuffled into a deck. A second face
+    #: is the one thing a back face is not — a *second spell* the same card in
+    #: the same zone may be cast as, at a different price, with a different type
+    #: line, going somewhere different afterwards.
+    second_face: str | None = None
+    #: Where the second face may be cast from. Split halves and Adventures are
+    #: cast from hand; an **Aftermath** half may be cast *only* from the
+    #: graveyard (702.127a), which is the whole of what that keyword says.
+    second_face_zone: Literal["hand", "graveyard"] = "hand"
+    #: **Adventure** (715.3c and 715.3d): the card is exiled as the Adventure spell
+    #: resolves, and its owner may then cast the *front* face from exile.
+    #:
+    #: Off for a split card, whose halves are done with each other, and off for
+    #: aftermath, which exiles for good. Set it and the second face becomes an
+    #: Adventure rather than merely a second half — so this is the flag that
+    #: separates the three keywords sharing the field above.
+    adventure: bool = False
     #: "This spell can't be countered."
     uncounterable: bool = False
     #: Split second (702.61a): "As long as this spell is on the stack, players

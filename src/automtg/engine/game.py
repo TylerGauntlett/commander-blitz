@@ -217,6 +217,16 @@ class Game:
         oid = action.source
         obj = state.objects[oid]
         card = state.card_of(obj)
+        # Which face is being cast is chosen as the spell is announced (601.2a),
+        # so it is settled here, before anything reads a cost or a target list.
+        #
+        # Rebound locally rather than flagging the object: everything below is
+        # the second face's -- price, X, modes, splices, purpose -- and the
+        # object must not start showing that face until the spell is actually on
+        # the stack, because every `return` between here and `push_spell` is a
+        # cast that did not happen.
+        if action.second_face and card.second_face is not None:
+            card = state.registry.get(card.second_face)
         from_command = obj.zone is Zone.COMMAND
         from .costs import commander_cost, cost_reduction, spell_purpose
 
@@ -384,6 +394,7 @@ class Game:
             overloaded=action.overloaded,
             spliced=spliced,
             face_down=action.face_down,
+            second_face=action.second_face,
             modes=modes,
         )
         triggers.fire(

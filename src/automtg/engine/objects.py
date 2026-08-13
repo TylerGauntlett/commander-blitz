@@ -203,6 +203,24 @@ class GameObject:
     #: (712.13a, "enters front face up") and disturb is the one case that must
     #: survive it.
     cast_transformed: bool = False
+    #: Whether this object is currently showing its **second castable face** --
+    #: the Adventure half, the Aftermath half, one half of a split card.
+    #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so
+    #: the cost, the type line, the targets, the effects and the name in the log
+    #: are all that face's with nothing else changed.
+    #:
+    #: True only while the card is a *spell*: it is set as the spell is put on
+    #: the stack and cleared as it leaves, because a card that showed one face
+    #: on the stack and another wherever it landed would be two cards to
+    #: everyone watching.
+    showing_second_face: bool = False
+    #: **Adventure** (715.3d): this card is in exile having gone on an
+    #: adventure, and its owner may cast the *front* face from there.
+    #:
+    #: A flag rather than a reuse of ``exiled_by``: nothing exiled it, the card
+    #: put itself there on resolution, and there is no permanent for the link to
+    #: point at.
+    on_adventure: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -322,6 +340,9 @@ class GameObject:
         self.chosen_type = None
         self.added_subtypes = ()
         self.transformed = False
+        # The creature came back off its adventure and is on the battlefield;
+        # there is nothing left in exile for anyone to cast.
+        self.on_adventure = False
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

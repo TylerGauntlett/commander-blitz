@@ -313,6 +313,24 @@ class CardDef:
     #: guards test. Derived rather than authored so the link cannot be written
     #: in one direction only.
     front_face: str | None = None
+    #: The id of this card's **second castable face** -- adventure, aftermath,
+    #: and the other half of a split card. Two ``CardDef``s and one
+    #: ``GameObject``, exactly as ``back_face`` is; what differs is that this
+    #: one is *cast*, so ``showing_second_face`` on the object is set as the
+    #: spell goes on the stack rather than by anything on the battlefield.
+    second_face: str | None = None
+    #: Which zone the second face may be cast from -- ``"hand"`` for a split
+    #: half or an Adventure, ``"graveyard"`` for aftermath.
+    second_face_zone: str = "hand"
+    #: **Adventure**: the card is exiled as the second face resolves, and the
+    #: *front* face may then be cast from exile. The flag that separates
+    #: adventure from the other two users of ``second_face``.
+    adventure: bool = False
+    #: Set by the registry on the *second* face, naming the card it belongs to.
+    #: A second face is not a card anybody may draw or put in a deck on its own,
+    #: and it is castable only as part of the card that prints it -- the same
+    #: derived back-link, in the same direction, that ``front_face`` is.
+    parent_face: str | None = None
     #: "This spell can't be countered."  A printed property of the card
     #: rather than a granted one, read by the `counter` op -- a spell is on
     #: the stack, where static abilities do not reach it.

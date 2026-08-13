@@ -422,9 +422,9 @@ def printed_row(card, index):
     back face has no printed text in the catalog at all and is honestly reported
     as having nothing to check against.
     """
-    if card.back_face is not None:
+    if card.back_face is not None or card.second_face is not None:
         return index.lookup(card.name, joined=True)
-    if card.front_face is not None:
+    if card.front_face is not None or card.parent_face is not None:
         return None
     return index.lookup(card.name, token=False)
 
