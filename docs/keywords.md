@@ -208,7 +208,7 @@ This is the long tail, and where the build order comes from.
 | Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
 | Coven | free | condition `cmp` on `{"distinct": {"of": "power"}}` over creatures you control | `distinct` |
 | Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
-| Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
+| Cumulative upkeep | shipped | `upkeep` trigger, `add_counters`, then `may` `pay` with a `times` multiplier off the counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
 | Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |

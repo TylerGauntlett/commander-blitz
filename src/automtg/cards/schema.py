@@ -44,6 +44,12 @@ class CostModel(BaseModel):
     pay_life: int = 0
     remove_counters: dict[str, Any] | None = None
     exile_from_graveyard: dict[str, Any] | None = None
+    #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
+    #: A value expression multiplying the ``mana`` half, and the only part of a
+    #: cost that is not fixed when the card is written. Read only where an
+    #: ``EffectContext`` exists to evaluate it -- i.e. by `may`'s `pay`, not by
+    #: an activated ability's cost, which is charged before any effect runs.
+    times: dict[str, Any] | int | None = None
 
 
 class TargetModel(BaseModel):
