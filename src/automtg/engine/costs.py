@@ -502,6 +502,7 @@ def pay(
     x: int = 0,
     extra_generic: int = 0,
     purpose: frozenset[str] | None = None,
+    record_colors_on: int | None = None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
@@ -539,7 +540,12 @@ def pay(
             hybrid=req.hybrid,
         )
     if req.total and not pay_mana(
-        state, pid, req, exclude_oid=source_oid if cost.tap else None, purpose=purpose
+        state,
+        pid,
+        req,
+        exclude_oid=source_oid if cost.tap else None,
+        purpose=purpose,
+        record_colors_on=record_colors_on,
     ):
         return False
 
@@ -637,8 +643,15 @@ def pay_mana(
     *,
     exclude_oid: int | None = None,
     purpose: frozenset[str] | None = None,
+    record_colors_on: int | None = None,
 ) -> bool:
-    """Tap sources and deduct ``req`` from the pool."""
+    """Tap sources and deduct ``req`` from the pool.
+
+    ``record_colors_on`` is sunburst and converge: the object to write the
+    colours actually spent onto. This is the only moment they are knowable --
+    once the pool is decremented, one blue mana is indistinguishable from
+    another -- so a card that reads them later has to be handed them here.
+    """
     player = state.players[pid]
     sources = mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
@@ -648,8 +661,10 @@ def pay_mana(
         return False
     for oid, ability_index, option_index in payment.taps:
         activate_mana_ability(state, oid, ability_index, pid, option_index)
-    player.mana_pool.spend(req)
-    state.emit(EventType.MANA_SPENT, player=pid, amount=req.total)
+    spent = player.mana_pool.spend(req)
+    if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
+        obj.colors_spent = spent
+    state.emit(EventType.MANA_SPENT, player=pid, amount=req.total, colors=sorted(spent))
     return True
 
 

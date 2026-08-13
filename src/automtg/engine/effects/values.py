@@ -91,6 +91,11 @@ VALUE_KEYS = frozenset(
         # reader of a cost wants its total or the set of colours in it, and this
         # wants how many times one symbol appears.
         "mana_symbols",
+        # "…where X is the number of colors of mana spent to cast this spell" --
+        # sunburst and converge. A fact about the *payment*, not the cost: a
+        # Sunburst artifact cast for {4} off five different lands enters with
+        # five counters, and its printed cost has no coloured pip at all.
+        "colors_of_mana_spent",
     }
 )
 
@@ -143,6 +148,13 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
 
         pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+    if "colors_of_mana_spent" in expr:
+        # Sunburst and converge. Read off the object that was cast, which for a
+        # spell's own `spell_effects` is `source_oid` and for an artifact's
+        # enters trigger is the permanent -- the same object either way, because
+        # an oid survives the zone change onto the battlefield.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        return len(obj.colors_spent) if obj is not None else 0
     if "mana_symbols" in expr:
         # Chroma. Read off the **printed** cost, which is what the keyword says
         # and also what makes it safe inside a static: a mana cost is a pipeline

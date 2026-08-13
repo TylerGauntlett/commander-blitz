@@ -267,6 +267,10 @@ class Game:
             x=x,
             extra_generic=extra,
             purpose=spell_purpose(card),
+            # Sunburst and converge. The spell is what the colours are recorded
+            # on, and this is the only moment they exist: `spend` decrements the
+            # pool and one blue mana is then indistinguishable from another.
+            record_colors_on=oid,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return

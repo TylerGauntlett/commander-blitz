@@ -45,6 +45,13 @@ class GameObject:
     #: is the loop guard: a rebounded spell is cast from exile, so without it
     #: the card would rebound again every upkeep for ever.
     cast_from_hand: bool = False
+    #: Which **colours of mana were actually spent** casting this -- sunburst
+    #: (702.43a) and converge. Recorded by `pay_mana`, which is the only moment
+    #: it is knowable: `ManaPool.spend` decrements six integers and afterwards
+    #: one blue mana is indistinguishable from another. Counts mana spent on the
+    #: *generic* part too, which is what both keywords say -- a Sunburst artifact
+    #: cast for `{4}` off five different lands enters with five counters.
+    colors_spent: frozenset[str] = frozenset()
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
