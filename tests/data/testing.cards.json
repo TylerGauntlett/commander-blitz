@@ -4100,6 +4100,51 @@
       ]
     },
     {
+      "id": "t_vehicle",
+      "name": "Test Crewed Vehicle",
+      "oracle_text": "Crew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "total_power": 3
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ],
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_rebounder",
       "name": "Test Rebounding Bolt",
       "oracle_text": "Test Rebounding Bolt deals 2 damage to any target.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",

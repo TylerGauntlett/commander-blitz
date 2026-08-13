@@ -516,6 +516,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "sacrifice":      { "types": ["Creature"] },   // a selector; the permanent dies
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
   "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
+  "tap_permanents": { "types": ["Creature"], "total_power": 3 },  // crew 3
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
@@ -561,6 +562,35 @@ shape and a cost that could re-tap something already tapped costs nothing.
 Summoning sickness deliberately does not apply: rule 302.6 restricts the `{T}`
 symbol in a permanent's *own* cost, and Captivating Vampire's ruling is explicit
 that a Vampire which just arrived may be tapped for it — the source included.
+
+### Crew — a tap cost measured in power
+
+```jsonc
+{ "kind": "activated", "text": "Crew 3 (…)",
+  "cost": { "tap_permanents": { "controller": "you", "types": ["Creature"],
+                                "total_power": 3 } },
+  "effects": [ { "op": "animate", "power": { "const": 4 }, "toughness": { "const": 4 },
+                 "types": ["Creature"],
+                 "objects": { "zone": "battlefield", "self_only": true } } ] }
+```
+
+*Vehicle* needed nothing — `subtypes` is free text. `total_power` is the whole
+capability, and a sum is not a count with a different number: **one 4/4 crews a
+Vehicle that four 0/1s cannot.** Written as a count, crew is unpayable on a wide
+small board or free on a tall one, and both look plausible.
+
+**Derived** power, for skulk's reason: an anthem, a pump spell or a `+1/+1`
+counter all change who can crew, and the printed face would refuse a crew the
+board plainly supports.
+
+It asks **one creature at a time**, which is forced rather than stylistic:
+`ask_objects` takes counts, not sums, so a single subset question could be
+answered with a set that does not reach the number — and a cost cannot fail
+halfway through being paid. It also stops the moment the Vehicle is crewed,
+rather than taking every creature that could have helped.
+
+`count` and `total_power` together are refused: they are two different questions,
+and a card giving both would be paid by whichever was checked first.
 
 All three take a selector over the battlefield defaulting to `controller: "you"`,
 and all three make the ability **unavailable** when too little matches rather

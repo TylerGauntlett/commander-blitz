@@ -34,6 +34,10 @@ class CostModel(BaseModel):
     #: back untapped next untap step, which is what separates it from
     #: ``sacrifice`` and ``return_to_hand``. Not the same as ``tap``, which is
     #: the ``{T}`` symbol and only ever taps the source.
+    #: ``tap_permanents`` also carries **crew**'s ``total_power``: "tap any
+    #: number of untapped creatures you control with total power N or greater".
+    #: A sum rather than a headcount, read off *derived* power, so one 4/4 crews
+    #: a Vehicle that four 0/1s cannot and an anthem changes who can.
     tap_permanents: dict[str, Any] | None = None
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".

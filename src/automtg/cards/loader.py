@@ -1096,7 +1096,25 @@ def _compile_cost(model, where: str) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
-    validate_selector(model.tap_permanents, f"{where}.cost.tap_permanents")
+    # `total_power` is crew's, and it is a property of the *cost* rather than a
+    # test on any one candidate -- a selector cannot say "these together" -- so
+    # it is lifted out before the selector language sees it.
+    tap_selector = dict(model.tap_permanents) if model.tap_permanents is not None else None
+    total_power = tap_selector.pop("total_power", None) if tap_selector is not None else None
+    validate_selector(tap_selector, f"{where}.cost.tap_permanents")
+    if total_power is not None:
+        if not isinstance(total_power, int) or total_power < 1:
+            raise DslError(
+                f"{where}.cost.tap_permanents.total_power: crew N is a positive "
+                f"integer, got {total_power!r}"
+            )
+        if "count" in (tap_selector or {}):
+            # Two different questions -- "how many" and "how much power" -- and
+            # a card giving both would be paid by whichever the code checked
+            # first, which is not something the printed line ever says.
+            raise DslError(
+                f"{where}.cost.tap_permanents: give 'count' or 'total_power', not both"
+            )
     if model.discard_selector is not None and not model.discard:
         raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
     if model.tap_permanents is not None and "tapped" in model.tap_permanents:
