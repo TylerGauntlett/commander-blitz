@@ -239,6 +239,7 @@ This is the long tail, and where the build order comes from.
 | Flip | free | `back_face` plus the `transform` op, both shipped for Bloodline Keeper — 711 is a DFC whose difference is which way the cardboard turns | `back_face` |
 | Forecast | shipped | `active_zones: ["hand"]` plus `activate_steps` and `once_each_turn`, which is the fourth way to satisfy the guard | — |
 | Foretell | shipped | suspend's special action, shared: `{2}` to exile it, then a cast from exile at the `foretell` price on a later turn | `foretell` |
+| Fuse † | shipped | a third cast line on a split card: one card built from both halves — costs added, target lists concatenated, both effect lists run through **one** `EffectContext`, which is splice's argument | `fuse` |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
 | Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
@@ -345,7 +346,7 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**Every row is shipped or free** — 91 shipped, 93 free. `routed`, `blocked` and
+**Every row is shipped or free** — 92 shipped, 93 free. `routed`, `blocked` and
 `refused` are all empty.
 
 The single most useful finding, made over and over, is that **`blocked` was a
@@ -398,9 +399,17 @@ taught to walk it.
 What remains genuinely open is the **authoring pipeline**, not the engine: it
 emits one card entry per answer file, so a two-faced card is two hand-written
 entries linked by id, the way `bloodline_keeper` / `lord_of_lineage` already
-are. That is the `split-cards-fuse` gap record, and **fuse** itself is a
-different shape again — one spell made of two faces, where `card_of` answers
-with exactly one.
+are. That is what the `split-cards-fuse` gap record is really asking for.
+
+**Fuse** was the other half of that record and it is done. `second_face` shipped
+one face *or* the other — `card_of` answers with exactly one — and fuse is the
+case where the answer is *both*. The shape it needed already existed and it is
+**splice**: a spliced card's effects run after its host's through the same
+`EffectContext`, and that shared context is what makes them one spell rather
+than two. Fuse is the same thing with the second effect list coming from the
+card's own other half, so nothing reaches into `card_of` at all — the fused cast
+builds one card from the two and hands it to the machinery that prices, targets
+and resolves any other spell.
 
 ### The refused, all of them reversed
 
@@ -482,7 +491,9 @@ The census is the supplied source document, entry for entry, plus the rows
 marked **†**: hexproof, skulk, intimidate and partner, which the engine
 implements and the source omits; nightbound, which the source folds into the
 daybound entry and the engine keeps as its own `Keyword` because it is printed
-on the other face; mill and surveil, which are keyword actions the
+on the other face; fuse, which the source omits and which the engine implements
+as a card-level field rather than a `Keyword`, since it is a third way to cast
+one card rather than a characteristic of anything; mill and surveil, which are keyword actions the
 engine already has as ops; and infect, which the source discusses inside the
 poisonous entry rather than as one of its own. Landwalk is expanded into its six
 keywords — the five basic types plus nonbasic — because that is how the engine

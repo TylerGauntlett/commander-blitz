@@ -39,6 +39,7 @@ def push_spell(
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
+    fused: bool = False,
     bestowed: bool = False,
     mutated: bool = False,
     modes: tuple[int, ...] = (),
@@ -91,6 +92,7 @@ def push_spell(
         x=x,
         kicked=kicked,
         evoked=evoked,
+        fused=fused,
         bestowed=bestowed,
         mutated=mutated,
         flashback=flashback,
@@ -274,6 +276,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # countered on resolution like any Aura spell, which is 608.2b and not a
     # special case at all.
     specs = card.targets
+    if item.fused and card.second_face is not None:
+        # Both halves' targets, in the order legality offered them.
+        specs = tuple(card.targets) + tuple(state.registry.get(card.second_face).targets)
     if item.bestowed:
         specs = (BESTOW_TARGET,)
     elif item.mutated:
@@ -330,6 +335,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # may not declare targets of its own.
     for spliced_id in item.spliced:
         yield from execute(ctx, state.registry.get(spliced_id).spell_effects)
+    # Fuse (702.102a): the second half's effects, after the first's and through
+    # the **same** context -- which is what makes it one spell rather than two,
+    # and is exactly the argument splice makes a line above. Countering the
+    # fused spell stops all of it.
+    if item.fused and card.second_face is not None:
+        yield from execute(ctx, state.registry.get(card.second_face).spell_effects)
 
     if card.epic and not obj.is_token:
         # 702.50a. Recorded on the *player*, one-way and for the rest of the

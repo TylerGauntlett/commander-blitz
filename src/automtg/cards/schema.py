@@ -247,6 +247,11 @@ class CardModel(BaseModel):
     #: cast from hand; an **Aftermath** half may be cast *only* from the
     #: graveyard (702.127a), which is the whole of what that keyword says.
     second_face_zone: Literal["hand", "graveyard"] = "hand"
+    #: **Fuse** (702.102a): "You may cast one or both halves of this card from
+    #: your hand." The third cast line on a split card, and the only one that is
+    #: **one spell made of two faces** -- both costs paid together, both halves'
+    #: targets chosen together, both halves' effects run on one resolution.
+    fuse: bool = False
     #: **Adventure** (715.3c and 715.3d): the card is exiled as the Adventure spell
     #: resolves, and its owner may then cast the *front* face from exile.
     #:

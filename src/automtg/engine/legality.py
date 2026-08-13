@@ -425,9 +425,30 @@ def _second_face_actions(
     )
     if not tuples:
         return []
-    return _cast_variant(
+    out = _cast_variant(
         state, pid, oid, face, tuples, extra_generic=0, second_face=True
     )
+    # Fuse (702.102a): a third line that is **both** halves -- both costs paid
+    # together, both target lists chosen together. Priced and enumerated off a
+    # card built from the two, so `_cast_variant` needs no notion of fusion: it
+    # is pricing one spell, as it always is.
+    if card.fuse and zone is Zone.HAND:
+        import dataclasses
+
+        both = dataclasses.replace(
+            card,
+            name=f"{card.name} // {face.name}",
+            mana_cost=card.mana_cost.plus(face.mana_cost),
+            targets=tuple(card.targets) + tuple(face.targets),
+        )
+        fused_tuples = enumerate_target_tuples(
+            state, pid, both.targets, oid, exclude_sid=state.objects[oid].stack_id
+        )
+        if fused_tuples:
+            out = out + _cast_variant(
+                state, pid, oid, both, fused_tuples, extra_generic=0, fused=True
+            )
+    return out
 
 
 #: Where a second castable face may be cast from, as the zone the loop that
@@ -684,6 +705,7 @@ def _cast_variant(
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
+    fused: bool = False,
     bestowed: bool = False,
     mutated: bool = False,
     pay_generic: int = 0,
@@ -768,6 +790,8 @@ def _cast_variant(
         # one mechanism, and only the label tells the player which they are
         # buying.
         label_base += f" ({card.evoke_label})"
+    if fused:
+        label_base += " (fused)"
     if bestowed:
         label_base += " (bestowed)"
     if mutated:
@@ -810,6 +834,7 @@ def _cast_variant(
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,
+                fused=fused,
                 bestowed=bestowed,
                 mutated=mutated,
                 pay_generic=pay_generic,

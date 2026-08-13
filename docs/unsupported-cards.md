@@ -40,7 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflecting-mana](#reflecting-mana) | 1 | 9 | op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [sacrifice-trigger](#sacrifice-trigger) | 1 | 228 | trigger_event |
-| [split-cards-fuse](#split-cards-fuse) | 1 | 9863 | engine |
+| [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
 | [subtype-restricted-mana](#subtype-restricted-mana) | 1 | 2686 | engine |
 | [target-player-zone](#target-player-zone) | 1 | 24 | selector |
 | [token-created](#token-created) | 1 | 228 | trigger_event |
@@ -465,12 +465,12 @@ Blocks **1** card.
 
 </details>
 
-## split-cards-fuse
+## split-cards-authoring
 
 Blocks **1** card.
 
-- **(engine)** split cards: one card with two independently castable halves, each with its own mana cost, plus Fuse -- "you may cast one or both halves of this card from your hand", casting both as a single spell. The catalog row is layout='split', type_line='Instant // Instant', mana_cost='{4}{R}{R} // {2}{W}', keywords='Fuse'.
-  <br>Why the existing vocabulary won't do: docs/rules-coverage.md:157 lists split and adventure cards as not implemented, separately from modal double-faced cards. There is no concept of casting half a card: `mana_cost` is one string and `spell_effects` is one list. Unlike an MDFC, gate 3 here must consume BOTH halves' printed text from a single catalog row. The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer["card"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined "A // B" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason.
+- **(authoring)** The *authoring pipeline* half of split cards. The engine half has shipped: `second_face` gives one card two independently castable halves with their own mana costs, and `fuse` gives the third line that casts both as a single spell. What is still missing is emitting **two card entries from one answer file** for a catalog row whose layout='split' and whose name is the joined "A // B".
+  <br>Why the existing vocabulary won't do: The engine reason is gone -- see docs/rules-coverage.md's `second_face` and `fuse` rows. What remains is the pipeline: `collect_answers` reads `answer["card"]` as a single dict, so one answer cannot produce the two linked entries a split card needs, and it looks oracle text up by the payload's name, so a half authored under its own name misses the catalog's joined "A // B" row. Gate 3 must consume both halves' printed text from that single row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage, and the shipped split/adventure cards) are hand-written in data/cards/ for exactly this reason.
 
 <details><summary>Cards waiting on this</summary>
 

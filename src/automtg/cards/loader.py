@@ -440,6 +440,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'second_face_zone' needs a 'second_face' -- there is no "
                 f"second cast for it to restrict"
             )
+    # Fuse is a *third* line on a split card, so it needs the other two: a card
+    # with nothing to fuse to is an ordinary spell that says a word, and fusing
+    # onto a graveyard-only half would offer from hand a line that half may not
+    # be cast from.
+    if model.fuse:
+        if model.second_face is None:
+            raise DslError(
+                f"{where}: 'fuse' needs a 'second_face' -- there is only one half here"
+            )
+        if model.second_face_zone != "hand":
+            raise DslError(
+                f"{where}: 'fuse' is cast from hand (702.102a), and this card's second "
+                f"half may only be cast from the {model.second_face_zone}"
+            )
+        if model.adventure:
+            raise DslError(f"{where}: a card may not have both 'adventure' and 'fuse'")
     # 715.1: an adventurer card is a creature card, and the Adventure is an
     # instant or sorcery. Without the first half the front face would resolve
     # straight back to the graveyard from exile and the "cast it later" half of
@@ -600,6 +616,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         second_face=model.second_face,
         second_face_zone=model.second_face_zone,
         adventure=model.adventure,
+        fuse=model.fuse,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         buyback=model.buyback,
@@ -1823,6 +1840,17 @@ def link_second_faces(cards: dict[str, CardDef]) -> None:
                 raise DslError(
                     f"{face.id}: an Adventure must be an instant or a sorcery (715.1); "
                     f"a permanent one never reaches the exile it is cast from"
+                )
+        # A fused spell runs both halves through one `EffectContext`, exactly as
+        # a spliced card runs through its host's, so two targets named the same
+        # thing would not merely be ambiguous -- one would silently answer for
+        # the other and the spell would point somewhere nobody chose.
+        if card.fuse:
+            clash = {t.id for t in card.targets} & {t.id for t in face.targets}
+            if clash:
+                raise DslError(
+                    f"{card.id}: the two fused halves both name target(s) "
+                    f"{sorted(clash)} -- they resolve in one context and would collide"
                 )
         cards[face.id] = dataclasses.replace(face, parent_face=card.id)
 

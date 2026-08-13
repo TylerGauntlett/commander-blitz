@@ -67,6 +67,10 @@ class Action:
     #: prices for one spell, they are two different spells with different names,
     #: different type lines and different effects.
     second_face: bool = False
+    #: Cast **fused** -- both halves of a split card as one spell (702.102a).
+    #: Part of the identity like `second_face`, and a third thing again: it is
+    #: not either half, it is both, at both prices and with both target lists.
+    fused: bool = False
     #: Cast for the card's **bestow** cost, which makes it an Aura spell with
     #: enchant creature. Part of the identity like `evoked`, and more so: the
     #: bestowed line is the only cast variant that carries a *target*, so the

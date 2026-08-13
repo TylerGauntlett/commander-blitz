@@ -227,6 +227,19 @@ class Game:
         # cast that did not happen.
         if action.second_face and card.second_face is not None:
             card = state.registry.get(card.second_face)
+        # Fused: one spell whose cost, targets and effects are both halves'.
+        # Built here the same way legality built it to price the line, so the
+        # two cannot disagree about what is being cast.
+        elif action.fused and card.second_face is not None:
+            import dataclasses
+
+            face = state.registry.get(card.second_face)
+            card = dataclasses.replace(
+                card,
+                name=f"{card.name} // {face.name}",
+                mana_cost=card.mana_cost.plus(face.mana_cost),
+                targets=tuple(card.targets) + tuple(face.targets),
+            )
         from_command = obj.zone is Zone.COMMAND
         from .costs import commander_cost, cost_reduction, spell_purpose
 
@@ -399,6 +412,7 @@ class Game:
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,
+            fused=action.fused,
             bestowed=action.bestowed,
             mutated=action.mutated,
             modes=modes,

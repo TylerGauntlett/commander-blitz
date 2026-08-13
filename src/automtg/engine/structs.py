@@ -110,6 +110,10 @@ class StackItem:
     #: (`MUTATE_TARGET`) and because such a spell does not become a permanent of
     #: its own -- it merges into the one it targeted.
     mutated: bool = False
+    #: Cast **fused**: both halves at once. Read on resolution for the target
+    #: list (both halves' together) and for the effects (both halves', through
+    #: one context -- the same shape `spliced` uses, and for the same reason).
+    fused: bool = False
     #: Cast from a graveyard for its flashback cost. Read on
     #: resolution both by the `cast_from_graveyard` condition and by
     #: the once-only rider that exiles the card instead of

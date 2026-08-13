@@ -6701,6 +6701,67 @@
       ],
       "power": 1,
       "toughness": 1
+    },
+    {
+      "id": "t_fuse_left",
+      "name": "Test Wear",
+      "oracle_text": "Destroy target creature.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Instant"
+      ],
+      "fuse": true,
+      "second_face": "t_fuse_right",
+      "targets": [
+        {
+          "id": "left",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "left"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_fuse_right",
+      "name": "Test Tear",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "right",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Enchantment"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "right"
+          }
+        }
+      ]
     }
   ]
 }
