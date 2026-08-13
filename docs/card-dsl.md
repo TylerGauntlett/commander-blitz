@@ -170,6 +170,7 @@ Every key is optional; all present keys must match.
   "exclude_self": true,           // "other ... you control"
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
+  "shares_a_color_with": "it",   // radiance -- "...that shares a color with it"
   "self_only": true,              // this permanent only
   "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
   "count": 1,                     // an int, or "all", or "any" -- see below
@@ -261,6 +262,7 @@ whatever attacked, which is different on every trigger.
 | | |
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
+| `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted |
 | `exclude_binding` | drops the bound object from the pool |
 
 `subtypes` cannot stand in for the first: it takes a literal list, fixed when
@@ -272,6 +274,12 @@ loads and resolves without complaint.
 `exclude_self` compares against the **ability's source**, which for Shared
 Animosity is the enchantment — not a creature, never attacking. It removes
 nothing from a set of attackers, so every pump would be over by exactly one.
+
+`shares_a_color_with` has one boundary of its own, and it is intimidate's
+rather than landwalk's: a **colorless** object shares a colour with nothing,
+itself included. So radiance cast on an artifact creature hits only the target,
+and reading the clause as "is not a different colour" inverts exactly that case
+while looking identical on a board of coloured creatures.
 
 An unbound name matches **nothing** rather than everything. A trigger that did
 not bind what the card thought it did is a bug, and the failure should be a card

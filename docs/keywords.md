@@ -335,7 +335,7 @@ is ordinary, which is why most of this table is `free`.
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
 | Metalcraft | free | condition `cmp` on `count` of artifacts you control | — |
 | Morbid | free | condition `cmp` on `creatures_died_this_turn` over `all` — the per-turn ledger shipped | — |
-| Radiance | routed | widens a target to everything sharing a colour with it | — |
+| Radiance | free | `snapshot` the target, then a selector with `shares_a_color_with` and `exclude_binding` | `shares_a_color_with` |
 | Raid | free | condition `cmp` on `attacked_this_turn` over `you` — the per-turn ledger shipped | — |
 | Rally | free | `permanent_enters` with `subtypes: ["Ally"]` | — |
 | Sweep | free | cost `return_to_hand` over a selector by `subtypes`, then a value off `count` | — |
