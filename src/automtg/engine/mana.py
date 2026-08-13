@@ -278,8 +278,21 @@ class ManaPool:
     def to_dict(self) -> dict[str, int]:
         return {s: self.amounts[i] for i, s in enumerate(SYMBOLS) if self.amounts[i]}
 
-    def spend(self, req: Requirement) -> None:
-        """Deduct ``req`` from the pool.  Assumes the pool can cover it."""
+    def spend(self, req: Requirement) -> frozenset[str]:
+        """Deduct ``req`` from the pool.  Assumes the pool can cover it.
+
+        Returns **which colours were actually spent** -- sunburst and converge,
+        and the one fact about a payment that no card could previously read.
+        The information exists only here: by the time the spell is on the stack
+        the pool has been decremented and one blue mana is indistinguishable from
+        another.
+
+        It counts mana spent on the **generic** part too, which is what both
+        keywords say: a Sunburst artifact cast for `{4}` off five different
+        lands enters with five counters, and its printed cost has no coloured
+        pips at all. Colorless is not a colour, so `{C}` contributes nothing.
+        """
+        spent: set[str] = set()
         remaining_generic = req.generic
         for i in range(N_SYMBOLS):
             need = req.colored[i]
@@ -287,6 +300,8 @@ class ManaPool:
                 if self.amounts[i] < need:
                     raise ValueError("pool cannot cover colored requirement")
                 self.amounts[i] -= need
+                if i < len(COLOR_ORDER):
+                    spent.add(COLOR_ORDER[i].value)
         # Hybrid pips choose their half here, and must choose it the *same* way
         # `satisfies` decided they could -- so both run one routine. A second,
         # looser rule here could take a symbol the solver was relying on for a
@@ -300,6 +315,8 @@ class ManaPool:
                     remaining_generic += pip.generic or 0
                 else:
                     self.amounts[symbol] -= 1
+                    if symbol < len(COLOR_ORDER):
+                        spent.add(COLOR_ORDER[symbol].value)
         # Pay generic from the most plentiful symbols first so scarce colours are
         # preserved for later spells in the same step.  Deterministic by index.
         while remaining_generic > 0:
@@ -309,6 +326,9 @@ class ManaPool:
             take = min(self.amounts[best], remaining_generic)
             self.amounts[best] -= take
             remaining_generic -= take
+            if best < len(COLOR_ORDER):
+                spent.add(COLOR_ORDER[best].value)
+        return frozenset(spent)
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"ManaPool({self.to_dict()})"

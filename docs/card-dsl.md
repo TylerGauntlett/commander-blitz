@@ -380,8 +380,32 @@ Anywhere a number is expected:
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
                     "objects": { "controller": "you" } } }
+{ "colors_of_mana_spent": true }                // sunburst, converge
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+### Counting the mana that was actually spent
+
+`{"colors_of_mana_spent": true}` is sunburst and converge, and it is the first
+thing in the engine that reads how a spell was **paid for** rather than what it
+costs. The answer used to be thrown away: `ManaPool.spend` decremented six
+integers in place and returned nothing, so a moment later one blue mana was
+indistinguishable from another.
+
+Every near miss reads the cost, and the ordinary card separates them — a
+Sunburst artifact costs `{5}` and has no coloured pip at all. `{"x": true}`
+reads an X these cards do not have; `mana_symbols` reads printed pips, which is
+zero here; a `count` over lands counts permanents rather than what they made.
+
+Two details are the keyword rather than plumbing. **Mana spent on the generic
+part counts** — that is the whole of sunburst. And the record survives the move
+onto the battlefield, because the enters trigger is what reads it: it follows
+`cast_x`'s contract rather than the battlefield state `reset_permanent_state`
+wipes.
+
+A **hybrid** pip reports the half actually paid, which is not what `colors` on
+the cost says: that reports both, because both decide colour identity. Only one
+of them was ever spent.
 
 ### Counting mana symbols
 
