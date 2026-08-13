@@ -4100,6 +4100,57 @@
       ]
     },
     {
+      "id": "t_echoer",
+      "name": "Test Echoing Ox",
+      "oracle_text": "Echo {2}{G} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Echo {2}{G} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you",
+            "condition": {
+              "not": {
+                "has_flag": "echo_paid"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "set_flag",
+              "flag": "echo_paid"
+            },
+            {
+              "op": "may",
+              "prompt": "Pay Test Echoing Ox's echo cost?",
+              "pay": {
+                "mana": "{2}{G}"
+              },
+              "else": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "zone": "battlefield",
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_unearther",
       "name": "Test Unearthed Zombie",
       "oracle_text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. Unearth only as a sorcery.)",

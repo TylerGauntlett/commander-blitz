@@ -217,7 +217,7 @@ This is the long tail, and where the build order comes from.
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
 | Disturb | routed | `transform` and `flashback` both ship; needs the graveyard cast to arrive on the **back** face | — |
 | Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |
-| Echo | routed | `upkeep` + `may` `pay` + a sacrifice `else` all exist; "came under your control since your last upkeep" is the missing per-object flag | — |
+| Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
 | Entwine | shipped | `kicker` for the price, plus `all_if` on `choose_mode` for the both | `kicker` |
