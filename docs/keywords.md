@@ -199,7 +199,7 @@ This is the long tail, and where the build order comes from.
 | Buyback | free | `kicker` plus `buyback: true` — the rider returns it to hand instead of the graveyard; `kicker_label` names the cost | `buyback` |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
 | Casualty | shipped | `additional_cost` with `additional_optional`, then a cast trigger reading `additional_paid` | `additional_cost` |
-| Champion | blocked | exile-and-return tied to the championing permanent leaving | — |
+| Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
 | Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |

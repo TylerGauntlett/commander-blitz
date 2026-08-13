@@ -2,6 +2,122 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_elf",
+      "name": "Test Elf",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_champion",
+      "name": "Test Championed Elf",
+      "oracle_text": "Champion an Elf (When this creature enters, sacrifice it unless you exile another Elf you control. When this creature leaves the battlefield, that card returns to the battlefield.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, sacrifice it unless you exile another Elf you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "subtypes": [
+                    "Elf"
+                  ],
+                  "exclude_self": true
+                }
+              },
+              "then": [
+                {
+                  "op": "may",
+                  "prompt": "Exile another Elf you control to champion it?",
+                  "effects": [
+                    {
+                      "op": "exile",
+                      "until_leaves": true,
+                      "objects": {
+                        "zone": "battlefield",
+                        "controller": "you",
+                        "types": [
+                          "Creature"
+                        ],
+                        "subtypes": [
+                          "Elf"
+                        ],
+                        "exclude_self": true,
+                        "count": 1
+                      }
+                    }
+                  ],
+                  "else": [
+                    {
+                      "op": "sacrifice",
+                      "objects": {
+                        "zone": "battlefield",
+                        "self_only": true
+                      }
+                    }
+                  ]
+                }
+              ],
+              "else": [
+                {
+                  "op": "sacrifice",
+                  "objects": {
+                    "zone": "battlefield",
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, that card returns to the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              },
+              "controller": "owner"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_absorber",
       "name": "Test Absorbing Wall",
       "oracle_text": "Absorb 2 (If a source would deal damage to this creature, prevent 2 of that damage.)",
