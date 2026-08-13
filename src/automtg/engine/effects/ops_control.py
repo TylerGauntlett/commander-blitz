@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
 from ..carddef import Cost
@@ -57,7 +58,15 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     chooser = players[0] if players else ctx.controller
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
     condition = spec.get("condition")
-    cost = cost_from_spec(spec.get("pay"))
+    pay_spec = spec.get("pay")
+    cost = cost_from_spec(pay_spec)
+    if cost is not None and pay_spec is not None and pay_spec.get("times") is not None:
+        # Cumulative upkeep: "pay its upkeep cost for each age counter on it".
+        # Scaled here and nowhere else, because this is the one place a cost is
+        # charged with an `EffectContext` in hand -- an activated ability's cost
+        # is settled by legality before any effect has run, so a value
+        # expression there would have nothing to read.
+        cost = replace(cost, mana=cost.mana.scaled(evaluate_value(ctx, pay_spec["times"])))
 
     if not evaluate(ctx, condition):
         yield from execute(ctx, spec.get("else") or [])

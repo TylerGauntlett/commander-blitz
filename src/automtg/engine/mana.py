@@ -129,6 +129,30 @@ class ManaCost:
             indices.update(i for i in pip.symbols if i < len(COLOR_ORDER))
         return frozenset(COLOR_ORDER[i] for i in sorted(indices))
 
+    def scaled(self, times: int) -> ManaCost:
+        """This cost, charged ``times`` over -- cumulative upkeep.
+
+        "Pay its upkeep cost **for each age counter on it**" is the only place a
+        mana cost is not fixed when the card is written, and it multiplies every
+        part of it: ``{1}{U}`` at three age counters is ``{3}{U}{U}{U}``, not
+        ``{3}{U}``. Hybrid pips are repeated rather than summed, because each
+        one is its own independent choice of which half to pay.
+
+        ``X`` is deliberately not scaled and cannot appear: a cumulative upkeep
+        with an X in it has no printing, and multiplying an X the caster already
+        chose would charge for a number nobody picked.
+        """
+        n = max(0, int(times))
+        if n == 1:
+            return self
+        return ManaCost(
+            generic=self.generic * n,
+            colored=tuple(c * n for c in self.colored),
+            x_count=self.x_count,
+            text=self.text,
+            hybrid=self.hybrid * n,
+        )
+
     def symbols_of(self, color: str) -> int:
         """How many mana symbols of one colour appear in this cost — chroma.
 

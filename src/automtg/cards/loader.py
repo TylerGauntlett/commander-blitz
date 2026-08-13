@@ -1226,6 +1226,16 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
             )
+        if (times := effect["pay"].get("times")) is not None:
+            # Cumulative upkeep's multiplier. It scales the *mana* half and
+            # nothing else, so a `times` beside a cost with no mana would load
+            # and multiply nothing -- a card that reads "for each age counter"
+            # and charges a flat price.
+            validate_value(times, f"{where}.pay.times")
+            if not effect["pay"].get("mana"):
+                raise DslError(
+                    f"{where}.pay: 'times' multiplies the mana cost, and there is none"
+                )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.

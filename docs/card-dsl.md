@@ -519,8 +519,23 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
-  "exile_from_graveyard": { "types": ["Creature"] } }
+  "exile_from_graveyard": { "types": ["Creature"] },
+  "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
+                              "objects": { "self_only": true } } } }  // …for each
 ```
+
+`times` multiplies the **mana** half and is the only part of a cost that is not
+fixed when the card is written — cumulative upkeep's "pay its upkeep cost for
+each age counter on it". It is read only by `may`'s `pay`, and that location is
+forced rather than convenient: an activated ability's cost is settled by
+legality *before* any effect has run, so a value expression there would have
+nothing to read.
+
+It multiplies **every** part of the cost. `{1}{U}` at three age counters is
+`{3}{U}{U}{U}`, and scaling only the generic half gives `{3}{U}` — a card that
+gets relatively cheaper the longer it lives. Hybrid pips are repeated rather
+than summed, since each is its own choice of which half to pay. A `times` beside
+a cost with no mana is refused: it would multiply nothing and charge flat.
 
 `return_to_hand` is not `sacrifice` with a nicer ending, and the two cards that
 need it are built entirely on the difference. Meloku the Clouded Mirror and
