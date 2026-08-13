@@ -124,6 +124,14 @@ class GameState:
     #: `structs.TurnLedger`: the other per-turn tallies, folded from the event
     #: stream in `emit` rather than counted at six separate primitives.
     turn_ledger: TurnLedger = field(default_factory=TurnLedger)
+    #: Day / night (726). ``None`` until a daybound permanent makes it day, then
+    #: ``"day"`` or ``"night"`` for the rest of the game.
+    #:
+    #: On the *state* rather than on any player, because it is one designation
+    #: the whole table shares -- the same shape `turn` and `step` have, and the
+    #: reason daybound was called "a game-wide designated state" when it was
+    #: refused. There was no place to keep it; this is the place.
+    day_night: str | None = None
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False

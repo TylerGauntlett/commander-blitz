@@ -6635,6 +6635,42 @@
       "keywords": [
         "phasing"
       ]
+    },
+    {
+      "id": "t_werewolf",
+      "name": "Test Villager",
+      "oracle_text": "Daybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Werewolf"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "daybound"
+      ],
+      "back_face": "t_werewolf_night"
+    },
+    {
+      "id": "t_werewolf_night",
+      "name": "Test Howlpack",
+      "oracle_text": "Nightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Werewolf"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "nightbound",
+        "trample"
+      ]
     }
   ]
 }

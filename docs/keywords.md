@@ -211,7 +211,7 @@ This is the long tail, and where the build order comes from.
 | Cumulative upkeep | shipped | `upkeep` trigger, `add_counters`, then `may` `pay` with a `times` multiplier off the counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
-| Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
+| Daybound / nightbound | shipped | `GameState.day_night` — the table's designation, switched by a turn-based action off `TurnLedger.spells_cast`, turning the permanents over with `transform` | `daybound` |
 | Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
@@ -270,6 +270,7 @@ This is the long tail, and where the build order comes from.
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
 | Morph / megamorph | shipped | a face-down cast line at a fixed `{3}`, and `morph` / `morph_counter` for turning up | `morph` |
 | Mutate | shipped | an alternative cost with `MUTATE_TARGET`, and a **synthesised `CardDef`** written onto the host at `card_of` — the top card carrying the abilities of everything under it | `mutate` |
+| Nightbound † | shipped | the other half of daybound, and the reason the switching code keeps no record: the two are printed one per face, so `chars` already says which way round a permanent is | `nightbound` |
 | Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
@@ -399,13 +400,21 @@ are. That is the `split-cards-fuse` gap record, and **fuse** itself is a
 different shape again — one spell made of two faces, where `card_of` answers
 with exactly one.
 
-### The refused
+### The refused, and the one that is left
 
-`refused` is a recorded decision rather than a difficulty, and **four have been
-reversed**:
+`refused` is a recorded decision rather than a difficulty, and **five of the six
+have been reversed**:
 
 - **Regeneration** was refused as "a destruction-replacement shield" and now
   ships, because `zones.destroy` is a single choke point.
+- **Daybound / nightbound** was refused as needing "a game-wide designated
+  state the engine has no place to keep". That describes the problem exactly and
+  the answer is one field: `GameState.day_night`, the same shape `turn` and
+  `step` already are, because day and night belong to the **table**. Everything
+  else was there — `TurnLedger.spells_cast` for "cast no spells during their own
+  turn", `transform` for the permanents turning over, and `chars` for which way
+  round one is, since daybound is printed on the front face and nightbound on
+  the back.
 - **Phasing** was refused as changing "how the untap step works for *every*
   permanent in the game". It changes it for one permanent, once. 702.26c
   ("treated as though it does not exist") is a **list membership**: the
@@ -427,11 +436,16 @@ reversed**:
   `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
   status nobody should trust.
 
-The remaining two hold for reasons the reversals did not have. Banding changes
-how combat damage assignment works for every permanent in the game; daybound /
-nightbound needs a game-wide designated state. They belong in
-[rules-coverage.md](rules-coverage.md) and should be re-argued there rather than
-reclassified here.
+**Banding** is the one that still stands, and it stands on a different footing
+from the four that fell. The others were each *one* mechanism the engine turned
+out to have a place for. Banding is two rules that share a word: attacking as a
+band, which changes the shape of the attack declaration, and 702.21's transfer
+of combat **damage assignment** from the defending player to the attacking one.
+The second half is where the refusal holds — it is a change to who decides,
+inside the one part of combat the engine currently gives nobody a choice about —
+and half of banding shipped is a card that reads right and plays wrong.
+It belongs in [rules-coverage.md](rules-coverage.md) and should be re-argued
+there rather than reclassified here.
 
 ## Suggested build order
 
@@ -449,7 +463,9 @@ capability already has gap records, those cards are the real specification.
 
 The census is the supplied source document, entry for entry, plus the rows
 marked **†**: hexproof, skulk, intimidate and partner, which the engine
-implements and the source omits; mill and surveil, which are keyword actions the
+implements and the source omits; nightbound, which the source folds into the
+daybound entry and the engine keeps as its own `Keyword` because it is printed
+on the other face; mill and surveil, which are keyword actions the
 engine already has as ops; and infect, which the source discusses inside the
 poisonous entry rather than as one of its own. Landwalk is expanded into its six
 keywords — the five basic types plus nonbasic — because that is how the engine

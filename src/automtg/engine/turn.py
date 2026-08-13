@@ -140,6 +140,7 @@ def _untap_step(state: GameState) -> None:
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
     _phase(state, player.pid)
+    _day_night(state, player.pid)
     untap_all(state, player.pid)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.
@@ -151,6 +152,76 @@ def _untap_step(state: GameState) -> None:
     state.emit(
         EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round
     )
+
+
+def _day_night(state: GameState, pid: int) -> None:
+    """Set day or night, and turn the daybound permanents over (726).
+
+    Day and night are a designation the **whole table** shares, which is what
+    "a game-wide designated state the engine has no place to keep" meant when
+    this was refused. `GameState.day_night` is the place, and it is the same
+    shape `turn` and `step` already have.
+
+    Three rules, in the order 726 gives them:
+
+    - **726.2a** -- if it is neither day nor night and a daybound permanent is
+      on the battlefield, it becomes day. That is why the field starts as
+      ``None`` rather than as ``"day"``: a game with no Werewolf in it never has
+      a day, and a card that reads "if it's day" must say no rather than yes.
+    - **726.2b** -- if it is day and the player whose turn it *was* cast no
+      spells during it, it becomes night.
+    - **726.2c** -- if it is night and that player cast two or more, it becomes
+      day.
+
+    The count comes from `TurnLedger.spells_cast`, which storm already folds in
+    `emit`. Read here, at the start of the next turn, because that is when 726
+    asks -- and it is the last moment the previous turn's tally still exists,
+    since cleanup clears the ledger.
+
+    Turning the permanents over is `transform`, direction forced, because 726.3
+    is the whole content: every daybound permanent becomes its nightbound back
+    and every nightbound one becomes its daybound front, together, as the
+    designation changes.
+    """
+    from .characteristics import chars
+
+    daybound = [
+        oid
+        for oid in state.battlefield
+        if Keyword.DAYBOUND.value in chars(state, oid).keywords
+    ]
+    if state.day_night is None:
+        if not daybound:
+            return
+        state.day_night = "day"
+        state.emit("became_day", player=pid)
+        return
+
+    # Whoever's turn just ended. On the first untap of the game there is no
+    # previous turn, and the ledger is empty, which would read as "cast no
+    # spells" and make it night before anybody had a chance to play.
+    if state.turn <= 1:
+        return
+    previous = state.players[(state.active_idx - 1) % len(state.players)].pid
+    cast = state.turn_ledger.spells_cast.get(previous, 0)
+    if state.day_night == "day" and cast == 0:
+        _become(state, "night", pid)
+    elif state.day_night == "night" and cast >= 2:
+        _become(state, "day", pid)
+
+
+def _become(state: GameState, designation: str, pid: int) -> None:
+    from .characteristics import chars
+    from .primitives import transform
+
+    state.day_night = designation
+    to_back = designation == "night"
+    want = Keyword.DAYBOUND.value if to_back else Keyword.NIGHTBOUND.value
+    for oid in [
+        oid for oid in state.battlefield if want in chars(state, oid).keywords
+    ]:
+        transform(state, oid, to_back=to_back)
+    state.emit(f"became_{designation}", player=pid)
 
 
 def _phase(state: GameState, pid: int) -> None:

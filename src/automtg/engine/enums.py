@@ -222,6 +222,16 @@ class Keyword(str, Enum):
     #: stack and a card under a merged permanent already live. Every walk of the
     #: battlefield therefore misses it with no test of its own.
     PHASING = "phasing"
+    #: Daybound / nightbound (702.145, 702.146). A pair of `Keyword`s on the two
+    #: faces of one transforming card, and the pair is the point: daybound is
+    #: printed on the front and nightbound on the back, so which one `chars`
+    #: reports is already the answer to "which way round is this permanent".
+    #:
+    #: What they modify is the **game**, not the permanent -- day and night are
+    #: a designation the whole table shares (`GameState.day_night`), which is
+    #: why the switching lives in `turn` beside phasing rather than in a card.
+    DAYBOUND = "daybound"
+    NIGHTBOUND = "nightbound"
     #: Deck construction only -- "you can have two commanders if both have
     #: partner".  Listed here, and inert on purpose: the engine is handed a
     #: finished deck, so there is no game rule to implement.  It exists so a

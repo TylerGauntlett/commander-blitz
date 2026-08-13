@@ -2146,6 +2146,43 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Daybound and nightbound — one field for the whole table
+
+```jsonc
+{ "id": "village_watch", "keywords": ["daybound"], "back_face": "nightpack" }
+{ "id": "nightpack",     "keywords": ["nightbound"] }
+```
+
+This was `refused` as needing "a game-wide designated state the engine has no
+place to keep". That describes the problem exactly, and the answer is one field:
+`GameState.day_night`, the same shape `turn` and `step` already are. Day and
+night belong to the **table**, not to a player and not to a permanent, and the
+state object is where the table's facts live.
+
+Everything else was already here:
+
+| half | mechanism |
+|---|---|
+| "it becomes night" | `state.day_night`, set by a turn-based action beside phasing |
+| "cast no spells during their own turn" | `TurnLedger.spells_cast`, which storm folds in `emit` |
+| the permanents turning over | `transform`, direction forced |
+| which way round a permanent is | `chars` — the two keywords are printed one per face |
+
+That last row is the piece worth naming. Daybound is on the front face and
+nightbound on the back, so "is this permanent showing its night side?" is
+already answered by the characteristics layer and the switching code keeps no
+record of its own.
+
+It runs at the start of the next turn, which is both where 726 asks and the last
+moment the previous turn's ledger still exists — cleanup clears it.
+
+**Two boundaries**, and a naive version gets both wrong in the same direction:
+
+- It starts as **neither**. A game with no daybound permanent in it never has a
+  day, and a card reading "if it's day" has to say no.
+- The first untap step of the game has no previous turn, and an empty ledger
+  there reads as "cast no spells" — it would be night before anybody had played.
+
 ## Phasing — "does not exist", said by not being in a list
 
 ```jsonc
