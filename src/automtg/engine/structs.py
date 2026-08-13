@@ -311,8 +311,26 @@ class CombatState:
     attackers_declared: bool = False
     blockers_declared: bool = False
     first_strike_done: bool = False
+    #: Bands declared this combat (702.21b): each is a list of attacker oids,
+    #: "one or more attacking creatures with banding and up to one without".
+    #: A list of lists rather than a map, because a creature is in at most one
+    #: band and the band itself is the thing damage is assigned across.
+    bands: list[list[int]] = field(default_factory=list)
     #: staged during incremental declaration, before FINISH_DECLARATION validates it
     declaring_player: int | None = None
+
+    def band_of(self, oid: int) -> list[int]:
+        """The band this attacker is in, or just itself.
+
+        Returning the singleton rather than ``None`` is what lets the damage
+        code treat banded and unbanded attackers with one expression: a
+        creature is always assigned across "its band", which is usually a band
+        of one.
+        """
+        for band in self.bands:
+            if oid in band:
+                return [b for b in band if b not in self.removed]
+        return [oid]
 
     def attacking(self, oid: int) -> bool:
         return oid in self.attackers and oid not in self.removed

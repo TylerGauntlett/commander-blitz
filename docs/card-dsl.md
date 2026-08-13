@@ -2146,6 +2146,45 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Banding — the engine was sorting a choice it could have asked for
+
+```jsonc
+{ "id": "benalish_hero", "keywords": ["banding"], ... }
+```
+
+Banding was the last `refused` row, and the recorded reason was that it "needs
+player-chosen combat damage assignment, which the engine automates for every
+creature". Half right, and the wrong half is the interesting one.
+
+The engine does not *lack* damage assignment order. It has had
+`CombatState.block_order` all along and has been **sorting it instead of asking**
+— by effective toughness, ascending. That sort *is* a choice made silently on
+the attacking player's behalf, so banding is not a subsystem. It is two
+sentences: **ask, and ask the other player.**
+
+`ask_objects` records the order its options were taken in, which is exactly what
+a damage assignment order is, so the question needed no new `DecisionKind`.
+
+| half | rule | how |
+|---|---|---|
+| attacking as a band | 702.21b | two `ask_objects` questions |
+| blocked as a unit | 702.21e | `CombatState.band_of` |
+| the order changes hands | 702.21 | `_order_chooser`, then `_divide` |
+
+The band declaration is **two** questions because the printed sentence is two
+constraints — "one or more attacking creatures with banding **and up to one
+attacking creature without**". A single question over all attackers cannot say
+the second at all, and validating the answer afterwards means offering a choice
+the engine then refuses.
+
+`band_of` returns a band of one for anything not in a band, and `_ask_order`
+returns immediately when there is nothing to order, so **every combat without
+banding asks nothing** and behaves exactly as it did.
+
+*Divergence*: the ordinary case still sorts rather than asking. That is manual
+damage division, recorded in `rules-coverage.md`, and it is a statement about
+who is asked when banding is not involved.
+
 ## Daybound and nightbound — one field for the whole table
 
 ```jsonc

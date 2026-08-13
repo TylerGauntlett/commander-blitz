@@ -55,9 +55,9 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
     elif step is Step.DECLARE_BLOCKERS:
         _declare_blockers_step(state)
     elif step is Step.FIRST_STRIKE_DAMAGE:
-        combat_mod.deal_combat_damage(state, first_strike_step=True)
+        yield from combat_mod.deal_combat_damage(state, first_strike_step=True)
     elif step is Step.COMBAT_DAMAGE:
-        combat_mod.deal_combat_damage(state, first_strike_step=False)
+        yield from combat_mod.deal_combat_damage(state, first_strike_step=False)
     elif step is Step.END_OF_COMBAT:
         combat_mod.end_combat(state)
     elif step is Step.END_STEP:
