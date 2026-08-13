@@ -117,6 +117,20 @@ class AbilityModel(BaseModel):
     #: cards print without being cycling, and a trigger firing on those would be
     #: a different card.
     is_cycling: bool = False
+    #: **Forecast**: "Activate only during your upkeep, and only once each turn."
+    #: Two restrictions and they only make sense together -- an ability offered
+    #: from *hand* that does not remove its source is an infinite engine, and
+    #: what makes forecast safe is that it may be activated once. So
+    #: ``once_each_turn`` is the third satisfier of the outside-the-battlefield
+    #: guard, beside cycling's self-discard and unearth's self-move.
+    #:
+    #: ``activate_steps`` restricts *when*; "your" is the ordinary
+    #: ``condition: {"is_your_turn": true}`` and is not folded in here, because
+    #: they are separable and one card prints only the timing half.
+    activate_steps: list[
+        Literal["upkeep", "draw_step", "precombat_main", "end_step"]
+    ] = Field(default_factory=list)
+    once_each_turn: bool = False
 
     # triggered
     trigger: TriggerModel | None = None

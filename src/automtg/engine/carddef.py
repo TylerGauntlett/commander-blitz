@@ -239,6 +239,10 @@ class Ability:
     # triggered
     trigger: TriggerSpec | None = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
+    #: Forecast: which steps this ability may be activated in, empty for any.
+    activate_steps: tuple[str, ...] = ()
+    #: Forecast: "only once each turn", counted per (object, ability index).
+    once_each_turn: bool = False
     # activated + triggered
     targets: tuple[TargetSpec, ...] = ()
     effects: tuple[Mapping[str, Any], ...] = ()

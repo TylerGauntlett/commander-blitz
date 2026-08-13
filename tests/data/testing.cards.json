@@ -4100,6 +4100,56 @@
       ]
     },
     {
+      "id": "t_forecaster",
+      "name": "Test Forecast Sphinx",
+      "oracle_text": "Forecast — {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sphinx"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Forecast — {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
+          "active_zones": [
+            "hand"
+          ],
+          "activate_steps": [
+            "upkeep"
+          ],
+          "once_each_turn": true,
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "op": "reveal",
+              "objects": {
+                "zone": "hand",
+                "controller": "you",
+                "self_only": true
+              }
+            },
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_disturb_front",
       "name": "Test Disturbed Spirit",
       "oracle_text": "Disturb {1}{W} (You may cast this card transformed from your graveyard for its disturb cost.)",

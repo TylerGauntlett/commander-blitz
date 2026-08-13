@@ -244,6 +244,20 @@ class TurnLedger:
     #: past the fizzle and intervening-if returns, neither of which resolves.
     ability_resolutions: dict[tuple[int, int], int] = field(default_factory=dict)
 
+    #: How many times each ability has been **activated** this turn, keyed the
+    #: same way `ability_resolutions` is. Forecast's "only once each turn"
+    #: restricts *activating*, not resolving: an ability whose first activation
+    #: was countered has still had its go, and a resolution count would hand it
+    #: back.
+    ability_activations: dict[tuple[int, int], int] = field(default_factory=dict)
+
+    def activations(self, oid: int, ability_index: int) -> int:
+        return self.ability_activations.get((oid, ability_index), 0)
+
+    def activated(self, oid: int, ability_index: int) -> None:
+        key = (oid, ability_index)
+        self.ability_activations[key] = self.ability_activations.get(key, 0) + 1
+
     def resolving(self, oid: int, ability_index: int) -> int:
         """Count this resolution and return how many there have now been."""
         key = (oid, ability_index)
@@ -258,6 +272,7 @@ class TurnLedger:
         self.life_lost.clear()
         self.spells_cast.clear()
         self.combat_damage_types.clear()
+        self.ability_activations.clear()
         self.cards_to_graveyard = 0
         self.ability_resolutions.clear()
 

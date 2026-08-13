@@ -377,6 +377,11 @@ class Game:
         oid = action.source
         card = state.card(oid)
         ability = card.abilities[action.ability_index]
+        # Forecast's "only once each turn" counts *activations*, and this is the
+        # moment one happens. Counted before the cost is paid, so an activation
+        # that strands mid-payment still spends the turn's allowance -- the same
+        # reading `resolutions_this_turn` takes of its own event.
+        state.turn_ledger.activated(oid, action.ability_index)
 
         x = 0
         if ability.cost is not None and ability.cost.mana.x_count:
