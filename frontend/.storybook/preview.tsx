@@ -30,6 +30,7 @@ import "../src/styles/board.css";
 import "../src/styles/ui.css";
 import "../src/styles/lobby.css";
 
+import { setReducedMotionOverride } from "../src/fx/reducedMotion";
 import { useUiStore } from "../src/state/uiStore";
 import type { ArtMode } from "../src/testing/art";
 import { artFor } from "../src/testing/art";
@@ -159,6 +160,19 @@ const inTestRunner = (): boolean =>
 
 const withMotion: Decorator = (Story, context) => {
   const real = (context.parameters.automtg as AutomtgParameters | undefined)?.motion === "real";
+
+  /*
+   * The same decision, told to the effects layer.
+   *
+   * Particles, card actuators and screen shake are not Framer animations and
+   * cannot read `MotionConfig` -- a canvas draw loop and a module-level
+   * `burst()` have no React context around them. `fx/reducedMotion.ts` is the
+   * channel they read instead, and it has to be set from the same place and on
+   * the same rule, or a story would opt into real motion and still render an
+   * empty canvas because headless Chromium asked for reduced motion.
+   */
+  setReducedMotionOverride(real ? false : inTestRunner() ? true : null);
+
   if (real) {
     /*
      * `never`, not "leave it alone". Headless Chromium reports

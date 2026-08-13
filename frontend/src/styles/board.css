@@ -1924,6 +1924,32 @@
   filter: drop-shadow(0 0 4px rgb(195 155 255 / 0.55));
 }
 
+/*
+ * The physical effects: sparks, embers, smoke, shards.
+ *
+ * Sits *above* the cards and *below* `.fx`, which is deliberate. A burst thrown
+ * off a dying creature should cover the board -- that is the point of it -- but
+ * the damage numeral and the exit caption say what actually happened, and those
+ * must never be read through a cloud of embers.
+ *
+ * Sized in JavaScript rather than by `inset: 0`: a canvas has a CSS box and a
+ * backing store, and only the first of those a stylesheet can set. See
+ * `ParticleLayer`.
+ */
+.fx-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: calc(var(--z-fx) - 1);
+  pointer-events: none;
+}
+
+/* Block, or the canvas sits on a text baseline and the layer is a few pixels
+   taller than the board it is supposed to be exactly covering. */
+.fx-particles > canvas {
+  display: block;
+}
+
 .fx {
   position: absolute;
   inset: 0;
@@ -1980,6 +2006,38 @@
 }
 .fx-flash--loss {
   background: radial-gradient(circle, rgb(255 92 92 / 0.45), transparent 65%);
+}
+
+/*
+ * Damage, felt at the edge of the screen.
+ *
+ * A hit to a player was a numeral above an orb the size of a coin, in the
+ * corner of a board carrying ninety other things. Losing a third of your life
+ * total should not be something you have to go and look for.
+ *
+ * Inset shadow rather than a gradient background: it tints only the rim and
+ * leaves the middle of the table -- where the cards are -- completely clear.
+ */
+.fx-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.fx-vignette--damage,
+.fx-vignette--danger,
+.fx-vignette--loss {
+  box-shadow: inset 0 0 90px 12px rgb(255 60 60 / 0.42);
+}
+
+.fx-vignette--gain,
+.fx-vignette--good {
+  box-shadow: inset 0 0 90px 12px rgb(110 231 160 / 0.3);
+}
+
+.fx-vignette--neutral {
+  box-shadow: inset 0 0 90px 12px rgb(255 255 255 / 0.2);
 }
 
 .fx-spotlight {

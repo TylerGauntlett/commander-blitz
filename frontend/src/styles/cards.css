@@ -37,6 +37,20 @@
   cursor: default;
 }
 
+/*
+ * The force layer. Only `fx/actuators.ts` ever writes this node.
+ *
+ * Full size on purpose. Motion writes a `transform` here during a strike, and a
+ * transform establishes a containing block for absolutely-positioned
+ * descendants -- so `.card--tapped .card__pivot`, which centres itself with
+ * `inset: 0; margin: auto`, would resolve against a zero-sized box and collapse
+ * every tapped card the first time anything lunged.
+ */
+.card__actor {
+  width: 100%;
+  height: 100%;
+}
+
 /* The rotation layer. Only this node ever writes `rotate`. */
 .card__pivot {
   width: 100%;

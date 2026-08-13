@@ -442,7 +442,108 @@ opponents still owe decisions.
 `logic/events.ts` turns each batch of events into timed **beats** — floating damage
 numerals anchored to the struck permanent, life tickers, spotlights on the card being
 cast, turn banners, screen shake, cards leaving the battlefield. `state/narration.ts`
-runs the queue; input is gated while it drains, with a Skip button.
+runs the queue.
+
+A click while the queue is draining means "get on with it" **and** the thing that was
+clicked. It used to mean only the first — `gateInput` skipped the queue and threw the
+gesture away — so for a second or two after every action the board ignored you, which
+is what made playing it feel like it needed spamming. Only a genuine in-flight request
+gates input now. Skip empties the queue *and* puts the board back at rest, because the
+physical effects below run on their own clocks past the end of the beat that started
+them.
+
+### Effects are concurrent, not queued
+
+The queue plays one beat at a time and holds for its `hold`, which is the right shape
+for a turn banner and the wrong shape for a fight. A three-attacker exchange used to be
+nine consecutive beats — a 520ms banner, three 160ms flashes, a 420ms pause, then a
+340ms numeral per hit. **3.3 seconds**, during which the board was frozen, and in which
+nothing moved: the creatures involved sat perfectly still the whole time.
+
+`Beat.fx` is a list of `TimedFx`, each stamped with an `at` offset and played
+*concurrently* inside one beat. `at` is deliberately not bounded by `hold` — effects
+outlive the queue, exactly as a floating numeral already did, which is what makes a turn
+read as continuous rather than as a sequence of slides.
+
+That is the whole reason the board can get more physical without getting slower. Every
+golden batch in `tests/timing.test.ts` is now faster than it was:
+
+| batch | before | after |
+|---|---|---|
+| three-attacker exchange | 3300ms | 1954ms |
+| six-permanent wrath | 1700ms | 1520ms |
+| a quiet ramp turn | 3530ms | 2840ms |
+| nine Grapeshot copies | 5540ms | 2180ms |
+
+`tests/timing.test.ts` is the guardrail rather than the promise: it asserts against both
+the pre-work numbers and the current ones, so drifting a hundred milliseconds back at a
+time fails a test instead of slowly rotting.
+
+### Three effect primitives
+
+**`fx/actuators.ts` — the cards themselves move.** A registry of imperative handles keyed
+by oid; `Card` registers one on mount. `lunge`, `recoil`, `shudder`, `pulse`. Nothing here
+renders: they write Motion values directly, so a four-way exchange drives eight cards at
+sixty frames a second without the reconciler hearing about it. `Card` grew a *third*
+motion layer for this — outer owns position, `.card__actor` owns transient force, the
+pivot owns the tap rotation — for the same reason the first two were split.
+
+**`fx/particles.ts` + `ParticleLayer.tsx` — explosions.** A pooled, capped, pure
+simulation drawn to one canvas. Pure because an explosion is a physics question and every
+part of it is answerable by stepping the field, with no rendering context in the test.
+Presets in `fx/presets.ts`: `impact`, `explode`, `shatter`, `dissolve`, `dust`, `motes`,
+`heal`, coloured from the theme's own signal tokens. `burst()` is importable from
+anywhere, because an effect is thrown from wherever the thing happened.
+
+At the cap, new emissions are **dropped rather than the pool grown** — a capped effect
+that thins out keeps its frame rate, an uncapped one turns into a slideshow at exactly
+the moment the game is most dramatic.
+
+**`fx/scheduler.ts` — one frame loop.** There were two before (screen shake, the combat
+arrow settle burst) and this would have made four. It does not run when nothing is
+subscribed, and a ticker that returns `false` is dropped, so no effect has to remember to
+unsubscribe itself.
+
+`useScreenShake` writes Motion values through that loop. It used to call `setState` every
+frame, re-rendering the whole board subtree sixty times a second for the duration of every
+shake — at precisely the busiest moment — and each offset had to wait for a React commit
+to reach the DOM, which is why it read as mush rather than as an impact.
+
+### Combat is a collision
+
+`logic/choreography.ts` collapses each combat run into two beats. **Declare**: attackers
+surge toward the player they declared against, staggered so a wide board reads as a line
+advancing; blockers move to intercept. **Strike**: everything lunges at 0ms, everything
+connects at 140ms — sparks at each point of contact, numerals thrown off *those* points
+rather than off the cards, defenders knocked backwards, the screen kicked in proportion to
+what got through.
+
+Pairing needs no engine change: every combat `damage_dealt` already carries `source` and
+either `oid` or `to: "player"`, and that *is* the pairing.
+
+Two constraints worth keeping:
+
+- **Only the attacking side lunges.** A blocker in a trade both deals and takes damage, so
+  it would be told to lunge *and* to recoil — and an actuator cancels whatever the card was
+  already doing, so the recoil would fire at contact and snap the card back from full
+  extension. One side moves; the other gets moved.
+- **A hit lands at `between`, not on either card.** Resolved in `FxLayer` when the beat
+  plays, because both cards may still be mid-flight from a layout animation and there is no
+  earlier moment at which the point they meet is knowable.
+
+Non-combat damage collapses the same way, which is why nine Grapeshot copies cost 520ms
+instead of three seconds of the board counting to one, nine times.
+
+### Reduced motion
+
+`App` passes `reducedMotion="user"` to `MotionConfig` — Motion's default is `never`, so
+the app ignored the setting entirely before. Particles, actuators and shake cannot read
+React context, so `fx/reducedMotion.ts` is the channel they use instead. What is dropped
+is "how it felt"; what survives is "what happened" — numerals, captions, flashes, the log.
+
+Storybook sets the override alongside its `MotionConfig`, and has to: headless Chromium
+reports `prefers-reduced-motion: reduce`, so without it every particle story would render
+an empty canvas.
 
 ### Cards leaving the battlefield
 
@@ -494,6 +595,13 @@ The pieces:
 - **A card with no recorded position draws nothing.** Deliberate — the alternative is
   inventing one, and the board's centre would put an opponent's creature in the middle
   of the viewer's own board on its way out.
+- **How it leaves is branched on `cause` and `to`.** Both have been on `ExitFx` since
+  ghosts were built and until now only picked a caption and a tint, so a creature burned
+  down, a creature sacrificed and a creature exiled all performed the same polite little
+  arc. Destroyed is thrown out of its slot with an `explode` burst; sacrificed collapses
+  inward; exiled rises and comes apart into `dissolve` motes; countered shatters. A
+  **bounce gets nothing** on purpose — it is the one departure that is not a loss, and a
+  burst would make returning a creature to hand look like losing it.
 
 The reason outlives the animation in two places: `describeEvent`'s `zone_change` case
 puts the same sentence in the Log permanently, and `logic/removals.ts` folds the log

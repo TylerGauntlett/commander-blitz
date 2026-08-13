@@ -20,11 +20,23 @@
  * to `logic/cardRects` on the way out, which is what the exit animation draws
  * the ghost from. See that module for why the FX layer cannot simply look the
  * element up when the beat plays.
+ *
+ * There is now a third layer between those two:
+ *
+ *   outer  -- layoutId, drag, hover lift. Owns *position*.
+ *   actor  -- lunges, recoils, shudders. Owns *transient force*.
+ *   pivot  -- the 90-degree tap rotation. Owns *orientation*.
+ *
+ * The actor is what `fx/actuators.ts` drives when a creature strikes something.
+ * It is its own node for exactly the reason the pivot is: it writes `transform`
+ * on its own clock, and sharing a node with the layout animation would mean a
+ * creature that lunges mid-flight snaps to wherever the strike left it.
  */
 
-import { type Transition, motion } from "motion/react";
-import { type CSSProperties, useLayoutEffect, useRef } from "react";
+import { type Transition, motion, useMotionValue } from "motion/react";
+import { type CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import type { CardView } from "../../api/types";
+import { register } from "../../fx/actuators";
 import { remember } from "../../logic/cardRects";
 import { bouncy, mechanical, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -112,6 +124,23 @@ export function Card({
     [oid],
   );
 
+  /*
+   * The channel the FX layer pushes this card around through.
+   *
+   * Motion values rather than state: an actuator writes these sixty times a
+   * second during a combat exchange, and going through React would reconcile
+   * the whole board on every frame of every strike.
+   */
+  const fxX = useMotionValue(0);
+  const fxY = useMotionValue(0);
+  const fxRotate = useMotionValue(0);
+  const fxScale = useMotionValue(1);
+
+  useEffect(
+    () => register(oid, { x: fxX, y: fxY, rotate: fxRotate, scale: fxScale }),
+    [oid, fxX, fxY, fxRotate, fxScale],
+  );
+
   const classes = [
     "card",
     variant === "big" ? "card--big" : "",
@@ -169,12 +198,22 @@ export function Card({
         }
       }}
     >
+      {/*
+        The force layer. Sits at rest at identity and costs nothing until an
+        actuator pushes it -- `fx/actuators.ts` writes these four values
+        directly, so nothing here re-renders during a strike.
+      */}
       <motion.div
-        className="card__pivot"
-        animate={{ rotate: tapped ? 90 : 0 }}
-        transition={mechanical}
+        className="card__actor"
+        style={{ x: fxX, y: fxY, rotate: fxRotate, scale: fxScale }}
       >
-        <CardFace card={card} variant={variant} />
+        <motion.div
+          className="card__pivot"
+          animate={{ rotate: tapped ? 90 : 0 }}
+          transition={mechanical}
+        >
+          <CardFace card={card} variant={variant} />
+        </motion.div>
       </motion.div>
       {staged && <span className="card__pin" />}
       {/*

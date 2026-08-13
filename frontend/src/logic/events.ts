@@ -18,13 +18,60 @@
 
 import type { GameEvent } from "../api/types";
 import type { SoundName } from "../audio/sfx";
+import type { PresetName } from "../fx/presets";
+import { planCombat } from "./choreography";
 import { type NameLookup, describeEvent, exitPhrase, prettyCardName } from "./labels";
 
 export type { NameLookup };
 
 export type BeatAnchor = { kind: "player"; pid: number } | { kind: "object"; oid: number };
 
+/**
+ * Where on the board an effect goes.
+ *
+ * `between` is the one that earns its keep: a collision does not happen at the
+ * attacker and it does not happen at the blocker, it happens at the point they
+ * meet. Resolving that in the FX layer rather than in the choreography means
+ * the contact point is measured from where the cards actually are when the
+ * beat plays, which is the only place it is knowable -- both of them may still
+ * be mid-flight from a layout animation.
+ */
+export type FxPoint =
+  | BeatAnchor
+  | { kind: "between"; a: BeatAnchor; b: BeatAnchor; t?: number };
+
 export type Tone = "neutral" | "damage" | "gain" | "loss" | "danger" | "good";
+
+/**
+ * One effect, scheduled inside a beat.
+ *
+ * This is the field that lets the board get more physical without getting
+ * slower. A combat exchange used to be nine consecutive beats, each holding the
+ * board for its own `hold` -- 3.3 seconds of slideshow for three attackers. The
+ * same exchange is now *one* beat whose effects are stamped with offsets and
+ * fire concurrently: everything lunges at 0ms, everything connects at 140ms,
+ * everything recoils at 260ms. Denser, and a third of the wall clock.
+ *
+ * `at` is relative to the start of the beat and is *not* bounded by its `hold`.
+ * Effects deliberately outlive the queue -- a burst thrown at 260ms is still
+ * settling while the next beat plays, which is what makes a turn read as
+ * continuous rather than as a sequence of slides.
+ */
+export type TimedFx = { at: number } & (
+  | { kind: "emit"; preset: PresetName; at_point: FxPoint; angle?: number; scale?: number }
+  | {
+      kind: "actuate";
+      oid: number;
+      move: "lunge" | "recoil" | "shudder" | "pulse";
+      toward?: FxPoint;
+      power?: number;
+    }
+  | { kind: "float"; at_point: FxPoint; value: string; tone: Tone }
+  | { kind: "flash"; at_point: FxPoint; tone: Tone }
+  | { kind: "shake"; power: number }
+  | { kind: "vignette"; pid: number; tone: Tone }
+  | { kind: "sound"; sound: SoundName }
+);
 
 /**
  * One permanent leaving the battlefield, with everything needed to draw it.
@@ -85,6 +132,11 @@ export interface Beat {
   banner?: { text: string; tone: Tone };
   /** 0..1 screen shake intensity. */
   shake?: number;
+  /**
+   * Effects scheduled within this beat, played concurrently on their own
+   * offsets. See `TimedFx` -- this is what a combat exchange is made of.
+   */
+  fx?: TimedFx[];
   /**
    * A sound to play with this beat.
    *
@@ -211,6 +263,21 @@ function exitHold(count: number): number {
 }
 
 /**
+ * A permanent hitting the table.
+ *
+ * Dust under the card and a short squash, so an arrival has some mass to it.
+ * Nothing here adds to the beat's `hold` -- both effects outlive it, exactly as
+ * a floating numeral does, so the board gets heavier without getting slower.
+ */
+function arrival(source: number | null): TimedFx[] {
+  if (source === null) return [];
+  return [
+    { at: 0, kind: "emit", preset: "dust", at_point: { kind: "object", oid: source } },
+    { at: 0, kind: "actuate", oid: source, move: "pulse", power: 0.8 },
+  ];
+}
+
+/**
  * Build the beat queue for one batch of events.
  *
  * `names[pid]` are the player names; `lookup` resolves a card id such as
@@ -231,11 +298,17 @@ export function beatsFor(
 ): Beat[] {
   const beats: Beat[] = [];
   const { leaders, absorbed } = groupExits(events, lookup);
+  // Combat is collapsed the same way departures are, and for the same reason:
+  // the interesting unit is the exchange, not the individual hit. See
+  // `logic/choreography.ts` -- this is what turned a 3.3-second slideshow into
+  // one motion.
+  const combat = planCombat(events, (type) => SILENT.has(type), viewerSeat);
 
   events.forEach((event, index) => {
     if (SILENT.has(event.type)) return;
     // Folded into the run its leader carries.
     if (absorbed.has(index)) return;
+    if (combat.absorbed.has(index)) return;
 
     const id = `${index}-${event.type}`;
     const who = event.player === null ? "" : (names[event.player] ?? `P${event.player}`);
@@ -244,6 +317,25 @@ export function beatsFor(
     const text = describeEvent(event, names, viewerSeat, lookup);
     const push = (beat: Omit<Beat, "id" | "text">, override?: string | null) =>
       beats.push({ id, text: override === undefined ? text : override, ...beat });
+
+    /*
+     * A combat run replaces every beat its events would have produced.
+     *
+     * The prose is still `describeEvent`'s: a declaration says who is swinging,
+     * and the strike stays wordless because the ticker already lists every hit
+     * and a beat-level line would repeat it.
+     */
+    const exchange = combat.leaders.get(index);
+    if (exchange) {
+      beats.push({ ...exchange, text: combat.wordless.has(index) ? null : text });
+      return;
+    }
+
+    /** A flash on whatever this event came from, or nothing to flash. */
+    const onSource = (tone: Tone) =>
+      event.source === null
+        ? undefined
+        : ({ anchor: { kind: "object", oid: event.source }, tone } as const);
 
     const exits = leaders.get(index);
     if (exits) {
@@ -266,7 +358,7 @@ export function beatsFor(
     switch (event.type) {
       case "turn_began":
         push({
-          hold: 850,
+          hold: 620,
           banner: {
             text: event.player === viewerSeat ? "Your Turn" : `${who}'s Turn`,
             tone: "neutral",
@@ -276,7 +368,7 @@ export function beatsFor(
 
       case "spell_cast":
         push({
-          hold: 700,
+          hold: 520,
           sound: "chime",
           spotlight: {
             cardId: typeof event.data.card === "string" ? event.data.card : "",
@@ -304,14 +396,20 @@ export function beatsFor(
         });
         return;
 
+      /*
+       * Something arriving on the battlefield.
+       *
+       * All three used to be a ring flash and nothing else -- a permanent
+       * landed by fading a circle over itself, which reads as a highlight
+       * rather than as weight. They now land: a puff of dust under the card and
+       * a small squash, on top of the flash the tests already assert.
+       */
       case "land_played":
         push({
           hold: 260,
           sound: "thump",
-          flash:
-            event.source === null
-              ? undefined
-              : { anchor: { kind: "object", oid: event.source }, tone: "neutral" },
+          flash: onSource("neutral"),
+          fx: arrival(event.source),
         });
         return;
 
@@ -319,20 +417,16 @@ export function beatsFor(
         push({
           hold: 220,
           sound: "thump",
-          flash:
-            event.source === null
-              ? undefined
-              : { anchor: { kind: "object", oid: event.source }, tone: "good" },
+          flash: onSource("good"),
+          fx: arrival(event.source),
         });
         return;
 
       case "token_created":
         push({
           hold: 200,
-          flash:
-            event.source === null
-              ? undefined
-              : { anchor: { kind: "object", oid: event.source }, tone: "good" },
+          flash: onSource("good"),
+          fx: arrival(event.source),
         });
         return;
 
@@ -351,21 +445,14 @@ export function beatsFor(
         });
         return;
 
-      case "damage_dealt": {
-        if (amount === null || amount <= 0) return;
-        const toPlayer = event.data.to === "player";
-        const targetOid = num(event.data.oid);
-        const anchor: BeatAnchor = toPlayer
-          ? { kind: "player", pid: event.player ?? 0 }
-          : { kind: "object", oid: targetOid ?? event.source ?? 0 };
-        push({
-          hold: 340,
-          sound: "hit",
-          float: { anchor, value: `-${amount}`, tone: "damage" },
-          shake: toPlayer ? Math.min(1, amount / 12) : undefined,
-        });
-        return;
-      }
+      /*
+       * Damage has no case here any more.
+       *
+       * Every `damage_dealt` -- combat or not -- is collected by `planCombat`
+       * into a run and animated as one concurrent burst, so an event that
+       * reaches this switch is one that produced no hit at all: zero damage, or
+       * a form with no anchor to put a numeral on. Both are correctly silent.
+       */
 
       case "life_gained":
         if (amount === null) return;
@@ -390,6 +477,38 @@ export function beatsFor(
           },
         });
         return;
+
+      /*
+       * A combat trick landing.
+       *
+       * The engine used to change a creature's power in complete silence --
+       * `pump` mutated `until_eot` and called `bump_chars()` and that was all --
+       * so a creature would survive lethal damage for no reason the board ever
+       * gave. It now says so: the numbers swell off the card, and the card
+       * itself takes a pulse so the eye is pointed at the right creature before
+       * the damage arrives.
+       */
+      case "stats_changed": {
+        if (event.source === null) return;
+        const power = num(event.data.power);
+        const toughness = num(event.data.toughness);
+        const keyword = typeof event.data.keyword === "string" ? event.data.keyword : null;
+        const anchor = { kind: "object", oid: event.source } as const;
+        const value = keyword
+          ? keyword
+          : `${power !== null && power >= 0 ? "+" : ""}${power ?? 0}/${
+              toughness !== null && toughness >= 0 ? "+" : ""
+            }${toughness ?? 0}`;
+        push({
+          hold: 200,
+          fx: [
+            { at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 },
+            { at: 0, kind: "emit", preset: "motes", at_point: anchor },
+            { at: 0, kind: "float", at_point: anchor, value, tone: "good" },
+          ],
+        });
+        return;
+      }
 
       case "counter_placed": {
         const kind = typeof event.data.counter === "string" ? event.data.counter : "counter";
@@ -420,7 +539,7 @@ export function beatsFor(
         return;
 
       case "draw":
-        push({ hold: 110, sound: "shuffle" });
+        push({ hold: 90, sound: "shuffle" });
         return;
 
       case "discard":
@@ -451,7 +570,7 @@ export function beatsFor(
        */
       case "ability_triggered":
         push({
-          hold: 620,
+          hold: 460,
           sound: "chime",
           spotlight: {
             cardId: typeof event.data.card === "string" ? event.data.card : "",
@@ -472,7 +591,7 @@ export function beatsFor(
        * silent, since a copy is the difference between one bolt and nine.
        */
       case "spell_copied":
-        push({ hold: 200, sound: "chime" });
+        push({ hold: 120, sound: "chime" });
         return;
 
       case "ability_activated":
@@ -534,7 +653,7 @@ export function beatsFor(
        */
       case "tapped":
         push({
-          hold: 90,
+          hold: 70,
           sound: "tap",
           flash:
             event.source === null

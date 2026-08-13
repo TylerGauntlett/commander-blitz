@@ -55,6 +55,13 @@ export interface CardGhostProps {
   /** "Destroyed by Vandalblast". Built in `logic/labels.ts`, never here. */
   caption: string;
   to: string;
+  /**
+   * Why it left, which decides *how* it leaves. See `departure`.
+   *
+   * Optional because a ghost is legible without it -- the caption already says
+   * what happened in words. This changes the physics, not the meaning.
+   */
+  cause?: string;
   /** Board-relative start, the card's last known position. */
   from: { x: number; y: number };
   /** Board-relative end, the centre of the pile it lands in. */
@@ -74,12 +81,46 @@ export interface CardGhostProps {
   delay: number;
 }
 
+/**
+ * How a card behaves on the way out, by why it left.
+ *
+ * The scale and rotation keyframes only; the translation is always toward the
+ * destination pile, because that is where the card genuinely goes. Every
+ * departure used to share one curve, so a creature burned to the ground, a
+ * creature sacrificed to a Blood Artist and a creature exiled by Swords all
+ * performed the identical polite little arc.
+ *
+ * The three-slot shape matches the `times` array below: rest, the moment the
+ * caption is readable, and gone.
+ */
+function departure(cause: string, tone: GhostTone): { scale: number[]; rotate: number[] } {
+  if (tone === "exile") {
+    // Exile does not fall. It goes up and comes apart -- `FxLayer` throws the
+    // `dissolve` motes from the same point at the same moment.
+    return { scale: [1, 1.06, 0.62], rotate: [0, 1, -2] };
+  }
+  if (tone === "hand" || tone === "library" || tone === "command") {
+    // Not a death. Keeps its shape and simply travels.
+    return { scale: [1, 1.02, 0.42], rotate: [0, -2, 4] };
+  }
+  if (cause === "sacrificed" || cause === "cost") {
+    // Given up rather than taken: collapses inward instead of being thrown.
+    return { scale: [1, 0.94, 0.12], rotate: [0, 0, -14] };
+  }
+  if (cause === "lethal_damage" || cause === "destroyed" || cause === "zero_toughness") {
+    // Hit hard enough to be knocked out of its slot.
+    return { scale: [1, 1.12, 0.24], rotate: [0, -8, 26] };
+  }
+  return { scale: [1, 1.04, 0.3], rotate: [0, -3, 10] };
+}
+
 export function CardGhost({
   oid,
   card,
   name,
   caption,
   to,
+  cause = "",
   from,
   toPoint,
   width,
@@ -87,6 +128,7 @@ export function CardGhost({
   delay,
 }: CardGhostProps) {
   const tone = ghostTone(to);
+  const { scale, rotate } = departure(cause, tone);
   // The fraction of the flight spent holding still. Below about a fifth of a
   // second the caption cannot be read at all, so this is a floor rather than a
   // pure ratio.
@@ -114,8 +156,8 @@ export function CardGhost({
         // is exactly the bookkeeping `FxLayer` centralises.
         x: [0, 0, toPoint.x - from.x],
         y: [0, 0, toPoint.y - from.y],
-        scale: [1, 1.04, 0.3],
-        rotate: [0, -3, 10],
+        scale,
+        rotate,
         opacity: [1, 1, 0],
       }}
       transition={{ duration, delay, times: [0, hold, 1], ease: [0.4, 0, 0.7, 1] }}
