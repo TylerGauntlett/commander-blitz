@@ -86,6 +86,11 @@ VALUE_KEYS = frozenset(
         # *distinct values* over a pool, which no other leaf can be: `count`
         # counts objects, so five Forests are five and not one.
         "distinct",
+        # "…the number of green mana symbols in the mana costs of permanents you
+        # control" -- chroma. The one question nothing else asks: every other
+        # reader of a cost wants its total or the set of colours in it, and this
+        # wants how many times one symbol appears.
+        "mana_symbols",
     }
 )
 
@@ -138,6 +143,19 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
 
         pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+    if "mana_symbols" in expr:
+        # Chroma. Read off the **printed** cost, which is what the keyword says
+        # and also what makes it safe inside a static: a mana cost is a pipeline
+        # input, and no layer can change one.
+        spec = expr["mana_symbols"]
+        from .selectors import resolve_pool
+
+        color = str(spec.get("of", ""))
+        return sum(
+            ctx.state.card_of(obj).mana_cost.symbols_of(color)
+            for oid in resolve_pool(ctx, spec.get("objects") or {})
+            if (obj := ctx.state.objects.get(oid)) is not None
+        )
     if "distinct" in expr:
         # Domain and coven: how many *different* values a pool holds, not how
         # many objects are in it. `count` cannot say it in either direction --
@@ -293,6 +311,33 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     return c.power if which == "power" else c.toughness
 
 
+def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None) -> None:
+    """Shared by the effect-side and static-side value validators.
+
+    Both languages accept ``mana_symbols`` -- Primalcrux reads it in a `set_pt`
+    static and the ability-word cards read it as an amount -- and a leaf added to
+    one and not the other loads in a card that then quietly reads 0. They differ
+    only in which filter language checks ``objects``, so that is the parameter.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    unknown = set(spec) - {"of", "objects"}
+    if unknown:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    of = spec.get("of")
+    if not isinstance(of, str) or of.upper() not in ("W", "U", "B", "R", "G"):
+        # Defaulted or misspelled it would count nothing and read 0, which on
+        # Primalcrux is a 0/0 that dies to state-based actions on arrival.
+        raise DslError(f"{where}.of: must name a colour (W/U/B/R/G), got {of!r}")
+    if not spec.get("objects"):
+        # An empty selector is every permanent in the game, so chroma would
+        # count an opponent's board as well as yours.
+        raise DslError(f"{where}: needs 'objects' -- an empty selector is every permanent")
+    if validate_objects is None:
+        from .selectors import validate_selector as validate_objects
+    validate_objects(spec["objects"], f"{where}.objects")
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -316,6 +361,8 @@ def validate_value(expr: Any, where: str) -> None:
         from .selectors import validate_selector
 
         validate_selector(expr["count"], f"{where}.count")
+    if "mana_symbols" in expr:
+        validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "distinct" in expr:
         from .selectors import validate_selector
 

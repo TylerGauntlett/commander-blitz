@@ -338,8 +338,28 @@ Anywhere a number is expected:
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }
+{ "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
+                    "objects": { "controller": "you" } } }
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+### Counting mana symbols
+
+`{"mana_symbols": {"of": "G", "objects": …}}` is chroma, and it is the first
+thing in the engine that looks **inside** a mana cost. Every other reader wants
+the total (`mana_value`) or the set of colours (`colors`); this wants how many
+times one symbol appears, so `{G}{G}{G}{G}` is four where `colors` says green
+once.
+
+A **hybrid** pip counts for each of its colours (rule 107.4f) — a Kitchen Finks
+adds one to a green count and one to a white one. `ManaCost` stores `hybrid`
+apart from `colored`, deliberately and for unrelated reasons, so this is the case
+that would otherwise count for neither.
+
+It reads the **printed** cost, which is what the keyword says and also what makes
+it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
+layer can change one. Primalcrux is a static, so the leaf lives in both value
+languages — added to only one, the card would have loaded and read 0.
 
 ### Counting different values rather than objects
 

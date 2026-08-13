@@ -322,7 +322,7 @@ is ordinary, which is why most of this table is `free`.
 |---|---|---|---|
 | Addendum | free | condition `is_your_turn`, which is as close as the engine gets and is right for a sorcery-speed clause | — |
 | Battalion | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control | — |
-| Chroma | routed | counting mana symbols in a zone; nothing reads a card's pips | — |
+| Chroma | free | value `{"mana_symbols": {"of": …}}`, in both the effect and static languages | `mana_symbols` |
 | Domain | free | value `{"distinct": {"of": "basic_land_type"}}` over lands you control | `distinct` |
 | Enrage | free | the `dealt_damage` trigger, with `{"binding": "amount"}` for "that much" | — |
 | Fateful hour | free | condition `cmp` on `life_of` `"you"` | — |

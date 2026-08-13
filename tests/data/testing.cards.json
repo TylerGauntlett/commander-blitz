@@ -4100,6 +4100,46 @@
       ]
     },
     {
+      "id": "t_chroma_hulk",
+      "name": "Test Primalcrux",
+      "oracle_text": "Chroma — Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
+      "mana_cost": "{G}{G}{G}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Chroma — Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
+          "effect": "set_pt",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "mana_symbols": {
+              "of": "G",
+              "objects": {
+                "controller": "you"
+              }
+            }
+          },
+          "toughness": {
+            "mana_symbols": {
+              "of": "G",
+              "objects": {
+                "controller": "you"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "t_reconfigurer",
       "name": "Test Reconfigured Blade",
       "oracle_text": "Equipped creature gets +2/+2.\nReconfigure {1} ({1}: Attach to target creature you control. Reconfigure only as a sorcery.)",

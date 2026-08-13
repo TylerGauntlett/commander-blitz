@@ -25,7 +25,7 @@ from automtg.engine.effects import known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import validate_selector
-from automtg.engine.effects.values import validate_value
+from automtg.engine.effects.values import validate_mana_symbols, validate_value
 from automtg.engine.enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
@@ -1009,7 +1009,7 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 
 def _validate_static_value(value: Any, where: str) -> None:
     """Static abilities allow ``const``, ``count`` and the per-player life leaves."""
-    allowed = {"const", "count"} | STATIC_LIFE_KEYS
+    allowed = {"const", "count", "mana_symbols"} | STATIC_LIFE_KEYS
     if isinstance(value, int):
         return
     if not isinstance(value, Mapping):
@@ -1020,6 +1020,17 @@ def _validate_static_value(value: Any, where: str) -> None:
         )
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    if "mana_symbols" in value:
+        # Chroma, and Primalcrux is the reason it is here as well as in the
+        # effect language: "its power and toughness are each equal to the number
+        # of green mana symbols in the mana costs of permanents you control" is
+        # a `set_pt` static. Safe for the reason a zone count is -- a *printed*
+        # mana cost is a pipeline input, and no layer can change one.
+        validate_mana_symbols(
+            value["mana_symbols"],
+            f"{where}.mana_symbols",
+            validate_objects=_validate_static_count_filter,
+        )
     for key in STATIC_LIFE_KEYS & set(value):
         who = value[key]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
