@@ -595,6 +595,140 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
+    """"…put the rest on the bottom of your library in a random order."
+
+    Cascade, ripple, and every "look at the top N" card that does not simply
+    leave them there. Not a shuffle: shuffling reorders the *whole* library and
+    would destroy a stacked top somebody else set up, which is a different game
+    action with a different cost. The randomness is over these cards only.
+    """
+    for oid in ctx.state.rng.shuffled(list(oids)):
+        # Through `move_object` rather than by editing the list: half of these
+        # are in **exile** and half never left the library, and an object whose
+        # `zone` and whose containing list disagree is a card every other reader
+        # in the engine sees differently.
+        move_object(ctx.state, oid, Zone.LIBRARY, to_player=pid, cause="bottomed")
+
+
+def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
+    """"You may cast it without paying its mana cost."  Returns whether it was.
+
+    Shares `suspend.cast_for_free`, which is what makes the copy a real cast --
+    it uses the stack and can be countered. Haste is **not** shared: that flag
+    belongs to suspend, and a cascaded creature that could attack immediately
+    would be a strictly better card.
+    """
+    from ..suspend import cast_for_free
+
+    obj = ctx.state.objects.get(oid)
+    if obj is None:
+        return False
+    if not (yield from ask_yes_no(ctx, prompt, pid)):
+        return False
+    before = len(ctx.state.stack)
+    cast_for_free(ctx.state, pid, oid)
+    return len(ctx.state.stack) > before
+
+
+@register("cascade")
+def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 702.85a — exile from the top until something cheaper turns up.
+
+    "When you cast this spell, exile cards from the top of your library until
+    you exile a nonland card with lesser mana value. You may cast it without
+    paying its mana cost. Put the exiled cards on the bottom of your library in
+    a random order."
+
+    An op rather than an arrangement of existing ones, and the reason is the
+    **scan**: every other way the DSL reaches a library either takes the top N
+    (`look_at_top`) or searches the whole of it (`search_library`), and cascade
+    does neither -- it walks down until a condition is met and the depth is not
+    knowable when the card is written.
+
+    ``max_mana_value`` is the ceiling the exiled card must come in under, and it
+    defaults to **this spell's own** mana value, which is what every printing
+    says. It is read off the source rather than written into the card, because a
+    cascade spell's own cost is the number.
+    """
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    limit = spec.get("max_mana_value")
+    if limit is None:
+        source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        ceiling = ctx.state.card_of(source).mana_value if source is not None else 0
+    else:
+        ceiling = evaluate_value(ctx, limit)
+
+    exiled: list[int] = []
+    hit: int | None = None
+    while library:
+        oid = library[0]
+        card = ctx.state.card_of(ctx.state.objects[oid])
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="cascade")
+        exiled.append(oid)
+        if not card.is_land and card.mana_value < ceiling:
+            hit = oid
+            break
+
+    ctx.state.emit("cascade", player=pid, source=ctx.source_oid, exiled=len(exiled))
+    if hit is not None:
+        cast = yield from _offer_free_cast(
+            ctx, pid, hit, f"Cast {ctx.state.card_of(ctx.state.objects[hit]).name} for free?"
+        )
+        if cast:
+            exiled.remove(hit)
+    # Whatever is still in exile goes back, including the card if it was not
+    # cast -- 702.85a bottoms "the exiled cards", and the one that was cast is
+    # on the stack rather than among them.
+    _bottom_in_random_order(ctx, pid, exiled)
+
+
+@register("ripple")
+def op_ripple(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 702.20a — reveal the top N, cast the ones that match this card.
+
+    "Ripple N — When you cast this spell, you may reveal the top N cards of your
+    library. You may cast any revealed cards with the same name as this spell
+    without paying their mana costs. Put the rest on the bottom of your library
+    in a random order."
+
+    Cascade's shape with a fixed depth and a different test, and the test is why
+    it is its own op rather than a parameter: "the same name as this spell" is a
+    comparison against the *source*, and no selector key names it. `name` takes
+    a literal written into the card, which for ripple would have to be the
+    card's own name repeated -- true, and wrong the moment anything copies it.
+    """
+    pid = ctx.controller
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 4)))
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+    if source is None:
+        return
+    name = ctx.state.card_of(source).name
+
+    library = ctx.state.players[pid].library
+    revealed = list(library[:amount])
+    if not revealed:
+        return
+    ctx.state.emit(
+        "reveal",
+        player=pid,
+        source=ctx.source_oid,
+        cards=[ctx.state.card_of(ctx.state.objects[o]).id for o in revealed],
+    )
+
+    rest: list[int] = []
+    for oid in revealed:
+        if ctx.state.card_of(ctx.state.objects[oid]).name != name:
+            rest.append(oid)
+            continue
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="ripple")
+        cast = yield from _offer_free_cast(ctx, pid, oid, f"Cast {name} for free?")
+        if not cast:
+            rest.append(oid)
+    _bottom_in_random_order(ctx, pid, rest)
+
+
 @register("two_piles")
 def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
     """"An opponent separates those cards into two piles. Put one pile into your

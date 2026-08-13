@@ -148,7 +148,7 @@ def tick(state: GameState, pid: int) -> None:
             remaining=obj.counter(TIME_COUNTER),
         )
         if obj.counter(TIME_COUNTER) == 0:
-            cast_for_free(state, pid, oid)
+            cast_for_free(state, pid, oid, haste=True)
 
 
 def rebound_tick(state: GameState, pid: int) -> None:
@@ -177,7 +177,7 @@ def rebound_tick(state: GameState, pid: int) -> None:
         cast_for_free(state, pid, oid)
 
 
-def cast_for_free(state: GameState, pid: int, oid: int) -> None:
+def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) -> None:
     """Put a suspended card on the stack having paid nothing for it.
 
     Still a cast: it uses the stack, it can be countered, and its targets are
@@ -196,7 +196,11 @@ def cast_for_free(state: GameState, pid: int, oid: int) -> None:
     if not options:
         return
     obj.suspended_by = None
-    obj.hasted_by_suspend = card.is_creature
+    # Haste belongs to **suspend** and to nothing else that casts for free.
+    # Cascade and ripple both put a creature onto the battlefield the ordinary
+    # way, and one that could attack immediately would be a strictly better
+    # card -- so the flag is opt-in rather than a property of casting free.
+    obj.hasted_by_suspend = haste and card.is_creature
 
     item = stack.push_spell(state, oid, pid, options[0])
     triggers.fire(

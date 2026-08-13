@@ -2,6 +2,83 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_rippler",
+      "name": "Test Rippling Bolt",
+      "oracle_text": "Ripple 4 (When you cast this spell, you may reveal the top four cards of your library. You may cast any revealed cards with the same name as this spell without paying their mana costs. Put the rest on the bottom of your library in a random order.)\nYou gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Ripple 4",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "ripple",
+              "amount": {
+                "const": 4
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_cascader",
+      "name": "Test Cascading Bolt",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.)\nDraw a card.",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Cascade",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_foreteller",
       "name": "Test Foretold Bolt",
       "oracle_text": "Test Foretold Bolt deals 3 damage to any target.\nForetell {R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
