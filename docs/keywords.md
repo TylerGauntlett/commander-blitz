@@ -275,7 +275,7 @@ This is the long tail, and where the build order comes from.
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
 | Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
-| Phasing | refused | phasing; see rules-coverage.md | — |
+| Phasing | shipped | a `Keyword` read by the untap step: a phased-out permanent leaves `state.battlefield` and stays in `state.objects`, which is what "treated as though it does not exist" means here | `phasing` |
 | Poisonous | free | `deals_combat_damage_to_player` trigger, then `add_poison`; ten is lethal in the state-based pass | `add_poison` |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |
@@ -401,11 +401,19 @@ with exactly one.
 
 ### The refused
 
-`refused` is a recorded decision rather than a difficulty, and **three have been
+`refused` is a recorded decision rather than a difficulty, and **four have been
 reversed**:
 
 - **Regeneration** was refused as "a destruction-replacement shield" and now
   ships, because `zones.destroy` is a single choke point.
+- **Phasing** was refused as changing "how the untap step works for *every*
+  permanent in the game". It changes it for one permanent, once. 702.26c
+  ("treated as though it does not exist") is a **list membership**: the
+  permanent leaves `state.battlefield` and stays in `state.objects`, which is
+  where a card on the stack and a card under a merged permanent already sit, so
+  every walk of the battlefield misses it with no test of its own — and no zone
+  change means counters, auras, damage and 702.26f's "continuously on the
+  battlefield" all hold because nothing moved.
 - **Meld** was refused for the same words as flip — "a card-wide designated
   state the engine has no place to keep" — and by the time mutate shipped, the
   place existed. It is the merged permanent again, with the pair fixed by the
@@ -419,9 +427,9 @@ reversed**:
   `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
   status nobody should trust.
 
-The remaining three hold for reasons the reversals did not have. Banding and
-phasing change how combat and the untap step work for *every* permanent in the
-game; daybound / nightbound needs a game-wide designated state. They belong in
+The remaining two hold for reasons the reversals did not have. Banding changes
+how combat damage assignment works for every permanent in the game; daybound /
+nightbound needs a game-wide designated state. They belong in
 [rules-coverage.md](rules-coverage.md) and should be re-argued there rather than
 reclassified here.
 

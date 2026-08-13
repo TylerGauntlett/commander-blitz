@@ -2146,6 +2146,43 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Phasing — "does not exist", said by not being in a list
+
+```jsonc
+{ "id": "teferis_imp", "keywords": ["phasing"], ... }
+```
+
+Phasing was `refused` as changing how the untap step works for every permanent
+in the game. It changes it for one permanent, once, and the reason it is cheap
+is the reason the merged pile was: the engine already has a place for an object
+that exists and is nowhere.
+
+**702.26c is a list membership.** A phased-out permanent comes out of
+`state.battlefield` and stays in `state.objects` — exactly where a card on the
+stack and a card under a merged permanent already sit. Targeting, the
+state-based actions, the characteristics statics, the combat declarations and
+the serializer all walk the battlefield, so every one of them misses it without
+being told about phasing at all.
+
+Three more rules then hold because nothing moved:
+
+| rule | why it holds |
+|---|---|
+| 702.26c — no zone change, so no leave/enter triggers | nothing moves |
+| 702.26c — counters, auras and damage survive | `reset_permanent_state` never runs |
+| 702.26f — no summoning sickness on phasing in | `entered_turn` is untouched |
+
+The part that had to be written is **702.26e**: what is attached to a phasing
+permanent phases out *with* it and comes back with it, marked
+`phased_out_indirectly` so it follows its host rather than its controller's
+schedule. Without that the Aura is left alone on the battlefield, a state-based
+action puts it in the graveyard, and the permanent phases back in naked.
+
+702.26b is a **toggle** — out if in, in if out — so both lists are read from the
+state before anything moves. Reading the battlefield as it changes sends a
+permanent out and straight back, and the board afterwards looks exactly as if
+phasing did nothing.
+
 ## Meld — mutate's merged permanent, with the pair fixed by the card
 
 ```jsonc

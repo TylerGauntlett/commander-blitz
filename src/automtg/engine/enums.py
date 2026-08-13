@@ -211,6 +211,17 @@ class Keyword(str, Enum):
     #: destruction already goes through.
     TOTEM_ARMOR = "totem_armor"
     FLASH = "flash"
+    #: Phasing (702.26a): "a static ability that modifies the untap step of the
+    #: permanent's controller". A `Keyword` rather than a static, for
+    #: horsemanship's reason -- it takes no parameter, and it is read by the
+    #: *turn*, which cannot filter on a static.
+    #:
+    #: A phased-out permanent "is treated as though it does not exist"
+    #: (702.26c), which the engine says by taking it out of `state.battlefield`
+    #: while leaving it in `state.objects` -- the same nowhere a card on the
+    #: stack and a card under a merged permanent already live. Every walk of the
+    #: battlefield therefore misses it with no test of its own.
+    PHASING = "phasing"
     #: Deck construction only -- "you can have two commanders if both have
     #: partner".  Listed here, and inert on purpose: the engine is handed a
     #: finished deck, so there is no game rule to implement.  It exists so a
