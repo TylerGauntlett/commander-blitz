@@ -37,6 +37,7 @@ def push_spell(
     flashback: bool = False,
     overloaded: bool = False,
     spliced: tuple[str, ...] = (),
+    face_down: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -78,8 +79,9 @@ def push_spell(
         flashback=flashback,
         overloaded=overloaded,
         spliced=spliced,
+        face_down=face_down,
         modes=modes,
-        description=card.name,
+        description="a face-down creature" if face_down else card.name,
     )
     obj.stack_id = item.sid
     state.stack.append(item)
@@ -275,6 +277,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # would always read False and every overloaded spell would resolve as the
     # targeted half -- with no targets, which is nothing at all.
     obj.cast_overloaded = item.overloaded
+    obj.pending_face_down = item.face_down
 
     ctx = EffectContext(
         state=state,
@@ -360,6 +363,14 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
         destination = Zone.EXILE
     controller = obj.controller
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+    if obj.pending_face_down and destination is Zone.BATTLEFIELD:
+        # Morph. Marked after the move for `cast_transformed`'s reason:
+        # `reset_permanent_state` clears it on the way onto the battlefield,
+        # which is right for every permanent except one arriving face down.
+        obj.face_down = True
+        obj.pending_face_down = False
+        obj.revealed_to.add(obj.controller)
+        state.bump_chars()
     if obj.cast_transformed and destination is Zone.BATTLEFIELD:
         # `reset_permanent_state` cleared it on the way in -- 712.13a, "enters
         # front face up" -- which is right for every permanent except this one.

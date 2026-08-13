@@ -401,6 +401,12 @@ class CardModel(BaseModel):
     #: The only keyword that changes what a **different** card does, so it is
     #: paid and recorded as the host goes on the stack and its effects run after
     #: the host's on resolution. ``onto`` is the subtype it may be spliced onto.
+    #: **Morph** (702.37a) / **megamorph**: "You may cast this card face down as
+    #: a 2/2 creature for {3}. Turn it face up any time for its morph cost."
+    #: This names the *turn-face-up* price; the {3} is fixed by the rule.
+    morph: str | None = None
+    #: Megamorph: the creature turns up with a +1/+1 counter (702.109a).
+    morph_counter: bool = False
     splice: str | None = None
     splice_onto: str = "Arcane"
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way

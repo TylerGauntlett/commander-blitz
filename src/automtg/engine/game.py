@@ -133,6 +133,14 @@ class Game:
             else:
                 self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:
+            source = state.objects.get(action.source)
+            if source is not None and source.face_down and source.on_battlefield:
+                # Turning a permanent face up borrows `ability_index` 0 because
+                # a face-down permanent has no abilities to collide with -- so
+                # it must be routed *before* anything indexes into the hidden
+                # card's ability list, which is usually empty.
+                self._run(self._turn_face_up(pid, source))
+                return
             # A mana ability does not use the stack (rule 605.3a), so it takes a
             # different path entirely: nothing to respond to, and the player
             # keeps priority afterwards.
@@ -240,6 +248,10 @@ class Game:
             # whose price changed between being offered and being paid is the
             # bug `spell_purpose` exists to prevent elsewhere.
             cost = card.alternative_cost
+        elif action.face_down:
+            from .legality import MORPH_COST
+
+            cost = MORPH_COST
         elif action.foretold and card.foretell is not None:
             cost = card.foretell
         elif action.overloaded and card.overload is not None:
@@ -371,6 +383,7 @@ class Game:
             flashback=action.flashback,
             overloaded=action.overloaded,
             spliced=spliced,
+            face_down=action.face_down,
             modes=modes,
         )
         triggers.fire(
@@ -481,6 +494,34 @@ class Game:
                 ctx, f"Choose X for {name}", ceiling, pid, per_point=cost.x_count
             )
         )
+
+    def _turn_face_up(self, pid: int, obj) -> Generator[Any, list[int], None]:
+        """Pay the price and reveal what was underneath (707.9a, 701.34c).
+
+        Which price is *how it got there*: a card cast face down for morph turns
+        up for its morph cost, and a manifested creature card for its printed
+        one. The characteristics cache is dropped because everything about the
+        permanent changes at once -- it stops being a 2/2 with no abilities and
+        becomes whatever the card says.
+        """
+        from .costs import pay
+        from .objects import PLUS_ONE
+        from .primitives import add_counters
+
+        state = self.state
+        card = state.card_of(obj)
+        cost = card.morph if card.morph is not None else card.mana_cost
+        ok = yield from pay(state, pid, Cost(mana=cost), obj.oid)
+        if not ok:  # pragma: no cover - legality already proved payability
+            return
+        obj.face_down = False
+        obj.revealed_to.clear()
+        state.bump_chars()
+        if card.morph_counter:
+            # Megamorph (702.109a), and the only difference between the two
+            # words.
+            add_counters(state, obj.oid, PLUS_ONE, 1, source=obj.oid)
+        state.emit("turned_face_up", player=pid, source=obj.oid, card=card.id)
 
     def _ask_splices(
         self, pid: int, card, oid: int
@@ -744,6 +785,13 @@ def _only_pass_or_mana(state: GameState, options: list[Action], player) -> bool:
             seen_pass = True
             continue
         if action.kind is not ActionKind.ACTIVATE or action.source is None:
+            return False
+        obj = state.objects.get(action.source)
+        if obj is not None and obj.face_down:
+            # Turning a permanent face up is not a mana ability, and it does not
+            # index into the hidden card's abilities at all -- it borrows index
+            # 0 because a face-down permanent has none. Auto-passing past it
+            # would take the decision away, so this window is a real one.
             return False
         ability = state.card(action.source).abilities[action.ability_index]
         if not ability.is_mana_ability:

@@ -100,6 +100,22 @@ class GameObject:
     #: "the thing I am on", and carries the state-based action that bins an Aura
     #: attached to nothing. A pair is neither attached nor doomed by breaking.
     paired_with: int | None = None
+    #: **Face down** (707.2). A permanent whose *derived* characteristics are a
+    #: 2/2 colourless creature with no name, no other types and no abilities,
+    #: with the real card still underneath -- morph, megamorph and manifest.
+    #:
+    #: Distinct from a card hidden **in exile**, which is `revealed_to` and is
+    #: what foretell needed: hiding a card nobody can interact with is not
+    #: showing it, while a face-down permanent is a characteristics problem.
+    #:
+    #: Cleared by `reset_permanent_state`: a face-down permanent that leaves the
+    #: battlefield is revealed, and one that comes back is a new object.
+    face_down: bool = False
+    #: Set on the resolving spell and read a moment later by
+    #: `_place_after_resolution`, because `reset_permanent_state` clears
+    #: `face_down` on the way onto the battlefield. Identity state, like
+    #: `cast_kicked`, so it survives that reset.
+    pending_face_down: bool = False
     #: Cipher (702.97a): the creature this exiled card is **encoded on**. Haunt's
     #: link pointed a third way -- the card in exile names a creature, and the
     #: card is what has to notice that creature connecting. The two are separate
@@ -294,6 +310,7 @@ class GameObject:
         self.counters = {}
         self.attached_to = None
         self.paired_with = None
+        self.face_down = False
         self.until_eot = []
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the

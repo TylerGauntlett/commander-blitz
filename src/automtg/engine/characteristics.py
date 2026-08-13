@@ -92,10 +92,37 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+#: What a face-down permanent is, whatever is underneath it (707.2).
+FACE_DOWN_CHARS = Characteristics(
+    power=2,
+    toughness=2,
+    types=frozenset({"Creature"}),
+    subtypes=frozenset(),
+    supertypes=frozenset(),
+    keywords=frozenset(),
+    colors=frozenset(),
+)
+
+
 def _compute(state: GameState, oid: int) -> Characteristics:
     obj = state.objects.get(oid)
     if obj is None:
         return Characteristics()
+    if obj.face_down and obj.on_battlefield:
+        # Rule 707.2: a face-down permanent is a 2/2 creature with no name, no
+        # mana cost, no types beyond Creature, no subtypes and no abilities --
+        # whatever card is underneath it.
+        #
+        # Returned *before* any layer, so nothing about the hidden card reaches
+        # the pipeline. It is the one place in this module that does not build
+        # on the printed face, and it has to be: `card_of` still answers with
+        # the real card, because turning it face up has to find it again.
+        #
+        # Anthems and counters therefore do not apply either, which is a
+        # documented simplification -- a real face-down creature is still
+        # affected by them, and modelling that means layering over the shell
+        # rather than replacing with it.
+        return FACE_DOWN_CHARS
     card = state.card_of(obj)
     power = card.power or 0
     toughness = card.toughness or 0

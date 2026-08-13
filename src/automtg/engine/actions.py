@@ -57,6 +57,10 @@ class Action:
     #: price is not the printed one and the action must not compare equal to a
     #: hand cast of the same card.
     foretold: bool = False
+    #: Cast **face down** for {3} -- morph. Part of the identity like `kicked`:
+    #: a Morph creature cast face down and cast normally are two different
+    #: things to do with one card, and they cost differently.
+    face_down: bool = False
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it
