@@ -441,8 +441,68 @@ opponents still owe decisions.
 
 `logic/events.ts` turns each batch of events into timed **beats** — floating damage
 numerals anchored to the struck permanent, life tickers, spotlights on the card being
-cast, turn banners, screen shake. `state/narration.ts` runs the queue; input is gated
-while it drains, with a Skip button.
+cast, turn banners, screen shake, cards leaving the battlefield. `state/narration.ts`
+runs the queue; input is gated while it drains, with a Skip button.
+
+### Cards leaving the battlefield
+
+Permanents used to simply stop being drawn. There was a `dies` beat carrying a `toll`
+and a danger flash, and **it never once drew anything**: `FxLayer` resolves anchors by
+looking up `[data-oid]` in the live DOM when the beat plays, and a card being destroyed
+is by definition a card the board has stopped rendering. `useGame.absorb` commits the
+new state and *then* pushes the beats, so the element is always already gone.
+
+So a departure is a **ghost**: the card redrawn over the top from its last known box,
+held long enough to read a caption saying why it left, then dropped into its pile.
+
+**Why not `AnimatePresence` on the lane**, which would be the idiomatic answer. The
+exit would fire at the wrong time and it cannot be fixed locally — React commits the
+new battlefield the instant the response lands, while the queue may still be on a
+spotlight from three beats ago, so the card would fly to the graveyard before the
+narration said what killed it. Syncing them means rendering a *lagged* battlefield,
+which contradicts "the engine is authoritative, no optimistic updates" and desyncs
+every `data-oid` anchor, drop target and legality check in the app. Three smaller
+reasons: `CardStack` is an in-flow flex item, so a deferred unmount holds its slot and
+the lane reflows *after* the animation rather than during it; `narration.skip()`
+cancels an overlay in one line and cannot cancel a framer exit mid-layout; and a dying
+commander goes to the command zone, which *does* render a card, so a deferred
+`layoutId` would collide — the exact bug `Card.tsx`'s `StaticCard` comment describes.
+
+The pieces:
+
+- **`logic/cardRects.ts`** — oid → last known viewport box. `Card` posts its own on
+  unmount, in a `useLayoutEffect` **cleanup with empty deps**: React runs that cleanup
+  before it detaches the node, which is the whole mechanism. Cleanup-only rather than
+  also-on-commit because measuring every card on every render is ~40 forced synchronous
+  reflows per server response, continuously, to refresh a number one card per departure
+  reads. Zero-sized rects are rejected, which is what makes jsdom unmounts harmless.
+- **`Beat.exits`** — *plural*. A wrath emits one `zone_change` per permanent and a beat
+  each would stall the board for six seconds, so `beatsFor` groups each **consecutive
+  run** into one beat and `FxLayer` staggers the ghosts inside it. Consecutive, not
+  global: "death, trigger, death" stays two beats or the second death lands on screen
+  before the trigger that caused it. `Beat.hold` is sublinear — 420ms for one, capped at
+  820ms for a wipe — and the ghosts keep flying after the queue has moved on.
+- **`CardGhost`** — presentational; it is handed two points and a caption. Renders
+  `CardFace` directly, not `StaticCard`, whose own `initial`/`animate` fades it *in* on
+  mount. Graveyard darkens, exile bleaches and glows, a bounce keeps its colour: whether
+  a creature can be recurred is the question a player is asking as it goes.
+- **Destination comes from `data.to`, never from the cause** — see `docs/engine-rules.md`.
+- **Face resolution is `findCard` by oid, then `findCardByDefId`, then a name plate.**
+  The middle step is load-bearing: **tokens cease to exist** on the way out, so they are
+  in no zone by the time the beat plays, and token deaths are a large share of every
+  Commander game.
+- **A card with no recorded position draws nothing.** Deliberate — the alternative is
+  inventing one, and the board's centre would put an opponent's creature in the middle
+  of the viewer's own board on its way out.
+
+The reason outlives the animation in two places: `describeEvent`'s `zone_change` case
+puts the same sentence in the Log permanently, and `logic/removals.ts` folds the log
+into oid → phrase for the notes under each card in the graveyard/exile modal.
+
+`zone_change` narrates **only when `from === "battlefield"`**, which is doing two jobs:
+without it every draw, mill, discard and resolution earns a second log line, and a
+library-origin zone change carries a card id to every seat, so narrating one would put
+an opponent's tutor target in the log.
 
 There was a 0.5x / 1x / instant speed control beside it and it is gone. It took a
 third of the tool strip's width on a fixed 304px rail, which is what pushed the quit

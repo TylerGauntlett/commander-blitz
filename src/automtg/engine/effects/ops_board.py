@@ -35,7 +35,9 @@ from .values import evaluate_value
 def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Destroy", "destroy")
     for oid in oids:
-        destroy(ctx.state, oid)
+        # `by` is what makes the log and the exit animation able to say
+        # "Destroyed by Vandalblast" rather than just "Destroyed".
+        destroy(ctx.state, oid, by=ctx.source_oid)
 
 
 @register("exile")
@@ -54,7 +56,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     link = bool(spec.get("until_leaves"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
     for oid in oids:
-        exile(ctx.state, oid)
+        exile(ctx.state, oid, by=ctx.source_oid)
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.
@@ -69,7 +71,7 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     selector.setdefault("controller", "you")
     oids = yield from choose_objects(ctx, selector, "Sacrifice", "sacrifice")
     for oid in oids:
-        sacrifice(ctx.state, oid)
+        sacrifice(ctx.state, oid, by=ctx.source_oid)
 
 
 @register("put_onto_battlefield")

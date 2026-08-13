@@ -14,11 +14,18 @@
  * changes. That single fact is what makes a card *fly* from hand to stack to
  * battlefield instead of vanishing and reappearing -- framer interpolates
  * between the two mount points for free.
+ *
+ * It cannot do that for a card leaving the *board*, because there is no second
+ * mount point: the graveyard is a count pile. So this also posts its final box
+ * to `logic/cardRects` on the way out, which is what the exit animation draws
+ * the ghost from. See that module for why the FX layer cannot simply look the
+ * element up when the beat plays.
  */
 
 import { type Transition, motion } from "motion/react";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useLayoutEffect, useRef } from "react";
 import type { CardView } from "../../api/types";
+import { remember } from "../../logic/cardRects";
 import { bouncy, mechanical, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { CardFace, type CardVariant } from "./CardFace";
@@ -81,6 +88,29 @@ export function Card({
 }: CardProps) {
   const hover = useUiStore((s) => s.hover);
   const tapped = card.tapped === true;
+  const box = useRef<HTMLDivElement>(null);
+
+  /*
+   * Post the final position on the way out, and only on the way out.
+   *
+   * React runs a layout effect's cleanup *before* it detaches the node, so the
+   * element is still in the document here and still has a real box. That is the
+   * entire mechanism.
+   *
+   * Empty deps on purpose. Measuring on every commit as well would call
+   * `getBoundingClientRect` for every card on the table on every server
+   * response -- forty forced synchronous reflows a tick, continuously, for the
+   * whole time the AI pump is running -- to refresh a number that only one card
+   * per departure ever reads.
+   */
+  const oid = card.oid;
+  useLayoutEffect(
+    () => () => {
+      const el = box.current;
+      if (el) remember(oid, el.getBoundingClientRect());
+    },
+    [oid],
+  );
 
   const classes = [
     "card",
@@ -103,6 +133,7 @@ export function Card({
 
   return (
     <motion.div
+      ref={box}
       layoutId={`card-${card.oid}`}
       layout="position"
       className={classes}

@@ -1,3 +1,173 @@
+## Cards leaving the battlefield — an exit animation, and a reason
+
+### Overview
+
+A destroyed permanent used to stop being drawn, with no motion and no
+explanation. On a board wipe half the table disappeared between two frames.
+
+This was a broken feature rather than a missing one, and the failure is worth
+recording because nothing reported it. `logic/events.ts` already produced a
+`dies` beat carrying a `toll` and a danger flash. **The flash never once drew
+anything.** `FxLayer` resolves anchors by looking up `[data-oid]` in the live DOM
+at the moment a beat plays, `useGame.absorb` commits the new state and *then*
+pushes the beats, and a card being destroyed is by definition a card the board
+has stopped rendering — so the lookup returned null every single time and the
+layer drew nothing. The code read as though the feature existed.
+
+### Why the ghost is an overlay and not an `AnimatePresence` exit
+
+The idiomatic answer is to wrap `Lane` in an `AnimatePresence` and give `Card` a
+real exit animation. It is the wrong tool here, and the reason is timing rather
+than taste.
+
+React commits the new battlefield the instant a response lands, while the
+narration queue may still be several beats behind — one response can carry an
+AI's whole turn. An `AnimatePresence` exit fires on commit, so the card would fly
+to the graveyard *before* the narration said what killed it. Syncing the two
+means rendering a lagged battlefield, which contradicts "the engine is
+authoritative, there are no optimistic updates" and desyncs every `data-oid`
+anchor, drop target and legality check in the app. Not a local change.
+
+Three smaller reasons, any one of which would still have decided it:
+`CardStack` is an in-flow flex item, so a deferred unmount holds its slot and the
+lane reflows *after* the animation instead of during it; `narration.skip()`
+cancels an overlay in one line and cannot cancel a framer exit mid-layout; and a
+dying commander goes to the command zone, which *does* render a card, so a
+deferred `layoutId` for that oid would collide.
+
+`FxLayer` already exists to draw what the board no longer knows about — the
+spotlight resolves and draws cards that are in no rendered zone.
+
+### Remembering where the card was
+
+`logic/cardRects.ts` is oid → last known viewport box. `Card` posts its own in a
+`useLayoutEffect` **cleanup with empty deps**: React runs that cleanup before it
+detaches the node, so the element is still measurable. That is the entire
+mechanism.
+
+Cleanup-only rather than also-on-commit, which was the first design. Measuring
+every mounted card on every render is roughly forty forced synchronous reflows
+per server response, continuously, for the whole time the AI pump is running — to
+refresh a number that exactly one card per departure ever reads.
+
+Zero-sized rects are rejected. jsdom reports every box as 0x0, so without the
+guard any unit test that mounted a board would fill the registry with
+origin-anchored positions and ghosts would fly out of the top-left corner.
+
+### Naming the culprit
+
+`ZONE_CHANGE` had carried a `cause` since the beginning; what it had never
+carried was *who*. `source` on a zone change is the object that moved, not the
+thing that moved it, so no consumer could build a sentence of the form "X
+destroys Y" — which is why the log said only "Grizzly Bears dies".
+
+`move_object` now takes `by`, and the three removal ops pass `ctx.source_oid`,
+which `EffectContext` had held all along and `op_destroy` simply threw away.
+`by_card` is resolved *before* the move, because a creature that traded in combat
+is out of `state.objects` by the time the event goes out.
+
+Two decisions worth keeping:
+
+**A gang block names nobody.** `state.last_damager` is a second map rather than
+an ordering imposed on `damage_ledger`, which is rules-facing — the `damaged_by`
+filter reads it, and it must not change shape for the sake of a caption. It
+holds whichever source wrote last, which in a multi-block is an arbitrary one of
+three, so `sba._creature_deaths` only attributes when the ledger has exactly one
+damager. The caption degrades to a plain "Lethal damage", which is true.
+
+**`by` and `cause` are on `ZONE_CHANGE` only**, not on `DIES` or
+`LEAVES_BATTLEFIELD`. Nothing reads them there, and a new key in a *fired*
+event's data can collide with a card's trigger bindings. `not_cause` being
+loader-rejected on non-`enters` triggers protects matching but not bindings.
+
+### One beat per wrath
+
+A board wipe emits one `zone_change` per permanent, and a beat each at a readable
+single-death pace is six seconds of stalled board. `beatsFor` groups each
+**consecutive run** into one beat carrying several `exits`, and the FX layer
+staggers the ghosts inside it — which is exactly what that layer's overlapping
+short-lived effect lists were built for.
+
+Consecutive, not global. "A creature dies, a trigger resolves, another creature
+dies" is two moments, and merging them would put the second death on screen
+before the trigger that caused it. A run survives only the events that produce no
+beat of their own, which is what lets a wrath — whose every death also fires a
+silent `dies` and `leaves_battlefield` — still read as one sweep.
+
+`Beat.hold` is sublinear and capped: 420ms for one departure, never more than
+820ms however wide the board. The ghosts keep flying after the queue has moved
+on, exactly as damage numerals already do.
+
+### Details that are not details
+
+- **The destination comes from `data.to`, never from the cause.** Rule 903.9a
+  redirects a commander to the command zone while leaving `cause` as
+  "destroyed", so a destroyed commander is `to=command, cause=destroyed`. Routing
+  by cause sends the ghost to a graveyard the card is not in. The caption carries
+  both halves.
+- **Tokens are the fallback, not an edge case.** They cease to exist the instant
+  they leave the battlefield, so by the time the beat plays there is no card
+  anywhere in the view. Face resolution is `findCard` by oid, then
+  `findCardByDefId`, then a name plate — without the middle step a large share of
+  every Commander game would animate nothing.
+- **`CardFace` directly, not `StaticCard`**, whose own `initial`/`animate` pair
+  fades it *in* on mount — the opposite of a death, on a node that would then
+  fight the flight.
+- **A card with no recorded position draws nothing.** Inventing one means the
+  board's centre, which puts an opponent's creature in the middle of the viewer's
+  own board on its way out.
+- **The flight duration is divided by `SPEED_MULTIPLIER`.** The other effects get
+  away with fixed durations because each is shorter than its (already divided)
+  expiry timer; a 900ms flight is cut off mid-air at `fast` without it.
+- **Only `from === "battlefield"` is narrated.** Two jobs at once: otherwise
+  every draw, mill, discard and resolution earns a second log line, and a
+  library-origin zone change carries a card id to *every* seat, so narrating one
+  would put an opponent's tutor target in the log.
+
+### The reason outlives the animation
+
+`describeEvent` gained a `zone_change` case and **lost its `dies` case**. The
+zone change strictly dominates it — `move_object` emits the two together and only
+one of them knows the destination *and* the cause — so keeping both put two lines
+in the log for one departure, the less informative of which could not tell a
+removal spell from a legend rule and said nothing at all about exile.
+
+`logic/removals.ts` folds the same log into oid → phrase for the notes under each
+card in the graveyard and exile modal. Derived rather than stored: the server's
+view of a graveyard is a flat list with no history, and giving it one means
+persisting a cause per object for the whole game. Undo replaces the client's log
+wholesale, which is exactly right here — the map rebuilds, and a rewound death
+stops being reported without anything having to forget it.
+
+### Where it is tested, and where it deliberately is not
+
+The suites split by what they can see, and that line decided the coverage.
+
+`tests/unit/test_zone_change_cause.py` pins the payload — the culprit named
+through a real cast, a sacrifice cost naming what it paid for, the gang block
+declining, the commander landing `to=command, cause=destroyed`, and
+`last_damager` clearing at cleanup with the ledger it shadows.
+
+`tests/events.test.ts` and `tests/labels.test.ts` own the grouping and the words,
+including the load-bearing negative: a library-origin zone change returns null.
+`tests/cardRects.test.ts` is safe in jsdom precisely because the registry never
+touches the DOM.
+
+The geometry lives in stories, because jsdom cannot see it.
+`FxLayer.FliesToTheGraveyard` seeds the registry from the real cards on a real
+board and asserts the ghost ends closer to the pile than it started — with
+`motion: "real"`, since `reducedMotion` removes the transform under test and the
+story would otherwise measure a ghost already parked on its destination and
+assert nothing. `Card.RemembersItsRectOnUnmount` is the only tier that can prove
+the layout-effect-cleanup contract at all: a unit test would assert against a
+registry that had correctly refused to store a 0x0 box.
+
+**e2e covers the log line and not the ghost.** `e2e/helpers.ts` pins the speed to
+`instant`, and `narration.ts` short-circuits on that and drops beats rather than
+holding them, so an e2e run cannot see a ghost without changing the harness lock
+that keeps the suite fast. The Log is not speed-gated, so that is where a real
+engine's real deaths are checked.
+
 ## Bolster, mentor, evolve — and the condition that could not see the event
 
 ### Overview

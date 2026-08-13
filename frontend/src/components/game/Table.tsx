@@ -22,7 +22,9 @@ import {
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
+import { reset as forgetCardRects } from "../../logic/cardRects";
 import { sourcesSpentBy } from "../../logic/mana";
+import { removalsByOid } from "../../logic/removals";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -94,9 +96,18 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const shake = useScreenShake(narration.current);
   const viewer = state.players[state.seat];
   const names = useMemo(() => state.players.map((p) => p.name), [state.players]);
+  // How every card in a graveyard or exile pile got there, for the zone modal.
+  // Folded from the accumulated log rather than the view, which carries no
+  // history; recomputed wholesale so an undo simply un-tells the story.
+  const removals = useMemo(() => removalsByOid(events, game.cardName), [events, game.cardName]);
   const decisionKind = state.pending?.player === state.seat ? state.pending.kind : null;
   const inCombatDecision = decisionKind !== null && COMBAT_DECISIONS.has(decisionKind);
   const locked = busy || narration.busy;
+
+  // Card positions are remembered globally, by oid, and oids restart with each
+  // game. Leaving them behind would let the first death of a new table fly out
+  // of wherever the last table's card #12 happened to be sitting.
+  useEffect(() => forgetCardRects, []);
 
   // A decision's buttons must exist exactly once in the document. Whichever
   // surface owns a decision renders its ids; everything else stands down.
@@ -853,7 +864,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       )}
 
       <PromptDialog state={state} actions={actions} onAct={act} disabled={locked} />
-      <ZonePeek state={state} />
+      <ZonePeek state={state} reasons={removals} />
       <GameOverScreen state={state} onRematch={onRematch} onQuit={onQuit} />
     </div>
   );

@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
-import { decisionPrompt, describeEvent, stepLabel, turnLabel } from "../src/logic/labels";
+import {
+  decisionPrompt,
+  describeEvent,
+  exitPhrase,
+  stepLabel,
+  turnLabel,
+} from "../src/logic/labels";
 import { gameView, player } from "./fixtures";
 
 function event(overrides: Partial<GameEvent> = {}): GameEvent {
@@ -108,5 +114,90 @@ describe("describeEvent", () => {
   it("returns null for noise", () => {
     expect(describeEvent(event({ type: "step_ended" }), names)).toBeNull();
     expect(describeEvent(event({ type: "mana_added" }), names)).toBeNull();
+  });
+});
+
+describe("exitPhrase", () => {
+  it("supplies each cause its own preposition", () => {
+    // Not one blanket " by ": a creature is destroyed *by* a spell but
+    // sacrificed *to* an outlet, and the wrong one reverses who wanted it.
+    expect(exitPhrase("destroyed", "Vandalblast")).toBe("Destroyed by Vandalblast");
+    expect(exitPhrase("sacrificed", "Ashnod's Altar")).toBe("Sacrificed to Ashnod's Altar");
+    expect(exitPhrase("lethal_damage", "Ulamog")).toBe("Killed by Ulamog");
+    expect(exitPhrase("cost", "Krark-Clan Ironworks")).toBe(
+      "Paid as a cost for Krark-Clan Ironworks",
+    );
+  });
+
+  it("falls back to a plain form when the engine named nobody", () => {
+    // A gang block, where naming one of three blockers would be a lie.
+    expect(exitPhrase("lethal_damage", null)).toBe("Lethal damage");
+    expect(exitPhrase("destroyed", null)).toBe("Destroyed");
+  });
+
+  it("has a plain-only form for the causes with no possible culprit", () => {
+    expect(exitPhrase("legend_rule", null)).toBe("Legend rule");
+    expect(exitPhrase("zero_toughness", null)).toBe("Toughness reduced to 0");
+    expect(exitPhrase("aura_unattached", null)).toBe("Nothing left to enchant");
+  });
+
+  it("adds the commander redirect as a rider, not as a replacement", () => {
+    // Rule 903.9a changes the destination and leaves the cause alone, so the
+    // line has to carry both halves or it loses the reason it left.
+    expect(exitPhrase("destroyed", "Swords to Plowshares", "command")).toBe(
+      "Destroyed by Swords to Plowshares — to the command zone",
+    );
+  });
+
+  it("humanises a cause it has never heard of", () => {
+    expect(exitPhrase("some_new_cause", null)).toBe("Some new cause");
+  });
+});
+
+describe("describeEvent on zone changes", () => {
+  const names = ["You", "AI 1"];
+  const exit = (data: Record<string, unknown>, lookup?: (id: string) => string | undefined) =>
+    describeEvent(event({ type: "zone_change", player: 1, data }), names, 0, lookup);
+
+  const KILL = {
+    card: "grizzly_bears",
+    from: "battlefield",
+    to: "graveyard",
+    cause: "destroyed",
+    by_card: "swords_to_plowshares",
+  };
+
+  it("names the card and why it left", () => {
+    expect(exit(KILL)).toBe("Grizzly Bears — Destroyed by Swords To Plowshares");
+  });
+
+  it("uses the printed name for the culprit when one is known", () => {
+    // The culprit goes through the same `card_id -> name` lookup the victim
+    // does, which is what the fallback above cannot get right: prettifying
+    // capitalises every word, and no card is called "Swords To Plowshares".
+    const printed = { swords_to_plowshares: "Swords to Plowshares" } as Record<string, string>;
+    expect(exit(KILL, (id) => printed[id])).toBe(
+      "Grizzly Bears — Destroyed by Swords to Plowshares",
+    );
+  });
+
+  it("stays silent about every zone change that did not start on the battlefield", () => {
+    // The load-bearing negative. Without it the log gains a second line for
+    // every draw, mill, discard and resolution -- and a library-origin zone
+    // change carries a card id to every seat, so narrating one would put an
+    // opponent's tutor target in the log.
+    expect(exit({ card: "forest", from: "library", to: "hand", cause: "search" })).toBeNull();
+    expect(
+      exit({ card: "brainstorm", from: "stack", to: "graveyard", cause: "resolved" }),
+    ).toBe(null);
+    expect(exit({ card: "island", from: "library", to: "hand", cause: "draw" })).toBeNull();
+  });
+
+  it("no longer has a `dies` line, which would double every death", () => {
+    // `move_object` emits the zone change and fires `dies` together, and only
+    // the zone change knows the destination and the cause.
+    expect(describeEvent(event({ type: "dies", data: { card: "grizzly_bears" } }), names)).toBe(
+      null,
+    );
   });
 });

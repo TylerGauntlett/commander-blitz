@@ -9,24 +9,42 @@
  * Anchors are resolved from the DOM (`data-oid`, `data-player`) at the moment
  * the beat plays, because the cards are inside springs and layout flights and
  * there is no reliable static position to precompute.
+ *
+ * Departing cards are the exception, and they are why `logic/cardRects.ts`
+ * exists. A card being destroyed is one the board has *stopped* drawing -- the
+ * new state is committed before the beats are pushed -- so there is no element
+ * left to anchor to and the DOM lookup returns null. That is why a dying
+ * permanent used to produce no effect at all despite `dies` carrying a flash.
+ * Its last known box is posted here by `Card` on unmount instead.
  */
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
 import { play } from "../../audio/sfx";
+import { recall } from "../../logic/cardRects";
 import { CARD_SCALE, cardWidthVar } from "../../logic/cardSize";
-import type { Beat, BeatAnchor, Tone } from "../../logic/events";
-import { findCardByDefId } from "../../logic/zoneGrouping";
+import type { Beat, BeatAnchor, ExitFx, Tone } from "../../logic/events";
+import { findCard, findCardByDefId } from "../../logic/zoneGrouping";
 import type { LiveBeat } from "../../state/narration";
 import { SPEED_MULTIPLIER, type Speed, useUiStore } from "../../state/uiStore";
 import { StaticCard } from "./Card";
+import { CardGhost } from "./CardGhost";
 
 /** How long a numeral floats, before speed scaling. */
 const FLOAT_MS = 1100;
 const BANNER_MS = 900;
 const SPOTLIGHT_MS = 800;
 const FLASH_MS = 600;
+/** The whole of a departure: the pause on the caption plus the fall. */
+const GHOST_MS = 900;
+/**
+ * How long a wipe takes to sweep, regardless of how wide it is.
+ *
+ * Ten deaths at a comfortable 60ms apart is 600ms of stagger on top of a beat
+ * the queue has already moved past, so the gap closes as the board gets wider.
+ */
+const GHOST_SWEEP_MS = 400;
 
 interface Positioned {
   uid: number;
@@ -58,6 +76,21 @@ interface SpotlightFx {
   card: CardView | null;
 }
 
+interface GhostFx {
+  /** Unique per ghost, not per beat: a wipe puts several in one beat. */
+  key: string;
+  oid: number;
+  card: CardView | null;
+  name: string;
+  caption: string;
+  to: string;
+  from: { x: number; y: number };
+  toPoint: { x: number; y: number };
+  width: number;
+  duration: number;
+  delay: number;
+}
+
 /** How wide a spotlit card is drawn. Big enough to read the rules text. */
 /** Ratio of `--card-w-base`; see logic/cardSize.ts. */
 
@@ -70,6 +103,83 @@ function anchorPoint(anchor: BeatAnchor, origin: DOMRect): { x: number; y: numbe
   return {
     x: box.left + box.width / 2 - origin.left,
     y: box.top + box.height / 2 - origin.top,
+  };
+}
+
+/** The board-relative centre of the first element matching a selector. */
+function centreOf(selector: string, origin: DOMRect): { x: number; y: number } | null {
+  const element = document.querySelector(selector);
+  if (!element) return null;
+  const box = element.getBoundingClientRect();
+  // Zero-sized means not laid out -- jsdom, or a pile that is not rendered.
+  if (box.width <= 0 && box.height <= 0) return null;
+  return {
+    x: box.left + box.width / 2 - origin.left,
+    y: box.top + box.height / 2 - origin.top,
+  };
+}
+
+/**
+ * The pile a departing card lands in, or null when there is nothing to aim at.
+ *
+ * Keyed off the destination the engine reported and never off the cause: rule
+ * 903.9a sends a *destroyed commander* to the command zone, so a ghost routed
+ * by its cause would fly to a graveyard the card is not in.
+ */
+function pilePoint(exit: ExitFx, origin: DOMRect): { x: number; y: number } | null {
+  const pile = centreOf(`[data-testid="pile-${exit.owner}-${exit.to}"]`, origin);
+  if (pile) return pile;
+  // The library is drawn as a pile named "library", and there is no pile for
+  // the stack at all -- fall back to the owner's orb, which is beside both.
+  return centreOf(`[data-player="${exit.owner}"]`, origin);
+}
+
+/**
+ * One ghost, or null if there is nothing worth drawing.
+ *
+ * The start point is the card's last known box rather than a live DOM lookup,
+ * because a card leaving the battlefield is exactly a card that is no longer in
+ * the DOM -- see `logic/cardRects.ts`. When even that is missing the ghost is
+ * dropped rather than guessed at: a card whose position was never recorded was
+ * never on this screen, and inventing one (the board's centre, say) would put
+ * an opponent's creature in the middle of the viewer's own board.
+ */
+function ghostFor(
+  exit: ExitFx,
+  index: number,
+  count: number,
+  uid: number,
+  state: GameView,
+  origin: DOMRect,
+  multiplier: number,
+): GhostFx | null {
+  const rect = recall(exit.oid);
+  if (!rect) return null;
+  const toPoint = pilePoint(exit, origin);
+  if (!toPoint) return null;
+
+  return {
+    key: `${uid}-${exit.oid}-${index}`,
+    oid: exit.oid,
+    // By oid first, which finds any real card in the zone it just landed in.
+    // By definition id second, for a *token*: tokens cease to exist on the way
+    // out, so they are in no zone by the time this runs, and without the
+    // fallback the commonest death in Commander would animate nothing.
+    card:
+      findCard(state, exit.oid) ?? (exit.cardId ? findCardByDefId(state, exit.cardId) : null),
+    name: exit.name,
+    caption: exit.caption,
+    to: exit.to,
+    from: {
+      x: rect.x + rect.width / 2 - origin.left,
+      y: rect.y + rect.height / 2 - origin.top,
+    },
+    toPoint,
+    // A tapped card lies on its side, so its box is wider than it is tall and
+    // its *height* is the card width. Take the smaller side either way.
+    width: Math.min(rect.width, rect.height),
+    duration: GHOST_MS / multiplier / 1000,
+    delay: (Math.min(60, GHOST_SWEEP_MS / count) * index) / multiplier / 1000,
   };
 }
 
@@ -86,6 +196,7 @@ export function FxLayer({ beat, speed, boardRef, state }: Props) {
   const [flashes, setFlashes] = useState<FlashFx[]>([]);
   const [banners, setBanners] = useState<BannerFx[]>([]);
   const [spotlights, setSpotlights] = useState<SpotlightFx[]>([]);
+  const [ghosts, setGhosts] = useState<GhostFx[]>([]);
   const timers = useRef<number[]>([]);
 
   useEffect(() => {
@@ -169,6 +280,24 @@ export function FxLayer({ beat, speed, boardRef, state }: Props) {
       setSpotlights((current) => [...current, fx]);
       expire(() => setSpotlights((c) => c.filter((s) => s.uid !== fx.uid)), SPOTLIGHT_MS);
     }
+
+    if (beat.exits?.length) {
+      const exits = beat.exits;
+      const fx = exits
+        .map((exit, i) =>
+          ghostFor(exit, i, exits.length, beat.uid, stateRef.current, origin, multiplier),
+        )
+        .filter((ghost): ghost is GhostFx => ghost !== null);
+      if (fx.length > 0) {
+        const keys = new Set(fx.map((ghost) => ghost.key));
+        setGhosts((current) => [...current, ...fx]);
+        // The last ghost's own delay is already baked into `delay`, so the
+        // whole sweep is gone one flight after the last one starts. `expire`
+        // divides by the multiplier again, which is why this is the raw value.
+        const sweep = GHOST_MS + Math.min(60, GHOST_SWEEP_MS / exits.length) * exits.length;
+        expire(() => setGhosts((c) => c.filter((ghost) => !keys.has(ghost.key))), sweep);
+      }
+    }
   }, [beat, speed, boardRef]);
 
   return (
@@ -200,6 +329,29 @@ export function FxLayer({ beat, speed, boardRef, state }: Props) {
           >
             {fx.value}
           </motion.span>
+        ))}
+      </AnimatePresence>
+
+      {/*
+        Below the spotlights and banners in the stacking order, because a
+        departure is a consequence: the spell that caused it is what the player
+        is being asked to read first.
+      */}
+      <AnimatePresence>
+        {ghosts.map((fx) => (
+          <CardGhost
+            key={fx.key}
+            oid={fx.oid}
+            card={fx.card}
+            name={fx.name}
+            caption={fx.caption}
+            to={fx.to}
+            from={fx.from}
+            toPoint={fx.toPoint}
+            width={fx.width}
+            duration={fx.duration}
+            delay={fx.delay}
+          />
         ))}
       </AnimatePresence>
 

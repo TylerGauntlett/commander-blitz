@@ -254,7 +254,14 @@ def _creature_deaths(state: GameState) -> bool:
             continue
         lethal = obj.damage >= c.toughness or (obj.deathtouched and obj.damage > 0)
         if lethal and Keyword.INDESTRUCTIBLE.value not in c.keywords:
-            move_object(state, oid, Zone.GRAVEYARD, cause="lethal_damage")
+            # Name the killer only when there is exactly one candidate. A gang
+            # block damages a creature from three sources and `last_damager`
+            # holds whichever wrote last, so attributing here would blame an
+            # arbitrary blocker; the caption degrades to a plain "Lethal damage"
+            # instead, which is true.
+            damagers = state.damage_ledger.get(oid, ())
+            by = state.last_damager.get(oid) if len(damagers) == 1 else None
+            move_object(state, oid, Zone.GRAVEYARD, cause="lethal_damage", by=by)
             changed = True
     return changed
 

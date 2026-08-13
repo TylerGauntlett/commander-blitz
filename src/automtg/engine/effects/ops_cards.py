@@ -220,7 +220,9 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
-        move_object(ctx.state, oid, Zone.HAND, to_player=obj.owner, cause="returned")
+        move_object(
+            ctx.state, oid, Zone.HAND, to_player=obj.owner, cause="returned", by=ctx.source_oid
+        )
 
 
 @register("return_from_graveyard")
@@ -406,5 +408,13 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
-        move_object(ctx.state, oid, Zone.LIBRARY, to_player=obj.owner, to_top=True, cause="tuck")
+        move_object(
+            ctx.state,
+            oid,
+            Zone.LIBRARY,
+            to_player=obj.owner,
+            to_top=True,
+            cause="tuck",
+            by=ctx.source_oid,
+        )
         ctx.state.emit(EventType.ZONE_CHANGE, source=oid, to="library_top")
