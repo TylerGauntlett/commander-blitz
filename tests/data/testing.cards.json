@@ -4100,6 +4100,71 @@
       ]
     },
     {
+      "id": "t_kinship",
+      "name": "Test Kinship Ox",
+      "oracle_text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "snapshot",
+              "as": "top_card",
+              "objects": {
+                "zone": "library",
+                "controller": "you"
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "binding": "top_card",
+                  "zone": "library",
+                  "shares_a_type_with": "self"
+                }
+              },
+              "then": [
+                {
+                  "op": "may",
+                  "prompt": "Reveal the top card and gain 2 life?",
+                  "effects": [
+                    {
+                      "op": "reveal",
+                      "objects": {
+                        "binding": "top_card"
+                      }
+                    },
+                    {
+                      "op": "gain_life",
+                      "player": "you",
+                      "amount": {
+                        "const": 2
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_cumulative",
       "name": "Test Ageing Wall",
       "oracle_text": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)",

@@ -331,7 +331,7 @@ is ordinary, which is why most of this table is `free`.
 | Hellbent | free | condition `cmp` on `cards_in_hand` equals 0 | — |
 | Heroic | free | `becomes_target` trigger with `controller: "you"`, then whatever the card does | — |
 | Join forces | routed | mana contributed by several players; every cost is paid by one | — |
-| Kinship | routed | `upkeep` trigger; needs to look at the library top and read its subtypes | — |
+| Kinship | free | `upkeep` trigger, `snapshot` over `{"zone": "library"}` (which binds the top card), then `exists` with `shares_a_type_with: "self"` | `snapshot` |
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
 | Metalcraft | free | condition `cmp` on `count` of artifacts you control | — |
 | Morbid | free | condition `cmp` on `creatures_died_this_turn` over `all` — the per-turn ledger shipped | — |
