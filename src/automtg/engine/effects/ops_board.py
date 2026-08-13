@@ -255,6 +255,69 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
             attach(ctx.state, aura, oid)
 
 
+@register("meld")
+def op_meld(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile them, then meld them into <name>." Bruna and Gisela (701.37).
+
+    Meld is `mutate`'s merged permanent with the pair fixed by the card instead
+    of chosen by the caster, and it reuses the same mechanism: **one
+    `CardDef`**, the melded card, written onto one object, with the partner
+    recorded in `merged_under` so `move_object` sends both wherever it goes.
+
+    What is genuinely different is that it is a *new* permanent. 701.37c has the
+    two cards **exiled** and then returned melded, so the melded permanent
+    enters the battlefield -- its enter triggers fire, and it is summoning sick.
+    That is why this exiles and re-enters rather than writing `merged_card` onto
+    a permanent that is already there, which is what mutate does.
+
+    The whole "if you both own and control" clause is the card's own
+    ``condition`` on the trigger. Nothing here re-checks it: an intervening-if
+    is checked twice by `triggers`, and a third check inside the effect would be
+    a different rule wearing the same words.
+    """
+    state = ctx.state
+    source = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if source is None or not source.on_battlefield:
+        return
+    card = state.registry.get(source.def_id)
+    if card.melds_with is None or card.melds_into is None:
+        raise DslError(f"{card.id}: 'meld' needs 'melds_with' and 'melds_into'")
+    partner = next(
+        (
+            oid
+            for oid in state.battlefield
+            if (other := state.objects.get(oid)) is not None
+            and other.def_id == card.melds_with
+            and other.controller == source.controller
+            and other.owner == source.owner
+        ),
+        None,
+    )
+    if partner is None:
+        return
+    controller = source.controller
+    # Exiled first, both of them, because that is what the printed line says and
+    # because the melded permanent has to *enter* -- a card that never left
+    # would have no enters-the-battlefield trigger to fire.
+    exile(state, source.oid)
+    exile(state, partner)
+    move_object(state, source.oid, Zone.BATTLEFIELD, cause="meld")
+    melded = state.objects[source.oid]
+    melded.controller = controller
+    # After the move, for `cast_transformed`'s reason: `reset_permanent_state`
+    # clears both of these on the way onto the battlefield, which is right for
+    # every permanent except one that arrives already melded.
+    melded.merged_card = state.registry.get(card.melds_into)
+    melded.merged_under = (partner,)
+    partner_obj = state.objects[partner]
+    partner_obj.zone = Zone.BATTLEFIELD
+    partner_obj.merged_into = source.oid
+    state.players[partner_obj.owner].exile.remove(partner)
+    state.bump_chars()
+    state.emit("melded", player=controller, source=source.oid, card=card.melds_into)
+    yield from ()
+
+
 @register("transform")
 def op_transform(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Transform this creature." Bloodline Keeper.

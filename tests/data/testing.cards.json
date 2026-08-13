@@ -6536,6 +6536,88 @@
       "keywords": [
         "flying"
       ]
+    },
+    {
+      "id": "t_meld_a",
+      "name": "Test Bruna",
+      "oracle_text": "At the beginning of your end step, if you both own and control Test Bruna and Test Gisela, exile them, then meld them into Test Brisela.",
+      "mana_cost": "{5}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 5,
+      "toughness": 7,
+      "keywords": [
+        "flying"
+      ],
+      "melds_with": "t_meld_b",
+      "melds_into": "t_meld_result",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your end step, meld them into Test Brisela.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you"
+          },
+          "condition": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Horror"
+              ]
+            },
+            "at_least": 1
+          },
+          "effects": [
+            {
+              "op": "meld"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_meld_b",
+      "name": "Test Gisela",
+      "mana_cost": "{4}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 4,
+      "toughness": 6,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    {
+      "id": "t_meld_result",
+      "name": "Test Brisela",
+      "oracle_text": "Flying, first strike, vigilance",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Angel",
+        "Horror"
+      ],
+      "power": 9,
+      "toughness": 10,
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance"
+      ]
     }
   ]
 }

@@ -407,6 +407,11 @@ class CardDef:
     #: **Mutate** (702.140a). An alternative cost like ``bestow``, and like it
     #: the target comes from `MUTATE_TARGET` rather than from the card.
     mutate: ManaCost | None = None
+    #: **Meld** (701.37): the card this one melds with, and the single oversized
+    #: card the two become. Read by the `meld` op; the melded entry is linked
+    #: back through ``parent_face`` so no deck may contain it.
+    melds_with: str | None = None
+    melds_into: str | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
     #: Prowl and spectacle: an alternative mana cost offered from hand only
