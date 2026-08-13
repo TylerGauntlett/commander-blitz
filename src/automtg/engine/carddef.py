@@ -400,6 +400,8 @@ class CardDef:
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.
     miracle: ManaCost | None = None
+    #: Foretell -- the price of casting it out of the exile it was foretold to.
+    foretell: ManaCost | None = None
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 

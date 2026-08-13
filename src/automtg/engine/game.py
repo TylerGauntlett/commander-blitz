@@ -125,7 +125,13 @@ class Game:
         elif action.kind is ActionKind.SUSPEND:
             from . import suspend
 
-            self._run(suspend.suspend_card(state, pid, action.source))
+            # One action kind, two mechanics: both exile a card from hand to
+            # be cast later and neither uses the stack. Which one is decided by
+            # the card, since no printing has both.
+            if state.card(action.source).foretell is not None:
+                self._run(suspend.foretell_card(state, pid, action.source))
+            else:
+                self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:
             # A mana ability does not use the stack (rule 605.3a), so it takes a
             # different path entirely: nothing to respond to, and the player
@@ -234,6 +240,8 @@ class Game:
             # whose price changed between being offered and being paid is the
             # bug `spell_purpose` exists to prevent elsewhere.
             cost = card.alternative_cost
+        elif action.foretold and card.foretell is not None:
+            cost = card.foretell
         elif action.overloaded and card.overload is not None:
             cost = card.overload
         elif action.kicked:

@@ -2711,6 +2711,7 @@ them where it is sitting:
 "dredge": 3                                 // replace a draw: mill 3, take this back
 "madness": "{R}"                            // discarded -> exiled, and castable for this
 "miracle": "{W}"                            // cast it as the first card you draw
+"foretell": "{R}"                           // pay {2} to exile it; cast it later for this
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
@@ -2856,6 +2857,28 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+#### Foretell
+
+```jsonc
+"foretell": "{R}"
+```
+
+The census called suspend "the nearest shape". It is the *same* shape, and
+foretell shares its `ActionKind`: both exile a card from hand to be cast later,
+neither uses the stack, and neither can be countered. What differs is only the
+ticking rule and whether the later cast costs anything. The `{2}` to foretell is
+fixed by rule 702.143a; the card names only the later price.
+
+**"Face down" here is `revealed_to`**, the private-information channel Glasses
+of Urza built. That is a far smaller claim than a face-down *permanent*: a card
+in exile nobody may interact with is hidden by not being shown, where a
+face-down creature is a 2/2 shell over a real card and a characteristics
+problem. Foretell needs only the first, which is why it ships and morph does not.
+
+**"On a later turn" is the whole price** — foretold and cast on the same turn is
+the printed cost paid in two instalments with the discount thrown in — so
+`foretold_turn` is recorded and compared.
 
 #### Dredge, madness and miracle — replacements that stop to ask
 

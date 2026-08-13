@@ -87,6 +87,12 @@ class GameObject:
     #: Survives zone changes only in the sense that it is cleared when the card
     #: is finally cast -- see `engine/suspend.py`.
     suspended_by: int | None = None
+    #: Whose foretold card this is, while it waits face down in exile, and the
+    #: turn it was put there. Both are needed: 702.143a says "on a **later**
+    #: turn", so a card foretold and cast on the same turn would be the printed
+    #: cost paid in two instalments with the discount thrown in.
+    foretold_by: int | None = None
+    foretold_turn: int = -1
     #: A creature cast off suspend has haste.  Not an until-end-of-turn effect:
     #: it lasts as long as the permanent does, which is the only reason suspend
     #: is ever better than simply waiting.

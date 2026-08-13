@@ -2,6 +2,33 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_foreteller",
+      "name": "Test Foretold Bolt",
+      "oracle_text": "Test Foretold Bolt deals 3 damage to any target.\nForetell {R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "foretell": "{R}",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "any",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
       "id": "t_miracle",
       "name": "Test Miracle Wrath",
       "oracle_text": "Destroy all creatures.\nMiracle {W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",

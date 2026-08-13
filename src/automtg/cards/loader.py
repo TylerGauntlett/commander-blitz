@@ -522,6 +522,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         dredge=model.dredge,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
+        foretell=ManaCost.parse(model.foretell) if model.foretell else None,
         additional_cost=additional_cost,
         additional_optional=model.additional_optional,
         additional_repeatable=model.additional_repeatable,
