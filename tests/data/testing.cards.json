@@ -2,6 +2,73 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_imprinter",
+      "name": "Test Imprinting Foundry",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{3}, {T}: Create a token that's a copy of the exiled card.",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Imprint -- When this artifact enters, you may exile a creature card from your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exile a creature card from your hand?",
+              "condition": {
+                "exists": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "effects": [
+                {
+                  "op": "exile",
+                  "until_leaves": true,
+                  "objects": {
+                    "zone": "hand",
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{3}, {T}: Create a token that's a copy of the exiled card.",
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "controller": "you",
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_epic",
       "name": "Test Epic Blessing",
       "oracle_text": "You gain 2 life.\nEpic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.)",
