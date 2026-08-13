@@ -259,7 +259,7 @@ This is the long tail, and where the build order comes from.
 | Landwalk — mountainwalk | shipped | `Keyword` | `mountainwalk` |
 | Landwalk — forestwalk | shipped | `Keyword` | `forestwalk` |
 | Landwalk — nonbasic † | shipped | `Keyword`, and **not** a sixth `LANDWALK_SUBTYPE` row: the test is a supertype the land must lack | `nonbasic_landwalk` |
-| Level up | blocked | levels are a characteristic-defining subsystem, not counters with a static | — |
+| Level up | free | a level counter, plus `set_pt` / `grant_keyword` statics whose `condition` is an `all` of two `counters` comparisons -- a band | `set_pt` |
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
 | Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
 | Manifest | blocked | face-down creatures | — |
