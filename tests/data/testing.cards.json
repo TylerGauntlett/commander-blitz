@@ -4100,6 +4100,66 @@
       ]
     },
     {
+      "id": "t_unearther",
+      "name": "Test Unearthed Zombie",
+      "oracle_text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. Unearth only as a sorcery.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. Unearth only as a sorcery.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "controller": "you",
+              "objects": {
+                "zone": "graveyard",
+                "self_only": true
+              }
+            },
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "duration": "permanent",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step.",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "zone": "battlefield",
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_entwiner",
       "name": "Test Entwine",
       "oracle_text": "Choose one —\n• Draw a card.\n• You gain 3 life.\nEntwine {2} (Choose both if you pay the entwine cost.)",

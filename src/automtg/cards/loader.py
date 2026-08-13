@@ -462,6 +462,39 @@ def _mentions_kicked(model: CardModel) -> bool:
     return _mentions_condition(model, "kicked")
 
 
+#: Ops that take an object out of the zone an ability was activated from.
+#: Unearth's `put_onto_battlefield`, and the three other destinations a card
+#: could plausibly be sent to by its own ability.
+SOURCE_MOVING_OPS = frozenset(
+    {"put_onto_battlefield", "exile", "return_to_hand", "put_on_top"}
+)
+
+
+def _effects_move_source(effects: Any) -> bool:
+    """Does this ability *unconditionally* move its own source out of its zone?
+
+    The third way to satisfy the outside-the-battlefield guard, after cycling's
+    self-discard and embalm's self-exile. Unearth pays neither: its cost is
+    plain mana and the card leaves because the effect returns it to the
+    battlefield.
+
+    Only the **top level** counts. An effect nested inside an `if` or a `may`
+    might not run, and an ability whose only exit is a branch the player can
+    decline is activatable again from the same zone -- which is the shape the
+    guard exists to refuse. `self_only` is likewise required: an ability that
+    moves *some other* card out of a graveyard has not moved itself.
+    """
+    for effect in effects or ():
+        if not isinstance(effect, Mapping):
+            continue
+        if effect.get("op") not in SOURCE_MOVING_OPS:
+            continue
+        objects = effect.get("objects")
+        if isinstance(objects, Mapping) and objects.get("self_only"):
+            return True
+    return False
+
+
 def _mentions_condition(model: CardModel, key: str) -> bool:
     """Does anything on this card read the ``key`` condition?"""
     return _mentions(model, lambda node: key in node)
@@ -551,12 +584,20 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             )
         # Two costs remove the source from a non-battlefield zone: cycling
         # discards this card from hand, embalm exiles it from the graveyard.
-        # Either satisfies the rule; neither is optional.
-        removes_source = cost.discard_self or cost.exile_from_graveyard is not None
+        # Unearth is the third shape and pays neither -- its *effect* is what
+        # takes the card out ("return this card from your graveyard to the
+        # battlefield"), so the property the guard is really after is that the
+        # source cannot still be sitting there afterwards, however it left.
+        removes_source = (
+            cost.discard_self
+            or cost.exile_from_graveyard is not None
+            or _effects_move_source(model.effects)
+        )
         if set(active_zones) - {Zone.BATTLEFIELD} and not removes_source:
             raise DslError(
                 f"{where}: an activated ability outside the battlefield needs a cost "
-                f"that removes its source from that zone (got {cost.describe()!r}); "
+                f"or an unconditional effect that removes its source from that zone "
+                f"(got {cost.describe()!r}); "
                 f"otherwise it can be activated repeatedly without ever leaving"
             )
     else:
