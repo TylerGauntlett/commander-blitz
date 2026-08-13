@@ -159,7 +159,7 @@ class Game:
             add_attacker(state, action.source, defender)
             return  # the decision stays open for more attackers
         state.pending_decision = None
-        finish_attackers(state)
+        self._run(finish_attackers(state))
 
     def _dispatch_blockers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state

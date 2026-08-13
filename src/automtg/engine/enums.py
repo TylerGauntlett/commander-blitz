@@ -230,6 +230,12 @@ class Keyword(str, Enum):
     #: What they modify is the **game**, not the permanent -- day and night are
     #: a designation the whole table shares (`GameState.day_night`), which is
     #: why the switching lives in `turn` beside phasing rather than in a card.
+    #: Banding (702.21). Two rules sharing a word: attacking as a band, and
+    #: **who chooses the damage assignment order** of the creature on the other
+    #: side. The engine already has damage assignment order as a concept -- it
+    #: simply sorts it by effective toughness and asks nobody -- so banding is
+    #: exactly "this one is asked, and the other player is who is asked".
+    BANDING = "banding"
     DAYBOUND = "daybound"
     NIGHTBOUND = "nightbound"
     #: Deck construction only -- "you can have two commanders if both have

@@ -10,8 +10,9 @@ UX is still "select all, confirm".
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .characteristics import (
     attack_compelled,
@@ -193,11 +194,19 @@ def remove_attacker(state: GameState, oid: int) -> None:
         state.combat.attackers.pop(oid, None)
 
 
-def finish_attackers(state: GameState) -> None:
-    """Lock in the attack: tap the attackers and fire their triggers."""
+def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
+    """Lock in the attack: form bands, tap the attackers and fire their triggers.
+
+    A generator because of the bands, and only because of them: 702.21b puts the
+    declaration "as a player declares attackers", so it belongs here rather than
+    anywhere later -- and the question is skipped entirely when nobody is
+    attacking with banding, which is every combat in every deck that does not
+    play a fifth-edition white creature.
+    """
     combat = state.combat
     if combat is None:
         return
+    yield from _declare_bands(state)
     combat.attackers_declared = True
     discharge_attack_requirements(state)
     for oid in list(combat.attackers):
@@ -647,8 +656,17 @@ def _deals_damage_this_step(state: GameState, oid: int, first_strike_step: bool)
     return double or not first
 
 
-def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
-    """Collect every assignment, then apply them all at once."""
+def deal_combat_damage(
+    state: GameState, *, first_strike_step: bool
+) -> Generator[Any, list[int], None]:
+    """Collect every assignment, then apply them all at once.
+
+    A generator because of banding, and only because of it: 702.21 moves the
+    choice of a creature's **damage assignment order** to the other player, and
+    a choice has to be asked. Every combat without banding in it asks nothing
+    and behaves exactly as it did -- `_ask_order` returns immediately when there
+    is nothing to order.
+    """
     combat = state.combat
     if combat is None:
         return
@@ -660,6 +678,19 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
             continue
         if not _deals_damage_this_step(state, attacker_oid, first_strike_step):
             continue
+        # 702.21: a blocking creature with banding takes this order away from
+        # the attacking player. The automatic sort *is* the attacker's choice
+        # made silently, so this is the whole of banding's defensive half.
+        chooser = _order_chooser(state, attacker_oid)
+        if chooser is not None:
+            blockers = [
+                b for b in combat.block_order.get(attacker_oid, []) if _in_combat(state, b)
+            ]
+            order = yield from _ask_order(
+                state, chooser, attacker_oid,
+                blockers, f"Order the blockers of {state.card(attacker_oid).name}",
+            )
+            combat.block_order[attacker_oid] = order
         assignments.extend(_attacker_assignments(state, attacker_oid))
 
     for blocker_oid in sorted(combat.blockers):
@@ -671,10 +702,20 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
         if not _deals_damage_this_step(state, blocker_oid, first_strike_step):
             continue
         power = chars(state, blocker_oid).power
-        if power > 0:
-            assignments.append(
-                DamageAssignment(source=blocker_oid, to_object=attacker_oid, amount=power)
+        if power <= 0:
+            continue
+        # A creature blocking a **band** has several attackers to divide its
+        # damage between, and 702.21 gives that order to the attacking player.
+        # `band_of` returns a band of one for everything else, so the ordinary
+        # case falls straight through to the single assignment below.
+        band = [b for b in combat.band_of(attacker_oid) if _in_combat(state, b)]
+        if len(band) > 1:
+            attacking = state.objects[attacker_oid].controller
+            band = yield from _ask_order(
+                state, attacking, blocker_oid, band,
+                f"Order the band for {state.card(blocker_oid).name}'s damage",
             )
+        assignments.extend(_divide(state, blocker_oid, power, band))
 
     for assignment in assignments:
         if assignment.to_player is not None:
@@ -688,6 +729,137 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
 
     if first_strike_step:
         combat.first_strike_done = True
+
+
+def _declare_bands(state: GameState) -> Generator[Any, list[int], None]:
+    """"One or more attacking creatures with banding and up to one without" (702.21b).
+
+    Asked as **two** questions rather than one, because that sentence is two
+    constraints and `ask_objects` expresses each of them exactly: any number
+    from the creatures with banding, then at most one from the creatures
+    without. A single question over all attackers could not say "up to one
+    without" at all, and validating the answer afterwards would mean offering a
+    choice the engine then refuses.
+
+    Looped, because a player may declare more than one band. The loop ends when
+    they stop picking, which is also how they decline to band at all.
+    """
+    from .effects.context import EffectContext, ask_objects
+
+    combat = state.combat
+    if combat is None:
+        return
+    pid = state.active_player
+    ctx = EffectContext(state=state, controller=pid, source_oid=None)
+    banded: set[int] = set()
+    for _ in range(len(combat.attackers)):
+        pool = [
+            oid
+            for oid in sorted(combat.attackers)
+            if oid not in banded
+            and Keyword.BANDING.value in chars(state, oid).keywords
+        ]
+        if not pool:
+            return
+        members = yield from ask_objects(
+            ctx, pool, 0, len(pool), "Form a band with", pid, purpose="banding"
+        )
+        if not members:
+            return
+        # "…and up to one attacking creature without banding", which has to be
+        # attacking the same player: a band is blocked as a unit, and a unit
+        # spread across two defenders is not one.
+        defender = combat.attackers[members[0]]
+        others = [
+            oid
+            for oid in sorted(combat.attackers)
+            if oid not in banded
+            and oid not in members
+            and combat.attackers[oid] == defender
+            and Keyword.BANDING.value not in chars(state, oid).keywords
+        ]
+        tagalong: list[int] = []
+        if others:
+            tagalong = yield from ask_objects(
+                ctx, others, 0, 1, "Add one creature without banding to the band",
+                pid, purpose="banding",
+            )
+        band = [*members, *tagalong]
+        combat.bands.append(band)
+        banded.update(band)
+        state.emit("band_declared", player=pid, attackers=sorted(band))
+
+
+def _order_chooser(state: GameState, attacker_oid: int) -> int | None:
+    """Who picks this attacker's damage assignment order, if not the engine.
+
+    702.21: a creature with banding on the **blocking** side takes the choice
+    away from the attacking player and gives it to its own controller. The
+    engine's automatic sort is that choice made silently on the attacker's
+    behalf, so banding's whole content here is "ask, and ask the other player".
+
+    ``None`` means nobody is asked and the automatic order stands, which is
+    every combat without banding in it.
+    """
+    combat = state.combat
+    assert combat is not None
+    for blocker_oid in combat.block_order.get(attacker_oid, []):
+        if not _in_combat(state, blocker_oid):
+            continue
+        if Keyword.BANDING.value in chars(state, blocker_oid).keywords:
+            obj = state.objects.get(blocker_oid)
+            return obj.controller if obj is not None else None
+    return None
+
+
+def _ask_order(
+    state: GameState, chooser: int, subject: int, options: list[int], prompt: str
+) -> Generator[Any, list[int], list[int]]:
+    """Ask a player to order some creatures for damage assignment.
+
+    Returns the chosen order followed by anything not chosen, so a short answer
+    is still a complete order and the caller never has to handle a partial one.
+    `ask_objects` records the order the options were taken in, which is exactly
+    what a damage assignment order is -- the engine has had the concept all
+    along and has simply been sorting it by effective toughness.
+    """
+    from .effects.context import EffectContext, ask_objects
+
+    if len(options) < 2:
+        return options
+    ctx = EffectContext(state=state, controller=chooser, source_oid=subject)
+    picked = yield from ask_objects(
+        ctx, options, 0, len(options), prompt, chooser, purpose="damage_order"
+    )
+    return [*picked, *[oid for oid in options if oid not in picked]]
+
+
+def _divide(
+    state: GameState, source_oid: int, power: int, targets: list[int]
+) -> list[DamageAssignment]:
+    """Lethal to each in order, the way an attacker already divides among blockers.
+
+    Rule 510.1c is one rule, not two: whoever is assigning, they must give each
+    creature lethal damage before assigning any to the next. So this is the same
+    walk `_attacker_assignments` makes, factored out and pointed the other way --
+    a blocker dividing among a band it is blocking.
+    """
+    deathtouch = Keyword.DEATHTOUCH.value in chars(state, source_oid).keywords
+    out: list[DamageAssignment] = []
+    remaining = power
+    for oid in targets:
+        if remaining <= 0:
+            break
+        lethal = 1 if deathtouch else max(1, _effective_toughness(state, oid))
+        assign = min(remaining, lethal)
+        out.append(DamageAssignment(source=source_oid, to_object=oid, amount=assign))
+        remaining -= assign
+    if remaining > 0 and out:
+        last = out[-1]
+        out[-1] = DamageAssignment(
+            source=last.source, to_object=last.to_object, amount=last.amount + remaining
+        )
+    return out
 
 
 def _in_combat(state: GameState, oid: int) -> bool:
@@ -711,7 +883,11 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
     defender = combat.attackers[attacker_oid]
 
     blockers = [b for b in combat.block_order.get(attacker_oid, []) if _in_combat(state, b)]
-    was_blocked = bool(combat.block_order.get(attacker_oid))
+    # 702.21e: a band is blocked as a unit. A member nobody blocked is still
+    # blocked if any of its band was, so it deals no damage to the player --
+    # which is the whole defensive value of blocking a band, and the reason a
+    # band is a unit rather than a convenience.
+    was_blocked = any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
 
     if not was_blocked:
         return [DamageAssignment(source=attacker_oid, to_player=defender, amount=power)]

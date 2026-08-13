@@ -188,7 +188,7 @@ This is the long tail, and where the build order comes from.
 | Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
 | Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
 | Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
-| Banding | refused | needs player-chosen combat damage assignment, which the engine automates for *every* creature — see rules-coverage.md | — |
+| Banding | shipped | `CombatState.bands` for 702.21b, and the `block_order` the engine already had — it was *sorting* the damage assignment order, and banding is "ask, and ask the other player" | `banding` |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
 | Bestow | shipped | an alternative cost like evoke, plus the one target list the *rules* supply (`BESTOW_TARGET`), plus a type change in `chars` switched on `attached_to` | `bestow` |
 | Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
@@ -345,9 +345,8 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**One row is refused. The other 183 are shipped or free** — 90 shipped, 93 free.
-`routed` and `blocked` are both empty, and the one refusal (banding) names its
-blocker rather than pointing at a document.
+**Every row is shipped or free** — 91 shipped, 93 free. `routed`, `blocked` and
+`refused` are all empty.
 
 The single most useful finding, made over and over, is that **`blocked` was a
 routing error rather than a size estimate** — every one of the twenty-five rows
@@ -403,10 +402,10 @@ are. That is the `split-cards-fuse` gap record, and **fuse** itself is a
 different shape again — one spell made of two faces, where `card_of` answers
 with exactly one.
 
-### The refused, and the one that is left
+### The refused, all of them reversed
 
-`refused` is a recorded decision rather than a difficulty, and **five of the six
-have been reversed**:
+`refused` is a recorded decision rather than a difficulty, and **all six have
+been reversed**:
 
 - **Regeneration** was refused as "a destruction-replacement shield" and now
   ships, because `zones.destroy` is a single choke point.
@@ -439,25 +438,31 @@ have been reversed**:
   `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
   status nobody should trust.
 
-**Banding** is the one that still stands, and it stands on a different footing
-from the five that fell. Each of those was *one* mechanism the engine turned out
-to have a place for. Banding is two rules sharing a word:
+**Nothing is refused any more.** Banding was the last row, and its recorded
+reason was half right in the way that turned out to matter:
 
-| half | rule | status |
+> needs player-chosen combat damage assignment, which the engine automates for
+> every creature.
+
+The engine does not *lack* damage assignment order. It has had the concept all
+along — `CombatState.block_order` — and has simply been **sorting it instead of
+asking**. The automatic sort by effective toughness *is* a choice made silently
+on the attacking player's behalf, so banding is two sentences rather than a
+subsystem: ask, and ask the other player. `ask_objects` already records the
+order options were taken in, which is exactly what a damage assignment order is,
+so it needed no new `DecisionKind` either.
+
+| half | rule | how |
 |---|---|---|
-| attacking as a band, blocked as a unit | 702.21b, 702.21e | buildable — it is a shape change in the attack declaration |
-| combat **damage assignment** moves to the banding creature's controller | 702.21 | **nothing to move** |
+| attacking as a band | 702.21b | two `ask_objects` questions, because the printed sentence is two constraints — any number *with* banding, then at most one *without* |
+| blocked as a unit | 702.21e | `band_of`, which returns a band of one for everything else, so the ordinary case falls straight through |
+| the damage assignment order changes hands | 702.21 | `_order_chooser`, and `_divide` — one walk of 510.1c, pointed either way |
 
-The second half is the point of the keyword, and the engine has no chooser to
-hand over: combat damage is assigned automatically, blockers ordered by effective
-toughness and paid lethal in order, with nobody asked. That is *manual damage
-division*, already a recorded simplification in
-[rules-coverage.md](rules-coverage.md), and banding sits behind it.
-
-Shipping the band declaration alone would be a card that reads right and plays
-wrong — which is `/extend-dsl` rule 3, refuse what you cannot do exactly. So the
-refusal is re-argued rather than reversed, and it now names its blocker instead
-of pointing at the document.
+*Manual damage division* remains a recorded simplification in
+[rules-coverage.md](rules-coverage.md) for combats with no banding in them: the
+automatic sort still stands there, and nobody is asked. That is a divergence
+about **who is asked in the ordinary case**, not about banding, and it is stated
+where the rest of the simplifications are.
 
 ## Suggested build order
 
