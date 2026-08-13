@@ -7,6 +7,7 @@ from typing import Any
 
 from ..enums import Zone
 from ..events import EventType
+from ..objects import PLUS_ONE
 from ..primitives import add_counters, discard_cards, draw_cards, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
@@ -347,6 +348,74 @@ def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
         for oid in to_bin:
             move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=pid, cause="surveil")
         ctx.state.emit("surveil", player=pid, looked=len(top), binned=len(to_bin))
+
+
+@register("explore")
+def op_explore(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.40a — reveal the top card, and route it by whether it is a land.
+
+    "Reveal the top card of your library. Put that card into your hand if it's a
+    land. Otherwise, put a +1/+1 counter on this creature, then put that card
+    back on top of your library or into your graveyard."
+
+    One op rather than a `reveal` plus an `if`, and the reason is the branch
+    itself: the test is on **the card that was revealed**, which no condition can
+    name. `snapshot` binds an object a selector already found, and the nearest a
+    card could otherwise get is `{"exists": {"zone": "library", "types":
+    ["Land"]}}` — "is there a land somewhere in my deck", true in essentially
+    every game, which would make Merfolk Branchwalker draw a card every time.
+
+    Three details that are wrong in a way no board would show:
+
+    - **The counter goes on the exploring permanent**, not on the ability's
+      source. "Target creature you control explores" puts the counter on the
+      target, and a version reading `self_only` would grow the wrong creature.
+    - **Each permanent explores separately.** Two creatures exploring reveal two
+      cards, so the library is walked once per permanent rather than once.
+    - **The land half asks nothing.** Only the non-land branch is a choice
+      (701.40a), and offering one for a land would let a player decline the card.
+
+    ``objects`` is required rather than defaulted to this permanent, because the
+    op is printed on sorceries as often as on creatures and a defaulted
+    ``self_only`` on a sorcery resolves to the spell — which is on the stack, is
+    not the exploring permanent, and would make the card reveal nothing at all.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Explore", "explore")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        pid = obj.controller
+        library = ctx.state.players[pid].library
+        if not library:
+            # An empty library reveals nothing, so neither half happens -- not
+            # even the counter, which 701.40b makes conditional on a card.
+            continue
+        top = library[0]
+        revealed = ctx.state.objects.get(top)
+        if revealed is None:
+            continue
+        card = ctx.state.card_of(revealed)
+        ctx.state.emit("reveal", player=pid, source=ctx.source_oid, cards=[card.id])
+        if card.is_land:
+            move_object(ctx.state, top, Zone.HAND, to_player=pid, cause="explore")
+            binned = False
+        else:
+            add_counters(ctx.state, oid, PLUS_ONE, 1, source=ctx.source_oid)
+            binned = yield from ask_yes_no(
+                ctx, f"Put {card.name} into your graveyard? (otherwise it stays on top)", pid
+            )
+            if binned:
+                move_object(ctx.state, top, Zone.GRAVEYARD, to_player=pid, cause="explore")
+        ctx.state.emit(
+            "explore",
+            player=pid,
+            source=ctx.source_oid,
+            oid=oid,
+            card=card.id,
+            land=card.is_land,
+            binned=binned,
+        )
 
 
 @register("two_piles")

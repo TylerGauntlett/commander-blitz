@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>59 ops"]
+    ctx --> ops["op registry<br/>63 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-62 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+63 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -2144,6 +2144,39 @@ splits is a strictly better spell than the one printed.
 Two decisions — a subset chosen by an opponent, then a yes/no from the caster —
 rather than "choose a pile", because the piles are not objects until the split is
 made.
+
+## Explore
+
+```jsonc
+// Merfolk Branchwalker — "When this creature enters, it explores."
+{ "op": "explore", "objects": { "zone": "battlefield", "self_only": true } }
+
+// "Target creature you control explores."
+{ "op": "explore", "objects": { "target": "t1" } }
+```
+
+Rule 701.40a in one op: reveal the top card, put it in your hand if it is a
+land, and otherwise put a `+1/+1` counter on the exploring permanent and let its
+controller send the card to the graveyard or leave it on top.
+
+**The branch is why it is an op.** Every other conditional in the DSL is an `if`
+over a condition, and the condition language has no way to name *the card that
+was just revealed*. The nearest spelling is `{"exists": {"zone": "library",
+"types": ["Land"]}}` — "is there a land somewhere in my deck" — which is true in
+essentially every game, so a Branchwalker written that way takes the land branch
+every time and draws a card instead of growing. It loads cleanly and looks right
+on the board.
+
+`objects` is **required**, and that is not bookkeeping. Half the printed explore
+cards are sorceries, whose source is a spell on the stack; a defaulted
+`self_only` would resolve to that spell, reveal nothing and place no counter —
+while reading perfectly on the creature cards where the default was tested.
+
+Two smaller things follow from the rule text rather than from convenience:
+each permanent in the pool explores **separately**, so two exploring creatures
+reveal two cards; and the land half asks **nothing**, because 701.40a offers the
+choice only on the "otherwise" branch and a yes/no there would let a player
+decline a free card.
 
 ## Cycling
 

@@ -1287,6 +1287,16 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
             )
+    if op == "explore" and not effect.get("objects"):
+        # 701.40a puts the +1/+1 counter on the *exploring* permanent, so the op
+        # has to be told which one that is. Defaulted to this permanent it would
+        # read correctly on a creature and silently do nothing on a sorcery,
+        # whose source is a spell on the stack -- so the card would reveal no
+        # card, place no counter, and load perfectly cleanly.
+        raise DslError(
+            f"{where}: explore needs 'objects' naming what explores "
+            f"(use {{\"self_only\": true}} for \"it explores\")"
+        )
     if op == "add_mana" and "mana" not in effect:
         raise DslError(f"{where}: add_mana needs 'mana'")
     if op == "animate":
