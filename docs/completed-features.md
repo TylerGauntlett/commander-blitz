@@ -1,3 +1,50 @@
+## Clash — a comparison across two libraries, and a binding to carry it
+
+### Overview
+
+The census filed clash as "`reveal` exists; needs a cross-player comparison of
+the revealed cards". The reveal really was already there, and it was never the
+obstacle. The obstacle is that **the value language reads one board.**
+
+`mana_value_of` takes a target or a snapshot. Neither can name the top card of
+an opponent's library: a target must be legal and visible, and a snapshot binds
+what a selector found, while selectors have no notion of "the first one" in an
+ordered hidden zone. `top_of_library` is the one leaf that reaches a library
+top at all, and it answers a *filter* with a boolean — so it cannot produce a
+number to compare against, and this needs two numbers at once.
+
+### Why the result is a binding
+
+The printed card is two sentences: "Clash with an opponent. If you win, draw a
+card." Giving the op a `won:` block would collapse them into one, which reads
+worse and, more importantly, takes the branch away from `if` — the op the DSL
+already has for exactly that.
+
+So `clash` writes `clash_won` into `EffectContext.bindings` and an ordinary
+`{"binding": "clash_won"}` reads it. That made a **half-a-feature guard**
+necessary, and it is kicker's guard word for word in a different place: a
+`clash` nothing reads reveals two cards and does nothing, and a `clash_won` with
+no clash behind it evaluates to 0 for ever. Both load cleanly and neither shows
+on a board, so both are load errors.
+
+`_mentions_condition` could not express either check. It tests `key in node`,
+which is right for `{"kicked": true}` and useless for `{"op": "clash"}` — every
+effect has an `op`, and dozens of nodes have a `binding`. So the walker was
+split: `_mentions_pair(model, key, value)` matches the pair, and
+`_mentions_condition` is now one line on top of the shared walk.
+
+### The boundary that decides a sentinel
+
+"A player wins if their card had a higher mana value **than each other card
+revealed this way**" is vacuously true when no other card was revealed. So a
+card beats an empty library, and an empty library beats nothing — including
+another empty library, since neither is higher than the other.
+
+That makes the no-card sentinel `-1` rather than `0`, and the case that
+separates them is a card costing `{0}`. With a `0` sentinel, revealing a Forest
+against an empty deck is a tie and the clash is lost. It is one character, and
+the test for it is the only thing that would ever have found it.
+
 ## Connive — the same argument as explore, one clause further along
 
 ### Overview

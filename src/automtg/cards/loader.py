@@ -371,6 +371,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(
             f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe"
         )
+    # Clash is two halves the same way kicker is, and half of it fails just as
+    # silently. Every printed clash card reads "Clash with an opponent. If you
+    # win, …", so a `clash` nothing reads is a spell that reveals two cards and
+    # does nothing, and a `clash_won` binding with no clash behind it is a
+    # clause that reads 0 and can never fire. Both load cleanly.
+    clashes = _mentions_pair(model, "op", "clash")
+    reads_clash = _mentions_pair(model, "binding", "clash_won")
+    if clashes and not reads_clash:
+        raise DslError(
+            f"{where}: has a 'clash' that no effect reads via "
+            f"{{'binding': 'clash_won'}} -- a clash nobody wins is not a card"
+        )
+    if reads_clash and not clashes:
+        raise DslError(
+            f"{where}: reads the 'clash_won' binding but never clashes, so it "
+            f"would always read 0"
+        )
+
     reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
     if reads_from_graveyard and flashback is None:
         raise DslError(
@@ -446,10 +464,23 @@ def _mentions_kicked(model: CardModel) -> bool:
 
 def _mentions_condition(model: CardModel, key: str) -> bool:
     """Does anything on this card read the ``key`` condition?"""
+    return _mentions(model, lambda node: key in node)
 
+
+def _mentions_pair(model: CardModel, key: str, value: str) -> bool:
+    """Does anything on this card carry ``{key: value}``?
+
+    The ``key in node`` test `_mentions_condition` uses is too coarse for
+    ``{"op": "clash"}`` and ``{"binding": "clash_won"}`` — every effect has an
+    ``op`` and dozens have a ``binding``, so the key alone matches everything.
+    """
+    return _mentions(model, lambda node: node.get(key) == value)
+
+
+def _mentions(model: CardModel, predicate: Any) -> bool:
     def walk(node: Any) -> bool:
         if isinstance(node, Mapping):
-            return key in node or any(walk(v) for v in node.values())
+            return bool(predicate(node)) or any(walk(v) for v in node.values())
         if isinstance(node, (list, tuple)):
             return any(walk(v) for v in node)
         return False

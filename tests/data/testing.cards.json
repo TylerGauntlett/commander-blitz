@@ -4100,6 +4100,41 @@
       ]
     },
     {
+      "id": "t_clasher",
+      "name": "Test Clash",
+      "oracle_text": "Clash with an opponent. If you win, draw a card.",
+      "mana_cost": "{1}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "clash"
+        },
+        {
+          "op": "if",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "binding": "clash_won"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "then": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_explore_target",
       "name": "Test Exploration",
       "oracle_text": "Target creature you control explores.",
