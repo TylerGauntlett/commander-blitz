@@ -202,7 +202,7 @@ This is the long tail, and where the build order comes from.
 | Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
-| Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
+| Cipher | shipped | the `encode` op (a fourth destination rider) and `cast_copy`, read back by an `encoded_by` trigger filter | `encode` |
 | Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
 | Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |

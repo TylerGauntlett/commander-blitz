@@ -100,6 +100,12 @@ class GameObject:
     #: "the thing I am on", and carries the state-based action that bins an Aura
     #: attached to nothing. A pair is neither attached nor doomed by breaking.
     paired_with: int | None = None
+    #: Cipher (702.97a): the creature this exiled card is **encoded on**. Haunt's
+    #: link pointed a third way -- the card in exile names a creature, and the
+    #: card is what has to notice that creature connecting. The two are separate
+    #: fields rather than one "linked_to", because a card could in principle be
+    #: both and because the triggers that read them ask different questions.
+    encoded_on: int | None = None
     #: Haunt (702.55a): the creature this exiled card is haunting. The link
     #: points at the **victim**, which is the opposite direction from
     #: `exiled_by`, and it has to: haunt's second trigger fires when the

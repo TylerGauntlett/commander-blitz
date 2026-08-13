@@ -341,6 +341,12 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     # "From your hand" is the loop guard, not flavour: the free cast at the next
     # upkeep happens from **exile**, so without the clause the card would rebound
     # again every upkeep for the rest of the game.
+    # Cipher: "exile this spell card encoded on a creature you control". The
+    # fourth rider on this slot, and like the others it only ever replaces the
+    # *graveyard* -- the encoding is written by the `encode` op during
+    # `spell_effects`, which is the only moment a creature is there to name.
+    if obj.encoded_on is not None and destination is Zone.GRAVEYARD:
+        destination = Zone.EXILE
     rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
     if rebounds:
         destination = Zone.EXILE
