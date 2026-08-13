@@ -234,6 +234,8 @@ class Game:
             # whose price changed between being offered and being paid is the
             # bug `spell_purpose` exists to prevent elsewhere.
             cost = card.alternative_cost
+        elif action.overloaded and card.overload is not None:
+            cost = card.overload
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
         else:
@@ -339,6 +341,7 @@ class Game:
             kicked=action.kicked,
             evoked=action.evoked,
             flashback=action.flashback,
+            overloaded=action.overloaded,
             modes=modes,
         )
         triggers.fire(

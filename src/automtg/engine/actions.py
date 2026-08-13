@@ -44,6 +44,10 @@ class Action:
     #: may be castable from hand and from the graveyard at once, and
     #: they are different actions at different prices.
     flashback: bool = False
+    #: Cast for the card's **overload** cost. Part of the identity for the
+    #: reason `kicked` is, and more so: an overloaded spell is a different
+    #: action *and* has different targets -- none.
+    overloaded: bool = False
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it

@@ -374,6 +374,14 @@ def _cast_options(
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
+    # Overload. A third variant, and the only one that changes what the spell
+    # *points at* rather than what it costs: an overloaded spell is cast with no
+    # targets at all (702.96a replaces every "target" with "each"), so it is
+    # given the empty tuple rather than `tuples`.
+    if card.overload is not None and state.objects[oid].zone is Zone.HAND:
+        out += _cast_variant(
+            state, pid, oid, card, [()], extra_generic=extra_generic, overloaded=True
+        )
     # Emerge offers one line *per sacrificeable creature*, because the price
     # depends on which one goes: the cost is reduced by that creature's mana
     # value. Same reason kicked and unkicked are two actions rather than one
@@ -477,6 +485,7 @@ def _cast_variant(
     emerge_oid: int | None = None,
     flashback: bool = False,
     alternative: bool = False,
+    overloaded: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -493,6 +502,8 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif overloaded and card.overload is not None:
+        cost = card.overload
     elif alternative and card.alternative_cost is not None:
         cost = card.alternative_cost
     elif kicked:
@@ -546,6 +557,8 @@ def _cast_variant(
         label_base += f" ({card.evoke_label})"
     if alternative:
         label_base += " (alternative cost)"
+    if overloaded:
+        label_base += " (overloaded)"
     if pay_generic:
         word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
         label_base += f" ({word} {pay_generic})"
@@ -569,6 +582,7 @@ def _cast_variant(
                 kicked=kicked,
                 evoked=evoked,
                 alternative=alternative,
+                overloaded=overloaded,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

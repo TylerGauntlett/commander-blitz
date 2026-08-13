@@ -106,6 +106,9 @@ class StackItem:
     #: the once-only rider that exiles the card instead of
     #: returning it to the graveyard.
     flashback: bool = False
+    #: Cast for the card's overload cost, read on resolution by the
+    #: `{"overloaded": true}` condition the card branches on.
+    overloaded: bool = False
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""

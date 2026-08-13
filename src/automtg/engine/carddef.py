@@ -324,6 +324,11 @@ class CardDef:
     #: is `suspend.rebound_tick`, which shares `cast_for_free` with suspend
     #: because it is the same sentence.
     rebound: bool = False
+    #: **Overload**. A third cast variant, and the only one that changes what
+    #: the spell *targets* rather than what it costs: an overloaded spell is put
+    #: on the stack with no targets at all, and the card branches on
+    #: `{"overloaded": true}`.
+    overload: ManaCost | None = None
     #: What the kicker is called on screen -- "kicked", "buyback".
     kicker_label: str = "kicked"
     #: "Kicker {1}{U}" -- an additional cost the caster may choose to pay.  It is

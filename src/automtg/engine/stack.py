@@ -35,6 +35,7 @@ def push_spell(
     kicked: bool = False,
     evoked: bool = False,
     flashback: bool = False,
+    overloaded: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -63,6 +64,7 @@ def push_spell(
         kicked=kicked,
         evoked=evoked,
         flashback=flashback,
+        overloaded=overloaded,
         modes=modes,
         description=card.name,
     )
@@ -255,6 +257,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # graveyard, create ten of those tokens instead" is read *during*
     # `spell_effects`, so a flag written afterwards would always read False.
     obj.cast_from_graveyard = item.flashback
+    # Same reason, same moment: "destroy each artifact instead of target
+    # artifact" is an `if` inside `spell_effects`, so a flag written after them
+    # would always read False and every overloaded spell would resolve as the
+    # targeted half -- with no targets, which is nothing at all.
+    obj.cast_overloaded = item.overloaded
 
     ctx = EffectContext(
         state=state,
@@ -274,6 +281,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.cast_x = item.x
     obj.cast_kicked = item.kicked
     obj.cast_evoked = item.evoked
+    obj.cast_overloaded = item.overloaded
     _place_after_resolution(state, obj, card)
     _attach_aura(state, obj, card, targets)
 

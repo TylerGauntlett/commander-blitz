@@ -4100,6 +4100,63 @@
       ]
     },
     {
+      "id": "t_overloader",
+      "name": "Test Overloaded Shock",
+      "oracle_text": "Test Overloaded Shock deals 2 damage to target creature.\nOverload {3}{R} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each\".)",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "overload": "{3}{R}",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "optional": true,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "if",
+          "condition": {
+            "overloaded": true
+          },
+          "then": [
+            {
+              "op": "damage",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "amount": {
+                "const": 2
+              }
+            }
+          ],
+          "else": [
+            {
+              "op": "damage",
+              "target": "t1",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_prowler",
       "name": "Test Prowling Faerie",
       "oracle_text": "Flying\nProwl {1}{U} (You may cast this spell for its prowl cost if a player was dealt combat damage this turn by a Faerie or a Rogue.)",
