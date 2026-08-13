@@ -236,7 +236,7 @@ This is the long tail, and where the build order comes from.
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
 | Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |
 | Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
-| Flip | refused | flip cards; see rules-coverage.md | — |
+| Flip | free | `back_face` plus the `transform` op, both shipped for Bloodline Keeper — 711 is a DFC whose difference is which way the cardboard turns | `back_face` |
 | Forecast | shipped | `active_zones: ["hand"]` plus `activate_steps` and `once_each_turn`, which is the fourth way to satisfy the guard | — |
 | Foretell | shipped | suspend's special action, shared: `{2}` to exile it, then a cast from exile at the `foretell` price on a later turn | `foretell` |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
@@ -399,16 +399,25 @@ are. That is the `split-cards-fuse` gap record, and **fuse** itself is a
 different shape again — one spell made of two faces, where `card_of` answers
 with exactly one.
 
-### The five refused
+### The refused
 
-`refused` is a recorded decision rather than a difficulty, and one has been
-reversed here: **regeneration** was refused as "a destruction-replacement
-shield" and now ships, because `zones.destroy` is a single choke point.
+`refused` is a recorded decision rather than a difficulty, and **two have been
+reversed**:
 
-The remaining five hold for a reason none of the reversals had. Banding and
+- **Regeneration** was refused as "a destruction-replacement shield" and now
+  ships, because `zones.destroy` is a single choke point.
+- **Flip** was refused as needing "a card-wide designated state the engine has
+  no place to keep", and needed *nothing*. Rule 711 is `back_face` plus the
+  `transform` op, both of which shipped for Bloodline Keeper, and every
+  difference between a flip card and a transforming double-faced one is a
+  difference about **cardboard** — which way you turn it. It is now `free`, with
+  `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
+  status nobody should trust.
+
+The remaining four hold for reasons the reversals did not have. Banding and
 phasing change how combat and the untap step work for *every* permanent in the
-game; daybound / nightbound, flip and meld each need a game-wide or card-wide
-designated state the engine has no place to keep. They belong in
+game; daybound / nightbound needs a game-wide designated state; meld needs two
+specific cards to become one oversized permanent. They belong in
 [rules-coverage.md](rules-coverage.md) and should be re-argued there rather than
 reclassified here.
 

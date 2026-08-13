@@ -6474,6 +6474,68 @@
       ],
       "power": 2,
       "toughness": 2
+    },
+    {
+      "id": "t_flipper",
+      "name": "Test Initiate",
+      "oracle_text": "At the beginning of the end step, if you control three or more Elks, flip Test Initiate.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "back_face": "t_flipped",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of the end step, if you control three or more Elks, flip this.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you"
+          },
+          "condition": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Elk"
+              ]
+            },
+            "at_least": 3
+          },
+          "effects": [
+            {
+              "op": "transform",
+              "to_back": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_flipped",
+      "name": "Test Enlightened Master",
+      "oracle_text": "Flying",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying"
+      ]
     }
   ]
 }
