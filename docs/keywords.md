@@ -164,7 +164,7 @@ Not abilities: instructions naming something a player or the game does.
 | Clash | shipped | op, plus a `clash_won` binding an ordinary `if` reads back | `clash` |
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |
-| Reconfigure | routed | needs *unattach*, which the attach model has no notion of — equipment may only move | — |
+| Reconfigure | shipped | the equip ability, plus the `unattach` op and an `is_attached` static condition for 702.151d | `unattach` |
 | Regeneration | refused | a destruction-replacement shield; see rules-coverage.md | — |
 | Sacrifice | shipped | op, and also a cost | `sacrifice` |
 | Scry | shipped | op | `scry` |

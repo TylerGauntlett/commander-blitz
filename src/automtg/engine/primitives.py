@@ -312,6 +312,13 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     target = state.objects.get(target_oid)
     if aura is None or target is None or not target.on_battlefield:
         return False
+    if aura_oid == target_oid:
+        # Rule 301.5c -- an Equipment can't equip itself. Unreachable until
+        # reconfigure, which prints the first Equipment that is also a creature
+        # and so the first one its own "target creature you control" can find.
+        # The card says `exclude_self` and this is the backstop, because an
+        # Equipment attached to itself is a permanent no rule can ever detach.
+        return False
     # "Protection from Wizards" cannot be enchanted or equipped by one. The Aura
     # is left where it is; state-based actions bin an Aura attached to nothing.
     if protected_from(state, target_oid, aura_oid):

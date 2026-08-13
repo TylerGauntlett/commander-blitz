@@ -283,6 +283,17 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "is_attached" in cond:
+        # "Attached permanents with reconfigure aren't creatures" (702.151d) --
+        # a `set_types` static switched by this. `GameObject.attached_to` is a
+        # field written by the `attach` primitive, so it is a pipeline *input*
+        # exactly as counters are: no layer can change it, and no static can
+        # come to depend on another static's output through it.
+        #
+        # Not the `{"attached": true}` filter key, which is the opposite
+        # direction -- that names the permanent this one is attached *to*, and
+        # is how "equipped creature gets +1/+1" is written.
+        return (source.attached_to is not None) == bool(cond["is_attached"])
     if "has_city_s_blessing" in cond:
         # Player state, so a pipeline *input* exactly as a zone count is:
         # nothing in the fixed-order characteristics pipeline can change whether
