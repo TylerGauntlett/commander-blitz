@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
-from .carddef import CardDef, Cost
+from .carddef import BESTOW_TARGET, CardDef, Cost
 from .characteristics import chars
 from .costs import (
     can_pay,
@@ -474,6 +474,18 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
+    # Bestow (702.103a): the same alternative-cost shape as evoke, and the only
+    # one that changes what the spell *points at*. "Enchant creature" is fixed
+    # by the rule, so the target comes from `BESTOW_TARGET` rather than from the
+    # card -- which is also why the tuples are enumerated here instead of reused
+    # from above: a bestow creature declares no targets of its own.
+    if card.bestow is not None and state.objects[oid].zone is Zone.HAND:
+        bestow_tuples = enumerate_target_tuples(
+            state, pid, (BESTOW_TARGET,), oid, exclude_sid=exclude_sid
+        )
+        out += _cast_variant(
+            state, pid, oid, card, bestow_tuples, extra_generic=extra_generic, bestowed=True
+        )
     # Prowl and spectacle: the same alternative-cost shape, offered only while
     # its condition holds. Checked here rather than at payment because the
     # condition is *permission to cast this way at all* -- offering the line and
@@ -660,6 +672,7 @@ def _cast_variant(
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
+    bestowed: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -676,6 +689,8 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif bestowed and card.bestow is not None:
+        cost = card.bestow
     elif face_down:
         cost = MORPH_COST
     elif foretold and card.foretell is not None:
@@ -738,6 +753,8 @@ def _cast_variant(
         # one mechanism, and only the label tells the player which they are
         # buying.
         label_base += f" ({card.evoke_label})"
+    if bestowed:
+        label_base += " (bestowed)"
     if alternative:
         label_base += " (alternative cost)"
     if overloaded:
@@ -776,6 +793,7 @@ def _cast_variant(
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,
+                bestowed=bestowed,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

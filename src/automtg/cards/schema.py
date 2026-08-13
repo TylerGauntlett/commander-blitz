@@ -308,6 +308,14 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: **Bestow {5}{W}** (702.103a): "If you cast this card for its bestow cost,
+    #: it's an Aura spell with enchant creature. It becomes a creature again if
+    #: it's not attached to a creature."
+    #:
+    #: An alternative cost like ``evoke``, and unlike every other one it changes
+    #: what the spell **targets**: the "enchant creature" is fixed by the rule,
+    #: not by the card, so no bestow card writes a target of its own.
+    bestow: str | None = None
     #: "Evoke {2}{U}" -- an *alternative* cost that replaces the printed one
     #: while casting from hand.  Subtractive where kicker is additive, and the
     #: printed mana value is unchanged: a Mulldrifter evoked is still a

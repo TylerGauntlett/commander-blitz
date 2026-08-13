@@ -190,7 +190,7 @@ This is the long tail, and where the build order comes from.
 | Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
 | Banding | refused | see rules-coverage.md | — |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
-| Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
+| Bestow | shipped | an alternative cost like evoke, plus the one target list the *rules* supply (`BESTOW_TARGET`), plus a type change in `chars` switched on `attached_to` | `bestow` |
 | Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
 | Bloodrush | free | `activated` + `active_zones: ["hand"]` + a `discard_self` cost, then `pump` — the cycling shape | — |
 | Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
@@ -369,19 +369,20 @@ above it.
 
 ### What is genuinely left
 
-**Two blocked rows, and they no longer share a cluster.** Every one-off is done, and so is the second-castable-face mechanism the census grouped four keywords under: adventure and aftermath ship on it, and they took split cards with them.
+**One blocked row.** Every one-off is done, and so is the second-castable-face mechanism the census grouped four keywords under — adventure and aftermath ship on it and took split cards with them, while bestow turned out not to belong to it at all.
 
 | keyword | what it needs |
 |---|---|
-| **Bestow** | a creature card cast as an **Aura**, which is one card with two type lines on the *battlefield* rather than on the stack. `second_face` cannot carry it: the two faces there are two spells, and this is one spell that lands as two different permanents depending on whether what it enchanted is still there |
-| **Mutate** | two permanents merged into one, with the abilities of both and one set of characteristics. The only genuine subsystem left in the census: a `GameObject` is one card, and every choke point the other reversals leaned on — `card_of`, `chars`, `zones.move_object` — assumes that |
+| **Mutate** | two permanents merged into one, with the abilities of both and one set of characteristics. The only genuine subsystem left in the census: a `GameObject` is one card, and every choke point the other reversals leaned on — `card_of`, `chars`, `zones.move_object` — assumes exactly that |
 
-The census grouped these two with adventure and aftermath under "a second
-castable face", and that grouping was wrong in the way `blocked` usually was.
-Adventure and aftermath *are* one mechanism, and it is a small one, because
-`back_face` had already built two `CardDef`s over one `GameObject`. Bestow and
-mutate are not that mechanism at all: neither is about which spell you cast,
-both are about what the permanent turns out to be.
+The census grouped mutate and bestow with adventure and aftermath under "a
+second castable face", and that grouping was wrong in the way `blocked` usually
+was. Adventure and aftermath *are* one mechanism, and a small one, because
+`back_face` had already built two `CardDef`s over one `GameObject`. Bestow is
+not that mechanism: it is one spell that lands as two different permanents, so
+it is `chars` rather than `card_of`, and it shipped as an alternative cost with
+a type change switched on `attached_to`. Mutate is the only one of the four that
+is really about two things being one.
 
 Hideaway was likewise listed as waiting on *two* clusters and needed neither
 whole. "Face down in exile" is `revealed_to`, which foretell had already
@@ -404,15 +405,12 @@ reclassified here.
 
 ## Suggested build order
 
-1. **Bestow**, which is the smaller of the two: one spell, two things it can
-   land as, and the "becomes a creature when the enchanted one leaves" half is
-   an ordinary state-based check rather than a new zone rule.
-2. **Mutate** last, and only after deciding whether merged permanents belong in
-   the engine at all — [rules-coverage.md](rules-coverage.md) is where that
-   argument goes, not here.
+1. **Mutate**, and only after deciding whether merged permanents belong in the
+   engine at all — [rules-coverage.md](rules-coverage.md) is where that argument
+   goes, not here.
 
-Both still need the *authoring pipeline* to emit two card entries from one
-answer file, which the shipped second-face cards work around by being
+The second-face keywords also still need the *authoring pipeline* to emit two
+card entries from one answer file, which the shipped cards work around by being
 hand-written — the same way `bloodline_keeper` / `lord_of_lineage` are.
 
 Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a

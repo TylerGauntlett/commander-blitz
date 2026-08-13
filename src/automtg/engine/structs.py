@@ -101,6 +101,11 @@ class StackItem:
     #: known: nothing about the object afterwards records what was paid for it.
     kicked: bool = False
     evoked: bool = False
+    #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
+    #: creature. Read on resolution to decide which target list the spell has:
+    #: the printed card declares none, and "enchant creature" comes from the
+    #: rule rather than from the card.
+    bestowed: bool = False
     #: Cast from a graveyard for its flashback cost. Read on
     #: resolution both by the `cast_from_graveyard` condition and by
     #: the once-only rider that exiles the card instead of

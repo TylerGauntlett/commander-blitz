@@ -1,3 +1,66 @@
+## Bestow — one spell, two permanents, and the wrong cluster
+
+### Overview
+
+The census filed bestow under "a second castable face", beside adventure and
+aftermath, and it does not belong there. A second face is **two spells**. Bestow
+is one spell that lands as two different permanents depending on what happens to
+the thing it enchanted — so the mechanism is `chars`, not `card_of`, and none of
+the second-face machinery is touched.
+
+### The first alternative cost that is not only a price
+
+The engine had six before this one, and every one of them changes what a spell
+costs and leaves what it points at alone:
+
+| cost | what it changes |
+|---|---|
+| evoke, prowl, spectacle, emerge, flashback, foretell, morph | the price |
+| **bestow** | the price **and the target** |
+
+702.103a makes a bestowed creature "an Aura spell with **enchant creature**", so
+the target list is the *rules'*: `carddef.BESTOW_TARGET`, enumerated through the
+ordinary targeting machinery so one line is offered per creature on the board.
+No bestow card writes a target, and the loader has no need to refuse one —
+`_cast_options` never looks at the card's list for that variant.
+
+It lives in `carddef` rather than beside `MORPH_COST` in `legality` because both
+`legality` and `stack` need it, and `stack` may not import `legality`.
+
+### The type change is a pipeline input
+
+While `attached_to` is set, `chars` drops `Creature`, adds `Enchantment` and the
+`Aura` subtype, and zeroes the P/T. The moment it is not attached, the printed
+creature is back.
+
+`attached_to` is a field the `attach` primitive writes, and no layer can change
+it — so switching a type line on it is reading an **input**, exactly as
+`is_attached` does for reconfigure and `has_city_s_blessing` does for ascend.
+Nothing here can come to depend on another static's output.
+
+It is applied to the printed face *before* any layer, for `copy_overrides`'
+reason: it is part of what the permanent **is** while attached, not an effect on
+it, so an anthem or an animate afterwards layers on top exactly as it would on a
+printed Aura.
+
+### Two things that needed no code at all
+
+- The state-based action that puts an Aura enchanting nothing into its owner's
+  graveyard reads `state.card_of(obj).is_aura` — the **printed** card, which is
+  a Creature. So it never sees a bestowed permanent. That is not luck: 702.103e
+  says "it becomes a creature again" rather than "it is put into the graveyard",
+  and reading the printed face is what makes the rule and the code agree.
+- `_detach_all` already clears `attached_to` on everything attached to a
+  permanent that is leaving, so the Spirit turns back into a creature the
+  instant its host dies, with nothing to remember and nothing to clean up.
+
+### What is left of the cluster
+
+Mutate, alone, and it is the only genuine subsystem the census still names: two
+permanents that are **one object**, when a `GameObject` is one card and every
+choke point the other reversals leaned on — `card_of`, `chars`,
+`zones.move_object` — assumes exactly that.
+
 ## A second castable face — adventure, aftermath, and the halves of a split card
 
 ### Overview
