@@ -2,6 +2,53 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_ninja",
+      "name": "Test Ninja",
+      "oracle_text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ninja"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{U}",
+            "return_to_hand": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "attacking": true,
+              "blocked": false,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "zone": "hand",
+                "self_only": true
+              },
+              "controller": "you",
+              "tapped": true,
+              "attacking": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_haunter",
       "name": "Test Haunting Spirit",
       "oracle_text": "When this creature dies, exile it haunting target creature.\nWhen the creature this card haunts dies, you gain 3 life.",

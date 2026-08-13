@@ -270,7 +270,7 @@ This is the long tail, and where the build order comes from.
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
 | Morph / megamorph | blocked | face-down creatures | — |
 | Mutate | blocked | stacked permanents with merged abilities | — |
-| Ninjutsu | blocked | returning an unblocked attacker and putting a creature in attacking, without casting | — |
+| Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |

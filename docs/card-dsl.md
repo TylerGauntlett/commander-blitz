@@ -163,6 +163,7 @@ Every key is optional; all present keys must match.
   "supertypes": ["Basic"],
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
+  "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },
   "toughness":  { "op": "<=", "value": { "const": 2 } },
@@ -2057,6 +2058,39 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+## Ninjutsu — swapping into a combat already under way
+
+```jsonc
+{ "kind": "activated", "text": "Ninjutsu {1}{U} (…)",
+  "active_zones": ["hand"],
+  "cost": { "mana": "{1}{U}",
+            "return_to_hand": { "controller": "you", "types": ["Creature"],
+                                "attacking": true, "blocked": false, "count": 1 } },
+  "effects": [ { "op": "put_onto_battlefield",
+                 "objects": { "zone": "hand", "self_only": true },
+                 "controller": "you", "tapped": true, "attacking": true } ] }
+```
+
+Two missing words, one on each half.
+
+**`blocked`** is a new selector key and is *not* the negation of `blocking`.
+That key asks whether a creature is blocking something; this asks whether
+anything is blocking **this attacker**, and the two are different creatures.
+`Cost.return_to_hand` already existed, for Meloku.
+
+**`attacking`** is `create_token`'s clause moved onto `put_onto_battlefield`.
+The ninja joins the combat the returned attacker just left, which is why it
+arrives unblocked — the blocker that was there was blocking a creature now
+sitting in its owner's hand. Same contract as the token version: it was never
+*declared* as an attacker (508.4), so it triggers nothing that fires on
+attacking.
+
+The ability is offered from **hand** and satisfies the outside-the-battlefield
+guard through unearth's satisfier — an unconditional top-level effect moving
+`self_only` out. Ninjutsu is the shape that makes that satisfier obviously
+right: nothing in the *cost* removes the card, and it leaves hand because the
+effect puts it onto the battlefield.
 
 ## Haunt — the exile link pointing the other way
 
