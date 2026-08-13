@@ -1297,6 +1297,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             f"{where}: explore needs 'objects' naming what explores "
             f"(use {{\"self_only\": true}} for \"it explores\")"
         )
+    if op == "connive" and not effect.get("objects"):
+        # Same trap as explore, and the same three words fix it: the +1/+1
+        # counters go on the *conniving* permanent, so a defaulted `self_only`
+        # would be right on "whenever this creature attacks, it connives" and
+        # would draw and discard for nobody on "target creature connives".
+        raise DslError(
+            f"{where}: connive needs 'objects' naming what connives "
+            f"(use {{\"self_only\": true}} for \"it connives\")"
+        )
     if op == "add_mana" and "mana" not in effect:
         raise DslError(f"{where}: add_mana needs 'mana'")
     if op == "animate":
