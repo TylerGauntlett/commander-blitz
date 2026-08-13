@@ -487,6 +487,44 @@ def change_control(state: GameState, oid: int, pid: int, source: int | None = No
     return True
 
 
+def _stats_changed(
+    state: GameState,
+    obj: GameObject,
+    *,
+    power: int | None = None,
+    toughness: int | None = None,
+    keyword: str | None = None,
+) -> None:
+    """Announce a change to what a permanent *is*, short of a counter or a move.
+
+    ``pump``, ``animate`` and ``grant_keyword`` all mutate ``until_eot`` and call
+    ``bump_chars()``, and all three used to do it in complete silence.  Nothing
+    downstream could see them: a combat trick left no line in the play-by-play
+    and the client had no event to animate, so "target creature gets +3/+3 until
+    end of turn" happened entirely off screen and a creature simply survived
+    damage that should have killed it.
+
+    ``state.emit`` and not ``triggers.fire`` -- deliberately.  ``zones.py`` warns
+    that keys added to a *fired* event's ``data`` become bindings a card's
+    triggered ability can read, so firing this would quietly change what an
+    ability matches against.  Nothing is meant to trigger off it; it exists to
+    be watched.
+    """
+    data: dict[str, Any] = {"card": obj.def_id}
+    if power is not None:
+        data["power"] = power
+    if toughness is not None:
+        data["toughness"] = toughness
+    if keyword is not None:
+        data["keyword"] = keyword
+    state.emit(
+        EventType.STATS_CHANGED,
+        player=obj.controller,
+        source=obj.oid,
+        **data,
+    )
+
+
 def pump(
     state: GameState, oid: int, power: int, toughness: int, source: int | None = None
 ) -> None:
@@ -499,6 +537,7 @@ def pump(
         TempEffect(kind="pump", power=power, toughness=toughness, source=source)
     )
     state.bump_chars()
+    _stats_changed(state, obj, power=power, toughness=toughness)
 
 
 def animate(
@@ -540,6 +579,7 @@ def animate(
         )
     )
     state.bump_chars()
+    _stats_changed(state, obj, power=power, toughness=toughness)
 
 
 def grant_keyword(
@@ -569,6 +609,7 @@ def grant_keyword(
     else:
         obj.until_eot.append(TempEffect(kind="keyword", keyword=keyword, source=source))
     state.bump_chars()
+    _stats_changed(state, obj, keyword=keyword)
 
 
 def grant_ability(state: GameState, oid: int, ability_index: int, source: int) -> None:

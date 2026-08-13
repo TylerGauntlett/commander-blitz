@@ -79,6 +79,21 @@ class EventType:
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
     BECAME_MONSTROUS = "became_monstrous"
+    #: A permanent's power/toughness or keywords changed without a counter and
+    #: without a zone change -- a pump, an animated land, a granted keyword.
+    #:
+    #: Its own type for the same reason CONTROL_CHANGED and TRANSFORMED have
+    #: theirs: nothing else in the log records it. ``pump`` mutates ``until_eot``
+    #: and calls ``bump_chars()`` in silence, so "target creature gets +3/+3
+    #: until end of turn" was invisible to every consumer of the log -- the
+    #: client could not animate a trick it had no way of knowing had happened,
+    #: and the play-by-play skipped the whole combat trick.
+    #:
+    #: ``data`` carries ``power``, ``toughness`` and ``keyword`` as applicable.
+    #: Emitted through ``state.emit`` rather than ``triggers.fire``: see the
+    #: warning in ``zones.py`` about new keys in a fired event's ``data``
+    #: colliding with the bindings a card's trigger reads.
+    STATS_CHANGED = "stats_changed"
     SUSPENDED = "suspended"
     TIME_COUNTER_REMOVED = "time_counter_removed"
 

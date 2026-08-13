@@ -16,12 +16,59 @@
  * every test run.
  */
 
-export type SoundName = "thump" | "hit" | "tap" | "shuffle" | "chime" | "toll";
+export type SoundName =
+  | "thump"
+  | "hit"
+  | "tap"
+  | "shuffle"
+  | "chime"
+  | "toll"
+  // Added with the combat choreography. `impact` and `boom` are the weight a
+  // hit needs; `whoosh` is the sound of the swing that precedes it, and is the
+  // first voice here that plays *before* anything has happened.
+  | "impact"
+  | "boom"
+  | "whoosh"
+  | "shatter"
+  // Gesture voices. Every sound above answers the server; these answer the
+  // player, which is most of what "responsive" means.
+  | "pickup"
+  | "drop"
+  | "deny";
 
-type Ctx = AudioContext & { _master?: GainNode };
+type Ctx = AudioContext & {
+  _master?: GainNode;
+  _dry?: GainNode;
+  _wet?: GainNode;
+};
 
 let ctx: Ctx | null = null;
 let failed = false;
+
+/**
+ * A room, generated rather than loaded.
+ *
+ * The palette used to be deliberately tail-less because "anything with a long
+ * tail turns into mud" behind a queue that can fire a dozen beats a second --
+ * which was true, and the reason the board sounded like a spreadsheet. The
+ * actual fix is a short shared space plus the duck below: the tails live on one
+ * bus that gets pushed down whenever a new transient arrives, so a wrath's ten
+ * bursts overlap into one big noise instead of ten muddy ones.
+ *
+ * Noise shaped by a decaying exponential is not a real impulse response, but at
+ * 0.5s and 18% wet nothing about it needs to be. It costs one buffer, once.
+ */
+function impulse(c: Ctx, seconds = 0.5, decay = 3.2): AudioBuffer {
+  const frames = Math.floor(c.sampleRate * seconds);
+  const buffer = c.createBuffer(2, frames, c.sampleRate);
+  for (let channel = 0; channel < 2; channel += 1) {
+    const data = buffer.getChannelData(channel);
+    for (let i = 0; i < frames; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / frames) ** decay;
+    }
+  }
+  return buffer;
+}
 
 function context(): Ctx | null {
   if (failed) return null;
@@ -38,13 +85,50 @@ function context(): Ctx | null {
     const master = ctx.createGain();
     master.gain.value = 0.28;
     master.connect(ctx.destination);
+
+    // Voices fan out to both busses. `dry` is the transient, `wet` is the
+    // room -- keeping them separate is what lets the duck touch only the tail.
+    const dry = ctx.createGain();
+    dry.gain.value = 1;
+    dry.connect(master);
+
+    const wet = ctx.createGain();
+    wet.gain.value = 0.18;
+    try {
+      const reverb = ctx.createConvolver();
+      reverb.buffer = impulse(ctx);
+      wet.connect(reverb).connect(master);
+    } catch {
+      // No convolver: fall through dry rather than losing the voice entirely.
+      wet.connect(master);
+    }
+
     ctx._master = master;
+    ctx._dry = dry;
+    ctx._wet = wet;
     return ctx;
   } catch {
     // No Web Audio (jsdom, a locked-down browser). Sound is a luxury; carry on.
     failed = true;
     return null;
   }
+}
+
+/**
+ * Push the room down for a moment.
+ *
+ * Called by the loud voices. Without it, six simultaneous deaths put six
+ * half-second tails on top of each other and the board turns to porridge at
+ * exactly the moment it is trying to say something.
+ */
+function duck(c: Ctx, amount = 0.35, ms = 260): void {
+  const wet = c._wet;
+  if (!wet) return;
+  const now = c.currentTime;
+  wet.gain.cancelScheduledValues(now);
+  wet.gain.setValueAtTime(wet.gain.value, now);
+  wet.gain.linearRampToValueAtTime(0.18 * amount, now + 0.02);
+  wet.gain.linearRampToValueAtTime(0.18, now + ms / 1000);
 }
 
 /**
@@ -102,12 +186,17 @@ function noise(
   envelope.gain.linearRampToValueAtTime(gain, now + 0.004);
   envelope.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-  source
-    .connect(filter)
-    .connect(envelope)
-    .connect(c._master ?? c.destination);
+  source.connect(filter).connect(envelope);
+  route(c, envelope);
   source.start(now);
   source.stop(now + duration);
+}
+
+/** Every voice goes to the transient bus and the room, never straight out. */
+function route(c: Ctx, node: AudioNode): void {
+  if (c._dry) node.connect(c._dry);
+  else node.connect(c.destination);
+  if (c._wet) node.connect(c._wet);
 }
 
 /** A pitched blip, optionally sliding. */
@@ -146,7 +235,8 @@ function tone(
   envelope.gain.linearRampToValueAtTime(gain, now + 0.006);
   envelope.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-  osc.connect(envelope).connect(c._master ?? c.destination);
+  osc.connect(envelope);
+  route(c, envelope);
   osc.start(now);
   osc.stop(now + duration);
 }
@@ -178,6 +268,60 @@ const VOICES: Record<SoundName, (c: Ctx) => void> = {
   /** Something final: an elimination, the end of the game. */
   toll: (c) => {
     tone(c, { from: 160, to: 110, duration: 0.7, gain: 0.24, type: "triangle" });
+  },
+
+  /*
+   * Creatures connecting. Three layers, because a single burst of noise reads
+   * as static: a bright transient for the contact, a body for the mass behind
+   * it, and a short sub for the weight.
+   */
+  impact: (c) => {
+    noise(c, { duration: 0.05, gain: 0.6, type: "highpass", frequency: 2400 });
+    noise(c, { duration: 0.18, gain: 0.5, type: "bandpass", frequency: 900, q: 0.7 });
+    tone(c, { from: 180, to: 48, duration: 0.19, gain: 0.34, type: "square" });
+    duck(c, 0.5);
+  },
+
+  /** A player being hit hard. The one voice with real low end. */
+  boom: (c) => {
+    noise(c, { duration: 0.3, gain: 0.42, type: "lowpass", frequency: 700 });
+    tone(c, { from: 120, to: 34, duration: 0.42, gain: 0.5, type: "sine" });
+    tone(c, { from: 240, to: 70, duration: 0.2, gain: 0.2, type: "triangle" });
+    duck(c, 0.3, 380);
+  },
+
+  /*
+   * The swing, not the hit.
+   *
+   * Plays as the creatures set off, ~140ms before contact, which is what makes
+   * the exchange feel like it has a windup rather than arriving all at once.
+   * Bandpass sweeping down and quiet enough to sit under the impact.
+   */
+  whoosh: (c) => {
+    noise(c, { duration: 0.16, gain: 0.2, type: "bandpass", frequency: 1100, q: 0.35 });
+    tone(c, { from: 900, to: 300, duration: 0.14, gain: 0.06, type: "sine" });
+  },
+
+  /** Glass: a countered spell, and anything that breaks rather than burns. */
+  shatter: (c) => {
+    noise(c, { duration: 0.09, gain: 0.4, type: "highpass", frequency: 4200 });
+    tone(c, { from: 2400, to: 1400, duration: 0.16, gain: 0.1, type: "triangle" });
+    tone(c, { from: 3300, to: 1900, duration: 0.22, gain: 0.07, type: "sine" });
+  },
+
+  /* Gesture voices: quiet, instant, and never ducked. They answer the player's
+     own hand, so anything that made them wait would defeat the point. */
+  pickup: (c) => {
+    noise(c, { duration: 0.03, gain: 0.16, type: "highpass", frequency: 3000 });
+    tone(c, { from: 520, to: 700, duration: 0.05, gain: 0.05, type: "sine" });
+  },
+  drop: (c) => {
+    noise(c, { duration: 0.07, gain: 0.34, type: "lowpass", frequency: 520 });
+    tone(c, { from: 190, to: 90, duration: 0.07, gain: 0.14, type: "triangle" });
+  },
+  /** A gesture that maps to nothing legal. Dull and low: a refusal, not an alarm. */
+  deny: (c) => {
+    tone(c, { from: 150, to: 120, duration: 0.11, gain: 0.14, type: "square" });
   },
 };
 

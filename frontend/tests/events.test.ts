@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
-import { beatsFor, queueDuration } from "../src/logic/events";
+import { type Beat, beatsFor, queueDuration } from "../src/logic/events";
 import { describeEvent } from "../src/logic/labels";
 
 const NAMES = ["You", "Edgar AI"];
@@ -13,14 +13,29 @@ function event(
   return { type, turn: 1, step: 3, player: 0, source: null, data, ...extra };
 }
 
+/**
+ * Damage moved out of `beat.float` and into `beat.fx`.
+ *
+ * Every `damage_dealt` is now collected by `logic/choreography.ts` into a run
+ * and played as a concurrent burst -- sparks at the point of contact, a numeral
+ * thrown off that same point, the victim knocked backwards -- so the numeral is
+ * a scheduled effect rather than a property of the beat. These assert the same
+ * facts through the new shape.
+ */
+function floats(beat: Beat | undefined) {
+  return (beat?.fx ?? []).filter((fx) => fx.kind === "float");
+}
+
+function shakes(beat: Beat | undefined) {
+  return (beat?.fx ?? []).filter((fx) => fx.kind === "shake");
+}
+
 describe("beatsFor", () => {
   it("turns damage to a player into a floating numeral on that player", () => {
     const [beat] = beatsFor([event("damage_dealt", { amount: 4, to: "player" })], NAMES);
-    expect(beat.float).toEqual({
-      anchor: { kind: "player", pid: 0 },
-      value: "-4",
-      tone: "damage",
-    });
+    expect(floats(beat)).toMatchObject([
+      { at_point: { kind: "player", pid: 0 }, value: "-4", tone: "damage" },
+    ]);
   });
 
   it("anchors damage to a permanent on that permanent", () => {
@@ -28,7 +43,17 @@ describe("beatsFor", () => {
       [event("damage_dealt", { amount: 2, to: "permanent", oid: 42 })],
       NAMES,
     );
-    expect(beat.float?.anchor).toEqual({ kind: "object", oid: 42 });
+    expect(floats(beat)[0]).toMatchObject({ at_point: { kind: "object", oid: 42 } });
+  });
+
+  it("throws sparks at whatever the damage landed on", () => {
+    const [beat] = beatsFor(
+      [event("damage_dealt", { amount: 2, to: "permanent", oid: 42 })],
+      NAMES,
+    );
+    expect((beat.fx ?? []).filter((fx) => fx.kind === "emit")).toMatchObject([
+      { preset: "impact", at_point: { kind: "object", oid: 42 } },
+    ]);
   });
 
   it("shakes the screen only for big hits to a player", () => {
@@ -37,8 +62,8 @@ describe("beatsFor", () => {
       [event("damage_dealt", { amount: 2, to: "permanent", oid: 1 })],
       NAMES,
     );
-    expect(big.shake).toBeGreaterThan(0);
-    expect(small.shake).toBeUndefined();
+    expect(shakes(big).length).toBe(1);
+    expect(shakes(small).length).toBe(0);
   });
 
   it("ignores zero and negative damage", () => {
@@ -54,7 +79,7 @@ describe("beatsFor", () => {
       ],
       NAMES,
     );
-    expect(beats.filter((b) => b.float).length).toBe(1);
+    expect(beats.flatMap((b) => floats(b)).length).toBe(1);
   });
 
   it("resolves card ids to printed names when a lookup is supplied", () => {
@@ -170,8 +195,8 @@ describe("beatsFor", () => {
 describe("queueDuration", () => {
   it("scales with the speed multiplier", () => {
     const beats = beatsFor([event("turn_began", { turn: 1 })], NAMES);
-    expect(queueDuration(beats, 1)).toBe(850);
-    expect(queueDuration(beats, 2)).toBe(425);
+    expect(queueDuration(beats, 1)).toBe(620);
+    expect(queueDuration(beats, 2)).toBe(310);
   });
 
   it("is zero for an empty queue", () => {

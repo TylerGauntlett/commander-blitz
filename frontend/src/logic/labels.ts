@@ -249,6 +249,16 @@ export function exitPhrase(cause: string, byName: string | null, to?: string): s
     : base;
 }
 
+/**
+ * A power/toughness modifier the way a card prints it.
+ *
+ * Always signed, including the zero: "+3/+0" is how a pump reads on a card, and
+ * "+3/0" is how nothing reads. Negatives already carry their own sign.
+ */
+function signed(n: number): string {
+  return n < 0 ? String(n) : `+${n}`;
+}
+
 function humanise(cause: string): string {
   if (!cause) return "";
   const words = cause.replace(/_/g, " ");
@@ -369,6 +379,23 @@ export function describeEvent(
       return `${card ?? "A permanent"} gets ${amount ?? 1} ${
         typeof event.data.counter === "string" ? event.data.counter : "counter"
       }`;
+    /*
+     * A combat trick, which the log used to miss entirely.
+     *
+     * `pump`, `animate` and `grant_keyword` mutated the board in silence, so
+     * "target creature gets +3/+3 until end of turn" produced no line at all
+     * and a creature simply survived damage that should have killed it. The
+     * engine emits `stats_changed` for all three now.
+     */
+    case "stats_changed": {
+      const power = typeof event.data.power === "number" ? event.data.power : null;
+      const toughness = typeof event.data.toughness === "number" ? event.data.toughness : null;
+      const keyword = typeof event.data.keyword === "string" ? event.data.keyword : null;
+      const subject = card ?? "A permanent";
+      if (keyword) return `${subject} gains ${keyword}`;
+      if (power === null && toughness === null) return null;
+      return `${subject} gets ${signed(power ?? 0)}/${signed(toughness ?? 0)}`;
+    }
     case "mill":
       return `${who} ${v("mill", "mills")} ${event.data.count ?? amount ?? 1} cards`;
     case "draw":
