@@ -33,7 +33,7 @@ bumps.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
@@ -351,6 +351,17 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "mana_symbols" in expr:
+        # Chroma -- Primalcrux's "power and toughness are each equal to the
+        # number of green mana symbols in the mana costs of permanents you
+        # control". A *printed* mana cost is a pipeline input like a zone count,
+        # so reading it here cannot make one static depend on another's output.
+        spec = expr["mana_symbols"]
+        color = str(spec.get("of", ""))
+        return sum(
+            state.card_of(obj).mana_cost.symbols_of(color)
+            for obj in _matching_objects(state, spec.get("objects") or {}, source)
+        )
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])
         return min_life([state.players[p].life for p in pids])
@@ -370,24 +381,31 @@ def _count_matching(state: GameState, selector: Mapping[str, Any], source: GameO
     read, so it is the printed face alone.  The loader refuses the board-state
     keys on the second path rather than letting them load and match nothing.
     """
+    return sum(1 for _ in _matching_objects(state, selector, source))
+
+
+def _matching_objects(
+    state: GameState, selector: Mapping[str, Any], source: GameObject
+) -> Iterator[GameObject]:
+    """The objects a static's counting filter matches.
+
+    Split out of :func:`_count_matching` when chroma arrived: `mana_symbols`
+    wants to *sum something over* the same pool rather than measure it, and two
+    copies of this walk would be two places for the two zone paths to drift.
+    """
     zone = str(selector.get("zone", "battlefield"))
     if zone == Zone.BATTLEFIELD.value:
-        count = 0
         for oid in state.battlefield:
             obj = state.objects.get(oid)
-            if obj is None:
-                continue
-            if _matches(state, obj, source, selector):
-                count += 1
-        return count
+            if obj is not None and _matches(state, obj, source, selector):
+                yield obj
+        return
 
-    count = 0
     for pid in _static_players(state, source, selector.get("controller", "you")):
         for oid in state.players[pid].zone_list(Zone(zone)):
             obj = state.objects.get(oid)
             if obj is not None and _matches_printed(state.card_of(obj), selector):
-                count += 1
-    return count
+                yield obj
 
 
 def top_of_library(state: GameState, pid: int) -> GameObject | None:

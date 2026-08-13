@@ -129,6 +129,24 @@ class ManaCost:
             indices.update(i for i in pip.symbols if i < len(COLOR_ORDER))
         return frozenset(COLOR_ORDER[i] for i in sorted(indices))
 
+    def symbols_of(self, color: str) -> int:
+        """How many mana symbols of one colour appear in this cost — chroma.
+
+        Not the same question as :attr:`colors`, which is a set: chroma reads
+        Primalcrux off ``{G}{G}{G}{G}`` as four and ``colors`` says green once.
+        Nothing else in the engine had ever looked *inside* a cost this way --
+        every other reader wants its total or the set of colours in it.
+
+        A hybrid pip counts for **each** of its colours (rule 107.4f): ``{G/U}``
+        is a green mana symbol and a blue one, so a Kitchen Finks in play adds
+        to both a green and a white chroma count. ``{2/W}`` likewise counts
+        once for white, since the generic half is not a colour.
+        """
+        idx = SYMBOL_INDEX.get(color.upper())
+        if idx is None:
+            return 0
+        return self.colored[idx] + sum(1 for pip in self.hybrid if idx in pip.symbols)
+
     def total_required(self, x: int = 0) -> int:
         return self.mana_value(x)
 
