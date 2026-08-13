@@ -73,6 +73,11 @@ class PlayerState:
 
     mulligans_taken: int = 0
     has_kept_hand: bool = False
+    #: The oid of the **epic** spell this player cast, if any (702.50a). One-way
+    #: and lasts the rest of the game, like `has_city_s_blessing`: the card is in
+    #: a graveyard while the restriction and the copies go on, so the flag lives
+    #: on the *player* and not on the object.
+    epic_source: int | None = None
 
     #: Skip priority windows where this player has nothing worth responding to.
     #: Off by default so the RL environment and the golden tests still see every

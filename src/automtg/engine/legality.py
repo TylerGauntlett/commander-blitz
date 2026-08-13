@@ -293,6 +293,12 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
 
 def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
     out: list[Action] = []
+    if state.players[pid].epic_source is not None:
+        # Epic: "spend the rest of the game casting no spells" (702.50a). A
+        # legality gate rather than a cost or a condition, because it is not
+        # about any one card -- and lands are unaffected, which is why it is
+        # here rather than in `legal_actions`.
+        return out
 
     # Per object, not per card name -- see the note on _land_actions.
     for oid in state.players[pid].hand:

@@ -402,6 +402,8 @@ class CardDef:
     miracle: ManaCost | None = None
     #: Foretell -- the price of casting it out of the exile it was foretold to.
     foretell: ManaCost | None = None
+    #: Epic -- no more spells this game, and a free copy each of your upkeeps.
+    epic: bool = False
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 

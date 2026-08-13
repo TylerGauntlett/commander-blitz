@@ -287,6 +287,19 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     )
     yield from execute(ctx, card.spell_effects)
 
+    if card.epic and not obj.is_token:
+        # 702.50a. Recorded on the *player*, one-way and for the rest of the
+        # game, like `has_city_s_blessing`: the card is in a graveyard a moment
+        # later while the restriction and the copies go on, so there is no
+        # object for it to live on.
+        #
+        # `not obj.is_token` **is** "except for its epic ability". A copy of a
+        # spell is a token here, and it resolves through this same function --
+        # so without the test each upkeep's copy would re-point `epic_source`
+        # at itself, and the copy is removed by a state-based action a moment
+        # later, which silently ends the copying after exactly one turn.
+        state.players[item.controller].epic_source = item.oid
+        state.emit("epic", player=item.controller, source=item.oid, card=card.id)
     state.emit(EventType.SPELL_RESOLVED, player=item.controller, source=item.oid, card=card.id)
     obj.stack_id = None
     obj.cast_x = item.x

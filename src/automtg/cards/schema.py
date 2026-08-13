@@ -385,6 +385,15 @@ class CardModel(BaseModel):
     #: special action: both exile a card from hand to be cast later, neither
     #: uses the stack, and neither can be countered.
     foretell: str | None = None
+    #: **Epic** (702.50a): "Spend the rest of the game casting no spells. At the
+    #: beginning of each of your upkeeps, copy this spell except for its epic
+    #: ability."
+    #:
+    #: A card-level flag rather than an ability, for `split_second`'s reason: it
+    #: is a fact about the *spell* and about the player who cast it, and there
+    #: is no permanent for it to sit on -- an epic spell is in a graveyard for
+    #: the rest of the game while the restriction and the copies go on.
+    epic: bool = False
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.
