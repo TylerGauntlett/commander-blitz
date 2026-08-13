@@ -106,6 +106,11 @@ SELECTOR_KEYS = frozenset(
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
         "damaged_by",
+        #: "…an unblocked attacking creature you control" -- ninjutsu. Asks
+        #: whether anything is blocking *this attacker*, which is not the
+        #: negation of `blocking`: that key is about a blocker, and these are
+        #: two different creatures.
+        "blocked",
         # "When the creature this card haunts dies…" -- a trigger filter only,
         # answered off the ability's source, which is the card sitting in exile
         # with the link on it. The haunted creature carries no record of it.
@@ -344,6 +349,16 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         selector["attacking"]
     ):
         return False
+    if "blocked" in selector:
+        # "…an **unblocked** attacking creature you control" -- ninjutsu. Not
+        # the negation of `blocking`, which is about a *blocker*: this asks
+        # whether anything is blocking **this attacker**, and the two are
+        # different creatures. A creature that is not attacking at all is not
+        # blocked either, which is why `blocked: false` is paired with
+        # `attacking: true` on every printed line of this shape.
+        is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
+        if is_blocked != bool(selector["blocked"]):
+            return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:
             # "…blocked by a creature without flanking": *which* attacker it is

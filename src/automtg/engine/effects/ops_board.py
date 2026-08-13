@@ -90,8 +90,21 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("put_onto_battlefield")
 def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put objects onto the battlefield, optionally tapped and attacking.
+
+    ``attacking`` is **ninjutsu**: "put this card onto the battlefield from your
+    hand tapped and attacking". It joins the combat the returned attacker just
+    left, which is why the ninja arrives unblocked -- the blocker that was there
+    was blocking a creature that is now in its owner's hand.
+
+    Same contract `create_token`'s `attacking` has: a permanent put in this way
+    was never *declared* as an attacker, so it triggers nothing that fires on
+    attacking. That is the real rule (508.4) and it is also what keeps "when
+    this attacks, put a creature onto the battlefield attacking" finite.
+    """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
+    attacking = _attack_defender(ctx) if spec.get("attacking") else None
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -108,6 +121,8 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=tapped,
             cause=str(spec.get("cause") or "put_onto_battlefield"),
         )
+        if attacking is not None and ctx.state.combat is not None:
+            ctx.state.combat.attackers[oid] = attacking
 
 
 @register("create_token")
@@ -168,6 +183,21 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                 attacking=_attack_target(ctx) if spec.get("attacking") else None,
                 overrides=dict(overrides) if overrides else None,
             )
+
+
+def _attack_defender(ctx: EffectContext) -> int | None:
+    """Whom a permanent put onto the battlefield attacking should be attacking.
+
+    Ninjutsu returns an attacker to hand and puts the ninja in its place, so the
+    defender is whoever *that* attacker was hitting. With no combat, or nothing
+    left attacking, there is nobody to join and the permanent simply arrives.
+    """
+    combat = ctx.state.combat
+    if combat is None or not combat.attackers:
+        return None
+    if ctx.source_oid is not None and ctx.source_oid in combat.attackers:
+        return combat.attackers[ctx.source_oid]
+    return next(iter(combat.attackers.values()))
 
 
 def _attack_target(ctx: EffectContext) -> int | None:
