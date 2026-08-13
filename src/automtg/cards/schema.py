@@ -365,6 +365,18 @@ class CardModel(BaseModel):
     #: card is the *back* face from the moment it goes on the stack, so its
     #: name, types and effects are the back face's and not the front's.
     graveyard_cast_transformed: bool = False
+    #: **Dredge N** (702.51a): "If you would draw a card, you may instead return
+    #: this card from your graveyard to your hand and mill N." The number is the
+    #: mill, and it is also the price -- a player with fewer than N cards left is
+    #: not offered the replacement at all.
+    dredge: int = 0
+    #: **Madness** (702.35a): "If you would discard this card, exile it instead.
+    #: Then you may cast it for its madness cost." The exile happens whether or
+    #: not the cast is taken.
+    madness: str | None = None
+    #: **Miracle** (702.94a): "You may cast this card for its miracle cost when
+    #: you draw it, if it's the first card you drew this turn."
+    miracle: str | None = None
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

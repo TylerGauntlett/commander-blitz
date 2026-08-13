@@ -10,7 +10,7 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
-from . import suspend
+from . import replacements, suspend
 from .actions import PendingDecision
 from .characteristics import player_has_no_hand_limit, untap_also
 from .effects.context import EffectContext, ask_objects
@@ -19,8 +19,6 @@ from .events import EventType
 from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_until_eot,
-    discard_cards,
-    draw_cards,
     untap_all,
     untap_permanent,
 )
@@ -47,7 +45,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         suspend.rebound_tick(state, state.active_player)
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
-        _draw_step(state)
+        yield from _draw_step(state)
     elif step is Step.BEGIN_COMBAT:
         combat_mod.start_combat(state)
         fire(state, EventType.BEGIN_COMBAT, player=state.active_player)
@@ -150,12 +148,18 @@ def _untap_step(state: GameState) -> None:
     )
 
 
-def _draw_step(state: GameState) -> None:
+def _draw_step(state: GameState) -> Generator[Any, list[int], None]:
+    """The turn's draw -- and the one place dredge and miracle can interrupt it.
+
+    A generator because those two ask a question, which is the whole reason this
+    step could not carry them before. `begin_step` already ran through
+    `Game._run`, so nothing above here changed.
+    """
     pid = state.active_player
     # In a two-player game the starting player skips their first draw.
     skip = state.turn == 1 and pid == state.starting_player and state.num_players == 2
     if not skip:
-        draw_cards(state, pid, 1)
+        yield from replacements.draw(state, pid, 1)
     fire(state, EventType.DRAW_STEP, player=pid)
 
 
@@ -209,7 +213,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
         picked = yield from ask_objects(
             ctx, "Discard down to seven cards", list(player.hand), excess, excess, pid, "discard"
         )
-        discard_cards(state, pid, picked)
+        yield from replacements.discard(state, pid, picked)
     clear_until_eot(state)
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or

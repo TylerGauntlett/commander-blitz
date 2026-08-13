@@ -2708,6 +2708,9 @@ them where it is sitting:
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
 "graveyard_cast_transformed": true          // disturb: it comes back as its back face
+"dredge": 3                                 // replace a draw: mill 3, take this back
+"madness": "{R}"                            // discarded -> exiled, and castable for this
+"miracle": "{W}"                            // cast it as the first card you draw
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
@@ -2853,6 +2856,46 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+#### Dredge, madness and miracle — replacements that stop to ask
+
+```jsonc
+"dredge": 3        // "…you may mill three cards instead. If you do, return this card"
+"madness": "{R}"   // "…exile it instead. When you do, you may cast it for {R}"
+"miracle": "{W}"   // "…when you draw it, if it's the first card you drew this turn"
+```
+
+Every replacement in the `replacements` whitelist is applied **synchronously and
+asks nothing** — enters tapped, enters with counters, the commander zone change,
+tokens ceasing to exist. That is why it is a whitelist on the card and is
+applied inline by `zones._enter_battlefield`.
+
+These three are not whitelist entries and never could be: each puts a question
+to a player at the exact moment of the replacement. What they were really
+waiting on is that **drawing and discarding had to become things that can
+suspend** — and that turned out to be small, because `turn.begin_step` already
+ran through `Game._run`. The turn structure could carry a decision all along;
+only `_draw_step` beneath it could not.
+
+`primitives.draw_cards` and `discard_cards` still ask nothing — that module's
+contract is "no decisions" and it is intact — and
+[`engine/replacements.py`](../src/automtg/engine/replacements.py) wraps them.
+Every draw and discard in the engine goes through the wrapper except the
+**opening hand**, which rule 103 deals before the game begins: no graveyard to
+dredge from, and no turn to have drawn a first card in.
+
+Three details are the keywords rather than plumbing:
+
+| | |
+|---|---|
+| dredge **replaces** the draw | no card is drawn, so dredging into an empty library does not deck you |
+| madness exiles **either way** | a declined madness card is in exile, not the graveyard; the other way round, every madness card is a free graveyard-filler |
+| miracle reads the tally **before** the draw bumps it | "the first card you drew this turn", and it is offered however the card was drawn |
+
+The cast in madness and miracle is a real cast — it uses the stack and can be
+countered — at a real price, which is what separates it from
+`suspend.cast_for_free`. A cost that cannot be paid is not offered at all
+(118.4), rather than asked and then failed.
 
 #### Disturb
 

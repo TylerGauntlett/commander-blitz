@@ -25,7 +25,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
-from .primitives import discard_cards, lose_life, tap_permanent
+from .primitives import lose_life, tap_permanent
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -557,13 +557,13 @@ def pay(
         picked = yield from ask_objects(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
-        discard_cards(state, pid, picked)
+        yield from _discard(state, pid, picked)
 
     if cost.discard_self and source_oid is not None:
         # No `ask_objects`: which card goes is not a choice, it is *this* card.
         # That is the whole difference from `discard`, and asking would let the
         # player cycle by pitching something else.
-        discard_cards(state, pid, [source_oid])
+        yield from _discard(state, pid, [source_oid])
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
@@ -634,6 +634,19 @@ def pay(
             exile_object(state, oid, cause="cost")
 
     return True
+
+
+def _discard(state: GameState, pid: int, oids):
+    """Discard as a *cost*, through the madness replacement.
+
+    Rule 702.35a does not care why the card was discarded -- a cycling cost and
+    a Wheel are both discards -- so the cost path goes through the same route
+    the effect path does. Imported here rather than at module scope because
+    `replacements` needs this module.
+    """
+    from .replacements import discard as discard_with_replacements
+
+    return (yield from discard_with_replacements(state, pid, oids))
 
 
 def pay_mana(

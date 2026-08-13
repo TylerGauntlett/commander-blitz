@@ -216,7 +216,7 @@ This is the long tail, and where the build order comes from.
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
 | Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |
-| Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |
+| Dredge | shipped | the `dredge` card field, offered by `replacements.draw` -- it replaces the draw rather than adding to it | `dredge` |
 | Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
@@ -261,11 +261,11 @@ This is the long tail, and where the build order comes from.
 | Landwalk — nonbasic † | shipped | `Keyword`, and **not** a sixth `LANDWALK_SUBTYPE` row: the test is a supertype the land must lack | `nonbasic_landwalk` |
 | Level up | blocked | levels are a characteristic-defining subsystem, not counters with a static | — |
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
-| Madness | blocked | replaces a discard, and the replacement whitelist has no discard form | — |
+| Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
 | Manifest | blocked | face-down creatures | — |
 | Meld | refused | melding; see rules-coverage.md | — |
 | Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
-| Miracle | blocked | replaces the first draw of a turn, and needs the draw's ordinality | — |
+| Miracle | shipped | the `miracle` card field, read off `cards_drawn_this_turn` *before* the draw bumps it | `miracle` |
 | Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
 | Morph / megamorph | blocked | face-down creatures | — |

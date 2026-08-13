@@ -394,6 +394,12 @@ class CardDef:
     graveyard_cast_exiles: bool = True
     #: Disturb: a graveyard cast that arrives on the **back** face.
     graveyard_cast_transformed: bool = False
+    #: Dredge N -- the mill that replaces a draw. See `engine/replacements.py`.
+    dredge: int = 0
+    #: Madness -- the price of casting it out of the exile a discard sent it to.
+    madness: ManaCost | None = None
+    #: Miracle -- the price of casting it as the first card drawn this turn.
+    miracle: ManaCost | None = None
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 

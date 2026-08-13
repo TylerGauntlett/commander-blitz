@@ -343,6 +343,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    if model.dredge < 0:
+        raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
     # Disturb needs both halves, and each is silent alone. Without a
     # `graveyard_cost` there is no cast to arrive transformed; without a
     # `back_face` there is nothing to transform *into*, so the card would be
@@ -517,6 +519,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         rebound=model.rebound,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
+        dredge=model.dredge,
+        madness=ManaCost.parse(model.madness) if model.madness else None,
+        miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         additional_cost=additional_cost,
         additional_optional=model.additional_optional,
         additional_repeatable=model.additional_repeatable,

@@ -8,7 +8,7 @@ from typing import Any
 from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE
-from ..primitives import add_counters, discard_cards, draw_cards, mill_cards, shuffle_library
+from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
@@ -30,11 +30,23 @@ DESTINATIONS = {
 }
 
 
+def _replacements():
+    """Imported lazily: `replacements` needs `costs`, which needs this package."""
+    from .. import replacements
+
+    return replacements
+
+
 @register("draw")
 def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
+    draw_with_replacements = _replacements().draw
+
     amount = evaluate_value(ctx, spec.get("amount", 1))
     for pid in select_players(ctx, spec.get("player", "you")):
-        draw_cards(ctx.state, pid, amount)
+        # Dredge replaces *a* draw, whatever caused it, and miracle asks about
+        # the first card drawn this turn however it arrived -- so every draw in
+        # the engine goes through here except the opening hand.
+        yield from draw_with_replacements(ctx.state, pid, amount)
 
 
 @register("discard")
@@ -50,7 +62,7 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
             picked = ctx.state.rng.shuffled(hand)[:take]
         else:
             picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
-        discard_cards(ctx.state, pid, picked)
+        yield from _replacements().discard(ctx.state, pid, picked)
 
 
 @register("mill")
@@ -468,7 +480,7 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None:
             continue
         pid = obj.controller
-        draw_cards(ctx.state, pid, amount)
+        yield from _replacements().draw(ctx.state, pid, amount)
         hand = list(ctx.state.players[pid].hand)
         take = min(amount, len(hand))
         picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
@@ -480,7 +492,7 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
             if (card := ctx.state.objects.get(o)) is not None
             and not ctx.state.card_of(card).is_land
         )
-        discard_cards(ctx.state, pid, picked)
+        yield from _replacements().discard(ctx.state, pid, picked)
         add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
         ctx.state.emit(
             "connive",
