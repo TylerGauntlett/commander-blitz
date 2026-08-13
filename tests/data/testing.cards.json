@@ -2,6 +2,71 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_miracle",
+      "name": "Test Miracle Wrath",
+      "oracle_text": "Destroy all creatures.\nMiracle {W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "mana_cost": "{4}{W}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "miracle": "{W}",
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_madness",
+      "name": "Test Madness Bolt",
+      "oracle_text": "Test Madness Bolt deals 3 damage to any target.\nMadness {R} (If you discard this card, exile it instead of putting it into your graveyard. When you do, you may cast it for its madness cost.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "madness": "{R}",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "any",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_dredger",
+      "name": "Test Dredging Troll",
+      "oracle_text": "Dredge 3 (If you would draw a card, you may mill three cards instead. If you do, return this card from your graveyard to your hand.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Troll"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "dredge": 3
+    },
+    {
       "id": "t_elf",
       "name": "Test Elf",
       "mana_cost": "{G}",
