@@ -4100,6 +4100,99 @@
       ]
     },
     {
+      "id": "t_reconfigurer",
+      "name": "Test Reconfigured Blade",
+      "oracle_text": "Equipped creature gets +2/+2.\nReconfigure {1} ({1}: Attach to target creature you control. Reconfigure only as a sorcery.)",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Attached permanents with reconfigure aren't creatures.",
+          "effect": "set_types",
+          "affects": {
+            "self_only": true
+          },
+          "types": [
+            "Artifact"
+          ],
+          "condition": {
+            "is_attached": true
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "Reconfigure {1}",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "exclude_self": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Reconfigure {1}",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "op": "unattach",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_clasher",
       "name": "Test Clash",
       "oracle_text": "Clash with an opponent. If you win, draw a card.",

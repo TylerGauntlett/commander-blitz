@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>65 ops"]
+    ctx --> ops["op registry<br/>66 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-65 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+66 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -746,6 +746,7 @@ Each node names **exactly one** form:
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
+| `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 
 This is a **mirror** of the `if`-effect condition language in
@@ -1081,6 +1082,54 @@ ability whose effect is `attach`:
     "count": 1 } ],
   "effects": [ { "op": "attach", "objects": { "target": "t1" } } ] }
 ```
+
+### Reconfigure — taking it off again
+
+```jsonc
+// "Reconfigure {1}" — two abilities, and the attach half is the equip ability.
+{ "kind": "activated", "text": "Reconfigure {1}", "sorcery_speed_only": true,
+  "cost": { "mana": "{1}" },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+    "selector": { "zone": "battlefield", "controller": "you",
+                  "types": ["Creature"], "exclude_self": true } } ],
+  "effects": [ { "op": "attach", "objects": { "target": "t1" } } ] },
+
+{ "kind": "activated", "text": "Reconfigure {1}", "sorcery_speed_only": true,
+  "cost": { "mana": "{1}" },
+  "effects": [ { "op": "unattach",
+                 "objects": { "zone": "battlefield", "self_only": true } } ] },
+
+// "Attached permanents with reconfigure aren't creatures." (702.151d)
+{ "kind": "static", "effect": "set_types", "affects": { "self_only": true },
+  "types": ["Artifact"], "condition": { "is_attached": true } }
+```
+
+The attach half needed nothing — it is Equip, which shipped long ago. `unattach`
+is the new op, and there was no route to it at all: the attach model only ever
+*moved* an Equipment, and moving one onto a creature you do not want it on is a
+different game action from taking it off.
+
+The third ability is the half that is easy to miss and expensive to miss. These
+cards are printed **Artifact Creature — Equipment**, so without 702.151d a
+reconfigured blade pumps the creature it is on *and* attacks beside it. That is
+a strictly better card, and nothing on the board would say so. `is_attached` is
+the leaf that switches it, and it is legal in a static's condition for the
+reason a counter is: `attached_to` is a field the attach primitive writes, so no
+layer can change it.
+
+Not to be confused with the `{"attached": true}` **filter** key, which points
+the other way — at the permanent this one is attached *to*, and is how "equipped
+creature gets +2/+2" is written. The two sit on the same card and mean opposite
+things.
+
+`unattach` deliberately does not touch **Auras**: state-based actions bin an
+Aura attached to nothing, so unattaching one is a destroy written in a way that
+does not say so.
+
+Reconfigure is also the first Equipment that is *also a creature*, which makes
+rule 301.5c reachable for the first time — an Equipment may not equip itself.
+The card says `exclude_self`, and `attach` refuses it anyway, because an
+Equipment attached to itself is a permanent no rule can ever detach.
 
 Attaching during an Aura's `spell_effects` does **not** work, and the failure is
 silent: `move_object` calls `reset_permanent_state` on the way onto the

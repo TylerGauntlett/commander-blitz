@@ -1,3 +1,53 @@
+## Reconfigure — three abilities, and the one nobody counts
+
+### Overview
+
+The census filed reconfigure as "needs *unattach*, which the attach model has no
+notion of — equipment may only move". That is exactly right about the op, and it
+is one of three abilities the keyword actually is.
+
+| printed half | mechanism | was it there? |
+|---|---|---|
+| "{1}: Attach to target creature you control" | the Equip ability | yes, unchanged |
+| "{1}: Unattach this permanent" | the `unattach` op | no route at all |
+| 702.151d — attached ones aren't creatures | `set_types` + `is_attached` | no leaf for it |
+
+The third is the one that gets forgotten, and it is not cosmetic. These cards
+are printed **Artifact Creature — Equipment**. Without 702.151d a reconfigured
+blade pumps the creature it is on *and* attacks beside it — a strictly better
+card, on a board where nothing looks wrong.
+
+### `is_attached`, and why it is legal in a static
+
+`GameObject.attached_to` is a field the `attach` primitive writes. No layer can
+change it, so it is a pipeline **input** exactly as a counter is, and a static
+switched by it cannot come to depend on another static's output. That is the
+whole argument, and it is the same one `has_city_s_blessing` and
+`top_of_library` made.
+
+It is deliberately *not* the `{"attached": true}` filter key, which points the
+other way — at the permanent this one is attached **to**. Both appear on the
+same card, one on the buff and one on the type-changer, meaning opposite things.
+
+### What reconfigure made reachable
+
+Reconfigure prints the first Equipment that is **also a creature**, so it is the
+first one whose own "target creature you control" can find itself. Rule 301.5c
+says an Equipment can't equip itself, and until now nothing could ask.
+
+An Equipment attached to itself is worse than illegal — it is a permanent
+nothing detaches, because the buff reads `attached` and would feed itself for
+ever. So it is refused in two places: the card's target selector says
+`exclude_self`, and `attach` returns false on `aura_oid == target_oid` regardless
+of what any card says.
+
+### What `unattach` deliberately will not do
+
+Auras. A state-based action puts an Aura attached to nothing into its owner's
+graveyard, so an op that unattached one would be a destroy written in a way that
+does not say so. No printed card unattaches an Aura, and the op has no business
+inventing the one that does.
+
 ## Domain and coven — one leaf, because `count` fails them opposite ways
 
 ### Overview

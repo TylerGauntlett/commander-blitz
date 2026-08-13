@@ -249,6 +249,38 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
         change_control(ctx.state, oid, players[0], source=ctx.source_oid)
 
 
+@register("unattach")
+def op_unattach(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.3d — "Unattach this permanent." Reconfigure's second half.
+
+    The attach model had no notion of coming *off*: `attach` moves an Equipment
+    from wherever it is to a new creature, and every printed line before
+    reconfigure only ever moved it. Nothing else can stand in — `attach` needs a
+    destination, and detaching by moving to a creature you do not want it on is
+    a different game action.
+
+    Deliberately does **not** touch Auras. `sba` puts an Aura attached to
+    nothing into its owner's graveyard, so unattaching one is a slow destroy
+    written in a way that does not say so; the guard is on the card side, since
+    no printed card unattaches an Aura and the op has no business inventing one.
+
+    An already-unattached permanent is left alone rather than raising: "unattach
+    this" on an Equipment sitting on the battlefield alone is a legal activation
+    that does nothing, which is what the printed card says.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Unattach", "unattach")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.attached_to is None:
+            continue
+        was = obj.attached_to
+        obj.attached_to = None
+        # Every static filtered on `attached` reads differently afterwards, and
+        # so does the source's own type line while it is a reconfigure card.
+        ctx.state.bump_chars()
+        ctx.state.emit("unattached", player=obj.controller, source=oid, oid=was)
+
+
 @register("add_subtype")
 def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
     """"It becomes a Vampire in addition to its other types." Captivating Vampire.

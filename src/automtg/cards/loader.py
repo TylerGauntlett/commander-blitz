@@ -830,6 +830,12 @@ STATIC_CONDITION_OPS = frozenset({">=", "<=", ">", "<", "=", "==", "!="})
 STATIC_CONDITION_HEADS = (
     "counters", "all", "any", "not", "exists", "is_your_turn",
     "has_city_s_blessing", "cmp",
+    # "Attached permanents with reconfigure aren't creatures" (702.151d).
+    # `attached_to` is a field the `attach` primitive writes, so it is a
+    # pipeline input like a counter and no layer can change it. Distinct from
+    # the `attached` *filter* key, which points the other way -- at the
+    # permanent this one is attached to.
+    "is_attached",
     # "As long as the top card of your library is black". A pipeline *input*
     # for the same reason a zone count is -- nothing in the characteristics
     # pipeline can change what is on top of a library -- but a strictly
@@ -947,6 +953,12 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "is_attached":
+        # Not defaulted: `{"is_attached": false}` is the other half of
+        # reconfigure ("it is a creature while unattached"), and a bare
+        # truthiness test would read a typo'd string as `true`.
+        if not isinstance(condition["is_attached"], bool):
+            raise DslError(f"{where}.is_attached: must be true or false")
     elif head == "top_of_library":
         spec = condition["top_of_library"]
         if not isinstance(spec, Mapping):
@@ -1318,6 +1330,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
             )
+    if op == "unattach" and not effect.get("objects"):
+        # Explore's trap once more: "unattach this permanent" is three words on
+        # the Equipment that prints it, and a default would silently unattach
+        # the spell object on anything that is not a permanent's own ability.
+        raise DslError(
+            f"{where}: unattach needs 'objects' naming what comes off "
+            f"(use {{\"self_only\": true}} for \"unattach this permanent\")"
+        )
     if op == "explore" and not effect.get("objects"):
         # 701.40a puts the +1/+1 counter on the *exploring* permanent, so the op
         # has to be told which one that is. Defaulted to this permanent it would
