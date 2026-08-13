@@ -173,6 +173,9 @@ def damage_permanent(
         # question about a creature that has already died, and anything stored
         # on the victim is wiped by `reset_permanent_state` on the way out.
         state.damage_ledger.setdefault(oid, set()).add(source_oid)
+        # The same fact, ordered, for the UI's "Killed by X" caption. See
+        # `GameState.last_damager` for why it is not folded into the ledger.
+        state.last_damager[oid] = source_oid
     if source_oid is not None and _has(state, source_oid, Keyword.DEATHTOUCH):
         obj.deathtouched = True
     fire(

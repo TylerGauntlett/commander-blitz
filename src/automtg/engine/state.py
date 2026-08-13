@@ -94,6 +94,19 @@ class GameState:
     #: object would be wiped by `reset_permanent_state` on the way to the
     #: graveyard, which is exactly the moment it is needed.
     damage_ledger: dict[int, set[int]] = field(default_factory=dict)
+    #: Who struck the killing blow: victim oid -> the *most recent* thing to
+    #: damage it. Cleared with `damage_ledger`, which it shadows.
+    #:
+    #: Presentation only -- the UI captions a death "Killed by Ulamog" -- and it
+    #: is deliberately a second map rather than an ordering imposed on
+    #: `damage_ledger`, which is rules-facing (the `damaged_by` card filter reads
+    #: it) and must not change shape for the sake of a caption.
+    #:
+    #: Only meaningful when its victim's ledger entry has exactly one damager.
+    #: A gang block writes three sources and last-writer-wins would name an
+    #: arbitrary blocker, so `sba` declines to attribute in that case rather
+    #: than blaming one of them.
+    last_damager: dict[int, int] = field(default_factory=dict)
     #: "…for each card you've drawn this turn." (Kydele, Chosen of Kruphix.)
     #:
     #: player id -> how many cards they have drawn during the current turn,

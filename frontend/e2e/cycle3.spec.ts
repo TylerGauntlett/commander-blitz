@@ -612,3 +612,46 @@ test.describe("a four-player pod fits", () => {
     expect(measured.rowClipped, "the opponents row is clipping a mat").toBe(false);
   });
 });
+
+/**
+ * A card that leaves the battlefield says why, permanently.
+ *
+ * The animation itself is out of reach here on purpose: `helpers.setInstant`
+ * pins the narration speed to `instant`, and `state/narration.ts` short-circuits
+ * on that setting and drops beats rather than holding them -- so no ghost is
+ * ever drawn in an e2e run. The ghost is covered by `FxLayer.stories.tsx`, which
+ * has real geometry and no engine.
+ *
+ * The Log is not speed-gated. It reads the raw event list, so it is the one
+ * surface where this can be checked against a real engine deciding real deaths.
+ */
+test.describe("the log says why a permanent left the battlefield", () => {
+  test("a death is one attributed line, not a bare 'dies'", async ({ page }) => {
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+    const keep = actionsOfKind(page, "keep");
+    if (await keep.count()) await keep.first().click();
+    await waitForOurTurn(page);
+
+    const log = page.getByTestId("event-log");
+    // Combat starts once there are creatures, so play on until something has
+    // actually died rather than assuming a fixed turn.
+    const died = await playUntil(
+      page,
+      async () =>
+        /Lethal damage|Destroyed|Sacrificed|Killed by|Exiled/.test(
+          (await log.textContent()) ?? "",
+        ),
+      { prefer: ["keep", "play_land", "cast", "add_attacker", "finish_declaration", "pass"] },
+    );
+
+    if (!died) {
+      test.skip(true, "no permanent left the battlefield in this seeded game");
+      return;
+    }
+
+    const text = (await log.textContent()) ?? "";
+    // Every departure is one line owned by `zone_change`. `dies` used to
+    // produce a second, less informative one for the same creature.
+    expect(text).not.toContain("dies");
+  });
+});

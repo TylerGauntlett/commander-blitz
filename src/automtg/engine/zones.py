@@ -33,18 +33,32 @@ def move_object(
     to_top: bool = False,
     tapped: bool = False,
     cause: str = "",
+    by: int | None = None,
 ) -> GameObject:
     """Move an object to another zone, firing every consequent event.
 
     ``to_player`` defaults to the object's *owner*, which is where cards always
     go in Commander (a card put into "its owner's graveyard" never lands in
     someone else's).
+
+    ``cause`` says *how* the object moved and ``by`` says *what moved it* -- the
+    resolving spell or ability, or the creature that dealt the killing blow.
+    Both ride on the ``ZONE_CHANGE`` event and are for the log and the client's
+    exit animation, which otherwise cannot say more than that a card vanished.
+    Neither is on ``DIES`` or ``LEAVES_BATTLEFIELD``: nothing reads them there,
+    and a new key in a *fired* event's data can collide with a card's trigger
+    bindings.
     """
     obj = state.objects[oid]
     from_zone = obj.zone
     card = state.card_of(obj)
     owner = obj.owner
     target_player = owner if to_player is None else to_player
+    # Resolved now rather than at emit time: a creature that traded in combat is
+    # moved in the same state-based-actions pass as the thing it killed, so by
+    # the time the event goes out the culprit may itself be out of `objects`.
+    # The client needs a card id it can turn into a printed name either way.
+    by_card = _card_id_of(state, by)
 
     # -- commander zone-change replacement (rule 903.9a) --------------------
     # Simplification: the owner always chooses the command zone.  Documented in
@@ -87,7 +101,13 @@ def move_object(
         source=oid,
         oid=oid,
         card=card.id,
-        **{"from": from_zone.value, "to": to_zone.value, "cause": cause},
+        **{
+            "from": from_zone.value,
+            "to": to_zone.value,
+            "cause": cause,
+            "by": by,
+            "by_card": by_card,
+        },
     )
 
     if was_on_battlefield:
@@ -121,6 +141,14 @@ def move_object(
         _enter_battlefield(state, obj, card, forced_tapped=tapped, cause=cause)
 
     return obj
+
+
+def _card_id_of(state: GameState, oid: int | None) -> str | None:
+    """The card id behind an oid, or None if there is no such object."""
+    if oid is None:
+        return None
+    obj = state.objects.get(oid)
+    return state.card_of(obj).id if obj is not None else None
 
 
 def _remove_from_zone(state: GameState, obj: GameObject) -> None:
@@ -221,40 +249,40 @@ def _enter_battlefield(
 # ----------------------------------------------------------------------
 
 
-def destroy(state: GameState, oid: int, *, cause: str = "destroyed") -> bool:
+def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | None = None) -> bool:
     """Destroy a permanent unless it is indestructible.  Returns True if it died."""
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     if "indestructible" in chars(state, oid).keywords:
         return False
-    move_object(state, oid, Zone.GRAVEYARD, cause=cause)
+    move_object(state, oid, Zone.GRAVEYARD, cause=cause, by=by)
     return True
 
 
-def sacrifice(state: GameState, oid: int) -> bool:
+def sacrifice(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Sacrifice ignores indestructible."""
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
-    move_object(state, oid, Zone.GRAVEYARD, cause="sacrificed")
+    move_object(state, oid, Zone.GRAVEYARD, cause="sacrificed", by=by)
     return True
 
 
-def exile(state: GameState, oid: int, *, cause: str = "exiled") -> bool:
+def exile(state: GameState, oid: int, *, cause: str = "exiled", by: int | None = None) -> bool:
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    move_object(state, oid, Zone.EXILE, cause=cause)
+    move_object(state, oid, Zone.EXILE, cause=cause, by=by)
     return True
 
 
-def bounce(state: GameState, oid: int) -> bool:
+def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Return a permanent to its owner's hand."""
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    move_object(state, oid, Zone.HAND, cause="returned")
+    move_object(state, oid, Zone.HAND, cause="returned", by=by)
     return True
 
 

@@ -5,20 +5,50 @@
  * `GameSession.drive_ai` runs every AI seat until a human must decide. The
  * state therefore *snaps*, and nothing about it is watchable. This module
  * converts that flat log into a timed queue -- floating numerals, spotlights,
- * banners -- which the narration layer plays over the top of the new state.
+ * banners, departing cards -- which the narration layer plays over the top of
+ * the new state.
+ *
+ * "Over the top of the new state" is why `exits` carries as much as it does.
+ * Every other beat anchors to something the board is still drawing; a card that
+ * has just been destroyed is by definition one the board has stopped drawing,
+ * so the beat has to name it well enough to be reconstructed from nothing.
  *
  * Pure: no timers, no React. The queue is data; `state/narration.ts` runs it.
  */
 
 import type { GameEvent } from "../api/types";
 import type { SoundName } from "../audio/sfx";
-import { type NameLookup, describeEvent, prettyCardName } from "./labels";
+import { type NameLookup, describeEvent, exitPhrase, prettyCardName } from "./labels";
 
 export type { NameLookup };
 
 export type BeatAnchor = { kind: "player"; pid: number } | { kind: "object"; oid: number };
 
 export type Tone = "neutral" | "damage" | "gain" | "loss" | "danger" | "good";
+
+/**
+ * One permanent leaving the battlefield, with everything needed to draw it.
+ *
+ * Carries the *identity* of the card rather than the card itself: the FX layer
+ * resolves a face when the beat plays, by which point the card is in the
+ * destination zone -- or, for a token, nowhere at all.
+ */
+export interface ExitFx {
+  oid: number;
+  /** The definition id, for the token fallback. See `FxLayer`. */
+  cardId: string;
+  name: string;
+  /** Whose pile it lands in. `zone_change` reports the owner as `player`. */
+  owner: number;
+  /**
+   * The destination the engine actually used, never one inferred from `cause`:
+   * rule 903.9a sends a *destroyed commander* to the command zone.
+   */
+  to: string;
+  cause: string;
+  /** Ready-made prose, so the layer that draws it owns no words. */
+  caption: string;
+}
 
 export interface Beat {
   id: string;
@@ -42,6 +72,15 @@ export interface Beat {
   };
   /** A brief highlight ring on a permanent. */
   flash?: { anchor: BeatAnchor; tone: Tone };
+  /**
+   * Permanents leaving the battlefield, drawn as cards flying into their pile.
+   *
+   * Plural, and that is the point: a wrath emits one `zone_change` per
+   * permanent, and a beat each would hold the board for six seconds. A run of
+   * them collapses into one beat and the FX layer staggers the ghosts inside
+   * it, which is what that layer says it exists for.
+   */
+  exits?: ExitFx[];
   /** A full-width sweep: turn changes, eliminations. */
   banner?: { text: string; tone: Tone };
   /** 0..1 screen shake intensity. */
@@ -81,11 +120,95 @@ const SILENT = new Set([
   // flashes the same permanent -- narrating both would double every land.
   "mana_added",
   "mana_emptied",
-  "zone_change",
+  // `zone_change` now owns every departure -- it knows the destination *and*
+  // the cause, and `move_object` emits it alongside both of these for the same
+  // card. Leaving `dies` audible would toll twice for one creature and flash an
+  // oid that is no longer in the DOM, which is what it did for its whole life.
+  "dies",
   "leaves_battlefield",
   "untapped",
   "ability_resolved",
 ]);
+
+/**
+ * A battlefield departure, or null for any other zone change.
+ *
+ * The guard is doing two jobs. Anything that did not start on the battlefield
+ * has no ghost to draw -- there is no card on screen to fly anywhere. And a
+ * zone change out of a *library* carries a card id to every seat, so animating
+ * one would show the table an opponent's tutor target.
+ */
+function exitFor(event: GameEvent, lookup?: NameLookup): ExitFx | null {
+  if (event.type !== "zone_change" || event.data.from !== "battlefield") return null;
+  const oid = typeof event.data.oid === "number" ? event.data.oid : null;
+  const cardId = typeof event.data.card === "string" ? event.data.card : "";
+  if (oid === null) return null;
+  const cause = typeof event.data.cause === "string" ? event.data.cause : "";
+  const to = typeof event.data.to === "string" ? event.data.to : "graveyard";
+  const byId = typeof event.data.by_card === "string" ? event.data.by_card : null;
+  const by = byId ? (lookup?.(byId) ?? prettyCardName(byId)) : null;
+  return {
+    oid,
+    cardId,
+    name: cardId ? (lookup?.(cardId) ?? prettyCardName(cardId)) : "A permanent",
+    owner: event.player ?? 0,
+    to,
+    cause,
+    caption: exitPhrase(cause, by, to),
+  };
+}
+
+/** Destinations worth a funeral toll. A bounced creature is not one. */
+const SOLEMN_ZONES = new Set(["graveyard", "exile"]);
+
+/**
+ * Group each *consecutive run* of departures onto its leading event.
+ *
+ * Consecutive, not global: "a creature dies, a trigger resolves, another
+ * creature dies" is two moments and collapsing them would put the second death
+ * on screen before the trigger that caused it. A run survives intervening
+ * events that produce no beat of their own -- which is what lets a wrath, whose
+ * every death also fires a silent `dies` and `leaves_battlefield`, still read as
+ * one sweep.
+ */
+function groupExits(
+  events: GameEvent[],
+  lookup?: NameLookup,
+): { leaders: Map<number, ExitFx[]>; absorbed: Set<number> } {
+  const leaders = new Map<number, ExitFx[]>();
+  const absorbed = new Set<number>();
+  let openRun: number | null = null;
+
+  events.forEach((event, index) => {
+    const exit = exitFor(event, lookup);
+    if (exit) {
+      if (openRun === null) {
+        openRun = index;
+        leaders.set(index, [exit]);
+      } else {
+        leaders.get(openRun)?.push(exit);
+        absorbed.add(index);
+      }
+      return;
+    }
+    // Only something that would itself be narrated closes a run.
+    if (!SILENT.has(event.type)) openRun = null;
+  });
+
+  return { leaders, absorbed };
+}
+
+/**
+ * How long the board holds while a run of departures plays.
+ *
+ * Deliberately sublinear. Ten deaths at a readable single-death pace would stall
+ * the turn for six seconds; the ghosts are staggered inside the FX layer
+ * instead, and keep flying after the queue has moved on -- floats already work
+ * exactly this way.
+ */
+function exitHold(count: number): number {
+  return Math.min(820, 420 + (count - 1) * 100);
+}
 
 /**
  * Build the beat queue for one batch of events.
@@ -107,16 +230,38 @@ export function beatsFor(
   viewerSeat?: number,
 ): Beat[] {
   const beats: Beat[] = [];
+  const { leaders, absorbed } = groupExits(events, lookup);
 
   events.forEach((event, index) => {
     if (SILENT.has(event.type)) return;
+    // Folded into the run its leader carries.
+    if (absorbed.has(index)) return;
 
     const id = `${index}-${event.type}`;
     const who = event.player === null ? "" : (names[event.player] ?? `P${event.player}`);
     const card = nameOf(event, lookup);
     const amount = num(event.data.amount);
     const text = describeEvent(event, names, viewerSeat, lookup);
-    const push = (beat: Omit<Beat, "id" | "text">) => beats.push({ id, text, ...beat });
+    const push = (beat: Omit<Beat, "id" | "text">, override?: string | null) =>
+      beats.push({ id, text: override === undefined ? text : override, ...beat });
+
+    const exits = leaders.get(index);
+    if (exits) {
+      const solemn = exits.some((exit) => SOLEMN_ZONES.has(exit.to));
+      push(
+        {
+          hold: exitHold(exits.length),
+          exits,
+          sound: solemn ? "toll" : undefined,
+          // A wrath is a big enough moment to feel; a single death is not.
+          shake: exits.length >= 4 ? Math.min(0.7, exits.length / 10) : undefined,
+        },
+        // The ticker lists every departure independently, so the beat only
+        // needs the headline. Past a pair, naming one of them would be odd.
+        exits.length > 2 ? `${exits.length} permanents leave the battlefield` : text,
+      );
+      return;
+    }
 
     switch (event.type) {
       case "turn_began":
@@ -203,17 +348,6 @@ export function beatsFor(
             event.source === null
               ? undefined
               : { anchor: { kind: "object", oid: event.source }, tone: "good" },
-        });
-        return;
-
-      case "dies":
-        push({
-          hold: 380,
-          sound: "toll",
-          flash:
-            event.source === null
-              ? undefined
-              : { anchor: { kind: "object", oid: event.source }, tone: "danger" },
         });
         return;
 

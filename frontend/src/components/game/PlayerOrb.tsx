@@ -152,11 +152,7 @@ function ZonePile({ pid, zone, name, kind, label, count, title, topCard }: PileP
   if (zone === null) {
     if (!topCard) return <div {...shared}>{body}</div>;
     return (
-      <div
-        {...shared}
-        onMouseEnter={() => hover(topCard.oid)}
-        onMouseLeave={() => hover(null)}
-      >
+      <div {...shared} onMouseEnter={() => hover(topCard.oid)} onMouseLeave={() => hover(null)}>
         {body}
       </div>
     );

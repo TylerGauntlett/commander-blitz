@@ -214,6 +214,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.
     state.damage_ledger.clear()
+    state.last_damager.clear()
     # And with it every other "this turn" tally. Cleanup rather than untap for
     # the reason the comment in `_untap_step` gives in reverse: none of these can
     # happen before turn 1, so there is nothing for them to have to survive.

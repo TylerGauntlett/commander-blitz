@@ -109,6 +109,36 @@ Every one of these goes through `zones.move_object()`, so enters/leaves/dies tri
 permanent-state resetting and the commander replacement all happen in exactly one
 place.
 
+### What a zone change reports
+
+`ZONE_CHANGE` carries `from`, `to`, and three fields about *why*:
+
+| field | meaning |
+|---|---|
+| `cause` | how it moved: `destroyed`, `sacrificed`, `lethal_damage`, `zero_toughness`, `legend_rule`, `aura_unattached`, `exiled`, `returned`, `tuck`, `cost`, `player_left`, `countered`, `resolved`, `draw`, `mill`, … |
+| `by` | the oid of what moved it — the resolving spell or ability, or the creature that dealt the killing blow. `None` when nothing sensible can be named |
+| `by_card` | that object's card id, resolved *before* the move, because the culprit may itself be leaving in the same SBA pass |
+
+`source` on this event is the object that **moved**, not the thing that moved it,
+which is why `by` had to be added: without it no consumer could build a sentence of
+the form "X destroys Y", and the client's log said only "Grizzly Bears dies".
+
+Two rules the client depends on:
+
+- **`to` and `cause` answer different questions.** Rule 903.9a redirects a commander
+  to the command zone while leaving the cause alone, so a destroyed commander is
+  `to=command, cause=destroyed`. Anything routing by cause sends it to a graveyard it
+  is not in.
+- **A gang block names nobody.** `sba._creature_deaths` only sets `by` when
+  `damage_ledger` holds exactly one damager for that creature. `state.last_damager`
+  records whichever source wrote last, which in a multi-block is an arbitrary one of
+  them, so it declines rather than blaming a blocker at random.
+
+`by`/`cause` are deliberately **not** on `DIES` or `LEAVES_BATTLEFIELD`. Nothing reads
+them there, and a new key in a *fired* event's data can collide with a card's trigger
+bindings; `move_object` emits the zone change alongside both, so a consumer that wants
+the reason correlates with that.
+
 ## Combat
 
 ```mermaid

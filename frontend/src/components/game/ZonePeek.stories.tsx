@@ -85,6 +85,43 @@ export const EmptyZone: Story = {
   parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
 };
 
+/**
+ * How each card got here.
+ *
+ * The durable half of the exit animation. The ghost answers "why did that die"
+ * for about a second; this is where a player who was not watching closely comes
+ * to find out afterwards which of their creatures was exiled, and with what.
+ *
+ * Note the two Forests: they collapse into one counted slot, and the note
+ * describes the copy actually on top rather than claiming to speak for both.
+ */
+export const WithRemovalNotes: Story = {
+  args: {
+    state: full,
+    reasons: new Map([
+      [870, "Destroyed by Swords to Plowshares"],
+      [871, "Sacrificed to Zuran Orb"],
+      [873, "Lethal damage"],
+    ]),
+  },
+  parameters: { automtg: { ui: { peek: { pid: 0, zone: "graveyard" } } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Destroyed by Swords to Plowshares");
+    // Cultivate is in the pile with a note; the second Forest is folded away.
+    expect(canvas.getAllByTestId("peek-note").length).toBeGreaterThanOrEqual(2);
+  },
+};
+
+/** The same in exile, where the question is usually more urgent. */
+export const ExileWithNotes: Story = {
+  args: { state: full, reasons: new Map([[880, "Exiled by Leyline of the Void"]]) },
+  parameters: { automtg: { ui: { peek: { pid: 0, zone: "exile" } } } },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByText("Exiled by Leyline of the Void");
+  },
+};
+
 /** Clicking the backdrop closes it, which is the only way out on a touch device. */
 export const ClosingIt: Story = {
   args: { state: full },

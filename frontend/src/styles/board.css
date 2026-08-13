@@ -2029,6 +2029,111 @@
   filter: drop-shadow(0 6px 18px rgb(0 0 0 / 0.55));
 }
 
+/* ---- a card leaving the battlefield ------------------------------------- */
+
+/* The board stops drawing a destroyed permanent the instant the state lands, so
+   this is a *ghost*: the card redrawn over the top from its last known box, held
+   long enough to read why it left, then dropped into its pile. See
+   `logic/cardRects.ts` for why it cannot be the real element. */
+.fx-ghost {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Positioned by its centre, matching every other anchor in this layer. */
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+/* A tint over the card rather than a filter on the ghost: a filter on the
+   parent would wash out the caption too, and the caption is the whole point.
+   Lives inside `.fx-ghost__card` and last in it, so it covers the art and stops
+   at the card's edge. */
+.fx-ghost__wash {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.fx-ghost__card {
+  position: relative;
+  filter: drop-shadow(0 8px 22px rgb(0 0 0 / 0.6));
+}
+
+/* No card to draw -- almost always a token, which ceases to exist on the way
+   out. Same trade the spotlight's plate makes: a name beats a gap. */
+.fx-ghost__plate {
+  padding: 10px 20px;
+  border: 2px solid var(--danger);
+  border-radius: 10px;
+  background: rgb(13 12 28 / 0.94);
+  color: var(--gold);
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.fx-ghost__cause {
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgb(9 8 20 / 0.92);
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.6);
+}
+
+.fx-ghost--graveyard .fx-ghost__wash {
+  background: rgb(120 12 22 / 0.34);
+  box-shadow: inset 0 0 22px rgb(0 0 0 / 0.7);
+}
+
+/* Exile is not death. Cold and bright, and the card bleaches rather than
+   darkens -- the difference has to be visible at a glance, because whether a
+   creature can be recurred is the question the player is actually asking. */
+.fx-ghost--exile .fx-ghost__wash {
+  background: rgb(150 110 255 / 0.3);
+  box-shadow: inset 0 0 26px rgb(190 160 255 / 0.4);
+}
+
+.fx-ghost--exile .fx-ghost__card {
+  filter: saturate(0.35) brightness(1.25) drop-shadow(0 0 16px rgb(170 130 255 / 0.65));
+}
+
+.fx-ghost--exile .fx-ghost__cause,
+.fx-ghost--exile .fx-ghost__plate {
+  border-color: #a98bff;
+  color: #c3aaff;
+}
+
+/* Bounced, tucked or sent to the command zone: nothing died, so nothing mourns.
+   The card keeps its colour and only the caption says what happened. */
+.fx-ghost--hand .fx-ghost__wash,
+.fx-ghost--library .fx-ghost__wash,
+.fx-ghost--command .fx-ghost__wash {
+  background: rgb(88 182 255 / 0.16);
+}
+
+.fx-ghost--hand .fx-ghost__cause,
+.fx-ghost--library .fx-ghost__cause,
+.fx-ghost--command .fx-ghost__cause {
+  color: var(--targetable);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The caption still has to be readable when the flight is suppressed, so it
+     stays put rather than inheriting a zeroed-out keyframe. */
+  .fx-ghost {
+    transition: none;
+  }
+}
+
 .fx-banner {
   position: absolute;
   top: 22%;

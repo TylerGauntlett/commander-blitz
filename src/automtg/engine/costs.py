@@ -546,7 +546,9 @@ def pay(
         pool = _sacrifice_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(ctx, "Sacrifice", pool, count, count, pid, "sacrifice")
         for oid in picked:
-            sacrifice_object(state, oid)
+            # The thing being paid for, so the log can say what the creature
+            # was sacrificed *to* rather than only that it was sacrificed.
+            sacrifice_object(state, oid, by=source_oid)
 
     if cost.return_to_hand is not None:
         spec = dict(cost.return_to_hand)
@@ -556,7 +558,7 @@ def pay(
             ctx, "Return to hand", pool, count, count, pid, "return_cost"
         )
         for oid in picked:
-            bounce_object(state, oid)
+            bounce_object(state, oid, by=source_oid)
 
     if cost.tap_permanents is not None:
         spec = dict(cost.tap_permanents)
