@@ -161,7 +161,7 @@ Not abilities: instructions naming something a player or the game does.
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
 | Attach | shipped | op | `attach` |
-| Clash | routed | `reveal` exists; needs a cross-player comparison of the revealed cards | — |
+| Clash | shipped | op, plus a `clash_won` binding an ordinary `if` reads back | `clash` |
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |
 | Reconfigure | routed | needs *unattach*, which the attach model has no notion of — equipment may only move | — |

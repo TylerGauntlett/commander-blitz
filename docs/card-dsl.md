@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>64 ops"]
+    ctx --> ops["op registry<br/>65 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-64 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+65 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -2206,6 +2206,43 @@ the turn your hand was all lands.
 `objects` is required for `explore`'s reason, and each permanent in the pool
 connives on its own — its own controller draws, from its own hand, onto its own
 counters.
+
+## Clash
+
+```jsonc
+// "Clash with an opponent. If you win, draw a card."
+{ "op": "clash" },
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "binding": "clash_won" }, "right": { "const": 1 } },
+  "then": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+Rule 701.23a. Both players reveal the top card of their library, each may then
+put their own card on the bottom, and the higher mana value wins.
+
+`reveal` was never the missing piece — the **comparison** was. Every numeric
+leaf in the value language reads one board: `mana_value_of` takes a target or a
+snapshot, and neither can name a card sitting on top of an opponent's library.
+`top_of_library` gets closest and answers a filter with a boolean, so it cannot
+produce a number to compare against, let alone the two this needs at once.
+
+The outcome is a **binding**, not a `won:` block, because the printed card is
+two sentences and `if` already says the second one. The loader refuses either
+half without the other, exactly as it refuses half a kicker: a `clash` nothing
+reads reveals two cards and stops, and a `clash_won` with no clash behind it
+reads 0 for ever. Both load cleanly.
+
+Three things the op decides, each of which a card written around it would
+otherwise get quietly wrong:
+
+| | |
+|---|---|
+| **Each player answers for their own card** | asking the clasher about both would be a strictly better spell |
+| **Both cards are revealed before either answer** | the information is the whole point of the decision |
+| **An empty library cannot win, and loses to `{0}`** | "higher than each other card revealed" is vacuously true against nothing, so the no-card sentinel has to sit *below* zero rather than at it |
+
+At a pod the op asks which opponent to clash with; in a duel there is one
+opponent and `ask_player` does not stop to ask.
 
 ## Cycling
 

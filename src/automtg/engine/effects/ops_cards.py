@@ -11,7 +11,7 @@ from ..objects import PLUS_ONE
 from ..primitives import add_counters, discard_cards, draw_cards, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
-from .context import EffectContext, ask_objects, ask_yes_no
+from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
@@ -477,6 +477,96 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
             discarded=len(picked),
             nonland=nonland,
         )
+
+
+#: The binding `clash` writes and "if you win the clash" reads back.  A binding
+#: rather than a `won:` block of effects, because the printed card really is two
+#: sentences — "Clash with an opponent. If you win, draw a card." — and `if` is
+#: already the op that says the second one.
+CLASH_WON = "clash_won"
+
+
+@register("clash")
+def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.23a — two players reveal, may bottom, and the bigger cost wins.
+
+    "Clash with an opponent. (Each of you reveals the top card of your library,
+    then puts that card on the top or bottom. A player wins if their card had a
+    higher mana value.)"
+
+    `reveal` cannot compose into this and the reason is not the reveal: it is
+    that clash is a **comparison across two players' libraries**, and every
+    comparison in the value language reads one board. `mana_value_of` takes a
+    target or a snapshot, and neither can name a card sitting on top of an
+    opponent's library — `top_of_library` is a static condition that tests a
+    filter against one card and reports a boolean, so it cannot report a number
+    to compare with, let alone two of them.
+
+    The outcome is written into ``bindings`` under ``clash_won`` rather than
+    carried in a ``won:`` block, because the printed card is two sentences and
+    `if` is already the op that says the second one. The loader refuses either
+    half without the other, the way it refuses half a kicker.
+
+    Two boundaries, both of which a card would otherwise get quietly wrong:
+
+    - **Each player decides about their own card**, and decides it *after* both
+      are revealed. Asking the clasher about both would be a different and much
+      better card, and asking before the reveal would remove the information the
+      decision exists for.
+    - **An empty library reveals nothing and cannot win.** "Higher than each
+      other card revealed this way" is vacuously true against no card at all, so
+      revealing something beats revealing nothing — and revealing nothing loses
+      even to nothing.
+    """
+    you = ctx.controller
+    opponents = ctx.opponents()
+    other = yield from ask_player(ctx, "Clash with which opponent?", opponents, you)
+    if other is None:
+        ctx.bindings[CLASH_WON] = 0
+        return
+
+    revealed: dict[int, int | None] = {}
+    for pid in (you, other):
+        library = ctx.state.players[pid].library
+        revealed[pid] = library[0] if library else None
+    shown = [oid for oid in revealed.values() if oid is not None]
+    if shown:
+        ctx.state.emit(
+            "reveal",
+            player=you,
+            source=ctx.source_oid,
+            cards=[ctx.state.card_of(ctx.state.objects[oid]).id for oid in shown],
+        )
+
+    # Both cards are on the table before either player decides, which is the
+    # whole of what makes the choice interesting.
+    for pid in (you, other):
+        oid = revealed[pid]
+        if oid is None:
+            continue
+        name = ctx.state.card_of(ctx.state.objects[oid]).name
+        to_bottom = yield from ask_yes_no(ctx, f"Put {name} on the bottom of your library?", pid)
+        if to_bottom:
+            library = ctx.state.players[pid].library
+            library.remove(oid)
+            library.append(oid)
+
+    def value_of(oid: int | None) -> int:
+        # -1 rather than 0: a card that costs {0} still beats no card at all,
+        # and no card must never beat one.
+        if oid is None:
+            return -1
+        return ctx.state.card_of(ctx.state.objects[oid]).mana_cost.mana_value()
+
+    won = value_of(revealed[you]) > value_of(revealed[other])
+    ctx.bindings[CLASH_WON] = 1 if won else 0
+    ctx.state.emit(
+        "clash",
+        player=you,
+        source=ctx.source_oid,
+        opponent=other,
+        won=won,
+    )
 
 
 @register("two_piles")
