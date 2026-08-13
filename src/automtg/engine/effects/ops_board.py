@@ -27,7 +27,7 @@ from ..primitives import (
 from ..zones import destroy, exile, move_object, sacrifice
 from . import register
 from .context import EffectContext
-from .selectors import choose_objects, resolve_pool
+from .selectors import choose_objects, pick_from_pool, resolve_pool
 from .values import evaluate_value
 
 
@@ -326,6 +326,48 @@ def op_regenerate(ctx: EffectContext, spec: Mapping[str, Any]):
             oid=oid,
             shields=obj.regeneration_shields,
         )
+
+
+@register("pair")
+def op_pair(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Soulbond — "you may pair this creature with another unpaired creature".
+
+    The link is **symmetric**: both objects carry it. "As long as this creature
+    is paired" is printed on the soulbond card and is read of the *partner* too
+    -- both get the bonus -- so a one-way link in `attached_to`'s shape would
+    buff exactly one of the two.
+
+    It is also not `attached_to` for a second reason: an Aura attached to
+    nothing is put into its owner's graveyard by a state-based action, and a
+    creature whose partner died is simply unpaired. Two different lifetimes, so
+    two different fields -- the argument `frozen_by` and `skip_next_untap`
+    already made.
+
+    Only *unpaired* creatures are offered, which is 702.94a and is also what
+    stops one creature being paired with two.
+    """
+    selector = dict(spec.get("objects") or {})
+    selector.setdefault("controller", "you")
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if source is None or source.paired_with is not None:
+        return
+    pool = [
+        oid
+        for oid in resolve_pool(ctx, selector)
+        if oid != ctx.source_oid and ctx.state.objects[oid].paired_with is None
+    ]
+    if not pool:
+        return
+    picked = yield from pick_from_pool(
+        ctx, pool, {**selector, "count": 1}, "Pair with", "pair"
+    )
+    if not picked:
+        return
+    partner = ctx.state.objects[picked[0]]
+    source.paired_with = partner.oid
+    partner.paired_with = source.oid
+    ctx.state.bump_chars()
+    ctx.state.emit("paired", player=source.controller, source=source.oid, oid=partner.oid)
 
 
 @register("haunt")

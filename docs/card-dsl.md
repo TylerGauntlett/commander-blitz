@@ -2059,6 +2059,36 @@ The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
 
+## Soulbond — a relationship that is not attachment
+
+```jsonc
+// "…pair this creature with another unpaired creature when either enters."
+{ "op": "pair", "objects": { "zone": "battlefield", "controller": "you",
+                             "types": ["Creature"] } }
+
+// "As long as this creature is paired, **both** creatures get +1/+1."
+{ "kind": "static", "effect": "buff", "affects": { "paired": true },
+  "power": { "const": 1 }, "toughness": { "const": 1 } },
+{ "kind": "static", "effect": "buff", "affects": { "paired_with_source": true },
+  "power": { "const": 1 }, "toughness": { "const": 1 } }
+```
+
+`attached_to` is the nearest existing thing and is wrong in two independent
+ways, either of which is enough:
+
+| | |
+|---|---|
+| it is **one-way** | "both creatures get +1/+1" is asked of the partner too, and a one-sided link buffs exactly one of them |
+| an Aura attached to nothing **dies** | a state-based action bins it; a creature whose partner died is simply unpaired. Two lifetimes, two fields — `frozen_by` and `skip_next_untap` already made this argument |
+
+So `paired_with` is symmetric, and breaking it is two writes: the leaving
+object's own is cleared by `reset_permanent_state`, and the **partner's** in
+`_detach_all` — nothing else walks back along the link, and a creature left
+pointing at a card in a graveyard keeps the bonus for ever.
+
+The static is written once and applies to two creatures, hence two filter keys.
+Both are board state, so neither can make one static depend on another's output.
+
 ## Ninjutsu — swapping into a combat already under way
 
 ```jsonc

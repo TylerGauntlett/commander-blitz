@@ -91,6 +91,15 @@ class GameObject:
     #: turn it was put there. Both are needed: 702.143a says "on a **later**
     #: turn", so a card foretold and cast on the same turn would be the printed
     #: cost paid in two instalments with the discount thrown in.
+    #: Soulbond (702.94a): the creature this one is paired with. Symmetric --
+    #: both objects carry the link -- because "as long as this creature is
+    #: paired" is asked of *either* of them, and a one-sided link would make
+    #: only one of the two buffed.
+    #:
+    #: Not `attached_to`, which is one-way, is read by `attached` filters as
+    #: "the thing I am on", and carries the state-based action that bins an Aura
+    #: attached to nothing. A pair is neither attached nor doomed by breaking.
+    paired_with: int | None = None
     #: Haunt (702.55a): the creature this exiled card is haunting. The link
     #: points at the **victim**, which is the opposite direction from
     #: `exiled_by`, and it has to: haunt's second trigger fires when the
@@ -278,6 +287,7 @@ class GameObject:
         self.regeneration_shields = 0
         self.counters = {}
         self.attached_to = None
+        self.paired_with = None
         self.until_eot = []
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the

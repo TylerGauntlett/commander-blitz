@@ -157,6 +157,12 @@ STATIC_FILTER_KEYS = frozenset(
         # state rather than a derived characteristic, so it cannot depend on
         # another static's output and belongs in this list rather than outside it.
         "attached",
+        # Soulbond: "as long as this creature is paired, **both** creatures
+        # have…". `paired: true` matches the source while it has a partner, and
+        # `paired_with_source: true` matches the partner. Board state like
+        # `attached`, and safe for the same reason.
+        "paired",
+        "paired_with_source",
     }
 )
 
