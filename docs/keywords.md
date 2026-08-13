@@ -247,7 +247,7 @@ This is the long tail, and where the build order comes from.
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
-| Infect † | routed | poison counters ship (`add_poison`); what is left is the damage *replacement* — to players as poison, to creatures as -1/-1 counters, which is the wither half too | — |
+| Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
 | Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
@@ -311,7 +311,7 @@ This is the long tail, and where the build order comes from.
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | free | activated from the graveyard: `put_onto_battlefield` self, `grant_keyword` haste `permanent`, then a `delay`ed `exile` | — |
 | Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
-| Wither | blocked | a damage replacement, and the whitelist has no damage form | — |
+| Wither | shipped | `Keyword`, read by `damage_permanent` -- the counters land instead of the damage mark | `wither` |
 
 ## Ability words
 

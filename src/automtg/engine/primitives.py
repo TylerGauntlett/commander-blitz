@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 from .characteristics import chars
 from .enums import Keyword, Zone
 from .events import EventType
-from .objects import PLUS_ONE, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -108,7 +108,23 @@ def damage_player(
     """Deal damage to a player, applying lifelink and commander damage tracking."""
     if amount <= 0:
         return 0
-    state.players[pid].life -= amount
+    # Infect (702.90c): damage to a *player* is poison counters instead of life
+    # loss. Wither is deliberately not here -- 702.90b is about damage to
+    # permanents only, so a wither creature that gets through hits for life in
+    # the ordinary way, and that asymmetry is the whole difference between the
+    # two keywords.
+    poisons = source_oid is not None and _has(state, source_oid, Keyword.INFECT)
+    if poisons:
+        state.players[pid].poison += amount
+        state.emit(
+            EventType.POISON_ADDED,
+            player=pid,
+            source=source_oid,
+            amount=amount,
+            total=state.players[pid].poison,
+        )
+    else:
+        state.players[pid].life -= amount
     fire(
         state,
         EventType.DAMAGE_DEALT,
@@ -167,7 +183,24 @@ def damage_permanent(
             reason="protection",
         )
         return 0
-    obj.damage += amount
+    # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
+    # counters" instead of being marked. Not a `replacements` entry -- that
+    # whitelist is about permanents *entering the battlefield* -- but a keyword
+    # read at the one point every damage source already passes through, exactly
+    # as deathtouch and lifelink are three lines below.
+    #
+    # It is still damage. Deathtouch still marks the victim, lifelink still
+    # gains, the damage ledger still records who did it, and `DAMAGE_DEALT`
+    # still fires with the same amount -- so enrage, Sengir and "damaged this
+    # turn" all read a withering creature the way they read any other. Only
+    # where the number lands changes.
+    withers = source_oid is not None and (
+        _has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT)
+    )
+    if withers:
+        add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
+    else:
+        obj.damage += amount
     if source_oid is not None:
         # Recorded here rather than on the object: Sengir Vampire asks the
         # question about a creature that has already died, and anything stored
