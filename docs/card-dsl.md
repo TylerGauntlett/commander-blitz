@@ -2381,6 +2381,45 @@ Bestow is **not** a second castable face, though the census filed it beside
 adventure. A second face is two spells; bestow is one spell that lands as two
 different permanents.
 
+## Fuse — the case where the answer is *both* faces
+
+```jsonc
+{ "id": "wear", "types": ["Instant"], "fuse": true, "second_face": "tear", … }
+```
+
+`second_face` ships adventure, aftermath and the halves of a split card, and all
+three are one face **or** the other: `card_of` answers with exactly one, which is
+why fuse was left open when they landed.
+
+Fuse is the case where the answer is *both*, and the shape it needs already
+existed — it is **splice**. A spliced card's effects run after its host's through
+the same `EffectContext`, and that shared context is what makes them one spell
+rather than two. Fuse is that with the second effect list coming from the card's
+own other half instead of from a different card in hand.
+
+So nothing here touches `card_of`. A fused cast builds **one card from the two**
+and hands it to the machinery that prices, targets and resolves any other spell:
+
+| what | where it comes from |
+|---|---|
+| the price | `front.mana_cost.plus(back.mana_cost)` |
+| the targets | both halves' lists, concatenated |
+| the effects | both halves', through one context |
+| the name on the action | "Wear // Tear (fused)" |
+
+Built identically in `legality` and in `Game._cast`, so the line that was priced
+and the spell that is cast cannot disagree about what is being cast.
+
+The halves may **not share a target id**, and the loader refuses it: they resolve
+in one context, so one would silently answer for the other and the spell would
+point somewhere nobody chose. That is the argument that stops a spliced card
+declaring targets at all — here the halves may declare them, because they are the
+same card and their ids are visible together at load time.
+
+Two more guards, each closing a line that would otherwise be offered and be
+wrong: fuse needs a `second_face` to fuse *to*, and that half must be castable
+from **hand** — an aftermath half may not be, and 702.102a casts from hand.
+
 ## A second castable face — adventure, aftermath and split cards
 
 ```jsonc

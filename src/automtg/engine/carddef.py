@@ -358,6 +358,9 @@ class CardDef:
     #: *front* face may then be cast from exile. The flag that separates
     #: adventure from the other two users of ``second_face``.
     adventure: bool = False
+    #: **Fuse** (702.102a): a third cast line that is both halves at once -- both
+    #: costs, both target lists, both effect lists, one spell.
+    fuse: bool = False
     #: Set by the registry on the *second* face, naming the card it belongs to.
     #: A second face is not a card anybody may draw or put in a deck on its own,
     #: and it is castable only as part of the card that prints it -- the same
