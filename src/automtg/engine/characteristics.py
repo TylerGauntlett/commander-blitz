@@ -544,6 +544,15 @@ def _matches(
     # `controller: "you"` would quietly stop it.
     if selector.get("attached"):
         return obj.oid == source.attached_to
+    # Soulbond. Two keys because the printed line applies to two creatures and
+    # the static is written once: `paired` is "this creature, while it has a
+    # partner" and `paired_with_source` is "the partner". Both short-circuit
+    # `controller` the way `attached` does -- a pair is a pair whoever ends up
+    # controlling either half.
+    if selector.get("paired"):
+        return obj.oid == source.oid and source.paired_with is not None
+    if selector.get("paired_with_source"):
+        return source.paired_with is not None and obj.oid == source.paired_with
 
     controller = selector.get("controller", "you")
     if controller == "you" and obj.controller != source.controller:

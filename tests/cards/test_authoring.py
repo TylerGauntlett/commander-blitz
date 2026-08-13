@@ -264,15 +264,20 @@ class TestThePacketCarriesTheWholeVocabulary:
         only, an effect's selector may read far more.
 
         Neither contains the other, which is the reason both have to travel.
-        `attached` ("enchanted creature gets +2/+2") is static-only because it
-        reads board state rather than a derived characteristic; everything the
-        selector language adds on top is unreachable from a static.
+        The static-only keys are all one category -- **relationships between two
+        permanents**, read off a field rather than off a characteristic:
+        `attached` is "enchanted creature gets +2/+2", and soulbond's two are
+        "as long as this creature is paired, **both** get +1/+1", which is one
+        static written once and applied to two creatures. All three are board
+        state, so no static can depend on another's output through them, and all
+        three are meaningless to an effect's selector, which addresses objects
+        by zone rather than by their relation to a source.
         """
         from automtg.cards.authoring.packet import reference
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
-        assert static - selector == {"attached"}
+        assert static - selector == {"attached", "paired", "paired_with_source"}
         assert len(selector - static) > 10, "the selector language is the larger one"
 
     def test_the_static_condition_vocabulary_is_shown(self):

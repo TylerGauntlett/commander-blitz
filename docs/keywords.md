@@ -294,7 +294,7 @@ This is the long tail, and where the build order comes from.
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |
 | Shroud | shipped | `Keyword`, read by `targeting.can_be_targeted` only — stops the controller too | `shroud` |
 | Skulk † | shipped | `Keyword`, compared on **derived** power inside `combat.can_block` | `skulk` |
-| Soulbond | blocked | a paired-permanent relationship with no representation | — |
+| Soulbond | shipped | a symmetric `paired_with` field, the `pair` op, and the `paired` / `paired_with_source` static filters | `pair` |
 | Soulshift | free | `dies` trigger, then `return_from_graveyard` filtered by subtype and `mana_value` | — |
 | Spectacle | free | `alternative_cost` with a condition on `life_lost_this_turn` over `each_opponent` | — |
 | Splice | blocked | adding one card's effects to another spell as it is cast | — |

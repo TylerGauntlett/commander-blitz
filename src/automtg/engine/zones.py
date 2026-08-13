@@ -184,11 +184,21 @@ def _add_to_zone(
 
 
 def _detach_all(state: GameState, oid: int) -> None:
-    """Unattach anything attached to a permanent that is leaving."""
+    """Unattach anything attached to a permanent that is leaving, and unpair it.
+
+    Soulbond's link is symmetric, so breaking it is two writes: the leaving
+    object's own is cleared by `reset_permanent_state`, and the *partner's* has
+    to be cleared here -- nothing else walks back along it, and a creature left
+    pointing at a card in a graveyard would keep the bonus for ever.
+    """
     for other_id in list(state.battlefield):
         other = state.objects.get(other_id)
-        if other is not None and other.attached_to == oid:
+        if other is None:
+            continue
+        if other.attached_to == oid:
             other.attached_to = None
+        if other.paired_with == oid:
+            other.paired_with = None
 
 
 def _enter_battlefield(
