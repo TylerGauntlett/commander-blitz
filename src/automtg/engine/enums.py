@@ -189,6 +189,19 @@ class Keyword(str, Enum):
     #: the other five are separate from each other -- `Keyword` is a bare string.
     NONBASIC_LANDWALK = "nonbasic_landwalk"
     INDESTRUCTIBLE = "indestructible"
+    #: Wither (702.90b) and infect (702.90c).  Both change the *form* damage
+    #: takes, and both are keywords rather than `replacements` entries for the
+    #: reason deathtouch and lifelink are: the whitelist covers what happens as
+    #: a permanent **enters the battlefield**, and this is a fact about damage,
+    #: read by `damage_permanent` at the one point every damage source passes
+    #: through.  Neither takes a parameter -- "-1/-1 counters instead" is the
+    #: whole content of the quality.
+    #:
+    #: Infect is wither plus poison, and is a separate keyword rather than a
+    #: pair because a creature has one or the other: 702.90c is written as its
+    #: own ability and a card carrying both would double neither half.
+    WITHER = "wither"
+    INFECT = "infect"
     FLASH = "flash"
     #: Deck construction only -- "you can have two commanders if both have
     #: partner".  Listed here, and inert on purpose: the engine is handed a

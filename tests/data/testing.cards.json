@@ -4100,6 +4100,40 @@
       ]
     },
     {
+      "id": "t_witherer",
+      "name": "Test Withering Spider",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spider"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "wither"
+      ]
+    },
+    {
+      "id": "t_infecter",
+      "name": "Test Infectious Blight",
+      "oracle_text": "Infect (This deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "infect"
+      ]
+    },
+    {
       "id": "t_kinship",
       "name": "Test Kinship Ox",
       "oracle_text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",

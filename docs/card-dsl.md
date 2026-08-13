@@ -2195,6 +2195,32 @@ in `combat.can_block` beside landwalk, which reads `chars` for the same reason.
 
 "Greater" is strictly greater: an equal-power creature blocks a skulker.
 
+### Wither and infect
+
+```jsonc
+"keywords": ["wither"]
+"keywords": ["infect"]
+```
+
+`Keyword`s, not `replacements` entries, and the census routed them wrongly for a
+reason worth naming: the replacement whitelist is entirely about a permanent
+**entering the battlefield**, and neither of these is an entry event. They are
+facts about *damage*, and damage already has one choke point that reads
+keywords — `damage_permanent`, where deathtouch and lifelink sit three lines
+apart. By the routing rule at the top of [keywords.md](keywords.md) they qualify
+on their own: no parameter, and a rule reads them.
+
+**It is still damage**, which is the half a naive version loses. Deathtouch
+still marks the victim, lifelink still gains, the damage ledger still records
+who did it, and `DAMAGE_DEALT` still fires with the same amount — so enrage,
+Sengir Vampire and every "damaged this turn" filter read a withering creature
+the way they read any other. Only where the number lands changes.
+
+They differ in exactly one place, and it is not the creature half: 702.90b says
+nothing about damage to **players**, so a wither creature that gets through hits
+for life in the ordinary way. Folding the two together would make every wither
+creature a poison threat.
+
 ### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
 
     Shriekmaw — "Fear."
