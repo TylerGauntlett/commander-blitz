@@ -2905,6 +2905,7 @@ them where it is sitting:
 "miracle": "{W}"                            // cast it as the first card you draw
 "foretell": "{R}"                           // pay {2} to exile it; cast it later for this
 "epic": true                                // no more spells; a free copy each upkeep
+"splice": "{1}{W}", "splice_onto": "Arcane" // add this card's effects to another spell
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
@@ -3050,6 +3051,30 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+#### Splice
+
+```jsonc
+"splice": "{1}{W}", "splice_onto": "Arcane"
+```
+
+The only keyword that changes what a **different** card does. Every other cost
+belongs to the card printing it; splice is paid out of one card to alter another
+as that other goes on the stack — so it is offered in `Game._cast`, between the
+host's own costs and `push_spell`, which is where the printed line puts it.
+
+Three properties, each of which a shortcut loses:
+
+| | |
+|---|---|
+| the card is **revealed, not spent** | it stays in hand and can be spliced again; discarding it deletes the whole economy of the mechanic |
+| the effects belong to the **host** | they run through the same `EffectContext` after the host's own, so countering the host stops all of it |
+| only the named subtype | `splice_onto` is checked against the host's subtypes |
+
+A spliced card may **not declare its own targets**, and the loader refuses one:
+its effects run in the host's context, so a target id there would either be
+missing or collide with one of the host's and quietly point somewhere else.
+Recorded as a divergence rather than approximated.
 
 #### Epic
 

@@ -36,6 +36,7 @@ def push_spell(
     evoked: bool = False,
     flashback: bool = False,
     overloaded: bool = False,
+    spliced: tuple[str, ...] = (),
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -76,6 +77,7 @@ def push_spell(
         evoked=evoked,
         flashback=flashback,
         overloaded=overloaded,
+        spliced=spliced,
         modes=modes,
         description=card.name,
     )
@@ -286,6 +288,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         source_name=card.name,
     )
     yield from execute(ctx, card.spell_effects)
+    # "…add this card's effects to that spell." After the host's own, in the
+    # order they were spliced on, and through the *same* context -- which is
+    # what makes them one spell rather than several, and is why a spliced card
+    # may not declare targets of its own.
+    for spliced_id in item.spliced:
+        yield from execute(ctx, state.registry.get(spliced_id).spell_effects)
 
     if card.epic and not obj.is_token:
         # 702.50a. Recorded on the *player*, one-way and for the rest of the

@@ -351,6 +351,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
+    if model.splice is not None and model.targets:
+        # A spliced card's effects run inside the *host* spell's context, so a
+        # target id written here would either be missing or -- worse -- collide
+        # with one of the host's and quietly point somewhere else. Refused
+        # rather than resolved: the divergence is recorded in
+        # rules-coverage.md, and a card that needs its own target is a card this
+        # cannot express yet.
+        raise DslError(
+            f"{where}: a spliced card may not declare its own targets -- its "
+            f"effects run in the host spell's context"
+        )
     # Disturb needs both halves, and each is silent alone. Without a
     # `graveyard_cost` there is no cast to arrive transformed; without a
     # `back_face` there is nothing to transform *into*, so the card would be
@@ -530,6 +541,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
         epic=model.epic,
+        splice=ManaCost.parse(model.splice) if model.splice else None,
+        splice_onto=model.splice_onto,
         additional_cost=additional_cost,
         additional_optional=model.additional_optional,
         additional_repeatable=model.additional_repeatable,

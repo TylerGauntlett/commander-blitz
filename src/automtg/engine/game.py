@@ -353,6 +353,13 @@ class Game:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
 
+        # Splice (702.47a): "as you cast an Arcane spell, you may reveal this
+        # card from your hand and pay its splice cost". Offered here, after the
+        # host's own costs and before it goes on the stack, which is where the
+        # printed line puts it -- and the cards are only *revealed*, so they
+        # stay in hand and can be spliced again next turn.
+        spliced = yield from self._ask_splices(pid, card, oid)
+
         item = stack.push_spell(
             state,
             oid,
@@ -363,6 +370,7 @@ class Game:
             evoked=action.evoked,
             flashback=action.flashback,
             overloaded=action.overloaded,
+            spliced=spliced,
             modes=modes,
         )
         triggers.fire(
@@ -473,6 +481,50 @@ class Game:
                 ctx, f"Choose X for {name}", ceiling, pid, per_point=cost.x_count
             )
         )
+
+    def _ask_splices(
+        self, pid: int, card, oid: int
+    ) -> Generator[Any, list[int], tuple[str, ...]]:
+        """Offer every spliceable card in hand, one at a time.
+
+        One at a time because each is its own "you may pay", and several may be
+        spliced onto one spell -- so this is a loop of yes/no questions rather
+        than a subset, and the order they are accepted in is the order their
+        effects run.
+
+        The cards are **revealed, not spent**: they stay in hand, which is the
+        whole economy of the mechanic and the thing a naive implementation
+        loses by discarding them.
+        """
+        from .costs import can_pay, pay
+        from .effects.context import EffectContext, ask_yes_no
+
+        state = self.state
+        chosen: list[str] = []
+        candidates = [
+            other
+            for other in list(state.players[pid].hand)
+            if other != oid and state.card(other).splice is not None
+        ]
+        if not candidates:
+            return ()
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        for other in candidates:
+            spliced_card = state.card(other)
+            if spliced_card.splice_onto not in card.subtypes:
+                continue
+            price = Cost(mana=spliced_card.splice)
+            if not can_pay(state, pid, price, other):
+                continue
+            if not (yield from ask_yes_no(
+                ctx, f"Splice {spliced_card.name} onto {card.name}?", pid
+            )):
+                continue
+            if not (yield from pay(state, pid, price, other)):
+                continue
+            state.emit("spliced", player=pid, source=other, card=spliced_card.id, onto=oid)
+            chosen.append(spliced_card.id)
+        return tuple(chosen)
 
     def _ask_modes(
         self, pid: int, name: str, spec, *, kicked: bool = False
