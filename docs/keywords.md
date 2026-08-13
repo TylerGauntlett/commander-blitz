@@ -344,62 +344,65 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**The routed column is empty, and blocked is down to fourteen.** 164 of the 183
-rows here are shipped or free.
+**Nine rows are blocked and five refused. The other 169 are shipped or free.**
 
-Three of the four "subsystems" the previous version of this section named turned
-out not to be subsystems, and the pattern in how they were misdiagnosed is the
-most useful thing on this page:
+The single most useful finding, made over and over, is that **`blocked` was
+usually a routing error rather than a size estimate**. Eleven keywords filed
+against a subsystem turned out to need something that already existed, or
+something small in a place nobody had looked:
 
-| filed as | actually |
+| filed as | what it actually was |
 |---|---|
-| wither, infect, regeneration, totem armor — "the replacement whitelist has no damage/destruction form" | choke points that already existed: `damage_permanent` and `zones.destroy` |
-| dredge, madness, miracle — "the whitelist has no draw/discard form" | a **call-graph** change, and a small one: `turn.begin_step` already ran through `Game._run`, so only `_draw_step` beneath it could not suspend |
-| cascade, ripple — "free casts off a library scan" | the free cast was `suspend.cast_for_free`; only the *scan* was missing |
+| wither, infect — "the whitelist has no damage form" | a keyword read by `damage_permanent`, where deathtouch already sits |
+| regeneration, totem armor — "a destruction replacement" | a check in `zones.destroy`, the one function every destruction goes through |
+| dredge, madness, miracle — "the whitelist has no draw/discard form" | a **call-graph** change: `turn.begin_step` already ran through `Game._run`, so only `_draw_step` beneath it could not suspend |
+| cascade, ripple — "free casts off a library scan" | the free cast was `suspend.cast_for_free`; only the scan was missing |
 | foretell — "suspend is the nearest shape" | suspend is the *same* shape, down to the `ActionKind` |
+| champion, imprint — "exile tied to a permanent" | `exile` with `until_leaves`, shipped for Oblivion Ring, read from each end |
+| level up — "a characteristic-defining subsystem" | `set_pt` (which *replaces* P/T) plus a band written as `all` over two `counters` comparisons |
 
-**The lesson worth keeping is that "blocked" was usually a routing error rather
-than a size estimate.** A keyword filed against a subsystem is worth re-deriving
-from the printed text before the subsystem gets built for it.
+**Before building a subsystem for a keyword, re-derive the keyword from its
+printed text.** Twice the census named a subsystem that the printed line did not
+actually require, and once (dredge) it named the right cluster for the wrong
+reason — the obstacle was not the replacement whitelist but the call graph
+above it.
 
 ### What is genuinely left
 
+Two subsystems and three one-offs.
+
 | cluster | keywords | what it needs |
 |---|---|---|
-| **Face-down permanents** | morph / megamorph, manifest (and cloak, from the demand side) | a permanent whose characteristics are a 2/2 shell over a real card, and a turn-face-up special action. `transform` built the `card_of` choke point; this is the second thing through it. **Not** what foretell needed — a card hidden in exile is `revealed_to`, and that shipped |
-| **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes. `back_face` is a face you *turn over*; this also needs the authoring pipeline to emit two card entries from one answer |
-| **Levels** | level up | a characteristic-defining subsystem: P/T and abilities read off a band |
-| **One-offs** | aura swap, cipher, epic, hideaway, imprint, soulbond, splice | one bespoke mechanism each. Soulbond wants a pairing field and two filter keys; hideaway wants play-from-exile; splice wants effects merged at cast time; the rest are smaller |
+| **Face-down permanents** | morph / megamorph, manifest (and cloak, on the demand side) | a permanent whose characteristics are a 2/2 shell over a real card, plus a turn-face-up special action. `transform` built the `card_of` choke point this goes through. **Not** what foretell needed — a card hidden *in exile* is `revealed_to`, and that shipped |
+| **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes afterwards. `back_face` is a face you *turn over*; this also needs the authoring pipeline to emit two card entries from one answer |
+| **Cipher** | — | encode a spell onto a creature and cast copies of it from exile whenever that creature connects. The copy machinery is `put_copy_on_stack`; the encoding link is haunt's, pointed a third way |
+| **Hideaway** | — | waits on **both** face-down exile and play-from-exile, which is the only reason it is not a one-off |
+| **Splice** | — | merge one card's effects into another spell as it is cast. The only keyword that changes what a *different* card does at cast time |
 
 ### The five refused
 
-`refused` is a recorded decision rather than a difficulty, and one has already
-been reversed: **regeneration** was refused as "a destruction-replacement
-shield" and is now shipped, because `zones.destroy` is a single choke point and
-the shield is a few lines through it.
+`refused` is a recorded decision rather than a difficulty, and one has been
+reversed here: **regeneration** was refused as "a destruction-replacement
+shield" and now ships, because `zones.destroy` is a single choke point.
 
-The remaining five hold for a reason the four above did not: banding and phasing
-change how combat and the untap step work for *every* permanent in the game, and
-daybound / nightbound, flip and meld each need a game-wide or card-wide
+The remaining five hold for a reason none of the reversals had. Banding and
+phasing change how combat and the untap step work for *every* permanent in the
+game; daybound / nightbound, flip and meld each need a game-wide or card-wide
 designated state the engine has no place to keep. They belong in
 [rules-coverage.md](rules-coverage.md) and should be re-argued there rather than
 reclassified here.
 
 ## Suggested build order
 
-1. **The one-offs**, cheapest first — aura swap, soulbond, epic, imprint — since
-   none of them waits on anything else and each is one mechanism.
-2. **Face-down permanents.** Two keywords plus a demand-side card, through the
-   `card_of` choke point `transform` already built.
-3. **A second castable face.** Four keywords, and the only cluster that also
-   needs the *authoring pipeline* changed rather than the engine.
-4. **Hideaway**, after face-down permanents and play-from-exile, since it wants
-   both.
-5. **Levels**, last, for the reason face-down cards used to be: it is a
-   characteristic-defining subsystem and nothing else needs it.
+1. **Cipher and splice**, in either order — neither waits on anything, and both
+   have their copy or cast machinery already built.
+2. **Face-down permanents**, through the `card_of` choke point `transform` made.
+3. **Hideaway**, once that and play-from-exile exist.
+4. **A second castable face**, last of the buildable work: it is the only
+   cluster that needs the *authoring pipeline* changed as well as the engine.
 
-Cross-check [unsupported-cards.md](unsupported-cards.md) before starting — where
-a capability already has gap records, those cards are the real specification.
+Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a
+capability already has gap records, those cards are the real specification.
 `/extend-dsl` rule 1 still applies: **one capability per run.**
 
 ## Provenance
