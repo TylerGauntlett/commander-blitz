@@ -206,7 +206,7 @@ This is the long tail, and where the build order comes from.
 | Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
 | Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
 | Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
-| Coven | blocked | "three creatures with different powers" — no distinct-value count exists | — |
+| Coven | free | condition `cmp` on `{"distinct": {"of": "power"}}` over creatures you control | `distinct` |
 | Crew | routed | vehicles are not a supported type; `tap_permanents` ships but counts permanents, and crew sums their **derived** power | — |
 | Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
@@ -323,7 +323,7 @@ is ordinary, which is why most of this table is `free`.
 | Addendum | free | condition `is_your_turn`, which is as close as the engine gets and is right for a sorcery-speed clause | — |
 | Battalion | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control | — |
 | Chroma | routed | counting mana symbols in a zone; nothing reads a card's pips | — |
-| Domain | blocked | counts basic land *types*, not lands; no distinct-subtype count exists | — |
+| Domain | free | value `{"distinct": {"of": "basic_land_type"}}` over lands you control | `distinct` |
 | Enrage | free | the `dealt_damage` trigger, with `{"binding": "amount"}` for "that much" | — |
 | Fateful hour | free | condition `cmp` on `life_of` `"you"` | — |
 | Ferocious | free | condition `exists` with `power` `>=` 4 | — |

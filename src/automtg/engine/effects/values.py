@@ -81,8 +81,22 @@ VALUE_KEYS = frozenset(
         # on the way to the graveyard. Answered from the dies trigger's
         # `had_counters` binding, snapshotted before the wipe.
         "counters_had",
+        # "…for each basic land type among lands you control" (domain), and
+        # "three or more creatures with different powers" (coven). A count of
+        # *distinct values* over a pool, which no other leaf can be: `count`
+        # counts objects, so five Forests are five and not one.
+        "distinct",
     }
 )
+
+#: What ``{"distinct": {"of": …}}`` may count. Two entries, and both have a card
+#: behind them: domain counts basic land types, coven counts powers. A third
+#: would be vocabulary with nothing printed asking for it, and a misspelling has
+#: to be a load error rather than a silent zero.
+DISTINCT_OF = ("power", "basic_land_type")
+
+#: Rule 305.6. The five basic land types, which are the whole of domain.
+BASIC_LAND_TYPES = frozenset({"Plains", "Island", "Swamp", "Mountain", "Forest"})
 
 
 def evaluate_value(ctx: EffectContext, expr: Any) -> int:
@@ -124,6 +138,28 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
 
         pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+    if "distinct" in expr:
+        # Domain and coven: how many *different* values a pool holds, not how
+        # many objects are in it. `count` cannot say it in either direction --
+        # five Forests are one basic land type and five objects, and three
+        # creatures that are all 2/2 are three objects and one power.
+        #
+        # Both readings are of **derived** characteristics, deliberately: an
+        # anthem changes who counts for coven, and "all lands are Islands"
+        # changes what counts for domain. That is also why this leaf is not in
+        # the static condition language -- a static reading it would depend on
+        # another static's output, which is the one thing layers-lite forbids.
+        spec = expr["distinct"]
+        from .selectors import resolve_pool
+
+        pool = resolve_pool(ctx, spec.get("objects") or {})
+        of = str(spec.get("of", "power"))
+        if of == "power":
+            return len({chars(ctx.state, oid).power for oid in pool})
+        found: set[str] = set()
+        for oid in pool:
+            found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
+        return len(found)
     if "creatures_you_control" in expr:
         return len(ctx.state.creatures(ctx.controller))
     if "lands_you_control" in expr:
@@ -280,3 +316,27 @@ def validate_value(expr: Any, where: str) -> None:
         from .selectors import validate_selector
 
         validate_selector(expr["count"], f"{where}.count")
+    if "distinct" in expr:
+        from .selectors import validate_selector
+
+        spec = expr["distinct"]
+        if not isinstance(spec, Mapping):
+            raise DslError(f"{where}.distinct: must be an object")
+        unknown = set(spec) - {"of", "objects"}
+        if unknown:
+            raise DslError(f"{where}.distinct: unsupported keys {sorted(unknown)}")
+        of = spec.get("of")
+        if of not in DISTINCT_OF:
+            # Defaulted or misspelled it would count powers when the card meant
+            # land types, which is a plausible-looking number on every board.
+            raise DslError(
+                f"{where}.distinct: 'of' must be one of {list(DISTINCT_OF)}, got {of!r}"
+            )
+        if not spec.get("objects"):
+            # An empty selector is the whole battlefield, so domain would count
+            # an opponent's basics and coven would count their creatures.
+            raise DslError(
+                f"{where}.distinct: needs 'objects' -- an empty selector is "
+                f"every permanent in the game, including your opponents'"
+            )
+        validate_selector(spec["objects"], f"{where}.distinct.objects")

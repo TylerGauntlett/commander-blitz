@@ -328,8 +328,44 @@ Anywhere a number is expected:
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
+{ "distinct": { "of": "basic_land_type",        // domain; "power" is coven
+                "objects": { "controller": "you", "types": ["Land"] } } }
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+### Counting different values rather than objects
+
+`{"distinct": …}` is domain and coven, and they are one leaf rather than two
+because `count` fails them in **opposite** directions:
+
+| | `count` says | the card means |
+|---|---|---|
+| five Forests, domain | 5 | 1 basic land type |
+| three 2/2s, coven | 3 | 1 power |
+
+No selector, however filtered, reaches either number — `count` counts matches,
+and these count the distinct values those matches hold. `of` is `power` or
+`basic_land_type`, and nothing else: both have a printed card behind them, and a
+misspelling is a load error rather than a silent fall back to powers.
+
+`objects` is required. An empty selector is every permanent in the game, so
+domain would count an opponent's basics and coven their creatures — and both
+would look plausible.
+
+Coven is then an ordinary comparison and needs nothing else:
+
+```jsonc
+{ "cmp": ">=", "right": { "const": 3 },
+  "left": { "distinct": { "of": "power",
+                          "objects": { "controller": "you", "types": ["Creature"] } } } }
+```
+
+Both readings are of **derived** characteristics, which is why this leaf is in
+the `if`-effect language and deliberately **not** in a static's `condition`. An
+anthem changes who has coven and "all lands are Islands" changes what counts for
+domain, so a static reading it would be switched on and off by another static's
+output — the one dependency [layers-lite](adr/0001-layers-lite.md) forbids. The
+static value whitelist already refuses it, and a test pins that it stays refused.
 
 ### Counting an event rather than the board
 
