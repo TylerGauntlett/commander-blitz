@@ -58,11 +58,32 @@
   height: var(--card-w);
 }
 
+/*
+ * Out of flow, and that is the fix rather than a detail.
+ *
+ * The centring used to be `margin-left: 0.2w; margin-top: -0.2w`, and the
+ * negative top margin never moved the pivot: `.card` is a plain relative block
+ * with no top border or padding, so a first child's top margin *collapses into
+ * it*. The whole outer box rose a fifth of a card -- and the `::after` rim with
+ * it, and the rune, and the pin, and the `[data-oid]` box the combat arrows and
+ * the death ghost measure -- while the rotated face stayed put. Horizontal
+ * margins do not collapse, which is why it read as a border in the right shape
+ * hovering above the card.
+ *
+ * It only did that on the board. In `laneCards` the card is a flex item, which
+ * is a formatting context root, so `Card.Tapped` was green the whole time;
+ * `CardStack.AllTapped` is the story that mounts it the way the board does.
+ *
+ * `inset: 0` plus a definite size plus `margin: auto` centres on both axes with
+ * no margin left to collapse, in any parent. Absolute rather than a translate
+ * because Motion owns `transform` on this node for the quarter turn.
+ */
 .card--tapped .card__pivot {
+  position: absolute;
+  inset: 0;
   width: var(--card-w);
   height: calc(var(--card-w) * 1.4);
-  margin-left: calc(var(--card-w) * 0.2);
-  margin-top: calc(var(--card-w) * -0.2);
+  margin: auto;
 }
 
 .face {

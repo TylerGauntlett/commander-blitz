@@ -55,8 +55,27 @@ export const Tapped: Story = {
       ),
     );
     // Rotated a quarter turn, so its box is wider than it is tall.
-    const box = (canvasElement.querySelector(".card") as HTMLElement).getBoundingClientRect();
+    const card = canvasElement.querySelector(".card") as HTMLElement;
+    const box = card.getBoundingClientRect();
     expect(box.width).toBeGreaterThan(box.height);
+
+    /*
+     * And the box is *on* the card. The rims are `.card::after` on this outer
+     * box, so a box that has the right shape in the wrong place draws a border
+     * beside the card rather than round it.
+     *
+     * Here the card is a flex item -- `laneCards` ends in `.lane__cards`, which
+     * is `display: flex` -- and that is a formatting context root, so this was
+     * green even while the board was visibly broken. The case that actually
+     * broke is `CardStack.AllTapped`; this one holds the other context.
+     */
+    const face = pivot.getBoundingClientRect();
+    for (const edge of ["top", "bottom", "left", "right"] as const) {
+      expect(
+        Math.abs(box[edge] - face[edge]),
+        `the rim's ${edge} edge is not on the tapped card's ${edge} edge`,
+      ).toBeLessThan(1);
+    }
   },
 };
 
