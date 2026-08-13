@@ -1517,6 +1517,22 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         # stringified into a name nothing reads back, so the count it feeds
         # would be 0 and amplify would enter with no counters.
         raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
+    if op == "join_forces":
+        # The total is the card -- "for each mana paid this way" -- so an effect
+        # that collects it and names no binding has taxed the whole table for
+        # nothing, and would resolve without complaint.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: join_forces needs an 'as' naming the binding the total "
+                f"lands in; without it nothing can read what was paid"
+            )
+        if "pay" in effect:
+            if not isinstance(effect["pay"], dict):
+                raise DslError(f"{where}: 'pay' must be an object")
+            try:
+                CostModel.model_validate(effect["pay"])
+            except Exception as exc:  # pydantic ValidationError
+                raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
     if op == "regenerate" and not effect.get("objects"):
         # A shield with nothing to put it on. The ability would cost mana, log
         # nothing and save nobody -- and "Regenerate this creature" is three

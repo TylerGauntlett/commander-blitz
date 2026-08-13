@@ -181,6 +181,50 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         yield from execute(ctx, modes[index].get("effects") or [])
 
 
+#: Guard on the "pay again?" loop, matching `may`'s and `repeat`'s. One
+#: pathological seat must not hang a game.
+MAX_JOIN_FORCES = 100
+
+
+@register("join_forces")
+def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Join forces — Starting with you, each player may pay any amount of mana."
+
+    The one effect in the pool whose cost is paid by **everybody**. Every other
+    cost in the engine hangs off one player: `may`'s `pay` grew a `player` for
+    Rhystic Study, but it asks that player once, and join forces asks the whole
+    table repeatedly and adds the answers up.
+
+    Asked one unit at a time, in turn order starting with the controller, which
+    is what the printed line says and is also the only shape the decision system
+    can carry: "any amount" has no ceiling to offer as a `choose_x`, and a seat
+    that stops paying is a seat that answered no.
+
+    Order matters and is not cosmetic. Later players see what earlier ones paid,
+    which is the whole politics of the card -- an implementation that asked
+    simultaneously, or in seat order regardless of who cast it, would be a
+    different card at a table.
+
+    ``as`` names the binding the total lands in; the card reads it back with
+    ``{"binding": …}``, the way clash reads `clash_won`.
+    """
+    unit = cost_from_spec(spec.get("pay") or {"mana": "{1}"})
+    prompt = str(spec.get("prompt") or "Pay one more into the pool?")
+    total = 0
+    for pid in ctx.state.turn_order(ctx.controller):
+        for _ in range(MAX_JOIN_FORCES):
+            if unit is None or not can_pay(ctx.state, pid, unit, ctx.source_oid):
+                break
+            if not (yield from ask_yes_no(ctx, prompt, pid)):
+                break
+            paid = yield from pay(ctx.state, pid, unit, ctx.source_oid)
+            if not paid:
+                break
+            total += 1
+    ctx.bindings[str(spec.get("as", "joined"))] = total
+    ctx.state.emit("join_forces", player=ctx.controller, source=ctx.source_oid, total=total)
+
+
 @register("for_each")
 def op_for_each(ctx: EffectContext, spec: Mapping[str, Any]):
     """Run a body once per matching object, binding it as ``each``."""

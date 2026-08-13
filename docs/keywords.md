@@ -330,7 +330,7 @@ is ordinary, which is why most of this table is `free`.
 | Grandeur | free | activated from hand, cost `discard_selector` by `name` | — |
 | Hellbent | free | condition `cmp` on `cards_in_hand` equals 0 | — |
 | Heroic | free | `becomes_target` trigger with `controller: "you"`, then whatever the card does | — |
-| Join forces | routed | mana contributed by several players; every cost is paid by one | — |
+| Join forces | shipped | the `join_forces` op -- one unit at a time, in turn order from the caster | `join_forces` |
 | Kinship | free | `upkeep` trigger, `snapshot` over `{"zone": "library"}` (which binds the top card), then `exists` with `shares_a_type_with: "self"` | `snapshot` |
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
 | Metalcraft | free | condition `cmp` on `count` of artifacts you control | — |

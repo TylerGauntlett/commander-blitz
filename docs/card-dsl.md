@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>66 ops"]
+    ctx --> ops["op registry<br/>68 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-66 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+68 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -145,7 +145,7 @@ required — defaulted it would look at one card and say nothing about it.
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
-| Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` `delay` |
+| Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` `delay` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -1460,6 +1460,31 @@ is still refused; paying to stop something is the card.
 "A cost they cannot afford is not offered" matters more in this direction than
 the other (rule 118.4): an opponent tapped out is not asked, and the draw simply
 happens.
+
+## Join forces — the one cost the whole table pays
+
+```jsonc
+{ "op": "join_forces", "as": "joined", "pay": { "mana": "{1}" },
+  "prompt": "Pay {1} into the shared pool?" },
+{ "op": "draw", "player": "you", "amount": { "binding": "joined" } }
+```
+
+Every other cost in the engine hangs off **one** player. `may`'s `pay` grew a
+`player` spec for Rhystic Study, which is as close as the vocabulary gets, and
+it asks that player once. This asks the whole table, repeatedly, and adds the
+answers up.
+
+One unit at a time, and that is forced: "any amount" has no ceiling to offer as
+a `choose_x`, and a seat that stops paying is a seat that answered no.
+
+**Order is the card.** Starting with the controller, in turn order, so later
+players see what earlier ones have already put in — the whole politics of a
+join-forces spell at a pod. Asked simultaneously, or in seat order regardless of
+who cast it, it would be a different card.
+
+The total lands in the binding named by `as`, read back with `{"binding": …}`
+the way clash's `clash_won` is. An effect that collects it and names no binding
+has taxed the table for nothing, so the loader refuses one.
 
 ## Modal spells with a target
 
