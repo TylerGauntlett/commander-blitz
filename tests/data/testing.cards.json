@@ -2,6 +2,33 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_absorber",
+      "name": "Test Absorbing Wall",
+      "oracle_text": "Absorb 2 (If a source would deal damage to this creature, prevent 2 of that damage.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 1,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Absorb 2 (If a source would deal damage to this creature, prevent 2 of that damage.)",
+          "effect": "prevent_damage",
+          "affects": {
+            "self_only": true
+          },
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_join_forces",
       "name": "Test Shared Draw",
       "oracle_text": "Join forces — Starting with you, each player may pay any amount of mana. Draw a card for each mana paid this way.",

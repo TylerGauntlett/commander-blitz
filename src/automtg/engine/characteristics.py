@@ -597,6 +597,31 @@ def effective_toughness(state: GameState, oid: int) -> int:
     return chars(state, oid).toughness - obj.damage
 
 
+def prevented_damage(state: GameState, oid: int) -> int:
+    """How much damage from **each source** this permanent prevents -- absorb.
+
+    Per source and per instance, which is what 702.63a says and is the whole of
+    why absorb 1 is playable at all: a creature with absorb 1 blocked by three
+    1/1s takes nothing from any of them, and the same creature hit by one 3/3
+    takes two. Summed over every applicable static, so two Absorb auras stack.
+
+    Not protection with a number. Protection prevents *all* the damage and three
+    other things besides -- it also stops the creature being blocked, enchanted
+    and targeted -- so reusing it would make an absorb creature unblockable.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
