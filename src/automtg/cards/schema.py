@@ -394,6 +394,15 @@ class CardModel(BaseModel):
     #: is no permanent for it to sit on -- an epic spell is in a graveyard for
     #: the rest of the game while the restriction and the copies go on.
     epic: bool = False
+    #: **Splice onto Arcane** (702.47a): "As you cast an Arcane spell, you may
+    #: reveal this card from your hand and pay its splice cost. If you do, add
+    #: this card's effects to that spell."
+    #:
+    #: The only keyword that changes what a **different** card does, so it is
+    #: paid and recorded as the host goes on the stack and its effects run after
+    #: the host's on resolution. ``onto`` is the subtype it may be spliced onto.
+    splice: str | None = None
+    splice_onto: str = "Arcane"
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

@@ -2,6 +2,68 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_plain_instant",
+      "name": "Test Plain Rite",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_splicer",
+      "name": "Test Spliced Rite",
+      "oracle_text": "You gain 3 life.\nSplice onto Arcane {1}{W} (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Instant"
+      ],
+      "subtypes": [
+        "Arcane"
+      ],
+      "splice": "{1}{W}",
+      "splice_onto": "Arcane",
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_arcane",
+      "name": "Test Arcane Blast",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "subtypes": [
+        "Arcane"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_cipher",
       "name": "Test Ciphered Whisper",
       "oracle_text": "Target player loses 1 life.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of this card without paying its mana cost.)",

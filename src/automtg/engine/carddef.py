@@ -404,6 +404,9 @@ class CardDef:
     foretell: ManaCost | None = None
     #: Epic -- no more spells this game, and a free copy each of your upkeeps.
     epic: bool = False
+    #: Splice -- the price, and the subtype it may be spliced onto.
+    splice: ManaCost | None = None
+    splice_onto: str = "Arcane"
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 
