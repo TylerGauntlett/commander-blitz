@@ -115,6 +115,9 @@ SELECTOR_KEYS = frozenset(
         # answered off the ability's source, which is the card sitting in exile
         # with the link on it. The haunted creature carries no record of it.
         "haunted_by",
+        # "…the creature this card is encoded on" -- cipher, the same shape as
+        # `haunted_by` and answered the same way, off the ability source.
+        "encoded_by",
     }
 )
 

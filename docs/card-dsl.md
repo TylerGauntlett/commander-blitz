@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>73 ops"]
+    ctx --> ops["op registry<br/>76 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-73 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+76 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2145,6 +2145,45 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 `self_only` out. Ninjutsu is the shape that makes that satisfier obviously
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
+
+## Cipher — the third direction an exile link can point
+
+```jsonc
+"spell_effects": [ …, { "op": "encode",
+                        "objects": { "zone": "battlefield", "controller": "you",
+                                     "types": ["Creature"], "count": 1 } } ],
+"abilities": [
+  { "kind": "triggered", "active_zones": ["exile"],
+    "trigger": { "event": "deals_combat_damage_to_player", "controller": "any",
+                 "filter": { "controller": "any", "encoded_by": "self" } },
+    "effects": [ { "op": "cast_copy" } ] } ]
+```
+
+There are now three exile links, all written on the exiled card, and they name
+different things because the triggers reading them ask different questions:
+
+| field | names | read by |
+|---|---|---|
+| `exiled_by` | the **exiler** | O-Ring's leaves-trigger, imprint's abilities |
+| `haunting` | a creature whose **death** matters | a `creature_dies` trigger in exile |
+| `encoded_on` | a creature whose **combat damage** matters | a `deals_combat_damage_to_player` trigger in exile |
+
+`encode` does **not** move the card, and that is the trap it fell into first. A
+resolving sorcery is placed by `_place_after_resolution` *after* its effects
+run, so an exile written from inside `spell_effects` is silently overwritten by
+the graveyard — with the link wiped by `reset_permanent_state` on the way. So
+encoding is the fourth **rider on the destination**, beside flashback's exile,
+buyback's hand and rebound's exile.
+
+`cast_copy` is not `copy_spell`: that op copies something on the **stack**, and
+an encoded card is in exile with nothing on the stack to point at. It shares
+`put_copy_on_stack`, so a cipher copy is a token and announces its targets
+exactly as a storm copy does — and the original stays in exile, which is why
+cipher keeps paying.
+
+A copy does **not** encode again (702.97b): it is not a card. Epic needed the
+same `not is_token` guard, and both keywords make copies that resolve through
+the very code that armed them.
 
 ## Haunt — the exile link pointing the other way
 

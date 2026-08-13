@@ -421,6 +421,69 @@ def op_pair(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.state.emit("paired", player=source.controller, source=source.oid, oid=partner.oid)
 
 
+@register("encode")
+def op_encode(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Cipher — "exile this spell card encoded on a creature you control".
+
+    Haunt's link pointed a third way. The card goes to exile and names a
+    creature; the *card* is what has to notice that creature connecting, so the
+    link points at the creature and the trigger reads it off the ability source.
+
+    Distinct from `exiled_by` (which names the exiler, for O-Ring and imprint)
+    and from `haunting` (which names a creature whose *death* matters). Three
+    directions, three fields, and the triggers that read them ask three
+    different questions.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Encode on", "encode")
+    if not oids or ctx.source_oid is None:
+        return
+    source = ctx.state.objects.get(ctx.source_oid)
+    if source is None or source.is_token:
+        # A **copy** of a ciphered spell does not encode again (702.97b): a copy
+        # is not a card, and there is nothing to exile. Epic's `not is_token`
+        # guard for the same reason -- both keywords make copies that resolve
+        # through the very code that armed them.
+        return
+    # The card is **not** moved here. A resolving sorcery is placed by
+    # `_place_after_resolution` *after* its effects run, so an exile written
+    # from inside `spell_effects` is immediately overwritten by the graveyard --
+    # which is how this first failed, silently, with the card in the bin and the
+    # link wiped by `reset_permanent_state` on the way.
+    #
+    # So encoding is a **rider on the destination**, the fourth on that slot
+    # beside flashback's exile, buyback's hand and rebound's exile. `encoded_on`
+    # survives the move because it is not battlefield state.
+    source.encoded_on = oids[0]
+    ctx.state.emit(
+        "encoded", player=source.controller, source=ctx.source_oid, oid=oids[0]
+    )
+
+
+@register("cast_copy")
+def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…may cast a copy of the encoded card without paying its mana cost."
+
+    A copy of *this ability's own card*, which is what separates it from
+    `copy_spell`: that op copies something on the stack, and the encoded card is
+    in exile with nothing on the stack to point at. Built through the same
+    `put_copy_on_stack`, so a cipher copy is a token and announces its targets
+    exactly as a storm copy does.
+
+    The original stays in exile -- it is copied, not cast -- which is the whole
+    of why cipher keeps paying.
+    """
+    from ..effects.ops_stack import put_copy_on_stack
+    from ..structs import StackItem
+
+    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if obj is None:
+        return
+    template = StackItem(
+        sid=-1, kind="spell", controller=ctx.controller, def_id=obj.def_id, oid=obj.oid
+    )
+    put_copy_on_stack(ctx.state, ctx.controller, template)
+
+
 @register("haunt")
 def op_haunt(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.55a — "exile it haunting target creature".

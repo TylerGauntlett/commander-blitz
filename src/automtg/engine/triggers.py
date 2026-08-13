@@ -461,6 +461,15 @@ def matches_card_filter(
     ):
         return False
 
+    # "Whenever the creature this card is encoded on deals combat damage…" --
+    # cipher, and the same shape as `haunted_by` one line up: answered off the
+    # ability source, which is the card sitting in exile with the link.
+    encoded_by = filt.get("encoded_by")
+    if encoded_by is not None and (
+        encoded_by != "self" or ability_source.encoded_on != oid
+    ):
+        return False
+
     damaged_by = filt.get("damaged_by")
     if damaged_by is not None:
         who = ability_source.oid if damaged_by == "self" else damaged_by
