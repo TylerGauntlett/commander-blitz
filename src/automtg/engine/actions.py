@@ -67,6 +67,11 @@ class Action:
     #: prices for one spell, they are two different spells with different names,
     #: different type lines and different effects.
     second_face: bool = False
+    #: Cast for the card's **bestow** cost, which makes it an Aura spell with
+    #: enchant creature. Part of the identity like `evoked`, and more so: the
+    #: bestowed line is the only cast variant that carries a *target*, so the
+    #: two lines for one card do not even point at the same things.
+    bestowed: bool = False
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it

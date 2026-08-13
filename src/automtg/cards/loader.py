@@ -301,6 +301,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: a card may not have both 'evoke' and 'emerge'")
     if evoke is not None and evoke.x_count:
         raise DslError(f"{where}: an evoke cost with X is not implemented")
+    # Bestow (702.103a). An alternative cost like evoke, and the two guards it
+    # needs are both about the *type line*: a non-creature with bestow has
+    # nothing to "become a creature again" as, and a card that is already an
+    # Aura would be one twice over -- the second Aura-ness silently doing
+    # nothing while the card looks implemented.
+    bestow = ManaCost.parse(model.bestow) if model.bestow else None
+    if bestow is not None:
+        if "Creature" not in model.types:
+            raise DslError(
+                f"{where}: 'bestow' is only on creature cards (702.103a) -- there is "
+                f"nothing for it to become a creature again as"
+            )
+        if "Aura" in model.subtypes:
+            raise DslError(
+                f"{where}: 'bestow' on a card that is already an Aura -- bestow is "
+                f"what makes it one, and this card would be an Aura twice"
+            )
     reads_evoked = _mentions_condition(model, "evoked")
     if reads_evoked and evoke is None:
         raise DslError(f"{where}: reads the 'evoked' condition but has no 'evoke' cost")
@@ -582,6 +599,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker_label=model.kicker_label,
         kicker=kicker,
         evoke=evoke,
+        bestow=bestow,
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,

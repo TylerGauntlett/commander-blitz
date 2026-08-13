@@ -252,6 +252,8 @@ class Game:
             cost = card.flashback.mana
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
+        elif action.bestowed and card.bestow is not None:
+            cost = card.bestow
         elif action.alternative and card.alternative_cost is not None:
             # Prowl and spectacle. The condition that let this line be offered
             # is not re-checked: legality asked it a moment ago, and a spell
@@ -395,6 +397,7 @@ class Game:
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,
+            bestowed=action.bestowed,
             modes=modes,
         )
         triggers.fire(

@@ -2146,6 +2146,43 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Bestow — the alternative cost that changes what the spell points at
+
+```jsonc
+{ "id": "hopeful_eidolon", "types": ["Creature"], "bestow": "{3}{W}",
+  "abilities": [{ "kind": "static", "effect": "buff",
+                  "affects": { "attached": true },
+                  "power": {"const": 1}, "toughness": {"const": 1} }] }
+```
+
+Bestow is the seventh alternative cost in the engine and the first that is not
+only a price. Evoke, prowl, spectacle, emerge, flashback, foretell and morph all
+change what a spell costs and leave what it targets alone. 702.103a makes a
+bestowed creature "an Aura spell with **enchant creature**", so the target comes
+from the rule — `carddef.BESTOW_TARGET` — and no bestow card writes one.
+
+The permanent is where the interesting half is. While it is attached, `chars`
+drops `Creature`, adds `Enchantment` and the `Aura` subtype, and zeroes the P/T;
+the moment it is not attached, it is the printed creature again. That switch is
+`attached_to`, a field the `attach` primitive writes and no layer can change, so
+it is a pipeline **input** — the same argument `is_attached` made for
+reconfigure, and the reason a conditional type line here cannot come to depend
+on another static's output.
+
+Two things then fall out for free:
+
+- The state-based action that puts an Aura enchanting nothing into the graveyard
+  reads the **printed** card, which is a Creature — so it never sees a bestowed
+  permanent. That is 702.103e ("it becomes a creature again", not "it is put
+  into the graveyard") agreeing with the implementation rather than luck.
+- `_detach_all` already clears `attached_to` on everything attached to a
+  permanent that leaves, so the Spirit turns back into a creature the instant
+  its host dies, with nothing to remember.
+
+Bestow is **not** a second castable face, though the census filed it beside
+adventure. A second face is two spells; bestow is one spell that lands as two
+different permanents.
+
 ## A second castable face — adventure, aftermath and split cards
 
 ```jsonc

@@ -33,6 +33,21 @@ class TargetSpec:
     optional: bool = False
 
 
+#: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the
+#: card: "it's an Aura spell with **enchant creature**". Every other alternative
+#: cost in the engine changes only the price; this is the one place a cast
+#: variant brings its own target list, and the list is the rules' -- which is why
+#: no bestow card writes one and none may.
+#:
+#: It lives here rather than in `legality` beside `MORPH_COST` because both
+#: `legality` and `stack` need it, and `stack` may not import `legality`.
+BESTOW_TARGET = TargetSpec(
+    id="bestow",
+    kind="permanent",
+    selector={"zone": "battlefield", "types": ["Creature"]},
+)
+
+
 @dataclass(frozen=True)
 class Cost:
     """The cost of an activated ability (or an additional cost of a spell)."""
@@ -368,6 +383,10 @@ class CardDef:
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
     evoke: ManaCost | None = None
+    #: **Bestow** (702.103a). An alternative cost like ``evoke``, and the only
+    #: one that changes what the spell *targets*: "enchant creature" is fixed by
+    #: the rule, so `legality.BESTOW_TARGET` supplies it and no card writes one.
+    bestow: ManaCost | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
     #: Prowl and spectacle: an alternative mana cost offered from hand only

@@ -203,6 +203,12 @@ class GameObject:
     #: (712.13a, "enters front face up") and disturb is the one case that must
     #: survive it.
     cast_transformed: bool = False
+    #: Whether this object was cast for its **bestow** cost (702.103a). Beside
+    #: the other `cast_*` flags and, like them, deliberately *not* cleared by
+    #: `reset_permanent_state`: it is what makes the permanent an Aura once it
+    #: has landed, so a flag wiped on the way onto the battlefield would leave
+    #: an ordinary creature attached to something.
+    cast_bestowed: bool = False
     #: Whether this object is currently showing its **second castable face** --
     #: the Adventure half, the Aftermath half, one half of a split card.
     #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so

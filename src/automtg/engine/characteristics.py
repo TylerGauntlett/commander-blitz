@@ -142,6 +142,28 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         if (repaint := obj.copy_overrides.get("colors")) is not None:
             colors = set(repaint)
 
+    # Bestow (702.103b): "it's an Aura spell with enchant creature... it becomes
+    # a creature again if it's not attached to a creature". Applied to the
+    # printed face, before any layer, for `copy_overrides`' reason -- it is part
+    # of what this permanent *is* while it is attached, not an effect on it, so
+    # an anthem or an animate afterwards layers on top exactly as it would on a
+    # printed Aura.
+    #
+    # `attached_to` is a field the `attach` primitive writes and no layer can
+    # change, so switching on it is reading a pipeline **input**, which is the
+    # same argument `is_attached` made for reconfigure. Nothing here can come to
+    # depend on another static's output.
+    #
+    # The condition is the whole keyword: it stops being a creature when it is
+    # attached and starts again the moment it is not, and `_detach_all` clearing
+    # `attached_to` as the enchanted creature leaves is what makes that happen
+    # with nothing to remember.
+    if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+        types.discard("Creature")
+        types.add("Enchantment")
+        subtypes.add("Aura")
+        power = toughness = 0
+
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
 

@@ -6356,6 +6356,37 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_bestower",
+      "name": "Test Bestower",
+      "oracle_text": "Bestow {5}{W} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached to a creature.)\nEnchanted creature gets +2/+2.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "bestow": "{5}{W}",
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        }
+      ]
     }
   ]
 }

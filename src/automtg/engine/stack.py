@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import Ability, CardDef
+from .carddef import BESTOW_TARGET, Ability, CardDef
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
@@ -39,6 +39,7 @@ def push_spell(
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
+    bestowed: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -53,6 +54,10 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    # Bestow (702.103a). Recorded on the object as well as the stack item,
+    # because it outlives the spell: it is what makes the resolved permanent an
+    # Aura, and `chars` asks the object rather than the stack.
+    obj.cast_bestowed = bestowed
     # A second castable face -- an Adventure, an Aftermath half, one half of a
     # split card. Set before `card_of` is asked anything, for the reason
     # disturb's transform below is: everything from here on names the card, and
@@ -85,6 +90,7 @@ def push_spell(
         x=x,
         kicked=kicked,
         evoked=evoked,
+        bestowed=bestowed,
         flashback=flashback,
         overloaded=overloaded,
         spliced=spliced,
@@ -259,8 +265,15 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         return
     card = state.card_of(obj)
 
+    # Bestow (702.103a) is the one cast variant that changes what the spell
+    # targets: the card declares none and the *rule* supplies "enchant
+    # creature". Asked here as well as in legality so the two agree about what
+    # is still legal -- a bestow spell whose creature died in response is
+    # countered on resolution like any Aura spell, which is 608.2b and not a
+    # special case at all.
+    specs = (BESTOW_TARGET,) if item.bestowed else card.targets
     targets, any_legal = filter_legal(
-        state, item.controller, card.targets, item.targets, item.oid
+        state, item.controller, specs, item.targets, item.oid
     )
     if not any_legal:
         state.emit(
@@ -332,7 +345,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.cast_evoked = item.evoked
     obj.cast_overloaded = item.overloaded
     _place_after_resolution(state, obj, card)
-    _attach_aura(state, obj, card, targets)
+    _attach_aura(state, obj, card, targets, specs)
 
 
 def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
@@ -424,7 +437,7 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
         state.emit("adventure", player=controller, source=obj.oid, card=printed.id)
 
 
-def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:
+def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
     """An Aura enters attached to what its spell targeted.
 
     It has to happen *after* the permanent is placed, not during its
@@ -437,9 +450,12 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:
     which is exactly how the card is written: "Enchant creature" is the targeting
     clause of the spell.
     """
-    if not card.is_aura or not obj.on_battlefield:
+    # A **bestowed** creature is an Aura the printed card says nothing about, so
+    # `is_aura` cannot be the whole test: 702.103a makes it one for as long as it
+    # is attached, and the attaching is what this does.
+    if not (card.is_aura or obj.cast_bestowed) or not obj.on_battlefield:
         return
-    for spec in card.targets:
+    for spec in specs:
         for ref in targets.get(spec.id) or []:
             if ref.kind == "object" and ref.id in state.objects:
                 attach(state, obj.oid, ref.id)
