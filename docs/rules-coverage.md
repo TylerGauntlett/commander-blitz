@@ -223,13 +223,25 @@ four enters-the-battlefield forms; the three that *ask* -- dredge, madness,
 miracle -- are implemented separately in `engine/replacements.py`)
 
 **Combat**
-Attacking planeswalkers or battles · banding · manual damage
-division · attacking with creatures you do not control
+Attacking planeswalkers or battles · manual damage division · attacking with
+creatures you do not control.
+
+**Banding** is the one keyword in the census still `refused`, and it is refused
+*because of* the entry beside it. Banding is two rules sharing a word: attacking
+as a band (702.21b), which changes the shape of the attack declaration, and the
+transfer of combat **damage assignment** to the banding creature's controller
+(702.21). The second is the point of the keyword, and there is nothing here to
+transfer — the engine assigns combat damage automatically, ordering blockers by
+effective toughness and paying out lethal in order, and asks nobody. Implementing
+banding therefore means first giving *every* combat a damage-assignment decision,
+which is manual damage division above, and only then handing that decision to the
+other player. Shipping the band declaration alone would be a card that reads
+right and plays wrong, which is the one outcome this document exists to prevent.
 
 **Structural**
 Multiplayer politics (voting) · sideboards and companions · the monarch,
-initiative, day/night and the other designated-player mechanics (the city's
-blessing is implemented; the rest are not)
+initiative and the other designated-player mechanics (the city's blessing and
+**day/night** are implemented; the monarch and the initiative are not)
 
 ## How this is enforced
 
