@@ -248,6 +248,19 @@ class CardModel(BaseModel):
     #: artifact"). An overloaded spell is cast with **no targets**, so every
     #: target the card declares must be `optional`.
     overload: str | None = None
+    #: An **additional cost** paid as the spell is cast from hand -- casualty,
+    #: replicate, and the "as an additional cost, sacrifice an artifact" family.
+    #: A full ``CostModel``, unlike `kicker`, which is mana-only.
+    #:
+    #: ``additional_optional`` makes it "you **may**", and
+    #: ``additional_repeatable`` makes it payable "any number of times"
+    #: (replicate). Legality offers one cast line per number of times paid,
+    #: exactly as convoke offers one per number convoked -- the count changes
+    #: the price and is the player's to choose. How many times it was paid is
+    #: read back with ``{"additional_paid": true}``.
+    additional_cost: CostModel | None = None
+    additional_optional: bool = False
+    additional_repeatable: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's
     #: name for the general thing; "buyback" and "kicker" are two words for it,
     #: and an action reading "(kicked)" on a buyback card is wrong about what

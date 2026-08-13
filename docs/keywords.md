@@ -198,7 +198,7 @@ This is the long tail, and where the build order comes from.
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
 | Buyback | free | `kicker` plus `buyback: true` — the rider returns it to hand instead of the graveyard; `kicker_label` names the cost | `buyback` |
 | Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
-| Casualty | routed | `copy_spell` ships; what is left is an additional cost that sacrifices a creature of a chosen power | — |
+| Casualty | shipped | `additional_cost` with `additional_optional`, then a cast trigger reading `additional_paid` | `additional_cost` |
 | Champion | blocked | exile-and-return tied to the championing permanent leaving | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
 | Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
@@ -286,7 +286,7 @@ This is the long tail, and where the build order comes from.
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
-| Replicate | routed | `copy_spell` ships; what is left is an additional cost paid *any number of times*, which no cost kind repeats | — |
+| Replicate | shipped | `additional_cost` with both modifiers -- one cast line per number of times paid | `additional_cost` |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
 | Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
 | Ripple | blocked | free casts off a library scan, retriggering itself | — |

@@ -328,6 +328,19 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
+        # The non-mana half of an additional cost -- casualty's sacrifice,
+        # Deadly Dispute's artifact. Paid after the mana (rule 601.2g), the same
+        # order emerge's sacrifice and retrace's discard use, so a creature that
+        # tapped for mana can still be the one that is eaten.
+        if action.additional_times and card.additional_cost is not None:
+            for _ in range(action.additional_times):
+                ok = yield from pay(
+                    state, pid, card.additional_cost.without_mana(), oid
+                )
+                if not ok:  # pragma: no cover - legality already proved payability
+                    return
+            obj.cast_additional = action.additional_times
+
         if from_command:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1

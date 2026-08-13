@@ -314,6 +314,30 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'rebound' only means anything on an instant or sorcery -- "
             f"a permanent spell enters the battlefield and never reaches the rider"
         )
+    # An additional cost paid at cast time -- casualty, replicate, Deadly
+    # Dispute. Unlike kicker it is a full `Cost`, and unlike kicker it need not
+    # be read by anything: "sacrifice an artifact" is the whole of Deadly
+    # Dispute's cost and no clause reads it back. So there is no half-a-cost
+    # guard here; what is guarded is the two modifiers, which mean nothing alone.
+    additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    if additional_cost is None and (model.additional_optional or model.additional_repeatable):
+        raise DslError(
+            f"{where}: 'additional_optional' and 'additional_repeatable' need an "
+            f"'additional_cost' to modify"
+        )
+    if model.additional_repeatable and not model.additional_optional:
+        # "Any number of times" includes zero. A mandatory repeatable cost would
+        # be offered from one upwards, which is not a printing and would make
+        # every replicate card unplayable without the extra mana.
+        raise DslError(
+            f"{where}: 'additional_repeatable' needs 'additional_optional' -- "
+            f"\"any number of times\" includes none"
+        )
+    if _mentions_condition(model, "additional_paid") and additional_cost is None:
+        raise DslError(
+            f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
+            f"would always read 0"
+        )
     # Overload is two halves like kicker, and half of it fails the same silent
     # way: a cost nobody reads is a more expensive cast that does the same
     # thing, and an `{"overloaded": true}` clause with no cost can never fire.
@@ -471,6 +495,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         buyback=model.buyback,
         rebound=model.rebound,
         overload=overload,
+        additional_cost=additional_cost,
+        additional_optional=model.additional_optional,
+        additional_repeatable=model.additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
         evoke=evoke,
