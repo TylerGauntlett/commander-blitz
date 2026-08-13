@@ -237,7 +237,7 @@ This is the long tail, and where the build order comes from.
 | Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |
 | Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
 | Flip | refused | flip cards; see rules-coverage.md | — |
-| Forecast | routed | an activated ability from hand that reveals rather than discarding — and so cannot use the cycling guard | — |
+| Forecast | shipped | `active_zones: ["hand"]` plus `activate_steps` and `once_each_turn`, which is the fourth way to satisfy the guard | — |
 | Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |

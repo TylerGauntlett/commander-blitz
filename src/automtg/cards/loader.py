@@ -616,6 +616,14 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
+    if (model.activate_steps or model.once_each_turn) and kind is not AbilityKind.ACTIVATED:
+        # Both are activation restrictions. On a trigger or a static they would
+        # load and be ignored, leaving a card that reads "only once each turn"
+        # and fires every time. Checked before the static branch returns.
+        raise DslError(
+            f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
+            f"so they only mean anything on an activated ability"
+        )
 
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
@@ -664,10 +672,18 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         # takes the card out ("return this card from your graveyard to the
         # battlefield"), so the property the guard is really after is that the
         # source cannot still be sitting there afterwards, however it left.
+        # Forecast is the fourth satisfier and the only one that does not move
+        # the card: "activate only during your upkeep, and only once each turn"
+        # is not an infinite engine because it may be activated once. Both
+        # halves are required -- `once_each_turn` alone would still be a card in
+        # hand with a free ability every turn for the whole game, which is what
+        # forecast's upkeep window is there to price.
+        gated_once = model.once_each_turn and bool(model.activate_steps)
         removes_source = (
             cost.discard_self
             or cost.exile_from_graveyard is not None
             or _effects_move_source(model.effects)
+            or gated_once
         )
         if set(active_zones) - {Zone.BATTLEFIELD} and not removes_source:
             raise DslError(
@@ -766,6 +782,8 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             dict(model.condition) if kind is AbilityKind.ACTIVATED and model.condition else None
         ),
         is_cycling=model.is_cycling,
+        activate_steps=tuple(model.activate_steps),
+        once_each_turn=model.once_each_turn,
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,

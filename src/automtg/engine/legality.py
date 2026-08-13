@@ -857,6 +857,14 @@ def _ability_aims(
         return None
     if ability.sorcery_speed_only and not sorcery_speed:
         return None
+    # Forecast: "activate only during your upkeep, and only once each turn".
+    # Both are checked here rather than at payment, because they are permission
+    # to activate at all (602.5c) -- an ability offered and then refused shows a
+    # row the player can never use.
+    if ability.activate_steps and state.step.name.lower() not in ability.activate_steps:
+        return None
+    if ability.once_each_turn and state.turn_ledger.activations(oid, ability.index):
+        return None
     if ability.activation_condition is not None and not _activation_allowed(
         state, pid, oid, ability
     ):

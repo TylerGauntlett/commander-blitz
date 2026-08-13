@@ -2567,13 +2567,27 @@ remove its source from that zone. Without that it is an infinite engine — a ca
 in hand whose ability costs only mana could be activated forever without ever
 leaving.
 
-Three things satisfy it, and the third arrived with **unearth**:
+Four things satisfy it, and the last two arrived with **unearth** and
+**forecast**:
 
 | | |
 |---|---|
 | `discard_self` on the cost | cycling |
 | `exile_from_graveyard` on the cost | embalm |
 | an **unconditional top-level effect** moving `self_only` out | unearth — "return this card from your graveyard to the battlefield" |
+| `activate_steps` **and** `once_each_turn` together | forecast — "activate only during your upkeep and only once each turn" |
+
+Forecast is the one that never moves the card at all, and it is safe because it
+may be activated once. Both halves are required: `once_each_turn` alone is still
+a free ability every turn for the whole game, which is exactly what forecast's
+upkeep window prices. `activate_steps` is checked where `sorcery_speed_only` is,
+since both are permission to activate at all (602.5c), and "**your** upkeep" is
+the ordinary `condition: {"is_your_turn": true}` beside it — the two are
+separable and one card prints only the timing half.
+
+`once_each_turn` counts **activations**, not resolutions. `resolutions_this_turn`
+already existed and is the wrong number: an ability whose first activation was
+countered has still had its go, and counting resolutions would hand it back.
 
 Unearth pays plain mana, so neither cost form could say it. The guard was right
 about the property and too narrow about how to reach it: what matters is that
