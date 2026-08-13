@@ -316,6 +316,15 @@ class CardModel(BaseModel):
     #: what the spell **targets**: the "enchant creature" is fixed by the rule,
     #: not by the card, so no bestow card writes a target of its own.
     bestow: str | None = None
+    #: **Mutate {1}{G}** (702.140a): "If you cast this spell for its mutate cost,
+    #: put it over or under target non-Human creature you own. They mutate into
+    #: the creature on top plus all abilities from under it."
+    #:
+    #: An alternative cost like ``bestow``, with a target the rule supplies
+    #: rather than the card. What makes it different from every other keyword is
+    #: what it *lands* as: not a permanent of its own, but a **pile** merged
+    #: into one that already exists.
+    mutate: str | None = None
     #: "Evoke {2}{U}" -- an *alternative* cost that replaces the printed one
     #: while casting from hand.  Subtractive where kicker is additive, and the
     #: printed mana value is unchanged: a Mulldrifter evoked is still a

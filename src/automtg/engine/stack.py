@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import BESTOW_TARGET, Ability, CardDef
+from .carddef import BESTOW_TARGET, MUTATE_TARGET, Ability, CardDef
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
@@ -40,6 +40,7 @@ def push_spell(
     face_down: bool = False,
     second_face: bool = False,
     bestowed: bool = False,
+    mutated: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -91,6 +92,7 @@ def push_spell(
         kicked=kicked,
         evoked=evoked,
         bestowed=bestowed,
+        mutated=mutated,
         flashback=flashback,
         overloaded=overloaded,
         spliced=spliced,
@@ -271,7 +273,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # is still legal -- a bestow spell whose creature died in response is
     # countered on resolution like any Aura spell, which is 608.2b and not a
     # special case at all.
-    specs = (BESTOW_TARGET,) if item.bestowed else card.targets
+    specs = card.targets
+    if item.bestowed:
+        specs = (BESTOW_TARGET,)
+    elif item.mutated:
+        specs = (MUTATE_TARGET,)
     targets, any_legal = filter_legal(
         state, item.controller, specs, item.targets, item.oid
     )
@@ -344,8 +350,56 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.cast_kicked = item.kicked
     obj.cast_evoked = item.evoked
     obj.cast_overloaded = item.overloaded
+    # Mutate (702.140b): the spell does not become a permanent of its own, so
+    # it never reaches `_place_after_resolution` -- it is merged into the one it
+    # targeted instead, and which way round is the caster's choice.
+    if item.mutated:
+        yield from _merge_mutation(state, item, targets)
+        return
     _place_after_resolution(state, obj, card)
     _attach_aura(state, obj, card, targets, specs)
+
+
+def _merge_mutation(
+    state: GameState, item: StackItem, targets
+) -> Generator[Any, list[int], None]:
+    """Put a mutating creature over or under the permanent it targeted.
+
+    "Over or under" is the caster's, and it is asked *here* rather than as the
+    spell is cast because 702.140b puts it at resolution -- and because a choice
+    made at cast time would be a choice made before anyone could respond to the
+    spell, which is a different card.
+
+    The host is re-read from the filtered targets rather than from the action:
+    `filter_legal` has already run above, so a spell whose creature is gone has
+    fizzled and never reaches here.
+    """
+    from .effects.context import EffectContext, ask_yes_no
+    from .primitives import merge_permanents
+
+    host_oid = next(
+        (
+            ref.id
+            for ref in targets.get(MUTATE_TARGET.id) or []
+            if ref.kind == "object" and ref.id in state.objects
+        ),
+        None,
+    )
+    if host_oid is None:  # pragma: no cover - filter_legal proved one is there
+        return
+    obj = state.objects[item.oid]
+    ctx = EffectContext(
+        state=state,
+        controller=item.controller,
+        source_oid=item.oid,
+        source_name=state.card_of(obj).name,
+    )
+    on_top = yield from ask_yes_no(
+        ctx,
+        f"Put {state.card_of(obj).name} on top of {state.card(host_oid).name}?",
+        item.controller,
+    )
+    merge_permanents(state, host_oid, item.oid, on_top=on_top)
 
 
 def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:

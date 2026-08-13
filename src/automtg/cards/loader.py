@@ -318,6 +318,20 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'bestow' on a card that is already an Aura -- bestow is "
                 f"what makes it one, and this card would be an Aura twice"
             )
+    # Mutate (702.140a). A creature card, for bestow's reason and one more: the
+    # merged permanent *is* the top card, so a non-creature on top would make a
+    # creature stop being one -- which is a different keyword.
+    mutate = ManaCost.parse(model.mutate) if model.mutate else None
+    if mutate is not None and "Creature" not in model.types:
+        raise DslError(
+            f"{where}: 'mutate' is only on creature cards (702.140a) -- the merged "
+            f"permanent is the card on top, and this one is not a creature"
+        )
+    if mutate is not None and bestow is not None:
+        # Both are alternative costs that land somewhere other than the
+        # battlefield on their own, and no printing has both. Offered together
+        # they would be two lines whose targets mean different things.
+        raise DslError(f"{where}: a card may not have both 'bestow' and 'mutate'")
     reads_evoked = _mentions_condition(model, "evoked")
     if reads_evoked and evoke is None:
         raise DslError(f"{where}: reads the 'evoked' condition but has no 'evoke' cost")
@@ -600,6 +614,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker=kicker,
         evoke=evoke,
         bestow=bestow,
+        mutate=mutate,
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
         retrace=model.retrace,

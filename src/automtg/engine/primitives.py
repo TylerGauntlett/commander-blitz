@@ -589,6 +589,54 @@ def grant_ability(state: GameState, oid: int, ability_index: int, source: int) -
     state.bump_chars()
 
 
+def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: bool) -> None:
+    """Mutate: put one card over or under a permanent, making them one.
+
+    702.140b -- "they mutate into the creature on top plus all abilities from
+    under it" -- is implemented as a **synthesised `CardDef`** written onto the
+    host, because `card_of` is the single place derived card identity is
+    decided. Building the union once here means legality, triggers, `chars`, the
+    stack's ability lookup and the serializer all see one ability list with one
+    set of indices, and not one of them needed changing.
+
+    It composes: mutating onto an already-mutated pile reads `card_of(host)`,
+    which is the previous union, so a third card adds to it rather than
+    replacing it.
+
+    Nothing else about the permanent moves. Counters, damage, auras, tapped
+    status and summoning sickness all stay, which is 702.140c and is also simply
+    what happens when the object is never touched.
+
+    The merged card goes to `Zone.BATTLEFIELD` and into **no zone list** -- the
+    same place a card on the stack lives -- so nothing that walks the
+    battlefield sees it twice.
+    """
+    import dataclasses
+
+    host = state.objects.get(host_oid)
+    newcomer = state.objects.get(card_oid)
+    if host is None or newcomer is None:
+        return
+    arriving = state.card_of(newcomer)
+    standing = state.card_of(host)
+    top, under = (arriving, standing) if on_top else (standing, arriving)
+    host.merged_card = dataclasses.replace(
+        top, abilities=tuple(top.abilities) + tuple(under.abilities)
+    )
+    host.merged_under = (*host.merged_under, card_oid)
+    newcomer.zone = Zone.BATTLEFIELD
+    newcomer.merged_into = host_oid
+    newcomer.stack_id = None
+    state.bump_chars()
+    state.emit(
+        "mutated",
+        player=host.controller,
+        source=host_oid,
+        oid=host_oid,
+        card=host.merged_card.id,
+    )
+
+
 def granted_abilities(state: GameState, oid: int):
     """Every ability currently granted to this object, as ``(source, ability)``.
 

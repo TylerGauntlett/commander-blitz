@@ -203,6 +203,23 @@ class GameObject:
     #: (712.13a, "enters front face up") and disturb is the one case that must
     #: survive it.
     cast_transformed: bool = False
+    #: **Mutate** (702.140a): the synthesised card this merged permanent *is* --
+    #: the card on top, carrying the abilities of everything under it.
+    #:
+    #: A whole ``CardDef`` rather than a pair of ids, because `card_of` is the
+    #: single place derived card identity is decided and every reader already
+    #: goes through it. Building the union once, here, means legality, triggers,
+    #: `chars` and the serializer all see one ability list with one set of
+    #: indices, and none of them needed changing.
+    merged_card: Any = None
+    #: The oids of the cards **underneath** this permanent. They stay in
+    #: ``state.objects`` and in no zone list -- the same place a card on the
+    #: stack lives -- so nothing that walks the battlefield sees them, and
+    #: `zones.move_object` sends the whole pile wherever the permanent goes.
+    merged_under: tuple[int, ...] = ()
+    #: Set on a card that is *part of* another permanent: the oid of the pile it
+    #: was merged into. The back-link, so a card in limbo can say why.
+    merged_into: int | None = None
     #: Whether this object was cast for its **bestow** cost (702.103a). Beside
     #: the other `cast_*` flags and, like them, deliberately *not* cleared by
     #: `reset_permanent_state`: it is what makes the permanent an Aura once it
@@ -346,6 +363,11 @@ class GameObject:
         self.chosen_type = None
         self.added_subtypes = ()
         self.transformed = False
+        # A permanent that left the battlefield is no longer a pile: the cards
+        # under it were sent along by `move_object` before this ran.
+        self.merged_card = None
+        self.merged_under = ()
+        self.merged_into = None
         # The creature came back off its adventure and is on the battlefield;
         # there is nothing left in exile for anyone to cast.
         self.on_adventure = False

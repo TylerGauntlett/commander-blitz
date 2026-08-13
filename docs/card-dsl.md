@@ -2146,6 +2146,50 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Mutate — two cards, one permanent, and one synthesised `CardDef`
+
+```jsonc
+{ "id": "gemrazer", "types": ["Creature"], "mutate": "{1}{G}", ... }
+```
+
+The census called mutate the one genuine subsystem it had left: *"a
+`GameObject` is one card, and every choke point the other reversals leaned on —
+`card_of`, `chars`, `zones.move_object` — assumes exactly that."*
+
+The first half is true and the conclusion is backwards. **Because** `card_of` is
+a single choke point, a merged permanent can be one `CardDef` synthesised at
+merge time — the card on top, carrying the abilities of everything under it —
+and every reader gets the union with no changes at all:
+
+| reader | asks for | gets |
+|---|---|---|
+| `chars` | name, types, P/T, colours | the **top** card's |
+| `legality._activate_actions` | `card.abilities[i]` | the union, in one index space |
+| `triggers.fire` | the same list | the same list |
+| `stack.ability_of` | the same list | the same list |
+| the serializer | `card_of(obj).id` | the top card |
+
+The subsystem the census feared is the *other* implementation — a list of cards
+per permanent, and every one of those readers taught to walk it.
+
+It composes: mutating onto an already-mutated pile reads `card_of(host)`, which
+is the previous union, so a third card adds to it rather than replacing it.
+
+The pile itself is the one genuinely new thing. The cards underneath stay in
+`state.objects` and in **no zone list** — which is exactly where a card on the
+stack already lives — so nothing walking the battlefield ever sees them twice.
+`zones.move_object`, the single zone-change path, sends the whole pile wherever
+the permanent goes, reading `merged_under` *before* `reset_permanent_state`
+clears it, which is the snapshot `had_counters` already needed for persist.
+
+Nothing else about the permanent moves. Counters, damage, auras, tapped status
+and summoning sickness all stay, which is 702.140c and is also simply what
+happens when the object is never touched.
+
+**"Over or under" is asked at resolution**, not as the spell is cast. 702.140b
+puts it there, and a choice made at cast time would be one made before anybody
+could respond to the spell — which is a different card.
+
 ## Bestow — the alternative cost that changes what the spell points at
 
 ```jsonc

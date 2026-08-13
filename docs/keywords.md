@@ -269,7 +269,7 @@ This is the long tail, and where the build order comes from.
 | Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
 | Morph / megamorph | shipped | a face-down cast line at a fixed `{3}`, and `morph` / `morph_counter` for turning up | `morph` |
-| Mutate | blocked | stacked permanents with merged abilities | — |
+| Mutate | shipped | an alternative cost with `MUTATE_TARGET`, and a **synthesised `CardDef`** written onto the host at `card_of` — the top card carrying the abilities of everything under it | `mutate` |
 | Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
@@ -369,26 +369,35 @@ above it.
 
 ### What is genuinely left
 
-**One blocked row.** Every one-off is done, and so is the second-castable-face mechanism the census grouped four keywords under — adventure and aftermath ship on it and took split cards with them, while bestow turned out not to belong to it at all.
+**Nothing.** The `blocked` column is empty.
 
-| keyword | what it needs |
-|---|---|
-| **Mutate** | two permanents merged into one, with the abilities of both and one set of characteristics. The only genuine subsystem left in the census: a `GameObject` is one card, and every choke point the other reversals leaned on — `card_of`, `chars`, `zones.move_object` — assumes exactly that |
+Every one of the twenty-five rows that started there has shipped, and the
+pattern held to the last one: **`blocked` was a routing error, not a size
+estimate.** The final four were the cluster the census called "a second castable
+face", and it was three different problems wearing one name:
 
-The census grouped mutate and bestow with adventure and aftermath under "a
-second castable face", and that grouping was wrong in the way `blocked` usually
-was. Adventure and aftermath *are* one mechanism, and a small one, because
-`back_face` had already built two `CardDef`s over one `GameObject`. Bestow is
-not that mechanism: it is one spell that lands as two different permanents, so
-it is `chars` rather than `card_of`, and it shipped as an alternative cost with
-a type change switched on `attached_to`. Mutate is the only one of the four that
-is really about two things being one.
+| keyword | what the census said | what it was |
+|---|---|---|
+| adventure, aftermath | one cluster, needing the authoring pipeline | one cluster, needing `card_of` — which `back_face` had already built |
+| bestow | the same cluster | not a second *spell* at all: one spell landing as two different permanents, so `chars` rather than `card_of` |
+| mutate | "the only genuine subsystem left" | one `CardDef` **synthesised at merge time**, precisely *because* `card_of` is a single choke point |
 
-Hideaway was likewise listed as waiting on *two* clusters and needed neither
-whole. "Face down in exile" is `revealed_to`, which foretell had already
-shipped — the 2/2 shell is only needed on the **battlefield**, where somebody
-can point at it. What was actually missing was the second half,
-play-from-exile, and that is one op reading back the `exiled_by` link.
+Mutate is the sharpest version of the finding. The census's argument was "a
+`GameObject` is one card, and every choke point the other reversals leaned on
+assumes that" — and the first half is true while the conclusion is backwards. A
+merged permanent is one `CardDef`: the card on top, carrying the abilities of
+everything under it, built once and stored on the object. `chars`, legality,
+triggers, the stack's ability lookup and the serializer all read it through
+`card_of` and none of them changed. The subsystem the census feared was the
+*alternative* implementation — a list of cards per permanent, and every reader
+taught to walk it.
+
+What remains genuinely open is the **authoring pipeline**, not the engine: it
+emits one card entry per answer file, so a two-faced card is two hand-written
+entries linked by id, the way `bloodline_keeper` / `lord_of_lineage` already
+are. That is the `split-cards-fuse` gap record, and **fuse** itself is a
+different shape again — one spell made of two faces, where `card_of` answers
+with exactly one.
 
 ### The five refused
 
@@ -405,15 +414,13 @@ reclassified here.
 
 ## Suggested build order
 
-1. **Mutate**, and only after deciding whether merged permanents belong in the
-   engine at all — [rules-coverage.md](rules-coverage.md) is where that argument
-   goes, not here.
+There is no engine work left in this census. The next thing worth building is
+the **authoring pipeline's** two-entries-from-one-answer, which is what
+`split-cards-fuse` is really asking for, and after that **fuse** — the one
+printed shape `card_of` cannot answer, because it is a single spell made of two
+faces at once.
 
-The second-face keywords also still need the *authoring pipeline* to emit two
-card entries from one answer file, which the shipped cards work around by being
-hand-written — the same way `bloodline_keeper` / `lord_of_lineage` are.
-
-Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a
+Cross-check [unsupported-cards.md](unsupported-cards.md) first: where a
 capability already has gap records, those cards are the real specification.
 `/extend-dsl` rule 1 still applies: **one capability per run.**
 

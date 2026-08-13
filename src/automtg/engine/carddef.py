@@ -48,6 +48,23 @@ BESTOW_TARGET = TargetSpec(
 )
 
 
+#: What a **mutating** spell targets, fixed by rule 702.140a: "target non-Human
+#: creature you own". Tokens are excluded because a merged permanent is a *pile
+#: of cards* and a token is not one -- there would be nothing to put underneath
+#: and nothing to come back when the pile is broken up.
+MUTATE_TARGET = TargetSpec(
+    id="mutate",
+    kind="permanent",
+    selector={
+        "zone": "battlefield",
+        "controller": "you",
+        "types": ["Creature"],
+        "not_subtypes": ["Human"],
+        "is_token": False,
+    },
+)
+
+
 @dataclass(frozen=True)
 class Cost:
     """The cost of an activated ability (or an additional cost of a spell)."""
@@ -387,6 +404,9 @@ class CardDef:
     #: one that changes what the spell *targets*: "enchant creature" is fixed by
     #: the rule, so `legality.BESTOW_TARGET` supplies it and no card writes one.
     bestow: ManaCost | None = None
+    #: **Mutate** (702.140a). An alternative cost like ``bestow``, and like it
+    #: the target comes from `MUTATE_TARGET` rather than from the card.
+    mutate: ManaCost | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
     #: Prowl and spectacle: an alternative mana cost offered from hand only

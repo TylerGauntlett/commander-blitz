@@ -72,6 +72,11 @@ class Action:
     #: bestowed line is the only cast variant that carries a *target*, so the
     #: two lines for one card do not even point at the same things.
     bestowed: bool = False
+    #: Cast for the card's **mutate** cost. Part of the identity like `bestowed`,
+    #: and it carries a target for the same reason: the mutating line names the
+    #: permanent the card is merging with, and the ordinary creature line names
+    #: nothing.
+    mutated: bool = False
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it
