@@ -2,6 +2,32 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_join_forces",
+      "name": "Test Shared Draw",
+      "oracle_text": "Join forces — Starting with you, each player may pay any amount of mana. Draw a card for each mana paid this way.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "join_forces",
+          "as": "joined",
+          "pay": {
+            "mana": "{1}"
+          },
+          "prompt": "Pay {1} into the shared pool?"
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "binding": "joined"
+          }
+        }
+      ]
+    },
+    {
       "id": "t_advocate_of_the_beast",
       "name": "Advocate of the Beast",
       "mana_cost": "{2}{G}",
