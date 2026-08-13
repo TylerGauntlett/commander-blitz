@@ -262,13 +262,13 @@ This is the long tail, and where the build order comes from.
 | Level up | free | a level counter, plus `set_pt` / `grant_keyword` statics whose `condition` is an `all` of two `counters` comparisons -- a band | `set_pt` |
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
 | Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
-| Manifest | blocked | face-down creatures | — |
+| Manifest | shipped | the `manifest` op, plus the face-down shell in `chars` and the turn-face-up activation | `manifest` |
 | Meld | refused | melding; see rules-coverage.md | — |
 | Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
 | Miracle | shipped | the `miracle` card field, read off `cards_drawn_this_turn` *before* the draw bumps it | `miracle` |
 | Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
-| Morph / megamorph | blocked | face-down creatures | — |
+| Morph / megamorph | shipped | a face-down cast line at a fixed `{3}`, and `morph` / `morph_counter` for turning up | `morph` |
 | Mutate | blocked | stacked permanents with merged abilities | — |
 | Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |

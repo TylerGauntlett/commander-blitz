@@ -186,6 +186,12 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     seen: set[int] = set()
 
     def emit_from(obj: GameObject, zone: Zone):
+        if obj.face_down and zone is Zone.BATTLEFIELD:
+            # A face-down permanent has no abilities (707.2), so the hidden
+            # card's triggers do not listen. Checked here rather than at each
+            # trigger, because this is the one place that walks a card's
+            # abilities on behalf of an object.
+            return
         card = state.card_of(obj)
         for ability in card.abilities:
             if not ability.is_triggered or ability.trigger is None:

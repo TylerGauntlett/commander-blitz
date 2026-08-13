@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
-from .carddef import CardDef
+from .carddef import CardDef, Cost
 from .characteristics import chars
 from .costs import (
     can_pay,
@@ -435,6 +435,14 @@ def _cast_options(
                 state, pid, oid, card, tuples, extra_generic=extra_generic,
                 additional_times=times,
             )
+    # Morph: "you may cast this card face down as a 2/2 creature for {3}"
+    # (702.37a). A cast variant with **no targets** -- a face-down spell is a
+    # nameless 2/2 with no text, so there is nothing on it to target with -- and
+    # the {3} is fixed by the rule rather than by the card.
+    if card.morph is not None and state.objects[oid].zone is Zone.HAND:
+        out += _cast_variant(
+            state, pid, oid, card, [()], extra_generic=extra_generic, face_down=True
+        )
     # Overload. A third variant, and the only one that changes what the spell
     # *points at* rather than what it costs: an overloaded spell is cast with no
     # targets at all (702.96a replaces every "target" with "each"), so it is
@@ -505,6 +513,10 @@ def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> 
         return 1
     return MAX_ADDITIONAL_TIMES
 
+
+#: What casting a creature face down costs, fixed by rule 702.37a rather than by
+#: the card. The card names only the price of turning it back up.
+MORPH_COST = ManaCost.parse("{3}")
 
 #: How many creatures a convoke line may tap, or cards a delve line may exile.
 #: Capped for the reason `_emerge_fodder` is capped: every one is a separate
@@ -580,6 +592,7 @@ def _cast_variant(
     overloaded: bool = False,
     additional_times: int = 0,
     foretold: bool = False,
+    face_down: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -596,6 +609,8 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif face_down:
+        cost = MORPH_COST
     elif foretold and card.foretell is not None:
         cost = card.foretell
     elif overloaded and card.overload is not None:
@@ -662,6 +677,8 @@ def _cast_variant(
         label_base += " (overloaded)"
     if foretold:
         label_base += " (foretold)"
+    if face_down:
+        label_base = "Cast a face-down creature"
     if additional_times:
         label_base += f" (+{additional_times} additional)"
     if pay_generic:
@@ -690,6 +707,7 @@ def _cast_variant(
                 overloaded=overloaded,
                 additional_times=additional_times,
                 foretold=foretold,
+                face_down=face_down,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,
@@ -810,6 +828,14 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         whose = obj.controller if zone is Zone.BATTLEFIELD else obj.owner
         if whose != pid:
             continue
+        if obj.face_down and zone is Zone.BATTLEFIELD:
+            # A face-down permanent has **no abilities** (707.2), so the hidden
+            # card's are not offered. What it does have is exactly one thing:
+            # turning face up, which is why that reuses `ability_index` 0 rather
+            # than needing an `ActionKind` of its own -- and so the RL action
+            # space is unchanged.
+            out.extend(_turn_face_up_actions(state, pid, obj))
+            continue
         card = state.card_of(obj)
         # Resolved at most once per object, and only for an object that actually
         # has a suppressed tap-only mana ability to decide about -- so a board of
@@ -885,6 +911,45 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                         )
                     )
     return out
+
+
+def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
+    """The one thing a face-down permanent can do (707.9a, 701.34c).
+
+    Two prices, and which one applies is *how the permanent got there*: a card
+    cast face down for morph turns up for its **morph cost**, and a manifested
+    creature card turns up for its **printed mana cost**. A manifested
+    non-creature card can never be turned up at all, which is the whole reason
+    manifest is not simply morph for free.
+
+    A special action in the rules: no stack, nothing to respond to. Here it is
+    an ordinary activation, because the engine's activations already resolve
+    without asking anything when they cost only mana -- and modelling it as its
+    own `ActionKind` would change the RL action space for one row.
+    """
+    from .costs import can_pay
+
+    card = state.card_of(obj)
+    if card.morph is not None:
+        cost = card.morph
+        label = f"Turn {card.name} face up (morph)"
+    elif card.is_creature:
+        cost = card.mana_cost
+        label = f"Turn {card.name} face up"
+    else:
+        # 701.34c: only a creature card may be turned face up this way.
+        return []
+    if not can_pay(state, pid, Cost(mana=cost), obj.oid):
+        return []
+    return [
+        Action(
+            kind=ActionKind.ACTIVATE,
+            source=obj.oid,
+            ability_index=0,
+            label=label,
+            base_label=label,
+        )
+    ]
 
 
 def _ability_aims(

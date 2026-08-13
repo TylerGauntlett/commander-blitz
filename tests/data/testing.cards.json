@@ -2,6 +2,42 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_manifester",
+      "name": "Test Manifesting Rite",
+      "oracle_text": "Manifest the top card of your library.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "manifest",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_morpher",
+      "name": "Test Morphing Beast",
+      "oracle_text": "Flying\nMorph {2}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "mana_cost": "{4}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "keywords": [
+        "flying"
+      ],
+      "morph": "{2}{G}"
+    },
+    {
       "id": "t_plain_instant",
       "name": "Test Plain Rite",
       "oracle_text": "You gain 1 life.",

@@ -421,6 +421,39 @@ def op_pair(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.state.emit("paired", player=source.controller, source=source.oid, oid=partner.oid)
 
 
+@register("manifest")
+def op_manifest(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.34a — "put the top card of your library onto the battlefield
+    face down as a 2/2 creature".
+
+    Manifest and morph are one mechanism seen from two sides: manifest puts a
+    card there face down, morph *casts* one that way, and both produce the same
+    2/2 shell that may be turned up later. Which is why the turn-face-up action
+    is not morph's -- it is the face-down permanent's, and manifest's cards use
+    the hidden card's own mana cost where morph's use the printed morph cost.
+
+    Any card may be manifested, including a land: it is a 2/2 creature while it
+    is face down whatever it really is, and only a *creature* card may be turned
+    up (701.34c), which is checked where the action is offered.
+    """
+    amount = max(1, evaluate_value(ctx, spec.get("amount", 1)))
+    for pid in _players(ctx, spec.get("player", "you")):
+        library = ctx.state.players[pid].library
+        for _ in range(amount):
+            if not library:
+                break
+            oid = library[0]
+            obj = ctx.state.objects[oid]
+            obj.controller = pid
+            move_object(ctx.state, oid, Zone.BATTLEFIELD, cause="manifest")
+            # After the move: `reset_permanent_state` clears it on the way in,
+            # which is right for every other permanent and wrong for this one.
+            obj.face_down = True
+            obj.revealed_to.add(pid)
+            ctx.state.bump_chars()
+            ctx.state.emit("manifested", player=pid, source=oid)
+
+
 @register("encode")
 def op_encode(ctx: EffectContext, spec: Mapping[str, Any]):
     """Cipher — "exile this spell card encoded on a creature you control".

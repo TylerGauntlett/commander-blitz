@@ -113,6 +113,9 @@ class StackItem:
     #: run after the host's, in the order they were spliced on -- which is what
     #: "add this card's effects to that spell" means, and why they are recorded
     #: here rather than executed at cast time.
+    #: Cast face down for {3} -- morph. Read on resolution, where the permanent
+    #: is marked before it enters.
+    face_down: bool = False
     spliced: tuple[str, ...] = ()
     #: Values captured when the ability triggered (e.g. the land that was played).
     bindings: dict[str, Any] = field(default_factory=dict)

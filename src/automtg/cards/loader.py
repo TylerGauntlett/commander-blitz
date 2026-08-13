@@ -351,6 +351,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
+    if model.morph_counter and model.morph is None:
+        raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
+    if model.morph is not None and "Creature" not in model.types:
+        # 702.37a: only a creature card may be cast face down, because what it
+        # becomes is a 2/2 *creature*. A non-creature carrying it would be
+        # castable face down and unable to turn up into anything.
+        raise DslError(f"{where}: 'morph' is only on creature cards")
     if model.splice is not None and model.targets:
         # A spliced card's effects run inside the *host* spell's context, so a
         # target id written here would either be missing or -- worse -- collide
@@ -541,6 +548,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
         epic=model.epic,
+        morph=ManaCost.parse(model.morph) if model.morph else None,
+        morph_counter=model.morph_counter,
         splice=ManaCost.parse(model.splice) if model.splice else None,
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,

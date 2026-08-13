@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>76 ops"]
+    ctx --> ops["op registry<br/>77 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-76 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+77 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2146,6 +2146,48 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Face-down permanents — morph, megamorph and manifest
+
+```jsonc
+"morph": "{2}{G}"            // and "morph_counter": true for megamorph
+{ "op": "manifest", "player": "you", "amount": { "const": 1 } }
+```
+
+The census called this a subsystem, and it is — but a small one, because the
+engine already had the two things that make it hard elsewhere: `card_of` is a
+single choke point (built for `transform`), and `chars` is the single place
+derived characteristics are decided.
+
+A face-down permanent is `chars` returning a **2/2 colourless creature with
+nothing else**, *before* any layer, while `card_of` goes on answering with the
+real card — which is exactly what turning it face up needs in order to find it
+again.
+
+Morph and manifest are one mechanism from two sides:
+
+| | morph | manifest |
+|---|---|---|
+| how it arrives | **cast** face down for `{3}`, fixed by 702.37a | put there off the library |
+| price to turn up | the printed **morph cost** | the hidden card's own mana cost |
+| a non-creature card | cannot carry morph at all (load error) | can be manifested, and can never be turned up (701.34c) |
+
+**Turning face up reuses `ActionKind.ACTIVATE` with `ability_index` 0**, and
+that is not a shortcut: a face-down permanent has no abilities (707.2), so index
+0 is free — and a new `ActionKind` would change the RL action space for one row.
+It has to be routed in `_dispatch_priority` *before* anything indexes into the
+hidden card's ability list, which is usually empty.
+
+Three things are suppressed while a permanent is face down, in three places, and
+each would otherwise leak the hidden card: its abilities are not offered
+(`legality`), its triggers do not listen (`triggers`), and its characteristics
+are not computed (`chars`).
+
+*Divergences*: anthems and counters do not apply to a face-down permanent,
+because the shell is *returned* rather than layered over — a real face-down
+creature is still affected by both. And "any time you have priority" is here an
+ordinary activation rather than a special action, which is observable only to
+something that could respond to it, and nothing can.
+
 ## Cipher — the third direction an exile link can point
 
 ```jsonc
@@ -2906,6 +2948,7 @@ them where it is sitting:
 "foretell": "{R}"                           // pay {2} to exile it; cast it later for this
 "epic": true                                // no more spells; a free copy each upkeep
 "splice": "{1}{W}", "splice_onto": "Arcane" // add this card's effects to another spell
+"morph": "{2}{G}", "morph_counter": false  // cast it face down for {3}; turn up for this
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
