@@ -6387,6 +6387,93 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_mutator",
+      "name": "Test Mutator",
+      "oracle_text": "Mutate {1}{G} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nWhenever this creature mutates, draw a card.",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elk"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "trample"
+      ],
+      "mutate": "{1}{G}",
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G}: This creature gets +1/+1 until end of turn.",
+          "cost": {
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_mutant_host",
+      "name": "Test Mutant Host",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: You gain 1 life.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_human",
+      "name": "Test Human",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2
     }
   ]
 }

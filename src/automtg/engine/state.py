@@ -155,6 +155,13 @@ class GameState:
         the serializer -- goes through here, so a transformed permanent shows
         its back face everywhere at once and none of them needed changing.
         """
+        # Mutate (702.140b): a merged permanent **is** the card on top, plus the
+        # abilities of everything under it. Asked first and answered outright,
+        # because it is not a face of the printed card at all -- it is a card
+        # synthesised at merge time, and the printed `def_id` is only one of the
+        # several cards in the pile.
+        if obj.merged_card is not None:
+            return obj.merged_card
         card = self.registry.get(obj.def_id)
         # A second castable face -- adventure, aftermath, a split half -- is
         # asked first, because it is the face the card is *currently being cast

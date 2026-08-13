@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
-from .carddef import BESTOW_TARGET, CardDef, Cost
+from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
 from .characteristics import chars
 from .costs import (
     can_pay,
@@ -486,6 +486,18 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, bestow_tuples, extra_generic=extra_generic, bestowed=True
         )
+    # Mutate (702.140a): bestow's shape again -- an alternative cost whose
+    # target the *rule* supplies. "Target non-Human creature you own" is
+    # `MUTATE_TARGET`, and a card with no legal one is simply not offered the
+    # line, which is why the ordinary creature cast above is enumerated first
+    # and separately.
+    if card.mutate is not None and state.objects[oid].zone is Zone.HAND:
+        mutate_tuples = enumerate_target_tuples(
+            state, pid, (MUTATE_TARGET,), oid, exclude_sid=exclude_sid
+        )
+        out += _cast_variant(
+            state, pid, oid, card, mutate_tuples, extra_generic=extra_generic, mutated=True
+        )
     # Prowl and spectacle: the same alternative-cost shape, offered only while
     # its condition holds. Checked here rather than at payment because the
     # condition is *permission to cast this way at all* -- offering the line and
@@ -673,6 +685,7 @@ def _cast_variant(
     face_down: bool = False,
     second_face: bool = False,
     bestowed: bool = False,
+    mutated: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -691,6 +704,8 @@ def _cast_variant(
         cost = card.evoke
     elif bestowed and card.bestow is not None:
         cost = card.bestow
+    elif mutated and card.mutate is not None:
+        cost = card.mutate
     elif face_down:
         cost = MORPH_COST
     elif foretold and card.foretell is not None:
@@ -755,6 +770,8 @@ def _cast_variant(
         label_base += f" ({card.evoke_label})"
     if bestowed:
         label_base += " (bestowed)"
+    if mutated:
+        label_base += " (mutating)"
     if alternative:
         label_base += " (alternative cost)"
     if overloaded:
@@ -794,6 +811,7 @@ def _cast_variant(
                 face_down=face_down,
                 second_face=second_face,
                 bestowed=bestowed,
+                mutated=mutated,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

@@ -106,6 +106,10 @@ class StackItem:
     #: the printed card declares none, and "enchant creature" comes from the
     #: rule rather than from the card.
     bestowed: bool = False
+    #: Cast for its **mutate** cost. Read on resolution both for the target list
+    #: (`MUTATE_TARGET`) and because such a spell does not become a permanent of
+    #: its own -- it merges into the one it targeted.
+    mutated: bool = False
     #: Cast from a graveyard for its flashback cost. Read on
     #: resolution both by the `cast_from_graveyard` condition and by
     #: the once-only rider that exiles the card instead of

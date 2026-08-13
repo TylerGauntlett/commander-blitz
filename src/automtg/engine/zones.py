@@ -83,6 +83,12 @@ def move_object(
     # every creature for ever.
     had_counters = dict(obj.counters) if was_on_battlefield else {}
 
+    # Mutate: the pile goes where the permanent goes (702.140f). Read *before*
+    # anything else, because `reset_permanent_state` below clears the list a
+    # moment later -- the same snapshot `had_counters` needs and for the same
+    # reason.
+    merged = tuple(obj.merged_under) if was_on_battlefield else ()
+
     _remove_from_zone(state, obj)
 
     if was_on_battlefield:
@@ -94,6 +100,24 @@ def move_object(
 
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top)
     state.bump_chars()
+
+    # The cards that were underneath follow, each to its own owner's copy of the
+    # zone. They were in no zone list while merged, so this is the first move
+    # any of them has made since resolving -- and it goes through this same
+    # function, so each fires its own zone-change event and each ends up
+    # somewhere a card can legally be.
+    for merged_oid in merged:
+        merged_obj = state.objects.get(merged_oid)
+        if merged_obj is None:
+            continue
+        merged_obj.merged_into = None
+        # Straight to the destination rather than recursing through the
+        # battlefield: a card under a pile was never *on* the battlefield in the
+        # sense that matters here, so it has no leaves-the-battlefield trigger
+        # of its own to fire.
+        merged_obj.zone = to_zone
+        merged_obj.reset_permanent_state()
+        _add_to_zone(state, merged_obj, to_zone, merged_obj.owner, to_top=to_top)
 
     state.emit(
         EventType.ZONE_CHANGE,

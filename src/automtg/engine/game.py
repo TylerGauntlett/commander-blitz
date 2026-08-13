@@ -254,6 +254,8 @@ class Game:
             cost = card.evoke
         elif action.bestowed and card.bestow is not None:
             cost = card.bestow
+        elif action.mutated and card.mutate is not None:
+            cost = card.mutate
         elif action.alternative and card.alternative_cost is not None:
             # Prowl and spectacle. The condition that let this line be offered
             # is not re-checked: legality asked it a moment ago, and a spell
@@ -398,6 +400,7 @@ class Game:
             face_down=action.face_down,
             second_face=action.second_face,
             bestowed=action.bestowed,
+            mutated=action.mutated,
             modes=modes,
         )
         triggers.fire(

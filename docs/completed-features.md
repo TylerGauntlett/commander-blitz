@@ -1,3 +1,80 @@
+## Mutate — the subsystem that was a single choke point all along
+
+### Overview
+
+The census listed twenty-five `blocked` keywords and mutate was the last one
+standing. Its entry read:
+
+> the only genuine subsystem left: a `GameObject` is one card, and every choke
+> point the other reversals leaned on — `card_of`, `chars`,
+> `zones.move_object` — assumes exactly that.
+
+The premise is true. The conclusion is backwards, and inverting it is the whole
+implementation.
+
+### One `CardDef`, synthesised once
+
+**Because** `card_of` is a single choke point, a merged permanent can *be* one
+`CardDef` — the card on top, with `abilities` set to the top's followed by
+everything under it — built at merge time and written onto the object. Every
+reader in the engine then gets the union for free:
+
+| reader | asks for | gets |
+|---|---|---|
+| `chars` | name, types, P/T, colours | the **top** card's |
+| `legality._activate_actions` | `card.abilities[i]` | the union, in one index space |
+| `triggers.fire` | the same list | the same list |
+| `stack.ability_of` | the same list | the same list |
+| the serializer | `card_of(obj).id` | the top card |
+
+Not one of those five changed. The subsystem the census was afraid of is the
+*other* implementation — a list of cards per permanent, and each of those
+readers taught to walk it and to invent an index space across it.
+
+It composes, which is the test that it is the right shape: mutating onto an
+already-merged pile reads `card_of(host)`, which is the previous union, so a
+third card adds to it rather than replacing it.
+
+### The pile is the genuinely new part
+
+The cards underneath stay in `state.objects` and in **no zone list**. That is
+not an invention — it is exactly where a card on the stack already lives — so
+nothing that walks `state.battlefield` sees them twice, and no state-based
+action, targeting selector or characteristics pass needed a special case.
+
+`zones.move_object`, the single zone-change path, sends the whole pile wherever
+the permanent goes. It reads `merged_under` **before** `reset_permanent_state`
+clears it, which is the same snapshot-before-the-wipe that `had_counters` needed
+for persist and undying.
+
+### What needed no code
+
+Counters, damage, auras, equipment, tapped status and summoning sickness all
+survive a mutation. That is rule 702.140c, and it is also simply what happens
+when the object is never touched: the host `GameObject` is the same object
+before and after, and only its `merged_card` changed.
+
+### Two timing decisions
+
+- **"Over or under" is asked at resolution**, not as the spell is cast. 702.140b
+  puts it there, and a choice made at cast time would be one made before anybody
+  could respond to the spell — a different card.
+- The target is `MUTATE_TARGET`, supplied by the rule the way `BESTOW_TARGET`
+  is. It excludes tokens: a merged permanent is a pile of *cards*, and a token
+  would have nothing to come back as when the pile breaks up.
+
+### The census is empty
+
+Twenty-five `blocked` rows, none left, and the finding held to the last one:
+**`blocked` was a routing error rather than a size estimate.** Wither and infect
+belonged at `damage_permanent`; regeneration and totem armor at `zones.destroy`;
+dredge, madness and miracle needed a call-graph change rather than the
+replacement whitelist; cascade and ripple only wanted a library scan; foretell
+*is* suspend; champion and imprint are one exile link read from each end; level
+up is `set_pt` plus a band; hideaway needed a permission, not a face-down
+subsystem; bestow is `chars`, not `card_of`; and mutate is `card_of` being a
+single choke point rather than an obstacle.
+
 ## Bestow — one spell, two permanents, and the wrong cluster
 
 ### Overview
