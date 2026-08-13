@@ -298,6 +298,35 @@ def op_regenerate(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("haunt")
+def op_haunt(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 702.55a — "exile it haunting target creature".
+
+    Two things at once, which is why it is one op: the source is exiled, and
+    the exiled card is linked to the creature it haunts. `exile` cannot do the
+    second half, because `exiled_by` points at the **exiler** -- the O-Ring
+    direction, where the link is read back by the *exiler's* own trigger.
+
+    Haunt needs the opposite. The card in exile is what survives, and it is what
+    has to notice a creature dying somewhere else, so the link points from the
+    haunting card at its victim and is read by a `haunted_by: "self"` trigger
+    filter.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Haunt", "haunt")
+    if not oids or ctx.source_oid is None:
+        return
+    source = ctx.state.objects.get(ctx.source_oid)
+    if source is None:
+        return
+    exile(ctx.state, ctx.source_oid, cause="haunt")
+    # After the move: `reset_permanent_state` runs on the way out and would wipe
+    # this if it were set first -- the same ordering `exiled_by` needs.
+    source.haunting = oids[0]
+    ctx.state.emit(
+        "haunt", player=source.controller, source=ctx.source_oid, oid=oids[0]
+    )
+
+
 @register("unattach")
 def op_unattach(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 701.3d — "Unattach this permanent." Reconfigure's second half.

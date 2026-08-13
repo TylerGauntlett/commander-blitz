@@ -2,6 +2,77 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_haunter",
+      "name": "Test Haunting Spirit",
+      "oracle_text": "When this creature dies, exile it haunting target creature.\nWhen the creature this card haunts dies, you gain 3 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, exile it haunting target creature.",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "controller": "any"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "haunt",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When the creature this card haunts dies, you gain 3 life.",
+          "active_zones": [
+            "exile"
+          ],
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "any",
+            "filter": {
+              "controller": "any",
+              "haunted_by": "self"
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_rippler",
       "name": "Test Rippling Bolt",
       "oracle_text": "Ripple 4 (When you cast this spell, you may reveal the top four cards of your library. You may cast any revealed cards with the same name as this spell without paying their mana costs. Put the rest on the bottom of your library in a random order.)\nYou gain 1 life.",

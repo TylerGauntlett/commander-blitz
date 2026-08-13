@@ -451,6 +451,16 @@ def matches_card_filter(
     # answered from the per-turn ledger on the state rather than from the card
     # face -- and it has to be, because the subject has already died and
     # anything stored on it is gone.
+    # "When the creature this card haunts dies…" -- the mirror of the clause
+    # below, and answered off the *ability source* rather than off the subject:
+    # the haunted creature has just died and carries no record of who was
+    # haunting it, while the haunting card is sitting in exile with the link.
+    haunted_by = filt.get("haunted_by")
+    if haunted_by is not None and (
+        haunted_by != "self" or ability_source.haunting != oid
+    ):
+        return False
+
     damaged_by = filt.get("damaged_by")
     if damaged_by is not None:
         who = ability_source.oid if damaged_by == "self" else damaged_by
