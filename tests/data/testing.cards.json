@@ -4065,6 +4065,70 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_explorer",
+      "name": "Test Branchwalker",
+      "oracle_text": "When this creature enters, it explores.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, it explores.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "explore",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_explore_target",
+      "name": "Test Exploration",
+      "oracle_text": "Target creature you control explores.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "explore",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }

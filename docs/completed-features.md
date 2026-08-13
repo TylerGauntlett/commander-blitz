@@ -1,3 +1,43 @@
+## Explore — the branch that names a card the condition language cannot
+
+### Overview
+
+The census filed explore as "`reveal` and `add_counters` exist; needs the
+revealed card routed by type", which is the right diagnosis and understates why
+routing it is a new op rather than an arrangement of old ones.
+
+Every other conditional in the DSL is an `if` over the condition language, and
+that language addresses objects through selectors, bindings and targets. The
+card explore has to ask about exists in none of those: it is the top card of a
+library, chosen by position, and it has to be tested *after* being revealed and
+*before* going anywhere. `snapshot` cannot reach it either — it binds what a
+selector already found, and the selector that would find it (`{"zone":
+"library"}`) has no notion of "the first one".
+
+So the nearest expressible spelling is `{"exists": {"zone": "library", "types":
+["Land"]}}`: **is there a land anywhere in my deck**. In a deck that plays
+Merfolk Branchwalker that is true essentially always, so the card would take the
+land branch every time and draw instead of growing. It loads, it resolves, it
+looks correct on the board, and it is a different card.
+
+### `objects` is required, and that is the whole guard
+
+Half the printed explore cards are sorceries. A defaulted `{"self_only": true}`
+resolves to the ability's source, which for a sorcery is the spell on the stack
+— not a permanent, so nothing is revealed and no counter is placed. The default
+would have been tested on Merfolk Branchwalker, where it is correct, and would
+have failed silently on the first instant or sorcery written with it. Requiring
+the key costs three words on the creature cards and removes the trap.
+
+### What fell out for free
+
+Both of the other rule-text details needed no argument, only not being smoothed
+over. Each permanent in the pool explores **separately**, because the loop walks
+the library once per permanent rather than once — two exploring creatures reveal
+two cards. And only the non-land branch asks a question, because 701.40a puts
+the choice after "otherwise"; a yes/no on the land branch would let a player
+decline a free card.
+
 ## Cards leaving the battlefield — an exit animation, and a reason
 
 ### Overview
