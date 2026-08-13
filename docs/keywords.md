@@ -197,7 +197,7 @@ This is the long tail, and where the build order comes from.
 | Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
 | Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
 | Buyback | free | `kicker` plus `buyback: true` — the rider returns it to hand instead of the graveyard; `kicker_label` names the cost | `buyback` |
-| Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
+| Cascade | shipped | the `cascade` op -- the scan was the missing half; `suspend.cast_for_free` was already the other | `cascade` |
 | Casualty | shipped | `additional_cost` with `additional_optional`, then a cast trigger reading `additional_paid` | `additional_cost` |
 | Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
@@ -289,7 +289,7 @@ This is the long tail, and where the build order comes from.
 | Replicate | shipped | `additional_cost` with both modifiers -- one cast line per number of times paid | `additional_cost` |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
 | Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
-| Ripple | blocked | free casts off a library scan, retriggering itself | — |
+| Ripple | shipped | the `ripple` op -- cascade's shape at a fixed depth, matched on the source's own name | `ripple` |
 | Scavenge | free | activated from the graveyard with an exile cost, then `add_counters` | — |
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |
 | Shroud | shipped | `Keyword`, read by `targeting.can_be_targeted` only — stops the controller too | `shroud` |

@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>68 ops"]
+    ctx --> ops["op registry<br/>70 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-68 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+70 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -2520,6 +2520,42 @@ each permanent in the pool explores **separately**, so two exploring creatures
 reveal two cards; and the land half asks **nothing**, because 701.40a offers the
 choice only on the "otherwise" branch and a yes/no there would let a player
 decline a free card.
+
+## Cascade and ripple — walking a library
+
+```jsonc
+// "When you cast this spell…" -- an ordinary cast trigger.
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ { "op": "cascade" } ] }
+
+{ "op": "ripple", "amount": { "const": 4 } }
+```
+
+The free cast was already there — `suspend.cast_for_free` — and the **scan** was
+not. Every other way the DSL reaches a library either takes the top N
+(`look_at_top`) or searches the whole of it (`search_library`); cascade does
+neither, walking down until a condition is met at a depth the card cannot know.
+
+`max_mana_value` defaults to **this spell's own** mana value, read off the
+source rather than written into the card, because a cascade spell's own cost is
+the number.
+
+"Put the rest on the bottom in a random order" is shared, and it is deliberately
+**not** a shuffle: shuffling reorders the whole library and would destroy a
+stacked top somebody else set up. It also goes through `move_object` rather than
+editing the list, because half of those cards are in exile and half never left —
+an object whose `zone` and whose containing list disagree is a card every other
+reader in the engine sees differently.
+
+**Haste is not shared.** It belongs to suspend, and a cascaded creature that
+could attack immediately would be a strictly better card, so `cast_for_free`
+grew an opt-in rather than granting it to everything that casts for nothing.
+
+Ripple is not cascade with a parameter: "the same name as this spell" is a
+comparison against the *source*, which no selector key names. `name` takes a
+literal written into the card — true for ripple, and wrong the moment anything
+copies it.
 
 ## Connive
 
