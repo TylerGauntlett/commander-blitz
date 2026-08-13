@@ -2573,6 +2573,7 @@ them where it is sitting:
 "graveyard_cast": "exile"                   // …and where it goes afterwards
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
+"rebound": true                             // exile it as it resolves, cast it free next upkeep
 ```
 
 #### Casting from the graveyard
@@ -2604,6 +2605,32 @@ means exactly `graveyard_cost`. A card giving both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+#### Rebound
+
+```jsonc
+"rebound": true
+```
+
+Two halves, both nearly there. The **exile** is the third rider on where a
+resolving spell goes, beside flashback's exile and buyback's hand — and like
+both it only ever replaces the *graveyard*, which is why `rebound` on a
+permanent card is a load error: a permanent enters the battlefield and never
+reaches the rider, so the card would look implemented and never rebound once.
+
+The **free cast** is suspend's, word for word, and shares `cast_for_free`.
+
+What is new is one clause, and it is the loop guard: **"if you cast this spell
+from your hand"**. The free cast happens from *exile*, so without it a rebounded
+spell rebounds again every upkeep for the rest of the game. It takes two things
+to close — `cast_from_hand`, recorded by `push_spell` because that is the last
+moment the zone is knowable, and clearing the mark *before* the free cast, since
+that cast is itself a cast and would otherwise re-arm the card as it resolved.
+
+*Divergences, shared with suspend*: the free cast is mandatory rather than "you
+**may** cast", and its targets are the first legal tuple rather than a choice.
+Both because the upkeep tick runs from the turn structure, which cannot stop to
+ask.
 
 ### Ascend
 

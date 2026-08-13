@@ -46,6 +46,9 @@ def push_spell(
     source_list = state.players[obj.owner].zone_list(obj.zone)
     if oid in source_list:
         source_list.remove(oid)
+    # Rebound reads this on resolution, and this is the only moment it is
+    # knowable: by then the card is on the stack and every spell looks alike.
+    obj.cast_from_hand = obj.zone is Zone.HAND
     obj.zone = Zone.STACK
     obj.controller = controller
 
@@ -299,7 +302,23 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     # still enters the battlefield.
     if card.buyback and obj.cast_kicked and destination is Zone.GRAVEYARD:
         destination = Zone.HAND
+    # Rebound (702.87a): "If you cast this spell from your hand, exile it as it
+    # resolves." The third rider on the same slot, and like the other two it only
+    # ever replaces the *graveyard*.
+    #
+    # "From your hand" is the loop guard, not flavour: the free cast at the next
+    # upkeep happens from **exile**, so without the clause the card would rebound
+    # again every upkeep for the rest of the game.
+    rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
+    if rebounds:
+        destination = Zone.EXILE
+    controller = obj.controller
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+    if rebounds:
+        # After the move: `move_object` runs `reset_permanent_state` on the way,
+        # which would wipe this if it were set first -- the same ordering
+        # `exiled_by` needs.
+        obj.rebound_by = controller
 
 
 def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:

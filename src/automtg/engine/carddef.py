@@ -318,6 +318,12 @@ class CardDef:
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False
+    #: **Rebound** (702.87a). The third rider on the destination a resolving
+    #: spell goes to, beside flashback's exile and buyback's hand, and like both
+    #: it only ever replaces the *graveyard*. The free cast at the next upkeep
+    #: is `suspend.rebound_tick`, which shares `cast_for_free` with suspend
+    #: because it is the same sentence.
+    rebound: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".
     kicker_label: str = "kicked"
     #: "Kicker {1}{U}" -- an additional cost the caster may choose to pay.  It is

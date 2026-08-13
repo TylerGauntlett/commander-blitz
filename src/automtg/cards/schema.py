@@ -227,6 +227,14 @@ class CardModel(BaseModel):
     #: with a rider -- and this is the rider. Set it and the card's kicker
     #: becomes a buyback cost.
     buyback: bool = False
+    #: **Rebound** (702.87a): "If you cast this spell from your hand, exile it as
+    #: it resolves. At the beginning of your next upkeep, you may cast this card
+    #: from exile without paying its mana cost."
+    #:
+    #: The third rider on the same slot as flashback's exile and buyback's hand,
+    #: and like both it only ever replaces the *graveyard*. "From your hand" is
+    #: the loop guard rather than flavour: the free cast happens from exile.
+    rebound: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's
     #: name for the general thing; "buyback" and "kicker" are two words for it,
     #: and an action reading "(kicked)" on a buyback card is wrong about what

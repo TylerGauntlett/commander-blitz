@@ -282,7 +282,7 @@ This is the long tail, and where the build order comes from.
 | Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
 | Prowl | routed | `alternative_cost` ships; prowl's own condition is narrower than the ledger keeps — "damage by a creature that **shares a type** with it" | — |
 | Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
-| Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
+| Rebound | shipped | card-level field: the exile rider on resolution, then suspend's free cast at your next upkeep | `rebound` |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
