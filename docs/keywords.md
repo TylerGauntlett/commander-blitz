@@ -245,7 +245,7 @@ This is the long tail, and where the build order comes from.
 | Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
 | Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
-| Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |
+| Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
 | Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
