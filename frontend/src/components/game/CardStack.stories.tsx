@@ -97,7 +97,22 @@ export const FansOnHover: Story = {
   },
 };
 
-/** A pile of tapped lands, which is what a spent turn looks like. */
+/**
+ * A pile of tapped lands, which is what a spent turn looks like.
+ *
+ * And the one tier that can state where a tapped card's *box* is. The rims --
+ * playable, targetable, staged, attacking -- are `.card::after` on the outer
+ * box, so "the border surrounds the card" is exactly the claim that the outer
+ * box and the rotated face share their four edges.
+ *
+ * It has to be asserted *here* rather than in `Card.stories.Tapped`, because the
+ * two mount the card into different formatting contexts and only this one is the
+ * board's. A card in `.lane__cards` is a flex item, which is a formatting
+ * context root; a card in `.cardstack__slot` is an ordinary block child, and a
+ * margin on its first child collapses out into it. The re-centre used to be a
+ * negative `margin-top`, so it landed in the story and not on the board: the
+ * whole card box, rim and all, sat a fifth of a card above the face.
+ */
 export const AllTapped: Story = {
   args: {
     group: (() => {
@@ -106,6 +121,25 @@ export const AllTapped: Story = {
       );
       return stackCards(cards)[0];
     })(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findAllByText("Forest");
+    const card = canvasElement.querySelector(".card--tapped") as HTMLElement;
+    const pivot = card.querySelector(".card__pivot") as HTMLElement;
+
+    // Waited for: Motion writes the rotation on its first frame rather than
+    // during render, so a synchronous read here measures an upright card.
+    await waitFor(() => {
+      const outer = card.getBoundingClientRect();
+      const face = pivot.getBoundingClientRect();
+      for (const edge of ["top", "bottom", "left", "right"] as const) {
+        expect(
+          Math.abs(outer[edge] - face[edge]),
+          `the rim's ${edge} edge is not on the tapped card's ${edge} edge`,
+        ).toBeLessThan(1);
+      }
+    });
   },
 };
 
