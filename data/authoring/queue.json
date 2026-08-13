@@ -28512,12 +28512,12 @@
     },
     "Bloodghast": {
       "edhrec_rank": 1045,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodghast",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "97d42d32-c9c8-4def-a48b-0590ea572e33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodgift Demon": {
@@ -40022,12 +40022,12 @@
     },
     "Carrion Feeder": {
       "edhrec_rank": 606,
-      "gate": "template",
+      "gate": null,
       "name": "Carrion Feeder",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "c0e175cb-ffea-473f-8422-53273f263016",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carrion Grub": {
@@ -47842,12 +47842,12 @@
     },
     "Cliffhaven Vampire": {
       "edhrec_rank": 4934,
-      "gate": "template",
+      "gate": null,
       "name": "Cliffhaven Vampire",
-      "reason": "no template for: Whenever you gain life, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "5544247d-1f8f-443f-a4c4-d8461db28a79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cliffrunner Behemoth": {
@@ -53062,12 +53062,12 @@
     },
     "Cordial Vampire": {
       "edhrec_rank": 1840,
-      "gate": "template",
+      "gate": null,
       "name": "Cordial Vampire",
-      "reason": "no template for: Whenever this creature or another creature dies, put a +1/+1 counter on each Vampire you c",
+      "reason": "",
       "scryfall_id": "0d91e61d-e3bf-4ddc-9f01-18b1abe35a61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Core Prowler": {
@@ -60752,12 +60752,12 @@
     },
     "Dark Ritual": {
       "edhrec_rank": 34,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Ritual",
-      "reason": "no template for: Add {B}{B}{B}",
+      "reason": "",
       "scryfall_id": "227f249f-a1da-4db0-a1a5-34378375fa8e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Salvation": {
@@ -89922,12 +89922,12 @@
     },
     "Falkenrath Pit Fighter": {
       "edhrec_rank": 9649,
-      "gate": "template",
+      "gate": null,
       "name": "Falkenrath Pit Fighter",
-      "reason": "no template for: {1}{R}, Discard a card, Sacrifice a Vampire: Draw two cards. Activate only if an opponent ",
+      "reason": "",
       "scryfall_id": "da9d87ed-a1c2-48a7-995e-b462a87dad6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Falkenrath Reaver": {
@@ -92232,12 +92232,12 @@
     },
     "Feed the Swarm": {
       "edhrec_rank": 89,
-      "gate": "template",
+      "gate": null,
       "name": "Feed the Swarm",
-      "reason": "no template for: Destroy target creature or enchantment an opponent controls. You lose life equal to that p",
+      "reason": "",
       "scryfall_id": "a041cfe3-a02d-41e2-aea3-76bc2bacc10e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feedback": {
@@ -93452,12 +93452,12 @@
     },
     "Fetid Heath": {
       "edhrec_rank": 340,
-      "gate": "template",
+      "gate": null,
       "name": "Fetid Heath",
-      "reason": "no template for: {W/B}, {T}: Add {W}{W}, {W}{B}, or {B}{B}",
+      "reason": "",
       "scryfall_id": "f465ded8-0d38-42ac-bafc-a12185013c5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fetid Horror": {
@@ -126802,12 +126802,12 @@
     },
     "High-Society Hunter": {
       "edhrec_rank": 4459,
-      "gate": "template",
+      "gate": null,
       "name": "High-Society Hunter",
-      "reason": "no template for: Whenever this creature attacks, you may sacrifice another creature. If you do, put a +1/+1",
+      "reason": "",
       "scryfall_id": "51da4a4b-ea12-4169-a7cf-eb4427f13e84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "High-Speed Hoverbike": {
@@ -157002,12 +157002,12 @@
     },
     "Lightning Bolt": {
       "edhrec_rank": 160,
-      "gate": "template",
+      "gate": null,
       "name": "Lightning Bolt",
-      "reason": "no template for: deals 3 damage to any target",
+      "reason": "",
       "scryfall_id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lightning Cloud": {
@@ -165782,12 +165782,12 @@
     },
     "Marauding Blight-Priest": {
       "edhrec_rank": 1112,
-      "gate": "template",
+      "gate": null,
       "name": "Marauding Blight-Priest",
-      "reason": "no template for: Whenever you gain life, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "5f70dafc-c638-4ec0-ab5b-62998f752720",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marauding Boneslasher": {
@@ -190682,12 +190682,12 @@
     },
     "Olivia's Wrath": {
       "edhrec_rank": 2797,
-      "gate": "template",
+      "gate": null,
       "name": "Olivia's Wrath",
-      "reason": "no template for: Each non-Vampire creature gets -X/-X until end of turn, where X is the number of Vampires ",
+      "reason": "",
       "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Olivia, Crimson Bride": {
@@ -193482,12 +193482,12 @@
     },
     "Orzhov Basilica": {
       "edhrec_rank": 398,
-      "gate": "template",
+      "gate": null,
       "name": "Orzhov Basilica",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "cc8f8ede-9620-4f7f-8326-a75031ef6ec1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orzhov Charm": {
@@ -197352,12 +197352,12 @@
     },
     "Patron of the Vein": {
       "edhrec_rank": 3448,
-      "gate": "template",
+      "gate": null,
       "name": "Patron of the Vein",
-      "reason": "no template for: When this creature enters, destroy target creature an opponent controls",
+      "reason": "",
       "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Patron of the Wild": {
@@ -299312,12 +299312,12 @@
     },
     "Vault of the Archangel": {
       "edhrec_rank": 457,
-      "gate": "template",
+      "gate": null,
       "name": "Vault of the Archangel",
-      "reason": "no template for: {2}{W}{B}, {T}: Creatures you control gain deathtouch and lifelink until end of turn",
+      "reason": "",
       "scryfall_id": "3fb781da-2b8b-44c6-999f-5038e79a7d57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vaultborn Tyrant": {
@@ -299792,12 +299792,12 @@
     },
     "Vein Ripper": {
       "edhrec_rank": 2624,
-      "gate": "template",
+      "gate": null,
       "name": "Vein Ripper",
-      "reason": "no template for: Ward—Sacrifice a creature",
+      "reason": "",
       "scryfall_id": "078933b3-6d82-45f2-94e8-addf54cf1704",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Veinfire Borderpost": {

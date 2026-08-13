@@ -232,6 +232,13 @@
   "blood_crypt": {
     "zone": "battlefield"
   },
+  "bloodghast": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {
@@ -313,6 +320,13 @@
   "carnelian_orb_of_dragonkind": {
     "zone": "battlefield"
   },
+  "carrion_feeder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "carven_caryatid": {
     "hand_size": {
       "0": 1
@@ -348,6 +362,13 @@
     "zone": "battlefield"
   },
   "claim_jumper": {
+    "zone": "battlefield"
+  },
+  "cliffhaven_vampire": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "cloak_of_the_bat": {
@@ -407,6 +428,10 @@
   "coral_atoll": {
     "zone": "battlefield"
   },
+  "cordial_vampire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },
@@ -423,6 +448,15 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "dark_ritual": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "graveyard"
   },
   "darkmoss_bridge": {
     "zone": "battlefield"
@@ -599,6 +633,13 @@
   "faerie_seer": {
     "zone": "battlefield"
   },
+  "falkenrath_pit_fighter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "fang_of_shigeki": {
     "zone": "battlefield"
   },
@@ -606,10 +647,26 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "feed_the_swarm": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "ferrous_lake": {
     "zone": "battlefield"
   },
   "festering_thicket": {
+    "zone": "battlefield"
+  },
+  "fetid_heath": {
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "fetid_pools": {
@@ -891,6 +948,10 @@
       ]
     }
   },
+  "high_society_hunter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "highborn_ghoul": {
     "zone": "battlefield"
   },
@@ -1106,6 +1167,13 @@
       "graveyard"
     ]
   },
+  "lightning_bolt": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "lightning_greaves": {
     "zone": "battlefield"
   },
@@ -1179,6 +1247,13 @@
     "zone": "battlefield"
   },
   "maraleaf_pixie": {
+    "zone": "battlefield"
+  },
+  "marauding_blight_priest": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "marble_diamond": {
@@ -1357,6 +1432,15 @@
     },
     "zone": "battlefield"
   },
+  "olivia_s_wrath": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "graveyard"
+  },
   "omen_hawker": {
     "zone": "battlefield"
   },
@@ -1376,6 +1460,13 @@
     "zone": "battlefield"
   },
   "ornithopter_of_paradise": {
+    "zone": "battlefield"
+  },
+  "orzhov_basilica": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "orzhov_guildgate": {
@@ -1414,6 +1505,15 @@
     "zone": "graveyard"
   },
   "palladium_myr": {
+    "zone": "battlefield"
+  },
+  "patron_of_the_vein": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "peel_from_reality": {
@@ -2238,10 +2338,21 @@
     },
     "zone": "battlefield"
   },
+  "vault_of_the_archangel": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "vault_of_whispers": {
     "zone": "battlefield"
   },
   "vector_imperial_capital": {
+    "zone": "battlefield"
+  },
+  "vein_ripper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "venomous_changeling": {

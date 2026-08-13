@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "fetid_heath",
+    "name": "Fetid Heath",
+    "oracle_text": "{T}: Add {C}.\n{W/B}, {T}: Add {W}{W}, {W}{B}, or {B}{B}.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{W/B}, {T}: Add {W}{W}, {W}{B}, or {B}{B}.",
+        "is_mana_ability": true,
+        "cost": {
+          "mana": "{W/B}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "{W}{W}",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}{W}"
+                  }
+                ]
+              },
+              {
+                "label": "{W}{B}",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}{B}"
+                  }
+                ]
+              },
+              {
+                "label": "{B}{B}",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}{B}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

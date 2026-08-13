@@ -1,0 +1,22 @@
+{
+  "card_id": "sundown_pass",
+  "name": "Sundown Pass",
+  "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {R} or {W}.",
+  "blocked_sentences": [
+    "This land enters tapped unless you control two or more other lands."
+  ],
+  "needs": [
+    {
+      "capability": "conditional-enters-tapped",
+      "kind": "replacement",
+      "what": "a `condition` field on the `self_enters_tapped` replacement, evaluated as the permanent enters, so the permanent enters untapped when it holds. The three printed shapes across this cycle are: a subtype test over permanents you control (\"a Mountain or a Plains\"), a count of other lands you control (\"two or more other lands\"), and a count of basic lands you control (\"two or more basic lands\") -- so the condition must reach a filtered count over your battlefield, with `other` excluding the entering permanent itself.",
+      "why_existing_wont_do": "`ReplacementModel` (cards/schema.py) has only `event`, `modify`, `counter` and `amount` -- there is no condition field -- and `zones._enter_battlefield` applies `self_enters_tapped` unconditionally. `proxy._enters_tapped` therefore emits the note \"enters tapped unconditionally; the printed condition is not modelled\" and the card is a strict downgrade of the printed one. `evaluate_condition` in engine/effects/conditions.py is the standalone evaluator this needs and already exists; nothing calls it from the ETB path."
+    }
+  ],
+  "closest_existing": [
+    "self_enters_tapped",
+    "evaluate_condition",
+    "static condition"
+  ],
+  "confidence": "high"
+}

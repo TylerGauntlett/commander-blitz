@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "patron_of_the_vein",
+    "name": "Patron of the Vein",
+    "oracle_text": "Flying\nWhen this creature enters, destroy target creature an opponent controls.\nWhenever a creature an opponent controls dies, exile it and put a +1/+1 counter on each Vampire you control.",
+    "mana_cost": "{4}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Shaman"],
+    "power": 4,
+    "toughness": 4,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, destroy target creature an opponent controls.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]},
+            "count": 1
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature an opponent controls dies, exile it and put a +1/+1 counter on each Vampire you control.",
+        "trigger": {"event": "creature_dies", "controller": "opponent"},
+        "effects": [
+          {"op": "exile", "objects": {"binding": "subject"}},
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": ["Vampire"],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "counters": {"kind": "+1/+1", "amount": 1}
+  }
+}

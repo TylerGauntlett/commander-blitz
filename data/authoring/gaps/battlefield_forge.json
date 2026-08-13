@@ -1,0 +1,29 @@
+{
+  "card_id": "battlefield_forge",
+  "name": "Battlefield Forge",
+  "oracle_text": "{T}: Add {C}.\n{T}: Add {R} or {W}. This land deals 1 damage to you.",
+  "blocked_sentences": [
+    "{T}: Add {R} or {W}. This land deals 1 damage to you."
+  ],
+  "needs": [
+    {
+      "capability": "mana-ability-rider",
+      "kind": "engine",
+      "what": "let a mana ability carry one non-mana rider effect that resolves alongside the mana -- i.e. an ability with `is_mana_ability: true` whose `effects` are a `choose_mode` of `add_mana` modes (or a plain `add_mana`) followed by a further effect such as `damage`, `lose_life` or `add_counters`. `_mana_options`/`_sum_mana` must keep deriving the produced-mana tuples from the `add_mana` part alone and ignore the rider, while activation during cost payment still applies the rider without using the stack",
+      "why_existing_wont_do": "`_sum_mana` in cards/loader.py rejects any effect that is not `add_mana` (\"mana abilities may only contain 'add_mana' (or a single 'choose_mode' of them)\"), so the `damage` op cannot sit in this ability at all. Dropping `is_mana_ability` to smuggle the damage in is the approximation that makes the card wrong, not merely incomplete: a non-mana ability uses the stack and is not offerable inside cost payment, so the land could never be tapped to help cast a spell -- the only thing it is played for."
+    },
+    {
+      "capability": "mana-ability-rider",
+      "kind": "cost",
+      "what": "alternatively, a cost entry that deals damage to the ability's controller from the source permanent (distinct from `pay_life`), if the rider is to be modelled as part of the activation cost rather than the resolution",
+      "why_existing_wont_do": "`cost_keys` has `pay_life`, which is life payment rather than damage -- it is not dealt by a source, so it is unaffected by damage prevention, redirection, lifelink or `dealt_damage` triggers, and it also moves the loss from resolution to activation. Substituting it would make the card quietly do something the printed text does not say."
+    }
+  ],
+  "closest_existing": [
+    "add_mana",
+    "choose_mode",
+    "pay_life",
+    "damage"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,29 @@
+{
+  "card_id": "herald_s_horn",
+  "name": "Herald's Horn",
+  "oracle_text": "As this artifact enters, choose a creature type.\nCreature spells you cast of the chosen type cost {1} less to cast.\nAt the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand.",
+  "blocked_sentences": [
+    "Creature spells you cast of the chosen type cost {1} less to cast.",
+    "At the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand."
+  ],
+  "needs": [
+    {
+      "capability": "chosen-type",
+      "kind": "static_effect",
+      "what": "`spell_cost_reduction`'s `affects_spells` filter must accept `{\"chosen_type_of\": \"self\"}` in its `subtypes` list, so a cost reduction can be scoped to the type the source permanent named as it entered",
+      "why_existing_wont_do": "`choose_type` already stores the choice on the permanent and `characteristics.resolve_chosen_subtypes` already substitutes it, but only on the two paths that get handed the source permanent: static `affects` (via `characteristics._matches`) and trigger filters (via `triggers`). `spell_cost_reduction` prices a card still in hand through `characteristics._matches_printed(card, filt)`, which takes no source object at all and so has nothing to read `chosen_type` off; the literal dict then reaches `set(subtypes)` and is unhashable. A literal subtype list cannot stand in either, because the type is not known until the artifact enters."
+    },
+    {
+      "capability": "chosen-type",
+      "kind": "selector",
+      "what": "the effect-side selector language (`effects.selectors.matches`, used by `look_at_top`'s `objects`) must accept `{\"chosen_type_of\": \"self\"}` in `subtypes`, so an ability can ask \"is this a creature card of the chosen type\" about a card in a library",
+      "why_existing_wont_do": "`resolve_chosen_subtypes` is never called from `effects/selectors.py`; its `subtypes` branch does a plain `set(want) & subtypes`, so the marker dict raises rather than resolving. The trigger-filter path does resolve it, but the printed line triggers on `upkeep`, which binds no object to filter, so the test has to happen inside the effect on the library's top card. `look_at_top` with `count: \"any\"` is otherwise the exact shape of \"look at the top card... you may... put it into your hand\"."
+    }
+  ],
+  "closest_existing": [
+    "choose_type",
+    "spell_cost_reduction",
+    "look_at_top"
+  ],
+  "confidence": "high"
+}

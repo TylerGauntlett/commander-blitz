@@ -1,0 +1,24 @@
+{
+  "card_id": "gallifrey_falls_no_more",
+  "name": "Gallifrey Falls // No More",
+  "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)",
+  "blocked_sentences": [
+    "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead",
+    "Fuse"
+  ],
+  "needs": [
+    {
+      "capability": "split-cards-fuse",
+      "kind": "engine",
+      "what": "split cards: one card with two independently castable halves, each with its own mana cost, plus Fuse -- \"you may cast one or both halves of this card from your hand\", casting both as a single spell. The catalog row is layout='split', type_line='Instant // Instant', mana_cost='{4}{R}{R} // {2}{W}', keywords='Fuse'.",
+      "why_existing_wont_do": "docs/rules-coverage.md:157 lists split and adventure cards as not implemented, separately from modal double-faced cards. There is no concept of casting half a card: `mana_cost` is one string and `spell_effects` is one list. Unlike an MDFC, gate 3 here must consume BOTH halves' printed text from a single catalog row. The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer[\"card\"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined \"A // B\" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason."
+    }
+  ],
+  "closest_existing": [
+    "back_face",
+    "transform",
+    "kicker",
+    "evoke"
+  ],
+  "confidence": "high"
+}

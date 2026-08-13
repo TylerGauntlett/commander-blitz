@@ -1,0 +1,25 @@
+{
+  "card_id": "skullclamp",
+  "name": "Skullclamp",
+  "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",
+  "blocked_sentences": [
+    "Whenever equipped creature dies, draw two cards."
+  ],
+  "needs": [
+    {
+      "capability": "attached-trigger",
+      "kind": "trigger_event",
+      "what": "a way for a triggered ability on an Aura or Equipment to be about the permanent it is attached to, rather than about any permanent matching a printed-face filter -- an `attached: true` key accepted by a trigger's `filter` (validated by `validate_selector` and honoured by `triggers.matches_card_filter`) that passes only when the event's subject is the object named by the source's `attached_to`. It must also carry last-known information for the leave-the-battlefield events: `zones.move_object` calls `_detach_all` at line 89, clearing every `attached_to` pointing at the dying creature, *before* it fires `LEAVES_BATTLEFIELD` and `DIES` at lines 113-138, so at match time the Equipment is already attached to nothing and a naive `source.attached_to == subject_oid` test can never be true for a dies trigger. The engine's existing explicit-LKI pattern (`was_creature`, `was_attacking`, `had_counters` snapshotted before the move) is the shape to follow: snapshot what was attached to the object on the way out and let the filter read it. This unblocks the whole \"Whenever equipped/enchanted creature <does something>\" family -- the queue holds dozens, including several more `equipped creature dies` cards",
+      "why_existing_wont_do": "`attached` today exists only in `static_filter_keys`: `characteristics.py:516` reads `selector.get(\"attached\")` against `source.attached_to` while applying a *continuous* effect, which is why \"Equipped creature gets +1/-1\" and the `attach`-based \"Equip {1}\" both work on this very card. Trigger filters go through a different function -- `triggers.matches_card_filter` reads the printed card face plus last-known controller and has no attachment key at all, and `selector_keys` (which `validate_selector` enforces on `trigger.filter`) does not list `attached`, so the clause cannot even be written. `source: \"self\"` is wrong because the Equipment is not what dies. A bare `creature_dies` with `controller: \"you\"` would draw two cards every time *any* creature you control died, which is a strictly better card and exactly the kind of quiet approximation that must not ship. `binding`/`exclude_binding` name what the event bound -- here the creature that died, which is the right object but by coincidence, giving no way to require that it was the equipped one -- and the DIES event payload carries no attachment data. The `grant_ability` op is not a substitute either: `ops_board.py:386` grants until end of turn only, it needs an ability to run it in the first place (the equip ability, whose printed line is \"Equip {1}\"), and a grant would survive the Equipment moving away"
+    }
+  ],
+  "closest_existing": [
+    "attached_selector",
+    "attached",
+    "creature_dies",
+    "binding",
+    "exclude_binding",
+    "grant_ability"
+  ],
+  "confidence": "high"
+}

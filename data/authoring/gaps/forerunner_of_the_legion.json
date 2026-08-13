@@ -1,0 +1,32 @@
+{
+  "card_id": "forerunner_of_the_legion",
+  "name": "Forerunner of the Legion",
+  "oracle_text": "When this creature enters, you may search your library for a Vampire card, reveal it, then shuffle and put that card on top.\nWhenever another Vampire you control enters, target creature gets +1/+1 until end of turn.",
+  "blocked_sentences": [
+    "When this creature enters, you may search your library for a Vampire card, reveal it, then shuffle and put that card on top."
+  ],
+  "needs": [
+    {
+      "capability": "tutor-to-top",
+      "kind": "op",
+      "what": "a library search whose found card ends up on top of the library *after* the mandatory shuffle, and is revealed on the way. Concretely, `search_library` needs the shuffle to happen before the found cards are placed when the destination is the library itself -- e.g. a `destination: \"library_top\"` that shuffles the remaining library first and only then puts the picked card on top -- plus a `reveal: true` flag (or an implicit reveal for this destination) that emits the same public `reveal` event `op_reveal` emits, so every seat learns which card was fetched. This is the printed template of the whole Forerunner cycle and of every tutor-to-top (Vampiric Tutor, Mystical Tutor, Enlightened Tutor, Worldly Tutor, Sylvan Tutor, Ashiok's Forerunner), so the ordering and the reveal are the two things the family needs",
+      "why_existing_wont_do": "`search_library` is the closest op and it has `destination: \"library_top\"`, but `_search` in `engine/effects/ops_cards.py` calls `_move_found` first and `shuffle_library(ctx.state, pid)` second, so \"library_top\" plus the default shuffle puts the card on top and then immediately shuffles it back into a random position -- the exact opposite of the printed line. Reordering it by hand (a `shuffle` op, then `search_library` with `shuffle: false`) is not the DSL saying what the card says: `shuffle: false` on a library search suppresses 701.19c's mandatory shuffle, which docs/card-dsl.md states is deliberately not conditional for library searches, so the flag is being used against its documented meaning to fake an ordering the op does not offer. `look_at_top` shuffles only on request but bounds the pool to the top N cards, which turns a tutor into a gamble; `put_on_top` moves cards to the top but cannot be pointed at what a search found (see the next need)"
+    },
+    {
+      "capability": "tutor-to-top",
+      "kind": "selector",
+      "what": "a way to name the cards a search just found, so a later op in the same effect list can act on exactly those cards -- `search_library` binding its picks under a name the way a trigger binds `subject`, e.g. `{\"op\": \"search_library\", ..., \"as\": \"found\"}` followed by `{\"op\": \"reveal\", \"objects\": {\"binding\": \"found\"}}` and `{\"op\": \"put_on_top\", \"objects\": {\"binding\": \"found\"}}`. This is what lets \"reveal it\" and \"put that card on top\" refer back to \"a Vampire card\" instead of re-choosing",
+      "why_existing_wont_do": "`resolve_pool` in `engine/effects/selectors.py` recognises exactly two ways to name a pool directly: `target`, which is the refs chosen for a target spec at cast time, and `binding`, which is what a *trigger* bound (`subject`, `amount`). `search_library` records nothing anywhere, so neither can reach its picks. `exiled_with` is the only other back-reference and it covers cards *this source exiled* -- `_move_found` writes no exile link, and routing the fetch through exile to borrow it would be a different set of zone changes. Re-selecting instead (`search_library` to hand, then `reveal`/`put_on_top` over `{\"zone\": \"hand\", \"subtypes\": [\"Vampire\"]}`) is a different card: it reveals every Vampire in hand rather than the one fetched, and it lets the player tuck a Vampire they were already holding"
+    }
+  ],
+  "closest_existing": [
+    "search_library",
+    "put_on_top",
+    "look_at_top",
+    "reveal",
+    "shuffle",
+    "binding",
+    "exiled_with"
+  ],
+  "confidence": "high"
+}

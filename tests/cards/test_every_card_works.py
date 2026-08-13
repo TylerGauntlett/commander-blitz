@@ -23,6 +23,7 @@ from automtg.engine.carddef import CardDef
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.game import Game
 from automtg.engine.objects import PLUS_ONE
+from automtg.engine.primitives import lose_life
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
 from tests.conftest import GameBuilder
@@ -342,18 +343,34 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     broken. Bloodline Keeper says "activate only if you control five or more
     Vampires" and the generic board has none.
 
-    Deliberately dumb, exactly as `_provide_the_target` is. It reads one shape --
-    ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}`` --
-    and adds permanents until the count is satisfied. A helper clever enough to
-    solve an arbitrary condition would be a second implementation of `evaluate`
-    living in the tests, and the first thing it would hide is a bug in the first.
+    Deliberately dumb, exactly as `_provide_the_target` is. It reads two shapes --
+    ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``, which
+    it satisfies by adding permanents, and the same comparison over
+    ``life_lost_this_turn``, which it satisfies by taking the life. A helper clever
+    enough to solve an arbitrary condition would be a second implementation of
+    `evaluate` living in the tests, and the first thing it would hide is a bug in
+    the first.
     """
     condition = getattr(ability, "activation_condition", None)
     if not isinstance(condition, dict) or "cmp" not in condition:
         return
     left = condition.get("left") or {}
     right = condition.get("right") or {}
-    if "count" not in left or "const" not in right:
+    if "const" not in right:
+        return
+
+    # "Activate only if an opponent lost life this turn" -- Falkenrath Pit
+    # Fighter. The tally is the real one the engine keeps, so this satisfies the
+    # condition by actually taking the life rather than by writing the counter
+    # the condition reads: a card that mis-names the tally still fails.
+    if "life_lost_this_turn" in left:
+        whose = str(left["life_lost_this_turn"])
+        pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
+        for pid in pids:
+            lose_life(game.state, pid, int(right["const"]))
+        return
+
+    if "count" not in left:
         return
     selector = left["count"]
     if selector.get("zone", "battlefield") != "battlefield":

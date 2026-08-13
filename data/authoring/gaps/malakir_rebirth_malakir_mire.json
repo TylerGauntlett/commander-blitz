@@ -1,0 +1,23 @@
+{
+  "card_id": "malakir_rebirth_malakir_mire",
+  "name": "Malakir Rebirth // Malakir Mire",
+  "oracle_text": "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",
+  "blocked_sentences": [
+    "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\""
+  ],
+  "needs": [
+    {
+      "capability": "modal-dfc",
+      "kind": "replacement",
+      "what": "modal double-faced cards: a second, separately playable face with its own cost and type line, chosen as the card is played. Here the front is an Instant and the back is a Land, so the back must go down the land-drop path (no stack, consumes the land drop) while the front is cast normally.",
+      "why_existing_wont_do": "docs/rules-coverage.md:52 states the position outright -- transforming DFCs are modelled but \"a back face here is a face, not a second castable card\" -- and :157 lists modal double-faced cards as not implemented. `back_face` exists but only ever describes the face a permanent shows after transforming; nothing offers it as a way to play the card. The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer[\"card\"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined \"A // B\" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason."
+    }
+  ],
+  "closest_existing": [
+    "back_face",
+    "transform",
+    "kicker",
+    "evoke"
+  ],
+  "confidence": "high"
+}

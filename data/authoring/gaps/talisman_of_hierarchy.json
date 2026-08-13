@@ -1,0 +1,23 @@
+{
+  "card_id": "talisman_of_hierarchy",
+  "name": "Talisman of Hierarchy",
+  "oracle_text": "{T}: Add {C}.\n{T}: Add {W} or {B}. This artifact deals 1 damage to you.",
+  "blocked_sentences": [
+    "{T}: Add {W} or {B}. This artifact deals 1 damage to you."
+  ],
+  "needs": [
+    {
+      "capability": "mana-ability-rider",
+      "kind": "engine",
+      "what": "let a mana ability carry one non-mana rider effect -- here the artifact dealing 1 damage to its controller -- alongside the mana it makes. `_mana_options`/`_sum_mana` must keep deriving produced-mana tuples from the `add_mana` part alone and ignore the rider, while activation during cost payment still applies the rider without using the stack.",
+      "why_existing_wont_do": "`_sum_mana` in cards/loader.py rejects any effect that is not `add_mana` inside a mana ability, so `damage` cannot sit in this ability. Dropping `is_mana_ability` to smuggle it in makes the card wrong rather than incomplete: a non-mana ability uses the stack and cannot be offered inside cost payment, so the artifact could never be tapped to help cast a spell. `pay_life` is not a substitute -- it is life payment, not damage from a source, so it is unaffected by prevention, lifelink or `dealt_damage` triggers. Established on Battlefield Forge; this card is the same ability with different colours."
+    }
+  ],
+  "closest_existing": [
+    "add_mana",
+    "choose_mode",
+    "pay_life",
+    "damage"
+  ],
+  "confidence": "high"
+}

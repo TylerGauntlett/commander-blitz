@@ -1,0 +1,23 @@
+{
+  "card_id": "bojuka_bog",
+  "name": "Bojuka Bog",
+  "oracle_text": "This land enters tapped.\nWhen this land enters, exile target player's graveyard.\n{T}: Add {B}.",
+  "blocked_sentences": [
+    "When this land enters, exile target player's graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "target-player-zone",
+      "kind": "selector",
+      "what": "let a selector scope a non-battlefield zone to a player chosen as a target, so `exile` with `{\"zone\": \"graveyard\", \"count\": \"all\", \"player\": {\"target\": \"t1\"}}` (a target spec of kind `player`) empties exactly that one player's graveyard. Concretely: `_zone_owners` in effects/selectors.py should accept a player spec resolved through `select_players` -- which already understands `{\"target\": ...}` -- instead of only the three literal controller words, and `validate_selector` must let that key through.",
+      "why_existing_wont_do": "`_zone_owners` reads `controller`, and `validate_selector` restricts it to \"you\", \"opponent\" or \"any\" -- none of which is \"the one player this trigger targeted\", and `\"any\"` with `count: \"all\"` exiles every graveyard, which is Relic of Progenitus rather than Bojuka Bog. The `{\"target\": \"t1\"}` selector shorthand cannot stand in either: `EffectContext.target_oids` keeps only refs with `kind == \"object\"`, so a player target seeds an empty pool. `select_players` does resolve `{\"target\": ...}` to a targeted player, but only ops carrying a `player` spec (`draw`, `mill`, `discard`, `look_at_hand`) call it, and `exile` takes only an `objects` selector."
+    }
+  ],
+  "closest_existing": [
+    "exile",
+    "look_at_hand",
+    "mill",
+    "return_from_graveyard"
+  ],
+  "confidence": "high"
+}

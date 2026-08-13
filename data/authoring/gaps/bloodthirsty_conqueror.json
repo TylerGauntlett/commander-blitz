@@ -1,0 +1,28 @@
+{
+  "card_id": "bloodthirsty_conqueror",
+  "name": "Bloodthirsty Conqueror",
+  "oracle_text": "Flying, deathtouch\nWhenever an opponent loses life, you gain that much life. (Damage causes loss of life.)",
+  "blocked_sentences": [
+    "Whenever an opponent loses life, you gain that much life. (Damage causes loss of life.)"
+  ],
+  "needs": [
+    {
+      "capability": "life-loss-trigger",
+      "kind": "trigger_event",
+      "what": "a `life_lost` trigger event that fires once per instance of a player losing life, filterable by whose life it was (you / an opponent / each opponent), and which fires for every source of loss -- combat and noncombat damage, payment of life as a cost, and direct lose_life effects -- rather than only for damage",
+      "why_existing_wont_do": "`trigger_events` has `you_gain_life` (the exact mirror of this, so the plumbing exists in one direction only) and `dealt_damage`, but `dealt_damage` fires on a permanent being damaged, not on a player's life total dropping, so it would miss life paid as a cost and every `lose_life` effect while also firing on creature damage that costs no life at all"
+    },
+    {
+      "capability": "life-loss-trigger",
+      "kind": "value",
+      "what": "a value key that reads the amount of life lost by the single triggering event, so \"you gain that much life\" can feed `gain_life` with the exact quantity from the trigger that just fired",
+      "why_existing_wont_do": "`life_lost_this_turn` is a cumulative per-turn total, so with two separate losses in a turn the second trigger would gain the sum instead of the increment; `binding` and `damage_taken_this_turn` likewise do not expose a per-trigger life-loss amount"
+    }
+  ],
+  "closest_existing": [
+    "you_gain_life",
+    "dealt_damage",
+    "life_lost_this_turn"
+  ],
+  "confidence": "high"
+}

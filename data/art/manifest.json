@@ -589,6 +589,11 @@
     "file": "bloodfell_caves.jpg",
     "scryfall_id": "49195d90-de0c-4290-aa1c-9f4d948b5521"
   },
+  "bloodghast": {
+    "artist": "Mica Angela Hendricks",
+    "file": "bloodghast.jpg",
+    "scryfall_id": "97d42d32-c9c8-4def-a48b-0590ea572e33"
+  },
   "bloodline_keeper": {
     "artist": "Jason Chan",
     "bytes": 44691,
@@ -757,6 +762,12 @@
     "file": "carnelian_orb_of_dragonkind.jpg",
     "scryfall_id": "6db2741d-2722-4eb7-b09d-0d81649c7ca2"
   },
+  "carrion_feeder": {
+    "artist": "Junji Ito",
+    "bytes": 121791,
+    "file": "carrion_feeder.jpg",
+    "scryfall_id": "c0e175cb-ffea-473f-8422-53273f263016"
+  },
   "carven_caryatid": {
     "artist": "Jim Nelson",
     "bytes": 105334,
@@ -840,6 +851,11 @@
     "bytes": 49639,
     "file": "claim_jumper.jpg",
     "scryfall_id": "11bda4c5-099f-489e-b64b-f4719241cf9d"
+  },
+  "cliffhaven_vampire": {
+    "artist": "David Gaillet",
+    "file": "cliffhaven_vampire.jpg",
+    "scryfall_id": "5544247d-1f8f-443f-a4c4-d8461db28a79"
   },
   "cloak_of_the_bat": {
     "artist": "Dominik Mayer",
@@ -971,6 +987,12 @@
     "file": "coral_atoll.jpg",
     "scryfall_id": "77e3ea71-ea9f-4bbf-93cb-0f6339f8a3ab"
   },
+  "cordial_vampire": {
+    "artist": "Winona Nelson",
+    "bytes": 44273,
+    "file": "cordial_vampire.jpg",
+    "scryfall_id": "0d91e61d-e3bf-4ddc-9f01-18b1abe35a61"
+  },
   "counterspell": {
     "artist": "Ignacio Bazan-Lazcano",
     "bytes": 62861,
@@ -1023,6 +1045,12 @@
     "bytes": 55904,
     "file": "curate.jpg",
     "scryfall_id": "78cd258b-431e-42f7-a938-76ebc80d528d"
+  },
+  "dark_ritual": {
+    "artist": "Fury Galluzzi",
+    "bytes": 87633,
+    "file": "dark_ritual.jpg",
+    "scryfall_id": "227f249f-a1da-4db0-a1a5-34378375fa8e"
   },
   "darkmoss_bridge": {
     "artist": "Raoul Vitale",
@@ -1510,6 +1538,12 @@
     "file": "falkenrath_noble.jpg",
     "scryfall_id": "2d97757e-f1fb-4ce6-9e14-3deedda7a03a"
   },
+  "falkenrath_pit_fighter": {
+    "artist": "Anna Fehr",
+    "bytes": 56752,
+    "file": "falkenrath_pit_fighter.jpg",
+    "scryfall_id": "da9d87ed-a1c2-48a7-995e-b462a87dad6a"
+  },
   "fang_of_shigeki": {
     "artist": "Yigit Koroglu",
     "bytes": 84808,
@@ -1528,6 +1562,12 @@
     "file": "fathom_mage.jpg",
     "scryfall_id": "4bb9c7e1-46a6-4acf-8415-221d9c9d9d23"
   },
+  "feed_the_swarm": {
+    "artist": "Paul Adam",
+    "bytes": 83167,
+    "file": "feed_the_swarm.jpg",
+    "scryfall_id": "a041cfe3-a02d-41e2-aea3-76bc2bacc10e"
+  },
   "fellwar_stone": {
     "artist": "John Avon",
     "bytes": 71080,
@@ -1545,6 +1585,11 @@
     "bytes": 64956,
     "file": "festering_thicket.jpg",
     "scryfall_id": "f71c87db-54ea-4611-8692-096d9714d854"
+  },
+  "fetid_heath": {
+    "artist": "Daarken",
+    "file": "fetid_heath.jpg",
+    "scryfall_id": "f465ded8-0d38-42ac-bafc-a12185013c5d"
   },
   "fetid_pools": {
     "artist": "Jonas De Ro",
@@ -2140,6 +2185,12 @@
     "file": "heros_downfall.jpg",
     "scryfall_id": "10cedc6d-075a-4f9b-a858-e2c29809ee33"
   },
+  "high_society_hunter": {
+    "artist": "Daneen Wilkerson",
+    "bytes": 47978,
+    "file": "high_society_hunter.jpg",
+    "scryfall_id": "51da4a4b-ea12-4169-a7cf-eb4427f13e84"
+  },
   "highborn_ghoul": {
     "artist": "Volkan Ba\u01f5a",
     "bytes": 62345,
@@ -2643,6 +2694,12 @@
     "file": "lifelink.jpg",
     "scryfall_id": "a8e207d4-9930-4aff-a7c8-b53bd1b5d566"
   },
+  "lightning_bolt": {
+    "artist": "Milivoj \u0106eran",
+    "bytes": 46158,
+    "file": "lightning_bolt.jpg",
+    "scryfall_id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f"
+  },
   "lightning_greaves": {
     "artist": "Brandon L. Hunt",
     "bytes": 63863,
@@ -2798,6 +2855,12 @@
     "bytes": 93083,
     "file": "maraleaf_pixie.jpg",
     "scryfall_id": "260bdaa3-6446-428f-92d9-a0b79a6caa70"
+  },
+  "marauding_blight_priest": {
+    "artist": "Caio Monteiro",
+    "bytes": 65763,
+    "file": "marauding_blight_priest.jpg",
+    "scryfall_id": "5f70dafc-c638-4ec0-ab5b-62998f752720"
   },
   "marauding_maulhorn": {
     "artist": "Jesper Ejsing",
@@ -3170,6 +3233,12 @@
     "file": "oboro_palace_in_the_clouds.jpg",
     "scryfall_id": "84065219-b902-41fa-9a5a-7312e5103b78"
   },
+  "olivia_s_wrath": {
+    "artist": "N\u00e9stor Ossand\u00f3n Leal",
+    "bytes": 59144,
+    "file": "olivia_s_wrath.jpg",
+    "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2"
+  },
   "omen_hawker": {
     "artist": "Josh Hass",
     "bytes": 88661,
@@ -3223,6 +3292,11 @@
     "bytes": 48194,
     "file": "ornithopter_of_paradise.jpg",
     "scryfall_id": "47c976ee-7eb3-42bb-8bfb-5eda12417e97"
+  },
+  "orzhov_basilica": {
+    "artist": "John Avon",
+    "file": "orzhov_basilica.jpg",
+    "scryfall_id": "cc8f8ede-9620-4f7f-8326-a75031ef6ec1"
   },
   "orzhov_guildgate": {
     "artist": "Cliff Childs",
@@ -3283,6 +3357,12 @@
     "bytes": 55844,
     "file": "path_to_exile.jpg",
     "scryfall_id": "e2e30b25-b710-4566-8b0f-56f6e390a446"
+  },
+  "patron_of_the_vein": {
+    "artist": "Tommy Arnold",
+    "bytes": 38479,
+    "file": "patron_of_the_vein.jpg",
+    "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1"
   },
   "peel_from_reality": {
     "artist": "Jason Felix",
@@ -5040,6 +5120,12 @@
     "file": "vanquishers_banner.jpg",
     "scryfall_id": "efa6944e-b5e2-4584-ae37-f5b59a8ec75e"
   },
+  "vault_of_the_archangel": {
+    "artist": "John Avon",
+    "bytes": 37857,
+    "file": "vault_of_the_archangel.jpg",
+    "scryfall_id": "3fb781da-2b8b-44c6-999f-5038e79a7d57"
+  },
   "vault_of_whispers": {
     "artist": "Rob Alexander",
     "bytes": 65489,
@@ -5057,6 +5143,11 @@
     "bytes": 71148,
     "file": "vedalken_engineer.jpg",
     "scryfall_id": "b46f0f64-4c1d-4a65-af67-a675c34119f1"
+  },
+  "vein_ripper": {
+    "artist": "Bastien L. Deharme",
+    "file": "vein_ripper.jpg",
+    "scryfall_id": "078933b3-6d82-45f2-94e8-addf54cf1704"
   },
   "venomous_changeling": {
     "artist": "Aaron Miller",
