@@ -147,11 +147,21 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     second question that genuinely belongs to resolution.  The answer is
     consumed rather than read, so an inner one asks rather than silently reusing
     the outer one's modes.
+
+    ``all_if`` is **entwine**: "choose both if you pay the entwine cost". The
+    entwine price is an ordinary `kicker`, so legality already offers the spell
+    twice and taking the second line *is* the choice rule 702.42a describes --
+    which is why this forces every mode rather than offering them. Written as a
+    wider `count` it would ask which two of two, a question with one answer;
+    written as a `may` it would let a player pay the entwine cost and then
+    decline half of what they bought.
     """
     modes = list(spec.get("modes") or [])
     if not modes:
         return
     count = evaluate_value(ctx, spec.get("count", 1))
+    if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
+        count = len(modes)
     chosen = list(ctx.modes)
     if chosen:
         ctx.modes = ()

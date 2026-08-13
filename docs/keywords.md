@@ -220,7 +220,7 @@ This is the long tail, and where the build order comes from.
 | Echo | routed | `upkeep` + `may` `pay` + a sacrifice `else` all exist; "came under your control since your last upkeep" is the missing per-object flag | — |
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
-| Entwine | routed | an additional cost that takes *both* modes; `choose_mode` picks exactly `count` | — |
+| Entwine | shipped | `kicker` for the price, plus `all_if` on `choose_mode` for the both | `all_if` |
 | Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
 | Escape | free | `graveyard_cost` with an `exile_from_graveyard` cost, and `graveyard_cast: "graveyard"` so it comes back | — |
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |

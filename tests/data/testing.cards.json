@@ -4100,6 +4100,52 @@
       ]
     },
     {
+      "id": "t_entwiner",
+      "name": "Test Entwine",
+      "oracle_text": "Choose one —\n• Draw a card.\n• You gain 3 life.\nEntwine {2} (Choose both if you pay the entwine cost.)",
+      "mana_cost": "{1}{G}",
+      "kicker": "{2}",
+      "kicker_label": "entwine",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "all_if": {
+            "kicked": true
+          },
+          "modes": [
+            {
+              "label": "Draw a card",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            },
+            {
+              "label": "You gain 3 life",
+              "effects": [
+                {
+                  "op": "gain_life",
+                  "player": "you",
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_amplifier",
       "name": "Test Amplified Beast",
       "oracle_text": "Amplify 2 (As this creature enters, put two +1/+1 counters on it for each Beast card you reveal in your hand.)",
