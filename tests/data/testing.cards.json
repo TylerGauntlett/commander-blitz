@@ -4100,6 +4100,123 @@
       ]
     },
     {
+      "id": "t_amplifier",
+      "name": "Test Amplified Beast",
+      "oracle_text": "Amplify 2 (As this creature enters, put two +1/+1 counters on it for each Beast card you reveal in your hand.)",
+      "mana_cost": "{3}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Amplify 2 (As this creature enters, put two +1/+1 counters on it for each Beast card you reveal in your hand.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "reveal",
+              "as": "shown",
+              "objects": {
+                "zone": "hand",
+                "controller": "you",
+                "subtypes": [
+                  "Beast"
+                ],
+                "count": "any"
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "binding": "shown"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_devourer",
+      "name": "Test Devourer",
+      "oracle_text": "Devour 2 (As this creature enters, you may sacrifice any number of creatures. This creature enters with twice that many +1/+1 counters on it.)",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Devour 2 (As this creature enters, you may sacrifice any number of creatures. This creature enters with twice that many +1/+1 counters on it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "as": "eaten",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "exclude_self": true,
+                "count": "any"
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "binding": "eaten"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_chroma_hulk",
       "name": "Test Primalcrux",
       "oracle_text": "Chroma — Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",

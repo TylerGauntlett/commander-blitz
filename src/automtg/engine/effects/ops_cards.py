@@ -16,7 +16,6 @@ from .selectors import (
     ZONE_NAMES,
     choose_objects,
     pick_from_pool,
-    resolve_pool,
     select_players,
 )
 from .values import evaluate_value
@@ -263,7 +262,22 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("reveal")
 def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
-    oids = resolve_pool(ctx, spec.get("objects"))
+    """Show cards to the table.
+
+    Goes through ``choose_objects`` rather than ``resolve_pool`` so a selector's
+    ``count`` means here what it means everywhere else. That is amplify: "reveal
+    **any number** of Beast cards from your hand" is `count: "any"`, and with a
+    bare pool resolution the card would reveal the whole hand and ask nothing.
+    The default is still ``"all"``, so every existing reveal is unchanged.
+
+    ``as`` records what was shown, because the count is the card: "this creature
+    enters with X +1/+1 counters, where X is the number of cards revealed this
+    way". Nothing can name that set afterwards -- the revealed cards are back
+    among a hand full of others the moment the op returns.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Reveal", "reveal")
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(oids)
     if oids:
         ctx.state.emit(
             "reveal",

@@ -185,7 +185,7 @@ This is the long tail, and where the build order comes from.
 | Afterlife | free | `dies` trigger, then `create_token` | — |
 | Aftermath | blocked | split cards | — |
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
-| Amplify | routed | `self_enters_with_counters` takes a fixed integer, not a value expression | — |
+| Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
 | Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
 | Aura swap | blocked | swapping an attached aura with one in hand; one card in the game | — |
 | Banding | refused | see rules-coverage.md | — |
@@ -214,7 +214,7 @@ This is the long tail, and where the build order comes from.
 | Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
 | Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
-| Devour | routed | `self_enters` + sacrifice + `for_each`; the scaling counters are the awkward half | — |
+| Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
 | Disturb | routed | `transform` and `flashback` both ship; needs the graveyard cast to arrive on the **back** face | — |
 | Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |
 | Echo | routed | `upkeep` + `may` `pay` + a sacrifice `else` all exist; "came under your control since your last upkeep" is the missing per-object flag | — |

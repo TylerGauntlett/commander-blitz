@@ -1341,6 +1341,12 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
             )
+    if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
+        # `as` names a binding -- `snapshot`'s, and the record `reveal` and
+        # `sacrifice` write of what they consumed. A non-string would be
+        # stringified into a name nothing reads back, so the count it feeds
+        # would be 0 and amplify would enter with no counters.
+        raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on
         # the Equipment that prints it, and a default would silently unattach

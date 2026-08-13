@@ -124,8 +124,7 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         if "target" in selector:
             seeded = ctx.target_oids(str(selector["target"]))
         else:
-            bound = _bound_oid(ctx, str(selector["binding"]))
-            seeded = [bound] if bound is not None else []
+            seeded = _bound_oids(ctx, str(selector["binding"]))
         if set(selector) <= {"target", "binding"}:
             return seeded
         return _narrow_to_extreme(ctx, [oid for oid in seeded if matches(ctx, oid, selector)], selector)
@@ -204,6 +203,24 @@ def _bound_oid(ctx: EffectContext, name: str) -> int | None:
     if isinstance(value, Mapping):
         value = value.get("oid")
     return int(value) if isinstance(value, int) else None
+
+
+def _bound_oids(ctx: EffectContext, name: str) -> list[int]:
+    """Every object bound under ``name`` -- one, or a whole set of them.
+
+    A binding is one oid for the trigger bindings and snapshots that have always
+    existed, and a **list** for an op that recorded what it chose (``as``).
+    Amplify and devour both need the list form: "X is the number of cards
+    revealed this way" and "for each creature devoured" are counts of a set that
+    a player picked a moment ago, and no selector can name it afterwards -- the
+    revealed cards are still in a hand full of others, and the devoured
+    creatures are gone.
+    """
+    value = ctx.bindings.get(name)
+    if isinstance(value, (list, tuple)):
+        return [int(v) for v in value if isinstance(v, int)]
+    bound = _bound_oid(ctx, name)
+    return [bound] if bound is not None else []
 
 
 def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
