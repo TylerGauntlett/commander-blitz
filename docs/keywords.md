@@ -242,7 +242,7 @@ This is the long tail, and where the build order comes from.
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
 | Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
-| Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
+| Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
 | Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |

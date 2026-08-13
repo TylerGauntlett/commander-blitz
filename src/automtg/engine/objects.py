@@ -91,6 +91,12 @@ class GameObject:
     #: turn it was put there. Both are needed: 702.143a says "on a **later**
     #: turn", so a card foretold and cast on the same turn would be the printed
     #: cost paid in two instalments with the discount thrown in.
+    #: Haunt (702.55a): the creature this exiled card is haunting. The link
+    #: points at the **victim**, which is the opposite direction from
+    #: `exiled_by`, and it has to: haunt's second trigger fires when the
+    #: *haunted* creature dies, and the haunting card is the thing that has to
+    #: still be somewhere to notice.
+    haunting: int | None = None
     foretold_by: int | None = None
     foretold_turn: int = -1
     #: A creature cast off suspend has haste.  Not an until-end-of-turn effect:

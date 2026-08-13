@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>70 ops"]
+    ctx --> ops["op registry<br/>71 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-70 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+71 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` |
 | Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2057,6 +2057,35 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+## Haunt — the exile link pointing the other way
+
+```jsonc
+// "When this creature dies, exile it haunting target creature."
+{ "op": "haunt", "objects": { "target": "t1" } }
+
+// "When the creature this card haunts dies, …"
+{ "kind": "triggered", "active_zones": ["exile"],
+  "trigger": { "event": "creature_dies", "controller": "any",
+               "filter": { "controller": "any", "haunted_by": "self" } },
+  "effects": [ … ] }
+```
+
+The engine already had an exile link — `exiled_by`, written on the exiled card
+and naming the permanent that exiled it. That is the **O-Ring direction**, and
+it is right there because the exiler is the thing that goes away and its own
+leaves-trigger reads the link back.
+
+Haunt is the mirror. The card in exile is what survives, and it is what has to
+notice a creature dying somewhere else, so the link points from the haunting
+card **at its victim**.
+
+`haunted_by` is therefore a *trigger filter* answered off the **ability's
+source**, not off the subject: by the time the second trigger fires, the haunted
+creature has died and carries no record of who was haunting it. The haunting
+card is in exile with the link on it, which is why that ability carries
+`active_zones: ["exile"]` — the same widening the cycling trigger needed for the
+graveyard.
 
 ## Token copies
 

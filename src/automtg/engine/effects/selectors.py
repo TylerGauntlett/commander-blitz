@@ -106,6 +106,10 @@ SELECTOR_KEYS = frozenset(
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
         "damaged_by",
+        # "When the creature this card haunts dies…" -- a trigger filter only,
+        # answered off the ability's source, which is the card sitting in exile
+        # with the link on it. The haunted creature carries no record of it.
+        "haunted_by",
     }
 )
 
