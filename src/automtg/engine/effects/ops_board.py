@@ -263,6 +263,41 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
         change_control(ctx.state, oid, players[0], source=ctx.source_oid)
 
 
+@register("regenerate")
+def op_regenerate(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.15 — "Regenerate this creature."
+
+    Puts a **shield** on the permanent rather than doing anything now, which is
+    the whole of the keyword action: "the *next* time this permanent would be
+    destroyed this turn, instead tap it, remove it from combat, and remove all
+    damage from it." What it replaces has not happened yet, and usually never
+    will.
+
+    A count rather than a flag, because "regenerate it twice" is two shields and
+    each is spent by one destruction. Cleared at cleanup with the rest of the
+    until-end-of-turn state -- expiring is most of what the ability is worth
+    paying for, and a shield that survived the turn would make every
+    regenerator indestructible from the first time it was used.
+
+    The shield is spent in `zones.destroy`, which is the one function every
+    route to a destruction already goes through.
+    """
+    amount = max(1, evaluate_value(ctx, spec.get("amount", 1)))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Regenerate", "regenerate")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.regeneration_shields += amount
+        ctx.state.emit(
+            "regeneration_shield",
+            player=obj.controller,
+            source=ctx.source_oid,
+            oid=oid,
+            shields=obj.regeneration_shields,
+        )
+
+
 @register("unattach")
 def op_unattach(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 701.3d — "Unattach this permanent." Reconfigure's second half.

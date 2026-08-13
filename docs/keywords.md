@@ -165,7 +165,7 @@ Not abilities: instructions naming something a player or the game does.
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |
 | Reconfigure | shipped | the equip ability, plus the `unattach` op and an `is_attached` static condition for 702.151d | `unattach` |
-| Regeneration | refused | a destruction-replacement shield; see rules-coverage.md | — |
+| Regeneration | shipped | the `regenerate` op puts a spent-once shield on the permanent; `zones.destroy` spends it | `regenerate` |
 | Sacrifice | shipped | op, and also a cost | `sacrifice` |
 | Scry | shipped | op | `scry` |
 | Surveil † | shipped | op — the source lists it under expansion, but it is a keyword action | `surveil` |
@@ -303,7 +303,7 @@ This is the long tail, and where the build order comes from.
 | Sunburst | routed | enters with counters scaled by the colours actually spent, which payment does not report | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
-| Totem armor | routed | a destruction replacement on the enchanted creature | — |
+| Totem armor | shipped | `Keyword` on the **Aura**, read by `zones.destroy` -- the Aura is destroyed instead | `totem_armor` |
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
 | Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |

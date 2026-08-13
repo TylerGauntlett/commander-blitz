@@ -615,6 +615,11 @@ def clear_until_eot(state: GameState) -> None:
             continue
         obj.damage = 0
         obj.deathtouched = False
+        # "The **next** time this permanent would be destroyed **this turn**."
+        # Expiring is most of what a regeneration shield is worth paying for; one
+        # that survived the turn would make every regenerator indestructible
+        # from the first time its ability was used.
+        obj.regeneration_shields = 0
         obj.until_eot.clear()
     state.bump_chars()
 

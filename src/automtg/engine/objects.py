@@ -40,6 +40,13 @@ class GameObject:
     damage: int = 0
     #: Set when damage from a deathtouch source was dealt this turn.
     deathtouched: bool = False
+    #: Regeneration shields (701.15): "the **next** time this permanent would be
+    #: destroyed this turn, instead …". A count rather than a boolean, because
+    #: "regenerate it twice" is two shields and each is spent by one
+    #: destruction. Cleared at cleanup with the rest of the until-end-of-turn
+    #: state -- it is one of the few things whose whole content is that it
+    #: expires.
+    regeneration_shields: int = 0
     counters: dict[str, int] = field(default_factory=dict)
     attached_to: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
@@ -225,6 +232,7 @@ class GameObject:
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
+        self.regeneration_shields = 0
         self.counters = {}
         self.attached_to = None
         self.until_eot = []

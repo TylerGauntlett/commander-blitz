@@ -202,6 +202,14 @@ class Keyword(str, Enum):
     #: own ability and a card carrying both would double neither half.
     WITHER = "wither"
     INFECT = "infect"
+    #: Totem armor (702.88a).  A keyword on the *Aura*: "if enchanted permanent
+    #: would be destroyed, instead remove all damage from it and destroy this
+    #: Aura."  Not a `replacements` entry, because that whitelist is about a
+    #: permanent entering the battlefield and this is the moment one leaves --
+    #: and not parameterised, because "destroy this Aura instead" is the whole
+    #: content of the quality.  Read by `zones.destroy`, which every route to a
+    #: destruction already goes through.
+    TOTEM_ARMOR = "totem_armor"
     FLASH = "flash"
     #: Deck construction only -- "you can have two commanders if both have
     #: partner".  Listed here, and inert on purpose: the engine is handed a
