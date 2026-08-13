@@ -1,0 +1,41 @@
+{
+  "card_id": "akroma_s_will",
+  "name": "Akroma's Will",
+  "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Creatures you control gain flying, vigilance, and double strike until end of turn.\n• Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.",
+  "blocked_sentences": [
+    "Choose one. If you control a commander as you cast this spell, you may choose both instead.",
+    "• Creatures you control gain lifelink, indestructible, and protection from each color until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "choose-both",
+      "kind": "decision",
+      "what": "A modal spell whose mode count is a floor rather than an exact number: choose one, and if a cast-time condition holds the controller *may* choose additional modes. Needs `choose_mode` to take an optional upper bound (e.g. `up_to`, gated by a `condition` evaluated as the spell is cast) so the decision is offered as min 1 / max 2 rather than forced.",
+      "why_existing_wont_do": "`choose_mode` has a `count`, but `ask_mode` builds the decision with `min_count = max_count = count`, and short-circuits with `if len(labels) <= count: return list(range(len(labels)))`. So a count of 2 over 2 modes does not ask at all -- it silently executes both. Making count conditional (`sum` of `{\"const\": 1}` and a `count` over an `is_commander` selector) computes the right *number*, but produces a card that must choose both whenever a commander is out, deleting the printed choice. There is no way to express an optional extra mode.",
+      "closest_existing": [
+        "choose_mode",
+        "count",
+        "is_commander",
+        "exists"
+      ]
+    },
+    {
+      "capability": "grant-protection",
+      "kind": "op",
+      "what": "An effect op that grants protection from a set of qualities (colors, types, subtypes) to a pool of permanents until end of turn -- the effect half of the existing `protection` static, usable from `spell_effects`, with `from_colors` naming all five colors for \"protection from each color\".",
+      "why_existing_wont_do": "`protection` exists only as a *printed static ability* on a permanent: `characteristics.protection_from` collects candidates from `_battlefield_statics`, which walks `card.abilities` of battlefield objects only and never consults granted or temporary effects. `grant_keyword` cannot carry it -- `loader.py` deliberately excludes `protection` from the keyword list because it is parameterised (\"protection from Wizards\" names a quality, and four rules read it). `grant_ability` hands over an entry from the granter's `grantable_abilities` as an until-EOT `TempEffect(kind='ability')`, which `granted_abilities` surfaces to triggers and legality, but the statics pipeline never reads it -- so a granted protection static would be inert.",
+      "closest_existing": [
+        "grant_keyword",
+        "grant_ability",
+        "protection"
+      ]
+    }
+  ],
+  "closest_existing": [
+    "choose_mode",
+    "grant_keyword",
+    "grant_ability",
+    "protection"
+  ],
+  "confidence": "high"
+}

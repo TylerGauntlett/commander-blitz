@@ -1,0 +1,42 @@
+{
+  "card_id": "mirkwood_bats",
+  "name": "Mirkwood Bats",
+  "oracle_text": "Flying\nWhenever you create or sacrifice a token, each opponent loses 1 life.",
+  "blocked_sentences": [
+    "Whenever you create or sacrifice a token, each opponent loses 1 life."
+  ],
+  "needs": [
+    {
+      "capability": "sacrifice-trigger",
+      "kind": "trigger_event",
+      "what": "A DSL trigger event that fires when a permanent is *sacrificed*, distinguishable from every other way of leaving the battlefield -- \"Whenever you sacrifice a token/creature/permanent, ...\". Two shapes would work: a new `SACRIFICED` engine event fired from `zones.sacrifice` alongside LEAVES_BATTLEFIELD/DIES, or -- cheaper -- carry the `cause` string that `move_object` already computes onto the LEAVES_BATTLEFIELD and DIES payloads and give `TriggerSpec` a positive `cause` filter to match the existing negative `not_cause`. Either way the subject oid must stay readable so an ordinary trigger `filter` of `{\"is_token\": true}` selects it, and the `controller: \"you\"` clause must mean the sacrificing player -- for sacrifice that is the sacrificed permanent's controller, which `_actor` already derives from the subject, so no new actor logic is needed. It must fire for noncreature tokens too: Mirkwood Bats counts a Treasure sacrificed for mana, not just creatures.",
+      "why_existing_wont_do": "`dies`, `creature_dies` and `leaves_battlefield` are the only leave triggers and none of them can tell a sacrifice from anything else. `zones.sacrifice` (zones.py:263) does tag the move `cause=\"sacrificed\"`, but that tag only reaches the ZONE_CHANGE payload -- the LEAVES_BATTLEFIELD and DIES events `move_object` fires (zones.py:113-138) carry `oid`, `card`, `was_creature`, `was_attacking` and `had_counters` and no `cause` at all -- and ZONE_CHANGE has no entry in `TRIGGER_EVENTS`, so nothing in the DSL can subscribe to the one event that knows. `TriggerSpec.not_cause` is a *negative* filter (\"refuse to fire on this cause\") and is checked against `event.data.get(\"cause\")`, which is absent on both leave events, so it cannot be inverted into the positive test this needs. Writing the card as `dies` with `{\"is_token\": true}` is the approximation the DSL notes forbid: Mirkwood Bats would drain every opponent when a token is killed in combat, destroyed by a wrath, or hit by removal, none of which is a sacrifice.",
+      "closest_existing": [
+        "dies",
+        "creature_dies",
+        "leaves_battlefield",
+        "not_cause"
+      ]
+    },
+    {
+      "capability": "token-created",
+      "kind": "trigger_event",
+      "what": "A DSL trigger name bound to the token-creation event, so \"Whenever you create a token\" can be said as printed. The engine event already exists and is already populated -- `EventType.TOKEN_CREATED` (events.py:31), emitted per token by `create_tokens` with `player=controller` and `source=<token oid>` (primitives.py:303). Two small changes finish it: emit it through `triggers.fire` rather than `state.emit`, so it reaches `collect` at all, and add a `\"token_created\": EventType.TOKEN_CREATED` row to `TRIGGER_EVENTS` plus membership in `OBJECT_SUBJECT_TRIGGERS` so a `filter` can ask about the token that was made. `_actor` should read `event.player` for it, because the clause asks who *created* the token, not who ends up controlling it.",
+      "why_existing_wont_do": "`permanent_enters` with a filter of `{\"is_token\": true}` and `controller: \"you\"` is the near miss, and it is close enough to be tempting -- rule 111.1 makes creating a token and putting it onto the battlefield the same act, so it fires at the right moment nearly every time. It is still not what the card prints. `permanent_enters` derives its `controller` clause from the *token's* controller (`_actor` falls through to the subject's controller), so a token you create under another player's control -- which the printed \"whenever **you** create\" still counts -- would not trigger, and a token an opponent's effect puts under your control would trigger when it should not. The exact signal already exists in the event log and is one `fire` call away from being usable; approximating it with an enters trigger would bake a controller/creator confusion into every future \"whenever you create a token\" card, of which this is only the first.",
+      "closest_existing": [
+        "permanent_enters",
+        "self_enters",
+        "is_token"
+      ]
+    }
+  ],
+  "closest_existing": [
+    "dies",
+    "creature_dies",
+    "leaves_battlefield",
+    "permanent_enters",
+    "not_cause"
+  ],
+  "confidence": "high",
+  "notes": "Flying is already handled by the starting point, and the payload is expressible today -- `{\"op\": \"lose_life\", \"player\": \"each_opponent\", \"amount\": {\"const\": 1}}`, exactly as zurgo.cards.json writes it. The only thing missing is the trigger. The printed line is one sentence firing on two different events, which needs *no* third capability: duplicate ability `text` is already precedented in the shipped pool (guul_draz_vampire and angel_of_sanctions each carry two abilities claiming the same printed line), so once both events exist the card is two triggered abilities, both claiming this sentence, one on `token_created` and one on the sacrifice trigger. `sacrifice_trigger` is the larger and more widely-owed of the two: every \"whenever you sacrifice a permanent\" card in black is waiting on it, and the aristocrats archetype is built on the distinction between a sacrifice and a death."
+}

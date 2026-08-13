@@ -1,0 +1,19 @@
+{
+  "card": {
+    "id": "dark_ritual",
+    "name": "Dark Ritual",
+    "oracle_text": "Add {B}{B}{B}.",
+    "mana_cost": "{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "spell_effects": [
+      { "op": "add_mana", "mana": "{B}{B}{B}" }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": { "0": 3 },
+    "hand_size": { "0": 0 }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "card_id": "deadly_dispute",
+  "name": "Deadly Dispute",
+  "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDraw two cards and create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, sacrifice an artifact or creature."
+  ],
+  "needs": [
+    {
+      "capability": "additional-cost",
+      "kind": "cost",
+      "what": "A card-level field holding a *mandatory, non-mana* additional cost paid as the spell is cast from hand -- a full `Cost` (here `sacrifice` with the selector `{\"any_types\": [\"Artifact\", \"Creature\"]}`, controller you) charged at cast time alongside the printed mana cost. Legality must refuse to offer the cast at all when the cost cannot be paid, and the payment must happen while the spell goes on the stack, not on resolution. The `Cost` struct and its `sacrifice` selector already exist and are already charged this way for graveyard casts; what is missing is a place to hang one on an ordinary cast from hand.",
+      "why_existing_wont_do": "`kicker` is the only additional cost a hand-cast spell can carry, and it is wrong twice over: it is mana-only (`_cast_variant` computes `card.mana_cost.plus(card.kicker)`, a `ManaCost`, so it cannot sacrifice anything) and it is optional by construction (legality deliberately offers the spell as both unkicked and kicked). Deadly Dispute's cost is neither. `emerge`/`emerge_subtype` does sacrifice a creature at cast time, but it is an *alternative* cost that replaces the printed mana cost and is then reduced by the sacrificed creature's mana value -- casting Deadly Dispute for {1}{B} plus a sacrifice is not what emerge would charge. `flashback`/`graveyard_cost` and `retrace` are the only paths that pay a non-mana `Cost` at cast time (`can_pay(state, pid, card.flashback.without_mana(), oid)`), but both are gated on casting from the graveyard, so neither applies to a spell cast from hand. Putting the sacrifice in `spell_effects` as the `sacrifice` op is the approximation the DSL notes forbid: it moves the payment to resolution, so the spell could be cast with no artifact or creature to sacrifice and would still draw two cards.",
+      "closest_existing": [
+        "kicker",
+        "emerge",
+        "flashback",
+        "graveyard_cost",
+        "retrace",
+        "sacrifice"
+      ]
+    }
+  ],
+  "closest_existing": [
+    "kicker",
+    "emerge",
+    "graveyard_cost",
+    "sacrifice"
+  ],
+  "confidence": "high",
+  "notes": "The second sentence is fully expressible today -- `draw` for two plus `create_token` of the existing `treasure_token` -- so this card needs only the additional-cost capability to ship. The same capability unblocks casualty and replicate, which docs/keywords.md already records as waiting on \"an additional cost\"."
+}

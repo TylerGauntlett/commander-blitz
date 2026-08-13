@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "cliffhaven_vampire",
+    "name": "Cliffhaven Vampire",
+    "oracle_text": "Flying\nWhenever you gain life, each opponent loses 1 life.",
+    "mana_cost": "{2}{W}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Warrior", "Ally"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you gain life, each opponent loses 1 life.",
+        "trigger": {
+          "event": "you_gain_life",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": "each_opponent",
+            "amount": {"const": 1}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 0}
+  }
+}

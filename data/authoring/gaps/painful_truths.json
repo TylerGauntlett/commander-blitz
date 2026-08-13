@@ -1,0 +1,18 @@
+{
+  "card_id": "painful_truths",
+  "name": "Painful Truths",
+  "oracle_text": "Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell.",
+  "blocked_sentences": [
+    "Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell."
+  ],
+  "needs": [
+    {
+      "capability": "converge",
+      "kind": "value",
+      "what": "A value key (e.g. `colors_of_mana_spent`) usable as an amount inside a spell's own `spell_effects`, returning how many distinct mana colors were spent paying that spell's cost -- 0 to 5. Requires the payment path to record the multiset of coloured symbols actually spent on a given cast and hang it off that spell's stack object, so the value can be read at resolution. `draw` and `lose_life` already take an arbitrary amount, so once the value exists the card is two ordinary ops.",
+      "why_existing_wont_do": "Nothing in `value_keys` can see how a spell was paid for. `x` reads the chosen value of X in the mana cost, which Painful Truths does not have -- its X is a property of the payment, not a declared cost. `const` is fixed; `count` counts objects matching a selector, and the mana spent is not an object; `lands_you_control` counts permanents, which is at best a proxy that is wrong whenever a land is tapped for a colour already produced or is not tapped at all. On the condition side, `kicked` and `evoked` are the only keys that read anything about *how* a spell was cast, and both are single booleans set by an alternative/additional cost, with no numeric or colour payload. Underneath, the information is discarded at payment time: `pay_mana` (src/automtg/engine/costs.py) calls `ManaPool.spend(req)`, which decrements `self.amounts` per symbol in place -- including choosing hybrid halves and paying generic from the most plentiful symbols -- and returns None, then emits `EventType.MANA_SPENT` carrying only `amount=req.total`. The chosen colours exist inside `spend` and are thrown away, so even a new op could not recover them without that plumbing."
+    }
+  ],
+  "closest_existing": ["x", "kicked", "evoked", "count", "lands_you_control"],
+  "confidence": "high"
+}

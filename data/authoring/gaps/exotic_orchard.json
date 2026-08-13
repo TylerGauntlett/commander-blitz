@@ -1,0 +1,23 @@
+{
+  "card_id": "exotic_orchard",
+  "name": "Exotic Orchard",
+  "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
+  "blocked_sentences": [
+    "{T}: Add one mana of any color that a land an opponent controls could produce."
+  ],
+  "needs": [
+    {
+      "capability": "reflecting-mana",
+      "kind": "op",
+      "what": "an `add_mana` form whose colour choice is not written on the card but read off the board at activation time -- e.g. `{\"op\": \"add_mana\", \"any_color_produced_by\": {\"zone\": \"battlefield\", \"controller\": \"opponent\", \"types\": [\"Land\"]}}`, which offers exactly the colours the lands matching that selector could themselves produce, and offers nothing (the ability being unactivatable for mana) when that set is empty. Engine-side this means the choice set for a mana ability has to become a function of GameState rather than a load-time constant: `CardDef.mana_options` / `offerable_mana_ability` / `mana_amount` in engine/costs.py and the mode chips built in engine/legality.py (around the `is_mana_ability` branches) all consult a fixed tuple-list baked by the loader's `_sum_mana`, so they would need to call a resolver that unions `parse_mana_production` over the mana abilities of the selected permanents. The mana-availability solver that decides whether a spell is castable has to consult the same resolver, or Exotic Orchard will read as producing nothing (or as producing all five) when the engine asks what the player can pay.",
+      "why_existing_wont_do": "`add_mana` takes a literal `mana` string parsed once by `parse_mana_production`, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which the loader restricts mana abilities to via `_sum_mana` -- has a fixed mode list written into the card, so the packet's `starting_point` offers all five colours unconditionally regardless of what the opponent's lands are. There is no way to prune those modes: a mana ability may contain only `add_mana`, so `if` (and with it every `condition_keys` entry, including `exists`) is rejected inside one, and `_validate_mana_amount` forbids even amounts that depend on targets or X because a mana ability is activated mid-payment. `add_mana_per` scales one fixed symbol by a count and cannot change which symbol it is. Nothing in `selector_keys` or `value_keys` can ask what mana a permanent could produce -- `colors` reads a card's printed colour, which is not its mana production (an opponent's Island is a colourless card that taps for {U}), so even a hypothetical `if`/`exists` gate could not be spelled correctly.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": [
+    "add_mana",
+    "add_mana_per",
+    "choose_mode"
+  ],
+  "confidence": "high"
+}

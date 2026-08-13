@@ -1,0 +1,26 @@
+{
+  "card_id": "henrika_domnathi_henrika_infernal_seer",
+  "name": "Henrika Domnathi // Henrika, Infernal Seer",
+  "oracle_text": "Flying\nAt the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, choose one that hasn't been chosen —",
+    "• Each player sacrifices a creature of their choice",
+    "• You draw a card and you lose 1 life",
+    "• Transform Henrika"
+  ],
+  "needs": [
+    {
+      "capability": "two-faced-card-authoring",
+      "kind": "engine",
+      "what": "a way for the authoring pipeline to produce a transforming double-faced card -- two linked card entries from one packet. NOTE: unlike the other two, the ENGINE already supports this mechanic (GameState.card_of, CardDef.back_face, primitives.transform, and the shipped bloodline_keeper / lord_of_lineage pair). Only the authoring path is missing, so this is cheaper than it looks and may be resolved by hand-authoring the card into data/cards/ rather than by any engine change.",
+      "why_existing_wont_do": "The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer[\"card\"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined \"A // B\" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason. Henrika additionally needs a `choose one that hasn't been chosen` mode tracker across separate trigger resolutions, which `ask_mode` does not provide."
+    }
+  ],
+  "closest_existing": [
+    "back_face",
+    "transform",
+    "kicker",
+    "evoke"
+  ],
+  "confidence": "high"
+}

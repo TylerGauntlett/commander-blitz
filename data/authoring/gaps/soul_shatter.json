@@ -1,0 +1,28 @@
+{
+  "card_id": "soul_shatter",
+  "name": "Soul Shatter",
+  "oracle_text": "Each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control.",
+  "blocked_sentences": [
+    "Each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control."
+  ],
+  "needs": [
+    {
+      "capability": "per-player-loop",
+      "kind": "op",
+      "what": "a control op that runs a body once per player from a `players` spec (`each_opponent`, `each_player`), binding the current player so nested effects and their selectors resolve against that one player -- so that `sacrifice`, `destroy` and friends can happen once per opponent instead of once in total",
+      "why_existing_wont_do": "`for_each` iterates *objects* and binds `each` to an oid; there is no player-shaped loop. The `player` spec (`select_players`) exists but only ops that act on a player directly -- `discard`, `mill`, `shuffle`, `draw`, `lose_life` -- read it; `sacrifice` takes only an `objects` selector, so a single sacrifice op over `{\"controller\": \"opponent\", \"count\": 1}` removes one permanent across the union of all opponents' boards, not one from each. `count: \"all\"` overshoots and takes every matching permanent from every opponent."
+    },
+    {
+      "capability": "per-player-loop",
+      "kind": "selector",
+      "what": "a way for a selector's `controller` clause to name a player bound by the enclosing loop (e.g. `\"controller\": {\"player\": \"each\"}`), so that `extreme` and `chooser` are evaluated within that one player's permanents",
+      "why_existing_wont_do": "`controller` accepts only `\"you\"`, `\"opponent\"` (meaning every opponent at once) or anything else (all players), so the pool for \"among creatures and planeswalkers they control\" cannot be scoped to a single opponent. `extreme` then computes one global maximum over the merged pool -- in a 3-player game the opponent with the smaller top mana value would be spared entirely -- and `chooser: \"owner\"` asks only the owner of `pool[0]`, so one opponent would be choosing another opponent's sacrifice."
+    }
+  ],
+  "closest_existing": [
+    "for_each",
+    "extreme",
+    "sacrifice"
+  ],
+  "confidence": "high"
+}

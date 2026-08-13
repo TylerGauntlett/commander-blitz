@@ -1,0 +1,91 @@
+{
+  "card": {
+    "id": "high_society_hunter",
+    "name": "High-Society Hunter",
+    "oracle_text": "Flying\nWhenever this creature attacks, you may sacrifice another creature. If you do, put a +1/+1 counter on this creature.\nWhenever another nontoken creature dies, draw a card.",
+    "mana_cost": "{3}{B}{B}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Noble"
+    ],
+    "power": 5,
+    "toughness": 3,
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, you may sacrifice another creature. If you do, put a +1/+1 counter on this creature.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Sacrifice another creature?",
+            "pay": {
+              "sacrifice": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "exclude_self": true,
+                "count": 1
+              }
+            },
+            "effects": [
+              {
+                "op": "add_counters",
+                "objects": {
+                  "self_only": true
+                },
+                "counter": "+1/+1",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever another nontoken creature dies, draw a card.",
+        "trigger": {
+          "event": "creature_dies",
+          "controller": "any",
+          "filter": {
+            "exclude_self": true,
+            "is_token": false
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
