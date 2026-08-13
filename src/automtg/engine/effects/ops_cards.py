@@ -418,6 +418,67 @@ def op_explore(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("connive")
+def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.47a — draw, discard, and grow by what the discard was.
+
+    "Connive N. (Draw N cards, then discard N cards. Put a +1/+1 counter on this
+    creature for each nonland card discarded this way.)"
+
+    Like `explore`, this is an op because of what the counter counts: **the cards
+    that were just discarded**, which nothing in the condition or value language
+    can name. `discard` puts them in a graveyard and returns nothing, so a card
+    written as `draw` + `discard` + `add_counters` would have to count something
+    else — and every available something else is wrong. `count` over the
+    graveyard counts what was already there; `cards_to_graveyard_this_turn`
+    counts every graveyard at the table and every earlier discard this turn. Both
+    load, and both grow the creature by a number nobody would recognise as wrong.
+
+    "Nonland", not "each card": conniving away two lands is the drawback, and an
+    implementation that counted the discards rather than reading them would
+    delete it.
+
+    Each permanent in the pool connives on its own — its own controller draws,
+    its own hand is discarded from, its own counters. That matters for "each
+    creature you control connives" only at a pod, and is free here.
+
+    *Divergence*: 701.47b keeps the draw and the discard when the conniving
+    permanent has left the battlefield, and drops only the counter. Here an empty
+    pool does nothing at all, so a creature killed in response to its own connive
+    trigger draws nobody a card. Recorded in rules-coverage.md.
+    """
+    amount = evaluate_value(ctx, spec.get("amount", 1))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Connive", "connive")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        pid = obj.controller
+        draw_cards(ctx.state, pid, amount)
+        hand = list(ctx.state.players[pid].hand)
+        take = min(amount, len(hand))
+        picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
+        # Read the faces before the move: a card in a graveyard is still
+        # readable, but reading first means this does not depend on that.
+        nonland = sum(
+            1
+            for o in picked
+            if (card := ctx.state.objects.get(o)) is not None
+            and not ctx.state.card_of(card).is_land
+        )
+        discard_cards(ctx.state, pid, picked)
+        add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
+        ctx.state.emit(
+            "connive",
+            player=pid,
+            source=ctx.source_oid,
+            oid=oid,
+            drawn=amount,
+            discarded=len(picked),
+            nonland=nonland,
+        )
+
+
 @register("two_piles")
 def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
     """"An opponent separates those cards into two piles. Put one pile into your

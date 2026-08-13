@@ -1,3 +1,42 @@
+## Connive — the same argument as explore, one clause further along
+
+### Overview
+
+Connive looks like three ops the engine already has: `draw`, `discard`,
+`add_counters`. Writing it that way fails on the last one, and it fails
+quietly — the counter has to count **the cards just discarded**, and there is no
+expression for that set.
+
+Every candidate is wrong in a way that resolves cleanly:
+
+| spelling | what it actually counts |
+|---|---|
+| `{"count": {"zone": "graveyard", "controller": "you"}}` | everything already lying in the graveyard |
+| `{"cards_to_graveyard_this_turn": true}` | every graveyard at the table, plus every earlier discard this turn |
+| the op's own `amount` | the discards, not the *nonland* discards |
+
+The third is the interesting one, because it is the version somebody writes and
+ships. "Nonland" is the drawback the whole mechanic is priced around — conniving
+away two lands is meant to cost you the counters — so counting the discards
+instead is a strictly better card, and the difference only appears on the turn
+your hand happened to be all lands.
+
+### What was already right
+
+Nothing under the op needed building. `ask_objects` already takes matched
+min/max bounds, so "discard N" is mandatory by construction; `draw_cards`
+already handles an empty library; and looping the pool per permanent gives "each
+creature you control connives" its own draw and its own hand for free.
+
+### The divergence, stated
+
+701.47b keeps the draw and the discard when the conniving permanent has left the
+battlefield and drops only the counter. Here an empty pool does nothing at all,
+so killing a creature in response to its own connive trigger denies the draw as
+well as the counter. Recorded in rules-coverage.md rather than papered over: the
+pool is resolved at resolution, and a departed permanent leaves nothing to read
+a controller off.
+
 ## Explore — the branch that names a card the condition language cannot
 
 ### Overview

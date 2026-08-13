@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>63 ops"]
+    ctx --> ops["op registry<br/>64 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-63 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+64 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -2177,6 +2177,35 @@ each permanent in the pool explores **separately**, so two exploring creatures
 reveal two cards; and the land half asks **nothing**, because 701.40a offers the
 choice only on the "otherwise" branch and a yes/no there would let a player
 decline a free card.
+
+## Connive
+
+```jsonc
+// "Whenever this creature attacks, it connives."
+{ "op": "connive", "objects": { "zone": "battlefield", "self_only": true } }
+
+// Connive 2, on a target.
+{ "op": "connive", "amount": { "const": 2 }, "objects": { "target": "t1" } }
+```
+
+Rule 701.47a: draw N, discard N, then a `+1/+1` counter for each **nonland**
+card discarded that way.
+
+Explore's argument again, in a different place. `draw` and `discard` both exist,
+so the obvious spelling is those two plus `add_counters` — and the counter has
+nothing correct to count. `discard` returns nothing, `count` over the graveyard
+counts what was already lying in it, and `cards_to_graveyard_this_turn` counts
+every graveyard at the table and every earlier discard this turn. All three
+load, and all three grow the creature by a number that looks plausible.
+
+"Nonland" is the clause doing the work: conniving away two lands is the drawback
+the mechanic is priced around, and an op that counted the discards rather than
+reading them would be a strictly better card whose difference shows up only on
+the turn your hand was all lands.
+
+`objects` is required for `explore`'s reason, and each permanent in the pool
+connives on its own — its own controller draws, from its own hand, onto its own
+counters.
 
 ## Cycling
 
