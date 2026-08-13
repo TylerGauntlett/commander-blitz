@@ -171,7 +171,7 @@ def damage_permanent(
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is
     # why this returns before all three rather than zeroing `amount` later.
-    from .characteristics import protected_from
+    from .characteristics import prevented_damage, protected_from
 
     if protected_from(state, oid, source_oid):
         state.emit(
@@ -183,6 +183,24 @@ def damage_permanent(
             reason="protection",
         )
         return 0
+    # Absorb (702.63a): "prevent N of that damage", per source and per instance.
+    # After protection, which prevents all of it, and before everything else --
+    # what is prevented was never dealt, so nothing below should see it: no
+    # deathtouch mark, no lifelink, no ledger entry, and a `DAMAGE_DEALT` event
+    # carrying the reduced number rather than the printed one.
+    if (shield := prevented_damage(state, oid)) > 0:
+        blocked = min(shield, amount)
+        amount -= blocked
+        state.emit(
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=blocked,
+            reason="prevent_damage",
+        )
+        if amount <= 0:
+            return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword

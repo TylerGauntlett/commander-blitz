@@ -178,7 +178,7 @@ This is the long tail, and where the build order comes from.
 
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
-| Absorb | blocked | damage prevention, which the engine models only as protection | — |
+| Absorb | shipped | the `prevent_damage` static -- parameterised on N, applied per source in `damage_permanent` | `prevent_damage` |
 | Adapt | free | activated ability: `if` `counters_on` is 0, then `add_counters` | — |
 | Adventure | blocked | split cards — one card, two castable halves | — |
 | Affinity | free | `cost_reduction` already takes `{"count": filter}`; generic-only, clamped at zero, which is exactly affinity | — |

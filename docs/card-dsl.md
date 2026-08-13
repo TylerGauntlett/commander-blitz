@@ -853,7 +853,7 @@ characteristics — the loader rejects anything else. See
 ```
 
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
-`block_restriction` ·
+`block_restriction` · `prevent_damage` ·
 `extra_land_drops`, plus the player-wide ones below.
 Values inside a static may only be `{"const": n}` or `{"count": filter}`.
 
@@ -2376,6 +2376,33 @@ let you target your own protected creature.
 
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
+
+### Absorb, which is not protection with a number
+
+```jsonc
+{ "kind": "static", "effect": "prevent_damage",
+  "affects": { "self_only": true }, "amount": { "const": 2 } }
+```
+
+"If a source would deal damage to this creature, prevent 2 of that damage."
+Protection is the near miss and is a *bigger* card in four ways, only one of
+which is about damage: it prevents all of it, and it also stops the creature
+being blocked, enchanted and targeted. An absorb creature written as protection
+is unblockable and untargetable.
+
+Parameterised on N, so a static rather than a `Keyword` — the routing rule's
+second row.
+
+The clause that decides everything is "**a source**". Prevention is per source
+and per instance, not a pool that drains: absorb 1 blocked by three 1/1s takes
+nothing from any of them, and hit by one 3/3 takes two. That is the whole reason
+absorb 1 is printable, and a running total would make it a one-shot.
+
+Prevented damage was **never dealt**, so it is subtracted before anything the
+damage pipeline does afterwards — no deathtouch mark, no lifelink, no entry in
+the damage ledger, and a `DAMAGE_DEALT` carrying the reduced number. Only what
+got through is damage, and it is ordinary damage: the excess from a deathtouch
+source still marks the victim.
 
 ### Shroud, which is the third member of that family
 

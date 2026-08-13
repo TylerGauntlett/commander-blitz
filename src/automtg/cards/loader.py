@@ -65,6 +65,11 @@ STATIC_EFFECTS = frozenset(
         # names a quality, and four separate rules (damage, enchant/equip,
         # block, target) ask about it.
         "protection",
+        # Absorb (702.63a): "If a source would deal damage to this creature,
+        # prevent N of that damage." Parameterised on N, so a static and not a
+        # keyword -- and *not* protection, which prevents all of it and three
+        # other things besides. Read by `damage_permanent` alone.
+        "prevent_damage",
         # Ancient Greenwarden.  A fact about the *player*, like the two above:
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
@@ -795,6 +800,11 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
+    if model.effect == "prevent_damage" and model.amount is None:
+        # Absorb 0 prevents nothing. A static that reads as damage prevention
+        # and prevents none of it is the failure this whole pass exists to
+        # refuse -- it would load, appear in the card's text, and never fire.
+        raise DslError(f"{where}: 'prevent_damage' needs an 'amount' -- absorb N")
     if model.effect not in STATIC_EFFECTS:
         raise DslError(
             f"{where}: unknown static effect {model.effect!r} (implemented: {sorted(STATIC_EFFECTS)})"
