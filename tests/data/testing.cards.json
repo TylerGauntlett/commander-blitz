@@ -4100,6 +4100,52 @@
       ]
     },
     {
+      "id": "t_disturb_front",
+      "name": "Test Disturbed Spirit",
+      "oracle_text": "Disturb {1}{W} (You may cast this card transformed from your graveyard for its disturb cost.)",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "back_face": "t_disturb_back",
+      "graveyard_cost": {
+        "mana": "{1}{W}"
+      },
+      "graveyard_cast_transformed": true
+    },
+    {
+      "id": "t_disturb_back",
+      "name": "Test Spirit's Memory",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_casualty",
       "name": "Test Casualty Bolt",
       "oracle_text": "Casualty 2 (As an additional cost to cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)\nDraw a card.",

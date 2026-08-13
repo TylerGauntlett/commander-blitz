@@ -338,6 +338,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    # Disturb needs both halves, and each is silent alone. Without a
+    # `graveyard_cost` there is no cast to arrive transformed; without a
+    # `back_face` there is nothing to transform *into*, so the card would be
+    # cast for its disturb cost and arrive as its front face -- which is
+    # flashback wearing the wrong word.
+    if model.graveyard_cast_transformed:
+        if model.graveyard_cost is None and model.flashback is None:
+            raise DslError(
+                f"{where}: 'graveyard_cast_transformed' needs a 'graveyard_cost' -- "
+                f"there is no cast for it to transform"
+            )
+        if model.back_face is None:
+            raise DslError(
+                f"{where}: 'graveyard_cast_transformed' needs a 'back_face' to "
+                f"transform into; without one the card arrives as its front face"
+            )
     # Overload is two halves like kicker, and half of it fails the same silent
     # way: a cost nobody reads is a more expensive cast that does the same
     # thing, and an `{"overloaded": true}` clause with no cost can never fire.
@@ -495,6 +511,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         buyback=model.buyback,
         rebound=model.rebound,
         overload=overload,
+        graveyard_cast_transformed=model.graveyard_cast_transformed,
         additional_cost=additional_cost,
         additional_optional=model.additional_optional,
         additional_repeatable=model.additional_repeatable,

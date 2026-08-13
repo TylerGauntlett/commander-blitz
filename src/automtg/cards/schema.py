@@ -345,6 +345,12 @@ class CardModel(BaseModel):
     #: ``graveyard``  **escape**, which is reusable, and which is the whole
     #:                reason this is a field rather than a hard-coded exile.
     graveyard_cast: Literal["exile", "graveyard"] = "exile"
+    #: **Disturb** (702.146a): "You may cast this card **transformed** from your
+    #: graveyard for its disturb cost." The graveyard cast is `graveyard_cost`,
+    #: already shipped for flashback; this is the one bit disturb adds -- the
+    #: card is the *back* face from the moment it goes on the stack, so its
+    #: name, types and effects are the back face's and not the front's.
+    graveyard_cast_transformed: bool = False
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.

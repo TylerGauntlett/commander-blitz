@@ -50,6 +50,17 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    # Disturb: the card is cast **transformed**, so it is the back face from
+    # here on -- name, types and effects included. Set before `card_of` is asked
+    # anything, since a spell that showed its front face on the stack and its
+    # back face on the battlefield would be two different cards.
+    if flashback and card.graveyard_cast_transformed and card.back_face:
+        obj.transformed = True
+        obj.cast_transformed = True
+        # Re-read: everything below names the card, and a spell that showed its
+        # front face on the stack and its back face on the battlefield would be
+        # two different cards to everyone watching.
+        card = state.card_of(obj)
     obj.zone = Zone.STACK
     obj.controller = controller
 
@@ -322,6 +333,12 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
         destination = Zone.EXILE
     controller = obj.controller
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
+    if obj.cast_transformed and destination is Zone.BATTLEFIELD:
+        # `reset_permanent_state` cleared it on the way in -- 712.13a, "enters
+        # front face up" -- which is right for every permanent except this one.
+        # Disturb's whole content is that it arrives on the back face.
+        obj.transformed = True
+        state.bump_chars()
     if rebounds:
         # After the move: `move_object` runs `reset_permanent_state` on the way,
         # which would wipe this if it were set first -- the same ordering

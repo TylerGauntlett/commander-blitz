@@ -365,7 +365,10 @@ class Game:
             oid=oid,
             spell_oid=oid,
             sid=item.sid,
-            card=card.id,
+            # `item.def_id`, not the `card` read at the top of this method: a
+            # disturb cast turns the card over inside `push_spell`, and the log
+            # has to name the face that was actually cast.
+            card=item.def_id,
             kicked=1 if action.kicked else 0,
         )
 
