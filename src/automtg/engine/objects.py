@@ -203,6 +203,15 @@ class GameObject:
     #: (712.13a, "enters front face up") and disturb is the one case that must
     #: survive it.
     cast_transformed: bool = False
+    #: **Phasing** (702.26c): this permanent is phased out and "treated as
+    #: though it does not exist". It is out of `state.battlefield` while this is
+    #: set, so nothing has to consult the flag -- it is here so the untap step
+    #: can find it again, and so the log can say which it is.
+    phased_out: bool = False
+    #: Set on a permanent that phased out only because what it was attached to
+    #: did (702.26e, "indirectly phases out"). It phases back in with its host
+    #: rather than on its own schedule, which is the whole of the difference.
+    phased_out_indirectly: bool = False
     #: **Mutate** (702.140a): the synthesised card this merged permanent *is* --
     #: the card on top, carrying the abilities of everything under it.
     #:

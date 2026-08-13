@@ -14,7 +14,7 @@ from . import replacements, suspend
 from .actions import PendingDecision
 from .characteristics import player_has_no_hand_limit, untap_also
 from .effects.context import EffectContext, ask_objects
-from .enums import DecisionKind, Step
+from .enums import DecisionKind, Keyword, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
 from .primitives import (
@@ -136,6 +136,10 @@ def _untap_step(state: GameState) -> None:
     for obj in state.objects.values():
         if obj.detained_by == player.pid:
             obj.detained_by = None
+    # Phasing (702.26b) happens **before** untapping and it is a turn-based
+    # action, not an ability -- which is why it lives here beside the untap
+    # rather than in a card's effect list.
+    _phase(state, player.pid)
     untap_all(state, player.pid)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.
@@ -147,6 +151,86 @@ def _untap_step(state: GameState) -> None:
     state.emit(
         EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round
     )
+
+
+def _phase(state: GameState, pid: int) -> None:
+    """Phase this player's permanents out and in (702.26b).
+
+    "A phased-out permanent is treated as though it does not exist" (702.26c) is
+    said by taking it out of ``state.battlefield`` and leaving it in
+    ``state.objects`` -- the same nowhere a card on the stack and a card under a
+    merged permanent already occupy. Every walk of the battlefield therefore
+    misses it: targeting, state-based actions, the characteristics statics, the
+    combat declarations and the serializer, none of which needed a test of their
+    own.
+
+    Three things follow that would each be work in a flag-based implementation:
+
+    - **No zone change.** Nothing moves, so no leaves- or enters-the-battlefield
+      trigger fires and `reset_permanent_state` never runs -- which is exactly
+      702.26c, and is why counters, auras and damage survive.
+    - **No summoning sickness.** `entered_turn` is untouched, so 702.26f ("it is
+      treated as having been continuously on the battlefield") is free.
+    - **Attachments come back attached.** `attached_to` is untouched too, and
+      the Aura phases out beside its host rather than being seen alone by the
+      state-based action that would bin it.
+
+    702.26b is a **toggle**, not two rules: a permanent phases out if it is
+    phased in and in if it is out, and each does one or the other in a given
+    untap step. So both lists are taken from the state as it stands *before*
+    anything moves -- decide, then act. Reading the battlefield as it changes
+    would send a permanent out and straight back in, or the reverse, and the
+    board would look exactly the same afterwards as if phasing did nothing.
+    """
+    from .characteristics import chars
+
+    going_in = [
+        oid
+        for oid, obj in state.objects.items()
+        if obj.phased_out and obj.controller == pid and not obj.phased_out_indirectly
+    ]
+    going_out = [
+        oid
+        for oid in state.battlefield
+        if (obj := state.objects.get(oid)) is not None
+        and obj.controller == pid
+        and Keyword.PHASING.value in chars(state, oid).keywords
+    ]
+    for oid in going_in:
+        _phase_in(state, oid)
+    for oid in going_out:
+        _phase_out(state, oid, indirect=False)
+    state.bump_chars()
+
+
+def _phase_out(state: GameState, oid: int, *, indirect: bool) -> None:
+    obj = state.objects.get(oid)
+    if obj is None or oid not in state.battlefield:
+        return
+    state.battlefield.remove(oid)
+    obj.phased_out = True
+    obj.phased_out_indirectly = indirect
+    state.emit("phased_out", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
+    # 702.26e: whatever is attached to it phases out with it, and is marked as
+    # having done so indirectly -- so it comes back when its host does rather
+    # than on the schedule of whoever controls it.
+    for other_id in list(state.battlefield):
+        other = state.objects.get(other_id)
+        if other is not None and other.attached_to == oid:
+            _phase_out(state, other_id, indirect=True)
+
+
+def _phase_in(state: GameState, oid: int) -> None:
+    obj = state.objects.get(oid)
+    if obj is None or not obj.phased_out:
+        return
+    obj.phased_out = False
+    obj.phased_out_indirectly = False
+    state.battlefield.append(oid)
+    state.emit("phased_in", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
+    for other_id, other in state.objects.items():
+        if other.phased_out and other.phased_out_indirectly and other.attached_to == oid:
+            _phase_in(state, other_id)
 
 
 def _epic_copy(state: GameState, pid: int) -> None:

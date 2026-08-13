@@ -6618,6 +6618,23 @@
         "first_strike",
         "vigilance"
       ]
+    },
+    {
+      "id": "t_phaser",
+      "name": "Test Phaser",
+      "oracle_text": "Phasing (This phases in or out before you untap during each of your untap steps.)",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "phasing"
+      ]
     }
   ]
 }
