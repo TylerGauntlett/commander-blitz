@@ -243,7 +243,7 @@ This is the long tail, and where the build order comes from.
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
 | Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
 | Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
-| Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
+| Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
@@ -369,13 +369,17 @@ above it.
 
 ### What is genuinely left
 
-**Seven blocked rows, and they are two clusters.** Every one-off is done.
+**Four blocked rows, and they are one cluster.** Every one-off is done.
 
 | cluster | keywords | what it needs |
 |---|---|---|
-| **Face-down permanents** | morph / megamorph, manifest (and cloak, on the demand side) | a permanent whose *derived* characteristics are a 2/2 colourless creature with no name and no abilities, over a real card that is still there; plus a turn-face-up special action gated on the hidden card. `transform` built the `card_of` choke point, and `chars` is where the shell would sit. **Not** what foretell needed — a card hidden *in exile* is `revealed_to`, and that shipped |
 | **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes afterwards. `back_face` is a face you *turn over*, and this also needs the authoring pipeline to emit two card entries from one answer |
-| **Hideaway** | — | waits on **both** of the above's first half and on play-from-exile, which is the only reason it is not a one-off |
+
+Hideaway was listed here as the one row waiting on *two* clusters, and it needed
+neither of them whole. "Face down in exile" is `revealed_to`, which foretell had
+already shipped — the 2/2 shell is only needed on the **battlefield**, where
+somebody can point at it. What was actually missing was the second half,
+play-from-exile, and that is one op reading back the `exiled_by` link.
 
 ### The five refused
 
@@ -392,12 +396,7 @@ reclassified here.
 
 ## Suggested build order
 
-1. **Face-down permanents.** Two keywords plus a demand-side card, and it opens
-   hideaway's first half. The shell belongs in `chars`, and the pieces around it
-   are a `face_down` flag, a suppression of the hidden card's abilities in
-   `legality` and `triggers`, and one special action.
-2. **Hideaway**, once that and play-from-exile exist.
-3. **A second castable face**, last of the buildable work: it is the only
+1. **A second castable face**, the last of the buildable work: it is the only
    cluster needing the *authoring pipeline* changed as well as the engine.
 
 Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a

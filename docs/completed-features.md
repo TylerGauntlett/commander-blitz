@@ -1,3 +1,75 @@
+## Hideaway — a permission, and a link read from the end that offers it
+
+### Overview
+
+The census filed hideaway as the one row waiting on **two** clusters at once:
+face-down exile, and playing a card from exile. That is why it was ranked after
+morph rather than beside the other one-offs — and it turned out to need neither
+of them whole.
+
+| printed half | what the census said it needed | what it needed |
+|---|---|---|
+| "look at the top four, exile one **face down**" | the face-down permanent shell | `revealed_to`, which foretell shipped |
+| "put the rest on the bottom in a **random** order" | — | `move_object`, like every other zone change |
+| "You may **play the exiled card** without paying its mana cost" | play-from-exile | the `play_exiled` op — the only genuinely missing piece |
+
+### "Face down" is two different claims
+
+A card hidden **in exile** and a permanent hidden **on the battlefield** are not
+the same problem, and the census collapsed them.
+
+Nothing may interact with a hideaway card while it sits there: it cannot be
+targeted, it is not counted by anything, and the only question the rules ever
+ask about it is whether its owner may play it. Hiding it is therefore just *not
+showing it* — `revealed_to`, the private-information channel foretell already
+uses.
+
+A face-down **permanent** is on the battlefield where opponents can point at it,
+so it needs derived characteristics of its own: a 2/2 colourless creature with
+no name and no abilities, over a real card that is still there. That is the
+`chars` shell morph and manifest built, and hideaway never touches it.
+
+### The missing half was a permission, not a movement
+
+The engine could already exile a card, and could already cast one for free
+(`suspend.cast_for_free`, shared by suspend, foretell, cascade, ripple and
+rebound). What it had no way to say was **"that one, from there"**.
+
+`play_exiled` is that sentence. Its selector defaults to
+
+```jsonc
+{ "zone": "exile", "controller": "any", "exiled_with": "self" }
+```
+
+so the ordinary hideaway card writes no selector at all, and the default is
+exactly the O-Ring link read back — the same read imprint makes.
+
+### Why the link points that way
+
+The engine now writes three exile links, all on the exiled card, each naming
+whatever the ability that reads it needs to ask about:
+
+| field | names | read by |
+|---|---|---|
+| `exiled_by` | the **exiler** | O-Ring's leaves-trigger, imprint's abilities, and hideaway |
+| `haunting` | a creature whose **death** matters | a `creature_dies` trigger in exile |
+| `encoded_on` | a creature whose **combat damage** matters | a `deals_combat_damage_to_player` trigger in exile |
+
+Hideaway takes `exiled_by` and it has to. The *permanent* is what later says
+"you may play the exiled card", so the permanent is what has to find it — and
+the permanent is the exiler. That is imprint's direction, not haunt's, and the
+Vault is still the one asking after it has been sacrificed to its own cost,
+because the link is an oid and an oid outlives the zone change.
+
+### The bottom of the library
+
+Putting the unchosen cards back is the kind of step that looks like list
+surgery, and doing it as list surgery leaves cards whose `zone` still reads
+`EXILE` sitting inside a library — a corruption nothing else in the engine would
+have noticed, because everything downstream trusts the zone field. It goes
+through `move_object`, which is the single zone-change path for the same reason
+`zones.destroy` is the single destruction path.
+
 ## Reconfigure — three abilities, and the one nobody counts
 
 ### Overview

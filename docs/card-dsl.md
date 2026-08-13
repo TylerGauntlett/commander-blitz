@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>77 ops"]
+    ctx --> ops["op registry<br/>79 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-77 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+79 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `hideaway` `play_exiled` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -2255,6 +2255,40 @@ creature has died and carries no record of who was haunting it. The haunting
 card is in exile with the link on it, which is why that ability carries
 `active_zones: ["exile"]` — the same widening the cycling trigger needed for the
 graveyard.
+
+## Hideaway — "that one, from there"
+
+```jsonc
+{ "op": "hideaway", "player": "you", "amount": { "const": 4 } }
+{ "op": "play_exiled", "player": "you" }
+```
+
+The census listed hideaway as waiting on *two* things — face-down exile and
+play-from-exile — and it needed one.
+
+"Face down in exile" is `revealed_to`, which foretell already shipped. A card
+nobody may interact with is hidden by **not being shown**, and it needs none of
+the 2/2 characteristics shell that morph does: nothing can target it, nothing
+counts it, and the only question anyone can ask about it is whether its owner
+may play it.
+
+What was genuinely missing is that permission. The engine could exile a card,
+and could cast one for free, and had no way to say *"that one, from there"* —
+which is `play_exiled`, reading back the link the exile wrote. Its selector
+defaults to `{"zone": "exile", "controller": "any", "exiled_with": "self"}`, so
+the ordinary card writes no selector at all.
+
+The link direction is **`exiled_by`**, and it has to be. The *permanent* is what
+later says "you may play the exiled card", so the permanent is what has to find
+it — which is imprint's direction, not haunt's. That completes the table in the
+cipher section above: all four users of the exile links are triggers or
+abilities asking different questions of the same three fields.
+
+The rest going to the **bottom in a random order** goes through `move_object`
+like every other zone change. Editing the library list in place is the obvious
+shortcut and it leaves cards whose `zone` still says `EXILE` sitting inside a
+library — caught here by a test, and worth stating because nothing else in the
+engine would have noticed.
 
 ## Token copies
 
