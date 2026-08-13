@@ -369,15 +369,13 @@ above it.
 
 ### What is genuinely left
 
-Two subsystems and three one-offs.
+**Seven blocked rows, and they are two clusters.** Every one-off is done.
 
 | cluster | keywords | what it needs |
 |---|---|---|
-| **Face-down permanents** | morph / megamorph, manifest (and cloak, on the demand side) | a permanent whose characteristics are a 2/2 shell over a real card, plus a turn-face-up special action. `transform` built the `card_of` choke point this goes through. **Not** what foretell needed — a card hidden *in exile* is `revealed_to`, and that shipped |
-| **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes afterwards. `back_face` is a face you *turn over*; this also needs the authoring pipeline to emit two card entries from one answer |
-| **Cipher** | — | encode a spell onto a creature and cast copies of it from exile whenever that creature connects. The copy machinery is `put_copy_on_stack`; the encoding link is haunt's, pointed a third way |
-| **Hideaway** | — | waits on **both** face-down exile and play-from-exile, which is the only reason it is not a one-off |
-| **Splice** | — | merge one card's effects into another spell as it is cast. The only keyword that changes what a *different* card does at cast time |
+| **Face-down permanents** | morph / megamorph, manifest (and cloak, on the demand side) | a permanent whose *derived* characteristics are a 2/2 colourless creature with no name and no abilities, over a real card that is still there; plus a turn-face-up special action gated on the hidden card. `transform` built the `card_of` choke point, and `chars` is where the shell would sit. **Not** what foretell needed — a card hidden *in exile* is `revealed_to`, and that shipped |
+| **A second castable face** | adventure, aftermath, bestow, mutate | one card, two castable things, differing in cost, type line and where the card goes afterwards. `back_face` is a face you *turn over*, and this also needs the authoring pipeline to emit two card entries from one answer |
+| **Hideaway** | — | waits on **both** of the above's first half and on play-from-exile, which is the only reason it is not a one-off |
 
 ### The five refused
 
@@ -394,12 +392,13 @@ reclassified here.
 
 ## Suggested build order
 
-1. **Cipher and splice**, in either order — neither waits on anything, and both
-   have their copy or cast machinery already built.
-2. **Face-down permanents**, through the `card_of` choke point `transform` made.
-3. **Hideaway**, once that and play-from-exile exist.
-4. **A second castable face**, last of the buildable work: it is the only
-   cluster that needs the *authoring pipeline* changed as well as the engine.
+1. **Face-down permanents.** Two keywords plus a demand-side card, and it opens
+   hideaway's first half. The shell belongs in `chars`, and the pieces around it
+   are a `face_down` flag, a suppression of the hidden card's abilities in
+   `legality` and `triggers`, and one special action.
+2. **Hideaway**, once that and play-from-exile exist.
+3. **A second castable face**, last of the buildable work: it is the only
+   cluster needing the *authoring pipeline* changed as well as the engine.
 
 Cross-check [unsupported-cards.md](unsupported-cards.md) first — where a
 capability already has gap records, those cards are the real specification.
