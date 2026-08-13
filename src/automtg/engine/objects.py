@@ -154,6 +154,12 @@ class GameObject:
     #: because a "when you cast this spell" trigger reads it while the spell is
     #: still on the stack and a permanent's enters trigger may read it after.
     cast_additional: int = 0
+    #: Whether this object was cast **transformed** -- disturb. Kept beside the
+    #: other `cast_*` flags rather than relying on `transformed`, because
+    #: `reset_permanent_state` clears that on the way onto the battlefield
+    #: (712.13a, "enters front face up") and disturb is the one case that must
+    #: survive it.
+    cast_transformed: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive

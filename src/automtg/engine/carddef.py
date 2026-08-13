@@ -388,6 +388,8 @@ class CardDef:
     #: finishes. True for flashback and jump-start; **False for escape**, which
     #: is reusable and is the only reason this is not a constant.
     graveyard_cast_exiles: bool = True
+    #: Disturb: a graveyard cast that arrives on the **back** face.
+    graveyard_cast_transformed: bool = False
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
 

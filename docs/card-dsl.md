@@ -2641,6 +2641,7 @@ them where it is sitting:
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
+"graveyard_cast_transformed": true          // disturb: it comes back as its back face
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
@@ -2786,6 +2787,38 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+#### Disturb
+
+```jsonc
+"back_face": "spirits_memory",
+"graveyard_cost": { "mana": "{1}{W}" },
+"graveyard_cast_transformed": true
+```
+
+Both halves shipped years apart and had never met: `graveyard_cost` is the cast,
+generalised for flashback, jump-start and escape, and `transformed` is the face,
+built for Bloodline Keeper. Disturb is the word joining them, and everything
+interesting is **when** the face is turned.
+
+*At cast time*, so the spell's name, types and effects are the back face's from
+the moment it goes on the stack. The disturb cards this matters most for have a
+Creature front and an Enchantment back, where even `is_permanent` would
+otherwise be answered off the wrong face — and a spell that showed one face on
+the stack and another on the battlefield is two different cards to everyone
+watching.
+
+*And again after the move*, because `reset_permanent_state` clears `transformed`
+on the way onto the battlefield — rule 712.13a, "enters front face up", which is
+right for every permanent except this one. `cast_transformed` sits beside the
+other `cast_*` flags and outlives the spell for the same reason `cast_x` does.
+
+Both halves are required: without a `graveyard_cost` there is no cast to
+transform, and without a `back_face` the card is cast for its disturb cost and
+arrives as its front face — flashback wearing the wrong word.
+
+*Divergence*: legality enumerates the cast's targets off the **front** face,
+because it decides what is castable before anything is turned over.
 
 ### Ascend
 
