@@ -314,6 +314,26 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'rebound' only means anything on an instant or sorcery -- "
             f"a permanent spell enters the battlefield and never reaches the rider"
         )
+    # Overload is two halves like kicker, and half of it fails the same silent
+    # way: a cost nobody reads is a more expensive cast that does the same
+    # thing, and an `{"overloaded": true}` clause with no cost can never fire.
+    overload = ManaCost.parse(model.overload) if model.overload else None
+    reads_overloaded = _mentions_condition(model, "overloaded")
+    if reads_overloaded and overload is None:
+        raise DslError(f"{where}: reads the 'overloaded' condition but has no 'overload' cost")
+    if overload is not None and not reads_overloaded:
+        raise DslError(
+            f"{where}: has an 'overload' cost that no effect reads via 'overloaded' -- "
+            f"the text change is what the extra mana buys"
+        )
+    if overload is not None and any(not t.optional for t in model.targets):
+        # An overloaded spell is cast with **no** targets (702.96a replaces every
+        # "target" with "each"), so a required target would make the overload
+        # line uncastable -- silently, since the printed line is still offered.
+        raise DslError(
+            f"{where}: an overload card's targets must all be 'optional' -- an "
+            f"overloaded spell is cast with no targets at all"
+        )
     if model.buyback and model.kicker is None:
         # Buyback *is* a kicker with a rider. Without the cost there is nothing
         # to pay and the rider never fires, so the card reads "buyback" and
@@ -450,6 +470,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         buyback=model.buyback,
         rebound=model.rebound,
+        overload=overload,
         kicker_label=model.kicker_label,
         kicker=kicker,
         evoke=evoke,

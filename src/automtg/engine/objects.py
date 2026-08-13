@@ -145,6 +145,10 @@ class GameObject:
     #: *current* zone, which for any resolving sorcery is the stack, identically
     #: whether it was cast from hand or from the graveyard.
     cast_from_graveyard: bool = False
+    #: Whether this object was cast for its **overload** cost. Same contract as
+    #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
+    #: permanent's own enters trigger may read it.
+    cast_overloaded: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive

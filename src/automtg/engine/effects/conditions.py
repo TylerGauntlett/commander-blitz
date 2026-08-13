@@ -34,6 +34,10 @@ CONDITION_KEYS = frozenset(
         "kicked",
         "evoked",
         "cast_from_graveyard",
+        # Overload (702.96a): "change its text by replacing all instances of
+        # 'target' with 'each'". There is no rewriting a printed sentence, and
+        # the two halves really are two effects, so the card branches on this.
+        "overloaded",
         "has_city_s_blessing",
         # "…if it isn't renowned". A one-way word written by `set_flag`.
         "has_flag",
@@ -78,6 +82,14 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_kicked = ctx.kicked or (obj is not None and obj.cast_kicked)
         return was_kicked == bool(cond["kicked"])
+    if "overloaded" in cond:
+        # Written onto the object *before* `spell_effects` run, so this reads
+        # the object in both lifetimes -- the same shape `kicked` has, and for
+        # the same reason: an overloaded permanent's own enters trigger sees
+        # only the object, the StackItem having gone.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was_overloaded = obj is not None and obj.cast_overloaded
+        return was_overloaded == bool(cond["overloaded"])
     if "evoked" in cond:
         # Only ever read on the battlefield -- "it's sacrificed when it
         # enters" is an ETB trigger -- but written the same way as `kicked`

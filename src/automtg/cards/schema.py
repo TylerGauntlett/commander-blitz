@@ -239,6 +239,15 @@ class CardModel(BaseModel):
     #: and like both it only ever replaces the *graveyard*. "From your hand" is
     #: the loop guard rather than flavour: the free cast happens from exile.
     rebound: bool = False
+    #: **Overload** (702.96a): "You may cast this spell for its overload cost.
+    #: If you do, change its text by replacing all instances of 'target' with
+    #: 'each'." A third cast variant beside kicked and evoked, and the text
+    #: change is written by the card as an `if` on `{"overloaded": true}` --
+    #: there is no way to rewrite a printed sentence, and the two halves really
+    #: are two different effects ("destroy target artifact" / "destroy each
+    #: artifact"). An overloaded spell is cast with **no targets**, so every
+    #: target the card declares must be `optional`.
+    overload: str | None = None
     #: What that additional cost is called on screen. `kicker` is the engine's
     #: name for the general thing; "buyback" and "kicker" are two words for it,
     #: and an action reading "(kicked)" on a buyback card is wrong about what

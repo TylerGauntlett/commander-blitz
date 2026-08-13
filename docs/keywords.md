@@ -272,7 +272,7 @@ This is the long tail, and where the build order comes from.
 | Mutate | blocked | stacked permanents with merged abilities | — |
 | Ninjutsu | blocked | returning an unblocked attacker and putting a creature in attacking, without casting | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
-| Overload | routed | a cost that swaps a targeted selector for a global one | — |
+| Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
 | Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
 | Phasing | refused | phasing; see rules-coverage.md | — |

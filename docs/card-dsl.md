@@ -2644,6 +2644,7 @@ them where it is sitting:
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
+"overload": "{3}{R}"                        // cast it with no targets, hitting each instead
 ```
 
 #### Casting from the graveyard
@@ -2675,6 +2676,37 @@ means exactly `graveyard_cost`. A card giving both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+#### Overload
+
+```jsonc
+"overload": "{3}{R}",
+"targets": [ { "id": "t1", …, "optional": true } ],
+"spell_effects": [
+  { "op": "if", "condition": { "overloaded": true },
+    "then": [ { "op": "damage", "objects": { … }, "amount": { "const": 2 } } ],
+    "else": [ { "op": "damage", "target": "t1", "amount": { "const": 2 } } ] }
+]
+```
+
+Kicker, evoke, emerge, flashback and prowl all change what a spell **costs**.
+Overload changes what it *does* — by rewriting a printed sentence, which is not
+something the engine can do to data it was handed. So the card writes both
+halves and branches on `{"overloaded": true}`, the shape `kicked` already has.
+
+That is not a workaround. "Destroy target artifact" and "destroy each artifact"
+really are two effects, one targeted and one not, and the residual gate still
+sees one printed line implemented by one `if`.
+
+**Targets are the half that bites.** An overloaded spell is cast with none at
+all, so legality gives that line the empty tuple, and every target the card
+declares must be `optional` — otherwise the overload line is offered and then
+never castable, silently, because the printed line still is. The loader refuses
+it.
+
+The flag is written onto the object *before* `spell_effects` run, for
+`cast_from_graveyard`'s reason: written after, every overloaded spell resolves
+as the targeted half, with no targets, which is nothing at all.
 
 #### Rebound
 
