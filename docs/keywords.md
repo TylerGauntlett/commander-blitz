@@ -1,6 +1,6 @@
 # Keywords, and where each one lands
 
-The engine implements 27 keywords. Every one arrived the same way: a card in the
+The engine implements 30 keywords. Every one arrived the same way: a card in the
 authoring queue could not be expressed, a worker wrote a gap record,
 `/extend-dsl` built it. That loop works, and [card-authoring.md](card-authoring.md)
 is the argument for it.
@@ -344,86 +344,87 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**The largest single finding is that ability words are nearly free.** Twelve of
-the twenty-one above need no engine work at all, and neither do a dozen entries
-in the expansion table — adapt, affinity, afterlife, alliance, battle cry,
-extort, fabricate, investigate, living weapon, populate, recover, reinforce,
-scavenge, soulshift, support, transfigure, transmute. Those are `/author-cards`
-jobs, not `/extend-dsl` jobs,
-and nothing in the demand-driven report would ever have surfaced them: a
-capability with no gap record does not appear there, and a capability that is
-already expressible never gets a gap record written for it.
+**The routed column is empty.** Every keyword whose mechanism was decided and
+whose gap was small and named has been built. What is left is 22 `blocked` rows
+and 5 `refused` ones, and the useful thing to say about them is that they are
+**four subsystems and a short tail**, not twenty-seven jobs.
 
-**The evasion family is now closed.** Fear, intimidate, horsemanship, shadow and
-nonbasic landwalk shipped together, because they are one capability and not five
-— every one is a question `combat.can_block` asks of `chars` on both creatures,
-and the rest of `can_block` was already the answer. What is left of combat is
-not evasion at all: flanking, rampage, bushido, frenzy and provoke each wanted a
-*trigger event* the engine did not have ("becomes blocked", "attacks and isn't
-blocked"), which is a different tier of work with frontend consequences. Four of
-those five have since shipped as `becomes_blocked` and `attacks_unblocked` —
-one capability rather than four, because both events are decided at the same
-instant and neither is knowable a moment earlier. Provoke is the one left, and
-it is not a trigger at all: it is a block *requirement*, the mirror of
-`must_attack`.
+### The four subsystems
 
-**The unshipped entries cluster, and the clusters are small.** Nearly everything
-still outstanding waits on one of six things:
+Each is a genuine rules capability the engine does not have. None is reachable
+inside a card-unblocking run, and `/extend-dsl` rule 4 says to stop and report
+rather than start one — which is what this section is.
 
-| Blocker | Waiting on it |
+| Subsystem | Keywords waiting on it | What it actually needs |
+|---|---|---|
+| **Face-down permanents** | morph / megamorph, manifest, (and cloak, from the demand side) | a permanent whose characteristics are a 2/2 shell over a real card, a special action to turn it up at any priority, and a `card_of` that answers the shell rather than the card. `transform` built the `card_of` choke point; this is the second thing to go through it |
+| **A second castable face** | adventure, aftermath, bestow, mutate, meld, flip | one card, two things you may cast, differing in cost, type line and where the card goes afterwards. `back_face` is a *face you turn over*, not a second castable card, and the authoring pipeline emits one card entry per answer file |
+| **Replacing a draw or a discard** | dredge, madness, miracle | the decision has to be asked **inside** `draw_cards` / `discard_cards`, which are called from the turn structure and are not generators. That is the whole of it: the replacement whitelist is not the obstacle, the call graph is |
+| **Levels** | level up | a characteristic-defining subsystem, not counters plus a static: a level creature's P/T and abilities are read off a band, and the bands are part of the card |
+
+The third is the one worth arguing about, because it looks like a whitelist
+entry and is not. `replacements` covers what happens as a permanent **enters the
+battlefield**, and every one of its members is applied synchronously with nothing
+to ask. Dredge and madness both ask a player a question at the moment of the
+replacement, so the primitives that draw and discard would have to become
+generators — and so would `turn._draw_step` and the cleanup discard above them.
+
+That the whitelist was the *wrong* diagnosis for four keywords is now on record:
+wither, infect, regeneration and totem armor were all filed against it, and all
+four turned out to belong at a choke point that already existed
+(`damage_permanent`, `zones.destroy`).
+
+### The short tail
+
+Seven keywords that are neither a subsystem nor small. Each needs one named
+thing, and none of them shares it with another:
+
+| Keyword | The one thing |
 |---|---|
-| ~~A **per-turn ledger**~~ — shipped as `GameState.turn_ledger`. Morbid, raid and bloodthirst are now `free`; the other four turned out to want a *second* thing each | ~~morbid, raid, bloodthirst~~, spectacle and prowl (a cost gated on a condition), storm and gravestorm (spell copying) |
-| ~~**Casting from the graveyard**~~ — generalised as `graveyard_cost` plus a `graveyard_cast` destination. Escape needed one bit; jump-start needed nothing | ~~escape, jump-start~~, unearth (an *activated* ability, not a cast), disturb (arrives on its back face) |
-| ~~**Spell copying**~~ — shipped as the `copy_spell` op | ~~conspire, storm, gravestorm~~; casualty and replicate want an additional cost, ripple a library scan |
-| **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
-| **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, bestow, mutate, meld |
-| ~~A **"becomes the target of" trigger**~~ — shipped as `becomes_target`, and it cleared the cluster outright | ~~heroic, ward~~ |
+| Cascade, Ripple | cast a card from **exile** chosen by a library scan. `suspend.cast_for_free` is most of it; the scan and the "rest on the bottom" are not |
+| Foretell | a special action putting a card in exile face down, plus a cast from there at a different cost. Suspend is the nearest shape and `ActionKind.SUSPEND` the nearest action |
+| Haunt, Imprint | an exile link pointing at *another* object, read back by a trigger filter. `exiled_with` points the other way -- at the exiler -- and champion showed that direction is already enough for a whole family |
+| Hideaway | face-down exile **plus** play-from-exile, so it waits on two things rather than one |
+| Cipher, Splice, Epic, Ninjutsu, Aura swap, Soulbond | one bespoke mechanism each, with one or two printed cards behind them |
 
-A per-turn ledger is one piece of state and unblocks seven mechanics. That is
-the shape of argument this page exists to make available, and it is not visible
-one gap record at a time.
+### The five refused
 
-Two of those six have since had their first member shipped, and the shipping
-moved the rest of the cluster from `blocked` to `routed` rather than clearing
-it: `flashback` and `embalm` proved casting from the graveyard for one cost each,
-and `transform` proved two faces behind one `GameObject`. A cluster whose
-foundation exists is a vocabulary gap; that is the whole difference between the
-two statuses.
+`refused` is a recorded decision rather than a difficulty, and one of them has
+since been reversed: **regeneration** was refused as "a destruction-replacement
+shield" and is now shipped, because `zones.destroy` is a single choke point and
+the shield is six lines through it.
+
+The remaining five are refused for reasons that still hold, and all five are
+*designated-game-state* or *combat-structure* mechanics rather than card
+vocabulary: banding and phasing change how combat and the untap step work for
+every permanent in the game; daybound / nightbound, flip and meld each need a
+game-wide or card-wide state the engine has no place to keep. They are recorded
+in [rules-coverage.md](rules-coverage.md) and should be re-argued there rather
+than reclassified here.
 
 ## Suggested build order
 
-Cheapness first, breadth second. Cross-check each against
-[unsupported-cards.md](unsupported-cards.md) before starting — where a
-capability already has gap records, those cards are the real specification, and
-`/extend-dsl` rule 1 still applies: **one capability per run**.
+Cheapness first, breadth second — and after this sequence the cheap work is
+done, so what is left is ordered by **how many keywords one subsystem unblocks**.
 
-1. **Harvest the free rows.** No engine work. Each is an `/author-cards` run
-   that will either produce a card or produce a gap record correcting this page,
-   and both outcomes are useful.
-2. **A per-turn ledger.** One piece of state, cleared at cleanup, exposed as
-   conditions. Seven mechanics, and it is the prerequisite most others assume.
-   Damage history and the draw tally are the two shapes to copy, and they differ
-   in *when they clear* — read why before adding a third.
-3. **The missing trigger events.** "Becomes blocked", "becomes untapped",
-   "becomes the target of", and the block-requirement mirror of `must_attack`.
-   The only tier of the six here with frontend consequences.
-4. **Costs and casting.** Starting with **`unless_pays`** — ward is evergreen,
-   so it compounds with every future set, and the demand side already has
-   records for it — then the graveyard-cast and from-hand generalisations, the
-   mana-paying cost kinds, and the alternative costs with delayed halves.
-5. **Counters.** ETB counts from a value expression, counter movement, the
-   dies-and-return pair, and the derived-power comparisons.
-6. **More replacement forms.** The whitelist is deliberate and widening it is a
-   design decision, not just work — read [adr/0001-layers-lite.md](adr/0001-layers-lite.md)
-   first.
-7. **Spell copying**, and then the long tail of one-off ops.
+1. **Replacing a draw and a discard.** Three keywords (dredge, madness,
+   miracle), and the smallest of the four subsystems: it is a call-graph change,
+   not a new rules concept. Do it first because the other three are much larger
+   and this one is bounded.
+2. **Face-down permanents.** Three keywords plus a demand-side card, and it goes
+   through the `card_of` choke point `transform` already built.
+3. **A second castable face.** Six keywords, and the only one that also needs
+   the *authoring pipeline* to emit two card entries from one answer.
+4. **The short tail**, in whatever order the demand side asks for it. Cascade
+   and ripple share a library scan; haunt and imprint share a reversed exile
+   link; the rest are one-offs.
+5. **Levels**, last, for the reason face-down cards used to be last: it is a
+   characteristic-defining subsystem and nothing else needs it.
 
-Face-down and multi-faced cards are last on purpose: they are the only cluster
-that is a genuine rules subsystem rather than a missing vocabulary item, and
-`/extend-dsl` rule 4 says to stop and report rather than start one inside a
-card-unblocking run. `transform` shipping does not change that — it built the
-`card_of` choke point the rest of the cluster needs, which is the foundation and
-not the subsystem.
+Before starting any of them, cross-check
+[unsupported-cards.md](unsupported-cards.md) — where a capability already has
+gap records, those cards are the real specification. `/extend-dsl` rule 1 still
+applies: **one capability per run.**
 
 ## Provenance
 
