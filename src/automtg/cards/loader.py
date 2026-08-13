@@ -1405,6 +1405,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         # stringified into a name nothing reads back, so the count it feeds
         # would be 0 and amplify would enter with no counters.
         raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
+    if op == "regenerate" and not effect.get("objects"):
+        # A shield with nothing to put it on. The ability would cost mana, log
+        # nothing and save nobody -- and "Regenerate this creature" is three
+        # words away from being right.
+        raise DslError(
+            f"{where}: regenerate needs 'objects' naming what is shielded "
+            f"(use {{\"self_only\": true}} for \"regenerate this creature\")"
+        )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on
         # the Equipment that prints it, and a default would silently unattach

@@ -4100,6 +4100,82 @@
       ]
     },
     {
+      "id": "t_regenerator",
+      "name": "Test Regenerating Troll",
+      "oracle_text": "{G}: Regenerate this creature.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Troll"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G}: Regenerate this creature.",
+          "cost": {
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "op": "regenerate",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_totem_armor",
+      "name": "Test Totem Shield",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nTotem armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "keywords": [
+        "totem_armor"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_witherer",
       "name": "Test Withering Spider",
       "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)",

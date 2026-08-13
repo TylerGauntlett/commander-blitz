@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
 from .characteristics import chars
-from .enums import Zone
+from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
 from .triggers import fire
@@ -250,14 +250,73 @@ def _enter_battlefield(
 
 
 def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | None = None) -> bool:
-    """Destroy a permanent unless it is indestructible.  Returns True if it died."""
+    """Destroy a permanent unless something replaces the destruction.
+
+    Three things can stop it, and they are three different mechanisms rather
+    than one with a parameter:
+
+    | | |
+    |---|---|
+    | `indestructible` | the destruction simply does not happen |
+    | a **regeneration** shield (701.15) | it is tapped, removed from combat and its damage removed, and one shield is spent |
+    | **totem armor** (702.88a) | its damage is removed and the *Aura* is destroyed instead |
+
+    Regeneration and totem armor are checked here rather than as `replacements`
+    entries because that whitelist is about a permanent *entering the
+    battlefield*, and this is the moment one leaves. Everything that destroys --
+    the lethal-damage state-based action, the `destroy` op, deathtouch -- already
+    routes through this function, which is what makes one check enough.
+
+    Regeneration is checked **before** totem armor: a regenerating creature does
+    not leave the battlefield at all, so nothing has happened for the Aura to
+    replace. Ordered the other way, a Rancor-style shield would be eaten by a
+    creature that was going to survive anyway.
+
+    Returns True only if the permanent actually died.
+    """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     if "indestructible" in chars(state, oid).keywords:
         return False
+    if obj.regeneration_shields > 0:
+        obj.regeneration_shields -= 1
+        # 701.15a in order: tap it, remove it from combat, remove all damage.
+        obj.tapped = True
+        if state.combat is not None:
+            state.combat.remove(oid)
+        obj.damage = 0
+        obj.deathtouched = False
+        state.bump_chars()
+        state.emit("regenerated", player=obj.controller, source=by, oid=oid)
+        return False
+    if (shield := _totem_armor(state, oid)) is not None:
+        obj.damage = 0
+        obj.deathtouched = False
+        state.emit("totem_armor", player=obj.controller, source=by, oid=oid, aura=shield)
+        # The Aura is *destroyed*, not sacrificed, so it goes through this same
+        # function -- which is how an indestructible totem-armour Aura keeps
+        # protecting, and how a second Aura on the same creature is not spent.
+        destroy(state, shield, cause="totem_armor", by=by)
+        return False
     move_object(state, oid, Zone.GRAVEYARD, cause=cause, by=by)
     return True
+
+
+def _totem_armor(state: GameState, oid: int) -> int | None:
+    """An Aura attached to ``oid`` whose controller printed totem armor, if any.
+
+    Read off *derived* keywords, so an Aura granted totem armor by something
+    else counts -- the same rule every other keyword check in the engine
+    follows.
+    """
+    for other in state.battlefield:
+        aura = state.objects.get(other)
+        if aura is None or aura.attached_to != oid:
+            continue
+        if Keyword.TOTEM_ARMOR.value in chars(state, other).keywords:
+            return other
+    return None
 
 
 def sacrifice(state: GameState, oid: int, *, by: int | None = None) -> bool:
