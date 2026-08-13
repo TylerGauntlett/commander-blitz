@@ -374,6 +374,22 @@ def _cast_options(
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
+    # An additional cost -- casualty, replicate, "sacrifice an artifact". One
+    # line per number of times paid, for the reason convoke offers one per
+    # number convoked: the count changes the price and is the player's to
+    # choose. A *mandatory* one starts at 1, so the free line above is not
+    # offered at all -- which is the whole difference between Deadly Dispute and
+    # a card that may pay.
+    if card.additional_cost is not None and state.objects[oid].zone is Zone.HAND:
+        first = 0 if card.additional_optional else 1
+        last = _additional_ceiling(state, pid, oid, card)
+        if not card.additional_optional and last < 1:
+            out = []  # the printed line is not castable without the cost
+        for times in range(max(first, 1), last + 1):
+            out += _cast_variant(
+                state, pid, oid, card, tuples, extra_generic=extra_generic,
+                additional_times=times,
+            )
     # Overload. A third variant, and the only one that changes what the spell
     # *points at* rather than what it costs: an overloaded spell is cast with no
     # targets at all (702.96a replaces every "target" with "each"), so it is
@@ -412,6 +428,37 @@ def _cast_options(
                 pay_generic=spend,
             )
     return out
+
+
+#: How many times a repeatable additional cost is offered. Capped for the reason
+#: convoke's ceiling is: every count is a separate cast action multiplied by
+#: every legal target tuple.
+MAX_ADDITIONAL_TIMES = 6
+
+
+def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+    """How many times this card's additional cost may be paid on this cast.
+
+    One unless the card says ``additional_repeatable`` -- replicate is the only
+    printed shape that repeats, and offering a second sacrifice on a casualty
+    card would be a strictly better card than the one printed.
+
+    Payability of the *non-mana* half is left to `can_pay`, which the caller
+    already runs; this only bounds how many lines are worth building.
+    """
+    from .costs import can_pay
+
+    # The non-mana half has to be *payable*, and legality is where that is
+    # decided: a casualty line offered with no creature big enough to sacrifice
+    # would be an action the player could take and the engine could not honour.
+    # The mana half is folded into the price and answered by the solver.
+    if card.additional_cost is not None and not can_pay(
+        state, pid, card.additional_cost.without_mana(), oid
+    ):
+        return 0
+    if not card.additional_repeatable:
+        return 1
+    return MAX_ADDITIONAL_TIMES
 
 
 #: How many creatures a convoke line may tap, or cards a delve line may exile.
@@ -486,6 +533,7 @@ def _cast_variant(
     flashback: bool = False,
     alternative: bool = False,
     overloaded: bool = False,
+    additional_times: int = 0,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -510,6 +558,11 @@ def _cast_variant(
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
+    if additional_times and card.additional_cost is not None:
+        # The mana half of the additional cost, charged `additional_times` over.
+        # Folded into the price *here* rather than paid separately, so legality
+        # and the solver price the line the player is actually being offered.
+        cost = cost.plus(card.additional_cost.mana.scaled(additional_times))
     discount = cost_reduction(state, pid, card)
     # Convoke and delve reduce the generic part, exactly as a cost reduction
     # does -- and go through the same clamp, so neither can make a spell free
@@ -559,6 +612,8 @@ def _cast_variant(
         label_base += " (alternative cost)"
     if overloaded:
         label_base += " (overloaded)"
+    if additional_times:
+        label_base += f" (+{additional_times} additional)"
     if pay_generic:
         word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
         label_base += f" ({word} {pay_generic})"
@@ -583,6 +638,7 @@ def _cast_variant(
                 evoked=evoked,
                 alternative=alternative,
                 overloaded=overloaded,
+                additional_times=additional_times,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

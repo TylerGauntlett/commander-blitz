@@ -4100,6 +4100,129 @@
       ]
     },
     {
+      "id": "t_casualty",
+      "name": "Test Casualty Bolt",
+      "oracle_text": "Casualty 2 (As an additional cost to cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)\nDraw a card.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 2
+            }
+          }
+        }
+      },
+      "additional_optional": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you do, copy this spell.",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_spell"
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_replicate",
+      "name": "Test Replicated Bolt",
+      "oracle_text": "Replicate {1} (When you cast this spell, copy it for each time you paid its replicate cost.)\nTest Replicated Bolt deals 1 damage to any target.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "additional_cost": {
+        "mana": "{1}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "any",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you cast this spell, copy it for each time you paid its replicate cost.",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "amount": {
+                "additional_paid": true
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_overloader",
       "name": "Test Overloaded Shock",
       "oracle_text": "Test Overloaded Shock deals 2 damage to target creature.\nOverload {3}{R} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each\".)",

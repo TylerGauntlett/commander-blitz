@@ -2645,6 +2645,9 @@ them where it is sitting:
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
 "overload": "{3}{R}"                        // cast it with no targets, hitting each instead
+"additional_cost": { "sacrifice": {...} }   // casualty, replicate, Deadly Dispute
+"additional_optional": true                 // …"you may"
+"additional_repeatable": true               // …"any number of times"
 ```
 
 #### Casting from the graveyard
@@ -2676,6 +2679,56 @@ means exactly `graveyard_cost`. A card giving both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+#### An additional cost that is not mana
+
+```jsonc
+// Casualty 2
+"additional_cost": { "sacrifice": { "controller": "you", "types": ["Creature"],
+                                    "power": { "op": ">=", "value": { "const": 2 } } } },
+"additional_optional": true,
+
+// "When you do, copy this spell." -- an ordinary cast trigger.
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you",
+               "condition": { "cmp": ">=", "left": { "additional_paid": true },
+                              "right": { "const": 1 } } },
+  "effects": [ { "op": "copy_spell" } ] }
+```
+
+`kicker` was the only additional cost a hand-cast spell could carry, and it is
+wrong twice over here: it is **mana-only** — the cast variant is
+`mana_cost.plus(kicker)`, a `ManaCost`, which cannot sacrifice anything — and it
+is paid **once**.
+
+So `additional_cost` is a full `Cost`, and legality offers **one cast line per
+number of times paid** — convoke's shape rather than kicker's, because the count
+changes both the price and what the spell does. The two modifiers are three
+different printed cards:
+
+| | |
+|---|---|
+| neither | Deadly Dispute — mandatory, so the free line is withdrawn entirely |
+| `additional_optional` | casualty — "you **may** sacrifice" |
+| both | replicate — "any number of times", which includes none |
+
+`additional_repeatable` without `additional_optional` is refused: "any number of
+times" includes zero, and a mandatory repeatable cost would make every replicate
+card unplayable without the extra mana.
+
+Unlike kicker there is **no half-a-cost guard**, and that is deliberate:
+"sacrifice an artifact" is the whole of Deadly Dispute's cost and no clause on
+the card reads it back. What is guarded is reading `additional_paid` with no
+cost behind it, which would always be zero.
+
+The non-mana half is paid **after** the mana (601.2g), so a creature that tapped
+for mana can still be the one that is eaten — the order emerge and retrace
+already use. Legality checks it is payable before offering the line.
+
+**The copy needs nothing new.** "When you cast this spell" is a `spell_cast`
+trigger with `active_zones: ["stack"]`, so it goes on the stack *above* the
+spell and its copy resolves first — which is what 706.10 wants, and what a
+`copy_spell` written into `spell_effects` would get backwards.
 
 #### Overload
 

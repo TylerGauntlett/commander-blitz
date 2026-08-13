@@ -96,6 +96,11 @@ VALUE_KEYS = frozenset(
         # Sunburst artifact cast for {4} off five different lands enters with
         # five counters, and its printed cost has no coloured pip at all.
         "colors_of_mana_spent",
+        # "…for each creature sacrificed this way" / "copy it for each time you
+        # paid" -- casualty and replicate. How many times the card's additional
+        # cost was paid, which nothing else records: the sacrificed creatures are
+        # in a graveyard among everything else that died, and the mana is gone.
+        "additional_paid",
     }
 )
 
@@ -148,6 +153,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
 
         pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+    if "additional_paid" in expr:
+        # Casualty and replicate. Read off the object being cast, which is what
+        # a "when you cast this spell" trigger is sourced to.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        return obj.cast_additional if obj is not None else 0
     if "colors_of_mana_spent" in expr:
         # Sunburst and converge. Read off the object that was cast, which for a
         # spell's own `spell_effects` is `source_oid` and for an artifact's

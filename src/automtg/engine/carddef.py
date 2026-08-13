@@ -329,6 +329,12 @@ class CardDef:
     #: on the stack with no targets at all, and the card branches on
     #: `{"overloaded": true}`.
     overload: ManaCost | None = None
+    #: An additional cost paid at cast time -- casualty, replicate, Deadly
+    #: Dispute. A full `Cost`, where `kicker` is mana-only, and offered as one
+    #: cast line per number of times paid.
+    additional_cost: Cost | None = None
+    additional_optional: bool = False
+    additional_repeatable: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".
     kicker_label: str = "kicked"
     #: "Kicker {1}{U}" -- an additional cost the caster may choose to pay.  It is

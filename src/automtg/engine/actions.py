@@ -48,6 +48,10 @@ class Action:
     #: reason `kicked` is, and more so: an overloaded spell is a different
     #: action *and* has different targets -- none.
     overloaded: bool = False
+    #: How many times this cast pays the card's additional cost -- 0, 1, or any
+    #: number for replicate. Part of the identity for the reason `kicked` is:
+    #: the count changes both the price and what the spell does.
+    additional_times: int = 0
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it
