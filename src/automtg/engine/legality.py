@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from . import combat as combat_mod
+from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef
 from .characteristics import chars
@@ -21,7 +22,7 @@ from .costs import (
     offerable_mana_ability,
 )
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
-from .mana import Requirement, max_affordable_x, solve_payment
+from .mana import ManaCost, Requirement, max_affordable_x, solve_payment
 from .structs import TargetRef
 from .targeting import enumerate_target_tuples
 
@@ -222,6 +223,27 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
                 label=f"Suspend {card.name} ({counters} counters)",
             )
         )
+    # Foretell shares the action kind, and the sharing is the argument: both are
+    # "exile this from hand now, cast it later", neither uses the stack, and
+    # neither can be countered. The {2} is fixed by rule 702.143a; the card names
+    # only the later price.
+    #
+    # Timing is *your turn at sorcery speed*, which is stricter than the card's
+    # own -- an instant with foretell may still only be foretold on your turn.
+    if sorcery_speed:
+        for oid in state.players[pid].hand:
+            card = state.card(oid)
+            if card.foretell is None:
+                continue
+            if not can_pay_mana(state, pid, ManaCost.parse(suspend_mod.FORETELL_COST)):
+                continue
+            out.append(
+                Action(
+                    kind=ActionKind.SUSPEND,
+                    source=oid,
+                    label=f"Foretell {card.name}",
+                )
+            )
     return out
 
 
@@ -280,6 +302,23 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if not _timing_ok(card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+
+    # Foretold cards are cast from **exile**, at the foretell price, and only on
+    # a turn after the one they were foretold on -- `foretold_cards` is what
+    # enforces the "later", because a card foretold and cast the same turn is
+    # the printed cost paid in two instalments with the discount thrown in.
+    for oid in suspend_mod.foretold_cards(state, pid):
+        card = state.card(oid)
+        if not _timing_ok(card, sorcery_speed):
+            continue
+        out.extend(
+            _cast_variant(
+                state, pid, oid, card,
+                enumerate_target_tuples(state, pid, card.targets, oid),
+                extra_generic=0,
+                foretold=True,
+            )
+        )
 
     # Retrace: the graveyard is a third place a card can be cast from, widened
     # here the same way `_land_actions` widens where a land may be played from.
@@ -534,6 +573,7 @@ def _cast_variant(
     alternative: bool = False,
     overloaded: bool = False,
     additional_times: int = 0,
+    foretold: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -550,6 +590,8 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif foretold and card.foretell is not None:
+        cost = card.foretell
     elif overloaded and card.overload is not None:
         cost = card.overload
     elif alternative and card.alternative_cost is not None:
@@ -612,6 +654,8 @@ def _cast_variant(
         label_base += " (alternative cost)"
     if overloaded:
         label_base += " (overloaded)"
+    if foretold:
+        label_base += " (foretold)"
     if additional_times:
         label_base += f" (+{additional_times} additional)"
     if pay_generic:
@@ -639,6 +683,7 @@ def _cast_variant(
                 alternative=alternative,
                 overloaded=overloaded,
                 additional_times=additional_times,
+                foretold=foretold,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

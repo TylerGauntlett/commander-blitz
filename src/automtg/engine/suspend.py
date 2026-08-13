@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .enums import Zone
 from .events import EventType
+from .mana import ManaCost
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -63,6 +64,58 @@ def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[in
         EventType.SUSPENDED, player=pid, source=oid, card=card.id, counters=counters
     )
     return True
+
+
+#: What foretelling costs, fixed by rule 702.143a rather than by the card. The
+#: card names only the *later* price.
+FORETELL_COST = "{2}"
+
+
+def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
+    """Pay {2} and exile this card face down, to be cast on a later turn.
+
+    Suspend's special action with a different ticking rule, which is why it
+    lives here and shares `ActionKind.SUSPEND`: both exile a card from hand to
+    be cast later, neither uses the stack, and neither can be countered.
+
+    "Face down" is `revealed_to`, the engine's existing channel for information
+    one seat holds -- the card is in exile and nobody else may look at it. That
+    is the whole of what face-down means for a card *nobody can interact with*;
+    it is a much smaller claim than a face-down **permanent**, which is a
+    characteristics problem and remains unimplemented.
+    """
+    from .costs import pay
+
+    obj = state.objects[oid]
+    card = state.card_of(obj)
+    if card.foretell is None:
+        return False
+
+    ok = yield from pay(state, pid, Cost(mana=ManaCost.parse(FORETELL_COST)), None)
+    if not ok:  # pragma: no cover - legality already proved payability
+        return False
+
+    from .zones import move_object
+
+    move_object(state, oid, Zone.EXILE, cause="foretold")
+    obj.foretold_by = pid
+    obj.foretold_turn = state.turn
+    # Only its own controller may see what it is. Written after the move, since
+    # `reset_permanent_state` clears `revealed_to` on the way.
+    obj.revealed_to.add(pid)
+    state.emit("foretold", player=pid, source=oid, card=card.id)
+    return True
+
+
+def foretold_cards(state: GameState, pid: int) -> list[int]:
+    """This player's foretold cards that may be cast **now** -- a later turn."""
+    return [
+        oid
+        for oid in state.players[pid].exile
+        if (obj := state.objects.get(oid)) is not None
+        and obj.foretold_by == pid
+        and obj.foretold_turn < state.turn
+    ]
 
 
 def suspended_cards(state: GameState, pid: int) -> list[int]:

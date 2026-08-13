@@ -377,6 +377,14 @@ class CardModel(BaseModel):
     #: **Miracle** (702.94a): "You may cast this card for its miracle cost when
     #: you draw it, if it's the first card you drew this turn."
     miracle: str | None = None
+    #: **Foretell** (702.143a): "During your turn, you may pay {2} and exile this
+    #: card from your hand face down. Cast it on a later turn for its foretell
+    #: cost." This names the *later* cost; the {2} is fixed by the rule.
+    #:
+    #: The nearest shipped shape is suspend, and it is near enough to share the
+    #: special action: both exile a card from hand to be cast later, neither
+    #: uses the stack, and neither can be countered.
+    foretell: str | None = None
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.
