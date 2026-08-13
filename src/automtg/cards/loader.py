@@ -1341,6 +1341,13 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
             )
+    if "all_if" in effect:
+        # Entwine. Only `choose_mode` has modes to take all of, so anywhere else
+        # the key would load, be ignored, and leave a card that reads "choose
+        # both" and chooses one.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'all_if' only means anything on choose_mode, not {op!r}")
+        validate_condition(effect["all_if"], f"{where}.all_if")
     if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
         # `as` names a binding -- `snapshot`'s, and the record `reveal` and
         # `sacrifice` write of what they consumed. A non-string would be

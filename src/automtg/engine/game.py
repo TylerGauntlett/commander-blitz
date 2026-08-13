@@ -255,7 +255,9 @@ class Game:
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
-        modes = yield from self._ask_modes(pid, card.name, card.cast_time_modes)
+        modes = yield from self._ask_modes(
+            pid, card.name, card.cast_time_modes, kicked=action.kicked
+        )
 
         ok = yield from pay(
             state,
@@ -437,7 +439,7 @@ class Game:
         )
 
     def _ask_modes(
-        self, pid: int, name: str, spec
+        self, pid: int, name: str, spec, *, kicked: bool = False
     ) -> Generator[Any, list[int], tuple[int, ...]]:
         """Which mode, asked as the spell or ability is put on the stack.
 
@@ -459,8 +461,21 @@ class Game:
         modes = list(spec.get("modes") or [])
         if not modes:
             return ()
-        ctx = EffectContext(state=self.state, controller=pid, source_oid=None, source_name=name)
+        ctx = EffectContext(
+            state=self.state,
+            controller=pid,
+            source_oid=None,
+            source_name=name,
+            # Entwine's `all_if` reads it, and this is the only place it can be
+            # known: the flag reaches the object at resolution, and by then the
+            # modes have been answered and recorded on the stack item.
+            kicked=kicked,
+        )
         count = evaluate_value(ctx, spec.get("count", 1))
+        from .effects.conditions import evaluate as evaluate_condition
+
+        if (gate := spec.get("all_if")) is not None and evaluate_condition(ctx, gate):
+            count = len(modes)
         labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
         chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count))
         return tuple(chosen)

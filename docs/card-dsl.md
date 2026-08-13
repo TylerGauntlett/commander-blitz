@@ -1418,6 +1418,33 @@ of casting to be asked at. Mana abilities are a third exception and a stricter
 one: their modes are compiled into `mana_options` and never reach the
 interpreter at all.
 
+### Entwine — "choose both if you pay the entwine cost"
+
+```jsonc
+"kicker": "{2}", "kicker_label": "entwine",
+"spell_effects": [
+  { "op": "choose_mode", "count": 1, "all_if": { "kicked": true },
+    "modes": [ … ] }
+]
+```
+
+The price needed nothing: entwine is an additional cost paid as the spell is
+cast, which is `kicker`, and legality already offers a kickable card twice. What
+was missing is that the two lines must ask **different questions** — the plain
+one asks which mode, the entwined one asks nothing.
+
+`all_if` forces every mode rather than offering them, and both near misses load
+cleanly. A wider `count` when kicked asks "which two of these two", a question
+with one answer, and puts a decision on screen that is not one. A `may` would
+let a player pay the entwine cost and then decline half of what they bought.
+Rule 702.42a puts the choice at the moment of casting, and choosing the entwine
+cast line *is* that choice.
+
+The half that bites: modes are answered as the spell goes on the stack (601.2b),
+and the `kicked` flag does not reach the object until resolution — so
+`Game._ask_modes` is handed the action's own flag. Without that, every entwined
+spell quietly picks one mode and the extra mana buys nothing.
+
 Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
 wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern and
 `tests/unit/test_cast_time_modes.py` pins the timing.
