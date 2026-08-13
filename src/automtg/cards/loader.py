@@ -385,6 +385,27 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'graveyard_cast_transformed' needs a 'back_face' to "
                 f"transform into; without one the card arrives as its front face"
             )
+    # A second castable face, and the two ways to write half of one. `adventure`
+    # with nothing to adventure *from* is a card that exiles itself on
+    # resolution and is never seen again -- which is aftermath, silently, under
+    # the wrong word. `second_face_zone` alone is a restriction on a cast nobody
+    # offers.
+    if model.second_face is None:
+        if model.adventure:
+            raise DslError(
+                f"{where}: 'adventure' needs a 'second_face' -- the Adventure is "
+                f"the half that gets cast, and there is nothing here to cast"
+            )
+        if model.second_face_zone != "hand":
+            raise DslError(
+                f"{where}: 'second_face_zone' needs a 'second_face' -- there is no "
+                f"second cast for it to restrict"
+            )
+    # 715.1: an adventurer card is a creature card, and the Adventure is an
+    # instant or sorcery. Without the first half the front face would resolve
+    # straight back to the graveyard from exile and the "cast it later" half of
+    # the keyword would be unreachable; both are checked once the pool is known,
+    # where the second face can actually be looked up.
     # Overload is two halves like kicker, and half of it fails the same silent
     # way: a cost nobody reads is a more expensive cast that does the same
     # thing, and an `{"overloaded": true}` clause with no cost can never fire.
@@ -537,6 +558,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
         back_face=model.back_face,
+        second_face=model.second_face,
+        second_face_zone=model.second_face_zone,
+        adventure=model.adventure,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         buyback=model.buyback,
@@ -1707,6 +1731,56 @@ def link_faces(cards: dict[str, CardDef]) -> None:
                 f"{back.id}: is the back face of both {back.front_face!r} and {card.id!r}"
             )
         cards[back.id] = dataclasses.replace(back, front_face=card.id)
+    link_second_faces(cards)
+
+
+def link_second_faces(cards: dict[str, CardDef]) -> None:
+    """Point every second castable face at the card that prints it.
+
+    The same derived back-link ``front_face`` is, in the same direction and for
+    the same reason -- but what it guards is different. A back face is never
+    *cast*; a second face is nothing but a cast, and the thing to keep it out of
+    is a **deck**. The Adventure half of a card is not a card you can own.
+    """
+    for card in cards.values():
+        if card.second_face is None:
+            continue
+        face = cards.get(card.second_face)
+        if face is None:
+            raise DslError(
+                f"{card.id}: second_face references unknown card {card.second_face!r}"
+            )
+        if face.second_face is not None:
+            # Two castable faces, not three -- `card_of` is a lookup, not a walk.
+            raise DslError(
+                f"{card.id}: second face {face.id!r} may not have a second face of its own"
+            )
+        if face.parent_face is not None and face.parent_face != card.id:
+            raise DslError(
+                f"{face.id}: is the second face of both {face.parent_face!r} and {card.id!r}"
+            )
+        if face.mana_cost.mana_value() == 0:
+            # An unwritten `mana_cost` parses to the same empty cost a back face
+            # has, so this is the guard against pointing `second_face` at one:
+            # it would be a free spell stapled to a creature. No printed second
+            # face costs {0}, and one that did would be indistinguishable here.
+            raise DslError(f"{face.id}: a second castable face needs a mana cost of its own")
+        # 715.1. Both halves, because each is silent alone: an Adventure that is
+        # a permanent never reaches the exile that makes it an Adventure, and a
+        # non-creature adventurer resolves out of that exile straight back to
+        # the graveyard with the whole second half unreachable.
+        if card.adventure:
+            if not card.is_permanent:
+                raise DslError(
+                    f"{card.id}: an adventurer card must be a permanent -- it is cast "
+                    f"from exile after the Adventure and has to stay somewhere"
+                )
+            if face.is_permanent:
+                raise DslError(
+                    f"{face.id}: an Adventure must be an instant or a sorcery (715.1); "
+                    f"a permanent one never reaches the exile it is cast from"
+                )
+        cards[face.id] = dataclasses.replace(face, parent_face=card.id)
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:

@@ -240,6 +240,15 @@ def validate_deck(deck: DeckList, registry: CardRegistry) -> list[str]:
             problems.append(
                 f"{card_id!r} is the back face of {card.front_face!r} and cannot be in a deck"
             )
+        if card.parent_face is not None:
+            # Nor is the Adventure half, the Aftermath half or one half of a
+            # split card -- and this one is worse than the back face, because
+            # the half *is* castable on its own and a deck listing it would get
+            # the spell without the creature attached.
+            problems.append(
+                f"{card_id!r} is the second face of {card.parent_face!r} "
+                f"and cannot be in a deck"
+            )
 
     seen: set[str] = set()
     for card_id, _ in deck.cards:

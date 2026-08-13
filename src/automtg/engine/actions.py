@@ -61,6 +61,12 @@ class Action:
     #: a Morph creature cast face down and cast normally are two different
     #: things to do with one card, and they cost differently.
     face_down: bool = False
+    #: Cast as the card's **second face** -- the Adventure half, the Aftermath
+    #: half, the other half of a split card. Part of the identity for the reason
+    #: `face_down` is, and more so than any of them: the two lines are not two
+    #: prices for one spell, they are two different spells with different names,
+    #: different type lines and different effects.
+    second_face: bool = False
     #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
     #: separate flag from ``evoked`` rather than a reuse of it, because
     #: ``evoked`` is read back on the permanent by the "it's sacrificed when it

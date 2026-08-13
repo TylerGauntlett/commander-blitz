@@ -1,3 +1,97 @@
+## A second castable face — adventure, aftermath, and the halves of a split card
+
+### Overview
+
+The census grouped four keywords under "a second castable face" — adventure,
+aftermath, bestow, mutate — and called it the last cluster of buildable work.
+Two of those four are one mechanism. The other two are a different problem, and
+saying so is half the value of building this one.
+
+| printed line | what it needs |
+|---|---|
+| "Cast this as its Adventure, then exile it; cast the creature later from exile" | a second face that is **cast**, plus a destination rider |
+| "Aftermath — cast this spell only from your graveyard. Then exile it" | the same second face, offered from a different zone |
+| "Bestow {5}{W} — cast this as an Aura" | one spell that **lands as two different permanents** |
+| "Mutate {1}{G} — merge with target non-Human creature" | two permanents that are **one object** |
+
+The first two are about which spell you cast. The last two are about what the
+permanent turns out to be, and neither is reachable from here.
+
+### The engine already had half of it
+
+`back_face` is two `CardDef`s over one `GameObject`, and `card_of` is the single
+place that picks between them — the choke point `transform` built. What was
+missing is a second face that is *cast*:
+
+| | back face | second face |
+|---|---|---|
+| how you get it | you **turn the permanent over** | you **cast the card as it** |
+| when it is showing | while the permanent is transformed | only while it is a spell |
+| may it be in a deck | no | no — and it is castable alone, so it matters more |
+
+`card_of` asks the second-face question **first**, because "currently being cast
+as this" is narrower than "the permanent is transformed". Nothing prints both,
+and if anything ever did, the spell on the stack is the more specific claim.
+
+### Only while it is a spell
+
+`showing_second_face` is set inside `push_spell` and cleared in all three places
+a spell can stop being one: it resolves, it fizzles, or it is countered. A card
+that showed one face on the stack and another wherever it landed would be two
+different cards to everyone watching.
+
+`Game._cast` deliberately does **not** set it. It rebinds the face *locally*,
+because every `return` between announcing a spell and putting it on the stack is
+a cast that did not happen — and a card left showing the wrong face in hand
+would be wrong for the rest of the game.
+
+### Two words separate three keywords
+
+| | cast from | after it resolves |
+|---|---|---|
+| a split half | hand | graveyard, like any spell |
+| **adventure** | hand | exile — *and the front face may be cast from there* |
+| **aftermath** | graveyard, and nowhere else | exile, finished |
+
+Aftermath's "only from your graveyard" is expressed as **where the half is
+offered**, not as a condition on the cast. There is no hand line to refuse: the
+loop that walks the graveyard offers it and the loop that walks the hand does
+not, and that is the whole restriction.
+
+Adventure's exile is the **fifth rider** on the destination a resolving spell
+goes to, beside flashback's exile, buyback's hand, rebound's exile and cipher's.
+It is the only one of the five that has to read the **printed** card rather than
+the one that just resolved, because `card_of` is answering with the half and the
+flags belong to the card as a whole.
+
+### Where the boundaries are
+
+Each of these is a card that would otherwise be exiled for free:
+
+- 715.3c exiles an Adventure **as it resolves**. Countered, it goes to the
+  graveyard. Fizzled, it goes to the graveyard.
+- The creature comes off its adventure onto the battlefield with `on_adventure`
+  cleared by `reset_permanent_state`, so it cannot be cast out of exile twice.
+- An Aftermath half is exiled with no flag at all, so nothing is offered out of
+  that exile ever again.
+
+### Timing is asked per face
+
+Both faces' timings are read off their own type lines. Brazen Borrower is a
+flash creature whose Adventure is an **instant**; a card gated on one face's
+types would be castable at the wrong speed in one direction or the other.
+
+### What this did not fix
+
+The authoring pipeline still emits one card entry per answer file, so a
+two-faced card is two hand-written entries linked by id — the same way
+`bloodline_keeper` / `lord_of_lineage` already are. That is a pipeline change,
+not an engine one, and the `split-cards-fuse` gap record is still open on it.
+
+**Fuse** is also still open and is a different shape: "you may cast one or both
+halves" is *one spell made of two faces*, and `card_of` answers with exactly
+one.
+
 ## Hideaway — a permission, and a link read from the end that offers it
 
 ### Overview

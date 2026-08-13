@@ -38,6 +38,7 @@ def push_spell(
     overloaded: bool = False,
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
+    second_face: bool = False,
     modes: tuple[int, ...] = (),
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
@@ -52,6 +53,14 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    # A second castable face -- an Adventure, an Aftermath half, one half of a
+    # split card. Set before `card_of` is asked anything, for the reason
+    # disturb's transform below is: everything from here on names the card, and
+    # a spell that showed one face on the stack and another wherever it landed
+    # would be two different cards to everyone watching.
+    if second_face and card.second_face is not None:
+        obj.showing_second_face = True
+        card = state.card_of(obj)
     # Disturb: the card is cast **transformed**, so it is the back face from
     # here on -- name, types and effects included. Set before `card_of` is asked
     # anything, since a spell that showed its front face on the stack and its
@@ -259,6 +268,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         )
         obj.stack_id = None
         obj.cast_from_graveyard = item.flashback
+        # 715.3c and 702.127b both exile the card **as it resolves**, so a
+        # second face that never resolves does not get the rider: an Adventure
+        # whose target vanished is a card in the graveyard, not one in exile
+        # waiting to be cast for free.
+        obj.showing_second_face = False
         # A fizzled spell is still a spell that was cast, so the same rider
         # applies -- and the same exemption: an escape spell whose targets all
         # left is back in the graveyard to be escaped again.
@@ -361,6 +375,25 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
     rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
     if rebounds:
         destination = Zone.EXILE
+    # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
+    # and the only one that has to read the **printed** card rather than the one
+    # that just resolved -- `card` here is the second face, and the flags that
+    # say what happens to it belong to the card as a whole.
+    #
+    # The two keywords differ in one word afterwards, which `on_adventure`
+    # below is: an Adventure may still be cast out of that exile, an Aftermath
+    # half is finished with. A split half is neither and keeps the graveyard.
+    printed = state.registry.get(obj.def_id)
+    adventuring = (
+        obj.showing_second_face
+        and destination is Zone.GRAVEYARD
+        and (printed.adventure or printed.second_face_zone == "graveyard")
+    )
+    if adventuring:
+        destination = Zone.EXILE
+    # It stops being a spell here, whatever it turned out to be, so it stops
+    # showing the face it was cast as.
+    obj.showing_second_face = False
     controller = obj.controller
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
@@ -382,6 +415,13 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
         # which would wipe this if it were set first -- the same ordering
         # `exiled_by` needs.
         obj.rebound_by = controller
+    if adventuring and printed.adventure:
+        # After the move for `rebound_by`'s reason, and this one really is
+        # cleared on the way back: the creature that comes off its adventure
+        # onto the battlefield has finished adventuring, which is what
+        # `reset_permanent_state` says.
+        obj.on_adventure = True
+        state.emit("adventure", player=controller, source=obj.oid, card=printed.id)
 
 
 def _attach_aura(state: GameState, obj, card: CardDef, targets) -> None:

@@ -305,6 +305,25 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         card = state.card(oid)
         if card.is_land:
             continue
+        # The two faces are offered independently and their timings are asked
+        # separately, because they are two different spells: Brazen Borrower is
+        # a flash creature whose Adventure is an *instant*, and a card whose
+        # Adventure was gated on the front face's type line would be castable at
+        # the wrong speed in one direction or the other.
+        out.extend(_second_face_actions(state, pid, oid, card, Zone.HAND, sorcery_speed))
+        if not _timing_ok(card, sorcery_speed):
+            continue
+        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+
+    # Adventure (715.3d): the card is in exile having gone on one, and its
+    # *front* face may be cast from there. A fourth zone a card may be cast
+    # from, widened the way retrace widens the graveyard -- and it is the front
+    # face, so nothing about the offer is special except where it is offered.
+    for oid in state.players[pid].exile:
+        obj = state.objects[oid]
+        if not obj.on_adventure or obj.owner != pid:
+            continue
+        card = state.card(oid)
         if not _timing_ok(card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
@@ -332,6 +351,11 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
 
     for oid in state.players[pid].graveyard:
         card = state.card(oid)
+        # Aftermath (702.127a): "cast this half only from your graveyard". The
+        # same widening retrace makes, and the restriction is where the second
+        # face is *offered* rather than a condition on the cast -- there is no
+        # hand line to refuse.
+        out.extend(_second_face_actions(state, pid, oid, card, Zone.GRAVEYARD, sorcery_speed))
         if not _timing_ok(card, sorcery_speed):
             continue
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
@@ -368,6 +392,48 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             _cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid))
         )
     return out
+
+
+def _second_face_actions(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    zone: Zone,
+    sorcery_speed: bool,
+) -> list[Action]:
+    """The lines for casting this card as its second face, if there are any.
+
+    One card, two spells. Everything the variant needs -- the price, the name,
+    the targets, the timing -- is read off the *second face's* ``CardDef``, so
+    this is a two-line function with a long argument: `_cast_variant` never
+    assumed the card it was pricing was the one the object is printed as.
+
+    The only thing that stays the front face's is the **object**, which is the
+    point: it is still one card, in one zone, and casting either half takes it
+    out of that zone.
+    """
+    if card.second_face is None:
+        return []
+    if SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
+        return []
+    face = state.registry.get(card.second_face)
+    if not _timing_ok(face, sorcery_speed):
+        return []
+    tuples = enumerate_target_tuples(
+        state, pid, face.targets, oid, exclude_sid=state.objects[oid].stack_id
+    )
+    if not tuples:
+        return []
+    return _cast_variant(
+        state, pid, oid, face, tuples, extra_generic=0, second_face=True
+    )
+
+
+#: Where a second castable face may be cast from, as the zone the loop that
+#: offers it is walking. Split halves and Adventures are cast from hand, an
+#: Aftermath half only from the graveyard.
+SECOND_FACE_ZONES = {"hand": Zone.HAND, "graveyard": Zone.GRAVEYARD}
 
 
 def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
@@ -593,6 +659,7 @@ def _cast_variant(
     additional_times: int = 0,
     foretold: bool = False,
     face_down: bool = False,
+    second_face: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose
@@ -708,6 +775,7 @@ def _cast_variant(
                 additional_times=additional_times,
                 foretold=foretold,
                 face_down=face_down,
+                second_face=second_face,
                 pay_generic=pay_generic,
                 flashback=flashback,
                 emerge_oid=emerge_oid,

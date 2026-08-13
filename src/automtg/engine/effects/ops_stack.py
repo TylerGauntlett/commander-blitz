@@ -163,4 +163,8 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
             obj = state.objects.get(item.oid)
             if obj is not None:
                 obj.stack_id = None
+                # It has stopped being a spell, so it stops showing the face it
+                # was cast as -- and a countered Adventure is a card in the
+                # graveyard, since 715.3c exiles it only *as it resolves*.
+                obj.showing_second_face = False
                 move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="countered")
