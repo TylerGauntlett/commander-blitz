@@ -45,8 +45,6 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     -- worth doing when a card in the pool needs it, and misleading to
     half-implement before then.
     """
-    from ..stack import StackItem, announce_targets
-    from ..state import new_object
     from .values import evaluate_value
 
     state = ctx.state
@@ -58,44 +56,59 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     if original is None or not original.is_spell:
         return
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
-    controller = ctx.controller
-    card = state.registry.get(original.def_id)
     for _ in range(max(0, times)):
-        obj = new_object(
-            state,
-            original.def_id,
-            owner=controller,
-            zone=Zone.STACK,
-            controller=controller,
-            is_token=True,
-        )
-        copy = StackItem(
-            sid=state.alloc_sid(),
-            kind="spell",
-            controller=controller,
-            def_id=original.def_id,
-            oid=obj.oid,
-            targets=original.targets,
-            x=original.x,
-            modes=original.modes,
-            kicked=original.kicked,
-            bindings=dict(original.bindings),
-            description=f"{card.name} (copy)",
-        )
-        obj.stack_id = copy.sid
-        state.stack.append(copy)
-        state.emit(
-            EventType.SPELL_COPIED,
-            player=controller,
-            source=original.oid,
-            sid=copy.sid,
-            of=original.sid,
-            card=original.def_id,
-        )
-        # A copy targets what the original targeted, and "becomes the target
-        # of a spell" does not ask whether that spell was cast -- so ward and
-        # heroic see the copy too.
-        announce_targets(state, copy)
+        put_copy_on_stack(state, ctx.controller, original)
+
+
+def put_copy_on_stack(state, controller: int, original):
+    """Rule 706.10 -- one copy of a spell, on top of the stack.
+
+    Split out of :func:`op_copy_spell` for **epic**, which makes a copy each
+    upkeep from the turn structure rather than from an effect. The two must not
+    drift: a copy is a token object (which is what makes it vanish correctly),
+    it keeps the original's targets, and it announces them so ward and heroic
+    see it -- and none of that is obvious enough to write twice.
+    """
+    from ..stack import StackItem, announce_targets
+    from ..state import new_object
+
+    card = state.registry.get(original.def_id)
+    obj = new_object(
+        state,
+        original.def_id,
+        owner=controller,
+        zone=Zone.STACK,
+        controller=controller,
+        is_token=True,
+    )
+    copy = StackItem(
+        sid=state.alloc_sid(),
+        kind="spell",
+        controller=controller,
+        def_id=original.def_id,
+        oid=obj.oid,
+        targets=original.targets,
+        x=original.x,
+        modes=original.modes,
+        kicked=original.kicked,
+        bindings=dict(original.bindings),
+        description=f"{card.name} (copy)",
+    )
+    obj.stack_id = copy.sid
+    state.stack.append(copy)
+    state.emit(
+        EventType.SPELL_COPIED,
+        player=controller,
+        source=original.oid,
+        sid=copy.sid,
+        of=original.sid,
+        card=original.def_id,
+    )
+    # A copy targets what the original targeted, and "becomes the target
+    # of a spell" does not ask whether that spell was cast -- so ward and
+    # heroic see the copy too.
+    announce_targets(state, copy)
+    return copy
 
 
 @register("counter")

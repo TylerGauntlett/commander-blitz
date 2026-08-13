@@ -2,6 +2,25 @@
   "_comment": "Cards that exist only for the test suite. Never part of a deck list; loaded by the test registry fixture alongside data/cards/.",
   "cards": [
     {
+      "id": "t_epic",
+      "name": "Test Epic Blessing",
+      "oracle_text": "You gain 2 life.\nEpic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.)",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "epic": true,
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
       "id": "t_big_aura",
       "name": "Test Heavy Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +5/+0.",

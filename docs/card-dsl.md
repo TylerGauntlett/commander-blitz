@@ -2865,6 +2865,7 @@ them where it is sitting:
 "madness": "{R}"                            // discarded -> exiled, and castable for this
 "miracle": "{W}"                            // cast it as the first card you draw
 "foretell": "{R}"                           // pay {2} to exile it; cast it later for this
+"epic": true                                // no more spells; a free copy each upkeep
 "suspend": { "cost": "{G}", "counters": 2 } // exile it now, cast it free later
 "split_second": true                        // nobody may respond while it is on the stack
 "rebound": true                             // exile it as it resolves, cast it free next upkeep
@@ -3010,6 +3011,32 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+#### Epic
+
+```jsonc
+"epic": true
+```
+
+Both halves are about *where the state lives*. An epic card is in a graveyard a
+moment after it resolves, so neither can be written on it.
+
+The **restriction** is on the player, one-way and for the rest of the game —
+`has_city_s_blessing`'s shape — and is enforced in `_cast_actions` rather than
+as a cost or a condition, because it is not about any one card. Lands are
+unaffected, which is why it sits there and not in `legal_actions`.
+
+The **copy** is a rule rather than an ability, for suspend's ticking reason: the
+card has no abilities where it is, and "at the beginning of each of your
+upkeeps" belongs to the game the way the untap step does. It goes through the
+same `put_copy_on_stack` that `copy_spell` uses.
+
+"Except for its epic ability" is **one condition**, `not obj.is_token`, and it
+is the sort of thing only a test finds: a copy is a token and resolves through
+the same function the original did, so without it each upkeep's copy re-points
+`epic_source` at itself — and the copy is removed by a state-based action a
+moment later, which silently ends the copying after exactly one turn. The board
+shows a card that worked once.
 
 #### Foretell
 

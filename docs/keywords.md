@@ -221,7 +221,7 @@ This is the long tail, and where the build order comes from.
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
 | Entwine | shipped | `kicker` for the price, plus `all_if` on `choose_mode` for the both | `kicker` |
-| Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
+| Epic | shipped | `PlayerState.epic_source` gates `_cast_actions`, and the upkeep copies through `put_copy_on_stack` | `epic` |
 | Escape | free | `graveyard_cost` with an `exile_from_graveyard` cost, and `graveyard_cast: "graveyard"` so it comes back | — |
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
 | Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |

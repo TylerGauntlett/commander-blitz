@@ -43,6 +43,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # anything that triggers from the upkeep itself.
         suspend.tick(state, state.active_player)
         suspend.rebound_tick(state, state.active_player)
+        _epic_copy(state, state.active_player)
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
         yield from _draw_step(state)
@@ -146,6 +147,35 @@ def _untap_step(state: GameState) -> None:
     state.emit(
         EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round
     )
+
+
+def _epic_copy(state: GameState, pid: int) -> None:
+    """Epic: "at the beginning of each of your upkeeps, copy this spell".
+
+    A rule rather than an ability, for suspend's ticking reason: the epic card
+    is in a graveyard with no abilities of its own, and the copy belongs to the
+    game the way the untap step does.
+
+    The copy is built from a *reconstructed* stack item rather than a live one,
+    because the original left the stack the moment it resolved. Everything that
+    matters about it -- the card, the controller -- is on the object, and the
+    targets are deliberately empty: an epic spell's copies choose their own, and
+    keeping the original's would point every copy at a creature that died on the
+    turn it was cast.
+    """
+    from .effects.ops_stack import put_copy_on_stack
+    from .structs import StackItem
+
+    oid = state.players[pid].epic_source
+    if oid is None:
+        return
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    template = StackItem(
+        sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid
+    )
+    put_copy_on_stack(state, pid, template)
 
 
 def _draw_step(state: GameState) -> Generator[Any, list[int], None]:
