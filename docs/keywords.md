@@ -309,7 +309,7 @@ This is the long tail, and where the build order comes from.
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |
 | Tribute | free | one `may` with `player: "opponent"` and an `else` — the shape was not merely reachable, it was already spelled | — |
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
-| Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
+| Unearth | free | activated from the graveyard: `put_onto_battlefield` self, `grant_keyword` haste `permanent`, then a `delay`ed `exile` | — |
 | Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
 | Wither | blocked | a damage replacement, and the whitelist has no damage form | — |
 

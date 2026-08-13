@@ -2452,9 +2452,27 @@ printed. `discard_self` names *this* card and asks nothing.
 
 The pairing is also the safety property, and the loader enforces it: an
 activated ability whose `active_zones` reach outside the battlefield **must**
-have a cost that removes its source from that zone. Without that it is an
-infinite engine — a card in hand whose ability costs only mana could be
-activated forever without ever leaving.
+remove its source from that zone. Without that it is an infinite engine — a card
+in hand whose ability costs only mana could be activated forever without ever
+leaving.
+
+Three things satisfy it, and the third arrived with **unearth**:
+
+| | |
+|---|---|
+| `discard_self` on the cost | cycling |
+| `exile_from_graveyard` on the cost | embalm |
+| an **unconditional top-level effect** moving `self_only` out | unearth — "return this card from your graveyard to the battlefield" |
+
+Unearth pays plain mana, so neither cost form could say it. The guard was right
+about the property and too narrow about how to reach it: what matters is that
+the source cannot still be sitting there afterwards, however it left.
+
+*Unconditional* and *top-level* are both load-bearing. An exit nested inside an
+`if` or a `may` might not run, and an ability whose only way out is a branch the
+player can decline is activatable again from the same graveyard — which is
+exactly the shape the guard exists to refuse. So is `self_only`: an ability that
+returns *a* creature card has not moved itself.
 
 Only plain cycling. Typecycling (`Landcycling {1}{G}`) fetches instead of
 drawing and is a different ability, so it fails the template rather than being
