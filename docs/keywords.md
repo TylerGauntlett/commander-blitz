@@ -187,7 +187,7 @@ This is the long tail, and where the build order comes from.
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
 | Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
 | Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
-| Aura swap | blocked | swapping an attached aura with one in hand; one card in the game | — |
+| Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
 | Banding | refused | see rules-coverage.md | — |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
 | Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
