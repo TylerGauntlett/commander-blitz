@@ -455,9 +455,28 @@ def _tap_cost_pool(
     spec.setdefault("zone", "battlefield")
     spec["tapped"] = False
     count = int(spec.pop("count", 1) or 1)
+    total_power = spec.pop("total_power", None)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = resolve_pool(ctx, spec)
+    if total_power is not None:
+        # Crew. The requirement is a *sum* rather than a headcount, so what
+        # makes it payable is the whole pool's power and not its length -- one
+        # 4/4 crews a Vehicle that four 0/1s cannot.
+        return pool if _total_power(state, pool) >= int(total_power) else []
     return pool if len(pool) >= count else []
+
+
+def _total_power(state: GameState, oids: list[int]) -> int:
+    """Summed **derived** power, which is the whole reason crew is not a count.
+
+    An anthem, a pump spell or a +1/+1 counter all change who can crew a
+    Vehicle, so the printed face is the wrong thing to read -- and reading it
+    would be wrong in the direction that matters, refusing a crew the board
+    plainly supports.
+    """
+    from .characteristics import chars
+
+    return sum(chars(state, oid).power for oid in oids if oid in state.objects)
 
 
 def _graveyard_pool(
@@ -563,10 +582,32 @@ def pay(
     if cost.tap_permanents is not None:
         spec = dict(cost.tap_permanents)
         count = int(spec.pop("count", 1) or 1)
+        total_power = spec.pop("total_power", None)
         pool = _tap_cost_pool(state, pid, cost, source_oid)
-        picked = yield from ask_objects(ctx, "Tap", pool, count, count, pid, "tap_cost")
-        for oid in picked:
-            tap_permanent(state, oid)
+        if total_power is None:
+            picked = yield from ask_objects(ctx, "Tap", pool, count, count, pid, "tap_cost")
+            for oid in picked:
+                tap_permanent(state, oid)
+        else:
+            # Crew, asked one creature at a time. `ask_objects` takes counts,
+            # not sums, so a single subset question could be answered with a
+            # set that does not reach the number -- and a cost cannot fail
+            # halfway. Asking repeatedly until the total is met is also how a
+            # player crews at a table: each creature is a real choice, and the
+            # question stops the moment the Vehicle is crewed rather than
+            # taking everything that could have helped.
+            needed = int(total_power)
+            remaining = list(pool)
+            while needed > 0 and remaining:
+                picked = yield from ask_objects(
+                    ctx, f"Tap to crew ({needed} more power)", remaining, 1, 1, pid, "tap_cost"
+                )
+                if not picked:
+                    break
+                chosen = picked[0]
+                needed -= _total_power(state, [chosen])
+                tap_permanent(state, chosen)
+                remaining.remove(chosen)
 
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters
