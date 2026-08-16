@@ -10,30 +10,33 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **33** capabilities.
+**32 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [conditional-enters-tapped](#conditional-enters-tapped) | 7 | 82 | replacement |
 | [mana-ability-rider](#mana-ability-rider) | 6 | 121 | cost, engine |
-| [additional-cost](#additional-cost) | 2 | 129 | cost, value |
+| [additional-cost](#additional-cost) | 3 | 129 | cost, engine, value |
+| [batched-enters-trigger](#batched-enters-trigger) | 2 | 425 | trigger_event |
+| [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
 | [missing-token-definitions](#missing-token-definitions) | 2 | 3474 | engine |
+| [once-each-turn-trigger](#once-each-turn-trigger) | 2 | 425 | trigger_event |
 | [per-player-loop](#per-player-loop) | 2 | 1141 | op, selector |
+| [subtype-restricted-mana](#subtype-restricted-mana) | 2 | 2443 | engine |
+| [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [attached-selector](#attached-selector) | 1 | 2433 | selector |
 | [attached-trigger](#attached-trigger) | 1 | 40 | trigger_event |
-| [batched-enters-trigger](#batched-enters-trigger) | 1 | 4270 | trigger_event |
+| [blood-token](#blood-token) | 1 | 2443 | engine |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [choose-both](#choose-both) | 1 | 191 | decision |
 | [chosen-type](#chosen-type) | 1 | 148 | selector, static_effect |
 | [cloak](#cloak) | 1 | 6625 | engine |
-| [commander-color-identity](#commander-color-identity) | 1 | 14 | op |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [converge](#converge) | 1 | 1669 | value |
+| [entering-power-filter](#entering-power-filter) | 1 | 425 | selector |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
 | [life-loss-trigger](#life-loss-trigger) | 1 | 883 | trigger_event, value |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
-| [once-each-turn-trigger](#once-each-turn-trigger) | 1 | 4270 | trigger_event |
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
@@ -41,38 +44,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [sacrifice-trigger](#sacrifice-trigger) | 1 | 228 | trigger_event |
 | [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
-| [subtype-restricted-mana](#subtype-restricted-mana) | 1 | 2686 | engine |
 | [target-player-zone](#target-player-zone) | 1 | 24 | selector |
 | [token-created](#token-created) | 1 | 228 | trigger_event |
 | [tutor-to-top](#tutor-to-top) | 1 | 5982 | op, selector |
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
+| [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## conditional-enters-tapped
-
-Blocks **7** cards.
-
-- **(replacement)** a `condition` field on the `self_enters_tapped` replacement, evaluated as the permanent enters, so the permanent enters untapped when it holds. The three printed shapes across this cycle are: a subtype test over permanents you control ("a Mountain or a Plains"), a count of other lands you control ("two or more other lands"), and a count of basic lands you control ("two or more basic lands") -- so the condition must reach a filtered count over your battlefield, with `other` excluding the entering permanent itself.
-  <br>Why the existing vocabulary won't do: `ReplacementModel` (cards/schema.py) has only `event`, `modify`, `counter` and `amount` -- there is no condition field -- and `zones._enter_battlefield` applies `self_enters_tapped` unconditionally. `proxy._enters_tapped` therefore emits the note "enters tapped unconditionally; the printed condition is not modelled" and the card is a strict downgrade of the printed one. `evaluate_condition` in engine/effects/conditions.py is the standalone evaluator this needs and already exists; nothing calls it from the ETB path.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clifftop Retreat** (rank 82) — `clifftop_retreat`
-  - This land enters tapped unless you control a Mountain or a Plains.
-- **Dragonskull Summit** (rank 85) — `dragonskull_summit`
-  - This land enters tapped unless you control a Swamp or a Mountain.
-- **Isolated Chapel** (rank 93) — `isolated_chapel`
-  - This land enters tapped unless you control a Plains or a Swamp.
-- **Smoldering Marsh** (rank 94) — `smoldering_marsh`
-  - This land enters tapped unless you control two or more basic lands.
-- **Sundown Pass** (rank 275) — `sundown_pass`
-  - This land enters tapped unless you control two or more other lands.
-- **Haunted Ridge** (rank 276) — `haunted_ridge`
-  - This land enters tapped unless you control two or more other lands.
-- **Shattered Sanctum** (rank 280) — `shattered_sanctum`
-  - This land enters tapped unless you control two or more other lands.
-
-</details>
 
 ## mana-ability-rider
 
@@ -106,7 +83,7 @@ Blocks **6** cards.
 
 ## additional-cost
 
-Blocks **2** cards.
+Blocks **3** cards.
 
 - **(cost)** A card-level field holding a *mandatory, non-mana* additional cost paid as the spell is cast from hand -- a full `Cost` (here `sacrifice` with the selector `{"any_types": ["Artifact", "Creature"]}`, controller you) charged at cast time alongside the printed mana cost. Legality must refuse to offer the cast at all when the cost cannot be paid, and the payment must happen while the spell goes on the stack, not on resolution. The `Cost` struct and its `sacrifice` selector already exist and are already charged this way for graveyard casts; what is missing is a place to hang one on an ordinary cast from hand.
   <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is wrong twice over: it is mana-only (`_cast_variant` computes `card.mana_cost.plus(card.kicker)`, a `ManaCost`, so it cannot sacrifice anything) and it is optional by construction (legality deliberately offers the spell as both unkicked and kicked). Deadly Dispute's cost is neither. `emerge`/`emerge_subtype` does sacrifice a creature at cast time, but it is an *alternative* cost that replaces the printed mana cost and is then reduced by the sacrificed creature's mana value -- casting Deadly Dispute for {1}{B} plus a sacrifice is not what emerge would charge. `flashback`/`graveyard_cost` and `retrace` are the only paths that pay a non-mana `Cost` at cast time (`can_pay(state, pid, card.flashback.without_mana(), oid)`), but both are gated on casting from the graveyard, so neither applies to a spell cast from hand. Putting the sacrifice in `spell_effects` as the `sacrifice` op is the approximation the DSL notes forbid: it moves the payment to resolution, so the spell could be cast with no artifact or creature to sacrifice and would still draw two cards.
@@ -114,13 +91,53 @@ Blocks **2** cards.
   <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is mana-only -- `CardDef.kicker` is a mana-cost *string* and the cast variant is `mana_cost.plus(kicker)`, a `ManaCost`, so it cannot sacrifice anything. `Cost.sacrifice` (in `carddef.py`) is exactly the right shape but is only reachable from an activated ability's `cost` or from a graveyard-cast path (`flashback`/`graveyard_cost`/`retrace`), never from an ordinary cast from hand; it is also a single fixed selector, so even mounted on a spell it would demand exactly N creatures rather than "one or more, your choice how many". Moving the sacrifice into `spell_effects` with the `sacrifice` op is the approximation the DSL notes forbid: it pays on resolution, which makes the copies impossible to have made (they must already be on the stack) and lets the spell be cast with the sacrifice unpaid.
 - **(value)** A value expression for "the number of permanents sacrificed to pay this spell's additional cost", available to the reflexive trigger's effects so `copy_spell`'s `amount` can be that count. The payment must record how many objects it consumed and expose them as a binding on the trigger.
   <br>Why the existing vocabulary won't do: `value_keys` has no reading of what a cost consumed. `creatures_died_this_turn` is the closest, and it is wrong: it counts every creature that died this turn from any source -- combat, an earlier removal spell, a second Plumb the Forbidden -- so on a real board it would copy the spell too many times. `creatures_you_control` counts what survives, not what was paid. `count` over a selector cannot name "the ones sacrificed this way" because nothing marks them.
+- **(engine)** A *mandatory* `additional_cost` must withdraw the free cast line, so the only way to cast the spell is the one that pays. The field itself now exists and the payment half works: `{"additional_cost": {"sacrifice": {"controller": "you", "types": ["Creature"]}}}` compiles, and casting the "(+1 additional)" line in the authoring sandbox really does sacrifice a creature (battlefield 32 -> 31, graveyard 2 -> 4). What is missing is the refusal: with neither `additional_optional` nor `additional_repeatable`, legality still offers the plain line beside it. In `src/automtg/engine/legality.py` the mandatory branch clears the free line only when the cost is *unpayable* -- `if not card.additional_optional and last < 1: out = []` -- so whenever the player actually has a creature, `_cast_variant` for `additional_times=1` is appended to an `out` that already holds the unpaid cast. Both actions come back with `kicked=False`, and `verify.find_play` takes the first, which is the free one. The fix is to drop the free line whenever `additional_cost` is present and not `additional_optional`, payable or not, and it wants the legality test the docstring in `tests/unit/test_additional_cost.py::TestAMandatoryCost` promises but never writes -- that class only exercises loading and DslError, so nothing today asserts the withdrawal.
+  <br>Why the existing vocabulary won't do: Not a vocabulary gap: `additional_cost` with `sacrifice` is exactly the printed cost and is in the packet's `cost_keys`. It is an enforcement gap, so no other spelling of the card is safe. `additional_optional` is the opposite of what is printed -- Village Rites does not say "you may". The `sacrifice` op in `spell_effects` is the approximation the packet notes forbid: it moves the payment to resolution, so the spell could be cast with no creature at all and still draw two. And an expectation that stops asserting the sacrifice would ship a strictly better Village Rites than the printed card -- a one-mana unconditional draw-two -- which is the exact failure the behaviour gate exists to catch. Measured, not reasoned: in the hand-written pool the free line leaves the board at 32 and still draws two cards.
 
 <details><summary>Cards waiting on this</summary>
 
 - **Deadly Dispute** (rank 129) — `deadly_dispute`
   - As an additional cost to cast this spell, sacrifice an artifact or creature.
+- **Village Rites** (rank 198) — `village_rites`
+  - As an additional cost to cast this spell, sacrifice a creature.
 - **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
   - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
+
+</details>
+
+## batched-enters-trigger
+
+Blocks **2** cards.
+
+- **(trigger_event)** a way to say "whenever one or more <matching> permanents enter" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. Needs the entering permanents to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered
+  <br>Why the existing vocabulary won't do: `permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` is called once per object, so a `{"is_token": true, "controller": "you"}` filter queues N copies when N tokens enter together -- an anthem-style token maker would make N Vampires instead of one. `not_cause` only suppresses a trigger by cause and `condition` is evaluated per event, so neither can collapse a batch
+- **(trigger_event)** a way to say "whenever one or more <matching> permanents enter" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. The entering permanents need to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered
+  <br>Why the existing vocabulary won't do: `permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` runs once per object, so a `{"types": ["Creature"], "controller": "you", "exclude_self": true, "power": {"op": "<=", "value": 2}}` filter queues N triggers when N small creatures enter together and draws N cards where the card draws one. `not_cause` only suppresses by zone-change cause and `condition` is evaluated per event, so neither collapses a batch. Note this need cannot be papered over by the per-turn cap above and vice versa: the cap alone still queues N triggers (only the first would do anything), and the batching alone still draws once per later enter this turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
+  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
+- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
+  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
+
+</details>
+
+## commander-color-identity
+
+Blocks **2** cards.
+
+- **(op)** an `add_mana` form whose colour options are the union of the colour identities of the activating player's commanders, resolved when the ability is activated rather than baked at load -- e.g. `{"op": "add_mana", "any_color_of": "commander_color_identity"}`, offering exactly those colours (and nothing at all, the ability being unactivatable, for a colourless commander). `Player.commanders` already holds the oids and `CardDef.color_identity` is already a `frozenset[str]`, so the data exists; what does not is a path from a mana ability to it. `cards/loader.py:_mana_options`/`_sum_mana` bake a fixed tuple of 6-tuples at load, and `engine/costs.py` (`mana_options`/`offerable_mana_ability`) plus the mode chips built in `engine/legality.py` and the castability solver in `engine/mana.py` (`ManaSource.options`/`producible`) all read that constant, so every one of them has to consult a resolver taking `GameState` and the activating player instead.
+  <br>Why the existing vocabulary won't do: `add_mana` takes a literal `mana` string parsed once at load, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which `_sum_mana` restricts mana abilities to -- has its mode list written into the card. That is exactly what the packet's `starting_point` does, and it is wrong rather than incomplete: five fixed modes is Command Tower in a five-colour deck and a strictly better card in every deck narrower than that, letting the land pay for spells the printed card cannot pay for. There is no way to prune the modes either -- a mana ability may contain only `add_mana`, so `if` and every `condition_keys` entry is rejected inside one, and `_validate_mana_amount` additionally forbids amounts depending on X, targets, bindings or a loop because a mana ability is activated mid-payment. Nothing in `selector_keys` or `value_keys` reads a commander's colour identity: `is_commander` selects the commander as an *object* and `colors` reads a permanent's current colour, which is not the same set (colour identity includes mana symbols in rules text and is read off the card in the command zone, which may not be on the battlefield at all). This shares its engine work with the `reflecting_mana` gap (Exotic Orchard) -- both need a mana ability's option set to become a function of GameState -- but the source of truth is different (the command zone, not the battlefield), so it is a distinct card group: Command Tower, Arcane Signet, Commander's Sphere and Opal Palace all want this one.
+- **(value)** A value leaf returning how many distinct colours are in the union of the colour identities of a player's commanders -- 0 to 5, and 0 for a colourless commander or an empty command zone -- e.g. `{"commander_color_identity": {"controller": "you"}}`, readable wherever an amount is read (and, per the need above, from a cost). The data already exists and is already the right shape: `Player.commanders` (src/automtg/engine/player.py:53) holds the oids, `state.commanders_of(pid)` (engine/state.py:406) returns them, and `CardDef.color_identity` (engine/carddef.py:325) is a `frozenset[str]`, so the leaf is a union over `card_of(oid).color_identity` and a `len`. What is missing is a name for it in the value language. It must read the *printed card* in whatever zone the commander is in -- typically the command zone, and this card is played specifically in decks where the commander is not on the battlefield.
+  <br>Why the existing vocabulary won't do: Nothing in `value_keys` reads a colour identity. `distinct` is the only leaf that counts distinct values over a pool, and `DISTINCT_OF` in engine/effects/values.py:111 is a closed two-entry tuple, `("power", "basic_land_type")`, with a load error for anything else -- and it resolves its pool through `resolve_pool`, i.e. over objects in a zone, so it could not see a commander in the command zone even if a third `of` existed. `colors_of_mana_spent` is a fact about how a spell was paid for, read off `obj.colors_spent`, not about a card's identity, and War Room's ability is not a spell cast at all. `count` with the `is_commander` selector counts commanders as *objects* -- two partners are two, and a five-colour commander is one, which is the wrong number in both directions -- and `selectors.py` documents `is_commander` as a battlefield-object predicate. The `colors` selector key reads a permanent's current, derived colour, which is not colour identity: identity is printed, includes mana symbols in rules text and in activation costs, and is immune to the colour-changing effects `colors` deliberately sees. This is the same missing fact as the `commander-color-identity` need already recorded for Path of Ancestry (Command Tower, Arcane Signet, Commander's Sphere), but a different consumer: that one needs it to shape a mana ability's colour options, this one needs it as an integer in a cost, so closing it for mana abilities alone leaves War Room blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Path of Ancestry** (rank 14) — `path_of_ancestry`
+  - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
+- **War Room** (rank 140) — `war_room`
+  - {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.
 
 </details>
 
@@ -137,6 +154,24 @@ Blocks **2** cards.
 
 - **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
   - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
+- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
+  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
+
+</details>
+
+## once-each-turn-trigger
+
+Blocks **2** cards.
+
+- **(trigger_event)** a per-turn cap on a triggered ability, declared on the trigger itself -- e.g. `"trigger": {"event": "permanent_enters", "filter": {"is_token": true, "controller": "you"}, "max_per_turn": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It must be counted in `triggers.collect`/`_matches` per (source object, ability index) against the turn ledger, reset at cleanup, and it must be a *trigger*-count cap, not a resolution-count one: a trigger that was countered or removed from the stack still spends the turn's allowance
+  <br>Why the existing vocabulary won't do: `TriggerSpec`/`TriggerModel` are strict models with only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- there is no per-turn limiter, so the trigger fires on every matching event. The two near misses both say something different. `set_flag`/`{"has_flag": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at end of turn), so it would make this once *ever* rather than once each turn. `{"cmp": {"left": {"resolutions_this_turn": true}, ...}}` is the engine's "Do this only once each turn" (Deep Gnome Terramancer wording): `ctx.resolutions` is set by `stack.resolve_top` and counts resolutions of the ability, so the trigger still goes on the stack every time and a countered or fizzled first copy would leave the allowance unspent -- the printed line here restricts triggering, not resolving
+- **(trigger_event)** a per-turn cap declared on a triggered ability's trigger -- e.g. `"trigger": {"event": "permanent_enters", "filter": {...}, "max_per_turn": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It has to be enforced where triggers are collected (`triggers.collect`/`_matches`), counted per (source object, ability index) in the turn ledger and reset at cleanup, and it must count *triggers*, not resolutions: a trigger that is countered or removed from the stack has still spent the turn's allowance
+  <br>Why the existing vocabulary won't do: `once_each_turn` exists on `Ability` but is an *activation* restriction, and `loader._compile_ability` raises `DslError` outright when it appears on anything that is not an activated ability ("'activate_steps' and 'once_each_turn' restrict *activating*, so they only mean anything on an activated ability"); `legality` is the only reader, and a trigger never passes through it. `TriggerSpec`/`TriggerModel` carry only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- no limiter. The two near misses say something different: `set_flag`/`{"has_flag": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at cleanup), so it would make this once *ever* rather than once each turn; and `{"cmp": ..., "left": {"resolutions_this_turn": "self"}}` gates *resolving*, not triggering -- `ctx.resolutions` is set by `stack.resolve_top`, so the trigger still goes on the stack every time and a countered first copy would leave the allowance unspent. docs/rules-coverage.md already names `resolutions_this_turn` "the wrong number" for exactly this cap
+
+<details><summary>Cards waiting on this</summary>
+
+- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
+  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
 - **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
   - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
 
@@ -160,6 +195,40 @@ Blocks **2** cards.
 - **Unexplained Absence** (rank 6625) — `unexplained_absence`
   - For each permanent exiled this way, its controller cloaks the top card of their library. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)
   - For each player, exile up to one target nonland permanent that player controls
+
+</details>
+
+## subtype-restricted-mana
+
+Blocks **2** cards.
+
+- **(engine)** a mana ability whose 'spend this mana only to...' clause names one or more creature subtypes (Vampire, Cleric, Demon) rather than a card type -- i.e. the ability's mana restriction must be able to hold a list of subtypes, and the purpose computed for the spell being paid for must include that spell's subtypes so a restricted source is offered when any one of them matches
+  <br>Why the existing vocabulary won't do: The existing mana restriction is a single lowercased card type: the loader rejects anything whose title-case form is not in the eight known card types, and the purpose a spell presents is built from that card's types alone, so subtypes are never consulted and 'Vampire, Cleric, and/or Demon' has no representation. Leaving the clause off would produce unrestricted {B}{B}{B}, which is strictly more permissive than the printed card.
+- **(engine)** a mana ability whose 'spend this mana only to...' clause names a creature subtype (Vampire) instead of a card type -- the ability's mana restriction must be able to hold a subtype, and the purpose computed for the spell being paid for must include that spell's subtypes so the restricted source is offered only for a Vampire spell
+  <br>Why the existing vocabulary won't do: The mana restriction an ability may carry is a single lowercased *card type*: the loader rejects any value whose title-case form is not one of the eight known card types, and the purpose a spell presents to the payment solver is built from its types alone, so 'Vampire' has no representation. Dropping the clause would produce unrestricted any-color mana off a land for one life, strictly more permissive than the printed card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Voldaren Estate** (rank 2443) — `voldaren_estate`
+  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
+  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
+- **Master of Dark Rites** (rank 2686) — `master_of_dark_rites`
+  - {T}, Sacrifice another creature: Add {B}{B}{B}. Spend this mana only to cast Vampire, Cleric, and/or Demon spells.
+
+</details>
+
+## activated-ability-cost-reduction
+
+Blocks **1** card.
+
+- **(cost)** a mana cost on an *activated* ability that shrinks by {1} for each permanent matching a filter its controller controls, clamped at {0} -- i.e. a scaling generic component on an ability cost, evaluated when the ability is offered and again when it is paid
+  <br>Why the existing vocabulary won't do: Both existing reductions discount *casting a spell*, not activating an ability: a card's `cost_reduction` field is Ghalta's 'this spell costs {X} less to cast', and the `spell_cost_reduction` static discounts other players' spells via `affects_spells`; both are read only from the cast path (`costs.cost_reduction`, called from the cast/legality code). An activated ability's `cost.mana` is a fixed literal mana string with no place for a count-derived term, and `times` in a cost repeats the whole cost rather than scaling its generic part.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Voldaren Estate** (rank 2443) — `voldaren_estate`
+  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
+  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
 
 </details>
 
@@ -191,17 +260,18 @@ Blocks **1** card.
 
 </details>
 
-## batched-enters-trigger
+## blood-token
 
 Blocks **1** card.
 
-- **(trigger_event)** a way to say "whenever one or more <matching> permanents enter" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. Needs the entering permanents to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered
-  <br>Why the existing vocabulary won't do: `permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` is called once per object, so a `{"is_token": true, "controller": "you"}` filter queues N copies when N tokens enter together -- an anthem-style token maker would make N Vampires instead of one. `not_cause` only suppresses a trigger by cause and `condition` is evaluated per event, so neither can collapse a batch
+- **(engine)** a Blood token in the shared token pool -- a colorless artifact token named Blood with the printed activated ability '{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.' so `create_token` can name it
+  <br>Why the existing vocabulary won't do: `create_token` requires a `token` id that resolves to an existing card marked `is_token`; `validate_token_references` raises on an unknown id. The pool holds Clue and Treasure artifact tokens plus creature tokens, but no Blood, and a card answer file cannot define one -- the token must be added to the token card pool. Substituting Clue would change both the activation cost and the discard.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
-  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
+- **Voldaren Estate** (rank 2443) — `voldaren_estate`
+  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
+  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
 
 </details>
 
@@ -266,20 +336,6 @@ Blocks **1** card.
 
 </details>
 
-## commander-color-identity
-
-Blocks **1** card.
-
-- **(op)** an `add_mana` form whose colour options are the union of the colour identities of the activating player's commanders, resolved when the ability is activated rather than baked at load -- e.g. `{"op": "add_mana", "any_color_of": "commander_color_identity"}`, offering exactly those colours (and nothing at all, the ability being unactivatable, for a colourless commander). `Player.commanders` already holds the oids and `CardDef.color_identity` is already a `frozenset[str]`, so the data exists; what does not is a path from a mana ability to it. `cards/loader.py:_mana_options`/`_sum_mana` bake a fixed tuple of 6-tuples at load, and `engine/costs.py` (`mana_options`/`offerable_mana_ability`) plus the mode chips built in `engine/legality.py` and the castability solver in `engine/mana.py` (`ManaSource.options`/`producible`) all read that constant, so every one of them has to consult a resolver taking `GameState` and the activating player instead.
-  <br>Why the existing vocabulary won't do: `add_mana` takes a literal `mana` string parsed once at load, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which `_sum_mana` restricts mana abilities to -- has its mode list written into the card. That is exactly what the packet's `starting_point` does, and it is wrong rather than incomplete: five fixed modes is Command Tower in a five-colour deck and a strictly better card in every deck narrower than that, letting the land pay for spells the printed card cannot pay for. There is no way to prune the modes either -- a mana ability may contain only `add_mana`, so `if` and every `condition_keys` entry is rejected inside one, and `_validate_mana_amount` additionally forbids amounts depending on X, targets, bindings or a loop because a mana ability is activated mid-payment. Nothing in `selector_keys` or `value_keys` reads a commander's colour identity: `is_commander` selects the commander as an *object* and `colors` reads a permanent's current colour, which is not the same set (colour identity includes mana symbols in rules text and is read off the card in the command zone, which may not be on the battlefield at all). This shares its engine work with the `reflecting_mana` gap (Exotic Orchard) -- both need a mana ability's option set to become a function of GameState -- but the source of truth is different (the command zone, not the battlefield), so it is a distinct card group: Command Tower, Arcane Signet, Commander's Sphere and Opal Palace all want this one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Path of Ancestry** (rank 14) — `path_of_ancestry`
-  - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-
-</details>
-
 ## commander-type-filter
 
 Blocks **1** card.
@@ -305,6 +361,20 @@ Blocks **1** card.
 
 - **Painful Truths** (rank 1669) — `painful_truths`
   - Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell.
+
+</details>
+
+## entering-power-filter
+
+Blocks **1** card.
+
+- **(selector)** a trigger filter whose `power`/`toughness` comparison reads the subject's *current* characteristics as it exists on the battlefield rather than its printed ones, for "creatures you control with power 2 or less enter"
+  <br>Why the existing vocabulary won't do: `triggers.matches_card_filter` compares against `card.power` (the printed face) by design, because trigger subjects are frequently gone by the time the filter runs. That is right for a `dies` trigger and wrong here: a printed 1/1 that enters as a 3/3 under an anthem, or with counters from a replacement effect, would still trigger. A subject that has just entered is still on the battlefield, so the derived characteristics are available -- but the filter never asks for them, and there is no key to request the derived reading
+
+<details><summary>Cards waiting on this</summary>
+
+- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
+  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
 
 </details>
 
@@ -364,20 +434,6 @@ Blocks **1** card.
 
 - **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
   - Choose target creature. You lose 2 life. Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
-
-</details>
-
-## once-each-turn-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a per-turn cap on a triggered ability, declared on the trigger itself -- e.g. `"trigger": {"event": "permanent_enters", "filter": {"is_token": true, "controller": "you"}, "max_per_turn": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It must be counted in `triggers.collect`/`_matches` per (source object, ability index) against the turn ledger, reset at cleanup, and it must be a *trigger*-count cap, not a resolution-count one: a trigger that was countered or removed from the stack still spends the turn's allowance
-  <br>Why the existing vocabulary won't do: `TriggerSpec`/`TriggerModel` are strict models with only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- there is no per-turn limiter, so the trigger fires on every matching event. The two near misses both say something different. `set_flag`/`{"has_flag": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at end of turn), so it would make this once *ever* rather than once each turn. `{"cmp": {"left": {"resolutions_this_turn": true}, ...}}` is the engine's "Do this only once each turn" (Deep Gnome Terramancer wording): `ctx.resolutions` is set by `stack.resolve_top` and counts resolutions of the ability, so the trigger still goes on the stack every time and a countered or fizzled first copy would leave the allowance unspent -- the printed line here restricts triggering, not resolving
-
-<details><summary>Cards waiting on this</summary>
-
-- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
-  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
 
 </details>
 
@@ -480,20 +536,6 @@ Blocks **1** card.
 
 </details>
 
-## subtype-restricted-mana
-
-Blocks **1** card.
-
-- **(engine)** a mana ability whose 'spend this mana only to...' clause names one or more creature subtypes (Vampire, Cleric, Demon) rather than a card type -- i.e. the ability's mana restriction must be able to hold a list of subtypes, and the purpose computed for the spell being paid for must include that spell's subtypes so a restricted source is offered when any one of them matches
-  <br>Why the existing vocabulary won't do: The existing mana restriction is a single lowercased card type: the loader rejects anything whose title-case form is not in the eight known card types, and the purpose a spell presents is built from that card's types alone, so subtypes are never consulted and 'Vampire, Cleric, and/or Demon' has no representation. Leaving the clause off would produce unrestricted {B}{B}{B}, which is strictly more permissive than the printed card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Master of Dark Rites** (rank 2686) — `master_of_dark_rites`
-  - {T}, Sacrifice another creature: Add {B}{B}{B}. Spend this mana only to cast Vampire, Cleric, and/or Demon spells.
-
-</details>
-
 ## target-player-zone
 
 Blocks **1** card.
@@ -552,6 +594,20 @@ Blocks **1** card.
   - • Each player sacrifices a creature of their choice
   - • You draw a card and you lose 1 life
   - • Transform Henrika
+
+</details>
+
+## variable-cost-amount
+
+Blocks **1** card.
+
+- **(cost)** A cost whose life payment is a value expression evaluated when the ability is activated rather than an integer written on the card -- e.g. `{"mana": "{3}", "tap": true, "pay_life": {"commander_color_identity": {"controller": "you"}}}`. Concretely `CostModel.pay_life` (src/automtg/cards/schema.py:48) and `Cost.pay_life` (src/automtg/engine/carddef.py:96) are `int`, coerced once by `Cost.from_spec` with `int(spec.get("pay_life", 0) or 0)`; the affordability test `can_pay` (src/automtg/engine/costs.py:344, `player.life < cost.pay_life`) and the charge in `pay` (costs.py:552, `lose_life(state, pid, cost.pay_life, ...)`) both read that constant, as does `Cost.describe` and `is_tap_only`. All four need to resolve the amount through a value evaluator given the activating player and the source, at the moment legality offers the action and again when the cost is charged, and both readings must agree so an ability cannot be offered at a price it is then not charged.
+  <br>Why the existing vocabulary won't do: `cost_keys` has `pay_life`, and it is exactly the right cost -- it is the *amount* that cannot be spelled. There is no cost key that takes a value expression for life. `times` is the one part of a cost that is not fixed at authoring time, and its own schema comment says it multiplies the **mana** half only and is read "where an ``EffectContext`` exists to evaluate it -- i.e. by `may`'s `pay`, not by an activated ability's cost, which is charged before any effect runs" -- so it neither reaches `pay_life` nor runs at the moment War Room needs it. Moving the payment into the effects, as `lose_life` with an amount, is the documented wrong answer: the packet's own notes say paying with an op "moves the payment to resolution and lets the ability be activated when it could not be paid for", which for War Room means drawing at 1 life against a five-colour commander, a strictly better card than the printed one. A `const` stand-in is worse still, because it is right only for decks of one particular colour count.
+
+<details><summary>Cards waiting on this</summary>
+
+- **War Room** (rank 140) — `war_room`
+  - {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.
 
 </details>
 

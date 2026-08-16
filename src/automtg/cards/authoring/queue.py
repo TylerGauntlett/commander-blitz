@@ -135,11 +135,21 @@ class Queue:
     def next_batch(self, limit: int, *, retry_failed: bool = False) -> list[Entry]:
         """The next cards to work on, best first.
 
-        ``unexpressible`` is never retried automatically: it means the engine
+        ``unexpressible`` is never retried *automatically*: it means the engine
         cannot say this yet, and nothing about running the same generator again
-        changes that. Those come back when the mechanic that unblocks them ships.
+        changes that. Those come back when the mechanic that unblocks them ships
+        -- and ``retry_failed`` is how that moment is announced. ``/extend-dsl``
+        ends by running ``--tier templates --retry`` precisely to collect the
+        cards its capability just freed, so excluding them there made the harvest
+        step a no-op for the one category it exists to serve: seven conditional
+        taplands stayed ``unexpressible`` after the condition they were waiting
+        on shipped, and only a by-name run could reach them.
         """
-        statuses = {"pending", "failed"} if retry_failed else {"pending"}
+        statuses = {"pending", "failed"}
+        if retry_failed:
+            statuses.add("unexpressible")
+        else:
+            statuses.discard("failed")
         candidates = [e for e in self.entries.values() if e.status in statuses]
         candidates.sort(key=_priority)
         return candidates[:limit]

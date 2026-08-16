@@ -6762,6 +6762,154 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_checkland",
+      "name": "Test Checkland",
+      "oracle_text": "Test Checkland enters tapped unless you control a Mountain or a Plains.\n{T}: Add {R}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "condition": {
+            "not": {
+              "exists": {
+                "zone": "battlefield",
+                "controller": "you",
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{R}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_slowland",
+      "name": "Test Slowland",
+      "oracle_text": "Test Slowland enters tapped unless you control two or more other lands.\n{T}: Add {B}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "exclude_self": true
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {B}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{B}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_fastland",
+      "name": "Test Fastland",
+      "oracle_text": "Test Fastland enters tapped unless you control two or fewer other lands.\n{T}: Add {W}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "exclude_self": true
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {W}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{W}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

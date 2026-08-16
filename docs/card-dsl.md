@@ -1560,6 +1560,52 @@ Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
 wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern and
 `tests/unit/test_cast_time_modes.py` pins the timing.
 
+## Conditional taplands — "enters tapped unless…"
+
+"This land enters tapped unless you control a Mountain or a Plains."
+
+A `condition` on a `replacements` entry, evaluated as the permanent enters. It
+says when the replacement **applies**, which is the same thing `condition` means
+everywhere else in the DSL — so the card carries the *negation* of the printed
+sentence:
+
+```jsonc
+"replacements": [{
+  "event": "self_enters_tapped",
+  "condition": {"not": {"exists": {
+    "zone": "battlefield", "controller": "you",
+    "any_of": [{"subtypes": ["Mountain"]}, {"subtypes": ["Plains"]}]
+  }}}
+}]
+```
+
+The condition is the full condition DSL, evaluated by `evaluate_condition` with
+the entering permanent as the source. The other two printed shapes in the cycle
+are counts:
+
+```jsonc
+// "…unless you control two or more other lands"   (slowlands)
+{"cmp": "<", "right": {"const": 2}, "left": {"count": {
+  "zone": "battlefield", "controller": "you", "types": ["Land"], "exclude_self": true}}}
+
+// "…unless you control two or fewer other lands"  (fastlands: the same count, inverted)
+{"cmp": ">", "right": {"const": 2}, "left": {"count": {
+  "zone": "battlefield", "controller": "you", "types": ["Land"], "exclude_self": true}}}
+```
+
+**`exclude_self` is load-bearing, not tidiness.** `move_object` calls
+`_add_to_zone` before `_enter_battlefield`, so the land is already on the
+battlefield when its own condition runs. Without it, one other land plus itself
+reads as two and every slowland enters untapped a turn early.
+
+The proxy generator reads these three shapes off the printed line
+(`proxy._unless_condition`), which is what lets the templates tier author the
+whole cycle. A shape it does not recognise — "unless you have two or more
+opponents", "unless a player has 13 or less life" — falls back to entering
+tapped **unconditionally**, never untapped: a free untapped dual is a strict
+upgrade over the printed card, and the one direction this must never fail in is
+handing a deck a better mana base than the one it was built with.
+
 ## Creature-lands
 
 "Until end of turn, this land becomes a 4/4 white and blue Elemental creature

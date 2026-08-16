@@ -1,3 +1,59 @@
+## Conditional taplands — a replacement that stops to look at the board
+
+### Overview
+
+Seven lands in a single imported deck, and 67 across the catalog, were marked
+`unexpressible` on one missing word. `self_enters_tapped` had no `condition`,
+and `zones._enter_battlefield` applied it unconditionally — so Clifftop Retreat
+shipped as the worst dual in the format wearing the right name. The whole reason
+that card is played over a Guildgate is that on turn three it is usually
+untapped.
+
+### Nothing new evaluates it
+
+`evaluate_condition` in `effects/conditions.py` was already the standalone
+evaluator for trigger intervening-if clauses. It had no caller on the
+enters-the-battlefield path, and that was the entire gap: one field on
+`ReplacementModel`, one guard in `compile_card`, one call in
+`_enter_battlefield`. The condition is stored as the clause the permanent enters
+*tapped* under — the negation of what is printed — so `condition` means here
+what it means everywhere else in the DSL: when this applies.
+
+### The ordering, which is the only real trap
+
+`move_object` calls `_add_to_zone` before `_enter_battlefield`, so the land is
+already on the battlefield when its own condition runs. "Two or more **other**
+lands" therefore needs `exclude_self`, and a version without it counts the
+arriving land and enters untapped a full turn early — every time, silently, in
+the deck's favour.
+
+### The fallback has a direction, and it is not symmetric
+
+`proxy._unless_condition` reads three printed shapes: a basic-land subtype test,
+a count of other lands, and a count of basic lands. Between them they carry the
+checkland, slowland, fastland and battle-land cycles. Anything else returns
+`None` and the land enters tapped **unconditionally**.
+
+That asymmetry is deliberate and predates this change: the generator always
+chose too-weak over too-strong, because a free untapped dual is a strict upgrade
+over the printed card and distorts a game far more than a slow one does. So the
+bug being closed here was always a card that was too weak, never one that was
+too strong — and refusing to guess keeps it that way. "Unless you have two or
+more opponents" is still a note, not a wrong condition.
+
+### What it unblocked
+
+37 cards authored on the next `--tier templates --retry`, including all seven in
+the deck that prompted it. Witness: `tests/unit/test_conditional_enters_tapped.py`.
+
+### A pipeline bug found on the way
+
+`Queue.next_batch` excluded `unexpressible` from `--retry`, so `/extend-dsl`'s
+documented harvest step could never harvest the cards its capability had just
+freed — the one category that step exists to serve. Shipping the mechanic is
+exactly the moment those cards should come back, and `--retry` is how that
+moment is announced, so it now includes them. Automatic runs still skip them.
+
 ## Mutate — the subsystem that was a single choke point all along
 
 ### Overview

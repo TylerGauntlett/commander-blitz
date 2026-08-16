@@ -653,23 +653,111 @@ _PERMANENT_TYPE_NAMES = frozenset(
 )
 
 
+#: The "unless ..." half of a conditional tapland, if there is one.
+_ENTERS_TAPPED_UNLESS = re.compile(r"\benters?\b[^.]*\btapped\b\s+unless\s+(?P<clause>[^.]+)", re.I)
+
+_BASIC_LAND_SUBTYPES = ("Plains", "Island", "Swamp", "Mountain", "Forest")
+
+_NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+
+#: "a Mountain or a Plains", "an Island", "a Plains or a Swamp" -- the checkland
+#: cycle.  Anchored end-to-end so a longer sentence with the same opening ("a
+#: Soldier card this way or you control a Soldier") cannot match half of itself.
+_UNLESS_SUBTYPES = re.compile(
+    r"^you control an? (?P<first>\w+)(?: or an? (?P<second>\w+))?$", re.I
+)
+
+#: "two or more other lands", "three or more other Mountains", "two or fewer
+#: other lands" -- slowlands, fastlands and the horizon cycle.
+_UNLESS_COUNT = re.compile(
+    r"^you control (?P<n>one|two|three|four|five) or (?P<dir>more|fewer) "
+    r"(?P<other>other )?(?P<what>basic lands|lands|\w+s)$",
+    re.I,
+)
+
+
+def _unless_condition(clause: str) -> dict | None:
+    """The clause a conditional tapland enters *tapped* under, or ``None``.
+
+    The printed sentence says when it enters tapped **unless** something holds,
+    so what is returned here is the negation of what is printed.  ``None`` means
+    the shape was not recognised, and the caller must fall back to entering
+    tapped unconditionally -- never to entering untapped, which would hand the
+    deck a strictly better land than the one in it.
+    """
+    clause = clause.strip().rstrip(".")
+    mine = {"zone": "battlefield", "controller": "you"}
+
+    if match := _UNLESS_SUBTYPES.match(clause):
+        names = [match.group("first")]
+        if match.group("second"):
+            names.append(match.group("second"))
+        # Only the five basic land types. "a legendary creature" and "a Mount or
+        # Vehicle" parse the same way and mean something else entirely, and a
+        # wrong reading here is a land that enters untapped when it should not.
+        if not all(n.title() in _BASIC_LAND_SUBTYPES for n in names):
+            return None
+        branches = [{"subtypes": [n.title()]} for n in names]
+        return {"not": {"exists": {**mine, "any_of": branches}}}
+
+    if match := _UNLESS_COUNT.match(clause):
+        count = _NUMBER_WORDS[match.group("n").lower()]
+        what = match.group("what").lower()
+        selector: dict = {**mine, "types": ["Land"]}
+        if what == "basic lands":
+            selector["supertypes"] = ["Basic"]
+        elif what != "lands":
+            subtype = match.group("what")[:-1].title()
+            if subtype not in _BASIC_LAND_SUBTYPES:
+                return None
+            selector["subtypes"] = [subtype]
+        if match.group("other"):
+            # `exclude_self` compares against the ability source, which for a
+            # replacement is the entering permanent -- and it is already on the
+            # battlefield by the time this is evaluated, so without it the land
+            # counts itself and every slowland is off by one.
+            selector["exclude_self"] = True
+        value = {"count": selector}
+        # "two or more" is untapped at >= 2, so tapped at < 2. "two or fewer" is
+        # untapped at <= 2, so tapped at > 2.
+        op = "<" if match.group("dir").lower() == "more" else ">"
+        return {"cmp": op, "left": value, "right": {"const": count}}
+
+    return None
+
+
 def _enters_tapped(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[str], set[str]]:
     """The one replacement effect worth generating.
 
-    Applied even when the printed condition is "unless you control two or fewer
-    other lands": a conditional tapland generated as always-untapped is a strict
-    upgrade over the real card, and a free dual distorts a game far more than an
-    always-tapped one does.
+    A printed condition is modelled when it can be read exactly.  When it cannot,
+    the land still enters tapped unconditionally rather than untapped: a
+    conditional tapland generated as always-untapped is a strict upgrade over the
+    real card, and a free dual distorts a game far more than an always-tapped one
+    does.
     """
     if not any(t in _PERMANENT_TYPE_NAMES for t in types):
         return [], [], set()
     lines = [ln for ln in facts.oracle_text.split("\n") if _ENTERS_TAPPED.search(ln)]
     if not lines:
         return [], [], set()
+
+    replacement: dict = {"event": "self_enters_tapped"}
+    joined = " ".join(lines)
+    if match := _ENTERS_TAPPED_UNLESS.search(joined):
+        condition = _unless_condition(match.group("clause"))
+        if condition is None:
+            return (
+                [replacement],
+                ["enters tapped unconditionally; the printed condition is not modelled"],
+                set(lines),
+            )
+        replacement["condition"] = condition
+        return [replacement], [], set(lines)
+
     notes: list[str] = []
-    if re.search(r"unless|if you control|as long as", " ".join(lines), re.I):
+    if re.search(r"if you control|as long as", joined, re.I):
         notes.append("enters tapped unconditionally; the printed condition is not modelled")
-    return [{"event": "self_enters_tapped"}], notes, set(lines)
+    return [replacement], notes, set(lines)
 
 
 def _power_toughness(

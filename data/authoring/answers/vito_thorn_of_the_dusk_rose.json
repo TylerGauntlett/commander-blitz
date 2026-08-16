@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "vito_thorn_of_the_dusk_rose",
+    "name": "Vito, Thorn of the Dusk Rose",
+    "oracle_text": "Whenever you gain life, target opponent loses that much life.\n{3}{B}{B}: Creatures you control gain lifelink until end of turn.",
+    "mana_cost": "{2}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Cleric"],
+    "supertypes": ["Legendary"],
+    "power": 1,
+    "toughness": 3,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you gain life, target opponent loses that much life.",
+        "trigger": {
+          "event": "you_gain_life",
+          "controller": "you"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "player",
+            "selector": {"controller": "opponent"},
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": {"target": "t1"},
+            "amount": {"binding": "amount"}
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{B}{B}: Creatures you control gain lifelink until end of turn.",
+        "cost": {"mana": "{3}{B}{B}"},
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "keywords": ["lifelink"],
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 0}
+  }
+}

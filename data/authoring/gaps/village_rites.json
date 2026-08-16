@@ -1,0 +1,30 @@
+{
+  "card_id": "village_rites",
+  "name": "Village Rites",
+  "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, sacrifice a creature."
+  ],
+  "needs": [
+    {
+      "capability": "additional-cost",
+      "kind": "engine",
+      "what": "A *mandatory* `additional_cost` must withdraw the free cast line, so the only way to cast the spell is the one that pays. The field itself now exists and the payment half works: `{\"additional_cost\": {\"sacrifice\": {\"controller\": \"you\", \"types\": [\"Creature\"]}}}` compiles, and casting the \"(+1 additional)\" line in the authoring sandbox really does sacrifice a creature (battlefield 32 -> 31, graveyard 2 -> 4). What is missing is the refusal: with neither `additional_optional` nor `additional_repeatable`, legality still offers the plain line beside it. In `src/automtg/engine/legality.py` the mandatory branch clears the free line only when the cost is *unpayable* -- `if not card.additional_optional and last < 1: out = []` -- so whenever the player actually has a creature, `_cast_variant` for `additional_times=1` is appended to an `out` that already holds the unpaid cast. Both actions come back with `kicked=False`, and `verify.find_play` takes the first, which is the free one. The fix is to drop the free line whenever `additional_cost` is present and not `additional_optional`, payable or not, and it wants the legality test the docstring in `tests/unit/test_additional_cost.py::TestAMandatoryCost` promises but never writes -- that class only exercises loading and DslError, so nothing today asserts the withdrawal.",
+      "why_existing_wont_do": "Not a vocabulary gap: `additional_cost` with `sacrifice` is exactly the printed cost and is in the packet's `cost_keys`. It is an enforcement gap, so no other spelling of the card is safe. `additional_optional` is the opposite of what is printed -- Village Rites does not say \"you may\". The `sacrifice` op in `spell_effects` is the approximation the packet notes forbid: it moves the payment to resolution, so the spell could be cast with no creature at all and still draw two. And an expectation that stops asserting the sacrifice would ship a strictly better Village Rites than the printed card -- a one-mana unconditional draw-two -- which is the exact failure the behaviour gate exists to catch. Measured, not reasoned: in the hand-written pool the free line leaves the board at 32 and still draws two cards.",
+      "closest_existing": [
+        "additional_cost",
+        "additional_optional",
+        "kicker",
+        "emerge",
+        "graveyard_cost"
+      ]
+    }
+  ],
+  "closest_existing": [
+    "additional_cost",
+    "kicker",
+    "emerge"
+  ],
+  "confidence": "high",
+  "notes": "\"Draw two cards.\" is fully expressible today. The moment the mandatory line is withdrawn this card ships as `{\"additional_cost\": {\"sacrifice\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Creature\"]}}}` plus `{\"op\": \"draw\", \"player\": \"you\", \"amount\": {\"const\": 2}}`, with expectation `{\"zone\": \"graveyard\", \"hand_size\": {\"0\": 2}, \"library_size\": {\"0\": 38}, \"battlefield_count\": 31, \"graveyard_size\": {\"0\": 4}}` -- those five numbers were read off the paid cast line in the sandbox, so they are known good. This supersedes the older `deadly_dispute` gap record's premise: the card-level field it asked for was built, but only the optional and repeatable shapes (casualty, replicate) are actually enforced. Every mandatory-additional-cost card -- Deadly Dispute, Village Rites, Bone Shards, Altar's Reap -- is currently castable for free, so this is a correctness bug in shipped legality, not only an authoring blocker. Verified against the pool the collector uses; note that the full pool including `data/cards/auto/` masks the bug, because its two board props are the same legendary creature and the legend rule takes one to the graveyard on its own, landing the board on 31 without any sacrifice."
+}
