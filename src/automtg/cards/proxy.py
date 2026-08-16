@@ -454,43 +454,112 @@ def _mana_ability(facts: CardFacts, types: list[str]) -> tuple[list[dict], list[
     if not any(t in _PERMANENT_TYPE_NAMES for t in types):
         return [], [], set()
 
-    line, prefix = _find_mana_line(facts.oracle_text)
-    if line is None:
+    lines = _find_mana_lines(facts.oracle_text)
+    if not lines:
         return [], [], set()
 
     symbols = [s for s in facts.produced_mana if s in ("W", "U", "B", "R", "G", "C")]
     if not symbols:
         return [], [], set()
 
-    # The cost beyond tapping.  Mana is expressible; a sacrifice, a life payment
-    # or "return an Island you control" is not -- and generating those as *free*
-    # would hand the deck a Signet that costs nothing and a bounce land with no
-    # bounce.  A generated card must never be better than the printed one, which
-    # is the same rule the conditional taplands follow.
-    extra_cost = None
-    if prefix:
-        if not _MANA_ONLY.match(prefix):
-            return [], [f"mana ability not generated; its cost is {prefix!r}"], set()
-        extra_cost, _ = simplify_mana_cost(prefix.replace(",", "").replace(" ", ""), facts.color_identity)
+    abilities: list[dict] = []
+    notes: list[str] = []
+    consumed: set[str] = set()
 
-    effects, quantity_note = _mana_effects(line, symbols)
-    cost: dict = {"tap": True}
-    if extra_cost:
-        cost["mana"] = extra_cost
-    ability = {
-        "kind": "activated",
-        # The printed line this implements, verbatim.  Not decoration: the
-        # authoring verifier's residual gate decides "is every sentence
-        # accounted for" by asking each ability which sentence it claims, and an
-        # ability with no text claims nothing.
-        "text": line.strip(),
-        "is_mana_ability": True,
-        "cost": cost,
-        "effects": effects,
-    }
+    for line, prefix in lines:
+        # The cost beyond tapping.  Mana is expressible; a sacrifice, a life
+        # payment or "return an Island you control" is not -- and generating
+        # those as *free* would hand the deck a Signet that costs nothing and a
+        # bounce land with no bounce.  A generated card must never be better than
+        # the printed one, which is the same rule the conditional taplands follow.
+        extra_cost = None
+        if prefix:
+            if not _MANA_ONLY.match(prefix):
+                notes.append(f"mana ability not generated; its cost is {prefix!r}")
+                continue
+            extra_cost, _ = simplify_mana_cost(
+                prefix.replace(",", "").replace(" ", ""), facts.color_identity
+            )
 
-    notes = [quantity_note] if quantity_note else []
-    return [ability], notes, {line}
+        # A line whose rider cannot be read is dropped rather than generated
+        # without its drawback -- one line short is a worse card, which is the
+        # safe direction; a painless painland is a better one, which is not.
+        rider, rider_note = _mana_rider(line, facts.name)
+        if rider_note:
+            notes.append(rider_note)
+            continue
+
+        effects, quantity_note = _mana_effects(line, symbols)
+        if quantity_note:
+            notes.append(quantity_note)
+        cost: dict = {"tap": True}
+        if extra_cost:
+            cost["mana"] = extra_cost
+        abilities.append(
+            {
+                "kind": "activated",
+                # The printed line this implements, verbatim.  Not decoration:
+                # the authoring verifier's residual gate decides "is every
+                # sentence accounted for" by asking each ability which sentence
+                # it claims, and an ability with no text claims nothing.
+                "text": line.strip(),
+                "is_mana_ability": True,
+                "cost": cost,
+                "effects": effects + rider,
+            }
+        )
+        consumed.add(line)
+
+    return abilities, notes, consumed
+
+
+#: Everything after the ``Add ...`` sentence on a mana line.  A painland prints
+#: its drawback there rather than as a line of its own.
+_MANA_TAIL = re.compile(r":\s*Add\s+[^.]+\.\s*(?P<tail>.+)$", re.I)
+
+#: "Battlefield Forge deals 1 damage to you." -- the one rider shape worth
+#: reading, and by a distance the most common (34 cards in the catalog).  The
+#: source name is matched loosely because oracle text says both "This land deals"
+#: and the card's own name.
+_RIDER_DAMAGE = re.compile(
+    r"^(?:this (?:land|artifact|permanent|creature)|[A-Z][\w',\- ]*?)"
+    r" deals (?P<n>\d+) damage to you\.$",
+    re.I,
+)
+
+
+def _mana_rider(line: str, name: str) -> tuple[list[dict], str | None]:
+    """``(rider effects, refusal note)`` for the sentence after ``Add ...``.
+
+    Exactly one of the two is ever non-empty.  A tail this cannot read is a
+    *refusal* -- the caller drops the whole mana ability rather than generating
+    it without its drawback, because a painland that costs no life is a strictly
+    better card than the printed one, and a free untapped dual is the one
+    direction this generator must never fail in.
+    """
+    # Unwrapped exactly as `_find_mana_lines` unwraps them, and for the same
+    # reason: a basic land's whole text is the reminder "({T}: Add {G}.)", and
+    # reading its closing bracket as a drawback made Forest generate with no
+    # mana ability at all -- the single most deck-breaking thing this generator
+    # can do, and it did it to every basic land in the format.
+    bare = line.replace("(", "").replace(")", "").strip()
+    match = _MANA_TAIL.search(bare)
+    if match is None:
+        return [], None
+    tail = match.group("tail").strip()
+    # "({C} represents colorless mana.)" says nothing about the card, and once
+    # unwrapped a reminder-only tail has no letters left to say it with.
+    if not re.search(r"[A-Za-z]", tail):
+        return [], None
+    if damage := _RIDER_DAMAGE.match(tail):
+        return [
+            {
+                "op": "damage",
+                "amount": {"const": int(damage.group("n"))},
+                "player": "you",
+            }
+        ], None
+    return [], f"mana ability not generated; its rider is {tail!r}"
 
 
 #: ``{T}: Add {C}{C}.`` -- everything after "Add", which is where the *amount*
@@ -619,14 +688,20 @@ def _mana_effects(line: str, symbols: list[str]) -> tuple[list[dict], str | None
     return [{"op": "add_mana", "mana": f"{{{symbols[0]}}}"}], None
 
 
-def _find_mana_line(oracle_text: str) -> tuple[str | None, str]:
-    """The card's *own* tap-for-mana line, and whatever its cost says before ``{T}``.
+def _find_mana_lines(oracle_text: str) -> list[tuple[str, str]]:
+    """Every one of the card's *own* tap-for-mana lines, with its cost prefix.
 
     Skips a line that hands the ability to something else.  Scryfall writes an
     Aura as ``Enchanted land has "{T}: Add {C}."``, and lifting that gives the
     Aura a mana ability of its own -- the same trap as ``keywords`` listing what
     a card *grants* rather than what it has.
+
+    All of them, not the first: a painland prints two ("{T}: Add {C}." and
+    "{T}: Add {R} or {W}. This land deals 1 damage to you."), and taking only
+    the first generated Battlefield Forge as a Wastes with the drawback line
+    left over as unimplemented text.
     """
+    out: list[tuple[str, str]] = []
     for line in oracle_text.split("\n"):
         # Parentheses are *unwrapped*, not stripped: a basic land's entire text
         # is the reminder "({T}: Add {G}.)", and deleting it leaves Forest with
@@ -637,8 +712,14 @@ def _find_mana_line(oracle_text: str) -> tuple[str | None, str]:
             continue
         match = _TAPS_FOR_MANA.match(bare)
         if match:
-            return line, match.group("pre").strip().rstrip(",").strip()
-    return None, ""
+            out.append((line, match.group("pre").strip().rstrip(",").strip()))
+    return out
+
+
+def _find_mana_line(oracle_text: str) -> tuple[str | None, str]:
+    """The first such line, for callers that only want one."""
+    lines = _find_mana_lines(oracle_text)
+    return lines[0] if lines else (None, "")
 
 
 _PERMANENT_TYPE_NAMES = frozenset(

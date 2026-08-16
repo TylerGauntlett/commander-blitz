@@ -6910,6 +6910,75 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_painland",
+      "name": "Test Painland",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {R} or {W}. Test Painland deals 1 damage to you.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}. Test Painland deals 1 damage to you.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

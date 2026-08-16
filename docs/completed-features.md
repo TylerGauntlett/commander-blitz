@@ -1,3 +1,69 @@
+## A mana ability with a rider — the painland, and the two wrong ways to say it
+
+### Overview
+
+`_sum_mana` rejected any effect in a mana ability that was not `add_mana`, so
+the painland and Talisman families were unsayable — six of them in one deck.
+Both obvious workarounds make a *different card* rather than an incomplete one,
+which is why the gap records refused them:
+
+- **Drop `is_mana_ability`** and the damage goes in as an ordinary activated
+  ability — which uses the stack and is not offerable inside cost payment. The
+  land could then never be tapped to help cast a spell, the only thing it is
+  played for.
+- **Use `pay_life`** and it is no longer damage from a source: unaffected by
+  prevention, redirection, lifelink and every `dealt_damage` trigger, and moved
+  from resolution to activation.
+
+### The rider is held apart from the mana
+
+`_split_mana_rider` splits the effects at the first non-mana op and puts the
+tail on `Ability.mana_rider`. The two halves answer to different code:
+`mana_options` is a constant tuple the payment solver reads while *planning*,
+before anything is tapped, and the rider is a real effect that must not run
+until the ability resolves. Mixed, either the solver believes a painland
+produces damage or the damage never happens.
+
+### One home, both paths
+
+The failure worth designing against is a rider that fires only on manual
+activation: the auto-payment solver taps lands for you without asking, so the
+land would be painless exactly when the engine used it. `pay_mana` and
+`Game.apply` both funnel through `activate_mana_ability`, so the rider lives
+there and nowhere else — and the test taps a painland by paying a mana cost
+rather than by activating anything.
+
+### The whitelist is a hang, not a taste
+
+`loader.MANA_RIDER_OPS` allows six ops that change a number and return. A mana
+ability is activated inside cost payment: no stack to put a decision on, no
+priority window to answer it in. An op that yields would hang the solver
+mid-tap, so refusing at load turns a locked-up game into a card that will not
+compile.
+
+### The regression this nearly shipped
+
+Reading the rider meant reading the sentence *after* the mana, and a basic
+land's entire text is the reminder "({T}: Add {G}.)". The first version read
+its closing bracket as a drawback it could not parse, refused the line, and
+generated Forest with no mana ability at all — the single most deck-breaking
+thing this generator can do, to every basic land in the format. The tail is now
+unwrapped exactly as `_find_mana_lines` unwraps it, and a tail with no letters
+left in it is not a rider.
+
+### Two mana lines, not one
+
+`_find_mana_line` returned the *first* tap-for-mana line. A painland prints
+two, so Battlefield Forge generated as a Wastes with its real ability sitting
+in the residual text. `_find_mana_lines` returns all of them and each becomes
+its own ability, which is also what makes the painless `{T}: Add {C}` half a
+real choice at the table.
+
+### What it unblocked
+
+54 cards authored. The Markov Chains deck goes 34 → 28 simplified.
+Witness: `tests/unit/test_mana_rider.py`.
+
 ## Conditional taplands — a replacement that stops to look at the board
 
 ### Overview
