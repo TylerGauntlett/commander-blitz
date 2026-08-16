@@ -1560,6 +1560,42 @@ Gate 5 of the authoring verifier drives the **first** mode only, so a modal card
 wants a unit test per mode; `tests/unit/test_modal_spells.py` is the pattern and
 `tests/unit/test_cast_time_modes.py` pins the timing.
 
+## A mana ability with a rider — the painland's drawback
+
+"{T}: Add {R} or {W}. Battlefield Forge deals 1 damage to you."
+
+A mana ability's effects may be the mana — one `add_mana`, several, or a single
+`choose_mode` of them — **followed by** a rider:
+
+```jsonc
+"effects": [
+  {"op": "choose_mode", "count": 1, "modes": [
+    {"label": "Red",   "effects": [{"op": "add_mana", "mana": "{R}"}]},
+    {"label": "White", "effects": [{"op": "add_mana", "mana": "{W}"}]}
+  ]},
+  {"op": "damage", "amount": {"const": 1}, "player": "you"}
+]
+```
+
+The rider is split off at load time onto `Ability.mana_rider` and run by
+`activate_mana_ability` right after the mana is added. It is held apart from
+`mana_options` deliberately: those tuples are constants the payment solver reads
+while *planning* a payment, before anything is tapped, while the rider is a real
+effect that must not happen until the ability resolves.
+
+**Do not model this as `pay_life`.** It is damage from a source — prevention,
+redirection, lifelink and every `dealt_damage` trigger read it, and none of them
+would ever see a life payment. Nor drop `is_mana_ability` to smuggle the damage
+in as an ordinary activated ability: that one uses the stack and is not offerable
+inside cost payment, so the land could never be tapped to help cast a spell,
+which is the only thing it is played for.
+
+The rider may only use `loader.MANA_RIDER_OPS` — `damage`, `lose_life`,
+`gain_life`, `add_poison`, `add_counters`, `remove_counters`. A mana ability is
+activated inside cost payment, where there is no stack to put a decision on and
+no priority window to answer it in, so an op that yields would hang the solver
+mid-tap. The whitelist makes that a card that will not load instead.
+
 ## Conditional taplands — "enters tapped unless…"
 
 "This land enters tapped unless you control a Mountain or a Plains."

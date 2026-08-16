@@ -15,6 +15,7 @@ from .carddef import Ability, CardDef, Cost
 from .characteristics import chars, player_doubles_land_mana, spell_cost_reduction
 from .effects.context import EffectContext, ask_objects
 from .enums import Keyword, Zone
+from .errors import DslError
 from .events import EventType
 from .mana import (
     SYMBOL_INDEX,
@@ -716,8 +717,36 @@ def activate_mana_ability(
     state.emit(
         EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced)
     )
+    if ability.mana_rider:
+        _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:
         _lands_tapped_for_mana(state, obj)
+
+
+def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:
+    """"…This land deals 1 damage to you", inline and off the stack.
+
+    Every tap for mana reaches here -- the payment solver's automatic taps go
+    through ``pay_mana`` and a player's own activation through ``Game.apply`` --
+    so the rider has exactly one home and cannot be skipped by one path and
+    applied by the other.  That matters more than it sounds: the solver taps a
+    painland without asking, and a rider that only ran on manual activation
+    would make the land painless exactly when the engine used it for you.
+
+    Run to exhaustion rather than suspended.  Nothing here can ask a question
+    (`loader.MANA_RIDER_OPS` is the whitelist that guarantees it), and there is
+    nowhere to suspend to: this is inside cost payment, with no stack and no
+    priority window.
+    """
+    from .effects import execute
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    generator = execute(ctx, list(ability.mana_rider))
+    for _ in generator:  # pragma: no cover - the whitelist forbids yielding
+        raise DslError(
+            f"a mana ability's rider asked a question ({ability.text!r}); "
+            f"mana abilities are activated during payment and cannot stop"
+        )
 
 
 def _lands_tapped_for_mana(state: GameState, land: Any) -> None:

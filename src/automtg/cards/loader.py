@@ -884,13 +884,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
 
     mana_options: tuple[tuple[int, ...], ...] = ()
     mana_amount: Mapping[str, Any] | None = None
+    mana_rider: tuple[Mapping[str, Any], ...] = ()
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
-        mana_options = _mana_options(model.effects, where)
-        mana_amount = _mana_amount(model.effects, where)
+        mana_effects, mana_rider = _split_mana_rider(model.effects, where)
+        mana_options = _mana_options(mana_effects, where)
+        mana_amount = _mana_amount(mana_effects, where)
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
@@ -908,6 +910,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
         mana_amount=mana_amount,
+        mana_rider=mana_rider,
         mana_restriction=model.mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         activation_condition=(
@@ -1351,6 +1354,47 @@ def _compile_cost(model, where: str) -> Cost:
     cost = Cost.from_spec(model.model_dump())
     assert cost is not None  # model_dump() is never None
     return cost
+
+
+#: Ops a mana ability's rider may use -- "this land deals 1 damage to you".
+#:
+#: A mana ability is activated inside cost payment and **must never stop to
+#: ask**: there is no stack to put a decision on and no priority window to
+#: answer it in, so an op that yields would hang the payment solver mid-tap.
+#: These six change a number and return. Anything else is refused at load, which
+#: is the difference between a card that will not compile and a game that locks
+#: up the first time somebody taps a Talisman.
+MANA_RIDER_OPS = frozenset(
+    {"damage", "lose_life", "gain_life", "add_poison", "add_counters", "remove_counters"}
+)
+
+
+def _split_mana_rider(
+    effects: list[dict[str, Any]], where: str
+) -> tuple[list[dict[str, Any]], tuple[Mapping[str, Any], ...]]:
+    """``(the mana half, the rider)``.
+
+    The rider is the run of effects after the mana, so the printed order is the
+    order they happen in. The mana half must come first and must not be empty:
+    an "ability" whose every effect is a rider is not a mana ability at all, and
+    accepting one would put an ordinary activated ability inside cost payment.
+    """
+    split = 0
+    for effect in effects:
+        op = effect.get("op") if isinstance(effect, Mapping) else None
+        if op not in ("add_mana", "choose_mode"):
+            break
+        split += 1
+    mana, rider = effects[:split], effects[split:]
+    for i, effect in enumerate(rider):
+        op = effect.get("op") if isinstance(effect, Mapping) else None
+        if op not in MANA_RIDER_OPS:
+            raise DslError(
+                f"{where}: mana abilities may only contain 'add_mana' (or a single "
+                f"'choose_mode' of them), optionally followed by a rider from "
+                f"{sorted(MANA_RIDER_OPS)} -- got {op!r} at effects[{split + i}]"
+            )
+    return mana, tuple(rider)
 
 
 def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int, ...], ...]:

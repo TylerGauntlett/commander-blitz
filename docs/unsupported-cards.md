@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **36** capabilities.
+**26 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [mana-ability-rider](#mana-ability-rider) | 6 | 121 | cost, engine |
 | [additional-cost](#additional-cost) | 3 | 129 | cost, engine, value |
 | [batched-enters-trigger](#batched-enters-trigger) | 2 | 425 | trigger_event |
 | [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
@@ -50,36 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
 | [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## mana-ability-rider
-
-Blocks **6** cards.
-
-- **(engine)** let a mana ability carry one non-mana rider effect that resolves alongside the mana -- i.e. an ability with `is_mana_ability: true` whose `effects` are a `choose_mode` of `add_mana` modes (or a plain `add_mana`) followed by a further effect such as `damage`, `lose_life` or `add_counters`. `_mana_options`/`_sum_mana` must keep deriving the produced-mana tuples from the `add_mana` part alone and ignore the rider, while activation during cost payment still applies the rider without using the stack
-  <br>Why the existing vocabulary won't do: `_sum_mana` in cards/loader.py rejects any effect that is not `add_mana` ("mana abilities may only contain 'add_mana' (or a single 'choose_mode' of them)"), so the `damage` op cannot sit in this ability at all. Dropping `is_mana_ability` to smuggle the damage in is the approximation that makes the card wrong, not merely incomplete: a non-mana ability uses the stack and is not offerable inside cost payment, so the land could never be tapped to help cast a spell -- the only thing it is played for.
-- **(cost)** alternatively, a cost entry that deals damage to the ability's controller from the source permanent (distinct from `pay_life`), if the rider is to be modelled as part of the activation cost rather than the resolution
-  <br>Why the existing vocabulary won't do: `cost_keys` has `pay_life`, which is life payment rather than damage -- it is not dealt by a source, so it is unaffected by damage prevention, redirection, lifelink or `dealt_damage` triggers, and it also moves the loss from resolution to activation. Substituting it would make the card quietly do something the printed text does not say.
-- **(engine)** let a mana ability carry one non-mana rider effect -- here the land dealing 1 damage to its controller -- alongside the mana it makes. `_mana_options`/`_sum_mana` must keep deriving produced-mana tuples from the `add_mana` part alone and ignore the rider, while activation during cost payment still applies the rider without using the stack.
-  <br>Why the existing vocabulary won't do: `_sum_mana` in cards/loader.py rejects any effect that is not `add_mana` inside a mana ability, so `damage` cannot sit in this ability. Dropping `is_mana_ability` to smuggle it in makes the card wrong rather than incomplete: a non-mana ability uses the stack and cannot be offered inside cost payment, so the land could never be tapped to help cast a spell. `pay_life` is not a substitute -- it is life payment, not damage from a source, so it is unaffected by prevention, lifelink or `dealt_damage` triggers. Established on Battlefield Forge; this card is the same ability with different colours.
-- **(engine)** let a mana ability carry one non-mana rider effect -- here the artifact dealing 1 damage to its controller -- alongside the mana it makes. `_mana_options`/`_sum_mana` must keep deriving produced-mana tuples from the `add_mana` part alone and ignore the rider, while activation during cost payment still applies the rider without using the stack.
-  <br>Why the existing vocabulary won't do: `_sum_mana` in cards/loader.py rejects any effect that is not `add_mana` inside a mana ability, so `damage` cannot sit in this ability. Dropping `is_mana_ability` to smuggle it in makes the card wrong rather than incomplete: a non-mana ability uses the stack and cannot be offered inside cost payment, so the artifact could never be tapped to help cast a spell. `pay_life` is not a substitute -- it is life payment, not damage from a source, so it is unaffected by prevention, lifelink or `dealt_damage` triggers. Established on Battlefield Forge; this card is the same ability with different colours.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Battlefield Forge** (rank 121) — `battlefield_forge`
-  - {T}: Add {R} or {W}. This land deals 1 damage to you.
-- **Caves of Koilos** (rank 125) — `caves_of_koilos`
-  - {T}: Add {W} or {B}. This land deals 1 damage to you.
-- **Talisman of Indulgence** (rank 130) — `talisman_of_indulgence`
-  - {T}: Add {B} or {R}. This artifact deals 1 damage to you.
-- **Talisman of Hierarchy** (rank 135) — `talisman_of_hierarchy`
-  - {T}: Add {W} or {B}. This artifact deals 1 damage to you.
-- **Talisman of Conviction** (rank 152) — `talisman_of_conviction`
-  - {T}: Add {R} or {W}. This artifact deals 1 damage to you.
-- **Sulfurous Springs** (rank 159) — `sulfurous_springs`
-  - {T}: Add {B} or {R}. This land deals 1 damage to you.
-
-</details>
 
 ## additional-cost
 
