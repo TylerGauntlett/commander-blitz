@@ -2909,6 +2909,74 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "blackcleave_cliffs",
+      "name": "Blackcleave Cliffs",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {B} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -4227,6 +4295,80 @@
                 {
                   "effects": [
                     {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {G} or {W}.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "canopy_vista",
+      "name": "Canopy Vista",
+      "oracle_text": "({T}: Add {G} or {W}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Forest",
+        "Plains"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{B}",
                       "op": "add_mana"
                     }
@@ -4969,6 +5111,80 @@
           },
           "effects": [
             {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {R} or {G}.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "cinder_glade",
+      "name": "Cinder Glade",
+      "oracle_text": "({T}: Add {R} or {G}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Mountain",
+        "Forest"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "amount": {
                 "count": {
                   "controller": "you",
@@ -5082,6 +5298,78 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "clifftop_retreat",
+      "name": "Clifftop Retreat",
+      "oracle_text": "This land enters tapped unless you control a Mountain or a Plains.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -5537,6 +5825,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "concealed_courtyard",
+      "name": "Concealed Courtyard",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {W} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -5793,6 +6149,74 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "copperline_gorge",
+      "name": "Copperline Gorge",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {R} or {G}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -6247,6 +6671,74 @@
       "source": "auto",
       "types": [
         "Artifact",
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "darkslick_shores",
+      "name": "Darkslick Shores",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {U} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
         "Land"
       ]
     },
@@ -6809,6 +7301,74 @@
           },
           "effects": [
             {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "deathcap_glade",
+      "name": "Deathcap Glade",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {B} or {G}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -7203,6 +7763,74 @@
       "abilities": [
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "deserted_beach",
+      "name": "Deserted Beach",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {W} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "mana": "{1}",
             "tap": true
           },
@@ -7490,6 +8118,78 @@
           },
           "effects": [
             {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "dragonskull_summit",
+      "name": "Dragonskull Summit",
+      "oracle_text": "This land enters tapped unless you control a Swamp or a Mountain.\n{T}: Add {B} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Swamp"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -7533,6 +8233,74 @@
       "id": "dread_statuary",
       "name": "Dread Statuary",
       "oracle_text": "{T}: Add {C}.\n{4}: This land becomes a 4/2 Golem artifact creature until end of turn. It's still a land.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "dreamroot_cascade",
+      "name": "Dreamroot Cascade",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {G} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
       "source": "auto",
       "types": [
         "Land"
@@ -7669,6 +8437,78 @@
       "source": "auto",
       "types": [
         "Artifact",
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "drowned_catacomb",
+      "name": "Drowned Catacomb",
+      "oracle_text": "This land enters tapped unless you control an Island or a Swamp.\n{T}: Add {U} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Island"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Swamp"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
         "Land"
       ]
     },
@@ -10795,6 +11635,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "glacial_fortress",
+      "name": "Glacial Fortress",
+      "oracle_text": "This land enters tapped unless you control a Plains or an Island.\n{T}: Add {W} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Island"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -12608,6 +13520,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "haunted_ridge",
+      "name": "Haunted Ridge",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {B} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -13163,6 +14143,78 @@
       "oracle_text": "This land enters tapped.\n{T}: Add {U} or {R}.",
       "replacements": [
         {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "hinterland_harbor",
+      "name": "Hinterland Harbor",
+      "oracle_text": "This land enters tapped unless you control a Forest or an Island.\n{T}: Add {G} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Forest"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Island"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
           "event": "self_enters_tapped"
         }
       ],
@@ -13913,6 +14965,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "inspiring_vantage",
+      "name": "Inspiring Vantage",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -14194,6 +15314,78 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "isolated_chapel",
+      "name": "Isolated Chapel",
+      "oracle_text": "This land enters tapped unless you control a Plains or a Swamp.\n{T}: Add {W} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Swamp"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -20444,6 +21636,74 @@
                 {
                   "effects": [
                     {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "overgrown_farmland",
+      "name": "Overgrown Farmland",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {G} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{B}",
                       "op": "add_mana"
                     }
@@ -21157,6 +22417,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W} or {U}.)"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "prairie_stream",
+      "name": "Prairie Stream",
+      "oracle_text": "({T}: Add {W} or {U}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains",
+        "Island"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -21752,6 +23086,80 @@
       "source": "auto",
       "subtypes": [
         "Forest",
+        "Plains"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {R} or {W}.)"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "radiant_summit",
+      "name": "Radiant Summit",
+      "oracle_text": "({T}: Add {R} or {W}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Mountain",
         "Plains"
       ],
       "types": [
@@ -22383,6 +23791,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "razorverge_thicket",
+      "name": "Razorverge Thicket",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {G} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -22900,6 +24376,74 @@
       "abilities": [
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "rockfall_vale",
+      "name": "Rockfall Vale",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {R} or {G}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "sacrifice": {
               "self_only": true,
               "zone": "battlefield"
@@ -22992,6 +24536,78 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "rootbound_crag",
+      "name": "Rootbound Crag",
+      "oracle_text": "This land enters tapped unless you control a Mountain or a Forest.\n{T}: Add {R} or {G}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Forest"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -24166,6 +25782,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "seachrome_coast",
+      "name": "Seachrome Coast",
+      "oracle_text": "This land enters tapped unless you control two or fewer other lands.\n{T}: Add {W} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -25255,6 +26939,74 @@
                 {
                   "effects": [
                     {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "shattered_sanctum",
+      "name": "Shattered Sanctum",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {W} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{R}",
                       "op": "add_mana"
                     }
@@ -25526,6 +27278,74 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "shipwreck_marsh",
+      "name": "Shipwreck Marsh",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {U} or {B}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -26763,6 +28583,80 @@
                 {
                   "effects": [
                     {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {B} or {R}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "smoldering_marsh",
+      "name": "Smoldering Marsh",
+      "oracle_text": "({T}: Add {B} or {R}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Swamp",
+        "Mountain"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{W}",
                       "op": "add_mana"
                     }
@@ -27636,6 +29530,74 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {R}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "stormcarved_coast",
+      "name": "Stormcarved Coast",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {U} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -27978,6 +29940,78 @@
                 {
                   "effects": [
                     {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {R}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "sulfur_falls",
+      "name": "Sulfur Falls",
+      "oracle_text": "This land enters tapped unless you control an Island or a Mountain.\n{T}: Add {U} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Island"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{B}",
                       "op": "add_mana"
                     }
@@ -28053,6 +30087,74 @@
       "abilities": [
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "sundown_pass",
+      "name": "Sundown Pass",
+      "oracle_text": "This land enters tapped unless you control two or more other lands.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "mana": "{1}",
             "tap": true
           },
@@ -28076,6 +30178,80 @@
       "name": "Sungrass Prairie",
       "oracle_text": "{1}, {T}: Add {G}{W}.",
       "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {U} or {B}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "sunken_hollow",
+      "name": "Sunken Hollow",
+      "oracle_text": "({T}: Add {U} or {B}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Island",
+        "Swamp"
+      ],
       "types": [
         "Land"
       ]
@@ -28132,6 +30308,78 @@
         "Plains",
         "Swamp"
       ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "sunpetal_grove",
+      "name": "Sunpetal Grove",
+      "oracle_text": "This land enters tapped unless you control a Forest or a Plains.\n{T}: Add {G} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Forest"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
       "types": [
         "Land"
       ]
@@ -29942,6 +32190,63 @@
       "source": "auto",
       "supertypes": [
         "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "nonbasic_landwalk"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has nonbasic landwalk"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "trailblazer_s_boots",
+      "mana_cost": "{2}",
+      "name": "Trailblazer's Boots",
+      "oracle_text": "Equipped creature has nonbasic landwalk. (It can't be blocked as long as defending player controls a nonbasic land.)\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
       ],
       "types": [
         "Artifact"
@@ -31933,6 +34238,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {B} or {G}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "vernal_fen",
+      "name": "Vernal Fen",
+      "oracle_text": "({T}: Add {B} or {G}.)\nThis land enters tapped unless you control two or more basic lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Swamp",
+        "Forest"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "vesuva",
@@ -32190,6 +34569,132 @@
         "Druid"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a creature: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "viscera_seer",
+      "mana_cost": "{B}",
+      "name": "Viscera Seer",
+      "oracle_text": "Sacrifice a creature: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever you gain life, target opponent loses that much life.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{B}{B}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{B}{B}: Creatures you control gain lifelink until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vito_thorn_of_the_dusk_rose",
+      "mana_cost": "{2}{B}",
+      "name": "Vito, Thorn of the Dusk Rose",
+      "oracle_text": "Whenever you gain life, target opponent loses that much life.\n{3}{B}{B}: Creatures you control gain lifelink until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -33430,6 +35935,78 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "woodland_cemetery",
+      "name": "Woodland Cemetery",
+      "oracle_text": "This land enters tapped unless you control a Swamp or a Forest.\n{T}: Add {B} or {G}.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Swamp"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Forest"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

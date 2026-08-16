@@ -240,6 +240,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
 
+    for i, replacement in enumerate(model.replacements):
+        if replacement.condition is None:
+            continue
+        # Without this the tree is only checked when a permanent actually
+        # enters, which turns a typo in a land into a mid-game crash instead of
+        # a card that refuses to load.
+        validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
+
     abilities = tuple(
         _compile_ability(a, i, where) for i, a in enumerate(model.abilities)
     )

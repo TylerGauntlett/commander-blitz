@@ -198,6 +198,13 @@ class ReplacementModel(BaseModel):
     modify: dict[str, Any] = Field(default_factory=dict)
     counter: str | None = None
     amount: int = 1
+    #: Applied only when this holds, evaluated as the permanent enters with the
+    #: entering object as the source -- so `exclude_self` means "other lands you
+    #: control" and counts the board the land is arriving on.  The printed
+    #: sentence is "enters tapped **unless** you control a Mountain", so the
+    #: card writes the negation: a condition here says when the replacement
+    #: *applies*, matching every other `condition` in the DSL.
+    condition: dict[str, Any] | None = None
 
 
 class CardModel(BaseModel):

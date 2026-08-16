@@ -1,0 +1,38 @@
+{
+  "card_id": "welcoming_vampire",
+  "name": "Welcoming Vampire",
+  "oracle_text": "Flying\nWhenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.",
+  "blocked_sentences": [
+    "Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "once-each-turn-trigger",
+      "kind": "trigger_event",
+      "what": "a per-turn cap declared on a triggered ability's trigger -- e.g. `\"trigger\": {\"event\": \"permanent_enters\", \"filter\": {...}, \"max_per_turn\": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It has to be enforced where triggers are collected (`triggers.collect`/`_matches`), counted per (source object, ability index) in the turn ledger and reset at cleanup, and it must count *triggers*, not resolutions: a trigger that is countered or removed from the stack has still spent the turn's allowance",
+      "why_existing_wont_do": "`once_each_turn` exists on `Ability` but is an *activation* restriction, and `loader._compile_ability` raises `DslError` outright when it appears on anything that is not an activated ability (\"'activate_steps' and 'once_each_turn' restrict *activating*, so they only mean anything on an activated ability\"); `legality` is the only reader, and a trigger never passes through it. `TriggerSpec`/`TriggerModel` carry only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- no limiter. The two near misses say something different: `set_flag`/`{\"has_flag\": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at cleanup), so it would make this once *ever* rather than once each turn; and `{\"cmp\": ..., \"left\": {\"resolutions_this_turn\": \"self\"}}` gates *resolving*, not triggering -- `ctx.resolutions` is set by `stack.resolve_top`, so the trigger still goes on the stack every time and a countered first copy would leave the allowance unspent. docs/rules-coverage.md already names `resolutions_this_turn` \"the wrong number\" for exactly this cap"
+    },
+    {
+      "capability": "batched-enters-trigger",
+      "kind": "trigger_event",
+      "what": "a way to say \"whenever one or more <matching> permanents enter\" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. The entering permanents need to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered",
+      "why_existing_wont_do": "`permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` runs once per object, so a `{\"types\": [\"Creature\"], \"controller\": \"you\", \"exclude_self\": true, \"power\": {\"op\": \"<=\", \"value\": 2}}` filter queues N triggers when N small creatures enter together and draws N cards where the card draws one. `not_cause` only suppresses by zone-change cause and `condition` is evaluated per event, so neither collapses a batch. Note this need cannot be papered over by the per-turn cap above and vice versa: the cap alone still queues N triggers (only the first would do anything), and the batching alone still draws once per later enter this turn"
+    },
+    {
+      "capability": "entering-power-filter",
+      "kind": "selector",
+      "what": "a trigger filter whose `power`/`toughness` comparison reads the subject's *current* characteristics as it exists on the battlefield rather than its printed ones, for \"creatures you control with power 2 or less enter\"",
+      "why_existing_wont_do": "`triggers.matches_card_filter` compares against `card.power` (the printed face) by design, because trigger subjects are frequently gone by the time the filter runs. That is right for a `dies` trigger and wrong here: a printed 1/1 that enters as a 3/3 under an anthem, or with counters from a replacement effect, would still trigger. A subject that has just entered is still on the battlefield, so the derived characteristics are available -- but the filter never asks for them, and there is no key to request the derived reading"
+    }
+  ],
+  "closest_existing": [
+    "permanent_enters",
+    "once_each_turn",
+    "resolutions_this_turn",
+    "set_flag",
+    "has_flag",
+    "exclude_self",
+    "power"
+  ],
+  "confidence": "high"
+}

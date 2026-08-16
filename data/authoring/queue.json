@@ -25712,12 +25712,12 @@
     },
     "Blackcleave Cliffs": {
       "edhrec_rank": 1076,
-      "gate": "template",
+      "gate": null,
       "name": "Blackcleave Cliffs",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "f75715ce-744f-409c-aeb1-e66eb9186a74",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Blackcleave Goblin": {
@@ -27054,7 +27054,7 @@
       "edhrec_rank": 1006,
       "gate": "template",
       "name": "Blightsteel Colossus",
-      "reason": "no template for: Trample, infect, indestructible",
+      "reason": "no template for: If would be put into a graveyard from anywhere, reveal and shuffle it into its owner's lib",
       "scryfall_id": "56931f20-d99d-443c-8b01-ee3c3ffa643d",
       "source": "",
       "status": "pending",
@@ -38782,12 +38782,12 @@
     },
     "Canopy Vista": {
       "edhrec_rank": 104,
-      "gate": "template",
+      "gate": null,
       "name": "Canopy Vista",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "369e6485-fbc7-45f9-ac9d-2e26dd94f2d5",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Cantankerous Captain": {
@@ -44864,7 +44864,7 @@
       "edhrec_rank": 998,
       "gate": "template",
       "name": "Chatterfang, Squirrel General",
-      "reason": "no template for: Forestwalk",
+      "reason": "no template for: If one or more tokens would be created under your control, those tokens plus that many 1/1",
       "scryfall_id": "2bb8c103-37c3-4c5f-9b3f-48d8b2292783",
       "source": "",
       "status": "pending",
@@ -46302,12 +46302,12 @@
     },
     "Cinder Glade": {
       "edhrec_rank": 87,
-      "gate": "template",
+      "gate": null,
       "name": "Cinder Glade",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "7ba7d71c-aaa6-49e9-9ba5-1fe7f8cbc9c4",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Cinder Hellion": {
@@ -47892,12 +47892,12 @@
     },
     "Clifftop Retreat": {
       "edhrec_rank": 82,
-      "gate": "template",
+      "gate": null,
       "name": "Clifftop Retreat",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "31342ed4-55d8-4abb-a995-a98cb9ea3ad1",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Cling to Dust": {
@@ -50942,12 +50942,12 @@
     },
     "Concealed Courtyard": {
       "edhrec_rank": 1162,
-      "gate": "template",
+      "gate": null,
       "name": "Concealed Courtyard",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "b75df1f0-0513-40e4-a449-454f75de6434",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Concealed Weapon": {
@@ -52842,12 +52842,12 @@
     },
     "Copperline Gorge": {
       "edhrec_rank": 1472,
-      "gate": "template",
+      "gate": null,
       "name": "Copperline Gorge",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "c25daaa2-2a04-4fb0-8db3-6e564c26fadc",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Copy Artifact": {
@@ -60972,12 +60972,12 @@
     },
     "Darkslick Shores": {
       "edhrec_rank": 1386,
-      "gate": "template",
+      "gate": null,
       "name": "Darkslick Shores",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "c49305d1-ac95-43ea-b02d-c3c7205bcda6",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Darkstar Augur": {
@@ -63382,12 +63382,12 @@
     },
     "Deathcap Glade": {
       "edhrec_rank": 366,
-      "gate": "template",
+      "gate": null,
       "name": "Deathcap Glade",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "78897104-80e1-4d8a-9958-145b40f679e8",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Deathcap Marionette": {
@@ -66752,12 +66752,12 @@
     },
     "Deserted Beach": {
       "edhrec_rank": 274,
-      "gate": "template",
+      "gate": null,
       "name": "Deserted Beach",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "c819de09-dac2-407a-98c8-775865e9bdf8",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Deserted Temple": {
@@ -73322,12 +73322,12 @@
     },
     "Dragonskull Summit": {
       "edhrec_rank": 85,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonskull Summit",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "af298499-349f-4af1-8791-3fba5dbff0cc",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Dragonsoul Knight": {
@@ -74542,12 +74542,12 @@
     },
     "Dreamroot Cascade": {
       "edhrec_rank": 177,
-      "gate": "template",
+      "gate": null,
       "name": "Dreamroot Cascade",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "bb911ec9-4354-46af-8750-6920555eb1e7",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Dreams of Laguna": {
@@ -75472,12 +75472,12 @@
     },
     "Drowned Catacomb": {
       "edhrec_rank": 109,
-      "gate": "template",
+      "gate": null,
       "name": "Drowned Catacomb",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "ebea49ab-e5cf-46d9-ae35-226a7321ede0",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Drowned Rusalka": {
@@ -109162,12 +109162,12 @@
     },
     "Glacial Fortress": {
       "edhrec_rank": 96,
-      "gate": "template",
+      "gate": null,
       "name": "Glacial Fortress",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "318e5c8d-6cb4-4683-9fdb-c487f98a73f7",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Glacial Grasp": {
@@ -122622,12 +122622,12 @@
     },
     "Haunted Ridge": {
       "edhrec_rank": 276,
-      "gate": "template",
+      "gate": null,
       "name": "Haunted Ridge",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "32f1e668-89b8-4f82-afc1-6c3efb1fef3b",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Haunted Screen": {
@@ -127142,12 +127142,12 @@
     },
     "Hinterland Harbor": {
       "edhrec_rank": 98,
-      "gate": "template",
+      "gate": null,
       "name": "Hinterland Harbor",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "21bab82f-2bd7-44a6-aed2-681f1691f7d1",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Hinterland Hermit // Hinterland Scourge": {
@@ -136782,12 +136782,12 @@
     },
     "Inspiring Vantage": {
       "edhrec_rank": 1463,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Vantage",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "8b71132c-306a-4e37-a34a-777f1028e4a1",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Veteran": {
@@ -139492,12 +139492,12 @@
     },
     "Isolated Chapel": {
       "edhrec_rank": 93,
-      "gate": "template",
+      "gate": null,
       "name": "Isolated Chapel",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "78814c92-b52c-462a-866f-3e7da9db9f70",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Isolated Watchtower": {
@@ -194412,12 +194412,12 @@
     },
     "Overgrown Farmland": {
       "edhrec_rank": 289,
-      "gate": "template",
+      "gate": null,
       "name": "Overgrown Farmland",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "66656795-a64d-4656-a9bf-050dd9a7b9bf",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Overgrown Pest": {
@@ -204322,12 +204322,12 @@
     },
     "Prairie Stream": {
       "edhrec_rank": 105,
-      "gate": "template",
+      "gate": null,
       "name": "Prairie Stream",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "7175c080-e908-4630-afe6-830d64d86832",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Prakhata Club Security": {
@@ -211172,12 +211172,12 @@
     },
     "Radiant Summit": {
       "edhrec_rank": 1270,
-      "gate": "template",
+      "gate": null,
       "name": "Radiant Summit",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "81b619cc-900c-4d65-83da-8b9dcb370984",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Radiant's Dragoons": {
@@ -215262,12 +215262,12 @@
     },
     "Razorverge Thicket": {
       "edhrec_rank": 1422,
-      "gate": "template",
+      "gate": null,
       "name": "Razorverge Thicket",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "d5d7e7c4-7c53-4ccd-bf36-7b11133656ee",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Razzle-Dazzler": {
@@ -224622,12 +224622,12 @@
     },
     "Rockfall Vale": {
       "edhrec_rank": 223,
-      "gate": "template",
+      "gate": null,
       "name": "Rockfall Vale",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "d4ef22f2-7c4f-4198-982b-f0830fd769cc",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Rockshard Elemental": {
@@ -225482,12 +225482,12 @@
     },
     "Rootbound Crag": {
       "edhrec_rank": 127,
-      "gate": "template",
+      "gate": null,
       "name": "Rootbound Crag",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "42d174e5-b8c2-45eb-8e08-1b94fc27cbee",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Rootbreaker Wurm": {
@@ -235712,12 +235712,12 @@
     },
     "Seachrome Coast": {
       "edhrec_rank": 1186,
-      "gate": "template",
+      "gate": null,
       "name": "Seachrome Coast",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "88ec4d3b-f1f1-489c-b41e-0206e5e59fbd",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Seacoast Drake": {
@@ -241302,12 +241302,12 @@
     },
     "Shattered Sanctum": {
       "edhrec_rank": 280,
-      "gate": "template",
+      "gate": null,
       "name": "Shattered Sanctum",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "5aa0c810-3b7d-4661-979e-e84fb327742d",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Shattered Seraph": {
@@ -241834,7 +241834,7 @@
       "edhrec_rank": 707,
       "gate": "template",
       "name": "Sheoldred, Whispering One",
-      "reason": "no template for: Swampwalk",
+      "reason": "no template for: At the beginning of your upkeep, return target creature card from your graveyard to the ba",
       "scryfall_id": "613d6668-6086-4672-a665-1c5f22f5a01f",
       "source": "",
       "status": "pending",
@@ -242712,12 +242712,12 @@
     },
     "Shipwreck Marsh": {
       "edhrec_rank": 229,
-      "gate": "template",
+      "gate": null,
       "name": "Shipwreck Marsh",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "156df6eb-1ac9-4954-bf93-b1668096b8bd",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Shipwreck Moray": {
@@ -251112,12 +251112,12 @@
     },
     "Smoldering Marsh": {
       "edhrec_rank": 94,
-      "gate": "template",
+      "gate": null,
       "name": "Smoldering Marsh",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "7b0edb33-1aa9-40ba-ba2b-db7c02768acd",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Smoldering Spires": {
@@ -264182,12 +264182,12 @@
     },
     "Stormcarved Coast": {
       "edhrec_rank": 188,
-      "gate": "template",
+      "gate": null,
       "name": "Stormcarved Coast",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "36f6c636-3539-494f-abf9-62ea00fcedfd",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Stormcatch Mentor": {
@@ -266532,12 +266532,12 @@
     },
     "Sulfur Falls": {
       "edhrec_rank": 80,
-      "gate": "template",
+      "gate": null,
       "name": "Sulfur Falls",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "2d8e0824-a609-4563-93ef-72f87ca70b8f",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sulfur Vent": {
@@ -267602,12 +267602,12 @@
     },
     "Sundown Pass": {
       "edhrec_rank": 275,
-      "gate": "template",
+      "gate": null,
       "name": "Sundown Pass",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "ac70c9ae-5115-46db-9ef8-05c475c88154",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sunfall": {
@@ -267802,12 +267802,12 @@
     },
     "Sunken Hollow": {
       "edhrec_rank": 86,
-      "gate": "template",
+      "gate": null,
       "name": "Sunken Hollow",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "3a8eef9b-9b03-42cd-a27a-07021bf0b33f",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sunken Hope": {
@@ -267892,12 +267892,12 @@
     },
     "Sunpetal Grove": {
       "edhrec_rank": 134,
-      "gate": "template",
+      "gate": null,
       "name": "Sunpetal Grove",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "c4ab46dc-df5c-4096-bae6-6921411dd5f5",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Sunrise Cavalier": {
@@ -288542,12 +288542,12 @@
     },
     "Trailblazer's Boots": {
       "edhrec_rank": 664,
-      "gate": "template",
+      "gate": null,
       "name": "Trailblazer's Boots",
-      "reason": "no template for: Equipped creature has nonbasic landwalk",
+      "reason": "",
       "scryfall_id": "23518ae8-98ab-4253-8930-63d1780b0d0c",
-      "source": "",
-      "status": "pending",
+      "source": "template:attached:grant,equip",
+      "status": "done",
       "wanted": false
     },
     "Trailblazer's Torch": {
@@ -300892,12 +300892,12 @@
     },
     "Vernal Fen": {
       "edhrec_rank": 803,
-      "gate": "template",
+      "gate": null,
       "name": "Vernal Fen",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "0466cf57-bb3e-4359-8fe8-d6cc1288fdc6",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Vernal Sovereign": {
@@ -303232,12 +303232,12 @@
     },
     "Viscera Seer": {
       "edhrec_rank": 254,
-      "gate": "template",
+      "gate": null,
       "name": "Viscera Seer",
-      "reason": "no template for: Sacrifice a creature: Scry 1",
+      "reason": "",
       "scryfall_id": "f511830b-1c1f-4d30-aa5d-4314726d142e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Viscerid Armor": {
@@ -303622,12 +303622,12 @@
     },
     "Vito, Thorn of the Dusk Rose": {
       "edhrec_rank": 493,
-      "gate": "template",
+      "gate": null,
       "name": "Vito, Thorn of the Dusk Rose",
-      "reason": "no template for: Whenever you gain life, target opponent loses that much life",
+      "reason": "",
       "scryfall_id": "65beff20-a533-44eb-addd-8d6fed02c6a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vitu-Ghazi Guildmage": {
@@ -315812,12 +315812,12 @@
     },
     "Woodland Cemetery": {
       "edhrec_rank": 113,
-      "gate": "template",
+      "gate": null,
       "name": "Woodland Cemetery",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "4d6f6c96-f813-4864-b4e1-b2a0aa8be1e8",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Woodland Champion": {

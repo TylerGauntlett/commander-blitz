@@ -377,11 +377,13 @@ class TestLands:
         # The lifegain is not implemented and the card says so.
         assert any("gain 1 life" in n for n in result.notes)
 
-    def test_a_conditional_tapland_enters_tapped_anyway_and_says_so(self):
-        """A free untapped dual distorts a game far more than a slow one.
+    def test_a_conditional_tapland_carries_its_printed_condition(self):
+        """The condition is read, so the card is the one in the deck list.
 
-        Generating the *upgrade* -- always untapped -- would quietly hand every
-        imported deck a better mana base than the one it was built with.
+        A checkland generated as always-tapped is the worst dual in the format
+        wearing the right name; the whole reason it is played is that it is
+        usually untapped. `ReplacementModel.condition` is the negation of the
+        printed sentence -- when it holds, the land enters tapped.
         """
         result, card = built(
             name="Sunpetal Grove",
@@ -391,7 +393,36 @@ class TestLands:
             produced_mana=("G", "W"),
             color_identity="GW",
         )
-        assert any(r["event"] == "self_enters_tapped" for r in card.replacements)
+        replacement = next(r for r in card.replacements if r["event"] == "self_enters_tapped")
+        assert replacement["condition"] == {
+            "not": {
+                "exists": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "any_of": [{"subtypes": ["Forest"]}, {"subtypes": ["Plains"]}],
+                }
+            }
+        }
+        assert not any("printed condition is not modelled" in n for n in result.notes)
+
+    def test_an_unreadable_condition_still_enters_tapped_and_says_so(self):
+        """A free untapped dual distorts a game far more than a slow one.
+
+        Generating the *upgrade* -- always untapped -- would quietly hand every
+        imported deck a better mana base than the one it was built with. So a
+        printed shape the reader does not recognise falls back to entering
+        tapped unconditionally, never to entering untapped.
+        """
+        result, card = built(
+            name="Sea of Clouds",
+            type_line="Land",
+            oracle_text="This land enters tapped unless you have two or more opponents.\n"
+            "{T}: Add {W} or {U}.",
+            produced_mana=("W", "U"),
+            color_identity="WU",
+        )
+        replacement = next(r for r in card.replacements if r["event"] == "self_enters_tapped")
+        assert "condition" not in replacement or replacement["condition"] is None
         assert any("printed condition is not modelled" in n for n in result.notes)
 
     def test_a_fetchland_produces_nothing_and_is_reported(self):

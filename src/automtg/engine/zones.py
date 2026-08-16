@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
 from .characteristics import chars
+from .effects.conditions import evaluate_condition
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
@@ -239,6 +240,15 @@ def _enter_battlefield(
 
     for replacement in card.replacements:
         event = replacement.get("event")
+        # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
+        # rather than by a static, because the answer is only ever asked once
+        # and the board it is asked about is the one the permanent is arriving
+        # on -- `_add_to_zone` has already run, so `exclude_self` is what makes
+        # "two or more *other* lands" count the right number.
+        if not evaluate_condition(
+            state, replacement.get("condition"), controller=obj.controller, source=obj.oid
+        ):
+            continue
         if event == "self_enters_tapped" or (
             event == "self_enters" and replacement.get("modify", {}).get("tapped")
         ):
