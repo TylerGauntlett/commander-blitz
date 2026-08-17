@@ -9303,6 +9303,167 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_marshal",
+      "name": "Test Marshal",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each other Human you control.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Human"
+              ],
+              "exclude_self": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_marshal_modify",
+      "name": "Test Modify Marshal",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each other Human you control.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "modify": {
+            "counters": {
+              "+1/+1": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Human"
+                  ],
+                  "exclude_self": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_marshal_striker",
+      "name": "Test Striking Marshal",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each other Human you control.\nWhen this creature enters, it deals damage equal to its power to each opponent.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Human"
+              ],
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": "each_opponent",
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_marshal_trigger",
+      "name": "Test Triggering Marshal",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on it for each other Human you control.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, put a +1/+1 counter on it for each other Human you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Human"
+                  ],
+                  "exclude_self": true
+                }
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
