@@ -124452,12 +124452,12 @@
     },
     "Heirloom Blade": {
       "edhrec_rank": 3831,
-      "gate": "template",
+      "gate": null,
       "name": "Heirloom Blade",
-      "reason": "no template for: Whenever equipped creature dies, you may reveal cards from the top of your library until y",
+      "reason": "",
       "scryfall_id": "49fe8b13-3f83-4a35-aa2d-2292b96f3d3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heirloom Epic": {

@@ -406,6 +406,111 @@ coming back, the three spellings it is *not*, Boromir's trigger end to end
 (including that declining still bottoms the rest, and that the question comes
 after the look), the `any_of`-in-a-library fix with the battlefield case pinned
 beside it, and every load-time guard.
+## `reveal_until` — the third walk down a library, and the first whose stop test is the card's
+
+### Overview
+
+**Heirloom Blade** — "Whenever equipped creature dies, you may reveal cards from
+the top of your library until you reveal a creature card that shares a creature
+type with it. Put that card into your hand and the rest on the bottom of your
+library in a random order."
+
+Two thirds of that card were already sayable and are Skullclamp's, line for line:
+"+3/+1" is a `buff` static with `affects: {"attached": true}`, and "Equip {1}" is
+the sorcery-speed `attach` activated ability. The trigger was sayable too —
+`dies` filtered on `attached`, wrapped in `may`, with `shares_a_type_with:
+"subject"` reading the creature that just died. What was missing is one op: the
+**scan**.
+
+### Why none of the three near misses could be asked
+
+The engine reaches a library four ways, and this sentence fits none of them.
+
+| | |
+|---|---|
+| `look_at_top` | Bounds the pool to `amount` cards off the top — a constant known when the card is written — and then hands the player **every** match in that window to pick the best of. Two different cards in one: an amount large enough to fake "until" reveals and randomizes the whole library on every resolution, and best-of-all-matches is strictly better than first-hit |
+| `search_library` | Looks at the whole library at once and shuffles afterwards (701.19). A chooser, not a scan, and it never walks down from the top |
+| `cascade` | The right unbounded top-down shape, and the *only* one. But its test is hardcoded to "nonland card with lesser mana value than this spell", it **exiles** rather than reveals, and it offers a free cast rather than a card to hand. Nothing in it takes a selector |
+| `ripple` | Fixed depth, and a hardcoded same-name-as-the-source test |
+
+So the op is cascade's walk with `objects` where cascade's condition was, and
+`_bottom_in_random_order` is shared rather than rewritten — the third
+implementation of "put the rest on the bottom" is the thing this run most wanted
+to avoid.
+
+### The two outcomes that carry the rules argument
+
+**It stops at the first hit, and there is no choice.** "Until you reveal" names
+the card it takes, so `reveal_until` asks nothing and is not even a generator.
+That is a structural claim rather than a stylistic one, and
+`tests/unit/test_reveal_until.py`'s runner asserts it: it fails the test if the
+op ever yields a decision.
+
+**Running the library out with no match is an outcome, not an error.** Every
+card revealed goes to the bottom, nothing reaches the destination, and nothing
+crashes. This is the case an Equipment sees most — a trigger that fires late in
+a game against a thin library — and it is also why "the rest" comes back in a
+*random* order rather than the revealed one: after a failed scan the controller
+has seen their entire library, and leaving it in order would hand them a fully
+known deck for the rest of the game.
+
+### `rest_to_bottom` defaults the opposite way to `look_at_top`'s
+
+On `look_at_top` it defaults to **false**, and that is what "look at" means: the
+cards you did not take stay on top, in order. Here it defaults to **true**,
+because there is no printed "reveal until" that leaves the revealed cards where
+they were — an omitted key defaulting the other way would silently make a card
+that keeps the top of its own library face up and in order.
+
+### The bottoming helper had two definitions, and now has one
+
+`ops_cards.py` carried two functions named `_bottom_in_random_order`, a leftover
+from reconciling parallel merges: an earlier one that spliced the list directly
+and a later one that went through `move_object`, with the later one shadowing the
+earlier for every caller. Both were random; the difference was the route.
+
+Neither route is right for everything, so the surviving one has a branch per
+card. Cascade's cards are in **exile** and must travel through `move_object` —
+an object whose `zone` and whose containing list disagree is a card every other
+reader in the engine sees differently. `look_at_top`'s, hideaway's and
+`reveal_until`'s never left the library, and for those `move_object` announces a
+zone change that did not happen, once per card: for a `reveal_until` that ran the
+library out, once for the whole deck. Those are spliced within the list. Both
+branches append in one shuffled order, so ripple's mixed set — a declined match
+sitting in exile, its misses never moved — still lands in a single random order
+rather than two.
+
+### The loader refuses two cards that would otherwise be silently wrong
+
+- **an empty `objects`**. The selector *is* the "until". An empty one matches
+  the first card revealed, quietly turning the card into "put the top card of
+  your library into your hand".
+- **an `amount`**. The depth belongs to the library, not the card. A card that
+  wrote one would believe its scan was bounded, and nothing would read it.
+  `look_at_top` is where a bounded window lives.
+
+An unknown `destination` is refused the same way `look_at_top`'s is.
+
+### Server and frontend: nothing
+
+A new op, and the scan emits the existing `reveal` event rather than a new one —
+game state serializes generically and `describeEvent` already narrates a reveal,
+so there was no Tier D work to skip.
+
+### What it unblocked
+
+**Heirloom Blade**, the whole card, through the **agent tier**. There is no
+template for the sentence and `--tier templates --retry` harvests nothing, which
+is the right outcome rather than a template that half-reads it.
+
+The authoring gate proves the Equipment resolves onto the battlefield and no
+more: `drive()` returns at `PRIORITY` with a non-empty stack and never activates
+an activated ability, and nothing in the fixed position kills an equipped
+creature, so the card honestly asserts `{"zone": "battlefield"}` with a board
+count and nothing about the scan. `tests/unit/test_reveal_until.py` is where the
+real coverage lives — the first-hit stop, the exhausted library, the match as the
+very last card, `shares_a_type_with` walking past creatures of the wrong type,
+and the randomness of the bottomed order asserted over seeds.
 
 ## "Can't block", with a clock and no permanent behind it
 
