@@ -585,6 +585,14 @@ def matches_card_filter(
     supertypes = filt.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
+    # "…nonbasic land". Honoured here as well as in `selectors.matches` because a
+    # trigger filter is validated against the same `SELECTOR_KEYS`, so a key that
+    # loaded and then did nothing would be exactly the silently-wider filter this
+    # key exists to prevent -- and wider is the dangerous direction for a
+    # negation, where a typo or an unread key forbids nothing at all.
+    not_supertypes = filt.get("not_supertypes")
+    if not_supertypes and set(not_supertypes) & card.supertypes:
+        return False
     # "…a creature spell that shares a creature type with your commander."
     # Path of Ancestry. Answered here as well as in `selectors.matches` because
     # this is the half a *trigger* filter reaches, and the printed subtypes are
