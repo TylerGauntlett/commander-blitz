@@ -6979,6 +6979,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_mandatory_sac",
+      "name": "Test Mandatory Sacrifice",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "mana_cost": "{B}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
     }
   ]
 }

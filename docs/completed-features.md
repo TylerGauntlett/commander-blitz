@@ -1,3 +1,57 @@
+## A mandatory additional cost — the half that "mandatory" did not deliver
+
+### Overview
+
+`additional_cost` had shipped with casualty and replicate, and its docstring
+said a mandatory cost withdraws the free cast line. It did not. `legality`
+built the plain cast variant first and only cleared it **when the cost was
+unpayable** -- which is the same thing as never charging it. A player holding a
+creature was offered both Village Rites lines side by side, and every automatic
+driver (the verifier's `find_play`, the arena, the RL agent) took the first.
+Village Rites was a one-mana draw-two that sacrificed nothing.
+
+No shipped card was affected, because none carried a mandatory additional cost
+yet. `tests/unit/test_additional_cost.py::TestAMandatoryCost` had the right
+docstring and tested only loading, so nothing said otherwise. Found by an
+authoring worker that refused to write the card and ran the gate to find out
+why -- the pipeline catching an engine bug rather than a card one.
+
+### The fix is a smaller statement, not a bigger one
+
+The free line is withdrawn whenever the cost is mandatory. An unpayable cost
+then falls out of the same statement: the loop adds nothing when the ceiling is
+zero, and the spell is simply not castable. Everything is dropped rather than
+just the plain variant, because 601.2f owes the cost on *every* way of casting
+the spell -- an evoke or kicker line that skipped it would be the same bug
+wearing a different name.
+
+### The residual gate had to learn a new kind of claim
+
+A card-level cost has no ability to carry its printed text, and gate 3 asks
+each ability which sentence it implements. This never surfaced while the only
+cards carrying one were instants and sorceries: `claimed_lines` treats
+`spell_effects` as accounting for every line of a spell. Demon of Catastrophes
+is a *creature* with an additional cost and no `spell_effects` at all, so its
+printed cost went unclaimed and the card was rejected.
+
+`_covered` already had this exact shape for `kicker`, `emerge`, `evoke`,
+`ascend`, `uncounterable` and `cost_reduction`; `additional_cost` joins them,
+and so does `Devoid`, which had the same hole (and is checked rather than
+skipped -- a card printing Devoid while carrying colours has not implemented
+it).
+
+### What it unblocked
+
+A template for the four printed shapes that carry the mechanic -- "sacrifice a
+creature", "sacrifice an artifact or creature", "discard a card", and the
+two-type variants -- reading only the *mandatory* form, since "you may
+sacrifice" almost always drags a "When you do..." reflexive trigger along with
+it, which is a separate capability.
+
+The sweep that followed also collected everything waves 1a and 1b had freed
+beyond the top of the queue, which an earlier `--limit` had been capping:
+**994 -> 2,318 playable cards, coverage 3.1% -> 7.2%**.
+
 ## A mana ability with a rider — the painland, and the two wrong ways to say it
 
 ### Overview

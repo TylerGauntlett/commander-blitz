@@ -46,6 +46,7 @@ SWAMP = "swamp"
 MOUNTAIN = "mountain"
 CASUALTY = "t_casualty"     # {1}{B} sorcery, casualty 2, draws a card
 REPLICATE = "t_replicate"   # {R} instant, replicate {1}, 1 damage
+MANDATORY = "t_mandatory_sac"  # {B} instant, sacrifice a creature, draw two
 BEAR = "t_bear"             # 2/2 -- power 2, so legal casualty fodder
 DORK = "t_dork"             # 1/1 -- power 1, so not
 
@@ -166,6 +167,55 @@ class TestReplicate:
         pass_until(game, lambda g: not g.state.stack)
 
         assert game.state.players[1].life == life - 1
+
+
+def mandatory_board(builder, *creatures: str):
+    return (
+        builder(players=2)
+        .battlefield(0, [SWAMP] * 3)
+        .battlefield(0, list(creatures))
+        .hand(0, [MANDATORY])
+        .library(0, [SWAMP] * 20)
+        .library(1, [SWAMP] * 20)
+        .build()
+    )
+
+
+class TestTheFreeLineIsReallyWithdrawn:
+    """The half of "mandatory" that the flag alone does not deliver.
+
+    Legality builds the plain cast line first and only later learns about the
+    additional cost, so withdrawing it is an act rather than an absence. It used
+    to be withdrawn *only when the cost was unpayable*, which is the same thing
+    as never charging it: a player holding a creature was offered both lines and
+    every automatic driver -- the verifier's `find_play`, the arena, the RL
+    agent -- took the first. Village Rites was a one-mana draw-two that
+    sacrificed nothing, and no test said otherwise.
+    """
+
+    def test_only_the_paying_line_is_offered(self, builder):
+        game = mandatory_board(builder, BEAR)
+        counts = sorted({a.additional_times for a in lines(game, MANDATORY)})
+        assert counts == [1], "there is no line that does not pay"
+
+    def test_casting_it_sacrifices_the_creature(self, builder):
+        game = mandatory_board(builder, BEAR)
+        bear = next(o.oid for o in game.state.battlefield_objects(0) if o.def_id == BEAR)
+        game.apply(lines(game, MANDATORY)[0])
+        pass_until(game, lambda g: not g.state.stack)
+
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD
+
+    def test_it_is_not_castable_with_nothing_to_sacrifice(self, builder):
+        """An unpayable mandatory cost falls out of the same rule."""
+        game = mandatory_board(builder)
+        assert lines(game, MANDATORY) == []
+
+    def test_an_optional_cost_still_offers_both(self, builder):
+        """The fix must not withdraw casualty's free line, which is printed."""
+        game = casualty_board(builder, BEAR)
+        counts = sorted({a.additional_times for a in lines(game, CASUALTY)})
+        assert counts == [0, 1]
 
 
 class TestAMandatoryCost:

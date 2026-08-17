@@ -10,11 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **35** capabilities.
+**25 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [additional-cost](#additional-cost) | 3 | 129 | cost, engine, value |
+| [additional-cost](#additional-cost) | 2 | 129 | cost, value |
 | [batched-enters-trigger](#batched-enters-trigger) | 2 | 425 | trigger_event |
 | [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
 | [missing-token-definitions](#missing-token-definitions) | 2 | 3474 | engine |
@@ -52,7 +52,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 
 ## additional-cost
 
-Blocks **3** cards.
+Blocks **2** cards.
 
 - **(cost)** A card-level field holding a *mandatory, non-mana* additional cost paid as the spell is cast from hand -- a full `Cost` (here `sacrifice` with the selector `{"any_types": ["Artifact", "Creature"]}`, controller you) charged at cast time alongside the printed mana cost. Legality must refuse to offer the cast at all when the cost cannot be paid, and the payment must happen while the spell goes on the stack, not on resolution. The `Cost` struct and its `sacrifice` selector already exist and are already charged this way for graveyard casts; what is missing is a place to hang one on an ordinary cast from hand.
   <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is wrong twice over: it is mana-only (`_cast_variant` computes `card.mana_cost.plus(card.kicker)`, a `ManaCost`, so it cannot sacrifice anything) and it is optional by construction (legality deliberately offers the spell as both unkicked and kicked). Deadly Dispute's cost is neither. `emerge`/`emerge_subtype` does sacrifice a creature at cast time, but it is an *alternative* cost that replaces the printed mana cost and is then reduced by the sacrificed creature's mana value -- casting Deadly Dispute for {1}{B} plus a sacrifice is not what emerge would charge. `flashback`/`graveyard_cost` and `retrace` are the only paths that pay a non-mana `Cost` at cast time (`can_pay(state, pid, card.flashback.without_mana(), oid)`), but both are gated on casting from the graveyard, so neither applies to a spell cast from hand. Putting the sacrifice in `spell_effects` as the `sacrifice` op is the approximation the DSL notes forbid: it moves the payment to resolution, so the spell could be cast with no artifact or creature to sacrifice and would still draw two cards.
@@ -60,15 +60,11 @@ Blocks **3** cards.
   <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is mana-only -- `CardDef.kicker` is a mana-cost *string* and the cast variant is `mana_cost.plus(kicker)`, a `ManaCost`, so it cannot sacrifice anything. `Cost.sacrifice` (in `carddef.py`) is exactly the right shape but is only reachable from an activated ability's `cost` or from a graveyard-cast path (`flashback`/`graveyard_cost`/`retrace`), never from an ordinary cast from hand; it is also a single fixed selector, so even mounted on a spell it would demand exactly N creatures rather than "one or more, your choice how many". Moving the sacrifice into `spell_effects` with the `sacrifice` op is the approximation the DSL notes forbid: it pays on resolution, which makes the copies impossible to have made (they must already be on the stack) and lets the spell be cast with the sacrifice unpaid.
 - **(value)** A value expression for "the number of permanents sacrificed to pay this spell's additional cost", available to the reflexive trigger's effects so `copy_spell`'s `amount` can be that count. The payment must record how many objects it consumed and expose them as a binding on the trigger.
   <br>Why the existing vocabulary won't do: `value_keys` has no reading of what a cost consumed. `creatures_died_this_turn` is the closest, and it is wrong: it counts every creature that died this turn from any source -- combat, an earlier removal spell, a second Plumb the Forbidden -- so on a real board it would copy the spell too many times. `creatures_you_control` counts what survives, not what was paid. `count` over a selector cannot name "the ones sacrificed this way" because nothing marks them.
-- **(engine)** A *mandatory* `additional_cost` must withdraw the free cast line, so the only way to cast the spell is the one that pays. The field itself now exists and the payment half works: `{"additional_cost": {"sacrifice": {"controller": "you", "types": ["Creature"]}}}` compiles, and casting the "(+1 additional)" line in the authoring sandbox really does sacrifice a creature (battlefield 32 -> 31, graveyard 2 -> 4). What is missing is the refusal: with neither `additional_optional` nor `additional_repeatable`, legality still offers the plain line beside it. In `src/automtg/engine/legality.py` the mandatory branch clears the free line only when the cost is *unpayable* -- `if not card.additional_optional and last < 1: out = []` -- so whenever the player actually has a creature, `_cast_variant` for `additional_times=1` is appended to an `out` that already holds the unpaid cast. Both actions come back with `kicked=False`, and `verify.find_play` takes the first, which is the free one. The fix is to drop the free line whenever `additional_cost` is present and not `additional_optional`, payable or not, and it wants the legality test the docstring in `tests/unit/test_additional_cost.py::TestAMandatoryCost` promises but never writes -- that class only exercises loading and DslError, so nothing today asserts the withdrawal.
-  <br>Why the existing vocabulary won't do: Not a vocabulary gap: `additional_cost` with `sacrifice` is exactly the printed cost and is in the packet's `cost_keys`. It is an enforcement gap, so no other spelling of the card is safe. `additional_optional` is the opposite of what is printed -- Village Rites does not say "you may". The `sacrifice` op in `spell_effects` is the approximation the packet notes forbid: it moves the payment to resolution, so the spell could be cast with no creature at all and still draw two. And an expectation that stops asserting the sacrifice would ship a strictly better Village Rites than the printed card -- a one-mana unconditional draw-two -- which is the exact failure the behaviour gate exists to catch. Measured, not reasoned: in the hand-written pool the free line leaves the board at 32 and still draws two cards.
 
 <details><summary>Cards waiting on this</summary>
 
 - **Deadly Dispute** (rank 129) — `deadly_dispute`
   - As an additional cost to cast this spell, sacrifice an artifact or creature.
-- **Village Rites** (rank 198) — `village_rites`
-  - As an additional cost to cast this spell, sacrifice a creature.
 - **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
   - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
 
