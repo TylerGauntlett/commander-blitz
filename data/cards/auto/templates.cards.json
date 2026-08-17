@@ -19880,6 +19880,39 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color that a land an opponent controls could produce."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "exotic_orchard",
+      "name": "Exotic Orchard",
+      "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -22622,6 +22655,93 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Vampire"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may search your library for a Vampire card, reveal it, then shuffle and put that card on top.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever another Vampire you control enters, target creature gets +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "forerunner_of_the_legion",
+      "mana_cost": "{2}{W}",
+      "name": "Forerunner of the Legion",
+      "oracle_text": "When this creature enters, you may search your library for a Vampire card, reveal it, then shuffle and put that card on top.\nWhenever another Vampire you control enters, target creature gets +1/+1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

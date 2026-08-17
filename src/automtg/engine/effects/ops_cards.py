@@ -131,12 +131,40 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
                 for oid in ctx.state.players[pid].zone_list(zone)
                 if _matches_in_zone(ctx, oid, selector, zone_name)
             )
+        picked: list[int] = []
         if pool:
             take = min(count, len(pool))
             prompt = "Search your library" if zones == ("library",) else "Search"
             picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
+            if spec.get("reveal") and picked:
+                # "…search your library for a Vampire card, **reveal it**, then
+                # shuffle and put that card on top." Revealed on the way out, so
+                # the table sees it whatever happens to it next.
+                ctx.state.emit(
+                    "reveal",
+                    player=pid,
+                    source=ctx.source_oid,
+                    cards=[
+                        ctx.state.objects[o].def_id
+                        for o in picked
+                        if o in ctx.state.objects
+                    ],
+                )
+
+        # "…then shuffle **and** put that card on top" (Forerunner of the
+        # Legion). The shuffle comes first when the card is going back to the
+        # top of the same library, or it lands there and is immediately shuffled
+        # into a random position -- which is a tutor that finds nothing.
+        #
+        # This is also the printed order: 701.19c's shuffle happens, and *then*
+        # the card is put on top. Every other destination is unaffected, because
+        # a card already in a hand or on the battlefield does not care.
+        to_top = spec.get("destination") == "library_top"
+        if shuffles and to_top:
+            shuffle_library(ctx.state, pid)
+        if picked:
             _move_found(ctx, picked, pid, destination, spec, tapped, "search")
-        if shuffles:
+        if shuffles and not to_top:
             shuffle_library(ctx.state, pid)
 
 

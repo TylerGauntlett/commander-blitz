@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **23** capabilities.
+**12 cards** blocked by **21** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,11 +29,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
-| [reflecting-mana](#reflecting-mana) | 1 | 9 | op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
-| [tutor-to-top](#tutor-to-top) | 1 | 5982 | op, selector |
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
 | [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
@@ -258,20 +256,6 @@ Blocks **1** card.
 
 </details>
 
-## reflecting-mana
-
-Blocks **1** card.
-
-- **(op)** an `add_mana` form whose colour choice is not written on the card but read off the board at activation time -- e.g. `{"op": "add_mana", "any_color_produced_by": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}`, which offers exactly the colours the lands matching that selector could themselves produce, and offers nothing (the ability being unactivatable for mana) when that set is empty. Engine-side this means the choice set for a mana ability has to become a function of GameState rather than a load-time constant: `CardDef.mana_options` / `offerable_mana_ability` / `mana_amount` in engine/costs.py and the mode chips built in engine/legality.py (around the `is_mana_ability` branches) all consult a fixed tuple-list baked by the loader's `_sum_mana`, so they would need to call a resolver that unions `parse_mana_production` over the mana abilities of the selected permanents. The mana-availability solver that decides whether a spell is castable has to consult the same resolver, or Exotic Orchard will read as producing nothing (or as producing all five) when the engine asks what the player can pay.
-  <br>Why the existing vocabulary won't do: `add_mana` takes a literal `mana` string parsed once by `parse_mana_production`, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which the loader restricts mana abilities to via `_sum_mana` -- has a fixed mode list written into the card, so the packet's `starting_point` offers all five colours unconditionally regardless of what the opponent's lands are. There is no way to prune those modes: a mana ability may contain only `add_mana`, so `if` (and with it every `condition_keys` entry, including `exists`) is rejected inside one, and `_validate_mana_amount` forbids even amounts that depend on targets or X because a mana ability is activated mid-payment. `add_mana_per` scales one fixed symbol by a count and cannot change which symbol it is. Nothing in `selector_keys` or `value_keys` can ask what mana a permanent could produce -- `colors` reads a card's printed colour, which is not its mana production (an opponent's Island is a colourless card that taps for {U}), so even a hypothetical `if`/`exists` gate could not be spelled correctly.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exotic Orchard** (rank 9) — `exotic_orchard`
-  - {T}: Add one mana of any color that a land an opponent controls could produce.
-
-</details>
-
 ## reflexive-trigger
 
 Blocks **1** card.
@@ -312,22 +296,6 @@ Blocks **1** card.
 
 - **Bojuka Bog** (rank 24) — `bojuka_bog`
   - When this land enters, exile target player's graveyard.
-
-</details>
-
-## tutor-to-top
-
-Blocks **1** card.
-
-- **(op)** a library search whose found card ends up on top of the library *after* the mandatory shuffle, and is revealed on the way. Concretely, `search_library` needs the shuffle to happen before the found cards are placed when the destination is the library itself -- e.g. a `destination: "library_top"` that shuffles the remaining library first and only then puts the picked card on top -- plus a `reveal: true` flag (or an implicit reveal for this destination) that emits the same public `reveal` event `op_reveal` emits, so every seat learns which card was fetched. This is the printed template of the whole Forerunner cycle and of every tutor-to-top (Vampiric Tutor, Mystical Tutor, Enlightened Tutor, Worldly Tutor, Sylvan Tutor, Ashiok's Forerunner), so the ordering and the reveal are the two things the family needs
-  <br>Why the existing vocabulary won't do: `search_library` is the closest op and it has `destination: "library_top"`, but `_search` in `engine/effects/ops_cards.py` calls `_move_found` first and `shuffle_library(ctx.state, pid)` second, so "library_top" plus the default shuffle puts the card on top and then immediately shuffles it back into a random position -- the exact opposite of the printed line. Reordering it by hand (a `shuffle` op, then `search_library` with `shuffle: false`) is not the DSL saying what the card says: `shuffle: false` on a library search suppresses 701.19c's mandatory shuffle, which docs/card-dsl.md states is deliberately not conditional for library searches, so the flag is being used against its documented meaning to fake an ordering the op does not offer. `look_at_top` shuffles only on request but bounds the pool to the top N cards, which turns a tutor into a gamble; `put_on_top` moves cards to the top but cannot be pointed at what a search found (see the next need)
-- **(selector)** a way to name the cards a search just found, so a later op in the same effect list can act on exactly those cards -- `search_library` binding its picks under a name the way a trigger binds `subject`, e.g. `{"op": "search_library", ..., "as": "found"}` followed by `{"op": "reveal", "objects": {"binding": "found"}}` and `{"op": "put_on_top", "objects": {"binding": "found"}}`. This is what lets "reveal it" and "put that card on top" refer back to "a Vampire card" instead of re-choosing
-  <br>Why the existing vocabulary won't do: `resolve_pool` in `engine/effects/selectors.py` recognises exactly two ways to name a pool directly: `target`, which is the refs chosen for a target spec at cast time, and `binding`, which is what a *trigger* bound (`subject`, `amount`). `search_library` records nothing anywhere, so neither can reach its picks. `exiled_with` is the only other back-reference and it covers cards *this source exiled* -- `_move_found` writes no exile link, and routing the fetch through exile to borrow it would be a different set of zone changes. Re-selecting instead (`search_library` to hand, then `reveal`/`put_on_top` over `{"zone": "hand", "subtypes": ["Vampire"]}`) is a different card: it reveals every Vampire in hand rather than the one fetched, and it lets the player tuck a Vampire they were already holding
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forerunner of the Legion** (rank 5982) — `forerunner_of_the_legion`
-  - When this creature enters, you may search your library for a Vampire card, reveal it, then shuffle and put that card on top.
 
 </details>
 

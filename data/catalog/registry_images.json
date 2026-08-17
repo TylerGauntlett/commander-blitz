@@ -2311,6 +2311,10 @@
     "artist": "Pierre Raveneau",
     "scryfall_id": "46012ec9-9605-44fe-84a9-6aab0738737f"
   },
+  "exotic_orchard": {
+    "artist": "Ron Spears",
+    "scryfall_id": "d11c5fe0-1528-4c94-a8cc-42bcab9d7487"
+  },
   "expedition_envoy": {
     "artist": "David Palumbo",
     "scryfall_id": "41193ef1-1619-4448-9905-26b05079c79a"
@@ -2594,6 +2598,10 @@
   "foreboding_ruins": {
     "artist": "Alexander Gering",
     "scryfall_id": "76fdf6be-e13b-49ee-9d50-8625edb49951"
+  },
+  "forerunner_of_the_legion": {
+    "artist": "Josh Hass",
+    "scryfall_id": "10718d37-63d4-44b7-9450-5d49cffce944"
   },
   "forest": {
     "artist": "Leon Tukker",
