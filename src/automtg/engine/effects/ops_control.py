@@ -398,3 +398,35 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             turn=state.turn,
         )
     )
+
+
+@register("extra_combat")
+def op_extra_combat(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"After this phase, there is an additional combat phase" (506.1).
+
+    ``amount`` is how many, for Fury of the Horde's "two additional combat
+    phases"; ``extra_main`` adds the additional **main** phase that Relentless
+    Assault, Resurgence and Savage Beating print after each combat, and Combat
+    Celebrant does not.
+
+    Queued rather than applied, because the printed timing is "after this phase"
+    and this op resolves *inside* the phase it extends -- from a sorcery in a main
+    phase, or from a trigger in the declare-attackers step. So it hands the
+    phases to the turn and the step walk enters them at the boundary; see
+    `turn._after_phase`.
+
+    Deliberately takes **no player**: a phase belongs to the turn, not to a seat.
+    Seize the Day is an instant, and cast on somebody else's turn its extra
+    combat is that player's, which is both what the rules say and what falls out
+    of a queue read by the turn. `loader` refuses a `player` here rather than
+    accepting one and ignoring it.
+    """
+    from ..turn import grant_extra_phases
+
+    times = max(0, min(evaluate_value(ctx, spec.get("amount", 1)), 10))
+    kinds: list[str] = []
+    for _ in range(times):
+        kinds.append("combat")
+        if spec.get("extra_main"):
+            kinds.append("main")
+    grant_extra_phases(ctx.state, kinds)

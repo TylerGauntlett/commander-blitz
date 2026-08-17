@@ -12,7 +12,8 @@ not a rewrite.
 
 | Area | Detail |
 |---|---|
-| **Turn structure** | All 13 steps, turn-based actions, correct priority windows, cleanup repeating per rule 514.3a |
+| **Turn structure** | All 13 steps, turn-based actions, correct priority windows, cleanup repeating per rule 514.3a, and **additional phases** — see below |
+| **Additional combat and main phases** | "After this main phase, there is an additional combat phase followed by an additional main phase" (506.1, 505.1b). `Step` is an ordered `IntEnum` walked one integer at a time, so a repeated phase had no representation — and needs none, since an extra phase is the same steps entered again. What has to be remembered is only that the phase the turn was *about to* enter is still owed: `GameState.extra_phases` queues the phase kinds a card granted and `resume_step` is the one bookmark the turn comes back to. So an extra combat granted in a precombat main is *inserted* in front of the combat the turn already had rather than eating it, and Combat Celebrant's extra combat returns to the bookmark rather than falling through into a postcombat main it never granted. The queue is read only when a main or combat phase ends, which is what makes "after this main phase" right for an Aggravated Assault activated in an upkeep; an unspent grant expires at the turn boundary. The additional main phase is a `POSTCOMBAT_MAIN` step (505.1b) and fires the per-phase `postcombat_main` trigger, and it is not an extra land drop, because `lands_played` is reset by the untap step |
 | **Priority** | APNAP order, retaining priority after acting, auto-pass when passing is the only option |
 | **The stack** | LIFO resolution, responses, countering, fizzling when every target became illegal |
 | **Casting** | Timing restrictions (sorcery speed vs instant vs flash), targets chosen at cast time and re-checked on resolution |
@@ -155,6 +156,7 @@ Each of these is a deliberate trade. The rationale matters more than the rule.
 | **Target options capped at 12** | A spell offers at most 12 target combinations | Only bites on very wide boards; without it a single "target creature" can flood the action space |
 | **Turn cap** | 30 turns per player (60 in a duel, 120 in a pod), then a draw | Self-play must terminate. Draws are counted and reported |
 | **Trigger loop guard** | More than 200 triggers in one step raises `RulesLoopError`, scored as a draw | One pathological board must not abort a 10,000-game run |
+| **Extra phases capped at 20 per turn** | Grants past `MAX_EXTRA_PHASES_PER_TURN` are dropped rather than queued | "Untap all creatures you control; there is an additional combat phase" plus enough mana is a real printed infinite combo (Aggravated Assault), and the rules let it run for ever. Twenty is far past anything a game turns on, and an unbounded turn is a hung process rather than a loss |
 | **Delayed triggers resolve off the stack** | "At the beginning of the next upkeep, draw a card" runs as the step begins rather than being put on the stack | Same trade as modes and trigger ordering: only observable when somebody would respond differently to the delayed half than to the spell that scheduled it |
 
 ### Simplifications *inside* a hand-written card

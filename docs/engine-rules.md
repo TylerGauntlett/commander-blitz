@@ -5,7 +5,8 @@ This is the rules walkthrough. For what is *not* implemented, read
 
 ## The turn
 
-Thirteen steps, in order. Priority is granted in every step except untap and
+Thirteen steps, in order — and a main or combat phase can happen **again** when a
+card grants an additional one. Priority is granted in every step except untap and
 cleanup.
 
 ```mermaid
@@ -30,12 +31,30 @@ stateDiagram-v2
     FIRST_STRIKE_DAMAGE --> COMBAT_DAMAGE
 
     COMBAT_DAMAGE --> END_OF_COMBAT
-    END_OF_COMBAT --> POSTCOMBAT_MAIN
-    POSTCOMBAT_MAIN --> END_STEP
+
+    state extra_combat_branch <<choice>>
+    END_OF_COMBAT --> extra_combat_branch
+    extra_combat_branch --> BEGIN_COMBAT: another combat phase is queued
+    extra_combat_branch --> END_STEP: the turn resumes past an inserted combat
+    extra_combat_branch --> POSTCOMBAT_MAIN: otherwise
+
+    state extra_main_branch <<choice>>
+    POSTCOMBAT_MAIN --> extra_main_branch
+    extra_main_branch --> BEGIN_COMBAT: a combat phase is queued, or the turn resumes into its own
+    extra_main_branch --> END_STEP: otherwise
+
     END_STEP --> CLEANUP
     CLEANUP --> CLEANUP: something happened (514.3a)
     CLEANUP --> [*]: next player's turn
 ```
+
+The two branches out of end-of-combat and the postcombat main are additional
+phases: "after this main phase, there is an additional combat phase followed by an
+additional main phase" (506.1, 505.1b). A card queues phase kinds on
+`GameState.extra_phases` and the turn enters them when its current main or combat
+phase ends, coming back afterwards to the step it had bookmarked in
+`resume_step` — so an extra combat is *inserted* rather than appended, and the
+rest of the turn still happens. See [rules-coverage.md](rules-coverage.md).
 
 Turn-based actions per step:
 

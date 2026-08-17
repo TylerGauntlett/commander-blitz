@@ -55730,6 +55730,57 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "response_resurgence",
+      "mana_cost": "{R/W}{R/W}",
+      "name": "Response // Resurgence",
+      "oracle_text": "Response deals 5 damage to target attacking or blocking creature.",
+      "second_face": "resurgence",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "attacking": true
+              },
+              {
+                "blocking": true
+              }
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -55758,6 +55809,45 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "resurgence",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Resurgence",
+      "oracle_text": "Creatures you control gain first strike and vigilance until end of turn. After this main phase, there is an additional combat phase followed by an additional main phase.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "first_strike",
+            "vigilance"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "extra_main": true,
+          "op": "extra_combat"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

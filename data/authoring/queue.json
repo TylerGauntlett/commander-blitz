@@ -219752,12 +219752,12 @@
     },
     "Response // Resurgence": {
       "edhrec_rank": 5272,
-      "gate": "template",
+      "gate": null,
       "name": "Response // Resurgence",
-      "reason": "no template for: Response deals 5 damage to target attacking or blocking creature",
+      "reason": "",
       "scryfall_id": "2502d3bf-1956-4294-b4d5-38eee79eeda1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rest for the Weary": {
