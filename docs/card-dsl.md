@@ -531,6 +531,8 @@ Anywhere a number is expected:
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
+{ "permanents_entered_this_turn":               // WHICH permanents entered; see below
+    { "controller": "you", "subtypes": ["Human"], "exclude_self": true } }
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "spells_cast_this_turn": "all" }              // storm
@@ -587,6 +589,45 @@ which traded, leaves the board count at 2 and Windbrisk Heights locked in the
 very turn it was supposed to open. The value reads the ledger's oids instead, so
 it survives the death. Use the selector when the effect has to *reach* the
 creatures, and the value when the card is only counting them.
+
+### Which permanents entered the battlefield this turn
+
+```jsonc
+// Éowyn, Shieldmaiden: "At the beginning of combat on your turn, if another
+// Human entered the battlefield under your control this turn, …"
+"trigger": {
+  "event": "begin_combat", "controller": "you",
+  "condition": { "cmp": ">=",
+                 "left": { "permanents_entered_this_turn": {
+                             "controller": "you", "subtypes": ["Human"],
+                             "exclude_self": true } },
+                 "right": { "const": 1 } } }
+```
+
+The only ledger value that takes a **filter** rather than a player spec, because
+the printed sentence asks *which* permanents entered and not how many did. The
+clauses are the selector language's, spelled the same way: `controller` (a player
+spec), `types` (all-of), `subtypes` and `colors` (any-of), and `exclude_self`.
+
+| | |
+|---|---|
+| `{"exists": {"subtypes": ["Human"], "zone": "battlefield"}}` | A **board** query, and a different question in both directions: true when a Human has stood there since turn three and nothing entered — the trigger fires every combat, forever — and false when a Human entered this turn and died before combat, which is the ordinary line the card is printed for |
+| `set_flag` / `has_flag` | Wrong lifetime *and* wrong shape. Flags clear on a zone change and never at cleanup, so the gate stays open for the rest of the game; and writing one needs a second `permanent_enters` ability no printed line asks for, which the residual gate rejects |
+| a `permanent_enters` trigger | The right event, the wrong tense. A trigger fires *when* the arrival happens; this clause is checked at the beginning of combat and asks about the whole turn behind it |
+
+`controller` is **required** — omitted, it would silently count the opponents'
+arrivals too. Say `"all"` when a card really does mean anybody's.
+
+**`exclude_self` is the printed word "another".** Éowyn is herself a Human and
+may well have entered this turn, so without it her own arrival satisfies her own
+trigger. It matches on the recorded arrival's *oid*, so it excludes her rather
+than everything shaped like her.
+
+The record is `TurnLedger.permanents_entered`, a snapshot per arrival taken from
+**derived** characteristics as the permanent entered — so a changeling and a
+creature a static had made a Human both count, and so the entry survives the
+permanent leaving. That last part is the point: a Human that entered and died
+this turn still entered, and there is nothing left on the board to ask.
 
 ### Counting the mana that was actually spent
 
