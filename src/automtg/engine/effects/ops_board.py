@@ -16,6 +16,7 @@ from ..primitives import (
     change_control,
     create_token,
     forbid_block,
+    goad_creature,
     grant_ability,
     grant_keyword,
     lock_abilities,
@@ -1262,6 +1263,65 @@ def op_must_attack(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         obj.must_attack = duration
         obj.must_attack_turn = ctx.state.turn
+    yield from ()
+
+
+@register("goad")
+def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Goad those creatures." (701.38a)
+
+    Two rules in one printed word, and both of them "if able":
+
+    1. **The compulsion.** Until the goading player's next turn, the creature
+       attacks each combat if able. Read live in `combat.attack_required`, which
+       is where `must_attack` and the `attacks_if_able` static already meet.
+    2. **The target restriction.** If it attacks, it must attack a player other
+       than the goading player if able. Read in
+       `combat.attack_target_forbidden`, the per-attacker/per-defender seam
+       `cant_attack_player` built and left open for exactly this.
+
+    The second half is why goad is not a compulsion with a longer clock: nothing
+    in the engine restricted *which* defender a given attacker could pick, and
+    without it a goaded creature swings straight back at the player who goaded
+    it -- which is the whole political point of the word, and a symmetrical
+    Overrun without it.
+
+    The datum written down is the **player**, in `GameObject.goaded_by`, which is
+    the shape detain uses and is forced twice over. "Until your next turn" is not
+    a turn number -- eliminate a player and it moves -- so `turn._untap_step`
+    clears the marks belonging to whoever is untapping, beside detain and the
+    block prohibitions. And the target restriction *needs* to know who: a goad is
+    a fact about a pair, not about a creature.
+
+    A set, so two opponents may goad the same creature and each clock runs
+    separately -- and so does each "other than you", which is why a creature
+    goaded by both remaining opponents is free to attack either of them.
+
+    Why not the two existing shapes:
+
+    * `must_attack` is one-shot. `combat.discharge_attack_requirements` spends
+      the flag when attackers lock in, so it compels one combat where goad
+      compels every combat until the goader untaps -- and it carries no notion of
+      who goaded, which is the datum half of goad is about.
+    * the `attacks_if_able` **static** is the live, unspent form, but it is a
+      continuous ability on a permanent read off `_battlefield_statics`. A
+      resolving sorcery leaves nothing on the battlefield to own it, its
+      `affects` filter reads only printed characteristics so it cannot mean
+      "those creatures" (the set chosen at resolution), and it cannot end at a
+      player's next turn.
+
+    ``objects`` is required (the loader says so): a goad with no selector goads
+    nobody, and the card would resolve, log nothing and change no combat.
+    ``player`` is the goader and defaults to the effect's controller, which is
+    every printed goad -- it is spelled out only so a "goaded by target
+    opponent" line has somewhere to say it.
+    """
+    goaders = _players(ctx, spec["player"]) if "player" in spec else [ctx.controller]
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        for player in goaders:
+            # Battlefield and liveness are checked in the primitive, which is
+            # also what makes a creature that left in response get nothing.
+            goad_creature(ctx.state, oid, player)
     yield from ()
 
 

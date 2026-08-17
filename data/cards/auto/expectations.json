@@ -6519,6 +6519,9 @@
   "tasseled_dromedary": {
     "zone": "battlefield"
   },
+  "taunt_from_the_rampart": {
+    "zone": "graveyard"
+  },
   "tcri_building": {
     "life": {
       "0": 41

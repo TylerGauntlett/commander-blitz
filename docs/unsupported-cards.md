@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **17** capabilities.
+**13 cards** blocked by **16** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
-| [goad](#goad) | 1 | 2089 | engine, op |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
@@ -177,22 +176,6 @@ Blocks **1** card.
 - **Palace Jailer** (rank 4016) — `palace_jailer`
   - When this creature enters, you become the monarch.
   - When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.
-
-</details>
-
-## goad
-
-Blocks **1** card.
-
-- **(op)** A `goad` op taking `objects`, marking each chosen creature as goaded by the op's controller (701.38a): until that player's next turn the creature attacks each combat if able, and if it attacks it must attack a player other than the goading player if able. Build it the way `detain` is built -- store the *player* who goaded (e.g. `GameObject.goaded_by: set[int]`, a set because two opponents may goad the same creature) rather than a turn number, and clear that player's entry in `turn._untap_step` where detain is already cleared, since "your next turn" moves when a player is eliminated. It must then be read in two places: `combat.attack_required` (a live requirement, re-armed every combat, NOT spent by `discharge_attack_requirements`) and a new per-creature defender restriction (below).
-  <br>Why the existing vocabulary won't do: `must_attack` is the closest op and covers only the requirement half, wrongly: its two durations are `this_turn` (Bident of Thassa) and `next_combat` (Trench Behemoth), and `combat.discharge_attack_requirements` spends the flag once attackers are locked in, so it compels exactly one combat while goad compels every combat until the goader's next turn. It also carries no notion of who goaded, which is exactly the datum the attack-target half needs. The `attacks_if_able` static is the live, unspent form but is a continuous ability on a permanent read off `_battlefield_statics` -- a sorcery leaves no source on the battlefield, and a static's `affects` filter may read only printed characteristics, so it cannot mean "those creatures" (the set chosen at resolution) nor end at a player's next turn.
-- **(engine)** A per-creature attack-target restriction in combat legality: for a goaded creature, the defending players/planeswalkers offered must exclude those controlled by any player who goaded it, whenever at least one other legal defender exists ("if able" -- with only the goader left to attack, the creature may attack them). Concretely, `combat.legal_defenders` / `legal_planeswalker_defenders` / `add_attacker` need to take the attacking oid into account and filter by it, and `attack_required` must stay consistent with that filtered set so a creature is not compelled to make an attack legality then refuses.
-  <br>Why the existing vocabulary won't do: Nothing in the engine restricts *which* defender a given attacker may choose. `combat.legal_defenders` is `[pid for pid in state.alive() if pid != state.active_player]` -- it takes no attacker argument at all -- and `add_attacker(state, oid, defender, planeswalker=...)` accepts any of them, so the choice is per-declaration and global rather than per-creature. `cant_attack`/`attack_forbidden` is the nearest restriction and is all-or-nothing (the creature cannot attack anyone); `block_restriction` restricts blockers, not attack targets. Without this, a goad op would let the goaded creature swing straight back at the player who goaded it, which is the half of goad that makes the card a Red/White political spell rather than a symmetrical Overrun.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
-  - Goad all creatures your opponents control.
 
 </details>
 

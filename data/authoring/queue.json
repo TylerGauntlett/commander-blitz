@@ -273652,12 +273652,12 @@
     },
     "Taunt from the Rampart": {
       "edhrec_rank": 2089,
-      "gate": "template",
+      "gate": null,
       "name": "Taunt from the Rampart",
-      "reason": "no template for: Goad all creatures your opponents control. Until your next turn, those creatures can't blo",
+      "reason": "",
       "scryfall_id": "80bdcb50-fd71-4824-8459-981ff721e198",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Taunting Arbormage": {
