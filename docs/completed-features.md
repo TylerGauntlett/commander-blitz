@@ -5635,6 +5635,7 @@ its own unit tests and a `card-dsl.md` entry:
 | `double_land_mana`, `freeze_opponent_lands`, `skip_next_untap` | Vorinclex |
 | Hybrid mana in the payment solver | Spitting Image |
 | Restricted mana and granted abilities | Herd Heirloom |
+| Restricted mana naming the *chosen* type, and reaching ability costs | Secluded Courtyard |
 | Retrace — casting from the graveyard | Spitting Image |
 | Suspend — a special action, an upkeep rule, and a free cast | Search for Tomorrow |
 | `two_piles` — the one decision an opponent makes | Fact or Fiction |
@@ -5659,6 +5660,18 @@ own with the 160-game arena run in between rather than all at once:
 - **Restricted mana** (162) never touches the solver at all: sources that may not
   pay for this spell are filtered out before it runs. That works only because
   mana here is tapped at the moment it is spent.
+
+  Extended twice since, both for Secluded Courtyard's one printed line. The
+  restriction can name **the type its own permanent chose**, so it is resolved
+  per permanent when the mana is offered instead of frozen at load — every fixed
+  value would be a different card, and `"creature"` in particular would be
+  strictly better than printed. And it can permit **activating an ability** and
+  not only casting, which needed a second purpose (`costs.ability_purpose`)
+  threaded through `legality._ability_aims` and `game._activate` the way
+  `spell_purpose` was already threaded through the four cast sites. The purpose
+  carries *which action* it is, and that is the load-bearing half: an activate
+  permission matched on names alone would have silently rewritten Herd Heirloom
+  and Master of Dark Rites, both of which print "only to **cast**".
 - **Vorinclex's doubling** had to be computed in two places — `_sources_of` so
   legality counts it, `activate_mana_ability` so payment adds it — and a
   disagreement would strand a spell mid-cast. One `mana_produced` helper, called

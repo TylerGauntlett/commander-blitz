@@ -394,6 +394,85 @@ class ManaPool:
         return f"ManaPool({self.to_dict()})"
 
 
+#: The placeholder a restriction group carries for "the type this permanent
+#: chose" -- Cavern of Souls, Unclaimed Territory, Secluded Courtyard.
+#:
+#: A restriction is otherwise a set of lowercased literal names fixed when the
+#: card loads, and the chosen type does not exist until the permanent is on the
+#: battlefield. So the load-time set carries this sentinel and
+#: `costs.resolve_mana_restriction` substitutes the object's `chosen_type` at the
+#: moment the mana is offered. A `\0` prefix cannot collide with a real card type
+#: or subtype: the loader's shape check requires letters, and this is the same
+#: trick `characteristics.resolve_chosen_subtypes` plays with `"\0none"`.
+CHOSEN_TYPE = "\0chosen"
+
+#: The two things mana is ever spent on, and the two halves a printed spend
+#: restriction distinguishes: "Spend this mana only to **cast** a creature spell
+#: of the chosen type or **activate an ability of** a creature source of the
+#: chosen type."
+CAST = "cast"
+ACTIVATE = "activate"
+
+
+@dataclass(frozen=True)
+class SpendPurpose:
+    """What a payment is *for*, as a restricted source needs to see it.
+
+    Two parts, and both are load-bearing.  ``names`` is the flat set of
+    lowercased types and subtypes -- of the spell being cast, or of the source
+    whose ability is being activated.  ``kind`` is which of those two it was.
+
+    The kind is not decoration.  Every restriction shipped before Secluded
+    Courtyard reads "spend this mana only to **cast** …", and a purpose that
+    carried names alone would have let Herd Heirloom, Ancient Ziggurat and
+    Master of Dark Rites pay to *activate* an ability of any creature that
+    matched -- a strictly better card than each of them prints, arriving without
+    a line of their JSON changing.
+    """
+
+    kind: str
+    names: frozenset[str]
+
+
+@dataclass(frozen=True)
+class ManaRestriction:
+    """"Spend this mana only to cast X (or activate an ability of Y)."
+
+    Two independent permissions, because the printed sentence gives them
+    different subjects: Secluded Courtyard casts *a creature spell* of the
+    chosen type and activates an ability of *a creature source* of the chosen
+    type.  They coincide on that card and need not on the next one, so they are
+    stored apart rather than as one list with a flag.
+
+    Each is an **any-of of all-ofs**: a tuple of groups, every name in a group
+    required at once.  Master of Dark Rites' "Vampire, Cleric, and/or Demon
+    spells" is three one-name groups -- the printed "and/or" is an any-of.
+    "A creature spell **of** the chosen type" is one two-name group, because
+    either half alone is a different and better card: `creature` on its own casts
+    every creature ever printed.
+
+    An empty tuple is a real answer and means "never": a card that says nothing
+    about activating abilities does not permit it.
+    """
+
+    cast: tuple[frozenset[str], ...] = ()
+    activate: tuple[frozenset[str], ...] = ()
+    #: Does any group name :data:`CHOSEN_TYPE`?  Derived here rather than stored
+    #: by the loader so it cannot drift from the groups it describes, and
+    #: computed once at load so `costs.resolve_mana_restriction` can return an
+    #: entirely static restriction untouched instead of rebuilding it per
+    #: battlefield walk.
+    dynamic: bool = field(init=False, default=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "dynamic", any(CHOSEN_TYPE in g for g in self.cast + self.activate)
+        )
+
+    def groups(self, kind: str) -> tuple[frozenset[str], ...]:
+        return self.activate if kind == ACTIVATE else self.cast
+
+
 @dataclass(frozen=True)
 class ManaSource:
     """One untapped permanent's mana ability, flattened into its possible yields.
@@ -413,7 +492,27 @@ class ManaSource:
     #: rather than by tagging the pool: mana here is tapped at the moment it is
     #: spent, so a source that may not pay for this spell simply is not offered,
     #: and the solver's inner loop is untouched.
-    restriction: frozenset[str] | None = None
+    #:
+    #: Already resolved against *this permanent*: `costs.resolve_mana_restriction`
+    #: has substituted any chosen type, so what arrives here is literal names.
+    restriction: ManaRestriction | None = None
+
+    def permits(self, purpose: SpendPurpose | None) -> bool:
+        """May this source pay for what ``purpose`` describes?
+
+        Both halves of the purpose are asked: the restriction's groups **for
+        that kind** (casting a spell, or activating an ability), and then whether
+        any one group's names are all present.
+
+        ``None`` means "no particular spell in mind", and withholds every
+        restricted source -- an under-count rather than an over-count, which is
+        the safe direction for a number the AI reads.
+        """
+        if self.restriction is None:
+            return True
+        if purpose is None:
+            return False
+        return any(group <= purpose.names for group in self.restriction.groups(purpose.kind))
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)

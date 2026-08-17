@@ -167,7 +167,24 @@ class AbilityModel(BaseModel):
     #: A *list* is the "and/or" form -- "Spend this mana only to cast Vampire,
     #: Cleric, and/or Demon spells" -- and its entries may be subtypes as well as
     #: types, matched as an any-of.
-    mana_restriction: str | list[str] | None = None
+    #:
+    #: An entry may itself be a **list**, and then every name in it must match at
+    #: once: "a creature spell **of the chosen type**" is
+    #: ``[["creature", {"chosen_type_of": "self"}]]``, because either half alone
+    #: is a different card -- ``"creature"`` casts any creature ever printed.
+    #: ``{"chosen_type_of": "self"}`` is the one entry that is not a literal
+    #: name; it reads the type this permanent chose as it entered.
+    #:
+    #: An **object** with ``cast`` and/or ``activate`` keys says which of the two
+    #: the mana is allowed to pay for -- Secluded Courtyard's "…or activate an
+    #: ability of a creature source of the chosen type". A bare string or list is
+    #: the ``cast`` half alone, which is what every other printing says.
+    mana_restriction: (
+        str
+        | list[str | dict[str, Any] | list[str | dict[str, Any]]]
+        | dict[str, list[str | dict[str, Any] | list[str | dict[str, Any]]]]
+        | None
+    ) = None
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.
