@@ -8418,6 +8418,74 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_vigilance_counter",
+      "name": "Test Vigilance Counter",
+      "oracle_text": "Put a vigilance counter on target creature.",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "add_counters",
+          "counter": "vigilance",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_arrives_with_lifelink",
+      "name": "Test Arrives With Lifelink",
+      "oracle_text": "Test Arrives With Lifelink enters with a lifelink counter on it.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "lifelink",
+          "amount": 1
+        }
+      ]
     }
   ]
 }

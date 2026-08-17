@@ -3,8 +3,15 @@
 Real Magic resolves continuous effects through seven numbered layers with
 timestamps and dependency analysis.  This engine applies a *fixed order* instead:
 
-    printed -> subtype grants -> keyword grants -> P/T setting -> P/T modifying
-    -> +1/+1 and -1/-1 counters -> until-end-of-turn pumps
+    printed -> subtype grants -> keyword grants (statics, then keyword counters)
+    -> P/T setting -> P/T modifying -> +1/+1 and -1/-1 counters
+    -> until-end-of-turn pumps
+
+Counters are read in **two** places, and deliberately: a +1/+1 counter is a
+size, so it belongs beside the anthems, and a keyword counter is an ability, so
+it belongs beside the keyword grants.  The real layer system splits them the
+same way -- 613.1f applies keyword counters with the ability-adding effects and
+613.1d applies +1/+1 counters four layers later.
 
 To make that safe there is one hard constraint, enforced by
 :func:`automtg.cards.loader.check_static_constraints`:
@@ -37,7 +44,7 @@ from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
-from .enums import Keyword, Zone
+from .enums import KEYWORD_COUNTERS, Keyword, Zone
 from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
@@ -212,6 +219,42 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             if _matches(state, obj, source_obj, static.get("affects")):
                 keywords.update(static.get("keywords", ()))
 
+        # 2b. Keyword counters (122.1c): "a permanent with a keyword counter on
+        #     it has that keyword ability".  A vigilance counter is not
+        #     bookkeeping about a keyword, it *is* the keyword.
+        #
+        #     Here rather than beside the +1/+1 counters at layer 5, which is
+        #     where the other half of "read the counters" lives. The real layer
+        #     system makes the same split for the same reason -- 613.1f puts
+        #     keyword counters with the ability-adding effects and 613.1d puts
+        #     +1/+1 counters four layers later -- and it is what the two
+        #     counters *do* that separates them: one is an ability and one is a
+        #     size. Nothing here would break at layer 5, because keywords only
+        #     ever accumulate into a set and no layer removes one, so the
+        #     position is a statement about what this is rather than about what
+        #     it would otherwise collide with. `animate` had to be first because
+        #     it *replaces* base P/T; this replaces nothing.
+        #
+        #     Counters are a pipeline **input** -- no layer can place or remove
+        #     one -- so reading them here cannot make a static depend on another
+        #     static's output, which is the constraint the whole fixed order
+        #     rests on.
+        #
+        #     What a static's *filter* sees is unchanged: `keywords: ["flying"]`
+        #     in an `affects` still reads the printed face, so Favorable Winds
+        #     does not pump a creature wearing a flying counter. That is not a
+        #     hole this opens, it is the documented no-layers simplification
+        #     applying to keyword counters exactly as it already applies to
+        #     every `grant_keyword` -- a creature granted flying by Levitation
+        #     is invisible to the same filter. Making counters the one visible
+        #     kind of grant would be the inconsistency. Effect selectors
+        #     (`selectors.matches`) read *derived* characteristics on the
+        #     battlefield and so see them for free, which is the split that
+        #     already existed.
+        for kind, amount in obj.counters.items():
+            if amount > 0 and kind in KEYWORD_COUNTERS:
+                keywords.add(kind)
+
         # 3. P/T setting
         for source_obj, static in statics:
             if static.get("effect") != "set_pt":
@@ -228,7 +271,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 power += _static_value(state, static.get("power"), source_obj)
                 toughness += _static_value(state, static.get("toughness"), source_obj)
 
-        # 5. counters
+        # 5. +1/+1 and -1/-1 counters -- the *size* half of reading the
+        #    counters. The ability half is layer 2b, and the two are apart on
+        #    purpose; see the note there.
         plus = obj.counter(PLUS_ONE)
         minus = obj.counter(MINUS_ONE)
         power += plus - minus

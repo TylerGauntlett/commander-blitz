@@ -26,7 +26,15 @@ from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import validate_selector
 from automtg.engine.effects.values import validate_mana_symbols, validate_value
-from automtg.engine.enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
+from automtg.engine.enums import (
+    KEYWORD_COUNTERS,
+    AbilityKind,
+    CardType,
+    Color,
+    Keyword,
+    Supertype,
+    Zone,
+)
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
 from automtg.engine.triggers import TRIGGER_EVENTS
@@ -268,6 +276,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
 
     for i, replacement in enumerate(model.replacements):
+        if replacement.counter is not None:
+            # "…enters with a vigilance counter on it." Checked here for the
+            # reason the condition below is: the kind is only looked at when a
+            # permanent actually enters, so a near-miss spelling of a keyword
+            # counter would arrive as an inert tally mid-game rather than being
+            # refused at load.
+            _check_counter_kind(
+                replacement.counter, f"{where}.replacements[{i}].counter"
+            )
+        for kind in (replacement.modify or {}).get("counters") or {}:
+            # The other spelling of the same clause: `modify: {"counters": {...}}`
+            # keyed by kind. `zones._enter_battlefield` reads whichever is there.
+            _check_counter_kind(kind, f"{where}.replacements[{i}].modify.counters")
         if replacement.condition is None:
             continue
         # Without this the tree is only checked when a permanent actually
@@ -931,6 +952,11 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"{where}: 'counter' only means anything on a counter_placed trigger, "
                 f"not on {model.trigger.event!r}"
             )
+        if model.trigger.counter is not None:
+            # "Whenever a vigilance counter is put on this creature." The filter
+            # is compared to the kind the primitive was handed, so a near-miss
+            # spelling matches nothing and the trigger never fires.
+            _check_counter_kind(model.trigger.counter, f"{where}.trigger.counter")
 
         trigger = TriggerSpec(
             event=model.trigger.event,
@@ -1356,6 +1382,11 @@ def _validate_static_condition(condition: Any, where: str) -> None:
         op = str(spec.get("op", ">="))
         if op not in STATIC_CONDITION_OPS:
             raise DslError(f"{where}.counters: unknown comparison {op!r}")
+        if "counter" in spec:
+            # "As long as it has an indestructible counter on it…" -- read off
+            # the source's own `counters` dict by exact key, so a near-miss
+            # spelling switches the static off for ever.
+            _check_counter_kind(spec["counter"], f"{where}.counters.counter")
     elif head in ("all", "any"):
         if not isinstance(condition[head], list) or not condition[head]:
             raise DslError(f"{where}.{head}: takes a non-empty list of conditions")
@@ -1615,6 +1646,38 @@ def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any]
     return dict(amount) if isinstance(amount, Mapping) else amount
 
 
+def _check_counter_kind(kind: Any, where: str) -> None:
+    """Refuse a counter kind that *nearly* names a keyword (122.1c).
+
+    A counter kind is a free string on purpose -- charge, quest, slumber, lore,
+    age -- so there is no vocabulary to check it against, with one exception.
+    A **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
+    the characteristics pipeline), and the match is exact: `"vigilance"` makes a
+    vigilant creature and `"Vigilance"`, `"vigilance counter"` and
+    `"first strike"` each make a tally nobody consults, on a card that loads
+    clean and reads as printed.
+
+    That is the one failure mode this whole validation pass exists to refuse,
+    and unusually it is detectable, because the near miss normalises onto a
+    keyword the engine implements. A kind that normalises onto nothing is left
+    alone -- it is somebody's charge counter, and guessing at typos in an open
+    vocabulary would refuse cards that are correct.
+    """
+    if not isinstance(kind, str) or not kind:
+        raise DslError(f"{where}: a counter kind must be a non-empty string, got {kind!r}")
+    normalised = kind.strip().lower().replace("-", " ").replace("_", " ")
+    for suffix in (" counters", " counter"):
+        if normalised.endswith(suffix):
+            normalised = normalised[: -len(suffix)]
+    normalised = "_".join(normalised.split())
+    if normalised != kind and normalised in KEYWORD_COUNTERS:
+        raise DslError(
+            f"{where}: write a keyword counter as the exact keyword name -- "
+            f"{normalised!r}, not {kind!r}. A keyword counter grants its keyword "
+            f"(122.1c) and the lookup is exact, so {kind!r} would be an inert tally"
+        )
+
+
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -1633,6 +1696,16 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             validate_value(effect[key], f"{where}.{key}")
     if "condition" in effect:
         validate_condition(effect["condition"], f"{where}.condition")
+    # Every op that names a counter kind spells it `counter` -- `add_counters`,
+    # `remove_counters`, `move_counters` -- so this is checked once here rather
+    # than per op, and the next op to grow one is covered before it is written.
+    if "counter" in effect:
+        _check_counter_kind(effect["counter"], f"{where}.counter")
+    # `return_from_graveyard`'s "return it with a lifelink counter on it" spells
+    # the same thing as a kind-keyed map, so both spellings are covered.
+    if isinstance(effect.get("counters"), Mapping):
+        for kind in effect["counters"]:
+            _check_counter_kind(kind, f"{where}.counters")
 
     if "target" in effect and str(effect["target"]) not in target_ids:
         raise DslError(
