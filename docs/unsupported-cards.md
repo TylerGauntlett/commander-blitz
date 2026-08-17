@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**20 cards** blocked by **23** capabilities.
+**19 cards** blocked by **22** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [saga](#saga) | 1 | 7121 | engine |
 | [unblockable](#unblockable) | 1 | 18 | op |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
-| [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
 
 ## ability-activated-trigger
@@ -349,22 +348,6 @@ Blocks **1** card.
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
   - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
-## ward
-
-Blocks **1** card.
-
-- **(keyword)** Ward {N} as a keyword the keyword system can actually carry, i.e. a keyword that holds a cost parameter (`ward {1}`, `ward {2}`, and eventually `ward-Sacrifice a creature`) rather than a bare word. Concretely: a `Keyword.WARD` variant whose instances carry a `Cost`, stored per object alongside the plain keyword set, plus the rules-supplied triggered ability that reads it -- one `becomes_target` trigger with `controller: "opponent"` whose `may`/`pay` uses *that object's* ward cost and whose `else` counters `{"binding": "sid"}`. Once a keyword can carry a cost, ward stops being a per-card hand-written trigger and starts being grantable like every other keyword.
-  <br>Why the existing vocabulary won't do: `reference.keywords` has no `ward` entry of any kind, and it cannot get one as things stand: `KNOWN_KEYWORDS` is `frozenset(k.value for k in Keyword)` (loader.py:39), a set of bare strings validated by exact match at loader.py:251, so a keyword has nowhere to put the `{1}`. `proxy.py:323` states the position outright -- "Ward {2}", "Protection from red" and "Annihilator 2" are not in `Keyword` at all and deliberately fall through to the residual. The engine's two shipped wards are both bespoke per-card triggers hosted on the warded permanent itself (`carddef.CLOAK_WARD` for cloak, and Vein Ripper's `Ward-Sacrifice a creature.` in data/cards/auto/templates.cards.json), which is exactly the shape that does not generalise to handing ward to somebody else.
-- **(static_effect)** A static that grants ward *with its cost* to a filtered set -- either `grant_keyword` extended to accept a parameterised keyword (`{"effect": "grant_keyword", "keywords": [{"ward": "{1}"}], "affects": {...}}`), or the general form this is one instance of: a static continuous effect that gives a filtered set of permanents a *triggered ability* defined on the granting card, the continuous counterpart of the one-shot `grant_ability` op. Either way the granted ability must end up on the recipient, so it fires from the warded creature and resolves on its own once triggered.
-  <br>Why the existing vocabulary won't do: The `static_effects` list has `grant_keyword`, and its `keywords` is a plain list of bare keyword names -- no slot for the `{1}`, and no ward name to put there (see the need above). `protection` is the nearest parameterised static and is the wrong ability: protection can't-be-targeted-by is not a triggered tax, and it also prevents damage and blocking. `grant_ability` looks like the escape hatch and is not one: it is an `ops` entry, a one-shot that fires when something resolves, so from an ETB trigger it would miss every Human that enters later and would keep granting after the Vanguard died -- and card-dsl.md is explicit that only *triggered* abilities may be granted and that a granted static has no place in the characteristics pipeline. Hosting the ward trigger on the Vanguard instead (a `becomes_target` trigger with `controller: "opponent"` and a filter of `{"controller": "you", "subtypes": ["Human"], "exclude_self": true}`) is the tempting approximation and is refused here because it puts the ability on the wrong object: the trigger's source would be the Vanguard rather than the targeted Human, so an opponent who answers the ward trigger by removing the Vanguard escapes a tax that the printed card -- whose ability belongs to the creature being targeted -- still collects. The `+1/+0` half of the line is expressible on its own as a `buff` static over `{"controller": "you", "subtypes": ["Human"], "exclude_self": true}`, but it shares one printed sentence with the ward clause, so shipping it alone would claim a line it only half implements.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Coppercoat Vanguard** (rank 4062) — `coppercoat_vanguard`
-  - Each other Human you control gets +1/+0 and has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)
 
 </details>
 

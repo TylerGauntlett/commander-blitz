@@ -256,12 +256,26 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                 continue
             yield obj, ability
 
+    # "Each other Human you control ... has ward {1}." A continuous effect whose
+    # product is a *triggered ability*, so this is where it is read -- once for
+    # the whole battlefield, because `granted_wards` is asked on every event and
+    # an ordinary board has no ward static at all.
+    from .characteristics import granted_wards
+
+    wards = granted_wards(state)
+
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
         if obj is None:
             continue
         seen.add(oid)
         yield from emit_from(obj, Zone.BATTLEFIELD)
+        # Yielded with `obj` as the source, and that is the whole point of
+        # granting ward this way rather than hosting one filtered trigger on the
+        # granter: the ability belongs to the creature being targeted, so an
+        # opponent who answers the trigger by killing the granter still pays.
+        for ability in wards.get(oid, ()):
+            yield obj, ability
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.

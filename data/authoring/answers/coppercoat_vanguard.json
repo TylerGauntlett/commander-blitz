@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "coppercoat_vanguard",
+    "name": "Coppercoat Vanguard",
+    "oracle_text": "Each other Human you control gets +1/+0 and has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Each other Human you control gets +1/+0.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "subtypes": ["Human"],
+          "exclude_self": true
+        },
+        "power": { "const": 1 }
+      },
+      {
+        "kind": "static",
+        "text": "Each other Human you control has ward {1}.",
+        "effect": "ward",
+        "affects": {
+          "controller": "you",
+          "subtypes": ["Human"],
+          "exclude_self": true
+        },
+        "cost": { "mana": "{1}" }
+      }
+    ]
+  },
+  "expectation": { "zone": "battlefield" }
+}
