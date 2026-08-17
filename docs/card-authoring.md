@@ -232,8 +232,15 @@ missing *subsystem* and turned out to be one boolean and one branch, because
 "Not implemented" in a coverage doc is a measurement of what was tried, not of
 what is hard.
 
-Still outstanding: **Crew** (74), **Convoke** (39), **Ward** (41), and
-**modal spells** (153).
+Still outstanding: **Crew** (74), **Convoke** (39), and **modal spells** (153).
+
+**Ward** is done, and it is the second entry on this list to be smaller than its
+count suggested. Ward-on-yourself had shipped for years as a hand-written
+`becomes_target` trigger; what was missing was that a keyword could not carry a
+cost, so ward could never be *granted* to anything. It became a static, the way
+protection already had — see [rules-coverage.md](rules-coverage.md) — and the
+template tier still harvests none of them, because a parameterised keyword is
+refused by `_keywords_in` by design.
 
 Modal is the one that looks cheap and is not. `choose_mode` exists, but modes are
 chosen *on resolution* while targets are chosen *at cast*, and a card whose first

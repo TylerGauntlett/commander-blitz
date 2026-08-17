@@ -52812,12 +52812,12 @@
     },
     "Coppercoat Vanguard": {
       "edhrec_rank": 4062,
-      "gate": "template",
+      "gate": null,
       "name": "Coppercoat Vanguard",
-      "reason": "no template for: Each other Human you control gets +1/+0 and has ward {1}",
+      "reason": "",
       "scryfall_id": "23165275-505c-4fe7-ad2e-4e522bdb014a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Copperhoof Vorrac": {

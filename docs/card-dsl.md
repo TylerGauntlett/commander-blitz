@@ -1194,7 +1194,7 @@ characteristics — the loader rejects anything else. See
 ```
 
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
-`block_restriction` · `prevent_damage` ·
+`block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
 `extra_land_drops`, plus the player-wide ones below.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
@@ -1229,6 +1229,58 @@ Arixmethes is "a land (it's not a creature)", which `add_subtype` cannot say. A
   "power":     { "count": { "controller": "you", "types": ["Land"] } },
   "toughness": { "count": { "controller": "you", "types": ["Land"] } } }
 ```
+
+### Ward with a cost
+
+```jsonc
+// printed on the creature itself
+{ "kind": "static", "effect": "ward", "affects": { "self_only": true },
+  "cost": { "mana": "{2}" } }
+
+// "Each other Human you control ... has ward {1}."  Coppercoat Vanguard
+{ "kind": "static", "effect": "ward",
+  "affects": { "controller": "you", "subtypes": ["Human"], "exclude_self": true },
+  "cost": { "mana": "{1}" } }
+```
+
+Ward is a static for the reason `protection` is: it is parameterised, and a
+`Keyword` is a bare string with nowhere to put the `{1}`. Its `cost` is an
+ordinary [`pay` spec](#you-may-pay-2-if-you-do), the same mapping `may` charges
+and validated through the same `CostModel` — so `{"sacrifice": {...}}` is Vein
+Ripper's "Ward — Sacrifice a creature" and needs nothing the mana form does not.
+**A ward with no `cost` is a load error**: ward {0} taxes nothing, can never be
+declined, and would print on the card while doing nothing at all.
+
+Do **not** write the trigger out by hand. The reminder text — "whenever it
+becomes the target of a spell or ability an opponent controls, counter it unless
+that player pays…" — is the rules speaking, not the card, so
+`carddef.ward_ability` builds it: one interned `becomes_target` trigger per
+distinct cost, with `may` routed to `{"binding": "event_player"}` (the *caster*)
+and `counter` of `{"binding": "sid"}` in the `else`.
+
+**The `affects` filter is what makes this a keyword rather than an anthem, and
+the difference is which permanent owns the trigger.** The tempting shortcut is a
+single `becomes_target` trigger on the Vanguard filtered to Humans you control.
+It loads, and in a duel it looks identical — and it is a weaker card: 603.2d puts
+the ward trigger on the stack as the removal spell is cast, so the opponent holds
+priority with it sitting there, and if the trigger's source is the Vanguard then
+killing the Vanguard is an answer to the tax. The printed ability belongs to the
+creature being targeted. So `characteristics.granted_wards` decides who has ward
+and `triggers._candidate_abilities` yields the trigger with the **warded**
+permanent as its source; the ability is addressed by a negative `ability_index`
+into the rules' own table, so it resolves without asking the board whether the
+granter is still there.
+
+`grant_ability` is not a substitute and card-dsl says so elsewhere: it is an
+`ops` entry, a one-shot, so from an enters-the-battlefield trigger it would miss
+every Human that arrives later and keep granting after the Vanguard died.
+
+*Simplification*: a face-down permanent is never granted ward. The rules would
+grant it (707.2 removes the abilities of the *card*, not ones an effect hands
+over), but a static's filter reads the printed face, so "each other Human you
+control" would reach through the shell and the trigger would announce what is
+under it. `chars` already makes exactly this trade. Cloak's own ward {2} is
+unaffected — it comes from the cloak rule rather than from a static.
 
 ### "+1/+1 for each charge counter on this artifact"
 
@@ -2402,7 +2454,11 @@ else — the second sentence is 701.34c verbatim, which manifest already ships. 
 **The ward cannot come from the card.** Rule 707.2 says a face-down permanent
 has no abilities, and the card underneath is usually not even a creature. The
 cloak *rule* grants it, so the engine carries it: `carddef.CLOAK_WARD`, beside
-`BESTOW_TARGET`, which is a rules-supplied target for the same reason.
+`BESTOW_TARGET`, which is a rules-supplied target for the same reason. It is now
+literally `ward_ability({"mana": "{2}"})` — the same interned trigger every other
+[ward](#ward-with-a-cost) uses, since cloak's ward and a granted one are one
+ability at one price and were two only while the keyword had nowhere to put a
+cost.
 
 Written as a plain `manifest` the card loads, plays and looks right, and its
 cloaked permanents are free to remove — which is most of what the keyword is
@@ -2412,7 +2468,9 @@ Two readers had to learn about it, and missing either is silent:
 `triggers._candidate_abilities`, which skips a face-down permanent's abilities
 wholesale, and `stack.ability_of`, which resolves an ability *by index* off the
 source's card — index 0 on a cloaked permanent runs whatever the hidden card
-prints first.
+prints first. The second is no longer a cloak special case: every rules-supplied
+ability carries a negative index and `ability_of` answers all of them the same
+way, without reading the board.
 
 ## "For each player, up to one target permanent that player controls"
 
