@@ -17,7 +17,7 @@ from collections.abc import Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
-from ..enums import CardType, Zone
+from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from .context import EffectContext, ask_objects
 
@@ -27,6 +27,12 @@ if TYPE_CHECKING:  # pragma: no cover
 #: Card types a selector may name.  Derived from the enum rather than imported
 #: from ``cards.loader``, which imports this module.
 KNOWN_TYPES = frozenset(t.value for t in CardType)
+
+#: Supertypes a selector may name, from the enum for the same reason.  There are
+#: three of them, which is what makes a typo here so much worse than a typo in a
+#: subtype: ``not_supertypes: ["basic"]`` forbids nothing at all, and a Field of
+#: Ruin that will happily destroy a Mountain is a different card.
+KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 
 #: Every key a selector may contain.  The loader validates against this set, so a
 #: misspelled key is a load-time error rather than a silently ignored filter.
@@ -66,6 +72,17 @@ SELECTOR_KEYS = frozenset(
         "subtypes",
         "not_subtypes",
         "supertypes",
+        #: "Destroy target **nonbasic** land an opponent controls" -- Field of
+        #: Ruin, Ghost Quarter, Tectonic Edge.  A supertype the permanent must
+        #: *lack*, which `supertypes` cannot say: it is a positive subset test,
+        #: so it can require Basic and never forbid it.
+        #:
+        #: `not_subtypes` over the five basic land types is not the same filter
+        #: and the difference is the whole card: it would spare every nonbasic
+        #: land that carries a basic land type -- Hallowed Fountain, Murmuring
+        #: Bosk, Dryad Arbor -- which is exactly what these cards are printed to
+        #: answer.  `mana_value` cannot separate them either; both are 0.
+        "not_supertypes",
         "colors",
         "not_colors",
         "keywords",
@@ -462,6 +479,11 @@ def matches(
         return False
     if (want := selector.get("supertypes")) and not set(want).issubset(supertypes):
         return False
+    # Read off `supertypes` above, which is *derived* on the battlefield -- so a
+    # land that a Blood Moon-shaped effect had made basic would stop being a
+    # legal target, and one that gained Snow would still be one.
+    if (want := selector.get("not_supertypes")) and set(want) & supertypes:
+        return False
     if (want := selector.get("colors")) and not (set(want) & colors):
         return False
     if (want := selector.get("not_colors")) and set(want) & colors:
@@ -769,6 +791,16 @@ def validate_selector(selector: Any, where: str) -> None:
         for name in selector.get(key) or ():
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    # Same argument, and sharper for the negated key: a misspelled *positive*
+    # supertype selects nothing and is visible on the first board, where a
+    # misspelled `not_supertypes` excludes nothing and looks like it worked.
+    for key in ("supertypes", "not_supertypes"):
+        for name in selector.get(key) or ():
+            if name not in KNOWN_SUPERTYPES:
+                raise DslError(
+                    f"{where}: unknown supertype {name!r} in {key!r} "
+                    f"(known: {sorted(KNOWN_SUPERTYPES)})"
+                )
     branches = selector.get("any_of")
     if branches is not None:
         if not isinstance(branches, (list, tuple)) or len(branches) < 2:

@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
-| [nonbasic-permanent-selector](#nonbasic-permanent-selector) | 1 | 890 | selector |
 | [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
 | [optional-pool-choice](#optional-pool-choice) | 1 | 6835 | selector |
 | [permanents-entered-this-turn](#permanents-entered-this-turn) | 1 | 4513 | value |
@@ -356,20 +355,6 @@ Blocks **1** card.
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
   - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
-## nonbasic-permanent-selector
-
-Blocks **1** card.
-
-- **(selector)** A selector key that excludes a supertype -- `not_supertypes: ["Basic"]` -- so a target spec can say "nonbasic land": a permanent with the Land type that does not have the Basic supertype. Mirror of the existing positive `supertypes` check, and it must apply in target legality (a target spec's `selector`) as well as in `objects`, since this card targets.
-  <br>Why the existing vocabulary won't do: `selector_keys` carries `supertypes`, but it is a positive subset test only (`if (want := selector.get("supertypes")) and not set(want).issubset(supertypes)`), so it can require Basic and can never forbid it. The negative keys that do exist are `not_types`, `not_subtypes`, `not_colors` and `not_keywords` -- there is no `not_supertypes`, and grepping the repo finds zero occurrences of one. Approximating with `not_subtypes: ["Plains", "Island", "Swamp", "Mountain", "Forest", "Wastes"]` is a different card: it would wrongly protect every nonbasic land that carries a basic land type (Hallowed Fountain, Murmuring Bosk, Dryad Arbor) -- exactly the dual lands Field of Ruin is printed to answer -- while a Snow-Covered Forest, which is Basic and must be illegal, is only excluded by coincidence of subtype. `mana_value` cannot separate them either, since both basic and nonbasic lands have mana value 0.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Field of Ruin** (rank 890) — `field_of_ruin`
-  - {2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. Each player searches their library for a basic land card, puts it onto the battlefield, then shuffles.
 
 </details>
 

@@ -163,6 +163,7 @@ Every key is optional; all present keys must match.
   "not_types": ["Artifact"],
   "subtypes": ["Vampire"],        // any one is enough
   "supertypes": ["Basic"],
+  "not_supertypes": ["Basic"],    // "target NONBASIC land" -- see below
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
@@ -242,6 +243,36 @@ Both keys are validated against the card types the engine knows, because a typo
 narrows a selector silently rather than failing: "artifact or enchantmnet" would
 quietly become "artifact". `any_types` with a single entry is also refused —
 `types` already says that, and two spellings of one filter is how they drift.
+
+`not_supertypes` is "destroy target **nonbasic** land" — Field of Ruin,
+Wasteland, Ruination. `supertypes` cannot say it: it is a positive subset test,
+so it can *require* Basic and never forbid it, and the negated family it joins
+(`not_types`, `not_subtypes`, `not_colors`, `not_keywords`) had no supertype
+member.
+
+Spelling "nonbasic" as `not_subtypes` over the five basic land types is the
+approximation to refuse, and the difference is the whole card: it spares every
+nonbasic land that carries a basic land type — Hallowed Fountain, Murmuring
+Bosk, Dryad Arbor — which is exactly the mana base these cards are printed to
+answer. It gets the other half right only by accident, too: Wastes is Basic with
+no subtype at all, so the subtype list would destroy a land the printed card
+protects. `mana_value` separates nothing here; every land is 0.
+
+Supertypes are validated against the three the engine knows, for a sharper
+version of the reason types are. A misspelled *positive* supertype selects
+nothing and is obvious on the first board; a misspelled negation forbids nothing
+and looks like it worked, so `not_supertypes: ["basic"]` would be a Field of Ruin
+that happily destroys a Mountain.
+
+It is honoured everywhere a selector is *validated*: an effect's `objects`, a
+target spec's `selector` (`targeting.candidates` and the `still_legal` re-check
+on resolution) and a trigger `filter`. It is deliberately **not** in
+`STATIC_FILTER_KEYS`. Every printed card that wants a static "nonbasic lands …"
+is blocked on a missing static *effect* rather than on the filter — Blood Moon
+and Magus of the Moon need a type-changing continuous effect, Back to Basics and
+Winter Moon an untap restriction, Archon of Emeria a filtered enters-tapped
+replacement — so the key would have nothing to attach to and no card to prove
+itself on.
 
 `any_of` is the same idea one level up, for where there is no single clause to
 widen. Stumpsquall Hydra distributes counters "among **it and any number of
