@@ -2875,13 +2875,53 @@ three rules that hang off it:
 Every static filtered on `controller` reads differently afterwards, so the
 characteristics cache is dropped with it.
 
-**There is no until-end-of-turn form**, and the loader *refuses* a `duration`
-key rather than ignoring one. Act of Treason written as a permanent steal is a
-strictly better card than the printed one, and it would load clean.
-
 `control_changed` is its own event for the same reason: every other way a
 permanent arrives on somebody's side of the board is a zone change, and a log
 built from zone changes alone would show a creature silently swapping sides.
+
+### …until end of turn
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "until_end_of_turn" }
+```
+
+Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
+default, and what every card written before this meant) or
+`"until_end_of_turn"`; **any other spelling is a load error**, which is the
+older refusal kept rather than removed. A `duration` the engine does not read
+would be understood as "until end of turn" by whoever wrote it and turn Act of
+Treason into a permanent steal — a strictly better card than the printed one,
+loading clean.
+
+The temporary form is the same call plus a `TempEffect(kind="control")` on the
+permanent recording the seat it came from, and the cleanup step **re-enters
+`change_control`** pointed the other way. That is the design, not an
+implementation detail: a control change is three rules, and every one of them
+applies coming home as well as going out.
+
+| | |
+|---|---|
+| **302.6** | the permanent has not been under its *original* controller continuously since their turn began either, because the thief had it in between. `entered_turn` is stamped with the handback, not restored to what it was before the steal |
+| **506.4** | the handback removes it from combat too. Structural rather than observable — `state.combat` is `None` by the cleanup step — and it costs one branch in a call already being made |
+| the cache | a creature stolen under an anthem is 3/3 going out and 2/2 coming back, so the drop happens in both directions |
+
+Which permanent goes back to whom is three more refusals:
+
+- one that **left the battlefield** during the turn is not resurrected —
+  `clear_until_eot` walks `state.battlefield`, and `reset_permanent_state`
+  empties `until_eot` on the way out, which is what makes stealing a creature
+  and sacrificing it a real line;
+- **two steals in one turn unwind newest-first**, or the first handback finds
+  the wrong controller and stops one seat from home;
+- a **permanent** control change made afterwards **outlives** this one, so the
+  stored seat is checked against the current controller rather than trusted.
+  Mind Control on a creature somebody already Act of Treason'd does not
+  evaporate at end of turn.
+
+The other two clauses of the printed sentence need nothing new: "untap that
+permanent" is `untap` on the same `{"target": "t1"}`, and "it gains haste until
+end of turn" is `grant_keyword`.
 
 ## "Its activated abilities can't be activated this turn"
 

@@ -7661,6 +7661,17 @@
   "zagoth_triome": {
     "zone": "battlefield"
   },
+  "zealous_conscripts": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "zealous_guardian": {
     "zone": "battlefield"
   },

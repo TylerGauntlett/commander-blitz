@@ -2478,13 +2478,65 @@ from zone changes alone would show a creature silently swapping sides. The card
 slides between battlefield rows with nothing behind it, which reads as a
 rendering glitch rather than a play.
 
-### What was deliberately refused
+### What was deliberately refused, and then built
 
-**There is no until-end-of-turn form**, and `loader` raises on a `duration` key
+**There was no until-end-of-turn form**, and `loader` raised on a `duration` key
 rather than ignoring one. A `duration` that loads and does nothing turns Act of
 Treason into a permanent steal — a strictly better card than the printed one,
-and one that would pass every gate. The temporary form needs a continuous-effect
-layer and a cleanup-step handback, and it is still listed as not implemented.
+and one that would pass every gate. That refusal was right for as long as the
+alternative was a silent one; it is not an argument that the card should not
+exist, and Zealous Conscripts is the card that came asking.
+
+## Gaining control until end of turn
+
+### Overview
+
+"When this creature enters, gain control of target permanent until end of turn.
+Untap that permanent. It gains haste until end of turn." Zealous Conscripts, and
+behind it Act of Treason, Threaten, Harness by Force, Mark of Mutiny, Kari Zev's
+Expertise and Insurrection. The other two clauses were already expressible; this
+op was the whole blocker for the family.
+
+`duration` on `gain_control`, spelled `permanent` (the default, so nothing
+already shipped moved) or `until_end_of_turn`. The loader guard is **kept** and
+narrowed rather than removed: every other spelling is still a load error, for the
+same reason it always was.
+
+### The handback is the feature
+
+The steal was already written. What is new is one `TempEffect(kind="control")`
+holding the two seats, and a pass in `clear_until_eot` that re-enters
+`change_control` pointed the other way. It is a re-entry and not an assignment to
+`controller` because a control change is three rules, and none of them is
+symmetric with itself:
+
+| | |
+|---|---|
+| **302.6** | it has not been under its *original* controller continuously since their turn began either — somebody else had it in between. The tidy wrong version saves `entered_turn` with the controller and restores both, which hands back a creature that is not newly under its controller's control |
+| **506.4** | structural rather than observable: `state.combat` is `None` by the cleanup step, so no turn structure this engine has reaches a handback mid-combat. It is one branch inside a call being made anyway, and the alternative is a rule that holds only until somebody adds a phase |
+| the cache | fully observable, and the one a hand-rolled handback loses outright: a creature stolen under an anthem is 3/3 going out and has to be 2/2 coming back |
+
+### Which handback, which seat
+
+Three ways to give the wrong permanent to the wrong player, and the store answers
+each:
+
+- **A permanent that left the battlefield is not resurrected.** Free:
+  `clear_until_eot` walks `state.battlefield`, and `reset_permanent_state` empties
+  `until_eot` on the way out. Act of Treason plus a sacrifice outlet depends on it.
+- **Two steals unwind newest-first.** Both effects end in the same step; undone
+  oldest-first the first handback finds the wrong controller and stops, leaving
+  the permanent one seat from home.
+- **A later *permanent* steal outlives this one.** The stored seat is validated
+  against the current controller rather than trusted, so Mind Control cast on a
+  creature somebody already Act of Treason'd does not evaporate at end of turn.
+
+### Ordering inside the cleanup step
+
+Rule 514.2 wipes damage and ends "until end of turn" effects in one turn-based
+action, so the handback happens in the same pass that zeroes damage, and the
+`control_changed` it fires is a trigger like any other — which is 514.3a, the
+rule that makes the cleanup step repeat.
 
 ## The discard trigger — an event that was fired but never listened to
 

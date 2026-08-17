@@ -44,7 +44,8 @@ class TempEffect:
     ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``,
     ``"lock_abilities"`` ("its activated abilities can't be activated this
     turn"), ``"ability"`` (a whole triggered or activated ability granted by
-    another permanent), or ``"animate"`` ("becomes a 4/4 creature until end of
+    another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
+    turn"), or ``"control"`` ("gain control of target permanent until end of
     turn").  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
@@ -52,6 +53,15 @@ class TempEffect:
     ``animate`` is the only kind that touches *base* characteristics, which is
     why ``power``/``toughness`` mean something different for it than they do for
     a pump: a pump's are a delta, an animation's are the value itself.
+
+    ``control`` is the odd one out in the other direction: every other kind is
+    read by ``chars`` while it lasts and does nothing when it ends, and this one
+    is read by nobody and does all its work *at the end*.  ``change_control``
+    has already moved the permanent by the time the entry exists; what the entry
+    holds is the two seats the cleanup step needs in order to give it back, and
+    it is stored here rather than in a list of its own because ``until_eot`` is
+    already emptied by ``reset_permanent_state`` when a permanent leaves the
+    battlefield -- which is exactly the handback that must not happen.
     """
 
     kind: str
@@ -68,6 +78,13 @@ class TempEffect:
     types: tuple[str, ...] = ()
     subtypes: tuple[str, ...] = ()
     colors: tuple[str, ...] = ()
+    #: For ``kind == "control"``: who controlled the permanent before the steal,
+    #: and who the steal handed it to.  **Both**, because the handback is
+    #: conditional on the second: an effect that gave control to A has nothing
+    #: to end if B has since taken the permanent off A permanently, and handing
+    #: it to the original controller then would undo somebody else's card.
+    previous_controller: int | None = None
+    new_controller: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -79,6 +96,8 @@ class TempEffect:
             "types": list(self.types),
             "subtypes": list(self.subtypes),
             "colors": list(self.colors),
+            "previous_controller": self.previous_controller,
+            "new_controller": self.new_controller,
         }
 
 
@@ -86,6 +105,14 @@ class TempEffect:
 #: sentence each one is.  Kept beside the class rather than as an enum because
 #: every other duration in the DSL is a bare string a card file writes.
 ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
+
+#: The two durations a control change can carry -- Captivating Vampire's steal
+#: and Act of Treason's.  Spelled the way ``grant_keyword``'s pair is, because
+#: it is the same distinction on a different field, and enumerated rather than
+#: defaulted for a harsher reason than most: a misread ``"until_end_of_turn"``
+#: is a *permanent* steal, which is the strictly better card the loader has
+#: always refused to let anybody write by accident.
+CONTROL_DURATIONS = ("permanent", "until_end_of_turn")
 
 
 @dataclass(frozen=True)

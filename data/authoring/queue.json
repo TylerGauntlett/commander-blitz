@@ -319372,12 +319372,12 @@
     },
     "Zealous Conscripts": {
       "edhrec_rank": 2341,
-      "gate": "template",
+      "gate": null,
       "name": "Zealous Conscripts",
-      "reason": "no template for: When this creature enters, gain control of target permanent until end of turn. Untap that ",
+      "reason": "",
       "scryfall_id": "78d6c026-c7ea-48e9-8125-19d55d407642",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zealous Display": {

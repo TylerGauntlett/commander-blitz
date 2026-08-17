@@ -1230,6 +1230,81 @@
       "toughness": 2
     },
     {
+      "id": "t_treason",
+      "name": "Test Treason",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_control",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "until_end_of_turn"
+        },
+        {
+          "op": "untap",
+          "objects": {
+            "target": "t1"
+          }
+        },
+        {
+          "op": "grant_keyword",
+          "keyword": "haste",
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_permanent_steal",
+      "name": "Test Mind Control",
+      "oracle_text": "Gain control of target creature.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_control",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
       "id": "t_big",
       "name": "Test Giant",
       "mana_cost": "{5}{G}",
