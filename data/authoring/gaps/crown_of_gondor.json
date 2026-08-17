@@ -1,0 +1,31 @@
+{
+  "card_id": "crown_of_gondor",
+  "name": "Crown of Gondor",
+  "oracle_text": "Equipped creature gets +1/+1 for each creature you control.\nWhen a legendary creature you control enters, if there is no monarch, you become the monarch.\nEquip {4}. This ability costs {3} less to activate if you're the monarch.",
+  "blocked_sentences": [
+    "When a legendary creature you control enters, if there is no monarch, you become the monarch",
+    "Equip {4}. This ability costs {3} less to activate if you're the monarch"
+  ],
+  "needs": [
+    {
+      "capability": "monarch",
+      "kind": "engine",
+      "what": "The monarch designation as game state: at most one player is the monarch at a time, that player draws a card at the beginning of their end step, and a player becomes the monarch whenever a creature they control deals combat damage to the monarch. Needs the designation stored on GameState (a player id or None), the two automatic behaviours above wired into the end step and the combat damage step, and two `condition_keys` entries, because this card asks the designation both ways: `is_monarch` taking a player selector for \"if you're the monarch\", and a no-argument \"there is no monarch\" test that is true exactly when the designation is unset. The second is not `{\"not\": {\"is_monarch\": \"you\"}}` -- that is also true when an opponent holds the crown, which is precisely the case this card must not fire in.",
+      "why_existing_wont_do": "`set_flag`/`has_flag` is the nearest thing and falls short three ways: `has_flag` is read off `ctx.source_oid` in `conditions.py`, so it is a per-object word on the ability's own source and cannot describe a player at all; it is not exclusive, so nothing stops both players holding it and there is no unset state to test for \"there is no monarch\"; and it is inert, so no end-step draw and no combat-damage transfer hang off it. `has_city_s_blessing` is the right *shape* -- a per-player boolean on `PlayerState`, readable from both `condition_keys` and `static_condition_keys` -- but it is one-way and non-exclusive by design (every player can ascend), which is the opposite of a designation exactly one player holds and that moves between them. Nothing in `src/` matches /monarch/."
+    },
+    {
+      "capability": "monarch",
+      "kind": "op",
+      "what": "An op that makes a player the monarch -- `become_monarch` with a player selector (\"you\" is all this card needs) -- setting the designation above and firing whatever triggers watch it change.",
+      "why_existing_wont_do": "No op in `ops` grants a player designation. `set_flag` is the closest and writes a card-scoped flag with no game-wide meaning; there is no monarch state for any op to set until the engine need above lands."
+    },
+    {
+      "capability": "conditional_cost_reduction",
+      "kind": "cost",
+      "what": "A flat cost reduction on an activated ability, gated on a condition rather than scaled by a count: \"this ability costs {3} less to activate if <condition>\". Needs an amount plus a `condition` on the same cost node, applied by `costs.ability_mana` so that `can_pay` and `pay` agree, and clamped at zero over the generic part like every other reduction.",
+      "why_existing_wont_do": "`mana_reduction` is the closest and is the wrong arithmetic: it is documented in `schema.py` as the `{\"count\": {filter}}` shape -- \"costs {1} less for each Vampire you control\" -- so it multiplies a per-object count and has no slot for a boolean condition. Writing this card's equip with it would mean finding a filter whose match count is 3 when you are the monarch and 0 otherwise, which no filter over permanents can express. The card-level `cost_reduction` field is also unusable here: `carddef.py` notes both existing reductions discount *casting a spell* and never reach the activation path an equip cost is charged on. Splitting the line into two abilities (equip {4} and equip {1}) is not available either, since nothing could turn the cheap one off when you are not the monarch."
+    }
+  ],
+  "closest_existing": ["mana_reduction", "cost_reduction", "has_city_s_blessing", "set_flag", "has_flag"],
+  "confidence": "high"
+}

@@ -2050,6 +2050,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "subtypes": [
+                  "Zombie"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            },
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Human"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, exile all Zombies, then return all Human creature cards from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_glory_s_rise",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{W}{W}",
+      "name": "Angel of Glory's Rise",
+      "oracle_text": "Flying\nWhen this creature enters, exile all Zombies, then return all Human creature cards from your graveyard to the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -5295,6 +5358,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Commander creatures you control get +2/+2 and have indestructible.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Commander creatures you control get +2/+2 and have indestructible."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bastion_protector",
+      "mana_cost": "{2}{W}",
+      "name": "Bastion Protector",
+      "oracle_text": "Commander creatures you control get +2/+2 and have indestructible.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -5898,6 +6018,80 @@
         "Giant"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Beregond or another Human you control enters, creatures you control get +1/+1 and gain vigilance until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Human"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "beregond_of_the_guard",
+      "mana_cost": "{3}{W}",
+      "name": "Beregond of the Guard",
+      "oracle_text": "Whenever Beregond or another Human you control enters, creatures you control get +1/+1 and gain vigilance until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -17525,6 +17719,43 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "distant_melody",
+      "mana_cost": "{3}{U}",
+      "name": "Distant Melody",
+      "oracle_text": "Choose a creature type. Draw a card for each permanent you control of that type.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "choose_type",
+          "prompt": "Choose a creature type"
+        },
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "count": "all",
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -20028,6 +20259,226 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "W"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "from_colors": [
+                    "W"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "U"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "from_colors": [
+                    "U"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "B"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "from_colors": [
+                    "B"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "R"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "from_colors": [
+                    "R"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "colors": [
+                    "G"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "from_colors": [
+                    "G"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "power": {
+                  "op": ">",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Éowyn enters, exile target creature an opponent controls with greater power. Legendary creatures you control gain protection from each of that creature's colors until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "eowyn_fearless_knight",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}{W}",
+      "name": "Éowyn, Fearless Knight",
+      "oracle_text": "Haste\nWhen Éowyn enters, exile target creature an opponent controls with greater power. Legendary creatures you control gain protection from each of that creature's colors until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -20084,6 +20535,65 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Erkenbrand or another Human you control enters, creatures you control get +1/+0 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Human"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "erkenbrand_lord_of_westfold",
+      "mana_cost": "{3}{R}",
+      "name": "Erkenbrand, Lord of Westfold",
+      "oracle_text": "Whenever Erkenbrand or another Human you control enters, creatures you control get +1/+0 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -21724,6 +22234,82 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may exile another target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "fiend_hunter",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Fiend Hunter",
+      "oracle_text": "When this creature enters, you may exile another target creature.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -25473,6 +26059,84 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another legendary creature you control enters, put a +1/+1 counter on Gimli.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Gimli deals combat damage to a player, create a Treasure token.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gimli_of_the_glittering_caves",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Gimli of the Glittering Caves",
+      "oracle_text": "Double strike\nWhenever another legendary creature you control enters, put a +1/+1 counter on Gimli.\nWhenever Gimli deals combat damage to a player, create a Treasure token.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -42134,6 +42798,37 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mass_appeal",
+      "mana_cost": "{2}{U}",
+      "name": "Mass Appeal",
+      "oracle_text": "Draw a card for each Human you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "count": "all",
+              "subtypes": [
+                "Human"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -69133,6 +69828,37 @@
     },
     {
       "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "supreme_verdict",
+      "mana_cost": "{1}{W}{W}{U}",
+      "name": "Supreme Verdict",
+      "oracle_text": "This spell can't be countered.\nDestroy all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ],
+      "uncounterable": true
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -72418,6 +73144,73 @@
       "subtypes": [
         "Human",
         "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Théoden or another Human you control enters, target creature gains double strike until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Human"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "theoden_king_of_rohan",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Théoden, King of Rohan",
+      "oracle_text": "Whenever Théoden or another Human you control enters, target creature gains double strike until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
       ],
       "supertypes": [
         "Legendary"

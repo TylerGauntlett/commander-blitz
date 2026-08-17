@@ -8482,12 +8482,12 @@
     },
     "Angel of Glory's Rise": {
       "edhrec_rank": 7645,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Glory's Rise",
-      "reason": "no template for: When this creature enters, exile all Zombies, then return all Human creature cards from yo",
+      "reason": "",
       "scryfall_id": "1865ab25-b01a-4e2c-bf19-ffcb0806358f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Grace": {
@@ -21412,12 +21412,12 @@
     },
     "Bastion Protector": {
       "edhrec_rank": 937,
-      "gate": "template",
+      "gate": null,
       "name": "Bastion Protector",
-      "reason": "no template for: Commander creatures you control get +2/+2 and have indestructible",
+      "reason": "",
       "scryfall_id": "07226d56-35ae-46af-bb6e-20b568f87652",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bat Colony": {
@@ -23922,12 +23922,12 @@
     },
     "Beregond of the Guard": {
       "edhrec_rank": 5324,
-      "gate": "template",
+      "gate": null,
       "name": "Beregond of the Guard",
-      "reason": "no template for: Whenever Beregond or another Human you control enters, creatures you control get +1/+1 and",
+      "reason": "",
       "scryfall_id": "6aad41a6-e894-43f8-a4b5-abc206836306",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Berg Strider": {
@@ -70022,12 +70022,12 @@
     },
     "Distant Melody": {
       "edhrec_rank": 641,
-      "gate": "template",
+      "gate": null,
       "name": "Distant Melody",
-      "reason": "no template for: Choose a creature type. Draw a card for each permanent you control of that type",
+      "reason": "",
       "scryfall_id": "f1d7e8c9-0936-47eb-8996-309e7a7edcad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Distant Memories": {
@@ -84942,12 +84942,12 @@
     },
     "Erkenbrand, Lord of Westfold": {
       "edhrec_rank": 7967,
-      "gate": "template",
+      "gate": null,
       "name": "Erkenbrand, Lord of Westfold",
-      "reason": "no template for: Whenever Erkenbrand or another Human you control enters, creatures you control get +1/+0 u",
+      "reason": "",
       "scryfall_id": "38f81e68-cddd-47f4-b1d1-a297c3298c25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Erode": {
@@ -93772,12 +93772,12 @@
     },
     "Fiend Hunter": {
       "edhrec_rank": 3867,
-      "gate": "template",
+      "gate": null,
       "name": "Fiend Hunter",
-      "reason": "no template for: When this creature enters, you may exile another target creature",
+      "reason": "",
       "scryfall_id": "2b497736-e502-4e0c-b5dc-6ce5e9e8d4ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiend of the Shadows": {
@@ -108762,12 +108762,12 @@
     },
     "Gimli of the Glittering Caves": {
       "edhrec_rank": 3506,
-      "gate": "template",
+      "gate": null,
       "name": "Gimli of the Glittering Caves",
-      "reason": "no template for: Whenever another legendary creature you control enters, put a +1/+1 counter on Gimli",
+      "reason": "",
       "scryfall_id": "5afc0319-9e17-4e81-a0b6-e76645bacb04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gimli's Axe": {
@@ -167462,12 +167462,12 @@
     },
     "Mass Appeal": {
       "edhrec_rank": 7168,
-      "gate": "template",
+      "gate": null,
       "name": "Mass Appeal",
-      "reason": "no template for: Draw a card for each Human you control",
+      "reason": "",
       "scryfall_id": "dfe9ae51-fd2b-45ca-a780-725f51f897b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mass Calcify": {
@@ -268582,12 +268582,12 @@
     },
     "Supreme Verdict": {
       "edhrec_rank": 477,
-      "gate": "template",
+      "gate": null,
       "name": "Supreme Verdict",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "3892f1c5-937e-4ef4-b6f9-e0c0ded070d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Supreme Will": {
@@ -284322,12 +284322,12 @@
     },
     "Théoden, King of Rohan": {
       "edhrec_rank": 4592,
-      "gate": "template",
+      "gate": null,
       "name": "Théoden, King of Rohan",
-      "reason": "no template for: Whenever Théoden or another Human you control enters, target creature gains double strike ",
+      "reason": "",
       "scryfall_id": "f6dcd1ca-4943-46e4-bb5d-c14949e21e23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tiamat": {
@@ -320942,12 +320942,12 @@
     },
     "Éowyn, Fearless Knight": {
       "edhrec_rank": 3146,
-      "gate": "template",
+      "gate": null,
       "name": "Éowyn, Fearless Knight",
-      "reason": "no template for: When Éowyn enters, exile target creature an opponent controls with greater power. Legendar",
+      "reason": "",
       "scryfall_id": "e5490ecc-01d2-49cf-be7a-f0f1fbfb4ee8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Éowyn, Lady of Rohan": {

@@ -1,0 +1,42 @@
+{
+  "card_id": "combat_celebrant",
+  "name": "Combat Celebrant",
+  "oracle_text": "If this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase. (An exerted creature won't untap during your next untap step.)",
+  "blocked_sentences": [
+    "If this creature hasn't been exerted this turn, you may exert it as it attacks.",
+    "When you do, untap all other creatures you control and after this phase, there is an additional combat phase."
+  ],
+  "needs": [
+    {
+      "capability": "extra_combat",
+      "kind": "engine",
+      "what": "An additional combat phase inserted after the phase now in progress, with its own postcombat main phase after it (506.1, 500.7). Needs a per-turn queue of pending extra combats on GameState (a count, or a list of {controller, phase kind} entries so \"you take an extra turn\"-adjacent and \"an additional combat phase\" both land in it), consumed by `turn.next_step`: when END_OF_COMBAT ends and the queue is non-empty, the next step is BEGIN_COMBAT again rather than POSTCOMBAT_MAIN. That is the hard part, because `Step` is an `IntEnum` of exactly 13 ordered values and `next_step` falls through to `Step(int(step) + 1)` -- the turn is a straight walk up the integers, so a repeated phase has no representation. `combat.start_combat` must also be re-entered cleanly (`state.combat` is currently nulled only at `_begin_next_turn`), attack-once-per-combat bookkeeping must reset per combat rather than per turn, and the queue must be cleared at end of turn so an unspent extra combat does not leak into the next player's turn.",
+      "why_existing_wont_do": "Nothing in `ops`, `static_effects` or the engine adds or repeats a phase. `cleanup_repeat` is the single precedent for re-entering a step and is not general: it is a bool that only ever re-enters CLEANUP (rule 514.3a) and is consumed on entry. `delay` schedules an *effect* at a later step from the fixed `DELAY_STEPS` table (`upkeep`, `draw_step`, `begin_combat`, `end_step`); it can make something happen at the one begin-combat the turn already has, but cannot create a second one. The `postcombat_main` trigger event's own docstring in `turn.py` says \"an extra combat gives an extra postcombat main\" -- the firing site was written per-phase in anticipation of this, but the phase it anticipates does not exist yet. Approximating with `untap` plus a second attack is not available either: there is no way to re-open a declare-attackers decision inside one combat."
+    },
+    {
+      "capability": "extra_combat",
+      "kind": "op",
+      "what": "A resolution-time op -- `extra_combat`, with an optional `amount` value and an optional `controller` selector, defaulting to one for the effect's controller -- that pushes onto the queue above. Its stated timing is \"after this phase\", so it must be legal to resolve during the combat phase it extends (this card resolves it in the declare-attackers step) as well as from a main-phase sorcery (Relentless Assault, Aggravated Assault, Waves of Aggression), which is why the queue is consumed by the step walk rather than applied immediately.",
+      "why_existing_wont_do": "No op in `ops` touches the phase structure at all; the closest ops are the ones that manipulate combat *within* a phase (`untap`, `tap`, `must_attack`, `freeze`) and they change who fights, not how many times fighting happens. `delay` is the only op that names a step and it only defers an effect list to one of four named steps. There is no queue for an op to push onto until the engine need above lands."
+    },
+    {
+      "capability": "exert",
+      "kind": "value",
+      "what": "A turn-scoped record of whether a specific permanent was exerted this turn, readable by an `if` -- e.g. a `value_keys` entry `exerted_this_turn` taking an object selector (compared against `{\"const\": 0}` the way `counters_on` is), tallied on `TurnLedger` when the exert choice is taken and reset with the rest of the ledger at the turn boundary. Exert itself is otherwise free and already cashed by `tests/unit/test_exert.py` (`attacks` trigger with `source: \"self\"`, `may`, `skip_untap`); what is missing is only the once-per-turn guard that Combat Celebrant prints because it is the exert card that can attack twice in a turn.",
+      "why_existing_wont_do": "`set_flag` / `has_flag` is the nearest shape and is deliberately one-way: `op_set_flag`'s docstring calls it \"a one-way word written onto a permanent\" for renown, `obj.flags` is a plain `set` that nothing in `src/automtg/engine/` ever removes from, and `clear_until_eot` does not touch it. So a flag-based guard would read \"hasn't been exerted this **game**\" and silently refuse the second exert on a later turn -- wrong in the direction that looks right in a one-turn test. `once_each_turn` is explicitly rejected for anything but an activated ability (`loader.py` raises: \"'activate_steps' and 'once_each_turn' restrict *activating*\"), and the exert choice hangs off an `attacks` trigger. `resolutions_this_turn` counts how often the ability *resolved*, which counts a declined `may` as an exert, so it answers a different question. `attacked_this_turn` is per player and asks about attacking, not exerting."
+    }
+  ],
+  "closest_existing": [
+    "skip_untap",
+    "set_flag",
+    "has_flag",
+    "once_each_turn",
+    "resolutions_this_turn",
+    "attacked_this_turn",
+    "delay",
+    "postcombat_main",
+    "untap",
+    "must_attack"
+  ],
+  "confidence": "high"
+}

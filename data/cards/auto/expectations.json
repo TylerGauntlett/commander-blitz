@@ -202,6 +202,14 @@
   "ancient_ziggurat": {
     "zone": "battlefield"
   },
+  "angel_of_glory_s_rise": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "angel_of_light": {
     "zone": "battlefield"
   },
@@ -498,6 +506,10 @@
   "bastion_enforcer": {
     "zone": "battlefield"
   },
+  "bastion_protector": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "battle_hurda": {
     "zone": "battlefield"
   },
@@ -551,6 +563,16 @@
     "zone": "battlefield"
   },
   "benthic_giant": {
+    "zone": "battlefield"
+  },
+  "beregond_of_the_guard": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "vigilance"
+      ]
+    },
     "zone": "battlefield"
   },
   "bird_maiden": {
@@ -1556,6 +1578,15 @@
       "0": 41
     }
   },
+  "distant_melody": {
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "divine_transformation": {
     "zone": [
       "battlefield",
@@ -1784,11 +1815,19 @@
     },
     "zone": "graveyard"
   },
+  "eowyn_fearless_knight": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "epic_proportions": {
     "zone": [
       "battlefield",
       "graveyard"
     ]
+  },
+  "erkenbrand_lord_of_westfold": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "esper_cormorants": {
     "zone": "battlefield"
@@ -1962,6 +2001,10 @@
     "zone": "battlefield"
   },
   "field_creeper": {
+    "zone": "battlefield"
+  },
+  "fiend_hunter": {
+    "battlefield_count": 32,
     "zone": "battlefield"
   },
   "fighting_drake": {
@@ -2318,6 +2361,10 @@
     "zone": "battlefield"
   },
   "gilt_leaf_palace": {
+    "zone": "battlefield"
+  },
+  "gimli_of_the_glittering_caves": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glacial_floodplain": {
@@ -3761,6 +3808,18 @@
   },
   "mask_of_avacyn": {
     "zone": "battlefield"
+  },
+  "mass_appeal": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "mass_of_ghouls": {
     "zone": "battlefield"
@@ -6193,6 +6252,14 @@
   "super_villain_lockup": {
     "zone": "battlefield"
   },
+  "supreme_verdict": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "surrakar_banisher": {
     "zone": "battlefield"
   },
@@ -6432,6 +6499,16 @@
     "zone": "battlefield"
   },
   "the_whizzer_classic_speedster": {
+    "zone": "battlefield"
+  },
+  "theoden_king_of_rohan": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "double_strike"
+      ]
+    },
     "zone": "battlefield"
   },
   "thornglint_bridge": {

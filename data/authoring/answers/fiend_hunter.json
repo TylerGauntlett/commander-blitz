@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "fiend_hunter",
+    "name": "Fiend Hunter",
+    "oracle_text": "When this creature enters, you may exile another target creature.\nWhen this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+    "mana_cost": "{1}{W}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Cleric"
+    ],
+    "power": 1,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you may exile another target creature.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "any",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "op": "exile",
+            "objects": {
+              "target": "t1"
+            },
+            "until_leaves": true
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.",
+        "trigger": {
+          "event": "leaves_battlefield",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "put_onto_battlefield",
+            "objects": {
+              "zone": "exile",
+              "controller": "any",
+              "exiled_with": "self"
+            },
+            "controller": "owner"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 32
+  }
+}
