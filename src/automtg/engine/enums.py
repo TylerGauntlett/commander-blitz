@@ -298,6 +298,21 @@ class AbilityKind(str, Enum):
     ACTIVATED = "activated"
     TRIGGERED = "triggered"
     STATIC = "static"
+    #: A Saga's **chapter ability** (714.1b).  A fourth kind rather than a
+    #: `triggered` ability with an exotic event, because the printed line "I --
+    #: …" is not a sentence any trigger vocabulary can spell: there is no word
+    #: for *when* in it at all, and the whole of the timing comes from the
+    #: rules.
+    #:
+    #: It is still a triggered ability where it counts -- 714.1b says so out
+    #: loud -- so `Ability.is_triggered` answers True for it and the entire
+    #: existing pipeline (matching, APNAP queueing, the stack, targets chosen as
+    #: it goes on) carries it with no second implementation. What the new kind
+    #: buys is the three things a `triggered` ability could not say: the chapter
+    #: *number*, which the loader turns into the trigger's filter; the
+    #: card-level `final_chapter` derived from those numbers; and a load-time
+    #: refusal of a chapter ability on a card that is not a Saga.
+    CHAPTER = "chapter"
 
 
 class ActionKind(str, Enum):

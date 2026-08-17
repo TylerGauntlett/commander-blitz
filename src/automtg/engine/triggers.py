@@ -126,6 +126,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: equipping a creature you control activates their ability on your
     #: permanent, and the printed line says that triggers.
     "ability_activated": EventType.ABILITY_ACTIVATED,
+    #: A Saga's chapter ability (714.1b, 714.2c). Never written in a card file --
+    #: the loader supplies it for `kind: "chapter"`, the way it supplies
+    #: `source: "self"` for `self_enters` -- because the printed line is "II --"
+    #: and there is no word in it for a trigger name to be.
+    #:
+    #: `counter_placed` with `{"counter": "lore"}` is the near miss, and it is
+    #: what the gap record for Oath of Eorl proposed and then refused. It fires
+    #: on the placement rather than on the count *reaching* the number, so a
+    #: proliferated Saga advances by the wrong pattern; and it fires not at all
+    #: on the counter a Saga **enters** with, which is chapter I on every Saga in
+    #: print.
+    "chapter": EventType.CHAPTER_REACHED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -173,6 +185,14 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
         # `_subject_oid` reaches it through the `event.source` fallthrough.
         "ability_activated",
+        # The Saga itself. Listed so `source: "self"` -- which the loader always
+        # supplies for a chapter -- scopes the ability to *this* Saga rather than
+        # to every Saga on the table, and so `_actor` reads the Saga's controller
+        # and not the event's player. The two agree today, because the only thing
+        # that fires CHAPTER_REACHED reads the controller off the same object; a
+        # Saga that changed hands mid-chapter is where they would come apart, and
+        # the object is the right answer there.
+        "chapter",
     }
 )
 
@@ -392,6 +412,14 @@ def _matches(
     # trigger fires on charge and slumber counters too -- both of which the
     # shipped pool places.
     if spec.counter is not None and event.data.get("counter") != spec.counter:
+        return False
+
+    # "II --". One CHAPTER_REACHED event carries the number the Saga's lore
+    # counters just reached, and every chapter ability on that Saga is a candidate
+    # for it, so this comparison is the whole of which chapter runs. Without it a
+    # three-chapter Saga would put all three chapters on the stack off its first
+    # lore counter.
+    if spec.chapter is not None and event.data.get("chapter") != spec.chapter:
         return False
 
     # "…**if it isn't a mana ability**." An intervening-if in the printed text

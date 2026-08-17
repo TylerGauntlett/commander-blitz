@@ -278,6 +278,16 @@ class TriggerSpec:
     #: A card printing "one or more" *without* a per-turn cap would still be
     #: wrong, and is still a gap.
     max_per_turn: int | None = None
+    #: Which chapter number a ``chapter`` trigger fires on -- the "II" in "II --
+    #: Create two 2/2 red Human Knight creature tokens".
+    #:
+    #: On the spec rather than only on the :class:`Ability`, because
+    #: ``triggers._matches`` is handed the spec and not the ability, and the
+    #: number is a *filter on the event* in exactly the way ``counter`` is: one
+    #: CHAPTER_REACHED event carries the number reached and every chapter ability
+    #: on the Saga sees it. Without the comparison a three-chapter Saga would
+    #: resolve all three chapters on its first lore counter.
+    chapter: int | None = None
 
 
 def count_mode_specs(effects: Any) -> int:
@@ -395,7 +405,30 @@ class Ability:
 
     @property
     def is_triggered(self) -> bool:
-        return self.kind is AbilityKind.TRIGGERED
+        """714.1b: "chapter abilities are triggered abilities".
+
+        Not a convenience -- it is the sentence, and reading it any other way
+        would mean a second copy of the trigger pipeline. Every caller of this
+        property already pairs it with ``ability.trigger is not None``, and the
+        loader gives a chapter ability a real ``TriggerSpec``, so a chapter is
+        collected, queued in APNAP order, put on the stack and given its targets
+        by exactly the code that does it for "when this enters".
+        """
+        return self.kind in (AbilityKind.TRIGGERED, AbilityKind.CHAPTER)
+
+    @property
+    def is_chapter(self) -> bool:
+        return self.kind is AbilityKind.CHAPTER
+
+    @property
+    def chapter(self) -> int | None:
+        """Which chapter this is, or ``None`` for any other kind of ability.
+
+        Read off the trigger rather than stored twice. The number is the
+        trigger's filter and the card's `final_chapter` is derived from it, and
+        two fields holding one number is two things to disagree.
+        """
+        return self.trigger.chapter if self.trigger is not None else None
 
     @property
     def is_static(self) -> bool:
@@ -425,6 +458,19 @@ class CardDef:
     #: replacement, because the client shows it on the card in hand where no
     #: object exists to carry counters yet.
     loyalty: int | None = None
+    #: A Saga's **final chapter number** (714.4). Set by the loader on any card
+    #: with chapter abilities, and the one thing about a Saga that is not
+    #: derivable from the board: it is what 704.5s compares the lore counters
+    #: against to decide the Saga is finished, and it is *not* reliably the
+    #: highest chapter the card implements -- a Saga whose last chapter the DSL
+    #: could not express would otherwise be sacrificed a chapter early, which is
+    #: silently a better card than the printed one.
+    #:
+    #: ``None`` means "not a Saga", and is what every reader tests rather than
+    #: the subtype: a card carrying the word Saga and no chapters has no final
+    #: chapter to reach, and 704.5s says so out loud ("with one or more chapter
+    #: abilities").
+    final_chapter: int | None = None
     abilities: tuple[Ability, ...] = ()
     #: Abilities this card can *hand to something else* -- the quoted text in
     #: `gains trample and "Whenever this creature deals combat damage to a

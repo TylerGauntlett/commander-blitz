@@ -4405,6 +4405,18 @@
       "0": 42
     }
   },
+  "oath_of_eorl": {
+    "battlefield_count": 35,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 2,
+      "id": "human_soldier_1_1_w"
+    },
+    "zone": "battlefield"
+  },
   "obelisk_of_bant": {
     "zone": "battlefield"
   },

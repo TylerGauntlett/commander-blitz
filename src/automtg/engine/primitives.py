@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
+from . import sagas
 from .characteristics import chars
 from .enums import Keyword, Zone
 from .events import EventType
@@ -349,6 +350,10 @@ def add_counters(
     obj = state.objects.get(oid)
     if obj is None or amount == 0:
         return 0
+    # Read before the write. A Saga's chapter ability triggers on the count
+    # *becoming* its number (714.2c), so the comparison needs both sides and
+    # this is the only moment both exist.
+    before = obj.counter(kind)
     obj.add_counter(kind, amount)
     state.bump_chars()
     if amount > 0:
@@ -361,6 +366,17 @@ def add_counters(
             counter=kind,
             amount=amount,
         )
+        if kind == sagas.LORE:
+            # Here rather than at each caller, because every way a lore counter
+            # can arrive comes through this function -- the turn-based action,
+            # `add_counters`, `move_counters` and `proliferate` -- and a Saga
+            # whose chapter fired for only some of them would be wrong in
+            # whichever direction nobody tested. Guarded on the kind first so
+            # every other counter in the game pays one string comparison.
+            #
+            # After COUNTER_PLACED, so a trigger watching the counter and the
+            # chapter it caused queue in that order.
+            sagas.chapters_reached(state, oid, before, before + amount)
     return amount
 
 
