@@ -11,27 +11,16 @@
       "kind": "trigger_event",
       "what": "A way to schedule an effect for the end of combat step -- either an `end_of_combat` entry in `turn.DELAY_STEPS` mapping to the already-existing `Step.END_OF_COMBAT`, so `{\"op\": \"delay\", \"step\": \"end_of_combat\", \"effects\": [...]}` fires there, or an `end_of_combat` member of `trigger_events` fired from the same site `postcombat_main` and `begin_combat` are. The delay form is the one this card wants, because \"Exile the token at end of combat\" is a delayed trigger created by the attack trigger's resolution and not a standing ability. It needs to fire once per combat rather than once per turn, since `Step.END_OF_COMBAT` is re-entered by every extra combat phase, and a delayed trigger scheduled during the combat damage step of one combat must fire at the end of *that* combat rather than waiting for the next turn's.",
       "why_existing_wont_do": "`Step.END_OF_COMBAT` (= 9) already exists in `engine/enums.py` and the turn walk passes through it, but nothing can be attached to it: `turn.DELAY_STEPS` maps only `upkeep`, `draw_step`, `begin_combat` and `end_step`, and `delay`'s step is matched against that table alone, so `{\"step\": \"end_of_combat\"}` silently never becomes due and the token would live forever. The nearest reachable step from `trigger_events` is `end_step`, and substituting it is wrong in a way that matters on exactly this card: the copy would survive the entire postcombat main phase, so it could be sacrificed, tapped for an ability, or attack again in an extra combat -- the printed exile-at-end-of-combat is what stops all of that. `exile` itself carries only `until_leaves` (the O-Ring link) and `playable_this_turn`; neither is a timing."
-    },
-    {
-      "capability": "effect_result_binding",
-      "kind": "selector",
-      "what": "A way for a later effect to name the token an earlier effect just created -- an `as` field on `create_token` and `copy_permanent` that records the new tokens' oids into `ctx.bindings`, exactly as `sacrifice`'s `as` records the objects it consumed, so a following `delay` can carry `{\"objects\": {\"binding\": \"the_token\"}}` into its scheduled `exile`. `delay` already captures `dict(ctx.bindings)` when it schedules, so the binding would survive to the later step with no further work; the missing half is only that the two token-creating ops write nothing down.",
-      "why_existing_wont_do": "`op_create_token` and `op_copy_permanent` in `effects/ops_board.py` both call `create_token(...)` and discard its result -- neither reads an `as` key -- so there is no binding for the `binding` / `exclude_binding` selector keys or the `binding` value key to read, even though those keys exist and `sacrifice` demonstrates the pattern. Reconstructing the token from a selector instead does not work: `is_token` matches every token you control, and `{\"is_token\": true, \"attacking\": true}` would also catch tokens made by anything else attacking that turn, so a second Flamerush Rider trigger, or any other token-making attack trigger, makes the card exile the wrong object. `exiled_with` and `haunted_by` link back to a *source*, not to objects an effect produced. `snapshot` copies characteristics off an object for later reading, not an identity a later effect can act on."
     }
   ],
   "closest_existing": [
     "delay",
-    "copy_permanent",
-    "create_token",
-    "sacrifice",
-    "binding",
-    "exclude_binding",
-    "is_token",
     "end_step",
     "begin_combat",
     "postcombat_main",
     "exile",
-    "snapshot"
+    "extra_combat"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "notes": "The second need on this record, `effect_result_binding`, is CLOSED. `copy_permanent` and `create_token` now take an `as` that records the oids of the tokens they made, so \"Exile **the token**\" is `{\"op\": \"copy_permanent\", \"objects\": {\"target\": \"t1\"}, \"tapped\": true, \"attacking\": true, \"as\": \"the_token\"}` followed by an exile of `{\"objects\": {\"binding\": \"the_token\"}}` -- and `delay` snapshots `dict(ctx.bindings)` when it schedules, so the record survives to whatever step the exile is scheduled for. Only the step is missing. Dash is not a blocker either: it is the existing `evoke` alternative cost plus `evoke_label`."
 }

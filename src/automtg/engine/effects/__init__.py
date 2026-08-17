@@ -22,6 +22,24 @@ from ..errors import DslError
 #: op name -> implementation.  Populated by the ``@register`` decorator.
 OPS: dict[str, Callable[..., Any]] = {}
 
+#: The ops that write ``ctx.bindings`` when given an ``as`` name -- "the cards
+#: revealed this way", "the number of creature cards exiled this way", "exile
+#: **the token**".  Every other op ignores an ``as`` entirely, and an `as` that
+#: nothing writes reads back as 0 rather than as an error, so the loader refuses
+#: it (see `loader._validate_effect`).  Listed here, beside `OPS`, so the guard
+#: and the implementations cannot drift apart.
+RECORDING_OPS = frozenset(
+    {
+        "copy_permanent",
+        "create_token",
+        "exile",
+        "join_forces",
+        "reveal",
+        "sacrifice",
+        "snapshot",
+    }
+)
+
 
 def register(name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Register an effect op under ``name``."""
@@ -71,4 +89,4 @@ from . import (
     ops_stack,  # noqa: F401
 )
 
-__all__ = ["OPS", "execute", "execute_one", "known_ops", "register"]
+__all__ = ["OPS", "RECORDING_OPS", "execute", "execute_one", "known_ops", "register"]

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **38** capabilities.
+**35 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
 | [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
-| [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
 | [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
@@ -128,24 +127,6 @@ Blocks **2** cards.
   - Equip {4}. This ability costs {3} less to activate if you're the monarch
 - **Visions of Glory** (rank 6142) — `visions_of_glory`
   - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
-
-</details>
-
-## effect-result-binding
-
-Blocks **2** cards.
-
-- **(selector)** A way for a later effect to name the token an earlier effect just created -- an `as` field on `create_token` and `copy_permanent` that records the new tokens' oids into `ctx.bindings`, exactly as `sacrifice`'s `as` records the objects it consumed, so a following `delay` can carry `{"objects": {"binding": "the_token"}}` into its scheduled `exile`. `delay` already captures `dict(ctx.bindings)` when it schedules, so the binding would survive to the later step with no further work; the missing half is only that the two token-creating ops write nothing down.
-  <br>Why the existing vocabulary won't do: `op_create_token` and `op_copy_permanent` in `effects/ops_board.py` both call `create_token(...)` and discard its result -- neither reads an `as` key -- so there is no binding for the `binding` / `exclude_binding` selector keys or the `binding` value key to read, even though those keys exist and `sacrifice` demonstrates the pattern. Reconstructing the token from a selector instead does not work: `is_token` matches every token you control, and `{"is_token": true, "attacking": true}` would also catch tokens made by anything else attacking that turn, so a second Flamerush Rider trigger, or any other token-making attack trigger, makes the card exile the wrong object. `exiled_with` and `haunted_by` link back to a *source*, not to objects an effect produced. `snapshot` copies characteristics off an object for later reading, not an identity a later effect can act on.
-- **(op)** An `as` key on the `exile` op that records the oids it consumed into `ctx.bindings`, so a later effect in the same resolution can count them: `{"op": "exile", "objects": {...}, "as": "exiled"}` then `{"count": {"binding": "exiled", "types": ["Creature"]}}`. Two halves: (1) `op_exile` in `src/automtg/engine/effects/ops_board.py` writes `ctx.bindings[str(name)] = list(oids)` after `choose_objects` and before the move loop, byte-for-byte the three lines `op_sacrifice` already has directly below it; (2) `resolve_pool`/`matches` must apply a selector's remaining filter clauses (here `types`) to an oid list arriving via `binding`, because the card needs the *creature* subset of the exiled set, not its cardinality. Today the binding branch of `resolve_pool` returns the bound oids unfiltered, so a `types` clause alongside `binding` is silently ignored -- which would turn "number of creature cards" into "number of cards" without any error.
-  <br>Why the existing vocabulary won't do: The engine already has this exact idiom under this exact name, on two other ops, for this exact printed shape -- `op_sacrifice`'s `as` is devour ("it enters with twice that many +1/+1 counters") and `op_reveal`'s `as` is documented as "this creature enters with X +1/+1 counters, where X is the number of cards revealed this way". `exile` is the one member of the family that never got it, so the read-back half (`{"count": {"binding": ...}}`) already works and only the write side is missing. Nothing else in `reference` reaches the set: `snapshot` captures one object's characteristics under a name (`capture_snapshot(state, oids[0])`), not a count, and there is no general last-known-information system. `exiled_with: "self"` reads `GameObject.exiled_by`, but `op_exile` only writes that field when `until_leaves` is true, and `until_leaves` is the Oblivion Ring link -- "exile it until this permanent leaves the battlefield" -- so borrowing it would declare a return this card does not have and would make the creature hand back the whole graveyard if the O-Ring return is ever driven off that link. Counting the graveyard *before* exiling it (`{"count": {"zone": "graveyard", "player": {"target": "t1"}, "types": ["Creature"]}}` placed ahead of the `exile`) is the near miss: it is numerically equal only because this particular card empties the whole zone, and it requires emitting the card's two printed sentences in the opposite order from the one printed, so it neither says nor generalises to "exiled this way".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Flamerush Rider** (rank 4737) — `flamerush_rider`
-  - Exile the token at end of combat.
-- **Grey Host Reinforcements** (rank 11982) — `grey_host_reinforcements`
-  - When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.
 
 </details>
 
