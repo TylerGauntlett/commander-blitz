@@ -697,6 +697,9 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
             controller=obj.controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
+            # Snapshotted now, while the object still exists -- see
+            # `TriggerInstance.def_id`.
+            def_id=obj.def_id,
             granted_by=_granter_of(state, obj, ability),
         )
     )

@@ -246,7 +246,10 @@ def push_triggered_ability(
     `drain_to_stack` is one too, and why `_advance` drives it through `_run`.
     """
     obj = state.objects.get(trig.source_oid)
-    def_id = obj.def_id if obj else "?"
+    # The trigger's own snapshot first: a token that triggers on its own death
+    # is out of `state.objects` by now, and `"?"` is not a card id -- it reaches
+    # `state.registry.get` in `_resolve_ability` and raises.
+    def_id = obj.def_id if obj else (trig.def_id or "?")
     item = StackItem(
         sid=state.alloc_sid(),
         kind="ability",
@@ -389,7 +392,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         x=item.x,
         kicked=item.kicked,
         modes=item.modes,
-        source_name=card.name,
+        source_name=card.name if card else item.description,
     )
     yield from execute(ctx, card.spell_effects)
     # "…add this card's effects to that spell." After the host's own, in the
@@ -592,10 +595,16 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
 
 def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int], None]:
     source = state.objects.get(item.source_oid) if item.source_oid is not None else None
-    card = state.registry.get(item.def_id)
+    # The ability first, and the card only once there is something to resolve.
+    # `ability_of` already copes with a source that is gone -- a token that
+    # sacrificed itself to pay for its own ability -- but the card lookup did
+    # not: `push_triggered_ability` writes `"?"` when it cannot name the card,
+    # and `registry.get("?")` raises rather than returning nothing. So a trigger
+    # whose source vanished took the game down instead of resolving to a no-op.
     ability = ability_of(state, item)
     if ability is None:
         return
+    card = state.registry.get(item.def_id) if item.def_id in state.registry else None
 
     targets, any_legal = filter_legal(
         state, item.controller, ability.targets, item.targets, item.source_oid
@@ -605,7 +614,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
             EventType.SPELL_FIZZLED,
             player=item.controller,
             source=item.source_oid,
-            card=card.id,
+            card=card.id if card else None,
             ability=item.ability_index,
         )
         return
@@ -618,7 +627,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         bindings=dict(item.bindings),
         x=item.x,
         modes=item.modes,
-        source_name=card.name,
+        source_name=card.name if card else item.description,
     )
 
     # Intervening-if clauses are checked again on resolution (rule 603.4).
@@ -628,7 +637,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
             EventType.ABILITY_RESOLVED,
             player=item.controller,
             source=item.source_oid,
-            card=card.id,
+            card=card.id if card else None,
             ability=item.ability_index,
             skipped="condition",
         )
@@ -646,6 +655,6 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         EventType.ABILITY_RESOLVED,
         player=item.controller,
         source=item.source_oid,
-        card=card.id,
+        card=card.id if card else None,
         ability=item.ability_index,
     )
