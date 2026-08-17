@@ -14,7 +14,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
@@ -33,22 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [saga](#saga) | 1 | 7121 | engine |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
-
-## ability-activated-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A DSL trigger event -- `ability_activated` -- that fires when a player activates an activated ability of a permanent, so a card can hang a triggered ability off somebody else's activation. Three pieces: (1) an entry in `TRIGGER_EVENTS` mapping the DSL name to the already-defined `EventType.ABILITY_ACTIVATED`; (2) `game.py:_activate` must use `triggers.fire` instead of `state.emit` at the ABILITY_ACTIVATED emission (line ~488), because `emit` only appends to the log and never calls `collect`, so nothing can ever hear the event as it stands; (3) the event's source permanent must become the trigger's `subject`, i.e. the new name added to `OBJECT_SUBJECT_TRIGGERS` with `_subject_oid` reading the activating permanent's oid off the payload (the emission already passes `source=oid`), so that `TriggerSpec.filter` can express "of an artifact, creature, or land on the battlefield" via the existing `matches_card_filter` types check. `TriggerSpec.controller: "opponent"` then covers "an opponent activates", and `_actor` must return `event.player` (the activating player) for this event rather than the subject's controller, since the subject is the opponent's own permanent in the common case but need not be -- an opponent activating an equip on a creature they do not control must still trigger.
-  <br>Why the existing vocabulary won't do: `trigger_events` in the packet lists 29 DSL events and none is about ability activation. `spell_cast` is the closest -- it is also "an opponent did a thing that used the stack" and already supports `controller: "opponent"` -- but it fires on `EventType.SPELL_CAST` from casting a card off the stack, which is a disjoint set of actions from activating an ability of a permanent already on the battlefield; a Harsh Mentor built on `spell_cast` would punish every instant and sorcery and never punish an equip or a fetchland. `becomes_target` is the other near miss and answers a different question -- it fires on the object being pointed at, so it cannot see an ability with no targets (crack a Signet, sac an Evolving Wilds) and would misfire on every targeted spell. `EventType.ABILITY_ACTIVATED` does exist in `engine/events.py` and is emitted in both activation paths, but via `state.emit`, whose own docstring says it "only records" and leaves the trigger bus to the caller -- so today it is a log line with no listener, and there is no DSL name that could subscribe to it even if there were.
-- **(trigger_event)** A way for an `ability_activated` trigger to exclude mana abilities -- the printed "if it isn't a mana ability" clause. Concretely: put the activated ability's mana-ability status on the ABILITY_ACTIVATED payload (the engine already knows it -- `Ability.is_mana_ability`, read at `legality.py:_is_mana_ability` and `costs.offerable_mana_ability`) and give the trigger spec a boolean restriction on it, e.g. `TriggerSpec.mana_ability: false`, checked in `_matches` beside the existing `not_cause` and `counter` restrictions. Note that the second emission site, `game.py:_activate_mana` (line ~704), emits the identical event type for mana abilities and deliberately bypasses the stack, so it must either keep emitting without firing or fire with the flag set -- but the two paths must stop being indistinguishable to a listener.
-  <br>Why the existing vocabulary won't do: The intervening-if is `condition`, drawn from `condition_keys` (all, any, cast_from_graveyard, cmp, combat_damage_by, evoked, exists, has_city_s_blessing, has_flag, is_your_turn, kicked, left, not, overloaded, right, zone_is), and every one of those asks about the board or about the trigger's own card -- none can ask a property of the ability that fired. `TriggerSpec.filter` runs through `matches_card_filter` against the *source permanent*, so it can say "an artifact, creature, or land" but has no reach into which of that permanent's abilities was used; filtering the permanent's types cannot substitute, because the very permanents this clause is about -- lands and mana artifacts -- are also the permanents whose non-mana abilities Harsh Mentor is printed to punish (a fetchland's sacrifice ability, a Signet's tap-for-mana: same object, opposite answers). Approximating by dropping the clause turns a 2/2 that taxes activated abilities into a Manabarbs that pings every land tap, which is a strictly harsher and different card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Harsh Mentor** (rank 2388) — `harsh_mentor`
-  - Whenever an opponent activates an ability of an artifact, creature, or land on the battlefield, if it isn't a mana ability, this creature deals 2 damage to that player.
-
-</details>
 
 ## addendum
 

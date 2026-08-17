@@ -303,6 +303,133 @@ fallback that Combat Celebrant and every other attack-triggered creature asserts
 The real coverage is `tests/unit/test_end_of_combat.py`, which plays the card
 through a turn with two combats and checks each copy against the end of the
 combat that made it.
+## `ability_activated` — the event that was already being emitted at nobody
+
+### Overview
+
+Harsh Mentor: *"Whenever an opponent activates an ability of an artifact,
+creature, or land on the battlefield, if it isn't a mana ability, this creature
+deals 2 damage to that player."* One printed line, and the whole card.
+
+`EventType.ABILITY_ACTIVATED` has existed since activations did, and `game.py`
+emitted it from **both** activation paths. It was still unreachable, twice over:
+both sites called `state.emit`, whose own docstring says it *only records* and
+leaves the trigger bus to the caller, and no name in `TRIGGER_EVENTS` mapped to
+it, so no card could have subscribed even if something had fired. A log line with
+zero listeners — the same silent no-op the cycling trigger's `fire`, not `emit`
+comment was written for, three lines further down the same method.
+
+**Not Tier D.** A new `EventType` is the one change that forces frontend work,
+and this is not one: the type already exists and the frontend already narrates
+it. `labels.ts::describeEvent` has `case "ability_activated"` and `events.ts::
+beatsFor` gives it a 320ms beat with a neutral flash on the source. Firing rather
+than emitting adds no *new* event type to the log either — `fire` calls `emit` —
+so both silent-swallow sites were checked deliberately and nothing under
+`frontend/` was touched.
+
+### "if it isn't a mana ability" had no vocabulary at all
+
+The clause is an intervening `if`, and `condition` cannot express it. Every
+condition key — `cmp`, `exists`, `zone_is`, `has_flag`, the rest — asks about the
+board or about the trigger's own card. None can ask a property of *the ability
+that fired*.
+
+`TriggerSpec.filter` cannot substitute either, and this is the part worth being
+precise about: it runs through `matches_card_filter` against the **source
+permanent's printed face**. The permanents the clause exists for are exactly the
+ones carrying both kinds of ability:
+
+| | |
+|---|---|
+| Bant Panorama | `{T}: Add {C}` and `{1}, {T}, Sacrifice this land: Search…` |
+| Azorius Signet | `{1}, {T}: Add {W}{U}` |
+
+An Artifact and a Land, both squarely inside "an artifact, creature, or land",
+and the right answers are opposite. Dropping the clause does not approximate
+Harsh Mentor, it replaces it: every land in a real game taps many times a turn,
+and a 2/2 that pings each one is Manabarbs.
+
+So the flag rides on the event. Both activation paths set `mana_ability`
+(`_activate` false, `_activate_mana` true) and `TriggerSpec.mana_ability`
+compares against it in `_matches`, beside `not_cause` and `counter`. The loader
+refuses it on any other event for the same reason it refuses `defending` there:
+a restriction that can never apply looks like the printed clause and is not one.
+
+**Firing on the mana path was the call.** The alternative the gap record allowed
+— keep emitting there, never fire — passes every test in this file for the wrong
+reason: with nothing listening, `mana_ability: false` would be a guard that never
+runs, and a card author writing `ability_activated` with no restriction would get
+non-mana-only behaviour by accident. `test_and_the_event_still_fired` is the test
+that pins the difference: the event must be in the log *and* the trigger must be
+absent.
+
+The remaining incompleteness is pre-existing and documented rather than fixed:
+the mana abilities the payment solver taps for itself go straight through
+`costs.pay_mana` → `activate_mana_ability` and emit nothing at all, so
+`mana_ability: true` sees only mana abilities activated by hand. Moving the
+emission into the primitive would put an animated log beat on every land
+auto-tapped to cast a spell, which is a UI change, not this capability.
+
+### Before the cost, not after
+
+The emission used to sit after `stack.push_activated_ability`. Moving it to
+before `pay` is not cosmetic and it is what makes the printed sentence true: a
+cost that **sacrifices the source** — a Panorama, a fetchland, Mind Stone — has
+already moved it to a graveyard by the time the ability is on the stack, so a
+listener asking "was it on the battlefield?" would be told no about precisely the
+activations Harsh Mentor is printed to punish. Rule 602.2b puts the announcement
+before the payment anyway, and `turn_ledger.activated` at the top of the same
+method already takes that reading out loud.
+
+The ordering that matters is unchanged: triggers queue and go on the stack at the
+next priority (603.3), which is after the push either way, so a trigger this
+wakes still lands on top of the ability that woke it. The `sid` field is gone
+from the payload — it does not exist yet at that point — and nothing read it.
+
+### Two filter keys that loaded and did nothing
+
+`zone` and `any_types` were already legal `SELECTOR_KEYS`, so `validate_selector`
+accepted them on a trigger filter and `matches_card_filter` then ignored them —
+the silently-wider filter that the `not_supertypes` comment in the same function
+is annotated about. Harsh Mentor needs both, in the narrowing direction:
+
+- `types` is a **conjunction**, so "an artifact, creature, or land" written with
+  it asks for a permanent that is all three and matches nothing. `any_types` is
+  the any-of form `selectors.matches` has had since Acidic Slime.
+- Without `zone`, the card fires when an opponent **cycles** a land card out of
+  hand: an activated ability of a Land card, so every printed characteristic the
+  filter reads says yes and only the zone says no.
+
+No shipped card used either key on a trigger, so nothing changed underneath.
+
+### The effect half needed nothing
+
+`event_bindings` has always seeded `event_player` from `event.player`, and
+`select_players` has always accepted `{"binding": …}`. So "that player" is one
+`damage` op, and it is multiplayer-correct rather than collapsing to
+"each opponent" — `test_the_damage_follows_the_activating_player_in_a_pod` is a
+four-player board where exactly one seat loses life.
+
+`_actor` returns `event.player` for this event rather than the subject's
+controller, and the two really do come apart: an opponent activating an equip on
+a creature **you** control is their activation of their ability on your
+permanent, and the printed line says that triggers.
+
+### Guarded by
+
+`tests/unit/test_ability_activated_trigger.py` — fourteen tests over four claims:
+the event reaches the bus at all (including a land's ability, which is why
+`spell_cast` could never stand in), mana abilities are excluded while still
+firing the event, the `controller` clause reads the activating player, and the
+filter's two halves. The authoring verifier never activates anything — it casts a
+card and stops — so this trigger cannot fire in the fixed sandbox and Harsh
+Mentor legitimately asserts `{"zone": "battlefield", "battlefield_count": 33}`.
+No gate was weakened; the behaviour lives in the unit test, which is where the
+gap record predicted it would have to.
+
+**Unblocked one card: Harsh Mentor**, whose only need this was. Agent tier;
+`--tier templates --retry` harvested nothing (`no template 200`), as expected —
+no template reads this sentence.
 
 ## Dash — the alternative cost that is allowed to cost more
 

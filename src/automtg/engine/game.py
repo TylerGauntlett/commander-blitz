@@ -488,20 +488,42 @@ class Game:
 
         modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
 
-        ok = yield from pay(state, pid, ability.cost, oid, x=x)
-        if not ok:  # pragma: no cover
-            return
-
-        item = stack.push_activated_ability(
-            state, oid, action.ability_index, pid, action.targets, x=x, modes=modes
-        )
-        state.emit(
+        # `fire`, not `emit`: emit only writes the log, and an activation event
+        # nothing listens for is the same silent no-op the cycling event below
+        # was fixed for. This one had been a log line since activations existed.
+        #
+        # Fired **before the cost is paid**, which is both where 602.2b puts the
+        # announcement and the only moment the source is still where it was: a
+        # cost that sacrifices it -- a Panorama, a Mind Stone, a fetchland --
+        # has already moved it to a graveyard by the time the ability is on the
+        # stack, and "an ability of a land **on the battlefield**" has to be
+        # able to see it there. The same reading `turn_ledger.activated` above
+        # already takes of an activation that strands mid-payment.
+        #
+        # The ordering this does *not* change is the one that matters: triggers
+        # queue here and go on the stack at the next priority (603.3), which is
+        # after `push_activated_ability` below either way -- so a trigger this
+        # wakes still lands on top of the ability that woke it.
+        #
+        # `mana_ability` is what separates this from `_activate_mana`'s
+        # identical event type; without it a listener cannot tell a fetchland's
+        # sacrifice ability from the same land's tap.
+        triggers.fire(
+            state,
             EventType.ABILITY_ACTIVATED,
             player=pid,
             source=oid,
             ability=action.ability_index,
-            sid=item.sid,
             card=card.id,
+            mana_ability=False,
+        )
+
+        ok = yield from pay(state, pid, ability.cost, oid, x=x)
+        if not ok:  # pragma: no cover
+            return
+
+        stack.push_activated_ability(
+            state, oid, action.ability_index, pid, action.targets, x=x, modes=modes
         )
         if ability.is_cycling:
             # Fired *after* the cycling ability is on the stack, and the order
@@ -704,6 +726,35 @@ class Game:
         card = state.card(oid)
         ability = card.abilities[action.ability_index]
 
+        # Fired rather than emitted, and tagged, so `TriggerSpec.mana_ability`
+        # is a live restriction rather than a guard that never runs: a card
+        # saying "if it isn't a mana ability" has to be *told* about the mana
+        # ones to be excluding anything. A mana ability still uses no stack, so
+        # nothing here is responded to -- the trigger it wakes drains at the
+        # next priority like every other trigger.
+        #
+        # Before the cost, for the same reason `_activate` is: this path is the
+        # one with `Cost.sacrifice` on it (Master of the Dark Rites, Krark-Clan
+        # Ironworks), and a listener asking where the source was has to be asked
+        # while it is still there.
+        #
+        # Known incompleteness, and pre-existing: the mana abilities the payment
+        # solver taps for itself go through `costs.pay_mana` ->
+        # `activate_mana_ability` directly and emit nothing at all, so they are
+        # invisible to `mana_ability: true` as they were already invisible to
+        # the log. Only the by-hand path is covered. Nothing shipped listens for
+        # mana activations, and moving the emission into the primitive would put
+        # an animated log beat on every land auto-tapped to cast a spell.
+        triggers.fire(
+            state,
+            EventType.ABILITY_ACTIVATED,
+            player=pid,
+            source=oid,
+            ability=action.ability_index,
+            card=card.id,
+            mana_ability=True,
+        )
+
         ok = yield from pay(state, pid, ability.cost, oid)
         if not ok:  # pragma: no cover - legality already proved payability
             return
@@ -711,13 +762,6 @@ class Game:
         from .costs import activate_mana_ability
 
         activate_mana_ability(state, oid, action.ability_index, pid, action.mana_option or 0)
-        state.emit(
-            EventType.ABILITY_ACTIVATED,
-            player=pid,
-            source=oid,
-            ability=action.ability_index,
-            card=card.id,
-        )
 
     def _pass_priority(self) -> None:
         state = self.state
