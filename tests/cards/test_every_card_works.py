@@ -273,6 +273,14 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     unstocked.
     """
     cost = ability.cost
+    # Loyalty, for the same reason and one step earlier: this harness puts the
+    # card on the battlefield by hand rather than through `move_object`, so the
+    # enters-with-counters replacement that carries a planeswalker's starting
+    # loyalty never runs. Every minus ability would report as unusable on a
+    # board that was never legal.
+    loyalty = game.state.registry.get(game.state.objects[oid].def_id).loyalty
+    if loyalty is not None:
+        game.state.objects[oid].counters["loyalty"] = loyalty
     spec = getattr(cost, "remove_counters", None) if cost else None
     if not spec:
         return
