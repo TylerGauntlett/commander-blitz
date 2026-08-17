@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **29** capabilities.
+**25 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-scaled-anthem](#counter-scaled-anthem) | 1 | 1083 | value |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [damage-prevention](#damage-prevention) | 1 | 2498 | op, trigger_event |
-| [dash](#dash) | 1 | 6918 | cost |
 | [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
@@ -175,20 +174,6 @@ Blocks **1** card.
 - **Selfless Squire** (rank 2498) — `selfless_squire`
   - When this creature enters, prevent all damage that would be dealt to you this turn.
   - Whenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature.
-
-</details>
-
-## dash
-
-Blocks **1** card.
-
-- **(cost)** The `evoke` alternative-cost slot must stop requiring that the alternative be *cheaper* than the printed cost, so it can carry a dash cost that is more expensive. Riders of Rohan is printed at {3}{R}{W} (mana value 5) with Dash {4}{R}{W} (mana value 6) -- you pay one more mana to buy haste plus the enters-the-battlefield trigger for a turn, then give the body back. That is a real trade a player takes, not dead weight. Concretely: relax the `evoke.mana_value() >= mana_cost.mana_value()` guard at `src/automtg/cards/loader.py:385-390` so a costlier alternative loads. The guard's stated purpose -- "an alternative nobody would take is dead weight that reads as a mechanic" -- is sound for evoke proper (Mulldrifter's evoke is strictly a discount) but it is not true of dash, where the extra mana buys haste and a re-triggerable ETB. If the guard is worth keeping in some form, the honest replacement is to reject only an alternative cost *equal* to the printed one (which really is offering two identical lines), not one that is more expensive. Alternatively split dash off as its own card-level field (`dash: "{4}{R}{W}"` writing the same `cast_evoked` flag, or a `dash_costs_more: true` opt-out beside `evoke_label`) if `evoke` is to keep its discount-only invariant.
-  <br>Why the existing vocabulary won't do: `evoke` plus `evoke_label: "dash"` is exactly the right mechanism otherwise, and `tests/unit/test_dash.py` was written to hold that claim down -- but it only covers a dasher printed at {2}{R} with dash {1}{R}, i.e. a discount. Loading this card with `evoke: "{4}{R}{W}"`, `evoke_label: "dash"`, and a `{"evoked": true}`-gated `grant_keyword` + `delay` fails at load with `DslError: riders_of_rohan: evoke '{4}{R}{W}' is not cheaper than the printed cost` (verified by compiling the card through `compile_card`). No card-level field in the DSL offers an unconditional alternative cost that may exceed the printed one. `alternative_cost` is the only other unconditional-shaped slot and is closed twice over: `loader.py:545-552` refuses it without a `condition` ("an unconditional alternative cost is 'evoke'") and this card's dash has no condition to invent, and more importantly it deliberately sets a *different* flag -- `Action.alternative`, not `evoked` (`src/automtg/engine/actions.py:84-89`, `src/automtg/engine/game.py:291-296`, `src/automtg/cards/schema.py:401-406`, whose comment is explicit that "a spectacle spell reporting `cast_evoked` would be a card quietly claiming to have been evoked"). Nothing reads back that a spell was cast for its `alternative_cost`, so the "If you do, it gains haste, and it's returned ..." half could not be gated on it at all and would have to fire on every cast, which is a different card. `kicker` points the wrong way -- it adds to the printed cost rather than replacing it, so a kicked cast would be {3}{R}{W} plus the dash price rather than {4}{R}{W} -- and while `kicked` is readable, mana value and the printed line would both be wrong. `emerge` replaces the printed cost but its price is reduced by a sacrificed creature's mana value and it may not coexist with `evoke` (`loader.py:332-336`); it is not a fixed alternative price.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Riders of Rohan** (rank 6918) — `riders_of_rohan`
-  - Dash {4}{R}{W} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)
 
 </details>
 

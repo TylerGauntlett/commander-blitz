@@ -5106,6 +5106,14 @@
   "rib_cage_spider": {
     "zone": "battlefield"
   },
+  "riders_of_rohan": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "human_knight_2_2_r_trample_haste"
+    },
+    "zone": "battlefield"
+  },
   "ridge_rannet": {
     "zone": "battlefield"
   },

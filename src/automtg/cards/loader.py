@@ -413,12 +413,30 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: has an 'evoke' cost that no effect reads via 'evoked'")
     if emerge is not None and emerge.x_count:
         raise DslError(f"{where}: an emerge cost with X is not implemented")
-    if evoke is not None and evoke.mana_value() >= mana_cost.mana_value():
-        # An "alternative" cost no cheaper than the printed one is never taken,
-        # so the whole mechanic would be dead weight nobody would notice.
-        raise DslError(
-            f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
-        )
+    if evoke is not None:
+        # What no alternative may ever be is *the same price as the printed
+        # one*: that is one cast offered twice, and the second line is dead
+        # weight nobody would notice however the card labels it.
+        if evoke.mana_value() == mana_cost.mana_value():
+            raise DslError(
+                f"{where}: evoke {model.evoke!r} costs the same as the printed cost -- "
+                f"the same cast offered twice, and nobody would take the second"
+            )
+        # Costlier than printed is dead weight too, but only for evoke *proper*,
+        # which buys nothing at all with the price: a Mulldrifter evoked is a
+        # Mulldrifter that dies, so paying more for it is a line no player takes.
+        # It is not dead weight for **dash**, which is this same mechanism under
+        # a different word and where the extra mana buys haste plus the enters
+        # trigger for a turn before the body goes back -- Riders of Rohan is
+        # printed {3}{R}{W} with dash {4}{R}{W}, and that is a trade players
+        # take. `evoke_label` is the card saying which of the two it is, in the
+        # action list and on screen, so it is what this guard reads: the default
+        # label keeps evoke's discount-only invariant, and a card that has
+        # renamed the cost has already said out loud that it is not evoke.
+        if evoke.mana_value() > mana_cost.mana_value() and model.evoke_label == "evoked":
+            raise DslError(
+                f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost"
+            )
 
     if model.rebound and set(model.types) & {"Creature", "Land", "Artifact", "Enchantment"}:
         # Rebound replaces the *graveyard* a spell would go to, so a permanent
