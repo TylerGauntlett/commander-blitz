@@ -1596,6 +1596,62 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "This ability triggers only once each turn"
+
+`max_per_turn` on a **trigger** (not the ability -- `once_each_turn` is an
+activation restriction and the loader refuses it on anything else):
+
+```jsonc
+"trigger": {"event": "permanent_enters", "controller": "you", "max_per_turn": 1,
+            "filter": {"types": ["Creature"], "exclude_self": true,
+                       "power": {"op": "<=", "value": 2}}}
+```
+
+Counted where the ability **queues**, not where it resolves: the printed word is
+"triggers", so an ability that triggered and was then countered has still used
+its one. Keyed by `(permanent, ability index)`, so two Welcoming Vampires each
+get their own draw.
+
+**It also buys "whenever one or more … enter".** Two creatures entering together
+queue the ability twice and the cap drops the second — the same answer batching
+the events would give. Every printed card that asked for the batch also printed
+the per-turn clause. A card printing "one or more" *without* a cap would still be
+wrong.
+
+A trigger filter's `power`/`toughness` are read off the **board** when the
+subject is still on it, and off the printed face otherwise. Everything else in a
+trigger filter is a characteristic no layer can change, which is what lets the
+filter be right about a creature that has already died; P/T is the exception, and
+a printed 2/2 entering under an anthem is a 3/3 that must not trigger "power 2 or
+less".
+
+## "Each opponent sacrifices…" — a loop over players
+
+```jsonc
+{"op": "for_each_player", "players": "each_opponent", "effects": [
+  {"op": "sacrifice", "objects": {
+     "zone": "battlefield", "controller": {"binding": "each_player"},
+     "any_types": ["Creature", "Planeswalker"],
+     "extreme": {"of": "mana_value", "pick": "greatest"},
+     "count": 1, "chooser": "owner"}}]}
+```
+
+`for_each` iterates objects; this iterates players and binds one as
+`each_player`, which a nested selector reads through `controller`. That binding
+is the point rather than the iteration: `controller: "opponent"` means every
+opponent *at once*, so `extreme` takes one global maximum over the merged pool
+and the opponent whose best creature is smaller keeps everything.
+
+Two things that are easy to get wrong and invisible in a duel:
+
+- **`count` is not optional.** `extreme` is tie-*preserving*, not a picker — two
+  creatures of equal mana value both survive it, and `count` defaults to `"all"`.
+  Omitting it sacrifices both.
+- **`chooser: "owner"`, not `"controller"`.** The printed card says each opponent
+  sacrifices, so they choose among their own tied permanents; `"controller"`
+  resolves to the *spell's* controller and lets you pick for them. A board count
+  cannot tell the two apart when the options are interchangeable.
+
 ## "Equipped creature" outside a static
 
 `attached` had lived only in `STATIC_FILTER_KEYS`, where `characteristics` reads

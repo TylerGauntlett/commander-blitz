@@ -345,6 +345,15 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     if controller == "opponent" and obj.controller == ctx.controller:
         return False
+    # A player spec rather than one of the three words -- "…among creatures
+    # **they** control", scoped to the one opponent a `for_each_player` loop is
+    # currently on. `"opponent"` cannot say it: it means every opponent at once,
+    # so `extreme` would take one global maximum over the merged pool and, at a
+    # pod, spare the opponent whose best creature is smaller.
+    if isinstance(controller, Mapping) and obj.controller not in select_players(
+        ctx, controller
+    ):
+        return False
 
     if (want := selector.get("types")) and not set(want).issubset(types):
         return False
@@ -597,7 +606,11 @@ def validate_selector(selector: Any, where: str) -> None:
     if chooser is not None and chooser not in ("controller", "owner", "none"):
         raise DslError(f"{where}: unknown chooser {chooser!r}")
     controller = selector.get("controller")
-    if controller is not None and controller not in ("you", "opponent", "any"):
+    if (
+        controller is not None
+        and not isinstance(controller, Mapping)
+        and controller not in ("you", "opponent", "any")
+    ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
     if "player" in selector:
         # Only zones that *belong* to a player have an owner to choose. On the

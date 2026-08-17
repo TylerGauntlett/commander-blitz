@@ -447,6 +447,10 @@
   "baron_airship_kingdom": {
     "zone": "battlefield"
   },
+  "baron_bertram_graywater": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barony_vampire": {
     "zone": "battlefield"
   },
@@ -5692,6 +5696,11 @@
   "soul_of_the_rapids": {
     "zone": "battlefield"
   },
+  "soul_shatter": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "soulbound_guardians": {
     "zone": "battlefield"
   },
@@ -7020,6 +7029,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "welcoming_vampire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "wetland_sambar": {
     "zone": "battlefield"

@@ -879,7 +879,13 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
             counter=model.trigger.counter,
+            max_per_turn=model.trigger.max_per_turn,
         )
+        if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
+            raise DslError(
+                f"{where}: 'max_per_turn' is a cap of at least 1; "
+                f"an ability that may never trigger is not a card"
+            )
         active_zones = tuple(Zone(z) for z in model.active_zones)
 
     mana_options: tuple[tuple[int, ...], ...] = ()
@@ -1799,6 +1805,12 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
+
+    # A loop with no body is a card that does nothing, and the whole point of
+    # this op is the body -- without it the printed "each opponent sacrifices"
+    # silently becomes "nobody does".
+    if op == "for_each_player" and not effect.get("effects"):
+        raise DslError(f"{where}: for_each_player needs 'effects' to run per player")
 
     for key in ("then", "else", "effects"):
         if key in effect:

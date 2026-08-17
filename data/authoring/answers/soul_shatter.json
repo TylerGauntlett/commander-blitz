@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "soul_shatter",
+    "name": "Soul Shatter",
+    "oracle_text": "Each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control.",
+    "mana_cost": "{2}{B}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "spell_effects": [
+      {
+        "op": "for_each_player",
+        "players": "each_opponent",
+        "effects": [
+          {
+            "op": "sacrifice",
+            "objects": {
+              "zone": "battlefield",
+              "controller": {
+                "binding": "each_player"
+              },
+              "any_types": [
+                "Creature",
+                "Planeswalker"
+              ],
+              "extreme": {
+                "of": "mana_value",
+                "pick": "greatest"
+              },
+              "count": 1,
+              "chooser": "owner"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5,
+    "battlefield_count": 32
+  }
+}
