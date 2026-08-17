@@ -42,7 +42,7 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
-from automtg.engine.structs import ATTACK_RESTRICTION_DURATIONS
+from automtg.engine.structs import ATTACK_RESTRICTION_DURATIONS, CONTROL_DURATIONS
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 
@@ -2061,13 +2061,17 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         # and does nothing at all.
         if "objects" not in effect:
             raise DslError(f"{where}: gain_control needs 'objects' -- there is nothing to take")
-        # Only the permanent form exists. A `duration` would be read as "until
-        # end of turn" by whoever wrote it and ignored by the engine, which
-        # turns Act of Treason into a strictly better card than the printed one.
-        if "duration" in effect:
+        # Both forms exist now, and the guard stays for the reason it was
+        # written: a `duration` nobody checked would be read as "until end of
+        # turn" by whoever wrote it and ignored by the engine, which turns Act
+        # of Treason into a strictly better card than the printed one. What
+        # changed is that `until_end_of_turn` is now implemented rather than
+        # refused -- every other spelling is still a load error, exactly as
+        # `grant_keyword`'s is below.
+        if "duration" in effect and str(effect["duration"]) not in CONTROL_DURATIONS:
             raise DslError(
-                f"{where}: gain_control has no duration; only a permanent control "
-                f"change is implemented (see docs/rules-coverage.md)"
+                f"{where}: unknown gain_control duration {effect['duration']!r} "
+                f"(use 'until_end_of_turn' or 'permanent')"
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")

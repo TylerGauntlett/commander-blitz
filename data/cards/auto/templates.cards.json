@@ -85678,6 +85678,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, gain control of target permanent until end of turn. Untap that permanent. It gains haste until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "zealous_conscripts",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Zealous Conscripts",
+      "oracle_text": "Haste\nWhen this creature enters, gain control of target permanent until end of turn. Untap that permanent. It gains haste until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
