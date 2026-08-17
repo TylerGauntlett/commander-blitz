@@ -878,7 +878,12 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
-        if not _matches_printed(card, filt):
+        # "Creature spells you cast **of the chosen type** cost {1} less."
+        # Herald's Horn. The substitution needs the permanent that made the
+        # choice, and this loop has had it all along -- `_battlefield_statics`
+        # yields the source beside the static, and only `_matches_printed`'s
+        # signature (a printed card, no object) suggested otherwise.
+        if not _matches_printed(card, resolve_chosen_subtypes(filt, source_obj)):
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total

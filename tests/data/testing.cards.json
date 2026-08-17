@@ -7046,6 +7046,50 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_chosen_discount",
+      "name": "Test Chosen Discount",
+      "oracle_text": "As this artifact enters, choose a creature type.\nCreature spells you cast of the chosen type cost {1} less to cast.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_type",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Creature spells you cast of the chosen type cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "amount": {
+            "const": 1
+          },
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

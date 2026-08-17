@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**23 cards** blocked by **34** capabilities.
+**21 cards** blocked by **31** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,15 +19,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [missing-token-definitions](#missing-token-definitions) | 2 | 3474 | engine |
 | [once-each-turn-trigger](#once-each-turn-trigger) | 2 | 425 | trigger_event |
 | [per-player-loop](#per-player-loop) | 2 | 1141 | op, selector |
-| [subtype-restricted-mana](#subtype-restricted-mana) | 2 | 2443 | engine |
 | [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [attached-selector](#attached-selector) | 1 | 2433 | selector |
 | [attached-trigger](#attached-trigger) | 1 | 40 | trigger_event |
-| [blood-token](#blood-token) | 1 | 2443 | engine |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [choose-both](#choose-both) | 1 | 191 | decision |
-| [chosen-type](#chosen-type) | 1 | 148 | selector, static_effect |
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [entering-power-filter](#entering-power-filter) | 1 | 425 | selector |
@@ -142,25 +139,6 @@ Blocks **2** cards.
 
 </details>
 
-## subtype-restricted-mana
-
-Blocks **2** cards.
-
-- **(engine)** a mana ability whose 'spend this mana only to...' clause names one or more creature subtypes (Vampire, Cleric, Demon) rather than a card type -- i.e. the ability's mana restriction must be able to hold a list of subtypes, and the purpose computed for the spell being paid for must include that spell's subtypes so a restricted source is offered when any one of them matches
-  <br>Why the existing vocabulary won't do: The existing mana restriction is a single lowercased card type: the loader rejects anything whose title-case form is not in the eight known card types, and the purpose a spell presents is built from that card's types alone, so subtypes are never consulted and 'Vampire, Cleric, and/or Demon' has no representation. Leaving the clause off would produce unrestricted {B}{B}{B}, which is strictly more permissive than the printed card.
-- **(engine)** a mana ability whose 'spend this mana only to...' clause names a creature subtype (Vampire) instead of a card type -- the ability's mana restriction must be able to hold a subtype, and the purpose computed for the spell being paid for must include that spell's subtypes so the restricted source is offered only for a Vampire spell
-  <br>Why the existing vocabulary won't do: The mana restriction an ability may carry is a single lowercased *card type*: the loader rejects any value whose title-case form is not one of the eight known card types, and the purpose a spell presents to the payment solver is built from its types alone, so 'Vampire' has no representation. Dropping the clause would produce unrestricted any-color mana off a land for one life, strictly more permissive than the printed card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Voldaren Estate** (rank 2443) — `voldaren_estate`
-  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
-  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
-- **Master of Dark Rites** (rank 2686) — `master_of_dark_rites`
-  - {T}, Sacrifice another creature: Add {B}{B}{B}. Spend this mana only to cast Vampire, Cleric, and/or Demon spells.
-
-</details>
-
 ## activated-ability-cost-reduction
 
 Blocks **1** card.
@@ -171,8 +149,7 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Voldaren Estate** (rank 2443) — `voldaren_estate`
-  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
-  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
+  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control.
 
 </details>
 
@@ -220,21 +197,6 @@ Blocks **1** card.
 
 </details>
 
-## blood-token
-
-Blocks **1** card.
-
-- **(engine)** a Blood token in the shared token pool -- a colorless artifact token named Blood with the printed activated ability '{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.' so `create_token` can name it
-  <br>Why the existing vocabulary won't do: `create_token` requires a `token` id that resolves to an existing card marked `is_token`; `validate_token_references` raises on an unknown id. The pool holds Clue and Treasure artifact tokens plus creature tokens, but no Blood, and a card answer file cannot define one -- the token must be added to the token card pool. Substituting Clue would change both the activation cost and the discard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Voldaren Estate** (rank 2443) — `voldaren_estate`
-  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.
-  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.")
-
-</details>
-
 ## bottom-of-library-random
 
 Blocks **1** card.
@@ -261,23 +223,6 @@ Blocks **1** card.
 - **Akroma's Will** (rank 191) — `akroma_s_will`
   - Choose one. If you control a commander as you cast this spell, you may choose both instead.
   - • Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.
-
-</details>
-
-## chosen-type
-
-Blocks **1** card.
-
-- **(static_effect)** `spell_cost_reduction`'s `affects_spells` filter must accept `{"chosen_type_of": "self"}` in its `subtypes` list, so a cost reduction can be scoped to the type the source permanent named as it entered
-  <br>Why the existing vocabulary won't do: `choose_type` already stores the choice on the permanent and `characteristics.resolve_chosen_subtypes` already substitutes it, but only on the two paths that get handed the source permanent: static `affects` (via `characteristics._matches`) and trigger filters (via `triggers`). `spell_cost_reduction` prices a card still in hand through `characteristics._matches_printed(card, filt)`, which takes no source object at all and so has nothing to read `chosen_type` off; the literal dict then reaches `set(subtypes)` and is unhashable. A literal subtype list cannot stand in either, because the type is not known until the artifact enters.
-- **(selector)** the effect-side selector language (`effects.selectors.matches`, used by `look_at_top`'s `objects`) must accept `{"chosen_type_of": "self"}` in `subtypes`, so an ability can ask "is this a creature card of the chosen type" about a card in a library
-  <br>Why the existing vocabulary won't do: `resolve_chosen_subtypes` is never called from `effects/selectors.py`; its `subtypes` branch does a plain `set(want) & subtypes`, so the marker dict raises rather than resolving. The trigger-filter path does resolve it, but the printed line triggers on `upkeep`, which binds no object to filter, so the test has to happen inside the effect on the library's top card. `look_at_top` with `count: "any"` is otherwise the exact shape of "look at the top card... you may... put it into your hand".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Herald's Horn** (rank 148) — `herald_s_horn`
-  - Creature spells you cast of the chosen type cost {1} less to cast.
-  - At the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand.
 
 </details>
 

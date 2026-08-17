@@ -819,6 +819,10 @@
     "artist": "Anna Podedworna",
     "scryfall_id": "28ff52a2-4223-4551-b388-b4dd21cc1437"
   },
+  "blood_token": {
+    "artist": "Stephen Andrade",
+    "scryfall_id": "6b563165-b97f-42c6-82a8-65d8ee69e381"
+  },
   "bloodfell_caves": {
     "artist": "Ron Spencer",
     "scryfall_id": "49195d90-de0c-4290-aa1c-9f4d948b5521"
@@ -3383,6 +3387,10 @@
     "artist": "Edward P. Beard, Jr.",
     "scryfall_id": "0582b42f-5ae5-4be2-ba2d-ed62b3cb20c5"
   },
+  "herald_s_horn": {
+    "artist": "Pablo Mendoza",
+    "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41"
+  },
   "herd_heirloom": {
     "artist": "Allen Morris",
     "scryfall_id": "5579a3ac-7fdb-4204-b44e-fe0174f78cfa"
@@ -4643,6 +4651,10 @@
   "mass_of_ghouls": {
     "artist": "Lucio Parrillo",
     "scryfall_id": "cd816d37-7a9e-485e-9ed9-20c1c15a26dd"
+  },
+  "master_of_dark_rites": {
+    "artist": "Igor Kieryluk",
+    "scryfall_id": "35c21fc4-d2f4-4682-b6af-f2e32377c9af"
   },
   "mavren_fein_dusk_apostle": {
     "artist": "Daarken",
@@ -8348,6 +8360,10 @@
     "artist": "Matt Stewart",
     "scryfall_id": "954d53f3-ebbe-48e0-9e1a-7019d2b0740c"
   },
+  "vampire_demon_4_3_wb_flying": {
+    "artist": "Nino Vecia",
+    "scryfall_id": "3005eb0a-5c96-4a07-a6b9-a907d1095cdf"
+  },
   "vampire_lacerator": {
     "artist": "Steve Argyle",
     "scryfall_id": "f8b76f75-5151-4bbc-a792-4eacdf8ecf44"
@@ -8375,6 +8391,10 @@
   "vampire_revenant": {
     "artist": "Nils Hamm",
     "scryfall_id": "2bd3a6c6-33b8-4530-9d80-c488898afd6e"
+  },
+  "vampire_rogue_1_1_b_lifelink": {
+    "artist": "Robin Olausson",
+    "scryfall_id": "55a35e07-9d80-4f2b-a000-5638b72a9808"
   },
   "vampire_sovereign": {
     "artist": "Volkan Ba\u01f5a",

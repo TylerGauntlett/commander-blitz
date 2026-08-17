@@ -276,6 +276,19 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
     if zone is not None and obj.zone is not zone:
         return False
 
+    # "…if it's a creature card **of the chosen type**." Herald's Horn asks this
+    # about the top card of a library, where no trigger has bound an object and
+    # no static is being computed -- so the substitution the characteristics
+    # layer already does for `affects` and for trigger filters has to happen on
+    # the effect side too. Resolved against the ability's own source, which is
+    # the permanent that made the choice.
+    if selector.get("subtypes"):
+        from ..characteristics import resolve_chosen_subtypes
+
+        selector = resolve_chosen_subtypes(
+            selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        )
+
     card = state.card_of(obj)
     use_derived = obj.on_battlefield
     c = chars(state, oid) if use_derived else None

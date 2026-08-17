@@ -353,7 +353,7 @@ class ManaSource:
     #: rather than by tagging the pool: mana here is tapped at the moment it is
     #: spent, so a source that may not pay for this spell simply is not offered,
     #: and the solver's inner loop is untouched.
-    restriction: str | None = None
+    restriction: frozenset[str] | None = None
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)

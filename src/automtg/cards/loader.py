@@ -893,14 +893,30 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_effects, mana_rider = _split_mana_rider(model.effects, where)
         mana_options = _mana_options(mana_effects, where)
         mana_amount = _mana_amount(mana_effects, where)
+    mana_restriction: frozenset[str] | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
-        if model.mana_restriction.title() not in KNOWN_TYPES:
-            raise DslError(
-                f"{where}: unknown mana restriction {model.mana_restriction!r} "
-                f"(a card type, lowercased)"
-            )
+        names = (
+            [model.mana_restriction]
+            if isinstance(model.mana_restriction, str)
+            else list(model.mana_restriction)
+        )
+        if not names:
+            raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")
+        for name in names:
+            # A card type, or a subtype. Subtypes are open-ended in Magic and
+            # there is no closed list to check one against, so the guard is the
+            # weaker "looks like a word": a typo here produces mana that can
+            # never be spent, which is a strictly worse card than the printed
+            # one -- the safe direction, but a silent one, so it is worth the
+            # shape check.
+            if not name or not name.replace("-", "").replace(" ", "").isalpha():
+                raise DslError(
+                    f"{where}: unparsable mana restriction {name!r} "
+                    f"(a card type or subtype, lowercased)"
+                )
+        mana_restriction = frozenset(n.lower() for n in names)
 
     return Ability(
         kind=kind,
@@ -911,7 +927,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_options=mana_options,
         mana_amount=mana_amount,
         mana_rider=mana_rider,
-        mana_restriction=model.mana_restriction,
+        mana_restriction=mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         activation_condition=(
             dict(model.condition) if kind is AbilityKind.ACTIVATED and model.condition else None

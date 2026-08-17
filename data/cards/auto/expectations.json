@@ -2614,6 +2614,10 @@
   "henge_of_ramos": {
     "zone": "battlefield"
   },
+  "herald_s_horn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "herd_heirloom": {
     "zone": "battlefield"
   },
@@ -3596,6 +3600,13 @@
     "zone": "battlefield"
   },
   "mass_of_ghouls": {
+    "zone": "battlefield"
+  },
+  "master_of_dark_rites": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "mek_leth_berserker": {
