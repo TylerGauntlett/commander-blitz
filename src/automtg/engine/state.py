@@ -18,6 +18,7 @@ from .structs import (
     BlockProhibition,
     CombatState,
     DelayedTrigger,
+    EnteredPermanent,
     StackItem,
     TriggerInstance,
     TurnLedger,
@@ -485,6 +486,36 @@ class GameState:
                 # emitter remembering to list them.
                 attacked = ledger.creatures_attacked.setdefault(pid, set())
                 attacked.update(int(oid) for oid in data.get("attackers") or ())
+        elif event.type == EventType.ENTERS_BATTLEFIELD:
+            # "…if another Human entered the battlefield under your control this
+            # turn." Snapshotted here rather than counted, because the question
+            # is *which* permanents entered and the answer has to survive them
+            # leaving: `chars` reads printed characteristics off a card in a
+            # graveyard and cannot be asked at all about a token, which the
+            # token state-based action pops out of `self.objects`.
+            #
+            # Derived characteristics, read while the permanent is on the
+            # battlefield -- `_enter_battlefield` has already applied its
+            # replacements and called `bump_chars`, and fires this event before
+            # anything else can move it. Same moment and same argument as
+            # `combat_damage_types` below.
+            obj = self.objects.get(data.get("oid"))
+            if obj is not None:
+                from .characteristics import chars
+
+                c = chars(self, obj.oid)
+                ledger.permanents_entered.append(
+                    EnteredPermanent(
+                        oid=obj.oid,
+                        # Controller *at entry*: "under your control" is a fact
+                        # about the arrival, and a permanent stolen afterwards
+                        # must not retroactively have entered under the thief.
+                        controller=obj.controller,
+                        types=frozenset(c.types),
+                        subtypes=frozenset(c.subtypes),
+                        colors=frozenset(c.colors),
+                    )
+                )
         elif event.type == EventType.DAMAGE_DEALT:
             # Two shapes share this event, and they say which they are: `to` is
             # "player" or "permanent".  Only the first is life loss, and on the

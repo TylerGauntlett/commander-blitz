@@ -1832,6 +1832,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "eowyn_shieldmaiden": {
+    "zone": "battlefield"
+  },
   "epic_proportions": {
     "zone": [
       "battlefield",
