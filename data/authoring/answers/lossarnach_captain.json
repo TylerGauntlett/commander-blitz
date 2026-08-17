@@ -1,0 +1,88 @@
+{
+  "card": {
+    "id": "lossarnach_captain",
+    "name": "Lossarnach Captain",
+    "oracle_text": "First strike\nWhenever this creature or another Human you control enters, tap target creature an opponent controls.\nAt the beginning of your upkeep, create a 1/1 white Human Soldier creature token.",
+    "mana_cost": "{3}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 3,
+    "toughness": 1,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "first_strike"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature or another Human you control enters, tap target creature an opponent controls.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "subtypes": [
+              "Human"
+            ]
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "tap",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, create a 1/1 white Human Soldier creature token.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "human_soldier_1_1_w",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 6
+  }
+}

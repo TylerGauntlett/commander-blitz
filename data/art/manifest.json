@@ -5436,6 +5436,12 @@
     "file": "horizon_scholar.jpg",
     "scryfall_id": "0584e234-4ce9-4e17-a1cf-d6dafc4e1374"
   },
+  "horn_of_gondor": {
+    "artist": "Yigit Koroglu",
+    "bytes": 49794,
+    "file": "horn_of_gondor.jpg",
+    "scryfall_id": "7565ff54-15be-4365-826a-2fcbd40f2ee9"
+  },
   "horn_of_greed": {
     "artist": "Winslow Mortimer & Mike Esposito",
     "bytes": 97214,
@@ -5507,6 +5513,18 @@
     "bytes": 41384,
     "file": "human_1_1_w.jpg",
     "scryfall_id": "25b0644d-4934-4495-9b6e-c31d1d10c298"
+  },
+  "human_knight_2_2_r_trample_haste": {
+    "artist": "Wayne Wu",
+    "bytes": 55030,
+    "file": "human_knight_2_2_r_trample_haste.jpg",
+    "scryfall_id": "546bda77-e3a8-4f2a-ba9c-94fb0b9ff183"
+  },
+  "human_soldier_1_1_w": {
+    "artist": "Jarel Threat",
+    "bytes": 66555,
+    "file": "human_soldier_1_1_w.jpg",
+    "scryfall_id": "6007af81-4541-4b55-90ea-03d365362ae5"
   },
   "humble_budoka": {
     "artist": "Christopher Moeller",
@@ -6742,6 +6760,12 @@
     "bytes": 61014,
     "file": "los_diablos_missile_base.jpg",
     "scryfall_id": "2123fcb5-8181-47ab-9a2d-7ede5b5118e8"
+  },
+  "lossarnach_captain": {
+    "artist": "Justine Cruz",
+    "bytes": 46998,
+    "file": "lossarnach_captain.jpg",
+    "scryfall_id": "08b78cd2-7c52-4dcd-b063-1ac5e96420d4"
   },
   "lost_legion": {
     "artist": "Anastasia Ovchinnikova",
