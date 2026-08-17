@@ -28,7 +28,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
 | [end-of-combat](#end-of-combat) | 1 | 4737 | trigger_event |
-| [exert](#exert) | 1 | 1000 | value |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [goad](#goad) | 1 | 2089 | engine, op |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
@@ -247,21 +246,6 @@ Blocks **1** card.
 
 - **Flamerush Rider** (rank 4737) — `flamerush_rider`
   - Exile the token at end of combat.
-
-</details>
-
-## exert
-
-Blocks **1** card.
-
-- **(value)** A turn-scoped record of whether a specific permanent was exerted this turn, readable by an `if` -- e.g. a `value_keys` entry `exerted_this_turn` taking an object selector (compared against `{"const": 0}` the way `counters_on` is), tallied on `TurnLedger` when the exert choice is taken and reset with the rest of the ledger at the turn boundary. Exert itself is otherwise free and already cashed by `tests/unit/test_exert.py` (`attacks` trigger with `source: "self"`, `may`, `skip_untap`); what is missing is only the once-per-turn guard that Combat Celebrant prints because it is the exert card that can attack twice in a turn.
-  <br>Why the existing vocabulary won't do: `set_flag` / `has_flag` is the nearest shape and is deliberately one-way: `op_set_flag`'s docstring calls it "a one-way word written onto a permanent" for renown, `obj.flags` is a plain `set` that nothing in `src/automtg/engine/` ever removes from, and `clear_until_eot` does not touch it. So a flag-based guard would read "hasn't been exerted this **game**" and silently refuse the second exert on a later turn -- wrong in the direction that looks right in a one-turn test. `once_each_turn` is explicitly rejected for anything but an activated ability (`loader.py` raises: "'activate_steps' and 'once_each_turn' restrict *activating*"), and the exert choice hangs off an `attacks` trigger. `resolutions_this_turn` counts how often the ability *resolved*, which counts a declined `may` as an exert, so it answers a different question. `attacked_this_turn` is per player and asks about attacking, not exerting.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Combat Celebrant** (rank 1000) — `combat_celebrant`
-  - If this creature hasn't been exerted this turn, you may exert it as it attacks.
-  - When you do, untap all other creatures you control and after this phase, there is an additional combat phase.
 
 </details>
 

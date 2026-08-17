@@ -2254,6 +2254,106 @@ landed in the previous run) and **Windbrisk Heights**, the first hideaway land i
 the pool. Aggravated Assault, Seize the Day and Waves of Aggression print the
 same untap clause and are now expressible with no further engine work.
 
+## A word that wears off — "hasn't been exerted this turn"
+
+### Overview
+
+Exert needed no engine support and still does not. `docs/keywords.md` has called
+it *free* since the census — an `attacks` trigger with `source: "self"`, a `may`,
+and `skip_untap` for the price — and `tests/unit/test_exert.py` cashes that claim
+rather than asserting it. Combat Celebrant is the one exert card that can attack
+twice in a turn, because it grants itself the second combat, so it is the one
+that prints a guard:
+
+> **If this creature hasn't been exerted this turn**, you may exert it as it
+> attacks. When you do, untap all other creatures you control and after this
+> phase, there is an additional combat phase.
+
+The guard is the whole of what was missing: a **turn-scoped record of the
+choice**, per object. Without one the ability is offered again in the combat it
+just made, exerts again, and the turn runs until `MAX_EXTRA_PHASES_PER_TURN`
+stops it — a printed once-per-turn card playing as an unbounded loop.
+
+### Every near miss, and why each is a different card
+
+| | |
+|---|---|
+| `set_flag` / `has_flag` | The right shape with the wrong lifetime, and the one that looks right. `op_set_flag`'s own docstring calls it *"a one-way word written onto a permanent"*: `obj.flags` is a plain `set`, nothing in `src/automtg/engine/` ever removes from it, and `clear_until_eot` does not touch it. Renown depends on exactly that — it must never be re-earned. A guard written there reads "hasn't been exerted this **game**", which passes every one-turn test and makes a once-per-turn card work once per game |
+| `once_each_turn` | An **activation** restriction. `loader.py` refuses it on anything that is not an activated ability — *"'activate_steps' and 'once_each_turn' restrict activating"* — and the exert choice hangs off a triggered ability |
+| `max_per_turn` on the trigger | The nearest thing that is turn-scoped, and counted where the ability **queues**. A player who is offered the exert and declines has spent the turn's one trigger without exerting anything, so the second attack is denied a choice the card gives it |
+| `resolutions_this_turn` | The same mistake one layer down: the ability resolves whether the `may` is taken or not, so a declined offer counts as an exert |
+| `attacked_this_turn` | Per object and turn-scoped, and about **attacking** — which the creature did either way |
+
+### The design: `set_flag`'s twin, not `set_flag` with a switch
+
+`TurnLedger.object_flags` maps object id → the words it was given this turn,
+written by the `set_turn_flag` op and read by the `{"has_turn_flag": …}`
+condition. Cleared in `TurnLedger.clear` with morbid, storm, raid and the rest,
+so the lifetime needs no sweep of its own and cannot be got wrong by a future
+caller.
+
+Two ops and two condition keys rather than one of each carrying a `duration`.
+That is the call `skip_untap` and `freeze` already made — *"using either for the
+other would be wrong in both directions, so they are two ops over two fields
+rather than one with a flag"* — and it is worth more here than there, because
+this mistake is **invisible on the turn it is made**. A card that reached for
+`set_flag` behaves identically for a whole turn and is wrong only on the next
+one.
+
+The read is deliberately narrow: a condition on the ability's own source, exactly
+as `has_flag` is. No selector key and no value expression, because no printed
+card asks "each creature exerted this turn" — the same call the
+`attacked_this_turn` work made about `STATIC_FILTER_KEYS`, for the same reason.
+
+### The write goes inside the `may`
+
+```jsonc
+"trigger": {"event": "attacks", "source": "self",
+            "condition": {"not": {"has_turn_flag": "exerted"}}},
+"effects": [{"op": "may", "prompt": "Exert Combat Celebrant?", "effects": [
+  {"op": "set_turn_flag", "flag": "exerted", "objects": {"self_only": true}},
+  {"op": "skip_untap",    "objects": {"self_only": true}},
+  {"op": "untap", "objects": {"controller": "you", "types": ["Creature"],
+                              "exclude_self": true, "count": "all"}},
+  {"op": "extra_combat"}]}]
+```
+
+Beside `skip_untap` and not around the `may`, because **declining exerts
+nothing** — which is the one behaviour that separates this from every rejected
+alternative above, and the test that pins it is the one that would have caught
+each of them.
+
+`skip_untap` is not the write site either, and could not be: it is the generic
+"doesn't untap during its controller's next untap step", printed by cards that
+freeze somebody else's creature. Exerting is a *choice its controller makes*
+(701.40a), so a record folded into `skip_untap` would report a creature an
+opponent tapped down as having been exerted.
+
+### The loader's share
+
+`set_turn_flag` with no `flag` is refused, the way `set_flag` is — it writes
+nothing, so the guard reading it back never bites and the card plays as though
+its once-per-turn clause were not printed. A `duration` on it is refused rather
+than ignored: there is one duration and it is in the name, and a card asking for
+another one is asking for `set_flag`. And `has_turn_flag` must be a flag *name* —
+`true` stringifies to `"True"`, which nothing ever wrote, so the guard would
+silently never fire.
+
+### What it unblocked
+
+**Combat Celebrant**, whose last blocked need this was: `extra_combat` landed two
+runs earlier and closed the second half of its sentence. Authored at the agent
+tier — no template, because the printed sentence is one of a kind in the pool and
+a template that half-read it would make a cheaper card than the printed one.
+
+The authoring verifier declines combat, so an `attacks` trigger cannot fire in
+its sandbox and the card legitimately asserts the weak `{"zone": "battlefield"}`
+expectation. The behaviour is covered where it can be driven:
+`tests/unit/test_turn_flags.py` attacks, exerts, takes the extra combat, attacks
+again, and asserts the second attack is offered nothing — then plays the greedy
+line to the end of the turn and asserts the turn contains exactly two combat
+phases rather than the twenty the cap would allow.
+
 ## Transforming double-faced cards
 
 ### Overview
