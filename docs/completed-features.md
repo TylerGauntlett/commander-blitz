@@ -176,6 +176,103 @@ needed nothing new. Flamerush Rider loses this need and keeps its other one:
 maps only four steps, so `{"op": "delay", "step": "end_of_combat"}` never becomes
 due. `delay` already snapshots `ctx.bindings` when it schedules, so the recorded
 token will survive to that step the moment the step is reachable.
+## Conditional cost reduction — the discount that can be switched off, and the one that belongs to a variant
+
+### Overview
+
+Two gap records named `conditional_cost_reduction` from opposite directions, and
+between them they specified it better than either did alone.
+
+**Crown of Gondor** — "Equip {4}. This ability costs {3} less to activate **if
+you're the monarch**." `Cost.mana_reduction` existed and was the wrong
+arithmetic: it took only `{"count": {filter}}`, a per-object multiplier, so a flat
+"{3} less if X" would have needed a filter matching exactly three permanents while
+the crown was yours and none otherwise, which no filter over a board can express.
+The two card-level reductions were no help either — both are read from the cast
+path and never reach the activation path an equip cost is charged on — and
+splitting the printed line into two equip abilities leaves nothing able to switch
+the cheap one off. So the card was either always {4} or always {1}: a card that
+plays like a different card, at a price nothing on screen would question.
+
+**Visions of Glory** — "Flashback {8}{W}{W}. This spell costs {X} less to cast
+**this way**." `legality._cast_variant` picks a price per cast variant and then
+applies `cost_reduction` to whatever it picked, because Ghalta costs less however
+it is cast; `game._cast` mirrors that. So a card-level reduction is
+**variant-blind**, and the rider written there would have taken {X} off the
+printed hand cast too. That is the more dangerous of the two omissions, because
+the card still loads, still plays, and is simply cheaper than it says — from a
+zone the reader was not looking at.
+
+### One mechanism, not two
+
+The two faces are the same question asked of different cost nodes: *how much less
+does **this** cost node cost right now*. So there is one reduction language,
+`costs.reduction_amount`, and three readers of it.
+
+The language gained two things. `{"amount": N}` is a **flat** reduction, a
+different shape from `count` rather than a special case of it, for the reason
+above. And `condition` gates the whole thing — the ordinary condition DSL, so
+`is_monarch`, `is_your_turn`, `exists` and `cmp` came for free the moment the gate
+existed.
+
+The variant scoping then turned out not to be a mechanism at all, but *where the
+node is read from*. `flashback`/`graveyard_cost` is already a full `Cost`, so it
+already had a `mana_reduction` slot; nothing read it. `costs.variant_reduction`
+reads it from the flashback branch of `_cast_variant` **and** the matching branch
+of `game._cast` — both, because a spell offered at one price and charged another
+strands the payment. Reusing `mana_reduction` rather than adding the `reduction`
+key the gap record suggested is deliberate: a second key meaning the same thing on
+the same model is a key that gets written in the wrong slot and ignored in
+silence.
+
+`ability_mana` also grew a `source_oid`, threaded from `can_pay` and `pay` alike,
+so a reduction whose condition asks about its own permanent answers identically in
+both.
+
+### What the loader refuses, and why each would otherwise be silent
+
+Every one of these loads clean and does the wrong thing quietly, which is what
+makes them load errors:
+
+- **A flat `amount` with no `condition`.** That is a cheaper printed cost written
+  the long way.
+- **A `condition` with no arithmetic**, or two kinds of arithmetic at once —
+  whichever the code read first would win, and no printed line says both.
+- **`kicked`, `evoked`, `overloaded`, `cast_from_graveyard`** in the condition. A
+  reduction is priced *before* the spell reaches the stack, so all four read
+  `False` every time: a discount clause that can never fire, on a card that reads
+  as though it has one. Checked recursively through `all`/`any`/`not`.
+- **A `mana_reduction` with no `mana` to reduce.** Clamped at zero, so it would do
+  nothing at all.
+- **A filter naming a zone other than the battlefield.** `_reduction_matches`
+  walks `state.battlefield` and nothing else.
+- **`mana_reduction` on `additional_cost`.** Its mana is folded into the spell's
+  price with `additional_cost.mana.scaled(...)`, so nothing prices that node on
+  its own and the player would be charged the full amount.
+
+Only `flashback`/`graveyard_cost` can carry the variant rider, and that is a fact
+about the schema rather than about the mechanism: `evoke`, `emerge`, `overload`,
+`bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana strings with
+no cost node to hang one on. Each would gain the rider for free the day it becomes
+a `Cost`.
+
+### What it unblocked
+
+**Crown of Gondor**, all three lines: the `buff` static whose value is a
+`{"count": …}` over creatures you control, the `permanent_enters` trigger filtered
+to legendary creatures with `{"no_monarch": true}` as its intervening-if, and the
+equip whose cost carries `{"amount": 3, "condition": {"is_monarch": "you"}}`. Its
+equip cost cannot be observed in the authoring sandbox — the verifier never
+activates activated abilities — so `tests/unit/test_conditional_cost_reduction.py`
+is where that coverage lives, including both halves of the offer-and-charge
+agreement.
+
+**Visions of Glory** remains blocked, on `commander_mana_value` alone: a maximum
+over the battlefield *and* the command zone, which no reduction shape and no value
+expression can produce, and which cannot be evaluated at pricing time where no
+`EffectContext` exists. Its gap record was trimmed rather than retired, so the
+report now says what it is actually waiting for. Its rider's *slot* now exists;
+only the number it takes does not.
 
 ## The monarch — a designation whose word is worth nothing
 
