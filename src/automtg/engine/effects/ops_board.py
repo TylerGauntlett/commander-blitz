@@ -41,6 +41,30 @@ def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
         destroy(ctx.state, oid, by=ctx.source_oid)
 
 
+@register("phase_out")
+def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Target creature phases out." (702.26)
+
+    Phasing shipped as a keyword the untap step reads, and nothing else: the
+    whole mechanism lived in `turn.py` behind two private functions whose only
+    caller was the untap walk. This is the printed one-shot half, and it is that
+    same mechanism -- attached permanents come along (702.26e), and the
+    permanent phases back in before its controller's next untap step.
+
+    Not `grant_keyword: phasing`, which is a different card: the keyword does
+    nothing *now* and then flickers the creature out and back for the rest of
+    the game. Not a blink either -- a phased-out permanent never leaves the
+    battlefield, so it keeps its counters, its attachments and its continuous
+    effects, and nothing that watches for a zone change sees anything.
+    """
+    from ..turn import phase_out
+
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Phase out", "phase_out")
+    for oid in oids:
+        phase_out(ctx.state, oid)
+    ctx.state.bump_chars()
+
+
 @register("exile")
 def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     """Exile objects, optionally remembering which permanent did it.

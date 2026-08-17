@@ -1805,6 +1805,32 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## "Target creature phases out"
+
+```jsonc
+{"op": "phase_out", "objects": {"target": "t1"}}
+```
+
+Phasing shipped as a keyword the untap step reads, and nothing else: the whole
+mechanism lived in `turn.py` behind two private functions whose only caller was
+the untap walk. This is the printed one-shot half, calling that same mechanism.
+
+Two things come free because they were already there — 702.26e takes whatever
+is attached along, and the untap walk brings the permanent back before its
+controller's next untap step. It stays back: a permanent phased out by an
+*effect* has no `phasing` keyword, so the walk does not send it out again.
+
+Neither workaround is this card:
+
+- **`grant_keyword: "phasing"`** does nothing now — the creature is still on the
+  battlefield — and then flickers it out and back for the rest of the game.
+- **A blink** is not phasing. A phased-out permanent never leaves the
+  battlefield: it keeps its counters, its attachments and every continuous
+  effect on it, and nothing watching for a zone change sees anything.
+
+`objects` is required, for `regenerate`'s reason: with no selector
+`choose_objects` finds nothing and the spell resolves having phased nobody out.
+
 ## "When that mana is spent to cast…"
 
 ```jsonc

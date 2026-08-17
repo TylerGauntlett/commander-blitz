@@ -274,13 +274,22 @@ def _phase(state: GameState, pid: int) -> None:
         and Keyword.PHASING.value in chars(state, oid).keywords
     ]
     for oid in going_in:
-        _phase_in(state, oid)
+        phase_in(state, oid)
     for oid in going_out:
-        _phase_out(state, oid, indirect=False)
+        phase_out(state, oid, indirect=False)
     state.bump_chars()
 
 
-def _phase_out(state: GameState, oid: int, *, indirect: bool) -> None:
+def phase_out(state: GameState, oid: int, *, indirect: bool = False) -> None:
+    """Phase a permanent out (702.26).
+
+    Public because phasing is no longer only the untap step's business: "target
+    creature phases out" is a printed one-shot, and the mechanism it wants is
+    exactly this one -- including 702.26e, which takes whatever is attached
+    along. A permanent phased out here has no `phasing` keyword, so the untap
+    walk phases it back in at its controller's next untap step and leaves it
+    there, which is what the printed line says.
+    """
     obj = state.objects.get(oid)
     if obj is None or oid not in state.battlefield:
         return
@@ -294,10 +303,11 @@ def _phase_out(state: GameState, oid: int, *, indirect: bool) -> None:
     for other_id in list(state.battlefield):
         other = state.objects.get(other_id)
         if other is not None and other.attached_to == oid:
-            _phase_out(state, other_id, indirect=True)
+            phase_out(state, other_id, indirect=True)
 
 
-def _phase_in(state: GameState, oid: int) -> None:
+def phase_in(state: GameState, oid: int) -> None:
+    """Phase a permanent back in, and whatever went out attached to it."""
     obj = state.objects.get(oid)
     if obj is None or not obj.phased_out:
         return
@@ -307,7 +317,7 @@ def _phase_in(state: GameState, oid: int) -> None:
     state.emit("phased_in", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
     for other_id, other in state.objects.items():
         if other.phased_out and other.phased_out_indirectly and other.attached_to == oid:
-            _phase_in(state, other_id)
+            phase_in(state, other_id)
 
 
 def _epic_copy(state: GameState, pid: int) -> None:

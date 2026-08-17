@@ -1831,6 +1831,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             f"{where}: regenerate needs 'objects' naming what is shielded "
             f"(use {{\"self_only\": true}} for \"regenerate this creature\")"
         )
+    if op == "phase_out" and not effect.get("objects"):
+        # The same trap as `regenerate` below. `choose_objects` with no selector
+        # finds nothing, so the spell would resolve, log nothing and phase
+        # nobody out -- and "this permanent phases out" is three words away.
+        raise DslError(
+            f"{where}: phase_out needs 'objects' naming what phases out "
+            f"(use {{\"self_only\": true}} for \"this permanent phases out\")"
+        )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on
         # the Equipment that prints it, and a default would silently unattach
