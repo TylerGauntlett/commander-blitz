@@ -244,7 +244,18 @@ class ReplacementModel(BaseModel):
     event: Literal["self_enters", "self_enters_tapped", "self_enters_with_counters"]
     modify: dict[str, Any] = Field(default_factory=dict)
     counter: str | None = None
-    amount: int = 1
+    #: How many, as a plain integer or a **value expression** -- "enters with a
+    #: +1/+1 counter on it for each other Human you control" is
+    #: ``{"count": {"zone": "battlefield", "controller": "you",
+    #: "subtypes": ["Human"], "exclude_self": true}}``.  Evaluated where the
+    #: `condition` below is, with the same source and controller, so it counts
+    #: the board the permanent is arriving on.  It has to live here rather than
+    #: in an `add_counters` trigger: 614.1c means the permanent is never seen
+    #: without the counters, and Éomer, King of Rohan -- who deals damage equal
+    #: to his own power from a second enters trigger -- would otherwise have a
+    #: payload that depended on which of two simultaneous triggers his
+    #: controller happened to order first.
+    amount: int | dict[str, Any] = 1
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you
     #: control" and counts the board the land is arriving on.  The printed

@@ -320922,12 +320922,12 @@
     },
     "Éomer, King of Rohan": {
       "edhrec_rank": 4800,
-      "gate": "template",
+      "gate": null,
       "name": "Éomer, King of Rohan",
-      "reason": "no template for: Éomer enters with a +1/+1 counter on it for each other Human you control",
+      "reason": "",
       "scryfall_id": "5f48930a-d7bd-410b-995a-4e2837aabb25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Éomer, Marshal of Rohan": {

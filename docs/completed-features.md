@@ -1,3 +1,110 @@
+## A counter for each — widening one field, not adding a mechanism
+
+### Overview
+
+"Éomer enters with a +1/+1 counter on it for each other Human you control."
+
+The mechanism this needs already existed and was already the right home.
+`self_enters_with_counters` is a `replacements` entry; it is what Mossborn Hydra
+uses for its fixed "enters with a +1/+1 counter on it", and what
+`loader._replacements_with_loyalty` compiles a planeswalker's starting loyalty
+into. What was missing was one type: `ReplacementModel.amount` was `int = 1`
+under a `Strict` model config, so a value expression was a validation error and
+**only a constant could be printed**.
+
+There is no honest constant for "for each other Human you control" — it is 0 on
+an empty board and unbounded in play — so the clause could not be written at all.
+Three edits close it:
+
+- `cards/schema.py`: `amount: int | dict[str, Any] = 1`.
+- `cards/loader.py`: a `validate_value` pass beside the existing
+  `validate_condition`, on both spellings of the clause.
+- `engine/zones.py`: `evaluate_value` instead of `int(...)` at the two
+  `add_counter` calls.
+
+### The evaluation context was already sitting there
+
+`zones._enter_battlefield` evaluates each entry's `condition` with
+`controller=obj.controller, source=obj.oid`, on the board the permanent is
+arriving on — that is what makes a slowland's "unless you control two or more
+**other** lands" count the right number. The amount wants exactly that context
+and nothing else, so it is one `EffectContext` built from the same two fields:
+
+- `_add_to_zone` runs before `_enter_battlefield`, so the permanent is already on
+  the battlefield when its own amount is counted. `exclude_self` is therefore
+  load-bearing rather than tidy — without it a lone Éomer counts himself and
+  enters as a 3/3.
+- An oid survives the zone change onto the battlefield, so Converge works from
+  here with no further change: `colors_of_mana_spent` reads `obj.colors_spent`
+  off `source_oid`, which is the same object that was on the stack.
+- A zero count leaves *no* counter, because `GameObject.add_counter` pops a kind
+  whose total is not positive. An inert `{"+1/+1": 0}` tally would be visible to
+  `counters_on` and to proliferate.
+
+### Why not a trigger, which is the obvious substitute
+
+An enters trigger running `add_counters` compiles today and needs nothing. It is
+a different card three ways, and on Éomer the difference is load-bearing rather
+than academic:
+
+1. **614.1c.** It is a replacement, so the permanent is never on the battlefield
+   without the counters. The trigger form lands a 2/2 and grows it later, and
+   anything that looks in between — another enters trigger, a static, a
+   state-based action — sees a creature the printed card never is.
+2. **Trigger order is the controller's.** Éomer's third printed line deals damage
+   *equal to its power*. With the counters arriving from a second simultaneous
+   enters trigger, the card's whole payload would depend on which of the two its
+   controller happened to order first: 2 damage, or 2 + N, from printed text
+   containing no such choice.
+3. **The event.** `add_counters` fires `COUNTER_PLACED`; the replacement route
+   calls `add_counter` directly and fires nothing. The substitute would wake every
+   `counter_placed` watcher on the board.
+
+`tests/unit/test_variable_enters_with_counters.py` carries `t_marshal_trigger` —
+the substitute written out as a card — so claims 1 and 2 are observed rather than
+argued. `move_object` is driven directly there, because the game loop resolves
+straight through the moment the difference exists in.
+
+### Both spellings, or neither
+
+`zones._enter_battlefield` reads whichever of two shapes is present: the
+top-level `counter`/`amount` pair, and `modify: {"counters": {kind: amount}}`.
+Widening only the first would leave half the DSL taking constants with nothing
+to say so, so both are validated and evaluated as values. That is one mechanism
+with two syntaxes, not two capabilities.
+
+### What it unblocks
+
+One card authored now: **Éomer, King of Rohan** — his last blocker, since the
+monarch run shipped `become_monarch` with a player selector and his "target
+player becomes the monarch" needed exactly that.
+
+`data/authoring/queue.json` defers thirty-nine more on "enters with a … counter
+on it for each …" — Diregraf Colossus, Gatekeeper Gargoyle, Golgari Grave-Troll,
+Kinsbaile Borderguard, Squad Captain, Ulasht, Verazol and the whole Converge
+cycle. **No template was added**, so they stay in the agent tier rather than
+being harvested here. Three reasons, and the third is the real one:
+
+- The printed sentence is not one phrase family but four — a board count, a
+  graveyard count, a per-turn tally ("for each creature that died this turn") and
+  Converge — under three different ability-word prefixes and a counter-word
+  multiplier ("two +1/+1 counters ... for each"). That is an importer capability,
+  and this run has one.
+- The near misses are the subtle part and a loose regex half-reads them into
+  cheaper cards. Giada's "**Each other Angel you control** enters with an
+  additional +1/+1 counter on it" is a replacement applying to permanents other
+  than its source, which the `replacements` whitelist cannot express at all;
+  Ulasht's sentence is two clauses joined by "and". Both must be *refused*, not
+  approximated.
+- A template card gets `_fallback_expectation`, which for a permanent is
+  `{"zone": "battlefield"}` — "it resolved". On exactly the cards where the
+  counter count *is* the card, that asserts nothing, and the sandbox board is not
+  knowable at template time. The agent tier writes an expectation per card and
+  can assert the count, so it produces a strictly better card here. Éomer's does:
+  `counters: {"kind": "+1/+1", "amount": 0}` is the honest number in the fixed
+  position, and dropping `exclude_self`, dropping the subtype filter, or writing
+  the old constant `1` each fail it.
+
 ## "Can't block", with a clock and no permanent behind it
 
 ### Overview
