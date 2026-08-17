@@ -2370,10 +2370,32 @@ the same two callers and the same reason as `mana_produced`.
 would make `solver_taps` and `offerable_mana_ability` both decide this is not a
 mana source, so the ability would never be tapped whatever the board offered.
 
-A reflecting ability never asks another one: the scan reads only *printed*
-options, so two Exotic Orchards facing each other terminate. An empty answer is a
-real answer — an opponent with no lands offers no colours, and the solver simply
-never picks a source that produces nothing.
+A reflecting ability never asks another one: the scan skips `reflecting`
+outright, so two Exotic Orchards facing each other terminate. Everything else it
+finds is asked the *same* question — `mana_options_of`, not the raw
+`mana_options` field. The two abilities that carry the five-colour superset are
+`reflecting` and `in_commander_identity`, and reading that field off an
+opponent's Path of Ancestry told a Fellwar Stone it could produce all five
+colours instead of the one its controller's commander makes. The recursion is one
+level deep and cannot cycle, because the only self-referential branch is the one
+that is skipped.
+
+An empty answer is a real answer — an opponent with no lands offers no colours,
+and the solver simply never picks a source that produces nothing.
+
+**It stays a mana ability.** `mana_options_of` only *looks*: no `ask_*`, no
+generator, no stack. Narrowing the option list narrows the choice every modal
+mana ability already had — the solver picks an option index while planning, and
+manual mana offers one chip per option — so nothing new is ever asked of a
+player, which is what rule 605.1a requires.
+
+Read exactly by the template tier, and only exactly: `proxy._REFLECTED_COLOR`
+matches "any **color** that a land an opponent controls / you control could
+produce" and nothing else. "Any **type**" (Reflecting Pool, Naga Vitalist)
+includes `{C}`, which this narrows away by design; a qualified noun ("a *basic*
+land", "a *Gate*") is a different set of permanents. Both fall through to the
+loose any-colour reading, which is *noted*, so the template tier refuses the card
+rather than shipping a better one than is printed.
 
 ## "If it would die this turn, exile it instead"
 

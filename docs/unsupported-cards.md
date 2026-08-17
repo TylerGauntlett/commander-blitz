@@ -31,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
-| [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
 | [saga](#saga) | 1 | 7121 | engine |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
@@ -287,20 +286,6 @@ Blocks **1** card.
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
   - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
-## opponent-land-mana-colors
-
-Blocks **1** card.
-
-- **(op)** A mana ability whose set of choosable colors is computed at activation from what lands an opponent currently controls could produce (e.g. only G and U in a board where the opponent controls only a Forest and an Island among lands), rather than a fixed list of modes.
-  <br>Why the existing vocabulary won't do: A mana ability may contain only add_mana, or one choose_mode whose modes each contain only add_mana -- and choose_mode's modes are a static, author-time list, not something computed from the board at activation. There is no value_key or selector that reads what colors of mana an opponent's lands could produce (commander_color_identity is the closest color-set value_key, but it is a fixed deck property known outside the game state, not a dynamic read of opponents' lands). Authoring this as choose_mode over all five colors (the free-tier starting point) would let the ability produce colors the opponent has no land for, which is not what the card does.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fellwar Stone** (rank 17) — `fellwar_stone`
-  - {T}: Add one mana of any color that a land an opponent controls could produce.
 
 </details>
 
