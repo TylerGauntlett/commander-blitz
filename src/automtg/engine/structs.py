@@ -307,6 +307,71 @@ class Unblockable:
         }
 
 
+#: The durations a :class:`DamageShield` can carry.  One word, and only one, is
+#: printed: "prevent all damage that would be dealt to you **this turn**"
+#: (Selfless Squire, Fog, Holy Day, Awe Strike).  A tuple of one rather than a
+#: bare constant so the loader can name the implemented set in its error the way
+#: it does for the two lists above, and so a second word -- if a card ever prints
+#: one -- is added here rather than smuggled in as a default nobody clears.
+DAMAGE_SHIELD_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class DamageShield:
+    """"Prevent all damage that would be dealt to you this turn."
+
+    A prevention effect over a **player**, which is the shape the engine's two
+    existing preventions cannot take.  `prevent_damage` the *static* (absorb N,
+    read by `characteristics.prevented_damage`) and `protection` are both keyed
+    to an object id: they walk `_battlefield_statics` and match each entry's
+    `affects` filter against a *permanent*, and `static_filter_keys` has no way
+    to name a seat.  Both are also continuous while their source stands on the
+    battlefield, so a creature carrying one would prevent damage on every future
+    turn as well -- which is a Worship, not a one-turn fog.
+
+    So this lives on the table (:attr:`GameState.damage_shields`) beside
+    `block_prohibitions` and `unblockables`, for the reason given there: the
+    effect belongs to no permanent and outlives whatever installed it.  Selfless
+    Squire's shield is up for the turn whether or not the Squire survives the
+    combat it was flashed into, and Fog leaves no permanent behind at all.
+
+    **All the damage, not N of it.**  There is deliberately no ``amount``: the
+    printed sentence this record exists for prevents *all* damage to the player
+    for the turn, and absorb-N over a player ("prevent the next 3 damage that
+    would be dealt to any target this turn" -- Healing Salve) is a different
+    effect with a pool that drains and a target that may be a creature instead.
+    Writing it as a shield with a number would be that card's shape and not its
+    behaviour, so `loader.py` refuses an ``amount`` on this op outright rather
+    than reading one and preventing everything anyway -- which loads clean and
+    plays a strictly better card.  See `docs/rules-coverage.md`.
+
+    Not consumed by use.  A shield is a fact about the turn, so it prevents every
+    instance of damage that would reach the player until cleanup drops it: three
+    attackers get through and all three are prevented, and each one fires its own
+    `DAMAGE_PREVENTED`.  That per-instance firing is what makes the Squire's
+    "put that many +1/+1 counters" add up to the whole swing.
+    """
+
+    #: The seat protected.  Not "whose next turn ends it" -- the only duration is
+    #: ``this_turn`` and it ends in the active player's cleanup step whoever is
+    #: shielded, which is why `clear_damage_shields` filters on duration alone
+    #: rather than reusing `primitives._expired`, whose ``player`` means the
+    #: other thing.
+    player: int
+    duration: str = "this_turn"
+    #: The permanent or spell that installed it, for the log.  Not part of the
+    #: lifetime: the Squire may be killed in response to its own ETB trigger and
+    #: the shield still covers the turn.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""

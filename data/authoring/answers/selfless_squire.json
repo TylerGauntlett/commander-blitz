@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "selfless_squire",
+    "name": "Selfless Squire",
+    "oracle_text": "Flash\nWhen this creature enters, prevent all damage that would be dealt to you this turn.\nWhenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature.",
+    "mana_cost": "{3}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flash"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, prevent all damage that would be dealt to you this turn.",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {"op": "prevent_damage", "player": "you", "duration": "this_turn"}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature.",
+        "trigger": {"event": "damage_prevented", "controller": "you"},
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "objects": {"zone": "battlefield", "self_only": true},
+            "amount": {"binding": "amount"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

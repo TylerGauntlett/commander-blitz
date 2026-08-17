@@ -20,6 +20,7 @@ from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_damage_shields,
     clear_unblockables,
     clear_until_eot,
     untap_all,
@@ -547,6 +548,14 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # granted it may have been destroyed in response, and the creature that has
     # it keeps the evasion until this line runs.
     clear_unblockables(state, "this_turn")
+    # "Prevent all damage that would be dealt to you **this turn**." (Selfless
+    # Squire, Fog.) Beside the three above and owned by no permanent for the same
+    # reason -- Fog is an instant and leaves nothing behind, and the Squire's
+    # shield covers the turn whether or not the Squire is still alive. This line
+    # *is* the whole difference from the `prevent_damage` static, which is
+    # continuous while its source stands on the battlefield and would therefore
+    # fog every future turn as well.
+    clear_damage_shields(state, "this_turn")
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

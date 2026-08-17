@@ -458,6 +458,30 @@ export function beatsFor(
        * a form with no anchor to put a numeral on. Both are correctly silent.
        */
 
+      /*
+       * A fog landing. The counterpart of the note just above: `planCombat`
+       * collects the hits, and a prevented swing produces no hit for it to
+       * collect, so without a beat here the attack simply plays out and nothing
+       * moves. That silence is fine for absorb -- the reduced damage still
+       * animates -- and is not fine for a shield over a player, which is the
+       * whole of the turn.
+       *
+       * Scoped to the player shape for the reason `describeEvent` scopes its
+       * line: the permanent shape has no anchor this can put a numeral on
+       * without first resolving an `oid` the payload does not promise.
+       */
+      case "damage_prevented":
+        if (amount === null || amount <= 0 || event.data.to !== "player") return;
+        push({
+          hold: 280,
+          float: {
+            anchor: { kind: "player", pid: event.player ?? 0 },
+            value: `${amount} prevented`,
+            tone: "good",
+          },
+        });
+        return;
+
       case "life_gained":
         if (amount === null) return;
         push({

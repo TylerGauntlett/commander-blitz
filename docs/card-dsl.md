@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-90 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+91 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -177,7 +177,7 @@ it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `unblockable` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
-| Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
+| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
@@ -1042,7 +1042,16 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `becomes_monstrous` · `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated`
+`ability_activated` · `damage_prevented`
+
+**`damage_prevented`** fires when damage that would have been dealt to a player
+is prevented — Selfless Squire's second line, with the amount readable as
+`{"binding": "amount"}`. Its subject is a **player**, so `controller: "you"`
+means "damage that would be dealt to *you*", not "your permanent". Scoped to the
+player half of the event: absorb and protection fire the same event about a
+*permanent*, and without the scoping a blocked absorb creature would pay out too.
+See "Preventing all damage to a player for the turn" below for the op that
+installs the shield.
 
 **`ability_activated`** fires when a player activates an activated ability —
 Harsh Mentor, "whenever an opponent activates an ability of an artifact,
@@ -2149,6 +2158,61 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 `TempEffect.keyword` is already a single string and `protection_from` already
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
+
+## Preventing all damage to a player for the turn
+
+```jsonc
+{"op": "prevent_damage", "player": "you", "duration": "this_turn"}
+```
+
+```jsonc
+"trigger": {"event": "damage_prevented", "controller": "you"}
+```
+
+Selfless Squire is both lines and needs both: the shield prevents, the event
+carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
+
+**The op is not the static of the same name.** `prevent_damage` the *static* is
+absorb N and is keyed to an **object** — `characteristics.prevented_damage`
+matches each entry's `affects` filter against a permanent, and
+`static_filter_keys` has no way to name a seat at all. It is also per source and
+per instance rather than "all damage this turn", it cannot be spelled `"all"`
+(the loader requires a number), and being a static it is continuous while its
+source stands on the battlefield — a Squire carrying one would fog its
+controller every future turn, which is a Worship. Same relationship `cant_block`
+the op has with `cant_block` the static, and the same three inversions: the
+subject, the clock, and who owns it.
+
+So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
+`block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
+modifies nothing when it resolves — the damage does not exist yet — and the whole
+of its behaviour is the record `primitives.damage_player` then consults.
+
+`duration` is required (`this_turn` is the only implemented word) and there is
+deliberately **no `amount`**: the shield prevents all of it, and "prevent the
+next 3 damage" is a pool that drains at a target that may be a creature instead.
+Writing that as a shield with a number loads clean and plays a strictly better
+card, so the loader refuses the key rather than reading it.
+
+The prevention check sits at the very **top** of `damage_player`, above the
+infect branch: prevented damage was never dealt, so it costs no life, adds no
+poison, gains the attacker no lifelink, tallies no commander damage and fires no
+`DAMAGE_DEALT` for the turn ledger to count. Each of those is a separate leak if
+the check sits lower, and the poison one is fatal — a shielded player who still
+took the counters would lose to a fog.
+
+`EventType.DAMAGE_PREVENTED` had existed since absorb and was `emit`ted (logged)
+at two sites rather than `fire`d (put through the trigger bus) — the same shape
+`you_attack` and `token_created` had, and the reason the `TRIGGER_EVENTS` row
+alone would have produced a trigger that silently never fires. All three sites
+now `fire`, and each carries `to` (`"player"` or `"permanent"`) the way
+`DAMAGE_DEALT` does, so the trigger can take the player half without also paying
+out on a blocked absorb creature.
+
+`dealt_damage` is the near miss and is exactly inverted: prevented damage is
+damage that was never dealt, so a Squire built on it grows only on the turns its
+own shield is down. `life_lost` fails the same way, and `damage_taken_this_turn`
+reads zero underneath a working shield by construction.
 
 ## "Whenever you attack"
 
