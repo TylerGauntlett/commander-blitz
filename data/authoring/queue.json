@@ -30162,12 +30162,12 @@
     },
     "Bojuka Bog": {
       "edhrec_rank": 24,
-      "gate": "template",
+      "gate": null,
       "name": "Bojuka Bog",
-      "reason": "no template for: When this land enters, exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "55b5b094-9d2d-4d96-b90c-78fecdae725a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bojuka Brigand": {

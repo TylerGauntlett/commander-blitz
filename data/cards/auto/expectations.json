@@ -694,6 +694,9 @@
   "bogstomper": {
     "zone": "battlefield"
   },
+  "bojuka_bog": {
+    "zone": "battlefield"
+  },
   "bone_saw": {
     "zone": "battlefield"
   },
