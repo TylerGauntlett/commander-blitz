@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
-from .mana import ManaCost
+from .mana import ManaCost, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
 LAND_TYPE = CardType.LAND.value
@@ -348,9 +348,12 @@ class Ability:
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
     mana_identity: bool = False
-    #: "Spend this mana only to cast a creature spell" -- the card type the mana
-    #: may pay for, lowercased.  ``None`` is ordinary mana.
-    mana_restriction: str | None = None
+    #: "Spend this mana only to cast a creature spell of the chosen type or
+    #: activate an ability of a creature source of the chosen type."  ``None`` is
+    #: ordinary mana.  See :class:`~automtg.engine.mana.ManaRestriction` for the
+    #: shape; a group may hold `mana.CHOSEN_TYPE`, resolved per permanent by
+    #: `costs.resolve_mana_restriction` rather than at load time.
+    mana_restriction: ManaRestriction | None = None
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and

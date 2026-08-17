@@ -236382,12 +236382,12 @@
     },
     "Secluded Courtyard": {
       "edhrec_rank": 222,
-      "gate": "template",
+      "gate": null,
       "name": "Secluded Courtyard",
-      "reason": "no template for: As this land enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "c0d17d04-cf0b-4918-bfec-b34b0d98a602",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Secluded Glen": {

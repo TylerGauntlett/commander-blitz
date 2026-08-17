@@ -50,7 +50,7 @@ from automtg.engine.enums import (
     Zone,
 )
 from automtg.engine.errors import DslError
-from automtg.engine.mana import ManaCost, parse_mana_production
+from automtg.engine.mana import CHOSEN_TYPE, ManaCost, ManaRestriction, parse_mana_production
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -1120,30 +1120,11 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where)
-    mana_restriction: frozenset[str] | None = None
+    mana_restriction: ManaRestriction | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
-        names = (
-            [model.mana_restriction]
-            if isinstance(model.mana_restriction, str)
-            else list(model.mana_restriction)
-        )
-        if not names:
-            raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")
-        for name in names:
-            # A card type, or a subtype. Subtypes are open-ended in Magic and
-            # there is no closed list to check one against, so the guard is the
-            # weaker "looks like a word": a typo here produces mana that can
-            # never be spent, which is a strictly worse card than the printed
-            # one -- the safe direction, but a silent one, so it is worth the
-            # shape check.
-            if not name or not name.replace("-", "").replace(" ", "").isalpha():
-                raise DslError(
-                    f"{where}: unparsable mana restriction {name!r} "
-                    f"(a card type or subtype, lowercased)"
-                )
-        mana_restriction = frozenset(n.lower() for n in names)
+        mana_restriction = _mana_restriction(model.mana_restriction, where)
 
     return Ability(
         kind=kind,
@@ -1954,6 +1935,114 @@ def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any]
     amount = carriers[0]["amount"]
     _validate_mana_amount(amount, f"{where}.amount")
     return dict(amount) if isinstance(amount, Mapping) else amount
+
+
+def _mana_restriction(spec: Any, where: str) -> ManaRestriction:
+    """"Spend this mana only to cast …" compiled to a :class:`ManaRestriction`.
+
+    A bare string or list is the **cast** half alone, which is what every card
+    printed before Secluded Courtyard says and why the old spelling still means
+    exactly what it meant:
+
+    - ``"creature"`` -- one name, Ancient Ziggurat.
+    - ``["Vampire", "Cleric", "Demon"]`` -- the printed "and/or", which is an
+      any-of: one matching name is enough (Master of Dark Rites).
+
+    An **object** names the halves separately, because the printed sentence
+    does: "…only to cast a creature spell of the chosen type **or activate an
+    ability of** a creature source of the chosen type" gives them different
+    subjects, and a card that says nothing about activating abilities must not
+    permit it.
+
+    ```jsonc
+    "mana_restriction": {
+      "cast":     [["creature", {"chosen_type_of": "self"}]],
+      "activate": [["creature", {"chosen_type_of": "self"}]]
+    }
+    ```
+
+    A nested list is an **all-of**, and this card needs it: "a creature spell
+    **of** the chosen type" is a conjunction, and flattening it into the any-of
+    above would offer the mana for every creature ever printed -- a strictly
+    better card than the printed one.
+
+    ``{"chosen_type_of": "self"}`` is the one entry that is not a literal name.
+    It compiles to `mana.CHOSEN_TYPE` and is substituted per permanent by
+    `costs.resolve_mana_restriction`, because the type does not exist until the
+    permanent is on the battlefield. Spelled the same way `subtypes` filters
+    already spell it (Vanquisher's Banner, Door of Destinies) rather than as a
+    new key meaning the same thing.
+    """
+    if isinstance(spec, Mapping):
+        unknown = sorted(set(spec) - {"cast", "activate"})
+        if unknown:
+            raise DslError(
+                f"{where}: 'mana_restriction' names {unknown}; mana is only ever spent "
+                f"to 'cast' a spell or 'activate' an ability"
+            )
+        restriction = ManaRestriction(
+            cast=_restriction_groups(spec.get("cast"), f"{where}.cast"),
+            activate=_restriction_groups(spec.get("activate"), f"{where}.activate"),
+        )
+        if not restriction.cast and not restriction.activate:
+            raise DslError(
+                f"{where}: 'mana_restriction' permits nothing at all; "
+                f"omit it for ordinary mana"
+            )
+        return restriction
+    return ManaRestriction(cast=_restriction_groups(spec, where))
+
+
+def _restriction_groups(spec: Any, where: str) -> tuple[frozenset[str], ...]:
+    """One half of a restriction: the groups, any of which may be satisfied.
+
+    ``None`` is an omitted half and means "never", which is the whole of how a
+    card that says only "to cast" refuses to fund an activation.
+    """
+    if spec is None:
+        return ()
+    groups = [spec] if isinstance(spec, str) else list(spec)
+    if not groups:
+        raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")
+    out: list[frozenset[str]] = []
+    for group in groups:
+        entries = [group] if isinstance(group, (str, Mapping)) else list(group)
+        if not entries:
+            raise DslError(
+                f"{where}: an empty group in 'mana_restriction' restricts nothing; "
+                f"omit it for ordinary mana"
+            )
+        out.append(frozenset(_restriction_name(entry, where) for entry in entries))
+    return tuple(out)
+
+
+def _restriction_name(entry: Any, where: str) -> str:
+    """One name inside a restriction group: a literal, or the chosen type."""
+    if isinstance(entry, Mapping):
+        # Exactly the one dynamic leaf, and validated as such: a near-miss
+        # spelling that fell through would freeze into a literal name no card
+        # has, producing mana that can never be spent.
+        if set(entry) != {"chosen_type_of"} or entry["chosen_type_of"] != "self":
+            raise DslError(
+                f"{where}: the only dynamic mana restriction is "
+                f'{{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+            )
+        return CHOSEN_TYPE
+    # A card type, or a subtype. Subtypes are open-ended in Magic and there is no
+    # closed list to check one against, so the guard is the weaker "looks like a
+    # word": a typo here produces mana that can never be spent, which is a
+    # strictly worse card than the printed one -- the safe direction, but a
+    # silent one, so it is worth the shape check.
+    if (
+        not isinstance(entry, str)
+        or not entry
+        or not entry.replace("-", "").replace(" ", "").isalpha()
+    ):
+        raise DslError(
+            f"{where}: unparsable mana restriction {entry!r} "
+            f"(a card type or subtype, lowercased)"
+        )
+    return entry.lower()
 
 
 #: Refuse a counter kind that *nearly* names a keyword (122.1c).  Lives in

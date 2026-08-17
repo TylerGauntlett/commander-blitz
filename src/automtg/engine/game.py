@@ -20,7 +20,7 @@ from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
 from .combat import add_attacker, add_blocker, finish_attackers
-from .costs import pay
+from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
@@ -472,6 +472,15 @@ class Game:
         # reading `resolutions_this_turn` takes of its own event.
         state.turn_ledger.activated(oid, action.ability_index)
 
+        # "…or activate an ability of a creature source of the chosen type."
+        # What this activation pays *for*, so Cavern of Souls mana is available
+        # here exactly as it is on the cast path -- and read now, before the cost
+        # is paid, because a cost that sacrifices its own source would leave
+        # nothing to ask about its types. This is the same value
+        # `legality._ability_aims` used to decide the ability was payable, which
+        # is the agreement restricted mana depends on.
+        purpose = ability_purpose(state, oid)
+
         x = 0
         if ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
@@ -482,7 +491,7 @@ class Game:
                 card.name,
                 ability.cost.mana,
                 0,
-                None,
+                purpose,
                 exclude_oid=oid if ability.cost.tap else None,
             )
 
@@ -518,7 +527,7 @@ class Game:
             mana_ability=False,
         )
 
-        ok = yield from pay(state, pid, ability.cost, oid, x=x)
+        ok = yield from pay(state, pid, ability.cost, oid, x=x, purpose=purpose)
         if not ok:  # pragma: no cover
             return
 
@@ -755,7 +764,14 @@ class Game:
             mana_ability=True,
         )
 
-        ok = yield from pay(state, pid, ability.cost, oid)
+        # A mana ability is an activated ability, so restricted mana may fund its
+        # cost on the same terms as any other -- and it is read here rather than
+        # left `None` because `legality._ability_aims` gates this path through
+        # the same `can_pay`, and a cost found payable there and refused here
+        # would strand the payment.
+        ok = yield from pay(
+            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid)
+        )
         if not ok:  # pragma: no cover - legality already proved payability
             return
 
