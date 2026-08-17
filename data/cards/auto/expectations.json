@@ -2673,6 +2673,24 @@
   "henge_of_ramos": {
     "zone": "battlefield"
   },
+  "henrika_domnathi_henrika_infernal_seer": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "herald_s_horn": {
     "battlefield_count": 33,
     "zone": "battlefield"

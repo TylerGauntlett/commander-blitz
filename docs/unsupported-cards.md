@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**11 cards** blocked by **20** capabilities.
+**10 cards** blocked by **19** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
-| [modes-not-yet-chosen](#modes-not-yet-chosen) | 1 | 7529 | engine |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
@@ -191,20 +190,6 @@ Blocks **1** card.
 
 - **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
   - Choose target creature. You lose 2 life. Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
-
-</details>
-
-## modes-not-yet-chosen
-
-Blocks **1** card.
-
-- **(engine)** A modal ability whose already-taken modes are struck off the list on later resolutions: `choose_mode` needs to record, per source permanent, which mode indices that ability has already run, and offer only the rest -- with the whole ability doing nothing once every mode is spent. Roughly a `once_each: true` (or `exclude_chosen`) flag on `choose_mode` plus a per-object ledger of used indices, keyed by ability so two modal abilities on one permanent do not share a tally.
-  <br>Why the existing vocabulary won't do: `op_choose_mode` (src/automtg/engine/effects/ops_control.py) builds its labels straight from `spec['modes']` every time it resolves and calls `ask_mode` with the full list; a mode is a `{label, effects}` pair and the loader's per-mode validation (`_validate_effect`, src/automtg/cards/loader.py) accepts no availability condition, so there is no place to hang "only if not yet chosen". Nothing in the engine tracks mode usage -- there is no `chosen_modes`/`modes_used` field on a game object, and `Game._ask_modes` likewise passes the printed list through untouched. The nearest tool, `set_flag`/`has_flag`, only writes a word on the permanent and reads it back inside an `if`: guarding each mode's body with `{"not": {"has_flag": "henrika_mode_1"}}` still OFFERS the used mode, so a player could pick a spent mode and have the trigger resolve for nothing, which is not the printed choice. The alternative approximation -- leaving the modes unguarded -- is strictly a different, much stronger card: a Henrika that can transform every combat, or drain every combat. Both are refused as approximations.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Henrika Domnathi // Henrika, Infernal Seer** (rank 7529) — `henrika_domnathi_henrika_infernal_seer`
-  - At the beginning of combat on your turn, choose one that hasn't been chosen —
 
 </details>
 

@@ -125182,12 +125182,12 @@
     },
     "Henrika Domnathi // Henrika, Infernal Seer": {
       "edhrec_rank": 7529,
-      "gate": "template",
+      "gate": null,
       "name": "Henrika Domnathi // Henrika, Infernal Seer",
-      "reason": "no template for: At the beginning of combat on your turn, choose one that hasn't been chosen —",
+      "reason": "",
       "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Henry Wu, InGen Geneticist": {
