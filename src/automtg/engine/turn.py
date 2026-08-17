@@ -60,6 +60,11 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         yield from combat_mod.deal_combat_damage(state, first_strike_step=False)
     elif step is Step.END_OF_COMBAT:
         combat_mod.end_combat(state)
+    elif step is Step.POSTCOMBAT_MAIN:
+        # "At the beginning of each of your postcombat main phases." Fired per
+        # phase rather than per turn, because an extra combat gives an extra
+        # postcombat main and the printed word is "each".
+        fire(state, EventType.POSTCOMBAT_MAIN, player=state.active_player)
     elif step is Step.END_STEP:
         fire(state, EventType.END_STEP, player=state.active_player)
     elif step is Step.CLEANUP:

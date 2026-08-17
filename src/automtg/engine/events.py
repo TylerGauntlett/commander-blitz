@@ -136,6 +136,11 @@ class EventType:
     UPKEEP = "upkeep"
     DRAW_STEP = "draw_step"
     BEGIN_COMBAT = "begin_combat"
+    #: The beginning of a **postcombat** main phase. Distinct from BEGIN_COMBAT,
+    #: which is the other side of combat and reads a life-loss tally that has
+    #: not happened yet -- Florian, Voldaren Scion counts what your opponents
+    #: lost *this turn*, which is mostly what the combat just before it did.
+    POSTCOMBAT_MAIN = "postcombat_main"
     END_STEP = "end_step"
 
     # mana
