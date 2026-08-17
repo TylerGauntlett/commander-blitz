@@ -160552,12 +160552,12 @@
     },
     "Lost to Legend": {
       "edhrec_rank": 10639,
-      "gate": "template",
+      "gate": null,
       "name": "Lost to Legend",
-      "reason": "no template for: Put target nonland historic permanent into its owner's library fourth from the top",
+      "reason": "",
       "scryfall_id": "c4e40481-aeaa-4b3d-a020-e9b6d7c11992",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lothlórien Blade": {

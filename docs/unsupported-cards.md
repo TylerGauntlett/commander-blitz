@@ -31,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exert](#exert) | 1 | 1000 | value |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [goad](#goad) | 1 | 2089 | engine, op |
-| [library-depth-placement](#library-depth-placement) | 1 | 10639 | op |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
@@ -294,20 +293,6 @@ Blocks **1** card.
 
 - **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
   - Goad all creatures your opponents control.
-
-</details>
-
-## library-depth-placement
-
-Blocks **1** card.
-
-- **(op)** A way to put an object into a library at a stated depth from the top -- either a new op (`put_into_library` with `objects`, `from_top: {"const": 4}`) or a `from_top`/`depth` amount on the existing `put_on_top`, plumbed through `move_object` as an insert index instead of the current top/bottom boolean. Depth should be an amount from `value_keys` (so `{"const": 2}` covers Hinder and `{"const": 4}` covers this card), it must clamp to the end of a library shorter than the depth, and the destination player must stay the object's *owner*, not the controller, since the printed line says "its owner's library".
-  <br>Why the existing vocabulary won't do: `put_on_top` is the only op that sends a permanent to a library, and it hard-codes the destination: `move_object(..., Zone.LIBRARY, to_player=obj.owner, to_top=True, cause="tuck")` in src/automtg/engine/effects/ops_cards.py, with no depth or position in the spec it reads. `move_object` itself (src/automtg/engine/zones.py) only accepts `to_top: bool = False`, so top and bottom are the sole reachable positions -- there is no insert index anywhere in the zone layer. Nothing else composes into a fourth-from-top tuck either: `scry`, `surveil` and `look_at_top` reorder or relocate cards that are *already* in a library and cannot admit a permanent from the battlefield, and `shuffle` randomizes rather than places. Approximating with plain `put_on_top` is a strictly better card than the one printed -- the owner draws the permanent back next turn instead of in four turns, which inverts the whole point of the depth -- and approximating with a bottom-of-library tuck is strictly worse and effectively exile in a 99-card deck.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lost to Legend** (rank 10639) — `lost_to_legend`
-  - Put target nonland historic permanent into its owner's library fourth from the top.
 
 </details>
 

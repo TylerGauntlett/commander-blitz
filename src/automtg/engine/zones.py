@@ -32,6 +32,7 @@ def move_object(
     *,
     to_player: int | None = None,
     to_top: bool = False,
+    to_index: int | None = None,
     tapped: bool = False,
     cause: str = "",
     by: int | None = None,
@@ -41,6 +42,13 @@ def move_object(
     ``to_player`` defaults to the object's *owner*, which is where cards always
     go in Commander (a card put into "its owner's graveyard" never lands in
     someone else's).
+
+    ``to_index`` is a **library position**, counted from the top with 0 meaning
+    the top card -- "into its owner's library second from the top" (Hinder) and
+    "fourth from the top" (Lost to Legend).  It outranks ``to_top``, which is
+    the same thing said as a boolean and is kept because thirty-odd callers say
+    it.  Ignored for every zone but a library: a graveyard and an exile are
+    unordered piles as far as any rule the engine models is concerned.
 
     ``cause`` says *how* the object moved and ``by`` says *what moved it* -- the
     resolving spell or ability, or the creature that dealt the killing blow.
@@ -132,7 +140,7 @@ def move_object(
         obj.reset_permanent_state()
 
     obj.left_with = left_with
-    _add_to_zone(state, obj, to_zone, target_player, to_top=to_top)
+    _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
     # The cards that were underneath follow, each to its own owner's copy of the
@@ -151,7 +159,9 @@ def move_object(
         # of its own to fire.
         merged_obj.zone = to_zone
         merged_obj.reset_permanent_state()
-        _add_to_zone(state, merged_obj, to_zone, merged_obj.owner, to_top=to_top)
+        _add_to_zone(
+            state, merged_obj, to_zone, merged_obj.owner, to_top=to_top, to_index=to_index
+        )
 
     state.emit(
         EventType.ZONE_CHANGE,
@@ -241,7 +251,13 @@ def _remove_from_zone(state: GameState, obj: GameObject) -> None:
 
 
 def _add_to_zone(
-    state: GameState, obj: GameObject, zone: Zone, pid: int, *, to_top: bool = False
+    state: GameState,
+    obj: GameObject,
+    zone: Zone,
+    pid: int,
+    *,
+    to_top: bool = False,
+    to_index: int | None = None,
 ) -> None:
     if zone is Zone.BATTLEFIELD:
         state.battlefield.append(obj.oid)
@@ -250,7 +266,17 @@ def _add_to_zone(
         # Stack membership is managed by stack.py, which owns the StackItem list.
         return
     lst = state.players[pid].zone_list(zone)
-    if to_top and zone is Zone.LIBRARY:
+    if to_index is not None and zone is Zone.LIBRARY:
+        # Clamped by hand rather than left to `list.insert`, which is forgiving
+        # in one direction and actively wrong in the other: an index past the
+        # end already appends, but a **negative** one counts back from the
+        # bottom, so a card asked for "first from the top" with a depth read off
+        # an empty board would land second from the *bottom* and nothing would
+        # ever say so. The upper clamp is the printed rule for a short library:
+        # a card put fourth from the top of a two-card library goes as deep as
+        # it can, which is the bottom.
+        lst.insert(max(0, min(int(to_index), len(lst))), obj.oid)
+    elif to_top and zone is Zone.LIBRARY:
         lst.insert(0, obj.oid)
     else:
         lst.append(obj.oid)

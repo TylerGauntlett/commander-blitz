@@ -3624,6 +3624,13 @@
   "lost_soul": {
     "zone": "battlefield"
   },
+  "lost_to_legend": {
+    "library_size": {
+      "1": 21
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "lotus_cobra": {
     "zone": "battlefield"
   },
