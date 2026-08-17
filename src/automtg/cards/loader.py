@@ -1031,6 +1031,16 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # spelling matches nothing and the trigger never fires.
             _check_counter_kind(model.trigger.counter, f"{where}.trigger.counter")
 
+        if model.trigger.mana_ability is not None and model.trigger.event != "ability_activated":
+            # Same reasoning as `counter` and `defending` above: only
+            # `ability_activated` carries the flag, so accepting it elsewhere
+            # would look like the "if it isn't a mana ability" clause and be a
+            # restriction that never applies.
+            raise DslError(
+                f"{where}: 'mana_ability' only means anything on an "
+                f"ability_activated trigger, not on {model.trigger.event!r}"
+            )
+
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -1040,6 +1050,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
             counter=model.trigger.counter,
+            mana_ability=model.trigger.mana_ability,
             max_per_turn=model.trigger.max_per_turn,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:

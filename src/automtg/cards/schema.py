@@ -131,6 +131,12 @@ class TriggerModel(BaseModel):
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
     counter: str | None = None
+    #: For ``ability_activated``: "…if it isn't a mana ability".  ``false``
+    #: excludes mana abilities, ``true`` keeps only them, omitted is both.
+    #: Both activation paths tag the event, so the two stop being
+    #: indistinguishable to a listener; without this clause Harsh Mentor is a
+    #: Manabarbs that pings every land tap.
+    mana_ability: bool | None = None
     #: "This ability triggers only once each turn." A per-permanent cap on how
     #: many times this ability may queue in one turn.
     max_per_turn: int | None = None

@@ -994,7 +994,8 @@ have become the word.
     "condition": { ... },            // intervening "if", re-checked on resolution
     "defending": "you",              // `attacks` only: whom it is attacking
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
-    "counter": "+1/+1"               // `counter_placed` only: which kind
+    "counter": "+1/+1",              // `counter_placed` only: which kind
+    "mana_ability": false            // `ability_activated` only: exclude mana abilities
   },
   "effects": [ ... ]
 }
@@ -1040,7 +1041,59 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `becomes_monstrous` · `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle`
+`counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
+`ability_activated`
+
+**`ability_activated`** fires when a player activates an activated ability —
+Harsh Mentor, "whenever an opponent activates an ability of an artifact,
+creature, or land on the battlefield, if it isn't a mana ability". The event
+existed and both activation paths emitted it; what it had never had was a
+listener, because both used `emit` (which only writes the log) rather than
+`fire`.
+
+`spell_cast` is the near miss and covers a *disjoint* set of actions: it fires on
+a card going from hand to stack, so a card built on it punishes every instant and
+never punishes an equip, a cracked fetchland or a Signet. `becomes_target` is the
+other, and it sees nothing at all when an ability has no targets.
+
+Its subject is the **permanent whose ability it was**, so `filter` reads that
+permanent; its `controller` clause is the **player who activated it**, which is
+not the same question — an opponent equipping a creature *you* control is their
+activation of their ability on your permanent, and the printed line says that
+triggers.
+
+```jsonc
+{ "event": "ability_activated", "controller": "opponent",
+  "mana_ability": false,
+  "filter": { "zone": "battlefield", "any_types": ["Artifact", "Creature", "Land"] } }
+```
+
+`mana_ability` is the intervening "if it isn't a mana ability", and it has to be
+a restriction on the trigger rather than a `condition`: every condition key asks
+about the board or about the trigger's own card, and this asks *which ability was
+used*. `filter` cannot answer it either — it reads the source permanent's printed
+face, and the permanents the clause exists for are exactly the ones carrying both
+kinds. Bant Panorama taps for `{C}` and sacrifices itself to fetch; a Signet taps
+for `{W}{U}`. Same types, opposite answers. So both activation paths tag the
+event and this compares the tag. Omit it and *every* activation fires the
+trigger; drop it from Harsh Mentor and the card becomes Manabarbs, since every
+land in a real game taps many times a turn.
+
+Two payment-path notes. The event is fired **before the cost is paid** — where
+602.2b puts the announcement, and the only moment a permanent that sacrifices
+itself as a cost is still on the battlefield for `zone` to see. And the mana
+abilities the *payment solver* taps for itself (`{T}: Add {G}` on a land, tapped
+automatically to cast a spell) never reach an activation path at all and emit
+nothing, so `mana_ability: true` sees only mana abilities a player activated by
+hand. `mana_ability: false` — the printed clause — is unaffected.
+
+`zone` and `any_types` in a **trigger filter** are honoured as of this event.
+Both were already legal `SELECTOR_KEYS`, so a trigger carrying either loaded and
+then ignored it — the silently-wider filter that `not_supertypes` is annotated
+about. Nothing shipped used them on a trigger, so no card changed; Harsh Mentor
+needs both, and needs them in the narrowing direction: `types` is a conjunction,
+so "an artifact, creature, or land" written with it matches nothing, and without
+`zone` the card fires when an opponent *cycles* a land card out of hand.
 
 **`becomes_monarch`** fires when the crown changes hands, whichever way it got
 there — the `become_monarch` op and the game's own combat-damage rule alike, since

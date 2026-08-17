@@ -122122,12 +122122,12 @@
     },
     "Harsh Mentor": {
       "edhrec_rank": 2388,
-      "gate": "template",
+      "gate": null,
       "name": "Harsh Mentor",
-      "reason": "no template for: Whenever an opponent activates an ability of an artifact, creature, or land on the battlef",
+      "reason": "",
       "scryfall_id": "3d440fb1-3e19-4615-a988-558b9d3db179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harsh Mercy": {
