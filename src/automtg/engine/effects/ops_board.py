@@ -24,6 +24,7 @@ from ..primitives import (
     transform,
     untap_permanent,
 )
+from ..structs import TempEffect
 from ..zones import destroy, exile, move_object, sacrifice
 from . import register
 from .context import EffectContext
@@ -692,6 +693,41 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
             )
 
 
+@register("grant_protection")
+def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Creatures you control gain protection from each color until end of turn."
+
+    The effect half of the `protection` static, which existed only as a printed
+    ability on a permanent: `protection_from` collected candidates from
+    `_battlefield_statics`, which walks `card.abilities` and never saw anything
+    granted. Akroma's Will is the card, and there is no near miss --
+    `grant_keyword` cannot carry a parameter, and protection is parameterised by
+    definition ("from black", "from Wizards").
+
+    One `TempEffect` per quality rather than one carrying a list, because
+    `TempEffect.keyword` is already a single string and `protection_from`
+    already returns a flat set of qualities: three colours is three entries and
+    nothing had to learn a new shape.
+    """
+    qualities = [
+        *(spec.get("from_colors") or ()),
+        *(spec.get("from_types") or ()),
+        *(spec.get("from_subtypes") or ()),
+    ]
+    if not qualities:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Grant protection to")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        for quality in qualities:
+            obj.until_eot.append(
+                TempEffect(kind="protection", keyword=str(quality), source=ctx.source_oid)
+            )
+    ctx.state.bump_chars()
+
+
 @register("animate")
 def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Becomes a 4/4 white and blue Elemental creature with vigilance until end
@@ -789,7 +825,12 @@ def op_grant_ability(ctx: EffectContext, spec: Mapping[str, Any]):
     a grant swept at cleanup would be a strictly weaker card that looks
     identical on the turn it was made.
     """
-    index = int(spec.get("ability", 0))
+    # Both spellings, because two shipped cards disagree and the disagreement is
+    # invisible: `ability` and `ability_index` each defaulted to 0, so a card
+    # using the other name worked by accident and would silently have granted
+    # the wrong ability the first time a card carried two grantables. The loader
+    # now insists on one of them being present.
+    index = int(spec.get("ability", spec.get("ability_index", 0)))
     permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant an ability to")
     if ctx.source_oid is None:

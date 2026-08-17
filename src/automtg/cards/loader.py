@@ -1845,6 +1845,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
 
+    # A grant naming an ability the card does not have is a silent no-op: the
+    # index defaults to 0 and every miss lands on the first grantable, or on
+    # nothing at all. Both spellings are accepted by the op, so both are checked.
+    if op == "grant_ability" and "ability" not in effect and "ability_index" not in effect:
+        raise DslError(
+            f"{where}: grant_ability needs 'ability' -- the index into the "
+            f"card's own 'grantable_abilities'"
+        )
+
     # A loop with no body is a card that does nothing, and the whole point of
     # this op is the body -- without it the printed "each opponent sacrifices"
     # silently becomes "nobody does".

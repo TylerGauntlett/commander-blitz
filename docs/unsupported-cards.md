@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **19** capabilities.
+**7 cards** blocked by **16** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,15 +24,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dies-exile-replacement](#dies-exile-replacement) | 1 | 9863 | replacement |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
-| [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
-| [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
-| [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
 
 ## additional-cost
 
@@ -181,20 +178,6 @@ Blocks **1** card.
 
 </details>
 
-## missing-token-definitions
-
-Blocks **1** card.
-
-- **(engine)** a 4/3 white and black Creature -- Vampire Demon token with flying in `data/cards/tokens.cards.json` (e.g. `vampire_demon_4_3_wb_flying`) for `create_token` to name. The "tapped" half needs nothing new -- `op_create_token` already forwards `spec["tapped"]` into `primitives.create_token`
-  <br>Why the existing vocabulary won't do: `loader.validate_token_references` refuses to load any card whose `create_token` names a token absent from the pool. The pool holds four Vampire tokens -- `vampire_1_1_b`, `vampire_1_1_bw`, `vampire_1_1_b_lifelink`, `vampire_2_2_b_flying` -- and none is 4/3, none has the Demon subtype, and the only white-and-black one is a vanilla 1/1. Substituting `vampire_2_2_b_flying` would be the wrong size, the wrong colors and would drop the Demon type that this very card's own "isn't a Demon" clause reads. A card answer file defines one card and cannot add a token definition, so it has to come from an /extend-dsl run
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
-  - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
-
-</details>
-
 ## per-player-loop
 
 Blocks **1** card.
@@ -207,20 +190,6 @@ Blocks **1** card.
 - **Unexplained Absence** (rank 6625) — `unexplained_absence`
   - For each permanent exiled this way, its controller cloaks the top card of their library. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)
   - For each player, exile up to one target nonland permanent that player controls
-
-</details>
-
-## permanent-granted-ability
-
-Blocks **1** card.
-
-- **(op)** a `duration` option on the `grant_ability` op -- `{"op": "grant_ability", "ability": 0, "duration": "permanent", "objects": {...}}` -- matching the one `grant_keyword` already carries, so "It gains <quoted ability>" with no printed duration sticks to the permanent for as long as it stays on the battlefield instead of falling off at cleanup. Needs a home other than `GameObject.until_eot`, since that list is what the cleanup step empties; the granted ability must survive to be found by `primitives.granted_abilities` on later turns and must be dropped when the permanent changes zones
-  <br>Why the existing vocabulary won't do: `primitives.grant_ability` appends a `TempEffect(kind="ability", ...)` to `obj.until_eot` unconditionally, and `ops_board.op_grant_ability` reads only `ability` and `objects` -- there is no duration field on either. The sibling op `grant_keyword` does exactly the right thing with `duration: "permanent"` (`primitives.grant_keyword` writes to `obj.granted_keywords` instead), but it can only grant a bare keyword from the `keywords` list, not a quoted triggered ability. Using the existing until-EOT grant would make this Vampire's death trigger vanish at the end of the combat that created it, which is the wrong card almost every time it matters -- the Vampire usually dies on a later turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
-  - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
 
 </details>
 
@@ -292,19 +261,5 @@ Blocks **1** card.
 
 - **Bojuka Bog** (rank 24) — `bojuka_bog`
   - When this land enters, exile target player's graveyard.
-
-</details>
-
-## whenever-you-attack
-
-Blocks **1** card.
-
-- **(trigger_event)** a player-subject attack trigger -- "Whenever you attack" -- that fires exactly once per combat in which its controller declared one or more attackers, regardless of how many creatures attacked. The event already exists unexposed as `EventType.ATTACKERS_DECLARED`, emitted once by `combat.py` after the whole attack is declared; what is missing is a DSL name for it in `triggers.DSL_EVENTS` (e.g. `"you_attack"`), left out of `OBJECT_SUBJECT_TRIGGERS` so `source: "self"` is not offered and `controller` scopes it to the attacking player. The attacking creatures should be reachable afterwards through an `{"attacking": true}` selector so the ability can still target among them
-  <br>Why the existing vocabulary won't do: The only attack triggers in `trigger_events` are `attacks` and `attacks_unblocked`, and both map to per-creature events (`EventType.ATTACKS` / `ATTACKED_UNBLOCKED`) and are listed in `OBJECT_SUBJECT_TRIGGERS`, so their subject is one attacking creature. Writing this as `{"event": "attacks", "controller": "you"}` would queue one copy of the ability for every creature that attacked -- an alpha strike with five Vampires would make five Demons and grant five death triggers instead of one. `defending` filters whom the attack is aimed at, not how many times the ability fires, and `condition`/`not_cause` are evaluated per event so neither can collapse the batch
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
-  - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
 
 </details>

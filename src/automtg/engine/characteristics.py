@@ -704,6 +704,16 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         out.update(static.get("from_types", ()))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
+    # "Creatures you control gain protection from each color until end of turn"
+    # -- Akroma's Will. Granted protection is one `TempEffect` per quality, so it
+    # joins the printed statics' qualities in the same flat set, and the four
+    # rules that read this -- damage, enchant/equip, block, target -- all see it
+    # without knowing where it came from.
+    out.update(
+        str(temp.keyword)
+        for temp in obj.until_eot
+        if temp.kind == "protection" and temp.keyword
+    )
     return frozenset(out)
 
 
