@@ -97,7 +97,12 @@ def reference() -> dict:
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.triggers import TRIGGER_EVENTS
 
-    from ..loader import STATIC_CONDITION_HEADS, STATIC_EFFECTS, STATIC_FILTER_KEYS
+    from ..loader import (
+        STATIC_CONDITION_HEADS,
+        STATIC_EFFECTS,
+        STATIC_FILTER_KEYS,
+        STATIC_VALUE_KEYS,
+    )
     from ..schema import CostModel
 
     return {
@@ -118,6 +123,13 @@ def reference() -> dict:
         # Nocturnus, so a worker had no way to know a static could be
         # conditional at all, let alone what it could be conditional on.
         "static_condition_keys": sorted(STATIC_CONDITION_HEADS),
+        # What a static's *magnitude* may be -- a fourth language again, and the
+        # one Door of Destinies was filed against. Shown `value_keys` alone, a
+        # worker reads the effect-side list as the whole vocabulary and writes
+        # a leaf a static cannot hold; shown nothing at all, it assumes an
+        # anthem's `power` is a `const` and files a gap for "+1/+1 for each
+        # charge counter on this artifact" instead of writing it.
+        "static_value_keys": sorted(STATIC_VALUE_KEYS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know
         #: "if this creature has no +1/+1 counters on it" is sayable, and files
@@ -146,6 +158,16 @@ def reference() -> dict:
             " `condition` may ask -- an \"as long as ...\" clause that switches"
             " the whole static on and off as the board moves. It is a third"
             " language, neither `condition_keys` nor `static_filter_keys`.",
+            "`static_value_keys` is what a static's *magnitude* may be -- its"
+            " `power`, `toughness` or `amount`, and either side of a `cmp` in"
+            " its condition. Smaller than `value_keys`, and a leaf outside it"
+            " is a load error rather than a silent 0. `counters_on` is in it,"
+            " so \"gets +1/+1 for each charge counter on this artifact\" is a"
+            " `buff` whose `power` is"
+            " `{\"counters_on\": {\"counter\": \"charge\", \"objects\":"
+            " {\"self_only\": true}}}` -- an anthem with a size, which no op"
+            " can be: `pump` wears off and `add_counters` would miss both the"
+            " creatures already out and the ones cast later.",
             "`selector_keys` is what an effect's `objects` or a target spec's"
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"

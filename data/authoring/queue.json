@@ -71712,12 +71712,12 @@
     },
     "Door of Destinies": {
       "edhrec_rank": 1083,
-      "gate": "template",
+      "gate": null,
       "name": "Door of Destinies",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "1d0d80c7-87b5-47cc-b2fd-7defd281e1a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Door to Nothingness": {
