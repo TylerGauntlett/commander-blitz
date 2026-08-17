@@ -109,7 +109,10 @@ class AbilityModel(BaseModel):
     cost: CostModel | None = None
     is_mana_ability: bool = False
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
-    mana_restriction: str | None = None
+    #: A *list* is the "and/or" form -- "Spend this mana only to cast Vampire,
+    #: Cleric, and/or Demon spells" -- and its entries may be subtypes as well as
+    #: types, matched as an any-of.
+    mana_restriction: str | list[str] | None = None
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.

@@ -125432,12 +125432,12 @@
     },
     "Herald's Horn": {
       "edhrec_rank": 148,
-      "gate": "template",
+      "gate": null,
       "name": "Herald's Horn",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heraldic Banner": {
@@ -167802,12 +167802,12 @@
     },
     "Master of Dark Rites": {
       "edhrec_rank": 2686,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Dark Rites",
-      "reason": "no template for: {T}, Sacrifice another creature: Add {B}{B}{B}. Spend this mana only to cast Vampire, Cler",
+      "reason": "",
       "scryfall_id": "35c21fc4-d2f4-4682-b6af-f2e32377c9af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of Death": {

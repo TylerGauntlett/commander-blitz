@@ -192,3 +192,82 @@ class TestItIsPerObject:
         assert game.state.objects[banner].chosen_type is None, (
             "a permanent that comes back is a new object and chooses again"
         )
+
+DISCOUNTER = "t_chosen_discount"  # {3} artifact; chosen-type creatures cost {1} less
+
+
+class TestTheChoiceReachesTheOtherTwoReaders:
+    """Herald's Horn — the two paths `resolve_chosen_subtypes` was never called from.
+
+    The substitution was done wherever a filter was about to be matched *and* the
+    source permanent happened to be in scope: static `affects`, via
+    `characteristics._matches`, and trigger filters, via `triggers`. Two readers
+    were left out, and both are on Herald's Horn.
+
+    `spell_cost_reduction` prices a card that is still in hand, through
+    `_matches_printed`, whose signature is a printed card and no object — which
+    made it look as though the source was unavailable. It was not: the loop
+    already walks `(source_obj, static)` pairs and had the permanent all along.
+
+    The effect-side selector is the genuinely new one. "If it's a creature card
+    of the chosen type" is asked about the top card of a *library*, where no
+    trigger has bound anything and no static is being computed, so the marker
+    dict reached `set(want) & subtypes` unresolved and matched nothing.
+    """
+
+    def board_with_discounter(self, builder, hand):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["island"] * 9)
+            .hand(0, [DISCOUNTER, *hand])
+            .library(0, ["forest"] * 10)
+            .active(0)
+            .max_turns(1)
+            .build()
+        )
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CAST
+                and game.state.objects[a.source].def_id == DISCOUNTER
+            )
+        )
+        return game
+
+    def cost_of(self, game, def_id: str) -> int:
+        """What legality is actually charging for this card right now."""
+        from automtg.engine.costs import cost_reduction
+
+        card = game.state.card_of(
+            next(
+                game.state.objects[o]
+                for o in game.state.players[0].hand
+                if game.state.objects[o].def_id == def_id
+            )
+        )
+        return card.mana_cost.mana_value() - cost_reduction(game.state, 0, card)
+
+    def test_the_chosen_type_is_discounted(self, builder):
+        game = self.board_with_discounter(builder, [BEAR])
+        choose(game, "Bear")
+        assert self.cost_of(game, BEAR) == 1, "a 2-drop Bear for {1}"
+
+    def test_another_type_is_not(self, builder):
+        game = self.board_with_discounter(builder, [FLIER])
+        choose(game, "Bear")
+        assert self.cost_of(game, FLIER) == 3, "the Bird pays full price"
+
+    def test_nothing_is_discounted_before_a_type_is_chosen(self, builder):
+        """`resolve_chosen_subtypes` matches nothing rather than everything.
+
+        The opposite default would discount the entire game while the trigger
+        was still on the stack.
+        """
+        game = self.board_with_discounter(builder, [BEAR])
+        discounter = only(game, DISCOUNTER)
+        assert game.state.objects[discounter].chosen_type is None, (
+            "the trigger has not been answered yet"
+        )
+        assert self.cost_of(game, BEAR) == 2, "full price, not free"
+

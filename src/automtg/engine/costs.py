@@ -59,14 +59,21 @@ def mana_sources(
             source
             for source in _sources_of(state, oid, obj)
             if source.restriction is None
-            or (purpose is not None and source.restriction in purpose)
+            or (purpose is not None and bool(source.restriction & purpose))
         )
     return out
 
 
 def spell_purpose(card: CardDef) -> frozenset[str]:
-    """What restricted mana would have to allow, to pay for this card."""
-    return frozenset(t.lower() for t in card.types)
+    """What restricted mana would have to allow, to pay for this card.
+
+    Subtypes as well as types, because the printed clause names either: "…only
+    to cast a creature spell" is a type, and "…only to cast Vampire, Cleric,
+    and/or Demon spells" is three subtypes. One flat set of lowercased names on
+    both sides, intersected -- which is also what the printed "and/or" means, an
+    any-of rather than an all-of.
+    """
+    return frozenset(t.lower() for t in (*card.types, *card.subtypes))
 
 
 def available_mana(state: GameState, pid: int) -> int:

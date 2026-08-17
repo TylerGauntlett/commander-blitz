@@ -1596,6 +1596,30 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## Restricted mana that names a subtype
+
+"Spend this mana only to cast Vampire, Cleric, and/or Demon spells." —
+Master of Dark Rites.
+
+`mana_restriction` takes a string or a **list**, and its entries may be creature
+subtypes as well as card types:
+
+```jsonc
+"is_mana_ability": true,
+"mana_restriction": ["Vampire", "Cleric", "Demon"]
+```
+
+Both ends are one flat set of lowercased names, intersected: `spell_purpose`
+builds `(*card.types, *card.subtypes)` and a source is offered when the two sets
+meet. The printed "and/or" is an any-of, so one matching name is enough — a
+Vampire that is not a Cleric still qualifies.
+
+Enforced by *filtering sources* before the solver sees them, so the solver's
+inner loop never learns restrictions exist. Subtypes are open-ended in Magic, so
+a typo cannot be caught against a closed list; it produces mana that can never be
+spent, which is a strictly worse card than the printed one — the safe direction,
+but a silent one.
+
 ## "Target player's graveyard" — scoping a zone to a chosen player
 
 A selector reaching a zone somebody *owns* — hand, graveyard, library, exile —

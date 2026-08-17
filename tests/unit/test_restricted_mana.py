@@ -219,3 +219,70 @@ class TestWhatCanBeGranted:
         model = CardModel.model_validate({**self.base, "grantable_abilities": [ability]})
         with pytest.raises(DslError, match="only triggered abilities can be granted"):
             compile_card(model)
+
+class TestASubtypeRestriction:
+    """Master of Dark Rites — "…only to cast Vampire, Cleric, and/or Demon spells".
+
+    The restriction was one lowercased *card type*, checked against the eight
+    known ones, and the purpose a spell presented was built from `card.types`
+    alone — so a subtype had no representation at either end. Leaving the clause
+    off would have produced unrestricted {B}{B}{B}, which is a strictly better
+    card than the printed one.
+
+    Both ends widened to the same flat set of lowercased names, intersected. The
+    printed "and/or" is an any-of, so one matching subtype is enough.
+    """
+
+    def card(self, restriction):
+        return compile_card(
+            CardModel.model_validate(
+                {
+                    "id": "t_tribal_mana",
+                    "name": "Tribal Mana",
+                    "mana_cost": "{2}",
+                    "types": ["Artifact"],
+                    "oracle_text": "{T}: Add {B}. Spend this mana only to cast Vampire spells.",
+                    "abilities": [
+                        {
+                            "kind": "activated",
+                            "text": "{T}: Add {B}. Spend this mana only to cast Vampire spells.",
+                            "is_mana_ability": True,
+                            "mana_restriction": restriction,
+                            "cost": {"tap": True},
+                            "effects": [{"op": "add_mana", "mana": "{B}"}],
+                        }
+                    ],
+                }
+            )
+        )
+
+    def test_a_list_of_subtypes_compiles(self):
+        card = self.card(["Vampire", "Cleric", "Demon"])
+        assert card.abilities[0].mana_restriction == frozenset(
+            {"vampire", "cleric", "demon"}
+        )
+
+    def test_a_bare_string_still_works(self):
+        """The old single-type form is unchanged."""
+        card = self.card("creature")
+        assert card.abilities[0].mana_restriction == frozenset({"creature"})
+
+    def test_an_empty_list_is_refused(self):
+        with pytest.raises(DslError, match="empty"):
+            self.card([])
+
+    def test_a_purpose_reads_subtypes(self, registry):
+        """Grizzly Bears is a Bear, and the set says so."""
+        assert "bear" in spell_purpose(registry.get("grizzly_bears"))
+        assert "creature" in spell_purpose(registry.get("grizzly_bears"))
+
+    def test_one_matching_subtype_is_enough(self, registry, builder):
+        """"and/or" is an any-of: a Vampire that is not a Cleric still qualifies."""
+        card = registry.get("vampire_of_the_dire_moon")
+        restriction = frozenset({"vampire", "cleric", "demon"})
+        assert restriction & spell_purpose(card)
+
+    def test_an_unrelated_creature_does_not_qualify(self, registry):
+        restriction = frozenset({"vampire", "cleric", "demon"})
+        assert not (restriction & spell_purpose(registry.get("grizzly_bears")))
+
