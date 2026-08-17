@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**20 cards** blocked by **23** capabilities.
+**19 cards** blocked by **22** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,7 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multikicker](#multikicker) | 1 | 4605 | cost |
 | [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
 | [saga](#saga) | 1 | 7121 | engine |
-| [unblockable](#unblockable) | 1 | 18 | op |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
@@ -320,20 +319,6 @@ Blocks **1** card.
   - I — Create two 1/1 white Human Soldier creature tokens.
   - II — Create two 2/2 red Human Knight creature tokens with trample and haste.
   - III — Put an indestructible counter on up to one target Human. You become the monarch.
-
-</details>
-
-## unblockable
-
-Blocks **1** card.
-
-- **(op)** a resolution op that makes a chosen creature unable to be blocked at all until end of turn -- an until-end-of-turn, per-object 'can't be blocked' flag on the targeted creature (not on the granting permanent), read by combat.can_block for every would-be blocker
-  <br>Why the existing vocabulary won't do: The only 'can't be blocked' machinery is the `block_restriction` static effect, and it is unreachable three ways from an activated ability. (1) It lives in a printed static on a permanent, collected by `characteristics._battlefield_statics`, which walks `card_of(obj).abilities` only -- so it applies to whatever its `affects` filter matches, and `affects` may contain only `static_filter_keys` (printed characteristics); there is no key for 'the creature this ability targeted', so a static on Rogue's Passage cannot be aimed at the target. (2) It has no duration: a static is on while its source is on the battlefield, so it cannot expire 'this turn'. (3) `grant_ability` cannot smuggle one onto the target, because granted abilities are pointers read by `primitives.granted_abilities`, whose only consumers are in `triggers.py` -- `_battlefield_statics` never consults them, so a granted `block_restriction` would load clean and do nothing. `grant_keyword` has no matching keyword either: the evasion keywords available (menace, fear, intimidate, skulk, shadow, horsemanship, the landwalks) are all conditional restrictions on *which* creatures may block, and any of them would be an approximation of full unblockability.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rogue's Passage** (rank 18) — `rogue_s_passage`
-  - {4}, {T}: Target creature can't be blocked this turn.
 
 </details>
 

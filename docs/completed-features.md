@@ -1,3 +1,88 @@
+## "Can't be blocked" — the same wire, read from the attacker's end
+
+### Overview
+
+`cant_block` shipped as an op one run ago: a one-shot, table-stored "that creature
+can't block", aimed at a would-be **blocker**. Rogue's Passage prints the opposite
+sentence — "{4}, {T}: Target creature can't be blocked this turn" — which names an
+**attacker** and refuses every blocker against it. The two meet in
+`combat.can_block(state, blocker, attacker)` and nowhere else, so this is the same
+storage shape keyed on the other creature: `GameState.unblockables`, a list of
+`structs.Unblockable`, read by `combat.unblockable`.
+
+Neither predicate consults the other, which is the whole of how they compose. A
+creature that is prohibited from blocking still cannot block an ordinary attacker;
+an unblockable attacker is still unblockable by creatures under no prohibition;
+and a creature that is both is refused by whichever early-out `can_block` reaches
+first, which is the same answer. `tests/unit/test_unblockable.py` pins all three,
+including the lift-one-and-the-other-still-bites case that a merged implementation
+would fail.
+
+### Why the existing machinery could not say it
+
+The engine's other "can't be blocked" is the `block_restriction` **static**
+("this creature can't be blocked by Humans", `characteristics.block_restrictions`
+off `_battlefield_statics`). It is wrong three ways over, and each one alone would
+have been survivable:
+
+| | |
+|---|---|
+| it needs a permanent | a static is on while its source is on the battlefield. Rogue's Passage can be sacrificed or destroyed in response to its own ability, and the creature stays unblockable — `TestItOutlivesItsSource` |
+| it has no clock | "this turn" is not expressible as "while I am here" |
+| its filters read printed characteristics | `static_filter_keys` has no key meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
+
+`grant_ability` cannot smuggle one onto the target either: granted abilities are
+pointers read by `triggers.py` alone, and `_battlefield_statics` never consults
+them, so a granted `block_restriction` loads clean and does nothing at all. And
+every available evasion **keyword** — menace, fear, intimidate, skulk, shadow,
+horsemanship, the landwalks — is a condition on *which* creatures may block.
+Granting one is an approximation of a printed line, which is a different card, so
+the brief refused them and so does this.
+
+### One form, not two
+
+`cant_block` takes exactly one of `objects` and `all_creatures: true`. This op
+takes `objects` only, and the asymmetry is deliberate rather than unfinished
+work: no printed one-shot makes an unrestricted *everything* unblockable. The
+plural forms that come close are controller-scoped — "creatures you control can't
+be blocked this turn" (Keeper of Keys, Glaring Spotlight) — and a global sentinel
+would read those as making the opponent's creatures unblockable too, which is a
+strictly better card. So the loader refuses an `unblockable` with no `objects`
+rather than guessing, and those cards stay unexpressible until somebody stores the
+*filter* instead of the oids. `make_unblockable` refuses an empty set for the same
+reason `forbid_block` does: a declined "up to one target" makes nobody
+unblockable.
+
+### The clocks, and the shared expiry
+
+The same pair `cant_block` takes, cleared by the same two hooks in the same
+breath: `this_turn` in `turn._cleanup_step`, `until_your_next_turn` in
+`turn._untap_step`, keyed by **who** granted it because eliminating a player moves
+everybody else's "next turn". `sba._eliminate` drops a departed seat's entries for
+the reason it drops their block prohibitions — they never untap again.
+`until_your_next_turn` is not speculative: Sly Instigator prints it.
+
+The two clear-ups now share one helper, `primitives._expired`, because they are
+the same rule over two lists shaped alike. `test_the_block_prohibition_clock_does_not_clear_this_one`
+is what catches a future merge of the two tables.
+
+### The card, and where its coverage actually lives
+
+**Rogue's Passage** (agent tier — `--tier templates --retry` harvests nothing:
+0 written, 200 no template). Its interesting line is an *activated* ability, and
+the authoring verifier never activates one and never declares a combat, so the
+card honestly asserts the weak `{"zone": "battlefield"}` expectation and the real
+coverage is in `tests/unit/test_unblockable.py`: the ability is activated for
+{4} and its target is then offered no blockers at all, the source is recorded and
+is not the target, an opponent's creature is a legal target, and the grant is gone
+next turn.
+
+### Server and frontend: nothing
+
+No new event, decision kind or API field. Unblockability shows up as an
+`ADD_BLOCKER` action that is not offered, and `LegalActionDTO.kind` is a bare
+string the client echoes back.
+
 ## Dash — the alternative cost that is allowed to cost more
 
 ### Overview

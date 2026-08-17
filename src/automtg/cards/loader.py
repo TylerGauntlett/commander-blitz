@@ -47,6 +47,7 @@ from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CONTROL_DURATIONS,
+    UNBLOCKABLE_DURATIONS,
 )
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
@@ -2120,6 +2121,30 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: unknown cant_block duration {effect['duration']!r} "
                 f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+    if op == "unblockable":
+        # `objects` is required and there is no wildcard shorthand, which is the
+        # one difference from `cant_block` above. Defaulting an absent `objects`
+        # to "every creature" there would be a one-sided Falter; here it would be
+        # a one-sided *unblockable board*, which is worse, and no printed card
+        # says it -- so the omission is a mistake and is refused as one.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: unblockable needs 'objects' (the creatures that "
+                f"can't be blocked, chosen when it resolves)"
+            )
+        # And the duration is required for the reason `cant_block`'s is: an
+        # evasion read a turn long when it was a turn cycle, or the reverse, is a
+        # different card both ways round.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: unblockable needs a 'duration' "
+                f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in UNBLOCKABLE_DURATIONS:
+            raise DslError(
+                f"{where}: unknown unblockable duration {effect['duration']!r} "
+                f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
