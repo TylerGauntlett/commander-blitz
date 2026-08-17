@@ -56780,6 +56780,84 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "human_knight_2_2_r_trample_haste"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 2/2 red Human Knight creature tokens with trample and haste.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Dash {4}{R}{W} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "evoke": "{4}{R}{W}",
+      "evoke_label": "dash",
+      "id": "riders_of_rohan",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Riders of Rohan",
+      "oracle_text": "When this creature enters, create two 2/2 red Human Knight creature tokens with trample and haste.\nDash {4}{R}{W} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],

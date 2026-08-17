@@ -409,6 +409,13 @@ class CardModel(BaseModel):
     #: mechanism under different words. Without this the action list offers
     #: "Cast Goblin Rabblemaster (evoked)" for a card that says dash, which is
     #: a lie about what the player is doing.
+    #:
+    #: It is not only cosmetic: the loader's price guard reads it. Evoke proper
+    #: buys nothing but the discount, so an evoke cost above the printed one is
+    #: a line nobody takes and is refused. Dash buys haste and the enters
+    #: trigger for a turn, so a *renamed* cost may be the dearer one — Riders of
+    #: Rohan is printed {3}{R}{W} with dash {4}{R}{W}. Equal to the printed cost
+    #: stays refused under every label: that is one cast offered twice.
     evoke_label: str = "evoked"
     #: ``{"mana": "{R}", "condition": {...}}`` -- **prowl** and **spectacle**.
     #: An alternative cost like evoke, and unlike evoke it is only *offered*
