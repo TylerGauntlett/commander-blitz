@@ -117032,12 +117032,12 @@
     },
     "Grey Host Reinforcements": {
       "edhrec_rank": 11982,
-      "gate": "template",
+      "gate": null,
       "name": "Grey Host Reinforcements",
-      "reason": "no template for: Flying, ward {3}",
+      "reason": "",
       "scryfall_id": "7d72498c-7ac0-41f7-8f8a-47fda31d99e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grey Knight Paragon": {
