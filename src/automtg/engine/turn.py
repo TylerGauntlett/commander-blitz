@@ -20,11 +20,8 @@ from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
-<<<<<<< HEAD
-    clear_goad,
-=======
     clear_damage_shields,
->>>>>>> worktree-agent-a44b247516e3b3abe
+    clear_goad,
     clear_unblockables,
     clear_until_eot,
     untap_all,
