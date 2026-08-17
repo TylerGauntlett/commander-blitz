@@ -2624,6 +2624,10 @@
   "grey_havens_navigator": {
     "zone": "battlefield"
   },
+  "grey_host_reinforcements": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "griffin_sentinel": {
     "zone": "battlefield"
   },

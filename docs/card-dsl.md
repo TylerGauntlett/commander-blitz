@@ -311,10 +311,25 @@ one particular card rather than about a zone:
 
 Without that, the nearest thing a card could ask was "is there a land *somewhere*
 in my library", which is true almost always and would have made the branch a
-formality. Note the explicit `"zone": "library"` — filtering defaults to the
-battlefield, and a card being asked about anywhere else has to say so.
+formality.
 
-### Recording what an op consumed — amplify and devour
+The two shorthands differ in one place: **what an absent `zone` clause means.**
+
+- After `target`, it means the battlefield, because a target is re-checked as the
+  spell resolves (608.2b) — "destroy target creature" whose creature is already
+  in a graveyard has no legal target left, and that default is the check.
+- After `binding`, it means *nowhere in particular*. A binding is a **record** of
+  objects an earlier effect touched, and those have usually just changed zones:
+  `{"binding": "exiled", "types": ["Creature"]}` is "the number of creature cards
+  exiled this way", and reading a battlefield default into it would not narrow
+  the set but empty it — silently, since nothing is malformed. The card would
+  count 0 and enter with no counters.
+
+A `zone` the card *writes* still filters on both, so "…the exiled cards that are
+still in exile" remains sayable. The Coiling Oracle snapshot above keeps its
+explicit `"zone": "library"` because that is the question it is asking.
+
+### Recording what an op consumed or produced — "this way", "the token"
 
 ```jsonc
 // Amplify 2 — "…for each Beast card you reveal in your hand."
@@ -348,6 +363,39 @@ exactly one, so nothing else changed.
 **any number**" sayable at all: it used to resolve its pool and show the whole
 hand without asking. `count` still defaults to `"all"`, so every reveal already
 in the pool is unchanged.
+
+Seven ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
+`copy_permanent`, `snapshot` and `join_forces`. **No other op does**, and an `as`
+on one that does not is a load error — it would name a binding nothing writes,
+every read of it would be 0, and the card's second sentence would silently do
+nothing.
+
+```jsonc
+// Grey Host Reinforcements — "…equal to the number of creature cards exiled this way."
+{ "op": "exile", "as": "exiled",
+  "objects": { "zone": "graveyard", "player": { "target": "t1" }, "count": "all" } },
+{ "op": "add_counters", "counter": "+1/+1",
+  "objects": { "zone": "battlefield", "self_only": true },
+  "amount": { "count": { "binding": "exiled", "types": ["Creature"] } } }
+
+// Flamerush Rider — "Exile the token …"
+{ "op": "copy_permanent", "objects": { "target": "t1" },
+  "tapped": true, "attacking": true, "as": "the_token" },
+{ "op": "exile", "objects": { "binding": "the_token" } }
+```
+
+The token half is not expressible any other way: `is_token` matches every token
+you control, and `{"is_token": true, "attacking": true}` also catches tokens
+another attack trigger made this turn, so a second copy of the same card exiles
+the wrong permanent. The oids `create_token` returns are the only thing that
+identifies them. `delay` snapshots `ctx.bindings` when it schedules, so a
+recorded set survives into a later step.
+
+Not `until_leaves` for the exile half of Grey Host Reinforcements: that is the
+O-Ring *link* and declares a return the card does not have. And not "count the
+graveyard first" — that is numerically equal only because this particular card
+empties the whole zone, it needs the printed sentences in the opposite order, and
+it does not generalise to "this way".
 
 *Divergence*: both keywords print "**as** this creature enters", a replacement.
 They are `self_enters` triggers here, for the reason

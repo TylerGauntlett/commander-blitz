@@ -8683,6 +8683,104 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_gravepicker",
+      "name": "Test Gravepicker",
+      "oracle_text": "When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.",
+      "mana_cost": "{3}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {}
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "as": "exiled",
+              "objects": {
+                "zone": "graveyard",
+                "player": {
+                  "target": "t1"
+                },
+                "count": "all"
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "amount": {
+                "count": {
+                  "binding": "exiled",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_token_smith",
+      "name": "Test Token Smith",
+      "oracle_text": "When this creature enters, create a 1/1 red Warrior creature token. Exile that token.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Artificer"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 red Warrior creature token. Exile that token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "t_warrior_token",
+              "as": "made"
+            },
+            {
+              "op": "exile",
+              "objects": {
+                "binding": "made"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

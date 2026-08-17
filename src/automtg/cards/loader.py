@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from automtg.engine.carddef import Ability, CardDef, Cost, TargetSpec, TriggerSpec, build_type_line
-from automtg.engine.effects import known_ops
+from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
@@ -1998,12 +1998,27 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         validate_condition(more["condition"], f"{where}.up_to_if.condition")
         if "count" in more:
             validate_value(more["count"], f"{where}.up_to_if.count")
-    if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
-        # `as` names a binding -- `snapshot`'s, and the record `reveal` and
-        # `sacrifice` write of what they consumed. A non-string would be
-        # stringified into a name nothing reads back, so the count it feeds
-        # would be 0 and amplify would enter with no counters.
-        raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
+    if "as" in effect:
+        # `as` names a binding -- `snapshot`'s, and the record `reveal`,
+        # `sacrifice`, `exile` and the two token-making ops write of what they
+        # consumed or produced. A non-string would be stringified into a name
+        # nothing reads back, so the count it feeds would be 0 and amplify would
+        # enter with no counters.
+        if not (isinstance(effect["as"], str) and effect["as"]):
+            raise DslError(
+                f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}"
+            )
+        if op not in RECORDING_OPS:
+            # And an `as` on an op that writes no binding fails exactly the same
+            # way while looking right on the page: "destroy the creatures, then
+            # draw a card for each destroyed this way" would load, resolve, and
+            # draw nothing. Only these ops record, so only these may be asked
+            # to -- the next op to grow one adds itself here.
+            raise DslError(
+                f"{where}: {op!r} records no binding, so its 'as' would name one "
+                f"nothing writes and every read of it would be 0 "
+                f"(ops that record: {sorted(RECORDING_OPS)})"
+            )
     if op == "join_forces":
         # The total is the card -- "for each mana paid this way" -- so an effect
         # that collects it and names no binding has taxed the whole table for

@@ -163,13 +163,40 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
     # the *source* and the rest still filters, which is what lets a card ask "is
     # the card I just bound a land?" without a condition language of its own.
     if "target" in selector or "binding" in selector:
+        # `zone` still filters when the card writes one, but its *default* is not
+        # the same on the two branches, because they are asking different
+        # questions.
+        #
+        # A target is re-checked as the spell resolves (608.2b), so "target
+        # creature" that is no longer a creature on the battlefield is no longer
+        # a legal target and the default `battlefield` is the check.
+        #
+        # A binding written by an earlier op in this same resolution is a
+        # *record*: "the number of creature cards exiled **this way**" is a fact
+        # about what was exiled, and those cards have by construction just
+        # changed zones. Defaulting to `battlefield` there does not narrow the
+        # set, it empties it -- silently, since nothing is malformed -- so
+        # `{"binding": "exiled", "types": ["Creature"]}` would count 0 and the
+        # card would enter with no counters. Devour and amplify never noticed
+        # because they read the bare `{"binding": …}`, which never reaches
+        # `matches` at all.
         if "target" in selector:
             seeded = ctx.target_oids(str(selector["target"]))
+            default_zone: str | None = "battlefield"
         else:
             seeded = _bound_oids(ctx, str(selector["binding"]))
+            default_zone = None
         if set(selector) <= {"target", "binding"}:
             return seeded
-        return _narrow_to_extreme(ctx, [oid for oid in seeded if matches(ctx, oid, selector)], selector)
+        return _narrow_to_extreme(
+            ctx,
+            [
+                oid
+                for oid in seeded
+                if matches(ctx, oid, selector, default_zone=default_zone)
+            ],
+            selector,
+        )
 
     state = ctx.state
     zone_name = selector.get("zone", "battlefield")
@@ -305,15 +332,27 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     return ctx.state.alive()
 
 
-def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
-    """Does one object satisfy every clause of ``selector``?"""
+def matches(
+    ctx: EffectContext,
+    oid: int,
+    selector: Mapping[str, Any],
+    *,
+    default_zone: str | None = "battlefield",
+) -> bool:
+    """Does one object satisfy every clause of ``selector``?
+
+    ``default_zone`` is what an absent ``zone`` clause means. It is the
+    battlefield everywhere a selector *searches* a zone, and ``None`` -- no zone
+    clause at all -- when the pool was named rather than searched by a
+    ``binding``; see `resolve_pool`.
+    """
     state = ctx.state
     obj = state.objects.get(oid)
     if obj is None:
         return False
 
-    zone_name = selector.get("zone", "battlefield")
-    zone = ZONE_NAMES.get(zone_name)
+    zone_name = selector.get("zone", default_zone)
+    zone = ZONE_NAMES.get(zone_name) if zone_name is not None else None
     if zone is not None and obj.zone is not zone:
         return False
 
@@ -404,7 +443,7 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
     # Checked here, alongside the other keys, so it composes with them: the
     # union narrows nothing on its own and everything outside it still filters.
     if (branches := selector.get("any_of")) and not any(
-        matches(ctx, oid, branch) for branch in branches
+        matches(ctx, oid, branch, default_zone=default_zone) for branch in branches
     ):
         return False
     if (want := selector.get("not_types")) and set(want) & types:
