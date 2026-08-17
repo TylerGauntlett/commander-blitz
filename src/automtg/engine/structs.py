@@ -234,6 +234,79 @@ class BlockProhibition:
         }
 
 
+#: The two durations an :class:`Unblockable` can carry -- the same pair
+#: :data:`BLOCK_PROHIBITION_DURATIONS` carries, and cleared by the same two
+#: hooks.  Both are printed: "target creature can't be blocked **this turn**"
+#: (Rogue's Passage, Slip Through Space, Thassa) and "**until your next turn**,
+#: target creature an opponent controls can't be blocked" (Sly Instigator).
+UNBLOCKABLE_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class Unblockable:
+    """"Target creature can't be blocked this turn." The mirror of
+    :class:`BlockProhibition`, pointing the other way down the same wire.
+
+    The two sentences meet in `combat.can_block(state, blocker, attacker)` and
+    are otherwise unrelated: a `BlockProhibition` names a would-be **blocker**
+    and takes it out of every block; this names an **attacker** and takes every
+    blocker out of the block against it.  Neither subsumes the other -- a
+    prohibited blocker facing an ordinary attacker still cannot block, and an
+    unblockable attacker is unblockable by creatures under no prohibition at all
+    -- so they are two lists and two predicates, both consulted, in either order.
+
+    The engine's existing "can't be blocked" is the `block_restriction` static
+    (`characteristics.block_restrictions`, "can't be blocked by Humans"), and it
+    is the wrong shape for this sentence three ways -- the three the gap record
+    for Rogue's Passage names.  A static needs a permanent standing on the
+    battlefield to own it, it lasts exactly as long as that permanent is there,
+    and its `blockers`/`affects` filters may read only *printed* characteristics.
+    So it can say "creatures with flying can't block me, while I am here" and it
+    can say nothing about the creature an activated ability targeted, nor about
+    the end of this turn.  This is that sentence with the source and the clock
+    swapped round, so it lives on the table (:attr:`GameState.unblockables`)
+    beside `block_prohibitions`, for the reason given there.
+
+    ``objects`` is the set chosen **at resolution** and it is never empty and
+    never a wildcard.  There is deliberately no counterpart of
+    `BlockProhibition`'s ``objects=None`` ("every creature", live for the rest of
+    the turn): no printed one-shot makes an unrestricted *everything*
+    unblockable, and the plural forms that come close are controller-scoped
+    ("creatures you control can't be blocked this turn" -- Keeper of Keys), which
+    a global sentinel would read as making the opponent's creatures unblockable
+    too.  Getting that wrong is a strictly better card, so the shape is refused
+    rather than approximated; see `docs/rules-coverage.md`.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"until_your_next_turn"`` (cleared in :attr:`player`'s untap step, beside
+    detain and block prohibitions).  The second is not a turn *number*: eliminate
+    a player and "your next turn" moves, which is why the player is recorded and
+    the deadline is not.
+    """
+
+    #: The creatures that can't be blocked.  A tuple rather than a set so the
+    #: record stays hashable, which is what lets the primitive deduplicate on the
+    #: whole entry.
+    objects: tuple[int, ...] = ()
+    duration: str = "this_turn"
+    #: Whose next turn ends it.  Meaningful only for ``until_your_next_turn``;
+    #: recorded for both because it is also who granted the evasion, which is
+    #: what `sba` needs to drop the entries whose clock can never come again.
+    player: int | None = None
+    #: The permanent or spell that granted it, for the log.  Not part of the
+    #: lifetime: Rogue's Passage may be destroyed in response and the creature it
+    #: targeted is still unblockable for the turn.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "objects": list(self.objects),
+            "duration": self.duration,
+            "player": self.player,
+            "source": self.source,
+        }
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""

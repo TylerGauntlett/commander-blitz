@@ -2162,6 +2162,120 @@
       ]
     },
     {
+      "id": "t_passage",
+      "name": "Test Passage",
+      "oracle_text": "{T}: Add {C}.\n{4}, {T}: Target creature can't be blocked this turn.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{4}, {T}: Target creature can't be blocked this turn.",
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "unblockable",
+              "objects": {
+                "target": "t1"
+              },
+              "duration": "this_turn"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_slip",
+      "name": "Test Slip",
+      "oracle_text": "Target creature can't be blocked this turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "unblockable",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_instigator",
+      "name": "Test Instigator",
+      "oracle_text": "Until your next turn, target creature an opponent controls can't be blocked.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "unblockable",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+    {
       "id": "t_taunter",
       "name": "Test Taunter",
       "oracle_text": "Until your next turn, creatures your opponents control can't block.",

@@ -22,6 +22,7 @@ from .structs import (
     StackItem,
     TriggerInstance,
     TurnLedger,
+    Unblockable,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -211,6 +212,20 @@ class GameState:
     #: naming a set. Normally empty, which is why `combat.block_prohibited`
     #: short-circuits on it.
     block_prohibitions: list[BlockProhibition] = field(default_factory=list)
+    #: "Target creature can't be blocked this turn" -- see
+    #: :class:`structs.Unblockable`.
+    #:
+    #: The mirror of `block_prohibitions` above and stored the same way for the
+    #: same reason, but a *separate* list because it points the other way: an
+    #: entry here names an attacker and stops every block against it, an entry
+    #: there names a blocker and stops it blocking anything. Merging them into
+    #: one list with a side flag would only make both predicates filter it.
+    #:
+    #: The engine's other "can't be blocked" is the `block_restriction` static,
+    #: which is precisely the shape that cannot say "the creature this activated
+    #: ability targeted, until the end of this turn". Normally empty, which is
+    #: why `combat.unblockable` short-circuits on it.
+    unblockables: list[Unblockable] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
     #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).

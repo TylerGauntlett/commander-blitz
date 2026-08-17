@@ -382,6 +382,34 @@ def block_prohibited(state: GameState, oid: int) -> bool:
     )
 
 
+def unblockable(state: GameState, oid: int) -> bool:
+    """Is this creature under a one-shot "can't be blocked", as opposed to a static?
+
+    The exact mirror of :func:`block_prohibited` one function up, and the two are
+    asked of opposite creatures: that one is asked of the would-be **blocker**,
+    this one of the **attacker**.  They compose by both being consulted in
+    `can_block` and either one refusing the block on its own -- a creature under
+    a prohibition still cannot block an ordinary attacker, and an unblockable
+    attacker is still unblockable by creatures under no prohibition at all.
+    Neither reads the other, so a creature that is both prohibited from blocking
+    and facing an unblockable attacker is refused twice, which is the same
+    answer.
+
+    Split from `characteristics.block_restrictions` -- the static "can't be
+    blocked by Humans" -- for the reason `block_prohibited` is split from
+    `block_forbidden`: that layer walks permanents on the battlefield and reads
+    printed characteristics, and this belongs to no permanent and names a
+    creature chosen when an ability resolved.  Rogue's Passage's target is not
+    Rogue's Passage.
+
+    Guarded on the list being non-empty, because this is on the hot path of the
+    block mask and the list is empty in most games.
+    """
+    if not state.unblockables:
+        return False
+    return any(oid in entry.objects for entry in state.unblockables)
+
+
 def can_block(
     state: GameState,
     blocker_oid: int,
@@ -433,6 +461,15 @@ def can_block(
     # into `block_forbidden` because it is table state and not a static: the
     # characteristics layer reads permanents, and this belongs to none.
     if block_prohibited(state, blocker_oid):
+        return False
+
+    # "That creature can't be blocked this turn." (Rogue's Passage.) The line
+    # above with the creatures swapped: that one asks whether this blocker may
+    # block anything, this one whether this attacker may be blocked by anything.
+    # Both are early-outs and neither consults the other, so a blocker under a
+    # prohibition facing an unblockable attacker is refused by whichever is
+    # asked first -- the same answer either way.
+    if unblockable(state, attacker_oid):
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked

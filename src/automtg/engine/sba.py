@@ -158,6 +158,15 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for r in state.block_prohibitions
         if not (r.duration == "until_your_next_turn" and r.player == pid)
     ]
+    # The same hole in the mirror list: "until your next turn, that creature
+    # can't be blocked" is cleared in the granting player's untap step, and an
+    # eliminated player never has another one -- so the evasion would last for
+    # the rest of the game.
+    state.unblockables = [
+        u
+        for u in state.unblockables
+        if not (u.duration == "until_your_next_turn" and u.player == pid)
+    ]
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()
