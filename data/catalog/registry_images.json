@@ -6186,9 +6186,17 @@
     "artist": "Jarel Threat",
     "scryfall_id": "8c951885-6ec8-4e64-bd27-ca3eb477a1d8"
   },
+  "response_resurgence": {
+    "artist": "Daarken",
+    "scryfall_id": "2502d3bf-1956-4294-b4d5-38eee79eeda1"
+  },
   "resupply": {
     "artist": "Filip Burburan",
     "scryfall_id": "ecf47c52-4065-4b81-acdc-878e74767bba"
+  },
+  "resurgence": {
+    "artist": "Daarken",
+    "scryfall_id": "2502d3bf-1956-4294-b4d5-38eee79eeda1"
   },
   "retreat_to_kazandu": {
     "artist": "Kieran Yanner",

@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>80 ops"]
+    ctx --> ops["op registry<br/>84 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -146,6 +146,7 @@ required — defaulted it would look at one card and say nothing about it.
 | Players | `become_monarch` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
+| Turn structure | `extra_combat` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `join_forces` |
 
 ## Selectors — "which objects"
@@ -1750,6 +1751,52 @@ Clavileño would make three Demons on a three-creature swing.
 No new event: `ATTACKERS_DECLARED` was already produced once by `combat.py` after
 the declaration closes, and was `emit`ted (logged) rather than `fire`d (put
 through the trigger bus) — the same shape `token_created` had.
+
+## An additional combat phase
+
+```jsonc
+{ "op": "untap", "objects": {"controller": "you", "types": ["Creature"], "count": "all"} },
+{ "op": "extra_combat", "extra_main": true }
+```
+
+That is Relentless Assault, and Resurgence's second sentence. `extra_main` is the
+"…**followed by an additional main phase**" half; leave it off for Combat
+Celebrant's bare "after this phase, there is an additional combat phase".
+`amount` is how many combats, for Fury of the Horde's two. There is no `player`,
+and the loader refuses one: a phase belongs to the **turn**, so Seize the Day cast
+on an opponent's turn gives *that* player the extra combat, which is how it is
+ruled.
+
+The op does not restructure anything — it queues phase kinds on
+`GameState.extra_phases`, and `turn.next_step` enters them when the current main
+or combat phase ends. That indirection is the printed timing: "after this phase"
+means the effect resolves *inside* the phase it extends, from a sorcery in a main
+phase or from a trigger in the declare-attackers step.
+
+`Step` is an ordered `IntEnum` walked one integer at a time, so a repeated phase
+has no representation of its own — and needs none, because an extra phase is the
+same steps entered again. What has to be remembered is that the phase the turn
+was *about to* enter is still owed, which is `GameState.resume_step`: one
+bookmark, set on the first diversion and spent when the queue runs dry. Two
+things follow that are easy to get wrong in the other direction:
+
+- An extra combat granted in a **precombat** main is inserted in front of the
+  combat the turn already had, and that combat still happens. Without the
+  bookmark it would be silently eaten, along with its postcombat main.
+- An extra combat is **not** an extra main phase. The engine's step order puts a
+  postcombat main after every combat, so Combat Celebrant's extra combat returns
+  to the bookmark rather than falling through into a second main phase it never
+  granted. The `postcombat_main` trigger fires per *phase* precisely so that a
+  card which does grant one gets it.
+
+An additional main phase is a `POSTCOMBAT_MAIN` step, because 505.1b makes any
+main phase after a combat a postcombat one. It is another sorcery window and not
+another land drop: `lands_played` is reset by the untap step, so rule 305.2 holds
+with no code. An unspent grant expires at the turn boundary — Aggravated Assault
+activated in an end step has no phase left to come after — and a turn takes at
+most `MAX_EXTRA_PHASES_PER_TURN` of them, which is the same kind of valve as the
+turn cap: the rules would let an untap-and-attack-again loop run for ever, and a
+self-play run cannot.
 
 ## Granting an ability for as long as the permanent lasts
 

@@ -8,18 +8,6 @@
   ],
   "needs": [
     {
-      "capability": "extra_combat",
-      "kind": "engine",
-      "what": "An additional combat phase after the phase now in progress, followed by an additional main phase (500.7, 506.1). Needs a per-turn queue of pending extra phases on GameState -- a count, or entries of {controller, phase kind} so \"an additional combat phase\" and \"an additional main phase\" are both representable -- consumed by `turn.next_step`: when END_OF_COMBAT ends and the queue is non-empty, the next step is BEGIN_COMBAT again instead of POSTCOMBAT_MAIN, and the extra main phase after it is the ordinary POSTCOMBAT_MAIN the extra combat then falls into. The blocker is that `Step` is an ordered `IntEnum` and `next_step` falls through to `Step(int(step) + 1)`, so a turn is a straight walk up the integers and a repeated phase has no representation. `combat.start_combat` must also be re-enterable (`combat.end_combat` sets `state.combat = None` and `turn.py:509` nulls it again at the turn boundary, so a fresh `CombatState` is fine, but the once-per-combat attack bookkeeping has to reset per combat rather than per turn), and the queue must be cleared at end of turn so an unspent extra combat does not leak into the next player's turn.",
-      "why_existing_wont_do": "Nothing in `ops` or `static_effects` adds or repeats a phase. `delay` is the only op that names a step, and it defers an *effect* to one of the fixed `DELAY_STEPS` (`upkeep`, `draw_step`, `begin_combat`, `end_step`) -- it can make something happen at the one begin-combat the turn already has, but cannot create a second one. `cleanup_repeat` is the only precedent for re-entering a step and is a bool hardwired to CLEANUP (514.3a), consumed on entry. The `postcombat_main` trigger event's docstring in `turn.py` already says \"an extra combat gives an extra postcombat main\", so the firing site anticipates this phase, but the phase does not exist. Approximating with `untap` plus asking the player to attack again is not available either: there is no way to re-open a declare-attackers decision."
-    },
-    {
-      "capability": "extra_combat",
-      "kind": "op",
-      "what": "A resolution-time op -- `extra_combat`, with an optional `amount` value and an optional `controller`, defaulting to one for the effect's controller -- that pushes onto the queue above. This card resolves it from a main-phase sorcery with the timing \"after this main phase\", so the queue must be consumed by the step walk rather than applied at resolution. An `amount` value is needed by siblings in the same queue (Seize the Day and Waves of Aggression want one, Fury of the Horde wants \"two additional combat phases\").",
-      "why_existing_wont_do": "No op in `ops` touches phase structure. The nearest ops act *within* a combat (`untap`, `tap`, `must_attack`, `freeze`) -- they change who fights, not how many times fighting happens. `set_flag` could record that the spell resolved but nothing reads a flag during the step walk, and there is no queue to push onto until the engine need above lands."
-    },
-    {
       "capability": "attacked_this_turn_objects",
       "kind": "selector",
       "what": "A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. Relentless Assault resolves in a main phase, after the combat whose attackers it wants to untap, so the creatures it names cannot be found from live combat state. Also wanted by Aggravated Assault, Seize the Day and Waves of Aggression, which print the same untap clause.",
@@ -37,5 +25,8 @@
     "must_attack",
     "set_flag"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "resolved": [
+    "extra_combat"
+  ]
 }
