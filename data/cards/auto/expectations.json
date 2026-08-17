@@ -6728,6 +6728,14 @@
   "undersea_invader": {
     "zone": "battlefield"
   },
+  "unexplained_absence": {
+    "library_size": {
+      "0": 39,
+      "1": 19
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "unflinching_courage": {
     "zone": [
       "battlefield",

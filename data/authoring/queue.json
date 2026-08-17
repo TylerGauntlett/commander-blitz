@@ -295352,12 +295352,12 @@
     },
     "Unexplained Absence": {
       "edhrec_rank": 6625,
-      "gate": "template",
+      "gate": null,
       "name": "Unexplained Absence",
-      "reason": "no template for: For each player, exile up to one target nonland permanent that player controls. For each p",
+      "reason": "",
       "scryfall_id": "4d802c0d-da4d-407d-808d-f891b12bcef8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unexplained Disappearance": {
