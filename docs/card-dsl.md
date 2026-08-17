@@ -177,6 +177,7 @@ strictly better card. A zero or negative ordinal is refused too — the op floor
 it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `set_turn_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
@@ -863,6 +864,8 @@ its mana, and a cost of five that settled for four would be a different card.
 { "has_city_s_blessing": "you" }              // ascend
 { "is_monarch": "you" }                       // the monarch (721)
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
+{ "has_flag": "renowned" }                    // a word written by `set_flag`, for the game
+{ "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
 ```
 
 `is_monarch` takes a player spec, so "if an opponent is the monarch" is
@@ -892,6 +895,12 @@ home that never attacked, false after the one that connected traded in combat.
 Read off **derived** subtypes at the moment the damage lands, so a changeling
 and a creature granted the type both count. Combat damage only, and cleared at
 cleanup with the rest of the ledger.
+
+`has_flag` and `has_turn_flag` are the same question with two lifetimes, and
+they are two keys over two stores rather than one key with a duration — see
+["If this creature hasn't been exerted this turn"](#if-this-creature-hasnt-been-exerted-this-turn)
+below. Both ask about the ability's own source, which is the only thing that can
+have become the word.
 
 ## Triggers
 
@@ -2497,6 +2506,49 @@ trigger filter is a characteristic no layer can change, which is what lets the
 filter be right about a creature that has already died; P/T is the exception, and
 a printed 2/2 entering under an anthem is a 3/3 that must not trigger "power 2 or
 less".
+
+## "If this creature hasn't been exerted this turn"
+
+Exert needs no engine support and never did: it is an `attacks` trigger, a `may`
+and `skip_untap`. Combat Celebrant adds a guard, and the guard is the part that
+had no home — a **record of the choice** that is scoped to the turn.
+
+```jsonc
+"trigger": {"event": "attacks", "source": "self",
+            "condition": {"not": {"has_turn_flag": "exerted"}}},
+"effects": [{"op": "may", "prompt": "Exert Combat Celebrant?", "effects": [
+  {"op": "set_turn_flag", "flag": "exerted", "objects": {"self_only": true}},
+  {"op": "skip_untap",    "objects": {"self_only": true}},
+  {"op": "untap", "objects": {"controller": "you", "types": ["Creature"],
+                              "exclude_self": true, "count": "all"}},
+  {"op": "extra_combat"}]}]
+```
+
+**The write goes inside the `may`, not around it.** Declining exerts nothing, and
+every cheaper way of spelling this guard gets exactly that wrong:
+
+| | |
+|---|---|
+| `set_flag` / `has_flag` | The right shape with the wrong lifetime. `obj.flags` is one-way *on purpose* — renown must never be re-earned — so nothing ever removes from it and `clear_until_eot` does not touch it. The guard would read "hasn't been exerted this **game**" and the card would work once per game, which every one-turn test passes |
+| `once_each_turn` | An **activation** restriction; the loader refuses it on anything that is not an activated ability, and this is a triggered one |
+| `max_per_turn` on the trigger | Counted where the ability **queues**, so a declined offer spends the turn's one trigger. The printed clause is spent by exerting, not by being asked |
+| `resolutions_this_turn` | The same mistake one layer down: the ability resolves whether you take the `may` or not |
+| `attacked_this_turn` | About attacking, which the creature did either way |
+
+`set_turn_flag` writes into `TurnLedger.object_flags` (object id → the words it
+was given this turn), so it is cleared by the same cleanup that clears morbid,
+storm and raid and needs no sweep of its own. Living on the ledger rather than on
+the permanent also means the record survives the object leaving the battlefield,
+which is what a past-tense clause says — the argument `creatures_attacked` makes
+one field above it.
+
+Two ops and two condition keys rather than one of each with a `duration`, which
+is the same call `skip_untap` and `freeze` made: the two lifetimes are different
+rules objects, and a card that reached for the wrong one would be wrong only on
+its **second** turn. The loader refuses a `duration` on `set_turn_flag` rather
+than accepting and ignoring it, and refuses a `has_turn_flag` that is not a flag
+name — `true` stringifies to `"True"`, which nothing ever writes, so the guard
+would silently never bite.
 
 ## "Each opponent sacrifices…" — a loop over players
 

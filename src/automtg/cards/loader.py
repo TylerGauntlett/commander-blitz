@@ -2174,6 +2174,22 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         # A flag with no name writes nothing, so renown's once-only guard never
         # closes and the creature grows on every combat damage for ever.
         raise DslError(f"{where}: set_flag needs a 'flag' to write")
+    if op == "set_turn_flag":
+        if not effect.get("flag"):
+            # Same failure as `set_flag` above with a worse tell: the guard that
+            # reads it back never bites, so Combat Celebrant offers its exert on
+            # every attack of the turn and the card that prints a once-per-turn
+            # clause plays as though it does not.
+            raise DslError(f"{where}: set_turn_flag needs a 'flag' to write")
+        if "duration" in effect:
+            # There is exactly one duration here, and it is in the name. A card
+            # asking for another one is asking for `set_flag`, whose word is
+            # permanent -- accepting and ignoring the key would give whichever
+            # of the two the author did not want.
+            raise DslError(
+                f"{where}: set_turn_flag takes no 'duration' -- it lasts the turn "
+                f"(use set_flag for a word that never wears off)"
+            )
     if op == "move_counters":
         # Without a destination the counters come off the source and go
         # nowhere, which is a card that reads "move a +1/+1 counter onto it"

@@ -1101,6 +1101,37 @@ def op_set_flag(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("set_turn_flag")
+def op_set_turn_flag(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…and it has been exerted." A word that wears off at the turn boundary.
+
+    `set_flag` above with the other lifetime, and a separate op for the reason
+    `skip_untap` and `freeze` are separate: the two durations are different rules
+    objects, and using either for the other is wrong in both directions and
+    invisible in a one-turn test. `set_flag` is one-way *on purpose* -- renown
+    must never be re-earned, so nothing ever removes from `obj.flags` -- while
+    "if this creature hasn't been exerted **this turn**" (Combat Celebrant,
+    701.40b) has to be false again next turn. Written there, the guard would read
+    "hasn't been exerted this game" and the card would work exactly once.
+
+    Written to `TurnLedger.object_flags` rather than to the permanent, so it is
+    cleared by the same cleanup that clears morbid and storm and needs no sweep
+    of its own -- and so the record survives the object leaving the battlefield,
+    which is what a past-tense clause says. Read back with
+    `{"has_turn_flag": "exerted"}`.
+
+    Exert is its first customer and does not otherwise need it: the keyword is
+    still an `attacks` trigger, a `may` and `skip_untap` (see `test_exert.py`).
+    This op is the *record* of the choice, which is why it goes inside the `may`
+    beside `skip_untap` and not around it -- a declined `may` exerts nothing.
+    """
+    flag = str(spec["flag"])
+    for oid in resolve_pool(ctx, spec.get("objects") or {"self_only": True}):
+        if oid in ctx.state.objects:
+            ctx.state.turn_ledger.set_object_flag(oid, flag)
+    yield from ()
+
+
 @register("move_counters")
 def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """Take counters off one permanent and put them on another.

@@ -226,7 +226,7 @@ This is the long tail, and where the build order comes from.
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
 | Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
-| Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py` | — |
+| Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py`. A card that guards it with "if this creature hasn't been exerted **this turn**" (Combat Celebrant) adds `set_turn_flag` inside the `may` and `{"not": {"has_turn_flag": "exerted"}}` as the intervening-if | `set_turn_flag` |
 | Exploit | free | `self_enters` trigger, `may`, then `sacrifice` and whatever the card does — cashed by `test_exploit_and_bloodrush.py` | — |
 | Explore | shipped | op — the branch reads the card just revealed, which no condition can name | `explore` |
 | Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |

@@ -451,6 +451,25 @@ class TurnLedger:
     #: back.
     ability_activations: dict[tuple[int, int], int] = field(default_factory=dict)
 
+    #: Words written onto a permanent that wear off at the turn boundary:
+    #: object id -> the flags it has been given **this turn**.  "If this creature
+    #: hasn't been **exerted this turn**" (Combat Celebrant, 701.40b).
+    #:
+    #: The turn-scoped twin of `GameObject.flags`, and a separate store rather
+    #: than a second lifetime on that set, for the reason `skip_untap` and
+    #: `freeze` are two ops: the two lifetimes are different rules objects and
+    #: using either for the other is wrong in both directions.  `obj.flags` is
+    #: one-way on purpose -- renown must never be re-earned -- so nothing in the
+    #: engine ever removes from it and a guard written there would silently read
+    #: "hasn't been exerted this **game**".
+    #:
+    #: Keyed by oid and cleared with the rest of the ledger, so it needs no
+    #: sweep of its own and cannot outlive the turn that wrote it.  Living here
+    #: rather than on the object also means the record survives the permanent
+    #: leaving the battlefield, which is what "has been exerted this turn" says:
+    #: the same argument `creatures_attacked` makes above.
+    object_flags: dict[int, set[str]] = field(default_factory=dict)
+
     @property
     def attacked(self) -> set[int]:
         """The players who declared an attacker this turn -- raid's question.
@@ -472,6 +491,14 @@ class TurnLedger:
         ordinary clause of the same selector.
         """
         return any(oid in oids for oids in self.creatures_attacked.values())
+
+    def set_object_flag(self, oid: int, flag: str) -> None:
+        """Write a word onto an object for the rest of this turn."""
+        self.object_flags.setdefault(oid, set()).add(flag)
+
+    def has_object_flag(self, oid: int, flag: str) -> bool:
+        """Has this object been given that word **this turn**?"""
+        return flag in self.object_flags.get(oid, ())
 
     def activations(self, oid: int, ability_index: int) -> int:
         return self.ability_activations.get((oid, ability_index), 0)
@@ -497,6 +524,7 @@ class TurnLedger:
         self.ability_activations.clear()
         self.cards_to_graveyard = 0
         self.ability_resolutions.clear()
+        self.object_flags.clear()
 
 
 @dataclass
