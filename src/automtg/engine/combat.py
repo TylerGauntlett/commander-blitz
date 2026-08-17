@@ -181,10 +181,42 @@ def legal_defenders(state: GameState) -> list[int]:
     return [pid for pid in state.alive() if pid != state.active_player]
 
 
-def add_attacker(state: GameState, oid: int, defender: int) -> bool:
+def legal_planeswalker_defenders(state: GameState) -> list[int]:
+    """Planeswalkers that may be attacked, in deterministic order (506.2).
+
+    Every planeswalker controlled by a player who could be attacked. Its
+    controller is the defending player, which is why attacking one does not
+    need its own notion of "who is being attacked" -- `attackers[oid]` still
+    answers that, and still truthfully.
+    """
+    from .characteristics import chars
+
+    defenders = set(legal_defenders(state))
+    return [
+        oid
+        for oid in state.battlefield
+        if (obj := state.objects.get(oid)) is not None
+        and obj.controller in defenders
+        and "Planeswalker" in chars(state, oid).types
+    ]
+
+
+def add_attacker(
+    state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
+) -> bool:
     combat = state.combat
     if combat is None or not can_attack(state, oid) or defender not in legal_defenders(state):
         return False
+    if planeswalker is not None:
+        if planeswalker not in legal_planeswalker_defenders(state):
+            return False
+        obj = state.objects.get(planeswalker)
+        if obj is None or obj.controller != defender:
+            # The planeswalker and the player have to agree, or `attackers[oid]`
+            # -- which everything else reads as "the defending player" -- would
+            # name someone this creature is not attacking.
+            return False
+        combat.attacking_planeswalker[oid] = planeswalker
     combat.attackers[oid] = defender
     return True
 
@@ -192,6 +224,7 @@ def add_attacker(state: GameState, oid: int, defender: int) -> bool:
 def remove_attacker(state: GameState, oid: int) -> None:
     if state.combat is not None:
         state.combat.attackers.pop(oid, None)
+        state.combat.attacking_planeswalker.pop(oid, None)
 
 
 def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
@@ -895,6 +928,20 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
     was_blocked = any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
 
     if not was_blocked:
+        # 508.1: a creature attacking a planeswalker that is still there deals
+        # its damage to the planeswalker instead of to its controller. If the
+        # planeswalker has already left -- burned down in response, or bounced
+        # -- the attacker deals no combat damage at all rather than falling
+        # through to the player, which is 506.4c and the whole risk of the
+        # attack.
+        target = combat.attacking_planeswalker.get(attacker_oid)
+        if target is not None:
+            obj = state.objects.get(target)
+            if obj is None or not obj.on_battlefield:
+                return []
+            return [
+                DamageAssignment(source=attacker_oid, to_object=target, amount=power)
+            ]
         return [DamageAssignment(source=attacker_oid, to_player=defender, amount=power)]
 
     out: list[DamageAssignment] = []

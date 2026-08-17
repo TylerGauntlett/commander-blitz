@@ -51,6 +51,11 @@ class CostModel(BaseModel):
     #: when the card is written.
     pay_life: int | dict[str, Any] = 0
     remove_counters: dict[str, Any] | None = None
+    #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
+    #: which only ever takes them off -- a plus ability *adds* loyalty, and it
+    #: is a cost rather than an effect, so it is paid whether or not the ability
+    #: resolves and cannot be responded to in between.
+    loyalty: int | None = None
     exile_from_graveyard: dict[str, Any] | None = None
     #: "This ability costs {1} less to activate for each Vampire you control."
     #: The same ``{"count": {filter}}`` shape a card's `cost_reduction` uses, but
@@ -247,6 +252,11 @@ class CardModel(BaseModel):
     subtypes: list[str] = Field(default_factory=list)
     power: int | None = None
     toughness: int | None = None
+    #: Starting loyalty (306.5b). Written as a number on the card and compiled
+    #: into a `self_enters_with_counters` replacement, so nothing new runs when
+    #: a planeswalker arrives -- loyalty *is* counters, and every reader the
+    #: engine already has for counters is a reader for loyalty.
+    loyalty: int | None = None
     keywords: list[str] = Field(default_factory=list)
     colors: list[str] | None = None
     color_identity: list[str] | None = None
