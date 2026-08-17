@@ -430,6 +430,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # be read by anything: "sacrifice an artifact" is the whole of Deadly
     # Dispute's cost and no clause reads it back. So there is no half-a-cost
     # guard here; what is guarded is the two modifiers, which mean nothing alone.
+    if model.additional_cost is not None and model.additional_cost.mana_reduction:
+        # `_cast_variant` folds an additional cost's mana *into* the spell's price
+        # with `card.additional_cost.mana.scaled(...)`, so nothing ever prices
+        # this node on its own and a reduction here is never read. Refused rather
+        # than dropped: it would load clean and cost the player the full amount.
+        raise DslError(
+            f"{where}.additional_cost: 'mana_reduction' is not read here -- an "
+            f"additional cost's mana is folded into the spell's price. Put the "
+            f"reduction on the card's 'cost_reduction' instead"
+        )
     additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
     if additional_cost is None and (model.additional_optional or model.additional_repeatable):
         raise DslError(
@@ -597,6 +607,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             raise DslError(f"{where}: a graveyard cost needs mana")
         if flashback.mana.x_count:
             raise DslError(f"{where}: a graveyard cost with X is not implemented")
+        if flashback.mana_reduction is not None:
+            # "…costs {X} less to cast **this way**". The one alternative cost
+            # modelled as a full `Cost`, so the one that can carry a variant-
+            # scoped rider; read by the flashback branch of
+            # `legality._cast_variant` and `game._cast` via
+            # `costs.variant_reduction`, and by nothing on the hand-cast path.
+            _validate_cost_reduction(
+                flashback.mana_reduction, f"{where}.graveyard_cost.mana_reduction"
+            )
         if model.retrace:
             # Both widen legality to the graveyard and each replaces the other's
             # answer to "what does it cost from there".
@@ -1251,22 +1270,116 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
 
 #: Ways a card may say how much less it costs.  ``count`` is "{1} less for each
-#: X"; ``total_power`` is Ghalta's "the total power of creatures you control".
-COST_REDUCTION_KEYS = frozenset({"count", "total_power"})
+#: X"; ``total_power`` is Ghalta's "the total power of creatures you control";
+#: ``amount`` is a flat "{3} less", which only means anything gated on a
+#: ``condition`` -- an ungated flat reduction is a smaller printed cost.
+COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount"})
+
+#: Condition heads a *cost* reduction may use.
+#:
+#: A reduction is evaluated while deciding what is castable or activatable --
+#: before the spell is on the stack and before any cost is paid -- so the four
+#: cast-variant flags (`kicked`, `evoked`, `overloaded`, `cast_from_graveyard`)
+#: are not merely useless here, they read ``False`` every time and would give a
+#: card a discount clause that can never fire.  Refused rather than allowed to
+#: load, because nothing on a board would ever say so.
+COST_CONDITION_HEADS = frozenset(
+    {
+        "all",
+        "any",
+        "not",
+        "cmp",
+        "left",
+        "right",
+        "exists",
+        "is_your_turn",
+        "has_city_s_blessing",
+        "is_monarch",
+        "no_monarch",
+        "combat_damage_by",
+        # Both read the reduction's own source, which is a real object at
+        # pricing time: the permanent whose ability is being activated, or the
+        # card in the graveyard being cast.
+        "zone_is",
+        "has_flag",
+    }
+)
+
+
+def _validate_cost_condition(cond: Any, where: str) -> None:
+    """A cost reduction's condition: the shared condition DSL, narrowed."""
+    validate_condition(cond, where)
+    if not isinstance(cond, Mapping):
+        return
+    unusable = set(cond) - COST_CONDITION_HEADS
+    if unusable:
+        raise DslError(
+            f"{where}: {sorted(unusable)} cannot be answered while a cost is being "
+            f"priced -- nothing is on the stack yet (usable: "
+            f"{sorted(COST_CONDITION_HEADS)})"
+        )
+    for key in ("all", "any"):
+        for i, sub in enumerate(cond.get(key) or ()):
+            _validate_cost_condition(sub, f"{where}.{key}[{i}]")
+    if "not" in cond:
+        _validate_cost_condition(cond["not"], f"{where}.not")
 
 
 def _validate_cost_reduction(spec: Any, where: str) -> None:
-    if not isinstance(spec, Mapping) or len(spec) != 1:
+    """One validator for every "costs {N} less", wherever it is written.
+
+    A card's own `cost_reduction`, an activated ability's
+    `cost.mana_reduction` and a graveyard cast's `mana_reduction` are three
+    readers of one language -- `costs.reduction_amount` -- so they get one
+    validator, or they drift about what "for each" and "if" mean.
+    """
+    if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
-    key = next(iter(spec))
-    if key not in COST_REDUCTION_KEYS:
-        raise DslError(f"{where}: unknown reduction {key!r} (implemented: {sorted(COST_REDUCTION_KEYS)})")
-    unknown = set(spec[key]) - STATIC_FILTER_KEYS
+    arithmetic = set(spec) & COST_REDUCTION_KEYS
+    unknown = set(spec) - COST_REDUCTION_KEYS - {"condition"}
     if unknown:
+        raise DslError(
+            f"{where}: unknown reduction keys {sorted(unknown)} "
+            f"(implemented: {sorted(COST_REDUCTION_KEYS)} plus an optional 'condition')"
+        )
+    if len(arithmetic) != 1:
+        # Two would be paid at whichever the code read first, which is not
+        # something a printed line ever says; none is a condition with nothing
+        # to reduce.
+        raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
+    key = next(iter(arithmetic))
+    if key == "amount":
+        amount = spec["amount"]
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}.amount: a flat reduction is a positive integer, got {amount!r}"
+            )
+        if "condition" not in spec:
+            # "Costs {3} less" with nothing to gate it is a card with a smaller
+            # printed cost, written the long way -- and it would load clean.
+            raise DslError(
+                f"{where}: a flat 'amount' needs a 'condition' -- an unconditional "
+                f"flat reduction is just a cheaper printed cost"
+            )
+    else:
+        filt = spec[key]
+        if not isinstance(filt, Mapping):
+            raise DslError(f"{where}.{key}: needs a filter")
         # Same restriction as a static filter, for the same reason: this is
         # evaluated while deciding what is castable, before anything is on the
         # stack, so it may only read printed characteristics of the board.
-        raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+        unknown = set(filt) - STATIC_FILTER_KEYS - {"zone"}
+        if unknown:
+            raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+        if "zone" in filt and filt["zone"] != "battlefield":
+            # `costs._reduction_matches` walks `state.battlefield` and nothing
+            # else, so any other zone would load and match nothing.
+            raise DslError(
+                f"{where}.{key}.zone: a cost reduction counts the battlefield only, "
+                f"got {filt['zone']!r}"
+            )
+    if "condition" in spec:
+        _validate_cost_condition(spec["condition"], f"{where}.condition")
 
 
 #: Comparisons a static's "as long as..." clause may use.
@@ -1526,6 +1639,14 @@ def _compile_cost(model, where: str) -> Cost:
             raise DslError(
                 f"{where}.cost.tap_permanents: give 'count' or 'total_power', not both"
             )
+    if model.mana_reduction is not None:
+        if not model.mana:
+            # "Costs {3} less" with no mana half to take it off. Clamped at zero,
+            # so it would load clean and do nothing at all.
+            raise DslError(
+                f"{where}.cost: 'mana_reduction' needs a 'mana' cost to reduce"
+            )
+        _validate_cost_reduction(model.mana_reduction, f"{where}.cost.mana_reduction")
     if model.discard_selector is not None and not model.discard:
         raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
     if model.tap_permanents is not None and "tapped" in model.tap_permanents:
@@ -1755,6 +1876,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         if not effect.get("effects") and not effect.get("else"):
             raise DslError(
                 f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
+            )
+        if effect["pay"].get("mana_reduction") is not None:
+            # Read: an optional `pay` is charged through `pay`, which prices its
+            # mana half with `ability_mana` like any other cost node. Validated
+            # here for the same reason an ability's is -- a malformed reduction
+            # should be a load error, not a mid-resolution crash.
+            _validate_cost_reduction(
+                effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
             )
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
@@ -2020,6 +2149,10 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 CostModel.model_validate(effect["pay"])
             except Exception as exc:  # pydantic ValidationError
                 raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+            if effect["pay"].get("mana_reduction") is not None:
+                _validate_cost_reduction(
+                    effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
+                )
     if op == "regenerate" and not effect.get("objects"):
         # A shield with nothing to put it on. The ability would cost mana, log
         # nothing and save nobody -- and "Regenerate this creature" is three

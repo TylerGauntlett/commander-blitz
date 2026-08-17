@@ -1,0 +1,111 @@
+{
+  "card": {
+    "id": "crown_of_gondor",
+    "name": "Crown of Gondor",
+    "oracle_text": "Equipped creature gets +1/+1 for each creature you control.\nWhen a legendary creature you control enters, if there is no monarch, you become the monarch.\nEquip {4}. This ability costs {3} less to activate if you're the monarch.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +1/+1 for each creature you control.",
+        "effect": "buff",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "count": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "toughness": {
+          "count": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "When a legendary creature you control enters, if there is no monarch, you become the monarch.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Creature"
+            ],
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "condition": {
+            "no_monarch": true
+          }
+        },
+        "effects": [
+          {
+            "op": "become_monarch",
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch.",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{4}",
+          "mana_reduction": {
+            "amount": 3,
+            "condition": {
+              "is_monarch": "you"
+            }
+          }
+        },
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

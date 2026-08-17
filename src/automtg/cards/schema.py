@@ -57,10 +57,26 @@ class CostModel(BaseModel):
     #: resolves and cannot be responded to in between.
     loyalty: int | None = None
     exile_from_graveyard: dict[str, Any] | None = None
-    #: "This ability costs {1} less to activate for each Vampire you control."
-    #: The same ``{"count": {filter}}`` shape a card's `cost_reduction` uses, but
-    #: read from the *activation* path -- which the card-level field never
-    #: reaches, because both existing reductions discount casting a spell.
+    #: How much less **this cost node** costs -- the same language a card's
+    #: `cost_reduction` speaks, read by `costs.reduction_amount`:
+    #: ``{"count": {filter}}`` for "{1} less to activate for each Vampire you
+    #: control", ``{"total_power": {filter}}``, or ``{"amount": N}`` for a flat
+    #: "{3} less" -- which needs a ``condition``, since an ungated flat reduction
+    #: is only a cheaper printed cost.
+    #:
+    #: ``condition`` is an ordinary condition, narrowed by the loader to the heads
+    #: that can be answered *at pricing time*: Crown of Gondor's "Equip {4}. This
+    #: ability costs {3} less to activate if you're the monarch."
+    #:
+    #: Two cost nodes read it. On an activated ability's ``cost`` it is applied by
+    #: `costs.ability_mana`, which the *activation* path goes through -- the
+    #: card-level field never reaches there. On ``flashback``/``graveyard_cost``
+    #: it is the "costs {X} less to cast **this way**" rider, applied by
+    #: `costs.variant_reduction` from the flashback branch of
+    #: `legality._cast_variant` and `game._cast` only, so it discounts the
+    #: graveyard cast and not the printed one. Refused on ``additional_cost``,
+    #: whose mana is folded into the spell's price and never priced on its own.
+    #:
     #: Generic only and clamped at zero, like every other reduction.
     mana_reduction: dict[str, Any] | None = None
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".

@@ -1286,6 +1286,10 @@
   "crookshank_kobolds": {
     "zone": "battlefield"
   },
+  "crown_of_gondor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crumbling_necropolis": {
     "zone": "battlefield"
   },
