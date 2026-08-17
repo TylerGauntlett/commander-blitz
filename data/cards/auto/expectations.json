@@ -2763,6 +2763,10 @@
   "harrier_naga": {
     "zone": "battlefield"
   },
+  "harsh_mentor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "harvest_gwyllion": {
     "zone": "battlefield"
   },

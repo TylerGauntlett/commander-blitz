@@ -256,6 +256,17 @@ class TriggerSpec:
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.
     counter: str | None = None
+    #: ``ability_activated`` only: "…**if it isn't a mana ability**".  ``False``
+    #: means only non-mana activations fire it, ``True`` only mana ones, and
+    #: ``None`` is every activation.
+    #:
+    #: A restriction rather than a ``condition`` because no condition key can
+    #: reach it: they ask about the board or about the trigger's own card, and
+    #: this asks which *kind* of ability was used.  ``filter`` cannot reach it
+    #: either -- it reads the source permanent's printed face, and the
+    #: permanents this clause exists for are exactly the ones with both kinds on
+    #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
+    mana_ability: bool | None = None
     #: "This ability triggers only once each turn." A cap on how many times this
     #: ability may *queue* in one turn, counted per permanent.
     #:

@@ -110,6 +110,22 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: what makes `controller: "opponent"` read "an opponent becomes the
     #: monarch".
     "becomes_monarch": EventType.BECAME_MONARCH,
+    #: "Whenever an opponent activates an ability of an artifact, creature, or
+    #: land on the battlefield, **if it isn't a mana ability**…" -- Harsh Mentor.
+    #: `EventType.ABILITY_ACTIVATED` had existed since activations did and was
+    #: emitted by both activation paths; what it never had was a listener or a
+    #: DSL name, so it was a log line and nothing more.
+    #:
+    #: `spell_cast` is the near miss and is a disjoint set of actions: it fires
+    #: on a card leaving the hand for the stack, so a card built on it would
+    #: punish every instant and never punish an equip or a cracked fetchland.
+    #:
+    #: The subject is the **permanent whose ability it was** (see
+    #: `OBJECT_SUBJECT_TRIGGERS`) while the actor is the **player who activated
+    #: it** (see `_actor`), and the two really do come apart -- an opponent
+    #: equipping a creature you control activates their ability on your
+    #: permanent, and the printed line says that triggers.
+    "ability_activated": EventType.ABILITY_ACTIVATED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -152,6 +168,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "attacks_unblocked",
         # The permanent that untapped.
         "becomes_untapped",
+        # The permanent whose ability was activated, so a filter can ask what it
+        # was -- "an ability of an artifact, creature, or land **on the
+        # battlefield**". The emission passes `source=oid` and no `oid` key, so
+        # `_subject_oid` reaches it through the `event.source` fallthrough.
+        "ability_activated",
     }
 )
 
@@ -359,6 +380,21 @@ def _matches(
     if spec.counter is not None and event.data.get("counter") != spec.counter:
         return False
 
+    # "…**if it isn't a mana ability**." An intervening-if in the printed text
+    # and a restriction here, because `condition` cannot reach it: every
+    # condition key asks about the board or about the trigger's own card, and
+    # this asks a property of the ability that fired. `filter` cannot reach it
+    # either -- it reads the source permanent's printed face, and a fetchland's
+    # sacrifice ability and its mana tap live on the same card.
+    #
+    # Both activation paths put the flag on the event, so this compares a real
+    # answer rather than an absence: a `False` spec on an event that forgot to
+    # say would otherwise pass, which is the wide direction.
+    if spec.mana_ability is not None and bool(
+        event.data.get("mana_ability")
+    ) is not spec.mana_ability:
+        return False
+
     actor = _actor(state, spec.event, event, subject_oid)
     if actor is not None:
         if spec.controller == "you" and actor != obj.controller:
@@ -480,7 +516,14 @@ def _actor(
     # monarch, so `controller: "opponent"` reads "an opponent becomes the
     # monarch" -- which is the whole of Palace Jailer's duration and would be a
     # strictly better card if it read the crown's previous holder instead.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch"):
+    # `ability_activated` is here for the same reason `becomes_target` is, and
+    # the difference is the whole of "whenever an **opponent** activates": the
+    # clause asks who activated the ability, not who controls the permanent it
+    # was printed on. Reading it off the subject would let an opponent equip
+    # your creature -- their ability, your permanent -- without triggering, and
+    # would fire on your own Signet the moment you tapped it under an
+    # opponent's Harsh Mentor.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
@@ -573,8 +616,29 @@ def matches_card_filter(
     if controller == "opponent" and obj.controller == ability_source.controller:
         return False
 
+    # "…an ability of an artifact, creature, or land **on the battlefield**."
+    # `zone` has always been a legal `SELECTOR_KEYS` entry, so a trigger filter
+    # carrying it loaded and then did nothing -- the silently-wider filter the
+    # `not_supertypes` note below is about, and the direction that matters here:
+    # without it Harsh Mentor fires when an opponent *cycles* a creature card,
+    # which is an activated ability of a creature card in a hand.
+    zone = filt.get("zone")
+    if zone is not None:
+        from .effects.selectors import ZONE_NAMES
+
+        if obj.zone is not ZONE_NAMES.get(zone):
+            return False
+
     types = filt.get("types")
     if types and not set(types).issubset(card.types):
+        return False
+    # The any-of form. `types` is a conjunction -- ["Artifact", "Creature"]
+    # means a permanent that is both -- so "an artifact, creature, or land"
+    # cannot be said with it, and saying it with `types` matches nothing at all.
+    # `selectors.matches` has had this key since Acidic Slime; the trigger side
+    # validated it and ignored it.
+    any_types = filt.get("any_types")
+    if any_types and not (set(any_types) & card.types):
         return False
     not_types = filt.get("not_types")
     if not_types and set(not_types) & card.types:
