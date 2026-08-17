@@ -10,7 +10,7 @@ from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
-from . import replacements, suspend
+from . import replacements, sagas, suspend
 from .actions import PendingDecision
 from .characteristics import player_has_no_hand_limit, untap_also
 from .effects.context import EffectContext, ask_objects
@@ -52,6 +52,13 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
         yield from _draw_step(state)
+    elif step is Step.PRECOMBAT_MAIN:
+        # 714.2d, a turn-based action: the active player puts a lore counter on
+        # each Saga they control as this phase begins. The first branch this step
+        # has ever had, because a precombat main phase otherwise does nothing but
+        # hand out priority -- and the reason a Saga's advance belongs here rather
+        # than on the card is that nothing is printed on the card to hang it on.
+        sagas.turn_based_lore(state)
     elif step is Step.BEGIN_COMBAT:
         combat_mod.start_combat(state)
         fire(state, EventType.BEGIN_COMBAT, player=state.active_player)

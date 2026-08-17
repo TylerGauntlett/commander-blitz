@@ -389,6 +389,26 @@ export function describeEvent(
      */
     case "became_monarch":
       return `${who} ${v("become", "becomes")} the monarch`;
+    /*
+     * A Saga reached a chapter.
+     *
+     * The `counter_placed` line beside it already says "Oath of Eorl gets 1
+     * lore", and that is the bookkeeping rather than the event: what a player
+     * needs to read is *which chapter is happening*, since the three do
+     * different things and only one of them is about to end the card. It is also
+     * the only line that appears at all when a Saga enters, because the counter
+     * it enters with is placed by a replacement and emits nothing.
+     *
+     * Numbered in Roman, as the card is. A Saga's chapters are printed "I", "II",
+     * "III" and a log reading "chapter 2" would not match the card the player is
+     * looking at. Beyond IV the numeral table runs out and the arabic number is
+     * used, which no printed Saga reaches.
+     */
+    case "chapter_reached": {
+      const n = typeof event.data.chapter === "number" ? event.data.chapter : 0;
+      const roman = ["I", "II", "III", "IV"][n - 1] ?? String(n);
+      return `${card ?? "A Saga"} — chapter ${roman}`;
+    }
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":

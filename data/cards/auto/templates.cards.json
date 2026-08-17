@@ -49823,6 +49823,94 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Create two 1/1 white Human Soldier creature tokens."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_knight_2_2_r_trample_haste"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Create two 2/2 red Human Knight creature tokens with trample and haste."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "indestructible",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "subtypes": [
+                  "Human"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "III — Put an indestructible counter on up to one target Human. You become the monarch."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "oath_of_eorl",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Oath of Eorl",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create two 1/1 white Human Soldier creature tokens.\nII — Create two 2/2 red Human Knight creature tokens with trample and haste.\nIII — Put an indestructible counter on up to one target Human. You become the monarch.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

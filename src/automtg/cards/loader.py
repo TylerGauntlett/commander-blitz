@@ -51,6 +51,7 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
+from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -247,8 +248,12 @@ def load_deck_file(path: Path) -> DeckModel:
 # ----------------------------------------------------------------------
 
 
-def _replacements_with_loyalty(model: CardModel) -> tuple[dict[str, Any], ...]:
-    """A card's replacements, plus the one its starting loyalty implies.
+def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
+    """A card's replacements, plus the ones the rules put on it.
+
+    Two cards in the game arrive with counters nobody wrote a replacement for,
+    and both are the same shape: a number printed on the card that the *rules*
+    turn into counters as the permanent enters.
 
     Loyalty **is** counters (306.5b), so a planeswalker's starting loyalty is an
     enters-with-counters replacement and nothing new runs when one arrives.
@@ -256,9 +261,19 @@ def _replacements_with_loyalty(model: CardModel) -> tuple[dict[str, Any], ...]:
     badge, `counters_on` -- reads loyalty for free because there is nothing else
     to read.
 
-    Written here rather than asked of the card's author, because a planeswalker
-    that entered with no loyalty would be binned by the zero-loyalty state-based
-    action the instant it resolved, and nothing would say why.
+    A Saga is 714.2b: "as a Saga enters, its controller puts a lore counter on
+    it". A **replacement** and not a `self_enters` trigger, and that distinction
+    is the first of the four the gap record for Oath of Eorl asked for. Written
+    as a trigger the counter lands after the Saga is already on the battlefield
+    and after every other enters trigger has looked at a Saga with no counters on
+    it -- so chapter I would be a round of priority late, an opponent could
+    respond to the Saga before it had started, and anything counting lore
+    counters on arrival would read zero.
+
+    Both are written here rather than asked of the card's author for the same
+    reason: a planeswalker that entered with no loyalty is binned by the
+    zero-loyalty state-based action the instant it resolves, and a Saga that
+    entered with no lore counter would simply never start.
     """
     out = [r.model_dump() for r in model.replacements]
     if model.loyalty is not None:
@@ -271,7 +286,74 @@ def _replacements_with_loyalty(model: CardModel) -> tuple[dict[str, Any], ...]:
                 "condition": None,
             }
         )
+    if any(a.kind == "chapter" for a in model.abilities):
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": LORE,
+                "amount": 1,
+                "modify": {},
+                "condition": None,
+            }
+        )
     return tuple(out)
+
+
+def _final_chapter(
+    model: CardModel, abilities: tuple[Ability, ...], where: str
+) -> int | None:
+    """A Saga's final chapter number (714.4), or ``None`` for a card that is not one.
+
+    Derived from the chapters the card prints unless the author names it, and the
+    override is the whole reason the field exists: 704.5s sacrifices a Saga once
+    its lore counters *reach* this number, so a Saga whose last chapter the DSL
+    could not say would, derived, be sacrificed one chapter early -- quietly a
+    better card than the printed one. Named, it sits out its final chapter doing
+    nothing, which is the printed card minus a line and is visible.
+
+    The two refusals here are both the "looks implemented, does nothing" shape
+    the authoring gates exist to catch, so each fails at load time:
+
+    - a chapter ability on a card with no ``Saga`` subtype. Nothing would ever
+      put a lore counter on it, so every chapter would be dead text.
+    - a declared ``final_chapter`` below the highest chapter written. The Saga
+      would be sacrificed before its last chapter could ever trigger.
+
+    **A ``Saga`` subtype with no chapters is allowed**, and that is not an
+    oversight. It is what an inert proxy of a Saga is -- `data/generated/` prints
+    the real name, cost, colours and type line with the rules text doing nothing,
+    and seven Sagas in the catalog are proxied that way -- so refusing it would
+    make those cards unrepresentable rather than unimplemented. Such a card gets
+    ``final_chapter is None``, which is what every rule in :mod:`engine.sagas`
+    tests: it is given no lore counter, advances nothing and is never sacrificed,
+    exactly like the inert enchantment it is. 704.5s agrees, since it asks for "a
+    Saga permanent **with one or more chapter abilities**".
+
+    An *authored* Saga cannot slip through the same hole, because its printed
+    chapter lines would be unclaimed and the residual gate rejects the card.
+    """
+    chapters = sorted(a.chapter for a in abilities if a.chapter is not None)
+
+    if chapters and SAGA not in model.subtypes:
+        raise DslError(
+            f"{where}: chapter abilities need the {SAGA!r} subtype -- "
+            f"only a Saga is given a lore counter, so these would never trigger"
+        )
+    if not chapters:
+        return model.final_chapter
+
+    if chapters[0] < 1:
+        raise DslError(f"{where}: chapter numbers start at 1, not {chapters[0]}")
+
+    declared = model.final_chapter
+    if declared is None:
+        return chapters[-1]
+    if declared < chapters[-1]:
+        raise DslError(
+            f"{where}: 'final_chapter' is {declared} but the card prints chapter "
+            f"{chapters[-1]}, which could never trigger before the Saga is sacrificed"
+        )
+    return declared
 
 
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
@@ -339,8 +421,10 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
     )
+    final_chapter = _final_chapter(model, abilities, where)
+
     for ability in grantable:
-        if not ability.is_triggered:
+        if ability.kind is not AbilityKind.TRIGGERED:
             # Only triggered abilities can be granted so far. A granted *static*
             # would have to join the characteristics pipeline from an object
             # that is not its source, and a granted *activated* one would need
@@ -349,6 +433,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # the exact "looks implemented, does nothing" failure this pass
             # exists to refuse. Granting a keyword is what `grant_keyword` is
             # for; `docs/rules-coverage.md` records the rest as not implemented.
+            #
+            # Tested against `AbilityKind.TRIGGERED` rather than `is_triggered`,
+            # which is True for a *chapter* as well (714.1b). A granted chapter
+            # ability is not a thing any card prints and would be nonsense
+            # anyway: its trigger is a comparison against the lore counters on
+            # its own source, so granted to a creature it would wait for a number
+            # nothing can ever reach.
             raise DslError(
                 f"{where}: only triggered abilities can be granted, not {ability.kind.value}"
             )
@@ -732,12 +823,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         power=model.power,
         toughness=model.toughness,
         loyalty=model.loyalty,
+        final_chapter=final_chapter,
         keywords=frozenset(model.keywords),
         colors=colors,
         color_identity=identity,
         targets=targets,
         spell_effects=tuple(model.spell_effects),
-        replacements=_replacements_with_loyalty(model),
+        replacements=_implied_replacements(model),
         abilities=abilities,
         grantable_abilities=grantable,
         type_line=build_type_line(supertypes, types, subtypes),
@@ -913,6 +1005,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             f"so they only mean anything on an activated ability"
         )
 
+    if model.chapter is not None and kind is not AbilityKind.CHAPTER:
+        # Silently ignored it would produce a card that reads "II --" and fires
+        # on whatever its own trigger says, which is the shape of every other
+        # misplaced-key refusal in this function.
+        raise DslError(
+            f"{where}: 'chapter' only means anything on a chapter ability, "
+            f"not on a {kind.value} one"
+        )
+
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
@@ -980,6 +1081,33 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"(got {cost.describe()!r}); "
                 f"otherwise it can be activated repeatedly without ever leaving"
             )
+    elif kind is AbilityKind.CHAPTER:
+        # The trigger is **supplied**, not read. There is no word in "II --
+        # Create two 2/2 red Human Knight creature tokens" saying when it
+        # happens: the whole of the timing is 714.2c, so every Saga in print
+        # would otherwise write out the same trigger and any one of them could
+        # write it wrong. Same reason the loader supplies `source: "self"` for
+        # `self_enters`, and a stronger one -- there is nothing to omit here.
+        if model.chapter is None:
+            raise DslError(f"{where}: a chapter ability needs a 'chapter' number")
+        if model.trigger is not None:
+            raise DslError(
+                f"{where}: a chapter ability's trigger comes from rule 714.2c, "
+                f"so it does not write one"
+            )
+        if model.cost is not None:
+            raise DslError(f"{where}: a chapter ability is triggered, so it has no cost")
+        if not model.effects:
+            raise DslError(f"{where}: a chapter ability with no effects is a blank line")
+        if list(model.active_zones) != ["battlefield"]:
+            # 714.2c reads the lore counters on the Saga permanent, and a card in
+            # a graveyard has none. The default is right and anything else is a
+            # trigger that could never fire.
+            raise DslError(
+                f"{where}: a chapter ability only works on the battlefield, "
+                f"not in {model.active_zones}"
+            )
+        trigger = TriggerSpec(event="chapter", source="self", chapter=model.chapter)
     else:
         if model.trigger is None:
             raise DslError(f"{where}: triggered abilities need a trigger")

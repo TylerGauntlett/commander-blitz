@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from . import sagas
 from .carddef import CardDef
 from .characteristics import chars
 from .effects.conditions import evaluate_condition
@@ -379,6 +380,12 @@ def _enter_battlefield(
         # the permanent it just put down, and again on that one's, forever.
         cause=cause,
     )
+    # A Saga entered with its first lore counter (714.2b), so chapter I triggers
+    # (714.2c). The counter itself was put on by the replacement loop above, which
+    # writes to the object directly and fires nothing -- so unlike every other
+    # route to a lore counter there is no `add_counters` call to reach the chapter
+    # comparison through, and this is the one place that says so.
+    sagas.entered(state, obj)
 
 
 # ----------------------------------------------------------------------

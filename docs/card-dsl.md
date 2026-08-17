@@ -40,7 +40,7 @@ silently producing a card that looks implemented and does nothing.
   "targets": [ ... ],             // spell-level targets
   "spell_effects": [ ... ],       // what an instant/sorcery does on resolution
   "replacements": [ ... ],        // whitelist only
-  "abilities": [ ... ],           // activated | triggered | static
+  "abilities": [ ... ],           // activated | triggered | static | chapter
   "is_token": false
 }
 ```
@@ -1035,6 +1035,9 @@ fires a single event with `amount` on it. That is correct for "a +1/+1 counter"
 and for Sharktocrab's "one or more +1/+1 counters" alike, so neither needs
 batching work.
 
+`chapter` is a Saga's, and no card writes it — see
+[Sagas](#sagas) below, where the whole trigger is supplied by rule 714.2c.
+
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
@@ -1042,7 +1045,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `becomes_monstrous` · `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated`
+`ability_activated` · `chapter`
 
 **`ability_activated`** fires when a player activates an activated ability —
 Harsh Mentor, "whenever an opponent activates an ability of an artifact,
@@ -2524,6 +2527,67 @@ never dies and there is nothing to replace.
 damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
+
+## Sagas
+
+```jsonc
+{"types": ["Enchantment"], "subtypes": ["Saga"],
+ "abilities": [
+   {"kind": "chapter", "chapter": 1,
+    "text": "I — Create two 1/1 white Human Soldier creature tokens.",
+    "effects": [{"op": "create_token", "token": "human_soldier_1_1_w",
+                 "controller": "you", "amount": {"const": 2}}]},
+   {"kind": "chapter", "chapter": 2, "text": "II — …", "effects": [ ... ]},
+   {"kind": "chapter", "chapter": 3, "text": "III — …",
+    "targets": [ ... ], "effects": [ ... ]}]}
+```
+
+A fourth `kind`, and **the only thing a Saga's card file says**. Everything in
+the parenthetical reminder line — "(As this Saga enters and after your draw step,
+add a lore counter. Sacrifice after III.)" — is a rule rather than an ability,
+and lives in `engine/sagas.py`:
+
+| rule | | where |
+|---|---|---|
+| 714.2b | a lore counter as it enters | a `self_enters_with_counters` replacement the loader compiles, exactly as it compiles `loyalty` |
+| 714.2d | a lore counter as your precombat main phase begins | a **turn-based action** in `turn.begin_step` |
+| 714.2c | the chapter triggers | `sagas.chapters_reached`, from `primitives.add_counters` and from the entering replacement |
+| 704.5s | sacrificed after the last chapter | a **state-based action** in `sba` |
+
+The reminder line itself needs no `text` claim: it is entirely parenthetical, so
+the residual gate's reminder-stripper removes it. Each chapter line is claimed by
+its own ability, like any other.
+
+**`chapter` writes no `trigger`, and may not.** There is no word in "II — Create
+two 2/2 red Human Knight creature tokens" saying *when*; all of the timing is
+714.2c. So the loader supplies `{"event": "chapter", "source": "self", "chapter":
+N}` for the reason it supplies `source: "self"` on `self_enters`, and with a
+stronger argument — here there is nothing an author could even leave out. A
+chapter ability **is** a triggered ability (714.1b), so it is collected, queued in
+APNAP order, put on the stack and given its targets by the same code as "when
+this enters".
+
+`counter_placed` with `{"counter": "lore"}` is the near miss and is wrong twice.
+It fires on the counter being *placed*, where 714.2c fires on the count
+**reaching** the number — so a proliferated Saga advances by the wrong pattern,
+and a placement of two counters at once fires one chapter instead of two. And it
+does not fire at all on the counter a Saga *enters* with, which is chapter I on
+every Saga ever printed.
+
+**`final_chapter`** is optional and derived from the highest chapter written.
+Write it by hand in exactly one case, which is the case it exists for: a Saga
+whose last chapter the DSL cannot yet say. Derived, 704.5s would sacrifice such a
+card a chapter early — a strictly better card than the printed one, arriving in
+silence. Declared, it sits out its final chapter doing nothing, which is the
+printed card minus a line and is visible to anyone who plays it.
+
+A card carrying the `Saga` subtype with **no** chapter abilities is accepted and
+is inert: `final_chapter` is `None`, it is given no lore counter, it advances
+nothing and it is never sacrificed. That is what an unimplemented Saga in
+`data/generated/` is, and refusing the shape would make seven real cards
+unrepresentable rather than unimplemented. An *authored* Saga cannot use the same
+hole — its printed chapter lines would go unclaimed and the residual gate would
+reject it.
 
 ## Planeswalkers
 
