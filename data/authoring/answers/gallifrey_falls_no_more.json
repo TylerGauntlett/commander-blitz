@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "gallifrey_falls_no_more",
+    "name": "Gallifrey Falls // No More",
+    "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)",
+    "mana_cost": "{4}{R}{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R", "W"],
+    "fuse": true,
+    "second_face": "no_more",
+    "second_face_zone": "hand",
+    "spell_effects": [
+      {
+        "op": "damage",
+        "objects": {"types": ["Creature"], "controller": "any"},
+        "amount": {"const": 4}
+      },
+      {
+        "op": "replace_deaths",
+        "destination": "exile",
+        "objects": {"types": ["Creature"], "controller": "any", "damaged_by": "self"}
+      }
+    ]
+  },
+  "back": {
+    "id": "no_more",
+    "name": "No More",
+    "oracle_text": "Any number of target creatures you control phase out.\nFuse (You may cast one or both halves of this card from your hand.)",
+    "mana_cost": "{2}{W}",
+    "types": ["Instant"],
+    "colors": ["W"],
+    "color_identity": ["R", "W"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": "any",
+        "selector": {"types": ["Creature"], "controller": "you"}
+      }
+    ],
+    "spell_effects": [
+      {"op": "phase_out", "objects": {"target": "t1"}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {"0": 3, "1": 0}
+  }
+}

@@ -4160,6 +4160,11 @@
     "file": "gallant_citizen.jpg",
     "scryfall_id": "ec64e524-531c-4e6d-a10f-23bb49ce88c0"
   },
+  "gallifrey_falls_no_more": {
+    "artist": "John Di Giovanni",
+    "file": "gallifrey_falls_no_more.jpg",
+    "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771"
+  },
   "game_trail": {
     "artist": "Jonas De Ro",
     "bytes": 62057,
@@ -7880,6 +7885,12 @@
     "bytes": 81002,
     "file": "no_dachi.jpg",
     "scryfall_id": "6c6061a8-d27f-4258-9e95-cd12365c4248"
+  },
+  "no_more": {
+    "artist": "John Di Giovanni",
+    "bytes": 47441,
+    "file": "no_more.jpg",
+    "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771"
   },
   "noble_elephant": {
     "artist": "Tony Roberts",

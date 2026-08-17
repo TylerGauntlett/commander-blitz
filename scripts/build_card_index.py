@@ -226,6 +226,39 @@ def better(candidate: dict, incumbent: dict) -> bool:
     return (candidate.get("id") or "") < (incumbent.get("id") or "")
 
 
+#: Layouts whose ``card_faces`` are two halves of **one** physical card, printed
+#: side by side and both castable from hand. A player holding Gallifrey Falls //
+#: No More reads both halves at once.
+#:
+#: Deliberately **not** `adventure` or `flip`, though both are also one physical
+#: card. Their front face is the permanent and the pipeline's conventions are
+#: built around that; widening them changes what several shipped cards claim,
+#: which is its own piece of work rather than a rider on this one.
+_HALVES_LAYOUTS = frozenset({"split"})
+
+
+def _oracle_text(record: dict, front: dict) -> str:
+    """The printed text of the card, both halves where there are two.
+
+    Scryfall gives a split card no top-level ``oracle_text`` and one per face, so
+    taking the front's was taking half the card. Every consumer downstream reads
+    this column -- the authoring packet a worker writes from, and the residual
+    gate -- so a split card's second half was invisible to both: nothing showed
+    it to the author and nothing noticed it missing.
+
+    Only for layouts whose faces are halves of one physical card. A transforming
+    card's back is a different face of a different object; the authoring
+    pipeline links it as a companion entry instead.
+    """
+    text = record.get("oracle_text")
+    if text:
+        return text
+    faces = record.get("card_faces") or []
+    if record.get("layout") in _HALVES_LAYOUTS and len(faces) > 1:
+        return "\n".join(f.get("oracle_text", "") for f in faces if f.get("oracle_text"))
+    return front.get("oracle_text", "") or ""
+
+
 def to_row(record: dict) -> tuple:
     faces = record.get("card_faces") or []
     front = faces[0] if faces else {}
@@ -252,7 +285,7 @@ def to_row(record: dict) -> tuple:
         "".join(record.get("color_identity") or []),
         1 if record.get("layout") in ("token", "double_faced_token") else 0,
         pick("artist"),
-        pick("oracle_text", ""),
+        _oracle_text(record, front),
         # Comma-joined: no keyword or mana symbol contains a comma, so the split
         # on the read side is exact.  `keywords` is card-level on Scryfall even
         # for double-faced cards, so `pick` only matters for the other two.

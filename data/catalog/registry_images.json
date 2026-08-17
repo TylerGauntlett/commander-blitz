@@ -2760,6 +2760,10 @@
     "artist": "Allen Morris",
     "scryfall_id": "ec64e524-531c-4e6d-a10f-23bb49ce88c0"
   },
+  "gallifrey_falls_no_more": {
+    "artist": "John Di Giovanni",
+    "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771"
+  },
   "game_trail": {
     "artist": "Jonas De Ro",
     "scryfall_id": "4d62258f-135b-44ca-a27d-3c2267f408a5"
@@ -5225,6 +5229,10 @@
   "no_dachi": {
     "artist": "Christopher Rush",
     "scryfall_id": "6c6061a8-d27f-4258-9e95-cd12365c4248"
+  },
+  "no_more": {
+    "artist": "John Di Giovanni",
+    "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771"
   },
   "noble_elephant": {
     "artist": "Tony Roberts",

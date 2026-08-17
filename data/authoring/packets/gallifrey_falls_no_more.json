@@ -33,7 +33,7 @@
   ],
   "mana_cost": "{4}{R}{R} // {2}{W}",
   "name": "Gallifrey Falls // No More",
-  "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)",
+  "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)\nAny number of target creatures you control phase out.\nFuse (You may cast one or both halves of this card from your hand.)",
   "power": null,
   "reference": {
     "condition_keys": [
@@ -60,6 +60,7 @@
       "discard_self",
       "exile_from_graveyard",
       "mana",
+      "mana_reduction",
       "pay_life",
       "remove_counters",
       "return_to_hand",
@@ -167,6 +168,7 @@
       "gain_life",
       "grant_ability",
       "grant_keyword",
+      "grant_protection",
       "haunt",
       "hideaway",
       "if",
@@ -185,6 +187,7 @@
       "must_block",
       "noop",
       "pair",
+      "phase_out",
       "play_exiled",
       "proliferate",
       "pump",
@@ -193,6 +196,7 @@
       "regenerate",
       "remove_counters",
       "repeat",
+      "replace_deaths",
       "return_from_graveyard",
       "return_to_hand",
       "reveal",
@@ -243,12 +247,14 @@
       "not_subtypes",
       "not_types",
       "object_kind",
+      "paid_by",
       "player",
       "power",
       "random",
       "self_only",
       "shares_a_color_with",
       "shares_a_type_with",
+      "shares_a_type_with_commander",
       "subtypes",
       "supertypes",
       "tapped",
@@ -340,11 +346,13 @@
       "leaves_battlefield",
       "life_lost",
       "permanent_enters",
+      "postcombat_main",
       "sacrificed",
       "self_enters",
       "spell_cast",
       "token_created",
       "upkeep",
+      "you_attack",
       "you_gain_life"
     ],
     "types": [
@@ -406,7 +414,7 @@
     "id": "gallifrey_falls_no_more",
     "mana_cost": "{4}{R}{R}",
     "name": "Gallifrey Falls // No More",
-    "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)",
+    "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)\nAny number of target creatures you control phase out.\nFuse (You may cast one or both halves of this card from your hand.)",
     "types": [
       "Instant"
     ]
@@ -414,6 +422,8 @@
   "template_said": "no template for: Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would",
   "todo": [
     "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead",
+    "Fuse",
+    "Any number of target creatures you control phase out",
     "Fuse"
   ],
   "toughness": null,

@@ -24363,6 +24363,51 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R"
+      ],
+      "fuse": true,
+      "id": "gallifrey_falls_no_more",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Gallifrey Falls // No More",
+      "oracle_text": "Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "second_face": "no_more",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "objects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        },
+        {
+          "destination": "exile",
+          "objects": {
+            "controller": "any",
+            "damaged_by": "self",
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "replace_deaths"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -46933,6 +46978,44 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "no_more",
+      "mana_cost": "{2}{W}",
+      "name": "No More",
+      "oracle_text": "Any number of target creatures you control phase out.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "phase_out"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
