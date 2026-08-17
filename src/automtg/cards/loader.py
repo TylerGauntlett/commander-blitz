@@ -1386,6 +1386,12 @@ COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "owner"})
 #: are not merely useless here, they read ``False`` every time and would give a
 #: card a discount clause that can never fire.  Refused rather than allowed to
 #: load, because nothing on a board would ever say so.
+#:
+#: `cast_during` is the fifth and the worst of them, so it is absent for both
+#: reasons at once: the phase stamp is written as the spell goes on the stack,
+#: which has not happened yet, and a card being priced for its *second* cast
+#: still carries the stamp from its first -- so this one would not read a
+#: harmless ``False``, it would read a stale ``True``.
 COST_CONDITION_HEADS = frozenset(
     {
         "all",

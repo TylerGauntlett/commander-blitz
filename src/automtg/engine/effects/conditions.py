@@ -7,6 +7,7 @@ clauses on triggers, and static ability conditions.
     {"zone_is": "battlefield"}
     {"kicked": true}
     {"evoked": true}
+    {"cast_during": "your_main"}
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
+from ..enums import STEP_PHASE, Phase
 from ..errors import DslError
 from .context import EffectContext
 
@@ -59,7 +61,23 @@ CONDITION_KEYS = frozenset(
         # a Rogue". A list of creature subtypes, true when *any* of them dealt
         # combat damage to a player this turn.
         "combat_damage_by",
+        # Addendum: "if you cast this spell during your main phase". Reads the
+        # step stamped on the object as it went on the stack, not the step the
+        # game is in now -- see `_cast_during`.
+        "cast_during",
     }
+)
+
+#: What `cast_during` may name. A phase, plus `main` for "either main phase",
+#: each optionally prefixed `your_` to *also* require that the caster was the
+#: active player -- which is the difference between "during a main phase" and
+#: addendum's "during **your** main phase".
+#:
+#: A generated vocabulary rather than a hand-kept list: the phases are the
+#: engine's own, so a card cannot name one the turn structure does not have.
+CAST_DURING_PHASES = frozenset({p.value for p in Phase} | {"main"})
+CAST_DURING_NAMES = frozenset(
+    set(CAST_DURING_PHASES) | {f"your_{name}" for name in CAST_DURING_PHASES}
 )
 
 
@@ -122,6 +140,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
+    if "cast_during" in cond:
+        # Addendum. Asked of the ability's own source: while the spell resolves
+        # that is the spell itself, and once it has become a permanent it is
+        # still the same object, so an enters trigger can ask it too.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        return _cast_during(obj, str(cond["cast_during"]))
     if "combat_damage_by" in cond:
         # Prowl. Answered from the turn ledger rather than from the board,
         # because by the time the spell is cast the creature that got through
@@ -184,6 +208,36 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         raise DslError(f"unknown comparison operator {op!r}")
 
     raise DslError(f"unknown condition {sorted(cond)}")
+
+
+def _cast_during(obj: Any, spec: str) -> bool:
+    """Whether ``obj`` was **cast** in the phase ``spec`` names.
+
+    Read off the step `stack.push_spell` stamped on the object, never off
+    `state.step`. Those are two different questions: Unbreakable Formation cast
+    in your main phase and answered with a spell that gets countered, or simply
+    responded to, still resolves in your main phase -- but the same card cast in
+    your main phase in response to something that then moves the turn on must
+    still get its addendum, and a card cast in your *end step* must not get one
+    merely because nothing has happened since.
+
+    ``False`` for anything never cast. A token, or a permanent an effect put
+    onto the battlefield, has no cast at all, and "if you cast this spell" is
+    not true of it.
+    """
+    if obj is None or obj.cast_step is None:
+        return False
+    if spec.startswith("your_"):
+        # The other half of "**your** main phase": `is_your_turn` compares the
+        # active player to the controller *now*, which is neither the right
+        # moment nor, after a change of control, the right player.
+        if not obj.cast_on_own_turn:
+            return False
+        spec = spec[len("your_") :]
+    phase = STEP_PHASE[obj.cast_step]
+    if spec == "main":
+        return phase in (Phase.PRECOMBAT_MAIN, Phase.POSTCOMBAT_MAIN)
+    return phase.value == spec
 
 
 def evaluate_condition(
@@ -265,6 +319,16 @@ def validate_condition(cond: Any, where: str) -> None:
         raise DslError(
             f"{where}.has_turn_flag: needs the name of a flag written by "
             f"set_turn_flag, got {cond['has_turn_flag']!r}"
+        )
+    # A phase name the turn structure does not have matches nothing, so the
+    # addendum clause would simply never fire on a card that prints one --
+    # exactly the silent failure the rest of these guards exist for. `"main
+    # phase"`, `"precombat"` and `Phase.PRECOMBAT_MAIN` (which stringifies to
+    # something no comparison here ever equals) are the tempting misses.
+    if "cast_during" in cond and cond["cast_during"] not in CAST_DURING_NAMES:
+        raise DslError(
+            f"{where}.cast_during: must name one of {sorted(CAST_DURING_NAMES)}, "
+            f"got {cond['cast_during']!r}"
         )
     if "combat_damage_by" in cond:
         wanted = cond["combat_damage_by"]

@@ -1,3 +1,105 @@
+## Addendum — the phase a spell was cast in, remembered after it has passed
+
+### Overview
+
+**Unbreakable Formation** — "Creatures you control gain indestructible until end
+of turn. **Addendum** — If you cast this spell during your main phase, put a
++1/+1 counter on each of those creatures and they gain vigilance until end of
+turn." The first line was never blocked; it is an ordinary `grant_keyword` over
+`creatures you control`. The second line asked a question the condition language
+could not put into words at all: **there was no notion of a phase or a step in
+it.** Not a missing key on a known subject — the subject was missing.
+
+`is_your_turn` was the closest thing, and it is wrong twice over, which is why
+this is a new key and not a widening of that one.
+
+**It says nothing about the phase.** It compares `state.active_player` to the
+source's controller and stops there. A Formation flashed in during your own
+combat — the moment people actually hold it for — or in your own end step would
+have collected the addendum it is not owed. That is not an edge case; it is the
+common case for an instant, and it makes the card strictly better than printed.
+
+**It is evaluated when it is read, not when the spell was cast.** "If you
+**cast** this spell during your main phase" is a fact about rule 601: it is
+settled the moment the spell is put on the stack, before anybody responded to it
+and long before the resolution that asks. A condition that reads `state.step`
+answers a different question, and the gap between the two is exactly what the
+stack is for.
+
+`has_flag` cannot stand in — it is written by `set_flag` on a permanent's own
+object and there is no effect that runs at cast time to write one — and
+`zone_is` reports the source's *current* zone, which for any resolving instant is
+the stack.
+
+### The stamp
+
+`stack.push_spell` is the single funnel every cast goes through — the hand cast,
+the flashback cast, cascade's free cast and suspend's — and it already wrote
+`cast_from_hand` there for rebound, for the same reason: that is the only moment
+the fact is knowable. Two fields joined it on `GameObject`, beside the
+`cast_kicked` / `cast_evoked` / `cast_overloaded` / `cast_from_graveyard` stamps
+that record the other cast-time facts:
+
+- `cast_step`, the step the spell was put on the stack in. A `Step`, not a
+  `Phase`, because the step is what the state has and the phase falls out of it
+  through `STEP_PHASE` — storing the derived half would throw away the ability to
+  ask "cast in your end step" later for nothing gained.
+- `cast_on_own_turn`, whether the caster was the active player at that moment.
+  The **relation**, not a player id: the sentence is about who cast it, that is
+  settled at cast time, and a later change of control must not be able to rewrite
+  it.
+
+They survive `reset_permanent_state` the way the other `cast_*` flags do, so a
+creature spell's own enters trigger can read them after the StackItem is gone.
+Nothing ever cast — a token, a permanent an effect put onto the battlefield —
+has `cast_step is None`, and every `cast_during` question about it is `False`,
+which is the honest reading of a clause about how the card was *cast*.
+
+### The key
+
+```jsonc
+{ "op": "if", "condition": { "cast_during": "your_main" },
+  "then": [ … ] }
+```
+
+The vocabulary is **generated**, not hand-kept: every `Phase` value, plus `main`
+for "either main phase", each optionally prefixed `your_` to also require
+`cast_on_own_turn`. So `your_main` is addendum, `main` is the same question
+without the turn (an opponent flashing something in during your main phase), and
+a card cannot name a phase the engine's turn structure does not have. A name
+outside the set is a `DslError` at load — `"main phase"` and `"precombat"` are
+the tempting misses, and either would match nothing, leaving a card that prints
+an addendum with a clause that can never fire.
+
+It is refused in a **cost reduction's** condition, with the four cast-variant
+flags `conditional_cost_reduction` already refused there, and it is the worst of
+the five. Those read a harmless `False` at pricing time; this one would read a
+stale `True`, because a card being priced for its second cast still carries the
+stamp from its first.
+
+It is also absent from the static-ability condition mirror, which reads pipeline
+inputs for every permanent on every cache miss and has no business asking how a
+card was cast.
+
+### Cards unblocked
+
+1 — **Unbreakable Formation**, the only card on the gap record, authored at the
+agent tier and its record retired. No template: the residual reader shows even
+its *first* line ("Creatures you control gain indestructible until end of turn")
+has no template today — Tortoise Formation is queued behind the same sentence —
+so a template here would have had to read two general effect clauses and a
+back-reference ("each of **those** creatures") to finish one card. Templates are
+all-or-nothing and a half-read sentence makes a cheaper card than the printed
+one, so the card went through the agent tier instead.
+
+Gate 5 measures the addendum rather than assuming it: the authoring sandbox casts
+in the controller's **precombat main phase**, and the expectation asserts that
+two permanents of yours carry *both* `indestructible` and `vigilance`. Vigilance
+is only reachable through the `if`, so an addendum that failed to fire fails the
+gate — the +1/+1 counters land on your creatures rather than on the card itself,
+which is the one thing the `counters` expectation key can see, so the keyword the
+same branch grants is what carries the claim.
+
 ## Ward — the keyword that had to carry a price, and then had to be given away
 
 ### Overview
