@@ -7871,6 +7871,78 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_plumb",
+      "name": "Test Plumb",
+      "oracle_text": "As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.\nYou draw a card and lose 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.",
+          "active_zones": [
+            "stack"
+          ],
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "amount": {
+                "additional_paid": true
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        },
+        {
+          "op": "lose_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
     }
   ]
 }

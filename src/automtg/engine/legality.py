@@ -666,7 +666,45 @@ def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> 
         return 0
     if not card.additional_repeatable:
         return 1
-    return MAX_ADDITIONAL_TIMES
+    # A repeatable cost is paid once *per line*, so the ceiling has to know how
+    # many payments the board can actually stand. Replicate never needed it: its
+    # cost is mana, each line is priced `mana.scaled(times)`, and the solver
+    # drops the ones that cannot be paid.
+    #
+    # A repeatable **non-mana** cost has an empty `mana`, so every line was
+    # priced at the printed cost and all six were offered whatever the board
+    # held -- and `pay` does not fail closed, because sacrificing an empty pool
+    # succeeds. Plumb the Forbidden with one creature was seven cards for
+    # {1}{B}. The single `can_pay` above proved *one* payment, not six.
+    return min(MAX_ADDITIONAL_TIMES, _repeatable_payments(state, pid, oid, card))
+
+
+def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+    """How many times the non-mana half of a repeatable cost could be paid.
+
+    Counts the pool each consuming clause draws from and takes the smallest -- a
+    cost that sacrifices *and* discards can be paid only as often as its scarcer
+    half allows. A clause with no pool to count leaves the ceiling alone, since
+    the mana price still bounds those.
+    """
+    from .costs import life_cost
+    from .effects.context import EffectContext
+    from .effects.selectors import resolve_pool
+
+    cost = card.additional_cost
+    if cost is None:
+        return MAX_ADDITIONAL_TIMES
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    limits: list[int] = []
+    for selector in (cost.sacrifice, cost.return_to_hand, cost.exile_from_graveyard):
+        if selector is not None:
+            limits.append(len(resolve_pool(ctx, selector)))
+    if cost.discard:
+        limits.append(len(state.players[pid].hand) // max(1, cost.discard))
+    if cost.pay_life:
+        per = life_cost(state, pid, cost, oid)
+        limits.append(state.players[pid].life // per if per else MAX_ADDITIONAL_TIMES)
+    return min(limits, default=MAX_ADDITIONAL_TIMES)
 
 
 #: What casting a creature face down costs, fixed by rule 702.37a rather than by
