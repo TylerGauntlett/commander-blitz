@@ -2553,6 +2553,42 @@ The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
 
+## "You may play the exiled card this turn" — impulse draw
+
+Florian, Voldaren Scion, and the whole impulse family. A key on the `exile` op:
+
+```jsonc
+{ "op": "exile",
+  "objects": { "chosen": true },
+  "playable_this_turn": true }
+```
+
+**This is not `play_exiled`.** They read alike and are different cards:
+
+| | `play_exiled` | `playable_this_turn` |
+|---|---|---|
+| who plays it | the effect does, as it resolves | you do, later, when you like |
+| price | **free** | the printed cost |
+| how long | now, or never | until the turn ends |
+
+`play_exiled` is hideaway's permission. Writing Florian with it hands you a free
+Griselbrand, which is not a subtle difference on a card that regularly exiles
+the top of a 100-card deck.
+
+The permission lives on the exiled object as a pair — `playable_by` and
+`playable_turn` — and not as a boolean. A boolean would leave the card castable
+out of exile for the rest of the game, and nothing on the board would say so.
+Both are cleared by `reset_permanent_state`, so a card that leaves exile cannot
+carry the permission anywhere.
+
+**It reaches both halves of "play".** A land is played rather than cast, so the
+offer is made from `_land_actions` as well as `_cast_actions`; without that,
+exiling a land grants a permission that silently does nothing. The land drop is
+still spent, and the spell is still paid for in full.
+
+Written *after* the move, like `until_leaves` and for the same reason:
+`reset_permanent_state` runs on the way into exile and would wipe it.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc

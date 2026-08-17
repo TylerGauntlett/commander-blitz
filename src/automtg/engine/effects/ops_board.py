@@ -55,9 +55,22 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     whose control, differs between O-Ring and Fiend Hunter.
     """
     link = bool(spec.get("until_leaves"))
+    # "You may play the exiled card this turn." Florian, and the impulse-draw
+    # family. Not `play_exiled`, which casts the card for *free* and does it
+    # there and then: this is a permission the player may take later, at the
+    # printed price, and it expires with the turn.
+    playable = bool(spec.get("playable_this_turn"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
+        if playable:
+            # After the move, for the same reason `exiled_by` below is:
+            # `move_object` runs `reset_permanent_state` on the way and would
+            # wipe this if it were set first.
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.playable_by = ctx.controller
+                obj.playable_turn = ctx.state.turn
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.

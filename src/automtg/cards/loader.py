@@ -1650,6 +1650,14 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         raise DslError(
             f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
         )
+    # Same shape as the link above: the permission is written on the exiled
+    # card, so with nothing selected there is no card to write it on and the
+    # key is silently doing nothing.
+    if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'playable_this_turn' needs 'objects' -- "
+            f"there is nothing to grant permission on"
+        )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a

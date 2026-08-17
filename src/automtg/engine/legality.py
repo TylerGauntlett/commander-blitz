@@ -274,6 +274,23 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         # land drop -- this widens *where* a land may be played from, not how
         # many, which `lands_played` already governs.
         zones.append(state.players[pid].graveyard)
+    # "You may **play** the exiled card this turn" covers a land, which is
+    # played rather than cast -- so the permission has to reach both halves or
+    # Florian's land half silently does nothing. Filtered per object below,
+    # because only the flagged cards in exile are offered.
+    if any(
+        state.objects[oid].playable_by == pid
+        and state.objects[oid].playable_turn == state.turn
+        for oid in state.players[pid].exile
+    ):
+        zones.append(
+            [
+                oid
+                for oid in state.players[pid].exile
+                if state.objects[oid].playable_by == pid
+                and state.objects[oid].playable_turn == state.turn
+            ]
+        )
     if player_plays_lands_from_library_top(state, pid) and state.players[pid].library:
         # The top card only -- which is what the cards say, and the only part
         # of a hidden zone anybody is entitled to see.
@@ -351,6 +368,20 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         card = state.card(oid)
         if not _timing_ok(card, sorcery_speed):
+            continue
+        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+
+    # "You may play the exiled card this turn." The same widening the Adventure
+    # block above makes, with a turn on it: the permission expires, and a card
+    # left in exile with a bare flag would stay castable for the rest of the
+    # game. The price is the printed one -- this grants permission, not a
+    # discount, which is the whole difference from `play_exiled`.
+    for oid in state.players[pid].exile:
+        obj = state.objects[oid]
+        if obj.playable_by != pid or obj.playable_turn != state.turn:
+            continue
+        card = state.card(oid)
+        if card.is_land or not _timing_ok(card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
