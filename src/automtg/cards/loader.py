@@ -25,7 +25,12 @@ from automtg.engine.effects import known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
-from automtg.engine.effects.values import validate_mana_symbols, validate_value
+from automtg.engine.effects.values import (
+    PER_PLAYER_COUNT_KEYS,
+    validate_mana_symbols,
+    validate_per_player_count,
+    validate_value,
+)
 from automtg.engine.enums import (
     KEYWORD_COUNTERS,
     AbilityKind,
@@ -1454,8 +1459,8 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 
 
 def _validate_static_value(value: Any, where: str) -> None:
-    """Static abilities allow ``const``, ``count`` and the per-player life leaves."""
-    allowed = {"const", "count", "mana_symbols"} | STATIC_LIFE_KEYS
+    """Static abilities allow ``const``, ``count`` and the per-player leaves."""
+    allowed = {"const", "count", "mana_symbols"} | STATIC_LIFE_KEYS | PER_PLAYER_COUNT_KEYS
     if isinstance(value, int):
         return
     if not isinstance(value, Mapping):
@@ -1483,6 +1488,18 @@ def _validate_static_value(value: Any, where: str) -> None:
             raise DslError(
                 f"{where}.{key}: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
             )
+    for key in PER_PLAYER_COUNT_KEYS & set(value):
+        # "As long as an opponent controls more lands than you" -- Verge Rangers.
+        # Here as well as in the effect language, because the same printed clause
+        # arrives as an intervening-`if` on one card and an "as long as" on the
+        # next, and a leaf in one language only would load and read 0 in the
+        # other. The filter is checked by the *static* counting validator, so it
+        # obeys the same printed-face-and-owner rule every static filter does.
+        validate_per_player_count(
+            value[key],
+            f"{where}.{key}",
+            validate_objects=_validate_static_count_filter,
+        )
 
 
 def _compile_cost(model, where: str) -> Cost:

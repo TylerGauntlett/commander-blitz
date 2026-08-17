@@ -3337,6 +3337,16 @@
   "knight_of_the_tusk": {
     "zone": "battlefield"
   },
+  "knight_of_the_white_orchid": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "knight_s_pledge": {
     "zone": [
       "battlefield",
@@ -7314,6 +7324,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "weathered_wayfarer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "weave_fate": {
     "hand_size": {

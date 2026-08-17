@@ -3639,6 +3639,12 @@
     "file": "fangren_hunter.jpg",
     "scryfall_id": "2dbc8eef-f032-490a-b487-da1af71b7ff2"
   },
+  "faramir_steward_of_gondor": {
+    "artist": "Anna Podedworna",
+    "bytes": 80592,
+    "file": "faramir_steward_of_gondor.jpg",
+    "scryfall_id": "5c3e8a30-de2a-4d8f-a929-5abeaea2e65a"
+  },
   "farbog_explorer": {
     "artist": "Scott Chou",
     "bytes": 79154,
@@ -6280,6 +6286,12 @@
     "bytes": 113872,
     "file": "knight_of_the_tusk.jpg",
     "scryfall_id": "2f81d2a0-5301-4cae-ac83-ad51647146e3"
+  },
+  "knight_of_the_white_orchid": {
+    "artist": "Mark Zug",
+    "bytes": 85808,
+    "file": "knight_of_the_white_orchid.jpg",
+    "scryfall_id": "ec4b5e6c-87a4-4e1b-b54a-b36bc6031af1"
   },
   "knight_s_pledge": {
     "artist": "Magali Villeneuve",
@@ -13624,6 +13636,12 @@
     "bytes": 88556,
     "file": "weakness.jpg",
     "scryfall_id": "ceb8322c-63e1-4618-8ee3-7e635cc8bf5e"
+  },
+  "weathered_wayfarer": {
+    "artist": "Greg Hildebrandt & Tim Hildebrandt",
+    "bytes": 70319,
+    "file": "weathered_wayfarer.jpg",
+    "scryfall_id": "09656d96-c366-49ec-b687-cad903de1385"
   },
   "weave_fate": {
     "artist": "Zack Stella",
