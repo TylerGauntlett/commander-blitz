@@ -44,6 +44,55 @@ class Action:
     #: may be castable from hand and from the graveyard at once, and
     #: they are different actions at different prices.
     flashback: bool = False
+    #: Cast for the card's **overload** cost. Part of the identity for the
+    #: reason `kicked` is, and more so: an overloaded spell is a different
+    #: action *and* has different targets -- none.
+    overloaded: bool = False
+    #: How many times this cast pays the card's additional cost -- 0, 1, or any
+    #: number for replicate. Part of the identity for the reason `kicked` is:
+    #: the count changes both the price and what the spell does.
+    additional_times: int = 0
+    #: Cast out of the exile it was foretold to, for the foretell cost. Part of
+    #: the identity like `flashback`: the same card can be nowhere else, but the
+    #: price is not the printed one and the action must not compare equal to a
+    #: hand cast of the same card.
+    foretold: bool = False
+    #: Cast **face down** for {3} -- morph. Part of the identity like `kicked`:
+    #: a Morph creature cast face down and cast normally are two different
+    #: things to do with one card, and they cost differently.
+    face_down: bool = False
+    #: Cast as the card's **second face** -- the Adventure half, the Aftermath
+    #: half, the other half of a split card. Part of the identity for the reason
+    #: `face_down` is, and more so than any of them: the two lines are not two
+    #: prices for one spell, they are two different spells with different names,
+    #: different type lines and different effects.
+    second_face: bool = False
+    #: Cast **fused** -- both halves of a split card as one spell (702.102a).
+    #: Part of the identity like `second_face`, and a third thing again: it is
+    #: not either half, it is both, at both prices and with both target lists.
+    fused: bool = False
+    #: Cast for the card's **bestow** cost, which makes it an Aura spell with
+    #: enchant creature. Part of the identity like `evoked`, and more so: the
+    #: bestowed line is the only cast variant that carries a *target*, so the
+    #: two lines for one card do not even point at the same things.
+    bestowed: bool = False
+    #: Cast for the card's **mutate** cost. Part of the identity like `bestowed`,
+    #: and it carries a target for the same reason: the mutating line names the
+    #: permanent the card is merging with, and the ordinary creature line names
+    #: nothing.
+    mutated: bool = False
+    #: Cast for a *conditional* alternative cost -- prowl and spectacle. A
+    #: separate flag from ``evoked`` rather than a reuse of it, because
+    #: ``evoked`` is read back on the permanent by the "it's sacrificed when it
+    #: enters" condition: a spectacle spell reporting `cast_evoked` would be a
+    #: card quietly claiming to have been evoked.
+    alternative: bool = False
+    #: How much of the generic cost is paid with something other than mana --
+    #: convoke (creatures tapped) and delve (cards exiled from the graveyard).
+    #: Part of the action's identity: convoking two creatures and convoking
+    #: three are two different things to do with the same card, at two
+    #: different prices.
+    pay_generic: int = 0
     #: The creature sacrificed to emerge, chosen as part of the action: how
     #: much the spell costs depends on which one, so two emerge lines with
     #: different sacrifices are two different things to do.
@@ -86,6 +135,8 @@ class Action:
             kicked=self.kicked,
             evoked=self.evoked,
             flashback=self.flashback,
+            alternative=self.alternative,
+            pay_generic=self.pay_generic,
             emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
             label=label,
@@ -106,6 +157,8 @@ class Action:
             self.kicked,
             self.evoked,
             self.flashback,
+            self.alternative,
+            self.pay_generic,
             -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
         )
@@ -120,6 +173,8 @@ class Action:
             "x": self.x,
             "kicked": self.kicked,
             "evoked": self.evoked,
+            "alternative": self.alternative,
+            "pay_generic": self.pay_generic,
             "emerge_oid": self.emerge_oid,
             "mana_option": self.mana_option,
             "label": self.label,

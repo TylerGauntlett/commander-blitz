@@ -210,7 +210,7 @@ def fix_oracle(*, dry_run: bool) -> int:
             card = compile_card(CardModel.model_validate(payload))
             if card.is_token:
                 continue
-            catalog = index.lookup(card.name, token=False)
+            catalog = F.printed_row(card, index)
             if catalog is None or not catalog.oracle_text:
                 continue
             printed = F.printed_text(catalog, card.name)
@@ -247,7 +247,7 @@ def fix_text(*, dry_run: bool) -> int:
             card = compile_card(CardModel.model_validate(payload))
             if card.is_token or not card.abilities:
                 continue
-            catalog = index.lookup(card.name, token=False)
+            catalog = F.printed_row(card, index)
             if catalog is None or not catalog.oracle_text:
                 continue
             printed = F.printed_text(catalog, card.name)
@@ -344,7 +344,7 @@ def open_deficits(deficits: list[F.Deficit], *, dry_run: bool) -> tuple[int, int
     opened = 0
     for card_id, why in sorted(blocked.items()):
         card = by_id[card_id]
-        catalog = index.lookup(card.name, token=False)
+        catalog = F.printed_row(card, index)
         entry = queue.entries.get(card.name)
         if entry is None:
             entry = Entry(

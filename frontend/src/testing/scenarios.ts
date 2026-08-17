@@ -863,6 +863,22 @@ export function mixedLog(): GameEvent[] {
     gameEvent({ type: "spell_countered", player: 1, data: { card: "thragtusk" } }),
     gameEvent({ type: "enters_battlefield", player: 1, data: { card: "grizzly_bears" } }),
     gameEvent({ type: "ability_triggered", player: 0, data: { card: "rhystic_study" } }),
+    // A death is two events, always: `move_object` emits the zone change and
+    // fires `dies` together. The zone change is the one that carries the words
+    // now, so a fixture with a bare `dies` would silently lose its line.
+    gameEvent({
+      type: "zone_change",
+      player: 1,
+      data: {
+        card: "grizzly_bears",
+        oid: 350,
+        from: "battlefield",
+        to: "graveyard",
+        cause: "destroyed",
+        by: 12,
+        by_card: "swords_to_plowshares",
+      },
+    }),
     gameEvent({ type: "dies", player: 1, data: { card: "grizzly_bears" } }),
     gameEvent({ type: "token_created", player: 0, data: { card: "kraken_token" } }),
   ];

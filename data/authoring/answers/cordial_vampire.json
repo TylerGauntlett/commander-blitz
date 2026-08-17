@@ -1,0 +1,58 @@
+{
+  "card": {
+    "id": "cordial_vampire",
+    "name": "Cordial Vampire",
+    "oracle_text": "Whenever this creature or another creature dies, put a +1/+1 counter on each Vampire you control.",
+    "mana_cost": "{B}{B}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature or another creature dies, put a +1/+1 counter on each Vampire you control.",
+        "trigger": {
+          "event": "dies",
+          "controller": "any",
+          "filter": {
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Vampire"
+              ],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

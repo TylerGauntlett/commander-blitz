@@ -33,7 +33,12 @@ CMD_CAP = 2
 ABIL_CAP = 2
 #: Target-option slots per castable object (index 0 also covers "no targets").
 TGT_SLOTS = 5
-DEF_CAP = 3
+#: Attack-target slots: every opponent, plus their planeswalkers. Eight rather
+#: than three because a planeswalker is a third kind of thing to attack (506.2)
+#: and a pod board can hold several. Raising it shifts every index above
+#: `IDX_ATTACK` and therefore invalidates trained checkpoints -- see
+#: docs/adr/0002-flat-action-space.md.
+DEF_CAP = 8
 BLOCK_TARGET_CAP = 4
 CHOICE_CAP = 10
 
@@ -146,10 +151,44 @@ class _Slots:
         )
         own = [o for o in state.battlefield if state.objects[o].controller == pid]
         self.battlefield = _index_map(sorted(own, key=lambda o: _bf_key(state, o)))
-        self.defenders = _index_map([p for p in state.turn_order(pid) if p != pid])
+        # Players first, then their planeswalkers, so a seat's slot does not
+        # move when a planeswalker enters or dies mid-combat -- which would
+        # relabel "attack Alice" as "attack Bob" between two decision points of
+        # the same declaration.
+        #
+        # Keyed by a *tagged* id rather than a bare one: a player id and an
+        # object id are both ints and 1 is a legal value of each, so an untagged
+        # map would let "attack player 1" and "attack the planeswalker whose oid
+        # is 1" collide on the same slot.
+        seats = [("player", p) for p in state.turn_order(pid) if p != pid]
+        walkers = [("pw", oid) for oid in _attackable_walkers(state, pid)]
+        self.defenders = _index_map(seats + walkers)
         attackers = sorted(state.combat.attackers) if state.combat else []
         self.attackers = _index_map(attackers)
         self.choices = _index_map(decision.remaining_options) if decision else {}
+
+
+def _attackable_walkers(state: GameState, pid: int) -> list[int]:
+    """Planeswalkers this player could attack, in the seat order above.
+
+    Grouped by controller rather than by oid, so a slot means "the first
+    planeswalker of the next opponent round the table" and stays roughly stable
+    as boards change -- the same reasoning `_bf_key` uses for battlefield slots.
+    """
+    from automtg.engine.characteristics import chars
+
+    out: list[int] = []
+    for seat in state.turn_order(pid):
+        if seat == pid:
+            continue
+        out.extend(
+            oid
+            for oid in state.battlefield
+            if (obj := state.objects.get(oid)) is not None
+            and obj.controller == seat
+            and "Planeswalker" in chars(state, oid).types
+        )
+    return out
 
 
 def _index_map(items) -> dict:
@@ -225,8 +264,13 @@ def _encode(
 
     if kind is ActionKind.ADD_ATTACKER:
         slot = slots.battlefield.get(action.source)
-        defender = action.targets[0].id if action.targets else None
-        defender_slot = slots.defenders.get(defender)
+        ref = action.targets[0] if action.targets else None
+        key = (
+            ("player", ref.id) if ref is not None and ref.kind == "player"
+            else ("pw", ref.id) if ref is not None
+            else None
+        )
+        defender_slot = slots.defenders.get(key)
         if slot is None or slot >= BF_CAP or defender_slot is None or defender_slot >= DEF_CAP:
             return None
         return IDX_ATTACK + slot * DEF_CAP + defender_slot

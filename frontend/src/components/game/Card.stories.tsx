@@ -9,7 +9,9 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { reset as forgetRects, recall } from "../../logic/cardRects";
 import * as pool from "../../testing/cards";
 import { Card, StaticCard } from "./Card";
 
@@ -53,8 +55,27 @@ export const Tapped: Story = {
       ),
     );
     // Rotated a quarter turn, so its box is wider than it is tall.
-    const box = (canvasElement.querySelector(".card") as HTMLElement).getBoundingClientRect();
+    const card = canvasElement.querySelector(".card") as HTMLElement;
+    const box = card.getBoundingClientRect();
     expect(box.width).toBeGreaterThan(box.height);
+
+    /*
+     * And the box is *on* the card. The rims are `.card::after` on this outer
+     * box, so a box that has the right shape in the wrong place draws a border
+     * beside the card rather than round it.
+     *
+     * Here the card is a flex item -- `laneCards` ends in `.lane__cards`, which
+     * is `display: flex` -- and that is a formatting context root, so this was
+     * green even while the board was visibly broken. The case that actually
+     * broke is `CardStack.AllTapped`; this one holds the other context.
+     */
+    const face = pivot.getBoundingClientRect();
+    for (const edge of ["top", "bottom", "left", "right"] as const) {
+      expect(
+        Math.abs(box[edge] - face[edge]),
+        `the rim's ${edge} edge is not on the tapped card's ${edge} edge`,
+      ).toBeLessThan(1);
+    }
   },
 };
 
@@ -165,4 +186,46 @@ export const Static: Story = {
       <StaticCard card={pool.counterspell()} variant="detail" />
     </div>
   ),
+};
+
+/**
+ * A card posts its last position on the way out.
+ *
+ * The contract behind the whole exit animation: React runs a layout effect's
+ * cleanup *before* it detaches the node, so `Card` can still measure itself
+ * there. Without it a destroyed permanent has no recorded position and the
+ * ghost has nowhere to fly from -- which is the state the board was in.
+ *
+ * This is the only tier that can prove it. jsdom reports every box as 0x0 and
+ * `remember` rejects zero-sized rects on purpose, so a unit test would assert
+ * against a registry that correctly refused to store anything.
+ */
+export const RemembersItsRectOnUnmount: Story = {
+  render: () => {
+    const [mounted, setMounted] = useState(true);
+    return (
+      <div>
+        <button type="button" data-testid="drop-it" onClick={() => setMounted(false)}>
+          Destroy
+        </button>
+        {mounted && <Card card={pool.grizzlyBears({ oid: 4242 })} />}
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    forgetRects();
+    await canvas.findByText("Grizzly Bears");
+    expect(recall(4242), "nothing is recorded while the card is still up").toBeNull();
+
+    await userEvent.click(canvas.getByTestId("drop-it"));
+
+    await waitFor(() => {
+      const box = recall(4242);
+      expect(box, "a card should post its box as it unmounts").not.toBeNull();
+      // A real measurement, not the zero rect the registry would have dropped.
+      expect(box?.width).toBeGreaterThan(0);
+      expect(box?.height).toBeGreaterThan(0);
+    });
+  },
 };

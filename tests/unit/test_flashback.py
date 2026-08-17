@@ -195,7 +195,10 @@ class TestTheLoader:
 
     def test_flashback_and_retrace_are_exclusive(self):
         """Both widen legality to the graveyard and each answers the price."""
-        with pytest.raises(DslError, match="both 'flashback' and 'retrace'"):
+        # The message now says "a graveyard cost", because `flashback` became
+        # one spelling of `graveyard_cost` when escape shipped -- the clash it
+        # names is the same one either way.
+        with pytest.raises(DslError, match="graveyard cost and 'retrace'"):
             compile_card(
                 CardModel.model_validate(
                     probe(flashback={"mana": "{1}{U}"}, retrace=True)

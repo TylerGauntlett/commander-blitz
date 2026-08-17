@@ -177,6 +177,32 @@ _CHANGELING = re.compile(r"^changeling$", re.I)
 #: ``Prowess`` -- a triggered ability spelled as a keyword.
 _PROWESS = re.compile(r"^prowess$", re.I)
 
+#: "As an additional cost to cast this spell, sacrifice a creature."  The
+#: *mandatory* shape only: "you may sacrifice" is a different card and almost
+#: always drags a "When you do, ..." reflexive trigger along with it, which is
+#: its own capability.
+_ADDITIONAL_SAC = re.compile(
+    r"^as an additional cost to cast this spell, sacrifice (?P<what>[^,.]+)$", re.I
+)
+_ADDITIONAL_DISCARD = re.compile(
+    r"^as an additional cost to cast this spell, discard a card$", re.I
+)
+
+#: The noun phrases the sacrifice clause is read for, and nothing else.  A
+#: phrase this does not know fails the whole card rather than guessing at a
+#: selector -- templates are all-or-nothing by design, and a cost charged
+#: against the wrong permanents is a different card, not an incomplete one.
+_SAC_SELECTORS: dict[str, dict] = {
+    "a creature": {"types": ["Creature"]},
+    "an artifact": {"types": ["Artifact"]},
+    "a land": {"types": ["Land"]},
+    "an enchantment": {"types": ["Enchantment"]},
+    "an artifact or creature": {"any_types": ["Artifact", "Creature"]},
+    "a creature or artifact": {"any_types": ["Artifact", "Creature"]},
+    "a creature or enchantment": {"any_types": ["Creature", "Enchantment"]},
+    "an artifact or enchantment": {"any_types": ["Artifact", "Enchantment"]},
+}
+
 #: ``Cycling {2}`` -- an activated ability you play from your hand, whose cost
 #: discards the card itself.  `_bare` has already stripped the reminder text
 #: that spells the ability out, so only the keyword and its cost are left.
@@ -335,6 +361,7 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
     abilities: list[dict] = []
     spell_effects: list[dict] = []
     targets: list[dict] = []
+    card_fields: dict = {}
     expectation: dict = {}
     used: list[str] = []
     is_spell = not _is_permanent(proxy.model)
@@ -357,6 +384,10 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
             abilities.append(produced)
         elif kind == "enchant":
             targets.append(produced)
+        elif kind == "card":
+            # A card-level field rather than an ability -- an additional cost is
+            # part of what the spell costs, not something it does.
+            card_fields.update(produced)
         elif kind == "nothing":
             # A line that is already true of the generated card -- Devoid on a
             # card the catalog already reports as colourless. Consumed, with
@@ -367,6 +398,7 @@ def translate(facts: CardFacts, *, taken: set[str] | None = None) -> TemplateRes
         _merge(expectation, translation.expect)
 
     payload = proxy.model.model_dump(exclude_defaults=True, exclude_none=True)
+    payload.update(card_fields)
     payload["abilities"] = [*payload.get("abilities", []), *abilities]
     if spell_effects:
         payload["spell_effects"] = [*payload.get("spell_effects", []), *spell_effects]
@@ -405,6 +437,28 @@ def _translate_line(line: str, *, is_spell: bool):
             None,
             Translation(effects=[], expect={}),
             "devoid",
+        )
+
+    if sac := _ADDITIONAL_SAC.match(bare):
+        selector = _SAC_SELECTORS.get(sac.group("what").strip().lower())
+        if selector is None:
+            return None
+        return (
+            "card",
+            {"additional_cost": {"sacrifice": {"controller": "you", **selector}}},
+            # No expectation of its own. What the cost *did* shows up in the
+            # card's own numbers -- a board one smaller, a graveyard one larger
+            # -- and those belong to the sentence that drew the cards.
+            Translation(effects=[], expect={}),
+            "additional-cost:sacrifice",
+        )
+
+    if _ADDITIONAL_DISCARD.match(bare):
+        return (
+            "card",
+            {"additional_cost": {"discard": 1}},
+            Translation(effects=[], expect={}),
+            "additional-cost:discard",
         )
 
     if _CHANGELING.match(bare):

@@ -189,7 +189,55 @@ class Keyword(str, Enum):
     #: the other five are separate from each other -- `Keyword` is a bare string.
     NONBASIC_LANDWALK = "nonbasic_landwalk"
     INDESTRUCTIBLE = "indestructible"
+    #: Wither (702.90b) and infect (702.90c).  Both change the *form* damage
+    #: takes, and both are keywords rather than `replacements` entries for the
+    #: reason deathtouch and lifelink are: the whitelist covers what happens as
+    #: a permanent **enters the battlefield**, and this is a fact about damage,
+    #: read by `damage_permanent` at the one point every damage source passes
+    #: through.  Neither takes a parameter -- "-1/-1 counters instead" is the
+    #: whole content of the quality.
+    #:
+    #: Infect is wither plus poison, and is a separate keyword rather than a
+    #: pair because a creature has one or the other: 702.90c is written as its
+    #: own ability and a card carrying both would double neither half.
+    WITHER = "wither"
+    INFECT = "infect"
+    #: Totem armor (702.88a).  A keyword on the *Aura*: "if enchanted permanent
+    #: would be destroyed, instead remove all damage from it and destroy this
+    #: Aura."  Not a `replacements` entry, because that whitelist is about a
+    #: permanent entering the battlefield and this is the moment one leaves --
+    #: and not parameterised, because "destroy this Aura instead" is the whole
+    #: content of the quality.  Read by `zones.destroy`, which every route to a
+    #: destruction already goes through.
+    TOTEM_ARMOR = "totem_armor"
     FLASH = "flash"
+    #: Phasing (702.26a): "a static ability that modifies the untap step of the
+    #: permanent's controller". A `Keyword` rather than a static, for
+    #: horsemanship's reason -- it takes no parameter, and it is read by the
+    #: *turn*, which cannot filter on a static.
+    #:
+    #: A phased-out permanent "is treated as though it does not exist"
+    #: (702.26c), which the engine says by taking it out of `state.battlefield`
+    #: while leaving it in `state.objects` -- the same nowhere a card on the
+    #: stack and a card under a merged permanent already live. Every walk of the
+    #: battlefield therefore misses it with no test of its own.
+    PHASING = "phasing"
+    #: Daybound / nightbound (702.145, 702.146). A pair of `Keyword`s on the two
+    #: faces of one transforming card, and the pair is the point: daybound is
+    #: printed on the front and nightbound on the back, so which one `chars`
+    #: reports is already the answer to "which way round is this permanent".
+    #:
+    #: What they modify is the **game**, not the permanent -- day and night are
+    #: a designation the whole table shares (`GameState.day_night`), which is
+    #: why the switching lives in `turn` beside phasing rather than in a card.
+    #: Banding (702.21). Two rules sharing a word: attacking as a band, and
+    #: **who chooses the damage assignment order** of the creature on the other
+    #: side. The engine already has damage assignment order as a concept -- it
+    #: simply sorts it by effective toughness and asks nobody -- so banding is
+    #: exactly "this one is asked, and the other player is who is asked".
+    BANDING = "banding"
+    DAYBOUND = "daybound"
+    NIGHTBOUND = "nightbound"
     #: Deck construction only -- "you can have two commanders if both have
     #: partner".  Listed here, and inert on purpose: the engine is handed a
     #: finished deck, so there is no game rule to implement.  It exists so a
@@ -269,4 +317,5 @@ class LossReason(str, Enum):
     LIFE = "life"
     EMPTY_LIBRARY = "empty_library"
     COMMANDER_DAMAGE = "commander_damage"
+    POISON = "poison"
     CONCEDE = "concede"

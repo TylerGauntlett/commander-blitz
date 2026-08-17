@@ -14,7 +14,9 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, Cost
 from .characteristics import chars, player_doubles_land_mana, spell_cost_reduction
 from .effects.context import EffectContext, ask_objects
-from .enums import Keyword, Zone
+from .effects.selectors import resolve_pool
+from .enums import COLORLESS, Keyword, Zone
+from .errors import DslError
 from .events import EventType
 from .mana import (
     SYMBOL_INDEX,
@@ -25,7 +27,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
-from .primitives import discard_cards, lose_life, tap_permanent
+from .primitives import lose_life, tap_permanent
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -58,14 +60,21 @@ def mana_sources(
             source
             for source in _sources_of(state, oid, obj)
             if source.restriction is None
-            or (purpose is not None and source.restriction in purpose)
+            or (purpose is not None and bool(source.restriction & purpose))
         )
     return out
 
 
 def spell_purpose(card: CardDef) -> frozenset[str]:
-    """What restricted mana would have to allow, to pay for this card."""
-    return frozenset(t.lower() for t in card.types)
+    """What restricted mana would have to allow, to pay for this card.
+
+    Subtypes as well as types, because the printed clause names either: "…only
+    to cast a creature spell" is a type, and "…only to cast Vampire, Cleric,
+    and/or Demon spells" is three subtypes. One flat set of lowercased names on
+    both sides, intersected -- which is also what the printed "and/or" means, an
+    any-of rather than an all-of.
+    """
+    return frozenset(t.lower() for t in (*card.types, *card.subtypes))
 
 
 def available_mana(state: GameState, pid: int) -> int:
@@ -155,7 +164,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                             doubled=doubled,
                             times=mana_amount(state, oid, ability),
                         )
-                        for option in ability.mana_options
+                        for option in mana_options_of(state, oid, ability)
                     )
                 ),
                 is_land=is_land,
@@ -196,6 +205,87 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
         source_name=state.card_of(obj).name,
     )
     return max(0, int(evaluate_value(ctx, ability.mana_amount)))
+
+
+def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """Which symbol tuples this ability could produce **right now**.
+
+    For almost every mana ability this is the load-time constant: the card says
+    what it makes. Exotic Orchard says what to *ask* instead -- "one mana of any
+    color that a land an opponent controls could produce" -- so its options are
+    a question about the board.
+
+    Called from ``_sources_of`` (so the solver plans against the real colours)
+    and from ``activate_mana_ability`` (so the payment adds one of them), for
+    exactly the reason ``mana_produced`` is: a spell offered on a colour and
+    then paid in another would strand the payment mid-cast. Both read the same
+    board within one payment, so the option index they agree on means the same
+    thing to each.
+
+    An empty result is a real answer -- an opponent with no lands offers no
+    colours, and the Orchard taps for nothing. The solver simply never picks a
+    source that produces nothing.
+    """
+    if ability.mana_identity:
+        return _identity_options(state, oid, ability)
+    if ability.mana_reflects is None:
+        return ability.mana_options
+
+    ctx = EffectContext(state=state, controller=state.objects[oid].controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_reflects):
+        other_card = state.card_of(state.objects[other])
+        for other_ability in other_card.abilities:
+            # The *printed* options of the other permanent, not its reflected
+            # ones: two Exotic Orchards facing each other would otherwise ask
+            # each other what they produce, for ever.
+            if not other_ability.is_mana_ability or other_ability.mana_reflects is not None:
+                continue
+            for option in other_ability.mana_options:
+                for index, amount in enumerate(option):
+                    if amount and index != SYMBOL_INDEX[COLORLESS]:
+                        colors.add(index)
+
+    out: list[tuple[int, ...]] = []
+    for option in ability.mana_options:
+        if any(amount and i in colors for i, amount in enumerate(option)):
+            out.append(option)
+    return tuple(out)
+
+
+def _identity_options(
+    state: GameState, oid: int, ability: Ability
+) -> tuple[tuple[int, ...], ...]:
+    """The five-colour superset narrowed to the controller's commanders' identity.
+
+    Read off the **printed** `color_identity` rather than the object's current
+    colours, and wherever the commander happens to be. Colour identity is a
+    deck-construction fact fixed by the card: it counts mana symbols in rules
+    text, it is the same set in the command zone as on the battlefield, and a
+    Command Tower does not stop working because the general is in a graveyard.
+    Asking `chars()` instead would be a different and smaller set on most
+    commanders, and a wrong one on all of them the turn somebody makes the
+    commander an artifact.
+
+    A colourless commander narrows this to nothing, and the land taps for
+    nothing -- which is the printed card, not a bug: the solver simply never
+    picks a source that produces nothing.
+    """
+    controller = state.objects[oid].controller
+    colors: set[int] = set()
+    for commander in state.commanders_of(controller):
+        obj = state.objects.get(commander)
+        if obj is None:
+            continue
+        for symbol in state.card_of(obj).color_identity:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    return tuple(
+        option
+        for option in ability.mana_options
+        if any(amount and i in colors for i, amount in enumerate(option))
+    )
 
 
 def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tuple[int, ...]:
@@ -314,6 +404,56 @@ def can_pay_mana(
     )
 
 
+def ability_mana(state: GameState, pid: int, cost: Cost, x: int = 0) -> Requirement:
+    """What this ability's mana half actually costs right now.
+
+    "This ability costs {1} less to activate for each Vampire you control."
+    Both existing reductions discount *casting a spell* -- a card's own
+    `cost_reduction` and the `spell_cost_reduction` static -- and both are read
+    only from the cast path, so an activated ability's price was the literal
+    string written on the card.
+
+    Generic only and clamped at zero, like every other reduction: "costs {1}
+    less" never reaches through the generic part into the coloured pips.
+
+    One helper, called by `can_pay` and by `pay`, because an ability offered at
+    the reduced price and then charged the printed one would strand the payment
+    -- the same care `life_cost` and `mana_produced` already take.
+    """
+    req = cost.mana.with_x(x)
+    spec = cost.mana_reduction
+    if not spec:
+        return req
+    less = sum(1 for _ in _reduction_matches(state, pid, spec.get("count") or {}))
+    return Requirement(
+        colored=req.colored,
+        generic=max(0, req.generic - less),
+        hybrid=req.hybrid,
+    )
+
+
+def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
+    """How much life this cost asks for, right now.
+
+    Almost always the integer written on the card. War Room's is a value
+    expression -- "pay life equal to the number of colors in your commanders'
+    color identity" -- and is the only part of a cost besides `times` that is
+    not fixed when the card is written.
+
+    One helper, because `can_pay` and `pay` must not be able to disagree: a cost
+    checked at one price and charged at another either strands the payment or
+    hands out a discount. The same care `mana_produced` and `mana_options_of`
+    already take, for the same reason.
+    """
+    spec = cost.pay_life
+    if isinstance(spec, int):
+        return spec
+    from .effects.values import evaluate_value
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return max(0, int(evaluate_value(ctx, spec)))
+
+
 def can_pay(
     state: GameState, pid: int, cost: Cost | None, source_oid: int | None, *, x: int = 0
 ) -> bool:
@@ -341,7 +481,8 @@ def can_pay(
     # action afterwards, not a reason the cost was illegal.  `<=` would stop a
     # fetchland being cracked at 1 life, which is precisely when somebody wants
     # to.
-    if cost.pay_life and player.life < cost.pay_life:
+    life = life_cost(state, pid, cost, source_oid)
+    if life and player.life < life:
         return False
     if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
         return False
@@ -357,11 +498,21 @@ def can_pay(
         return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
         return False
+    if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
+        return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         kind = str(cost.remove_counters.get("counter", "+1/+1"))
         amount = int(cost.remove_counters.get("amount", 1))
         if obj is None or obj.counter(kind) < amount:
+            return False
+    if cost.loyalty is not None and cost.loyalty < 0:
+        # 606.3: a minus ability may only be activated if there is enough
+        # loyalty to pay it. A plus or a zero is always payable, which is why
+        # only the negative half is tested -- and why this is not
+        # `remove_counters`, which can never add.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.counter("loyalty") < -cost.loyalty:
             return False
     if cost.exile_from_graveyard is not None and not _graveyard_pool(
         state, pid, cost, source_oid
@@ -374,7 +525,9 @@ def can_pay(
         # A source that is about to be tapped for this cost cannot also pay for it.
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
-        if solve_payment(cost.mana.with_x(x), player.mana_pool, sources) is None:
+        if solve_payment(
+            ability_mana(state, pid, cost, x), player.mana_pool, sources
+        ) is None:
             return False
     return True
 
@@ -431,6 +584,52 @@ def _return_pool(
     return pool if len(pool) >= count else []
 
 
+def _tap_cost_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """Which permanents this cost may tap -- "five untapped Vampires you control".
+
+    ``tapped: False`` is forced rather than defaulted, because "untapped" is
+    part of every printed line of this shape and a cost that could re-tap an
+    already-tapped Vampire would be free.
+
+    **Summoning sickness does not apply**, and that is not an oversight: rule
+    302.6 restricts the ``{T}`` *symbol in a permanent's own cost*, and this is
+    a cost that taps other permanents. Captivating Vampire's ruling is explicit
+    that a Vampire which just arrived may be tapped for it, and the source
+    itself counts among the five.
+    """
+    from .effects.selectors import resolve_pool
+
+    spec = dict(cost.tap_permanents or {})
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    spec["tapped"] = False
+    count = int(spec.pop("count", 1) or 1)
+    total_power = spec.pop("total_power", None)
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = resolve_pool(ctx, spec)
+    if total_power is not None:
+        # Crew. The requirement is a *sum* rather than a headcount, so what
+        # makes it payable is the whole pool's power and not its length -- one
+        # 4/4 crews a Vehicle that four 0/1s cannot.
+        return pool if _total_power(state, pool) >= int(total_power) else []
+    return pool if len(pool) >= count else []
+
+
+def _total_power(state: GameState, oids: list[int]) -> int:
+    """Summed **derived** power, which is the whole reason crew is not a count.
+
+    An anthem, a pump spell or a +1/+1 counter all change who can crew a
+    Vehicle, so the printed face is the wrong thing to read -- and reading it
+    would be wrong in the direction that matters, refusing a crew the board
+    plainly supports.
+    """
+    from .characteristics import chars
+
+    return sum(chars(state, oid).power for oid in oids if oid in state.objects)
+
+
 def _graveyard_pool(
     state: GameState, pid: int, cost: Cost, source_oid: int | None
 ) -> list[int]:
@@ -454,6 +653,7 @@ def pay(
     x: int = 0,
     extra_generic: int = 0,
     purpose: frozenset[str] | None = None,
+    record_colors_on: int | None = None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
@@ -480,7 +680,7 @@ def pay(
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
     # cannot strand the payment.
-    req = cost.mana.with_x(x)
+    req = ability_mana(state, pid, cost, x)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
@@ -491,25 +691,30 @@ def pay(
             hybrid=req.hybrid,
         )
     if req.total and not pay_mana(
-        state, pid, req, exclude_oid=source_oid if cost.tap else None, purpose=purpose
+        state,
+        pid,
+        req,
+        exclude_oid=source_oid if cost.tap else None,
+        purpose=purpose,
+        record_colors_on=record_colors_on,
     ):
         return False
 
     if cost.pay_life:
-        lose_life(state, pid, cost.pay_life, source=source_oid)
+        lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:
         pool = _discard_pool(state, pid, cost)
         picked = yield from ask_objects(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
-        discard_cards(state, pid, picked)
+        yield from _discard(state, pid, picked)
 
     if cost.discard_self and source_oid is not None:
         # No `ask_objects`: which card goes is not a choice, it is *this* card.
         # That is the whole difference from `discard`, and asking would let the
         # player cycle by pitching something else.
-        discard_cards(state, pid, [source_oid])
+        yield from _discard(state, pid, [source_oid])
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
@@ -517,7 +722,9 @@ def pay(
         pool = _sacrifice_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(ctx, "Sacrifice", pool, count, count, pid, "sacrifice")
         for oid in picked:
-            sacrifice_object(state, oid)
+            # The thing being paid for, so the log can say what the creature
+            # was sacrificed *to* rather than only that it was sacrificed.
+            sacrifice_object(state, oid, by=source_oid)
 
     if cost.return_to_hand is not None:
         spec = dict(cost.return_to_hand)
@@ -527,7 +734,37 @@ def pay(
             ctx, "Return to hand", pool, count, count, pid, "return_cost"
         )
         for oid in picked:
-            bounce_object(state, oid)
+            bounce_object(state, oid, by=source_oid)
+
+    if cost.tap_permanents is not None:
+        spec = dict(cost.tap_permanents)
+        count = int(spec.pop("count", 1) or 1)
+        total_power = spec.pop("total_power", None)
+        pool = _tap_cost_pool(state, pid, cost, source_oid)
+        if total_power is None:
+            picked = yield from ask_objects(ctx, "Tap", pool, count, count, pid, "tap_cost")
+            for oid in picked:
+                tap_permanent(state, oid)
+        else:
+            # Crew, asked one creature at a time. `ask_objects` takes counts,
+            # not sums, so a single subset question could be answered with a
+            # set that does not reach the number -- and a cost cannot fail
+            # halfway. Asking repeatedly until the total is met is also how a
+            # player crews at a table: each creature is a real choice, and the
+            # question stops the moment the Vehicle is crewed rather than
+            # taking everything that could have helped.
+            needed = int(total_power)
+            remaining = list(pool)
+            while needed > 0 and remaining:
+                picked = yield from ask_objects(
+                    ctx, f"Tap to crew ({needed} more power)", remaining, 1, 1, pid, "tap_cost"
+                )
+                if not picked:
+                    break
+                chosen = picked[0]
+                needed -= _total_power(state, [chosen])
+                tap_permanent(state, chosen)
+                remaining.remove(chosen)
 
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters
@@ -538,6 +775,17 @@ def pay(
             str(cost.remove_counters.get("counter", "+1/+1")),
             int(cost.remove_counters.get("amount", 1)),
         )
+
+    if cost.loyalty is not None and source_oid is not None:
+        # A **cost**, so it is paid as the ability goes on the stack and is not
+        # refunded if the ability is countered or does nothing -- which is what
+        # makes a planeswalker's loyalty spendable in response to removal.
+        from .primitives import add_counters, remove_counters
+
+        if cost.loyalty > 0:
+            add_counters(state, source_oid, "loyalty", cost.loyalty)
+        elif cost.loyalty < 0:
+            remove_counters(state, source_oid, "loyalty", -cost.loyalty)
 
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)
@@ -550,6 +798,19 @@ def pay(
     return True
 
 
+def _discard(state: GameState, pid: int, oids):
+    """Discard as a *cost*, through the madness replacement.
+
+    Rule 702.35a does not care why the card was discarded -- a cycling cost and
+    a Wheel are both discards -- so the cost path goes through the same route
+    the effect path does. Imported here rather than at module scope because
+    `replacements` needs this module.
+    """
+    from .replacements import discard as discard_with_replacements
+
+    return (yield from discard_with_replacements(state, pid, oids))
+
+
 def pay_mana(
     state: GameState,
     pid: int,
@@ -557,8 +818,17 @@ def pay_mana(
     *,
     exclude_oid: int | None = None,
     purpose: frozenset[str] | None = None,
+    record_colors_on: int | None = None,
 ) -> bool:
-    """Tap sources and deduct ``req`` from the pool."""
+    """Tap sources and deduct ``req`` from the pool.
+
+    ``record_colors_on`` is the object to write the payment's provenance onto:
+    the colours actually spent (sunburst and converge) and the permanents whose
+    mana abilities made them (Path of Ancestry's "when that mana is spent").
+    This is the only moment either is knowable -- once the pool is decremented,
+    one blue mana is indistinguishable from another and so is the land that made
+    it -- so a card that reads them later has to be handed them here.
+    """
     player = state.players[pid]
     sources = mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
@@ -568,8 +838,17 @@ def pay_mana(
         return False
     for oid, ability_index, option_index in payment.taps:
         activate_mana_ability(state, oid, ability_index, pid, option_index)
-    player.mana_pool.spend(req)
-    state.emit(EventType.MANA_SPENT, player=pid, amount=req.total)
+    spent = player.mana_pool.spend(req)
+    if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
+        obj.colors_spent = spent.colors
+        obj.mana_sources_spent = spent.sources
+    state.emit(
+        EventType.MANA_SPENT,
+        player=pid,
+        amount=req.total,
+        colors=sorted(spent.colors),
+        sources=sorted(spent.sources),
+    )
     return True
 
 
@@ -595,8 +874,17 @@ def activate_mana_ability(
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
     doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
+    options = mana_options_of(state, oid, ability)
+    if option_index >= len(options):
+        # The board changed what this ability offers between the plan and the
+        # payment. A reflecting ability is the first whose options are not
+        # constant, so this refuses rather than indexing into another colour.
+        raise DslError(
+            f"mana ability {ability.index} of {state.card(oid).name} no longer "
+            f"offers option {option_index}"
+        )
     produced = mana_produced(
-        ability.mana_options[option_index],
+        options[option_index],
         doubled=doubled,
         times=mana_amount(state, oid, ability),
     )
@@ -604,12 +892,44 @@ def activate_mana_ability(
     if ability.cost is not None and ability.cost.tap:
         tap_permanent(state, oid)
 
-    state.players[pid].mana_pool.add_tuple(produced)
+    # Tagged with the permanent that made it. The tag is the whole of what
+    # Path of Ancestry's "when that mana is spent" reads back, and it is
+    # knowable only here -- a pool of six integers cannot say where a pip
+    # came from once it has landed in it.
+    state.players[pid].mana_pool.add_tuple(produced, source=oid)
     state.emit(
         EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced)
     )
+    if ability.mana_rider:
+        _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:
         _lands_tapped_for_mana(state, obj)
+
+
+def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:
+    """"…This land deals 1 damage to you", inline and off the stack.
+
+    Every tap for mana reaches here -- the payment solver's automatic taps go
+    through ``pay_mana`` and a player's own activation through ``Game.apply`` --
+    so the rider has exactly one home and cannot be skipped by one path and
+    applied by the other.  That matters more than it sounds: the solver taps a
+    painland without asking, and a rider that only ran on manual activation
+    would make the land painless exactly when the engine used it for you.
+
+    Run to exhaustion rather than suspended.  Nothing here can ask a question
+    (`loader.MANA_RIDER_OPS` is the whitelist that guarantees it), and there is
+    nowhere to suspend to: this is inside cost payment, with no stack and no
+    priority window.
+    """
+    from .effects import execute
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    generator = execute(ctx, list(ability.mana_rider))
+    for _ in generator:  # pragma: no cover - the whitelist forbids yielding
+        raise DslError(
+            f"a mana ability's rider asked a question ({ability.text!r}); "
+            f"mana abilities are activated during payment and cannot stop"
+        )
 
 
 def _lands_tapped_for_mana(state: GameState, land: Any) -> None:

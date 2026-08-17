@@ -36,7 +36,23 @@ def _expectations() -> dict:
 
 
 PAYLOADS = _auto_payloads()
-CARD_IDS = sorted(c["id"] for c in PAYLOADS if "id" in c)
+
+#: The second entries of two-faced cards, by id -- both links. `back_face` is a
+#: transforming card's other side and `second_face` is a modal DFC's, a split
+#: half or an Adventure; either way the entry is not a card in its own right. It
+#: is never drawn or shuffled into a deck on its own, it has no expectation --
+#: there is no position to cast it in by itself -- and it is checked *through*
+#: its front, which names it as a companion below.
+BACK_FACE_IDS = frozenset(
+    str(c[key])
+    for c in PAYLOADS
+    for key in ("back_face", "second_face")
+    if c.get(key)
+)
+
+CARD_IDS = sorted(
+    c["id"] for c in PAYLOADS if "id" in c and c["id"] not in BACK_FACE_IDS
+)
 
 
 @pytest.fixture(scope="module")
@@ -54,15 +70,29 @@ def by_id() -> dict:
 class TestEveryAutoCardStillPasses:
     @pytest.mark.parametrize("card_id", CARD_IDS)
     def test_it_clears_every_gate(self, card_id, by_id, hand_written):
+        payload = by_id[card_id]
         expectation = _expectations().get(card_id, {})
-        verdict = V.verify(by_id[card_id], expectation, hand_written)
+        # A transforming card is two entries and one object, so its back face
+        # travels with it -- exactly as the answer file that produced it did.
+        # Verified apart, the front fails the registry gate on a `back_face`
+        # pointing at a card that is not in the pool.
+        companions = [
+            by_id[str(payload[key])]
+            for key in ("back_face", "second_face")
+            if payload.get(key) and str(payload[key]) in by_id
+        ]
+        verdict = V.verify(payload, expectation, hand_written, companions=companions)
         assert verdict.ok, str(verdict)
 
     def test_every_card_has_an_expectation(self, by_id):
         # Gate 5 enforces this at authoring time; this catches an expectation
         # deleted afterwards, which would leave a card nobody is checking.
+        #
+        # Back faces are exempt and have to be: there is no position in which to
+        # cast one, so there is nothing an expectation could asserted about it.
+        # What it does is proven through its front.
         expectations = _expectations()
-        missing = sorted(set(by_id) - set(expectations))
+        missing = sorted(set(by_id) - set(expectations) - BACK_FACE_IDS)
         assert missing == [], f"authored with no expectation: {missing[:10]}"
 
     def test_no_orphan_expectations(self, by_id):

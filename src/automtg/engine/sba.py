@@ -14,7 +14,7 @@ from .enums import Keyword, LossReason, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .zones import move_object
+from .zones import destroy, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -38,6 +38,7 @@ def check(state: GameState) -> bool:
     changed |= _tokens_and_attachments(state)
     changed |= _counter_annihilation(state)
     changed |= _creature_deaths(state)
+    changed |= _planeswalker_deaths(state)
     changed |= _legend_rule(state)
     changed |= _ascend(state)
     return changed
@@ -95,6 +96,10 @@ def _ascend(state: GameState) -> bool:
 # ----------------------------------------------------------------------
 
 
+#: Rule 704.5c: ten or more poison counters and the player loses.
+POISON_THRESHOLD = 10
+
+
 def _player_losses(state: GameState) -> bool:
     changed = False
     for player in state.players:
@@ -107,6 +112,11 @@ def _player_losses(state: GameState) -> bool:
             reason = LossReason.EMPTY_LIBRARY
         elif player.max_commander_damage() >= COMMANDER_DAMAGE_THRESHOLD:
             reason = LossReason.COMMANDER_DAMAGE
+        elif player.poison >= POISON_THRESHOLD:
+            # Rule 704.5c. Its own reason rather than folding into LIFE,
+            # because a player at 40 life who loses to poison did not run out
+            # of life, and a log that said so would be lying about the game.
+            reason = LossReason.POISON
         if reason is not None:
             _eliminate(state, player.pid, reason)
             changed = True
@@ -172,8 +182,14 @@ def _tokens_and_attachments(state: GameState) -> bool:
     changed = False
 
     # A token that has left the battlefield ceases to exist.
+    #
+    # **Except on the stack.** A copy of a spell is a token object sitting on
+    # the stack (706.10), and it is a legal object there until it resolves --
+    # 704.5e removes it *after*. Popping it here deletes the copy before it can
+    # do anything, which is silent: the copy is announced, the log says the
+    # spell was copied, and then nothing happens.
     for oid, obj in list(state.objects.items()):
-        if not obj.is_token or obj.zone is Zone.BATTLEFIELD:
+        if not obj.is_token or obj.zone in (Zone.BATTLEFIELD, Zone.STACK):
             continue
         lst = None
         if obj.zone in (Zone.HAND, Zone.GRAVEYARD, Zone.EXILE, Zone.LIBRARY, Zone.COMMAND):
@@ -223,6 +239,31 @@ def _counter_annihilation(state: GameState) -> bool:
     return changed
 
 
+def _planeswalker_deaths(state: GameState) -> bool:
+    """704.5i: a planeswalker with zero loyalty goes to its owner's graveyard.
+
+    A sibling of `_creature_deaths`'s zero-toughness branch, and the same shape
+    for the same reason: this is not destruction, so it goes through
+    `move_object` rather than `destroy` and indestructible does not save it.
+
+    Loyalty is counters, so "zero loyalty" is "no loyalty counters" -- which is
+    also what a planeswalker that somehow lost its enters-with-counters
+    replacement would read, and binning it is right: 306.5b says a planeswalker
+    with no loyalty counters on it has zero loyalty.
+    """
+    changed = False
+    for oid in list(state.battlefield):
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        if "Planeswalker" not in chars(state, oid).types:
+            continue
+        if obj.counter("loyalty") <= 0:
+            move_object(state, oid, Zone.GRAVEYARD, cause="zero_loyalty")
+            changed = True
+    return changed
+
+
 def _creature_deaths(state: GameState) -> bool:
     changed = False
     for oid in list(state.battlefield):
@@ -239,8 +280,25 @@ def _creature_deaths(state: GameState) -> bool:
             continue
         lethal = obj.damage >= c.toughness or (obj.deathtouched and obj.damage > 0)
         if lethal and Keyword.INDESTRUCTIBLE.value not in c.keywords:
-            move_object(state, oid, Zone.GRAVEYARD, cause="lethal_damage")
-            changed = True
+            # Name the killer only when there is exactly one candidate. A gang
+            # block damages a creature from three sources and `last_damager`
+            # holds whichever wrote last, so attributing here would blame an
+            # arbitrary blocker; the caption degrades to a plain "Lethal damage"
+            # instead, which is true.
+            damagers = state.damage_ledger.get(oid, ())
+            by = state.last_damager.get(oid) if len(damagers) == 1 else None
+            # Through `destroy`, not `move_object`: lethal damage **destroys**
+            # (704.5g), so a regeneration shield and totem armor both replace
+            # it. `destroy`'s own docstring already claimed this routed through
+            # it, and it did not -- a regenerating creature that took lethal
+            # damage died with its shield unspent.
+            #
+            # The indestructible test above stays where it is rather than being
+            # left to `destroy`: `changed` has to report whether the board
+            # actually moved, and `destroy` returning False is the only way to
+            # know.
+            if destroy(state, oid, cause="lethal_damage", by=by):
+                changed = True
     return changed
 
 

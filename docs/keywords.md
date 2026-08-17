@@ -1,6 +1,6 @@
 # Keywords, and where each one lands
 
-The engine implements 27 keywords. Every one arrived the same way: a card in the
+The engine implements 30 keywords. Every one arrived the same way: a card in the
 authoring queue could not be expressed, a worker wrote a gap record,
 `/extend-dsl` built it. That loop works, and [card-authoring.md](card-authoring.md)
 is the argument for it.
@@ -144,13 +144,15 @@ Keywords that appear in almost every set and carry no reminder text.
 | Reach | shipped | `Keyword`, read by `combat.can_block` | `reach` |
 | Trample | shipped | `Keyword`, read by combat damage assignment | `trample` |
 | Vigilance | shipped | `Keyword`, suppresses the tap on attack | `vigilance` |
-| Ward | blocked | needs `unless_pays` — the same missing capability as Rhystic Study | — |
+| Ward | free | `becomes_target` trigger with `controller: "opponent"`, then `may` with `player` the caster, a `pay` cost and a `counter` `sid` in the `else` | — |
 
-Ward is the interesting absence. It is evergreen, it has largely replaced
-hexproof on new creatures, and it is blocked on a capability that already has
-gap records filed against it under a different name. It routes a cost to a
-player who does not control the ability and inverts the outcome, and `may` — the
-only optional-effect op — asks the controller and attaches no cost.
+Ward is the interesting absence. It is evergreen and it has largely replaced
+hexproof on new creatures, and the half of it that looked hardest turned out to
+be free: routing a cost to a player who does not control the ability and
+inverting the outcome is exactly what `may` does with `player`, `pay` and
+`else`, which Rhystic Study shipped. What ward still waits on is much smaller
+and shared with heroic — a trigger for *becoming the target of* a spell, which
+no event covers.
 
 ## Keyword actions
 
@@ -159,11 +161,11 @@ Not abilities: instructions naming something a player or the game does.
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
 | Attach | shipped | op | `attach` |
-| Clash | routed | `reveal` exists; needs a cross-player comparison of the revealed cards | — |
+| Clash | shipped | op, plus a `clash_won` binding an ordinary `if` reads back | `clash` |
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |
-| Reconfigure | routed | needs *unattach*, which the attach model has no notion of — equipment may only move | — |
-| Regeneration | refused | a destruction-replacement shield; see rules-coverage.md | — |
+| Reconfigure | shipped | the equip ability, plus the `unattach` op and an `is_attached` static condition for 702.151d | `unattach` |
+| Regeneration | shipped | the `regenerate` op puts a spent-once shield on the permanent; `zones.destroy` spends it | `regenerate` |
 | Sacrifice | shipped | op, and also a cost | `sacrifice` |
 | Scry | shipped | op | `scry` |
 | Surveil † | shipped | op — the source lists it under expansion, but it is a keyword action | `surveil` |
@@ -176,80 +178,81 @@ This is the long tail, and where the build order comes from.
 
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
-| Absorb | blocked | damage prevention, which the engine models only as protection | — |
+| Absorb | shipped | the `prevent_damage` static -- parameterised on N, applied per source in `damage_permanent` | `prevent_damage` |
 | Adapt | free | activated ability: `if` `counters_on` is 0, then `add_counters` | — |
-| Adventure | blocked | split cards — one card, two castable halves | — |
+| Adventure | shipped | `second_face` plus `adventure`: `card_of`'s second branch while it is a spell, then a fifth destination rider that exiles it and a fourth zone it may be cast from | `second_face` |
 | Affinity | free | `cost_reduction` already takes `{"count": filter}`; generic-only, clamped at zero, which is exactly affinity | — |
 | Afterlife | free | `dies` trigger, then `create_token` | — |
-| Aftermath | blocked | split cards | — |
+| Aftermath | shipped | the same `second_face`, with `second_face_zone: "graveyard"` — the restriction is *where the half is offered*, and the exile is the same rider adventure uses | `second_face_zone` |
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
-| Amplify | routed | `self_enters_with_counters` takes a fixed integer, not a value expression | — |
-| Annihilator | routed | `attacks` trigger; needs a sacrifice chosen by the defending player | — |
-| Aura swap | blocked | swapping an attached aura with one in hand; one card in the game | — |
-| Banding | refused | see rules-coverage.md | — |
+| Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
+| Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
+| Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
+| Banding | shipped | `CombatState.bands` for 702.21b, and the `block_order` the engine already had — it was *sorting* the damage assignment order, and banding is "ask, and ask the other player" | `banding` |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |
-| Bestow | blocked | a creature cast as an aura — one card in two zones' worth of types | — |
-| Blitz | routed | an alternative cost like `evoke`, plus haste and a delayed sacrifice | — |
-| Bloodrush | routed | an activated ability from hand whose cost discards — the cycling shape, with a pump | — |
-| Bloodthirst | blocked | "an opponent was dealt damage this turn" — a per-turn ledger the engine does not keep | — |
-| Bolster | routed | needs "the creature with the lowest toughness", and no selector picks an extremum | — |
-| Bushido | routed | `blocks` trigger exists; "or is blocked" has no matching event | — |
-| Buyback | routed | an additional cost like `kicker`, plus a return-to-hand instead of the graveyard | — |
-| Cascade | blocked | cast a card from exile without paying its cost, chosen by a library scan | — |
-| Casualty | routed | an additional cost that copies the spell; spell copying does not exist | — |
-| Champion | blocked | exile-and-return tied to the championing permanent leaving | — |
+| Bestow | shipped | an alternative cost like evoke, plus the one target list the *rules* supply (`BESTOW_TARGET`), plus a type change in `chars` switched on `attached_to` | `bestow` |
+| Blitz | free | dash's shape with a `sacrifice` in the `delay` and a `dies` trigger that draws | — |
+| Bloodrush | free | `activated` + `active_zones: ["hand"]` + a `discard_self` cost, then `pump` — the cycling shape | — |
+| Bloodthirst | free | `self_enters` trigger, `if` on `cmp` of `damage_taken_this_turn` over `each_opponent`, then `add_counters` | — |
+| Bolster | free | `add_counters` over a selector with `extreme: {"of": "toughness", "pick": "least"}` | — |
+| Bushido | free | two abilities: the existing `blocks` trigger, and `becomes_blocked` for the other half | — |
+| Buyback | free | `kicker` plus `buyback: true` — the rider returns it to hand instead of the graveyard; `kicker_label` names the cost | `buyback` |
+| Cascade | shipped | the `cascade` op -- the scan was the missing half; `suspend.cast_for_free` was already the other | `cascade` |
+| Casualty | shipped | `additional_cost` with `additional_optional`, then a cast trigger reading `additional_paid` | `additional_cost` |
+| Champion | free | `exile` with `until_leaves` (the O-Ring family), an `exists` guard, a `may` with a sacrificing `else`, and a `leaves_battlefield` trigger reading `exiled_with: "self"` | — |
 | Changeling | free | `add_subtype` static — confirmed in card-authoring.md | — |
-| Channel | routed | the cycling shape again: an activated ability from hand costing a discard | — |
-| Cipher | blocked | encoding a spell onto a creature and recasting it from exile | — |
-| Connive | routed | draw-then-discard with a counter conditional on what was discarded; needs to read the discarded card | — |
-| Conspire | routed | a cost tapping creatures, plus spell copying | — |
-| Convoke | routed | a cost paid by tapping creatures — a cost kind, not an op | — |
-| Coven | blocked | "three creatures with different powers" — no distinct-value count exists | — |
-| Crew | routed | vehicles are not a supported type; the tap-for-power cost is the smaller half | — |
-| Cumulative upkeep | routed | `upkeep` trigger and `add_counters` exist; the escalating cost needs `may` `pay` to scale off a counter count | — |
+| Channel | free | the cycling shape: `active_zones: ["hand"]` with a `discard_self` cost — identical to bloodrush | — |
+| Cipher | shipped | the `encode` op (a fourth destination rider) and `cast_copy`, read back by an `encoded_by` trigger filter | `encode` |
+| Connive | shipped | op — the counter counts the cards just discarded, which nothing else can name | `connive` |
+| Conspire | free | `tap_permanents` as an additional cost, then `copy_spell` | `copy_spell` |
+| Convoke | free | `pay_generic_with: "tap_creatures"` — one cast line per number convoked. Generic only; the colour half is a documented simplification | `pay_generic_with` |
+| Coven | free | condition `cmp` on `{"distinct": {"of": "power"}}` over creatures you control | `distinct` |
+| Crew | shipped | `tap_permanents` with a `total_power`, summed off **derived** power; *Vehicle* is free text | — |
+| Cumulative upkeep | shipped | `upkeep` trigger, `add_counters`, then `may` `pay` with a `times` multiplier off the counter count | — |
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
-| Dash | routed | an alternative cost, plus haste and a delayed return | — |
-| Daybound / nightbound | refused | day/night is a designated-game-state mechanic; see rules-coverage.md | — |
-| Delve | routed | a cost exiling from the graveyard to pay generic mana | — |
-| Detain | routed | `lock_abilities` and `cant_attack` exist separately; needs them bundled until a player's next turn | — |
-| Devour | routed | `self_enters` + sacrifice + `for_each`; the scaling counters are the awkward half | — |
-| Disturb | blocked | transforming cards | — |
-| Dredge | blocked | replaces a draw, and the replacement whitelist has no draw form | — |
-| Echo | routed | `upkeep` trigger with a `may` `pay` and a sacrifice `else` — close to the Karoo idiom | — |
-| Embalm | routed | activated from the graveyard, creating a token copy; `copy_permanent` exists | — |
+| Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand` | — |
+| Daybound / nightbound | shipped | `GameState.day_night` — the table's designation, switched by a turn-based action off `TurnLedger.spells_cast`, turning the permanents over with `transform` | `daybound` |
+| Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
+| Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
+| Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
+| Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |
+| Dredge | shipped | the `dredge` card field, offered by `replacements.draw` -- it replaces the draw rather than adding to it | `dredge` |
+| Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |
+| Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
-| Entwine | routed | an additional cost that takes *both* modes; `choose_mode` picks exactly `count` | — |
-| Epic | blocked | a lasting restriction on casting, plus a copy each upkeep | — |
-| Escape | routed | casting from the graveyard, like `retrace`, with an exile cost instead of a discard | — |
+| Entwine | shipped | `kicker` for the price, plus `all_if` on `choose_mode` for the both | `kicker` |
+| Epic | shipped | `PlayerState.epic_source` gates `_cast_actions`, and the upkeep copies through `put_copy_on_stack` | `epic` |
+| Escape | free | `graveyard_cost` with an `exile_from_graveyard` cost, and `graveyard_cast: "graveyard"` so it comes back | — |
 | Evoke | shipped | card-level field, and the `evoked` condition its sacrifice trigger reads | `evoke` |
-| Evolve | routed | `permanent_enters` + a comparison against *this* creature's derived power | — |
+| Evolve | free | `permanent_enters` with a condition comparing `{"binding": "subject"}` against `{"self": true}` | — |
 | Exalted | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control equals 1 | — |
-| Exert | routed | `attacks` trigger plus a `may`; `skip_untap` already exists for the cost | — |
-| Exploit | routed | `self_enters` + an optional sacrifice; the "if you do" is an ordinary `may` `else` | — |
-| Explore | routed | `reveal` and `add_counters` exist; needs the revealed card routed by type | — |
-| Extort | routed | `spell_cast` trigger and `may` `pay` exist; the drain is `lose_life` plus `gain_life` | — |
+| Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py` | — |
+| Exploit | free | `self_enters` trigger, `may`, then `sacrifice` and whatever the card does — cashed by `test_exploit_and_bloodrush.py` | — |
+| Explore | shipped | op — the branch reads the card just revealed, which no condition can name | `explore` |
+| Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |
 | Fabricate | free | `self_enters` trigger, then `choose_mode` between `add_counters` and `create_token` | — |
-| Fading | routed | `upkeep` + `remove_counters` + a sacrifice; needs "if you can't" to be askable | — |
-| Fateseal | routed | `scry` on another player's library — the op is hard-wired to the controller | — |
+| Fading | free | `upkeep` trigger with an `if` on `counters_on` — "if you can't" is an ordinary comparison, and the sacrifice is the `else` | — |
+| Fateseal | free | `scry` with `player` naming whose library and `chooser` naming who decides | — |
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
-| Flanking | routed | needs "whenever this becomes blocked", which no event covers | — |
-| Flashback | routed | casting from the graveyard, like `retrace`, then exiling instead of returning | — |
-| Flip | refused | flip cards; see rules-coverage.md | — |
-| Forecast | routed | an activated ability from hand that reveals rather than discarding — and so cannot use the cycling guard | — |
-| Foretell | blocked | a special action putting a card in exile to be cast later; suspend is the nearest shape | — |
-| Frenzy | routed | needs "attacks and isn't blocked", which no event covers | — |
-| Graft | routed | enters with counters, then moves them on another creature entering | — |
-| Gravestorm | routed | spell copying, counted off a per-turn ledger | — |
-| Haunt | blocked | exile attached to a creature, with a second trigger on its death | — |
-| Hideaway | blocked | exiling a card face down and casting it later from under a permanent | — |
+| Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |
+| Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
+| Flip | free | `back_face` plus the `transform` op, both shipped for Bloodline Keeper — 711 is a DFC whose difference is which way the cardboard turns | `back_face` |
+| Forecast | shipped | `active_zones: ["hand"]` plus `activate_steps` and `once_each_turn`, which is the fourth way to satisfy the guard | — |
+| Foretell | shipped | suspend's special action, shared: `{2}` to exile it, then a cast from exile at the `foretell` price on a later turn | `foretell` |
+| Fuse † | shipped | a third cast line on a split card: one card built from both halves — costs added, target lists concatenated, both effect lists run through **one** `EffectContext`, which is splice's argument | `fuse` |
+| Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
+| Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
+| Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
+| Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
+| Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
-| Imprint | blocked | exile attached to a permanent, with abilities reading the exiled card | — |
+| Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
-| Infect † | routed | poison counters, plus damage-as-counters — the wither half is the same replacement | — |
-| Inspired | routed | needs a "becomes untapped" event | — |
+| Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
+| Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
-| Investigate | routed | `create_token` exists; the Clue needs a token with an activated ability | — |
-| Jump-start | routed | casting from the graveyard with a discard cost — retrace, discarding any card rather than a land | — |
+| Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
+| Jump-start | free | `graveyard_cost` repeating the printed mana plus `discard: 1`; the exile rider is the default | — |
 | Kicker | shipped | card-level field, and the `kicked` condition, readable on the object after resolution | `kicker` |
 | Landwalk — plainswalk | shipped | `Keyword`, read by `combat.can_block` against the defender's board | `plainswalk` |
 | Landwalk — islandwalk | shipped | `Keyword` | `islandwalk` |
@@ -257,59 +260,60 @@ This is the long tail, and where the build order comes from.
 | Landwalk — mountainwalk | shipped | `Keyword` | `mountainwalk` |
 | Landwalk — forestwalk | shipped | `Keyword` | `forestwalk` |
 | Landwalk — nonbasic † | shipped | `Keyword`, and **not** a sixth `LANDWALK_SUBTYPE` row: the test is a supertype the land must lack | `nonbasic_landwalk` |
-| Level up | blocked | levels are a characteristic-defining subsystem, not counters with a static | — |
+| Level up | free | a level counter, plus `set_pt` / `grant_keyword` statics whose `condition` is an `all` of two `counters` comparisons -- a band | `set_pt` |
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
-| Madness | blocked | replaces a discard, and the replacement whitelist has no discard form | — |
-| Manifest | blocked | face-down creatures | — |
-| Meld | refused | melding; see rules-coverage.md | — |
-| Mentor | routed | `attacks` trigger; the target filter must compare against this creature's derived power | — |
-| Miracle | blocked | replaces the first draw of a turn, and needs the draw's ordinality | — |
-| Modular | routed | enters with counters, then moves them all on death | — |
+| Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
+| Manifest | shipped | the `manifest` op, plus the face-down shell in `chars` and the turn-face-up activation | `manifest` |
+| Meld | shipped | the `meld` op: mutate's merged permanent with the pair fixed by `melds_with` and the result a third card entry, `melds_into` | `meld` |
+| Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
+| Miracle | shipped | the `miracle` card field, read off `cards_drawn_this_turn` *before* the draw bumps it | `miracle` |
+| Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |
 | Monstrosity | shipped | op, plus the one-way flag and the `becomes_monstrous` trigger | `monstrosity` |
-| Morph / megamorph | blocked | face-down creatures | — |
-| Mutate | blocked | stacked permanents with merged abilities | — |
-| Ninjutsu | blocked | returning an unblocked attacker and putting a creature in attacking, without casting | — |
-| Offering | routed | an alternative cost reduced by a sacrificed creature — this is `emerge`, restricted by type | — |
-| Overload | routed | a cost that swaps a targeted selector for a global one | — |
+| Morph / megamorph | shipped | a face-down cast line at a fixed `{3}`, and `morph` / `morph_counter` for turning up | `morph` |
+| Mutate | shipped | an alternative cost with `MUTATE_TARGET`, and a **synthesised `CardDef`** written onto the host at `card_of` — the top card carrying the abilities of everything under it | `mutate` |
+| Nightbound † | shipped | the other half of daybound, and the reason the switching code keeps no record: the two are printed one per face, so `chars` already says which way round a permanent is | `nightbound` |
+| Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
+| Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
+| Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
-| Persist | routed | a dies-trigger return with a counter; the "if it had none" gate is `counters_on` | — |
-| Phasing | refused | phasing; see rules-coverage.md | — |
-| Poisonous | routed | poison counters are not a loss condition the engine checks | — |
+| Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
+| Phasing | shipped | a `Keyword` read by the untap step: a phased-out permanent leaves `state.battlefield` and stays in `state.objects`, which is what "treated as though it does not exist" means here | `phasing` |
+| Poisonous | free | `deals_combat_damage_to_player` trigger, then `add_poison`; ten is lethal in the state-based pass | `add_poison` |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
-| Proliferate | routed | needs "every object with any counter", and counter kinds are not enumerable off an object | — |
-| Provoke | routed | `must_attack` exists for requirements; this is the block-requirement mirror, which does not | — |
-| Prowl | blocked | an alternative cost gated on a per-turn damage ledger | — |
-| Rampage | routed | needs "becomes blocked" and the count of blockers | — |
-| Rebound | routed | `delay` already schedules the recast; the exile-instead-of-graveyard half is a replacement | — |
-| Recover | routed | `creature_dies` trigger plus `may` `pay`, with an exile `else` | — |
+| Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |
+| Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
+| Prowl | free | `alternative_cost` with a `{"combat_damage_by": [...]}` condition, off a seventh ledger tally | — |
+| Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
+| Rebound | shipped | card-level field: the exile rider on resolution, then suspend's free cast at your next upkeep | `rebound` |
+| Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
-| Renown | routed | `deals_combat_damage_to_player` trigger plus a one-way flag, exactly like `monstrous` | — |
-| Replicate | routed | an additional cost paid repeatedly, plus spell copying | — |
+| Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
+| Replicate | shipped | `additional_cost` with both modifiers -- one cast line per number of times paid | `additional_cost` |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
-| Riot | routed | `self_enters` + `choose_mode`, but a `choose_mode` inside a trigger resolves late | — |
-| Ripple | blocked | free casts off a library scan, retriggering itself | — |
+| Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
+| Ripple | shipped | the `ripple` op -- cascade's shape at a fixed depth, matched on the source's own name | `ripple` |
 | Scavenge | free | activated from the graveyard with an exile cost, then `add_counters` | — |
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |
 | Shroud | shipped | `Keyword`, read by `targeting.can_be_targeted` only — stops the controller too | `shroud` |
 | Skulk † | shipped | `Keyword`, compared on **derived** power inside `combat.can_block` | `skulk` |
-| Soulbond | blocked | a paired-permanent relationship with no representation | — |
+| Soulbond | shipped | a symmetric `paired_with` field, the `pair` op, and the `paired` / `paired_with_source` static filters | `pair` |
 | Soulshift | free | `dies` trigger, then `return_from_graveyard` filtered by subtype and `mana_value` | — |
-| Spectacle | blocked | an alternative cost gated on a per-turn damage ledger | — |
-| Splice | blocked | adding one card's effects to another spell as it is cast | — |
-| Split second | routed | a flag suppressing priority while the spell is on the stack | — |
-| Storm | routed | spell copying, counted off a per-turn spell ledger | — |
-| Sunburst | routed | enters with counters scaled by the colours actually spent, which payment does not report | — |
+| Spectacle | free | `alternative_cost` with a condition on `life_lost_this_turn` over `each_opponent` | — |
+| Splice | shipped | a card-level `splice` cost offered in `_cast`, recorded on the `StackItem` and run after the host's effects | `splice` |
+| Split second | free | the `split_second` card field — priority is *not* suppressed; casting and non-mana activations are withheld while it is on the stack | `split_second` |
+| Storm | free | `spell_cast` trigger on the stack, then `copy_spell` with `spells_cast_this_turn` minus one | `copy_spell` |
+| Sunburst | free | `self_enters` trigger, then `add_counters` off `{"colors_of_mana_spent": true}` | — |
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
-| Totem armor | routed | a destruction replacement on the enchanted creature | — |
+| Totem armor | shipped | `Keyword` on the **Aura**, read by `zones.destroy` -- the Aura is destroyed instead | `totem_armor` |
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
-| Transform | refused | transforming cards; see rules-coverage.md | — |
+| Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |
-| Tribute | routed | `self_enters` with a choice belonging to an opponent; `two_piles` proves the shape is reachable | — |
-| Undying | routed | a dies-trigger return with a counter; the mirror of persist | — |
-| Unearth | routed | activated from the graveyard, returning to play with haste and a delayed exile | — |
-| Unleash | routed | enters with a counter is whitelisted, but there is no `cant_block` static to pair with it | — |
-| Wither | blocked | a damage replacement, and the whitelist has no damage form | — |
+| Tribute | free | one `may` with `player: "opponent"` and an `else` — the shape was not merely reachable, it was already spelled | — |
+| Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
+| Unearth | free | activated from the graveyard: `put_onto_battlefield` self, `grant_keyword` haste `permanent`, then a `delay`ed `exile` | — |
+| Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
+| Wither | shipped | `Keyword`, read by `damage_permanent` -- the counters land instead of the damage mark | `wither` |
 
 ## Ability words
 
@@ -320,21 +324,21 @@ is ordinary, which is why most of this table is `free`.
 |---|---|---|---|
 | Addendum | free | condition `is_your_turn`, which is as close as the engine gets and is right for a sorcery-speed clause | — |
 | Battalion | free | `attacks` trigger, condition `cmp` on `count` of attacking creatures you control | — |
-| Chroma | routed | counting mana symbols in a zone; nothing reads a card's pips | — |
-| Domain | blocked | counts basic land *types*, not lands; no distinct-subtype count exists | — |
-| Enrage | routed | needs a "this was dealt damage" trigger event | — |
+| Chroma | free | value `{"mana_symbols": {"of": …}}`, in both the effect and static languages | `mana_symbols` |
+| Domain | free | value `{"distinct": {"of": "basic_land_type"}}` over lands you control | `distinct` |
+| Enrage | free | the `dealt_damage` trigger, with `{"binding": "amount"}` for "that much" | — |
 | Fateful hour | free | condition `cmp` on `life_of` `"you"` | — |
 | Ferocious | free | condition `exists` with `power` `>=` 4 | — |
 | Grandeur | free | activated from hand, cost `discard_selector` by `name` | — |
 | Hellbent | free | condition `cmp` on `cards_in_hand` equals 0 | — |
-| Heroic | routed | needs a "becomes the target of a spell" trigger event | — |
-| Join forces | routed | mana contributed by several players; every cost is paid by one | — |
-| Kinship | routed | `upkeep` trigger; needs to look at the library top and read its subtypes | — |
+| Heroic | free | `becomes_target` trigger with `controller: "you"`, then whatever the card does | — |
+| Join forces | shipped | the `join_forces` op -- one unit at a time, in turn order from the caster | `join_forces` |
+| Kinship | free | `upkeep` trigger, `snapshot` over `{"zone": "library"}` (which binds the top card), then `exists` with `shares_a_type_with: "self"` | `snapshot` |
 | Landfall | free | `permanent_enters` with `types: ["Land"]` — **not** `land_played`, which is narrower | — |
 | Metalcraft | free | condition `cmp` on `count` of artifacts you control | — |
-| Morbid | blocked | "a creature died this turn" — a per-turn ledger the engine does not keep | — |
-| Radiance | routed | widens a target to everything sharing a colour with it | — |
-| Raid | blocked | "you attacked this turn" — a per-turn ledger | — |
+| Morbid | free | condition `cmp` on `creatures_died_this_turn` over `all` — the per-turn ledger shipped | — |
+| Radiance | free | `snapshot` the target, then a selector with `shares_a_color_with` and `exclude_binding` | `shares_a_color_with` |
+| Raid | free | condition `cmp` on `attacked_this_turn` over `you` — the per-turn ledger shipped | — |
 | Rally | free | `permanent_enters` with `subtypes: ["Ally"]` | — |
 | Sweep | free | cost `return_to_hand` over a selector by `subtypes`, then a value off `count` | — |
 | Threshold | free | condition `cmp` on `count` of `zone: "graveyard"`, `controller: "you"` | — |
@@ -342,72 +346,154 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**The largest single finding is that ability words are nearly free.** Twelve of
-the twenty-two above need no engine work at all, and neither do a dozen entries
-in the expansion table — adapt, affinity, afterlife, alliance, battle cry,
-fabricate, living weapon, populate, reinforce, scavenge, soulshift, support,
-transfigure, transmute. Those are `/author-cards` jobs, not `/extend-dsl` jobs,
-and nothing in the demand-driven report would ever have surfaced them: a
-capability with no gap record does not appear there, and a capability that is
-already expressible never gets a gap record written for it.
+**Every row is shipped or free** — 92 shipped, 93 free. `routed`, `blocked` and
+`refused` are all empty.
 
-**The evasion family is now closed.** Fear, intimidate, horsemanship, shadow and
-nonbasic landwalk shipped together, because they are one capability and not five
-— every one is a question `combat.can_block` asks of `chars` on both creatures,
-and the rest of `can_block` was already the answer. What is left of combat is
-not evasion at all: flanking, rampage, bushido, frenzy and provoke each want a
-*trigger event* the engine does not have ("becomes blocked", "attacks and isn't
-blocked"), which is a different tier of work with frontend consequences.
+The single most useful finding, made over and over, is that **`blocked` was a
+routing error rather than a size estimate** — every one of the twenty-five rows
+that started there has shipped. Eleven keywords filed
+against a subsystem turned out to need something that already existed, or
+something small in a place nobody had looked:
 
-**The blocked entries cluster, and the clusters are small.** Nearly everything
-marked `blocked` above waits on one of six things:
-
-| Blocker | Waiting on it |
+| filed as | what it actually was |
 |---|---|
-| A **per-turn ledger** — did a player attack, take damage, lose a creature | morbid, raid, bloodthirst, spectacle, prowl, storm, gravestorm |
-| **Casting from the graveyard**, generalised past `retrace` | flashback, escape, jump-start, embalm, unearth, disturb |
-| **Spell copying** | casualty, conspire, replicate, storm, gravestorm, ripple |
-| **More replacement forms** — draw, discard, damage, destruction | dredge, madness, wither, miracle, totem armor, regeneration |
-| **Face-down and multi-faced cards** | morph, manifest, adventure, aftermath, transform, disturb, meld |
-| **`unless_pays`** | ward, and Rhystic Study, which already has gap records |
+| wither, infect — "the whitelist has no damage form" | a keyword read by `damage_permanent`, where deathtouch already sits |
+| regeneration, totem armor — "a destruction replacement" | a check in `zones.destroy`, the one function every destruction goes through |
+| dredge, madness, miracle — "the whitelist has no draw/discard form" | a **call-graph** change: `turn.begin_step` already ran through `Game._run`, so only `_draw_step` beneath it could not suspend |
+| cascade, ripple — "free casts off a library scan" | the free cast was `suspend.cast_for_free`; only the scan was missing |
+| foretell — "suspend is the nearest shape" | suspend is the *same* shape, down to the `ActionKind` |
+| champion, imprint — "exile tied to a permanent" | `exile` with `until_leaves`, shipped for Oblivion Ring, read from each end |
+| level up — "a characteristic-defining subsystem" | `set_pt` (which *replaces* P/T) plus a band written as `all` over two `counters` comparisons |
 
-A per-turn ledger is one piece of state and unblocks seven mechanics. That is
-the shape of argument this page exists to make available, and it is not visible
-one gap record at a time.
+**Before building a subsystem for a keyword, re-derive the keyword from its
+printed text.** Twice the census named a subsystem that the printed line did not
+actually require, and once (dredge) it named the right cluster for the wrong
+reason — the obstacle was not the replacement whitelist but the call graph
+above it.
+
+### What is genuinely left
+
+**Nothing.** The `blocked` column is empty.
+
+Every one of the twenty-five rows that started there has shipped, and the
+pattern held to the last one: **`blocked` was a routing error, not a size
+estimate.** The final four were the cluster the census called "a second castable
+face", and it was three different problems wearing one name:
+
+| keyword | what the census said | what it was |
+|---|---|---|
+| adventure, aftermath | one cluster, needing the authoring pipeline | one cluster, needing `card_of` — which `back_face` had already built |
+| bestow | the same cluster | not a second *spell* at all: one spell landing as two different permanents, so `chars` rather than `card_of` |
+| mutate | "the only genuine subsystem left" | one `CardDef` **synthesised at merge time**, precisely *because* `card_of` is a single choke point |
+
+Mutate is the sharpest version of the finding. The census's argument was "a
+`GameObject` is one card, and every choke point the other reversals leaned on
+assumes that" — and the first half is true while the conclusion is backwards. A
+merged permanent is one `CardDef`: the card on top, carrying the abilities of
+everything under it, built once and stored on the object. `chars`, legality,
+triggers, the stack's ability lookup and the serializer all read it through
+`card_of` and none of them changed. The subsystem the census feared was the
+*alternative* implementation — a list of cards per permanent, and every reader
+taught to walk it.
+
+What remains genuinely open is the **authoring pipeline**, not the engine: it
+emits one card entry per answer file, so a two-faced card is two hand-written
+entries linked by id, the way `bloodline_keeper` / `lord_of_lineage` already
+are. That is what the `split-cards-fuse` gap record is really asking for.
+
+**Fuse** was the other half of that record and it is done. `second_face` shipped
+one face *or* the other — `card_of` answers with exactly one — and fuse is the
+case where the answer is *both*. The shape it needed already existed and it is
+**splice**: a spliced card's effects run after its host's through the same
+`EffectContext`, and that shared context is what makes them one spell rather
+than two. Fuse is the same thing with the second effect list coming from the
+card's own other half, so nothing reaches into `card_of` at all — the fused cast
+builds one card from the two and hands it to the machinery that prices, targets
+and resolves any other spell.
+
+### The refused, all of them reversed
+
+`refused` is a recorded decision rather than a difficulty, and **all six have
+been reversed**:
+
+- **Regeneration** was refused as "a destruction-replacement shield" and now
+  ships, because `zones.destroy` is a single choke point.
+- **Daybound / nightbound** was refused as needing "a game-wide designated
+  state the engine has no place to keep". That describes the problem exactly and
+  the answer is one field: `GameState.day_night`, the same shape `turn` and
+  `step` already are, because day and night belong to the **table**. Everything
+  else was there — `TurnLedger.spells_cast` for "cast no spells during their own
+  turn", `transform` for the permanents turning over, and `chars` for which way
+  round one is, since daybound is printed on the front face and nightbound on
+  the back.
+- **Phasing** was refused as changing "how the untap step works for *every*
+  permanent in the game". It changes it for one permanent, once. 702.26c
+  ("treated as though it does not exist") is a **list membership**: the
+  permanent leaves `state.battlefield` and stays in `state.objects`, which is
+  where a card on the stack and a card under a merged permanent already sit, so
+  every walk of the battlefield misses it with no test of its own — and no zone
+  change means counters, auras, damage and 702.26f's "continuously on the
+  battlefield" all hold because nothing moved.
+- **Meld** was refused for the same words as flip — "a card-wide designated
+  state the engine has no place to keep" — and by the time mutate shipped, the
+  place existed. It is the merged permanent again, with the pair fixed by the
+  card rather than chosen by the caster, and one thing genuinely harder: 701.37c
+  exiles both cards and returns them melded, so the melded permanent *enters*.
+- **Flip** was refused as needing "a card-wide designated state the engine has
+  no place to keep", and needed *nothing*. Rule 711 is `back_face` plus the
+  `transform` op, both of which shipped for Bloodline Keeper, and every
+  difference between a flip card and a transforming double-faced one is a
+  difference about **cardboard** — which way you turn it. It is now `free`, with
+  `tests/unit/test_flip.py` as the witness, because a status nobody checked is a
+  status nobody should trust.
+
+**Nothing is refused any more.** Banding was the last row, and its recorded
+reason was half right in the way that turned out to matter:
+
+> needs player-chosen combat damage assignment, which the engine automates for
+> every creature.
+
+The engine does not *lack* damage assignment order. It has had the concept all
+along — `CombatState.block_order` — and has simply been **sorting it instead of
+asking**. The automatic sort by effective toughness *is* a choice made silently
+on the attacking player's behalf, so banding is two sentences rather than a
+subsystem: ask, and ask the other player. `ask_objects` already records the
+order options were taken in, which is exactly what a damage assignment order is,
+so it needed no new `DecisionKind` either.
+
+| half | rule | how |
+|---|---|---|
+| attacking as a band | 702.21b | two `ask_objects` questions, because the printed sentence is two constraints — any number *with* banding, then at most one *without* |
+| blocked as a unit | 702.21e | `band_of`, which returns a band of one for everything else, so the ordinary case falls straight through |
+| the damage assignment order changes hands | 702.21 | `_order_chooser`, and `_divide` — one walk of 510.1c, pointed either way |
+
+*Manual damage division* remains a recorded simplification in
+[rules-coverage.md](rules-coverage.md) for combats with no banding in them: the
+automatic sort still stands there, and nobody is asked. That is a divergence
+about **who is asked in the ordinary case**, not about banding, and it is stated
+where the rest of the simplifications are.
 
 ## Suggested build order
 
-Cheapness first, breadth second. Cross-check each against
-[unsupported-cards.md](unsupported-cards.md) before starting — where a
-capability already has gap records, those cards are the real specification, and
-`/extend-dsl` rule 1 still applies: **one capability per run**.
+There is no engine work left in this census. The next thing worth building is
+the **authoring pipeline's** two-entries-from-one-answer, which is what
+`split-cards-fuse` is really asking for, and after that **fuse** — the one
+printed shape `card_of` cannot answer, because it is a single spell made of two
+faces at once.
 
-1. **Harvest the free rows.** No engine work. Each is an `/author-cards` run
-   that will either produce a card or produce a gap record correcting this page,
-   and both outcomes are useful.
-2. **A per-turn ledger.** One piece of state, cleared at cleanup, exposed as
-   conditions. Seven mechanics, and it is the prerequisite most others assume.
-3. **Casting from the graveyard, generalised.** `retrace` already proved the
-   legality scan; flashback and escape differ only in the cost and where the
-   card goes afterwards.
-4. **`unless_pays`.** Ward is evergreen, so this compounds with every future
-   set, and the demand side already has records for it.
-5. **Spell copying.** A cluster of six, and the object model already copies
-   permanents.
-6. **More replacement forms.** The whitelist is deliberate and widening it is a
-   design decision, not just work — read [adr/0001-layers-lite.md](adr/0001-layers-lite.md)
-   first.
-
-Face-down and multi-faced cards are last on purpose: they are the only cluster
-that is a genuine rules subsystem rather than a missing vocabulary item, and
-`/extend-dsl` rule 4 says to stop and report rather than start one inside a
-card-unblocking run.
+Cross-check [unsupported-cards.md](unsupported-cards.md) first: where a
+capability already has gap records, those cards are the real specification.
+`/extend-dsl` rule 1 still applies: **one capability per run.**
 
 ## Provenance
 
 The census is the supplied source document, entry for entry, plus the rows
 marked **†**: hexproof, skulk, intimidate and partner, which the engine
-implements and the source omits; mill and surveil, which are keyword actions the
+implements and the source omits; nightbound, which the source folds into the
+daybound entry and the engine keeps as its own `Keyword` because it is printed
+on the other face; fuse, which the source omits and which the engine implements
+as a card-level field rather than a `Keyword`, since it is a third way to cast
+one card rather than a characteristic of anything; mill and surveil, which are keyword actions the
 engine already has as ops; and infect, which the source discusses inside the
 poisonous entry rather than as one of its own. Landwalk is expanded into its six
 keywords — the five basic types plus nonbasic — because that is how the engine

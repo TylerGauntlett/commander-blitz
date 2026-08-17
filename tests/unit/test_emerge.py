@@ -33,7 +33,7 @@ from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.enums import ActionKind
 from automtg.engine.errors import DslError
-from tests.conftest import only_oid
+from tests.conftest import only_oid, pass_until
 
 EMERGER = {
     "id": "t_emerger_probe",
@@ -113,6 +113,9 @@ class TestWhatCastingItDoes:
     def test_it_arrives_on_the_battlefield(self, builder):
         game = board(builder)
         game.apply(next(a for a in casts(game) if a.emerge_oid is not None))
+        # The cast trigger stops to choose its four targets (603.3d), so the
+        # spell is still on the stack underneath it until someone answers.
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
         assert only_oid(game, "t_emerger")
 
     def test_mana_value_is_unchanged(self, builder):
@@ -129,11 +132,11 @@ class TestTheCastTrigger:
     def test_it_fires_while_the_card_is_still_a_spell(self, builder):
         """The zone nothing scanned.
 
-        Asserted on `ability_triggered` rather than on taps. The trigger takes
-        the first four permanents in deterministic order, which are Islands --
-        several of them already tapped to pay for the spell -- and `tap` on an
-        already-tapped permanent emits nothing. Counting taps would measure the
-        board's sort order, not whether the ability fired.
+        Asserted on `ability_triggered` rather than on taps. The trigger asks
+        its controller which four permanents, and this test does not answer --
+        it only cares that the ability was reached at all. Counting taps would
+        measure the answer the test happened to give, not whether the stack was
+        scanned.
         """
         game = board(builder)
         before = len(game.state.events)

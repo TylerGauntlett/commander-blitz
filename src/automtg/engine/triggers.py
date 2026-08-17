@@ -38,14 +38,61 @@ TRIGGER_EVENTS: dict[str, str] = {
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
+    #: "At the beginning of each of your postcombat main phases…" Florian.
+    #: `begin_combat` is the nearest existing phase event and is on the wrong
+    #: side of combat -- a card hung on it would read a life-loss tally from
+    #: before the damage it is counting.
+    "postcombat_main": EventType.POSTCOMBAT_MAIN,
     "end_step": EventType.END_STEP,
     "you_gain_life": EventType.LIFE_GAINED,
+    #: "Whenever **you** attack" -- Clavileño. Once per combat in which its
+    #: controller declared one or more attackers, whatever the number. Not
+    #: `attacks`, which is per creature and would fire three times on a
+    #: three-creature swing. The event already existed and nothing listened.
+    "you_attack": EventType.ATTACKERS_DECLARED,
+    #: "Whenever an opponent loses life, you gain that much life." The amount is
+    #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
+    #: because the reminder text on every card of this shape says so out loud:
+    #: "(Damage causes loss of life.)" Infect damage is the exception and fires
+    #: nothing, since it costs no life.
+    "life_lost": EventType.LIFE_LOST,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
+    #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
+    #: sacrifice is one specific way of leaving, and the printed line is about
+    #: the choice rather than the death. Fired beside DIES rather than instead
+    #: of it, so everything already listening for a death still hears one.
+    "sacrificed": EventType.SACRIFICED,
+    #: "Whenever you **create** a token…" -- the other half of the same card.
+    #: `permanent_enters` with `{"is_token": true}` is the near miss and is close
+    #: enough to be tempting (111.1 makes creating and entering one act), but it
+    #: also fires for a token that changed zones and back, and it reads the
+    #: entering permanent's controller rather than the creator's.
+    "token_created": EventType.TOKEN_CREATED,
     "draw": EventType.DRAW,
     "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
+    #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
+    #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
+    #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
+    #: the event covers damage to players as well, and this half of it is the
+    #: half with an object to hang a trigger on.
+    "dealt_damage": EventType.DAMAGE_DEALT,
+    #: Heroic (702.109) and ward (702.21): "whenever this becomes the target of
+    #: a spell…".  Fired as the spell goes on the stack (603.2d), which is the
+    #: timing that makes ward mean anything.
+    "becomes_target": EventType.BECAME_TARGET,
+    #: Flanking (702.25), rampage (702.23), bushido (702.45) and frenzy
+    #: (702.35), which between them are every combat keyword the engine had no
+    #: event for. Both fire when blockers are declared, because that is the
+    #: instant either becomes knowable.
+    "becomes_blocked": EventType.BECAME_BLOCKED,
+    "attacks_unblocked": EventType.ATTACKED_UNBLOCKED,
+    #: Inspired (702.117): "Whenever this creature becomes untapped, …". The
+    #: event existed; what did not was the untap *step* saying which permanents
+    #: it untapped, which is where inspired fires nearly every time.
+    "becomes_untapped": EventType.UNTAPPED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -55,6 +102,8 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "permanent_enters",
         "dies",
         "creature_dies",
+        "sacrificed",
+        "token_created",
         "leaves_battlefield",
         "spell_cast",
         "attacks",
@@ -71,6 +120,21 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # time the event fires and `matches_card_filter` reads the printed face,
         # so the subject is still there to be asked about.
         "discard",
+        # The permanent that was dealt the damage, not the source dealing it:
+        # enrage is a fact about the creature being hurt, and `source: "self"`
+        # has to scope it to that creature rather than to everything it hits.
+        "dealt_damage",
+        # The permanent that was targeted, for the same reason: `source: "self"`
+        # on heroic means "a spell targeting *me*", and the event's `source` is
+        # the spell doing the targeting.
+        "becomes_target",
+        # The attacker. Both of these are told from the attacking creature's
+        # side -- `blocks` already covers the blocker's -- so `source: "self"`
+        # scopes them to the creature that was, or was not, blocked.
+        "becomes_blocked",
+        "attacks_unblocked",
+        # The permanent that untapped.
+        "becomes_untapped",
     }
 )
 
@@ -151,6 +215,22 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     seen: set[int] = set()
 
     def emit_from(obj: GameObject, zone: Zone):
+        if obj.face_down and zone is Zone.BATTLEFIELD:
+            # A face-down permanent has no abilities (707.2), so the hidden
+            # card's triggers do not listen. Checked here rather than at each
+            # trigger, because this is the one place that walks a card's
+            # abilities on behalf of an object.
+            #
+            # Except the one the *rules* put there. A cloaked permanent has ward
+            # {2} (701.61a), which comes from the cloak rule and not from the
+            # card underneath -- and must not come from the card, since that
+            # card is usually not even a creature. So it is supplied here, in
+            # the same breath as the sentence that says everything else is gone.
+            if obj.cloaked:
+                from .carddef import CLOAK_WARD
+
+                yield obj, CLOAK_WARD
+            return
         card = state.card_of(obj)
         for ability in card.abilities:
             if not ability.is_triggered or ability.trigger is None:
@@ -202,7 +282,15 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         obj = state.objects.get(subject)
         if obj is not None:
             card = state.card_of(obj)
-            for ability in card.abilities:
+            # Printed abilities and granted ones both. Every other branch of
+            # this generator pairs a `card.abilities` walk with
+            # `granted_abilities`; this one did not, so an ability granted to a
+            # creature could never fire on that creature's own death -- which is
+            # the whole of Malakir Rebirth.
+            from .primitives import granted_abilities
+
+            granted = [a for _granter, a in granted_abilities(state, subject)]
+            for ability in (*card.abilities, *granted):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
@@ -224,6 +312,22 @@ def _matches(
     # "creature_dies" is sugar for a dies trigger filtered to creatures.
     if spec.event == "creature_dies" and not event.data.get("was_creature", False):
         return False
+
+    if spec.event == "dealt_damage":
+        # `DAMAGE_DEALT` covers both shapes and says which it is. Damage to a
+        # player has no permanent for the trigger to be about, and `player` on
+        # that event is the one being hit rather than a controller, so letting
+        # it through would fire every enrage on the board off a Lightning Bolt
+        # to the face.
+        if event.data.get("to") != "permanent":
+            return False
+        # `source: "self"` here means *this creature was dealt damage*, never
+        # "this creature dealt it". The generic check above accepts either,
+        # because for most events the subject and the source are the same
+        # object -- for this one they are the victim and the attacker, so a
+        # bear would trigger its own enrage every time it hit something.
+        if spec.source == "self" and subject_oid != obj.oid:
+            return False
 
     # "…if it wasn't put onto the battlefield with this ability." The loop guard,
     # and it has to be checked here rather than as a condition, because by the
@@ -257,10 +361,57 @@ def _matches(
     if spec.condition is not None:
         from .effects.conditions import evaluate_condition
 
-        if not evaluate_condition(state, spec.condition, controller=obj.controller, source=obj.oid):
+        if not evaluate_condition(
+            state,
+            spec.condition,
+            controller=obj.controller,
+            source=obj.oid,
+            bindings=event_bindings(obj, spec, event),
+        ):
             return False
 
     return True
+
+
+def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:
+    """What the event carried, for a condition or a queued trigger to read.
+
+    Shared by `_matches` and `_queue` so an intervening-if and the ability it
+    gates cannot disagree about what "that creature" means. They used to: the
+    condition was evaluated with no bindings at all, so evolve's comparison
+    against the creature that entered read zero and the ability never fired --
+    quietly, and only for the conditions that ask about the event rather than
+    about the board.
+    """
+    bindings: dict[str, Any] = {
+        "self": obj.oid,
+        "event_player": event.player,
+        "event_type": event.type,
+        "x": obj.cast_x,
+    }
+    subject = _subject_oid(spec.event, event)
+    if subject is not None:
+        bindings["subject"] = subject
+    for key in EVENT_BINDING_KEYS:
+        if key in event.data:
+            bindings[key] = event.data[key]
+    return bindings
+
+
+#: Event payload keys carried into a trigger's bindings.
+EVENT_BINDING_KEYS = (
+    "amount",
+    "damage",
+    "life",
+    "sid",
+    "defender",
+    "was_attacking",
+    "counter",
+    "blockers",
+    # Persist and undying: what was on the creature before it died, which
+    # nothing can read off the object afterwards.
+    "had_counters",
+)
 
 
 def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
@@ -301,7 +452,13 @@ def _actor(
     # now -- reading the actor off the object would be reading a controller that
     # `reset_permanent_state` has already been through. `discard_cards` puts the
     # discarding player on the event, so take it from there.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat"):
+    # `becomes_target` is listed here for the same reason `discard` is, and it
+    # matters more: the clause asks *whose spell it is*. Heroic is "whenever you
+    # cast a spell that targets this creature" and ward is "whenever an opponent
+    # casts one", so reading the actor off the subject -- the creature being
+    # targeted, whose controller is nearly always the trigger's own controller
+    # -- would make heroic fire on everything and ward on nothing.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
@@ -347,6 +504,41 @@ def matches_card_filter(
     # answered from the per-turn ledger on the state rather than from the card
     # face -- and it has to be, because the subject has already died and
     # anything stored on it is gone.
+    # "When the creature this card haunts dies…" -- the mirror of the clause
+    # below, and answered off the *ability source* rather than off the subject:
+    # the haunted creature has just died and carries no record of who was
+    # haunting it, while the haunting card is sitting in exile with the link.
+    # "Whenever **equipped creature** dies…" -- Skullclamp. The same shape as
+    # `haunted_by` below: answered off the *ability source's* link rather than
+    # off the subject, because an Equipment knows what it is attached to and a
+    # dying creature does not know what was attached to it.
+    #
+    # `last_attached_to` is why this works at all. `zones.move_object` calls
+    # `_detach_all` before it fires LEAVES_BATTLEFIELD and DIES, so at match
+    # time the Equipment is attached to nothing and a plain `attached_to == oid`
+    # test could never be true for a dies trigger -- the exact failure this
+    # capability's gap record predicted.
+    if filt.get("attached") and oid not in (
+        ability_source.attached_to,
+        ability_source.last_attached_to,
+    ):
+        return False
+
+    haunted_by = filt.get("haunted_by")
+    if haunted_by is not None and (
+        haunted_by != "self" or ability_source.haunting != oid
+    ):
+        return False
+
+    # "Whenever the creature this card is encoded on deals combat damage…" --
+    # cipher, and the same shape as `haunted_by` one line up: answered off the
+    # ability source, which is the card sitting in exile with the link.
+    encoded_by = filt.get("encoded_by")
+    if encoded_by is not None and (
+        encoded_by != "self" or ability_source.encoded_on != oid
+    ):
+        return False
+
     damaged_by = filt.get("damaged_by")
     if damaged_by is not None:
         who = ability_source.oid if damaged_by == "self" else damaged_by
@@ -371,6 +563,36 @@ def matches_card_filter(
     supertypes = filt.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
+    # "…a creature spell that shares a creature type with your commander."
+    # Path of Ancestry. Answered here as well as in `selectors.matches` because
+    # this is the half a *trigger* filter reaches, and the printed subtypes are
+    # the right side of the comparison for a spell on the stack.
+    # "When **that mana** is spent to cast a spell…" -- Path of Ancestry, Opal
+    # Palace. Answered off the *subject*, which is the spell: `pay_mana` wrote
+    # onto it which permanents' mana abilities made the mana that paid for it,
+    # at the one instant that was knowable. A `mana_spent` event of its own
+    # would fire during cost payment, before the spell is on the stack and
+    # before its filter has anything to match against.
+    paid_by = filt.get("paid_by")
+    if paid_by is not None:
+        wanted = ability_source.oid if paid_by == "self" else paid_by
+        if wanted not in obj.mana_sources_spent:
+            return False
+
+    who = filt.get("shares_a_type_with_commander")
+    if who is not None:
+        from .characteristics import commander_subtypes
+
+        seats = (
+            [ability_source.controller]
+            if who in ("you", "controller")
+            else [p.pid for p in state.players if p.pid != ability_source.controller]
+        )
+        theirs: set[str] = set()
+        for seat in seats:
+            theirs |= commander_subtypes(state, seat)
+        if not (card.subtypes & theirs):
+            return False
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):
         return False
@@ -384,11 +606,28 @@ def matches_card_filter(
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False
+    # Power and toughness are read off the board when the subject is still on
+    # it, and off the printed face otherwise. Everything above this line is a
+    # characteristic no layer can change, which is why the rest of this function
+    # can read the card face and be right about a creature that has already
+    # died -- but P/T is the one thing anthems and counters move.
+    #
+    # Welcoming Vampire is the witness: "creatures you control with power 2 or
+    # less enter". A printed 2/2 entering under an anthem is a 3/3 and must not
+    # trigger it, and reading `card.power` says it does.
+    from .characteristics import chars
+
+    live = chars(state, oid) if obj.on_battlefield else None
     power = filt.get("power")
-    if power is not None and not _compare(card.power or 0, power):
+    if power is not None and not _compare(
+        (live.power if live else card.power) or 0, power
+    ):
         return False
     toughness = filt.get("toughness")
-    return not (toughness is not None and not _compare(card.toughness or 0, toughness))
+    return not (
+        toughness is not None
+        and not _compare((live.toughness if live else card.toughness) or 0, toughness)
+    )
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
@@ -423,6 +662,19 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> int | No
 
 
 def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent) -> None:
+    # "This ability triggers only once each turn." Counted here, where the
+    # ability *queues*, because that is the printed word: an ability that
+    # triggered and then fizzled has still used its one for the turn.
+    #
+    # Keyed by (permanent, ability index) rather than by card, so two Welcoming
+    # Vampires each get their own draw.
+    spec_cap = ability.trigger.max_per_turn if ability.trigger is not None else None
+    if spec_cap is not None:
+        key = (obj.oid, ability.index)
+        if state.triggers_this_turn.get(key, 0) >= spec_cap:
+            return
+        state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
+
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:
         raise RulesLoopError(
@@ -431,19 +683,11 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         )
     spec = ability.trigger
     assert spec is not None
-    bindings: dict[str, Any] = {
-        "self": obj.oid,
-        "event_player": event.player,
-        "event_type": event.type,
-        # Carried through so "enters with X counters" can read the X that was paid.
-        "x": obj.cast_x,
-    }
-    subject = _subject_oid(spec.event, event)
-    if subject is not None:
-        bindings["subject"] = subject
-    for key in ("amount", "damage", "life", "sid", "defender", "was_attacking", "counter"):
-        if key in event.data:
-            bindings[key] = event.data[key]
+    # The same bindings the intervening-if was evaluated against, so a
+    # condition and the ability it gates cannot read "that creature"
+    # differently. `x` is carried through so "enters with X counters" can read
+    # what was paid.
+    bindings = event_bindings(obj, spec, event)
 
     card = state.card_of(obj)
     state.pending_triggers.append(
@@ -453,6 +697,9 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
             controller=obj.controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
+            # Snapshotted now, while the object still exists -- see
+            # `TriggerInstance.def_id`.
+            def_id=obj.def_id,
             granted_by=_granter_of(state, obj, ability),
         )
     )
@@ -469,24 +716,40 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     )
 
 
-def drain_to_stack(state: GameState) -> int:
+def drain_to_stack(state: GameState):
     """Put every pending trigger on the stack in APNAP order.
 
-    Returns how many were put on the stack.  Within a single player's triggers
-    the order is the order they were collected (stable and deterministic).
+    Within a single player's triggers the order is the order they were
+    collected (stable and deterministic).
+
+    A generator, because a triggered ability with targets asks its controller
+    to choose them as it goes on the stack (603.3d) and that is a decision like
+    any other.
+
+    Each trigger is struck off `state.pending_triggers` **after** it lands on
+    the stack, one at a time, rather than the whole list being emptied up
+    front. Mid-drain the game is neither quiescent nor finished, and emptying
+    first made it look like both: with the list cleared and nothing on the
+    stack yet, "no pending triggers and an empty stack" -- which is how the
+    tests and the auto-pass check ask whether the board has settled -- was true
+    while a player still owed an answer.
+
+    The order is a snapshot, so a trigger that fires *while* the choice is
+    being made (a `became_target` trigger, most likely) waits for the next
+    pass, exactly as it did before.
     """
     if not state.pending_triggers:
-        return 0
+        return
     from .stack import push_triggered_ability
 
-    pending = state.pending_triggers
-    state.pending_triggers = []
-    count = 0
-    for pid in state.turn_order():
-        for trig in pending:
-            if trig.controller != pid:
-                continue
-            push_triggered_ability(state, trig)
-            count += 1
+    order = [
+        trig
+        for pid in state.turn_order()
+        for trig in state.pending_triggers
+        if trig.controller == pid
+    ]
     # Triggers controlled by players who have left the game simply vanish.
-    return count
+    state.pending_triggers = list(order)
+    for trig in order:
+        yield from push_triggered_ability(state, trig)
+        state.pending_triggers = [t for t in state.pending_triggers if t is not trig]

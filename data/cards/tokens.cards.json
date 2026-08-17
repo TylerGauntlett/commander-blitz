@@ -392,6 +392,142 @@
         "W"
       ],
       "is_token": true
+    },
+    {
+      "id": "vampire_2_2_b_flying",
+      "name": "Vampire Flying Token",
+      "oracle_text": "2/2 black Vampire creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_rogue_1_1_b_lifelink",
+      "name": "Vampire Rogue Token",
+      "oracle_text": "1/1 black Vampire Rogue creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "vampire_demon_4_3_wb_flying",
+      "name": "Vampire Demon Token",
+      "oracle_text": "4/3 white and black Vampire Demon creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire",
+        "Demon"
+      ],
+      "power": 4,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "blood_token",
+      "name": "Blood",
+      "oracle_text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Blood"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "discard": 1,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampire_1_1_wb_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 white and black Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
     }
   ]
 }

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import chars
+from .characteristics import chars, player_reveals_library_top, top_of_library
 from .costs import (
     commander_cost,
     land_drops_available,
@@ -179,8 +179,32 @@ def _player(
         },
         # Hidden zones are counts for everyone; only the viewer sees their own hand.
         "library_count": len(player.library),
+        # "Play with the top card of your library revealed." Sent to *every*
+        # seat, not just this player's, which is the whole of what the line
+        # does: the card is public, and an opponent who cannot see it is
+        # playing against information they are entitled to. `None` whenever
+        # nothing reveals it, so the client needs no separate flag.
+        "library_top": (
+            card_view(state, top.oid)
+            if player_reveals_library_top(state, pid)
+            and (top := top_of_library(state, pid)) is not None
+            else None
+        ),
         "hand_count": len(player.hand),
         "hand": [card_view(state, oid) for oid in player.hand] if own else None,
+        # "Look at target player's hand." Private information, so it is sent to
+        # the one seat entitled to it and nobody else -- the `seat in
+        # revealed_to` test is what keeps this from being `reveal`. Empty for
+        # your own hand, which `hand` already sends in full.
+        "hand_revealed": (
+            []
+            if own
+            else [
+                card_view(state, oid)
+                for oid in player.hand
+                if seat in state.objects[oid].revealed_to
+            ]
+        ),
         # Only the gates that are actually closed, keyed by oid.  A card absent
         # from this map is playable; see legality.unplayable_reason.
         "hand_reasons": (

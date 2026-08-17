@@ -30,8 +30,12 @@ def random_states(seed: int, deck_ids=("aesi", "edgar"), steps: int = 400):
 
 class TestLayout:
     def test_size_is_a_fixed_constant(self):
+        """The literal is the point: changing it invalidates every trained
+        checkpoint, so it should never move without somebody deciding to. Last
+        moved when planeswalkers became attackable and `DEF_CAP` rose from 3 to
+        8 -- see docs/adr/0002-flat-action-space.md."""
         assert action_space.ACTION_SPACE_SIZE == action_space.IDX_KEEP + 1
-        assert action_space.ACTION_SPACE_SIZE == 825
+        assert action_space.ACTION_SPACE_SIZE == 1025
 
     def test_index_ranges_do_not_overlap(self):
         boundaries = [

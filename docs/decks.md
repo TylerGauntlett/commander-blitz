@@ -1,6 +1,7 @@
 # The decks
 
-Four Commander-legal 100-card decks. **Every card in all four is implemented and
+Four Commander-legal 100-card decks, each the **printed precon**, with no
+substitutions left in any of them. **Every card in all four is implemented and
 tested** — `tests/cards/test_every_card_works.py` plays each one and asserts it
 resolves. That is what separates them from an imported deck, which is mostly
 cards generated with their rules text inert ([deck-import.md](deck-import.md)).
@@ -71,36 +72,40 @@ instant-speed removal protect the engine; the top end is large creatures.
 
 Eminence works from the command zone, which the engine supports through an ability's
 `active_zones`. 37 of the 62 non-land cards are Vampires, so the token trigger fires
-constantly. Legion Lieutenant, Stromkirk Captain and Vanquisher's Banner turn the
+constantly. Legion Lieutenant, Stromkirk Captain and Shared Animosity turn the
 swarm lethal; Blood Artist, Cruel Celebrant, Kalastria Highborn and Sanguine Bond mean
-that even losing creatures drains the table.
+that even losing creatures drains the table. Bloodline Keeper is the one card in
+the four decks with two faces: five Vampires on the board turns it into Lord of
+Lineage, a 5/5 that gives the rest of them +2/+2.
 
 ## Substitutions
 
-Where a card's real text is not expressible in the effect DSL, a comparable card in
-the same colours took its place. Every swap is recorded in the deck file itself and
-repeated here.
+**None, in any of the four.** All four are the printed precons, and every card in
+every one of them does what it prints.
 
-### Aesi
+That is a recent thing and it is the best evidence the
+[card pipeline](card-authoring.md) has. `substitutions` is still a field on
+`DeckModel`, and the dossier still derives `swaps` and `swap_note` from it, so a
+future deck can record one — the mechanism did not go away, the swaps did.
 
-**None.** It is the printed precon, and every card in it does what it prints. The five
-it used to carry went with the hand-curated list they belonged to.
+Aesi got there first, when the hand-curated Simic list was replaced by Commander
+Legends' Reap the Tides.
 
-### Edgar Markov
+Edgar Markov was the last, and it took seven cards and six capabilities:
 
-| Original | Replacement | Why |
-|---|---|---|
-| Captivating Vampire | Sanctum Seeker | Gaining control of a creature is not implemented |
-| Vampire Nocturnus | Necropolis Regent | Reading the top of the library needs continuous reveal |
-| Bloodline Keeper | Mavren Fein, Dusk Apostle | Transforming double-faced cards are not implemented |
-| Shared Animosity | Vanquisher's Banner | A buff counting other attackers needs dependent static effects |
-| Anguished Unmaking | Vindicate | Same effect at sorcery speed |
-| Mortify | Hero's Downfall | Selectors cannot express "creature **or** enchantment" as one target |
-| Bedevil | Dreadbore | Same reason |
+| Card | What it was waiting on |
+|---|---|
+| Mortify, Bedevil, Anguished Unmaking | **nothing** — `any_types` and `any_of` had shipped for other cards, so the note claiming "selectors cannot express *creature or enchantment*" was stale rather than true |
+| Captivating Vampire | `gain_control`, the `add_subtype` **op**, and a `tap_permanents` cost |
+| Shared Animosity | `shares_a_type_with` and `exclude_binding` — selectors describing one object relative to another |
+| Vampire Nocturnus | `reveal_library_top` and a `top_of_library` static condition |
+| Bloodline Keeper | transforming double-faced cards, and "activate only if…" |
 
-Two of these — Mortify and Bedevil — point at a genuine gap rather than a deliberate
-omission: the selector language has no union. Adding one would let those cards in
-without any other change.
+The three cards that needed nothing are the useful half of that table. A
+substitution is a claim about the engine written down at a moment in time, and
+nothing re-checks it — which is exactly what
+`python scripts/audit_cards.py --check-substitutions` is for, and why it prints
+"0 substitution(s) the engine has outgrown" rather than nothing at all.
 
 ## Where the cards live
 

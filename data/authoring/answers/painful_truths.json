@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "painful_truths",
+    "name": "Painful Truths",
+    "oracle_text": "Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell.",
+    "mana_cost": "{2}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "spell_effects": [
+      { "op": "draw", "player": "you", "amount": { "colors_of_mana_spent": true } },
+      { "op": "lose_life", "player": "you", "amount": { "colors_of_mana_spent": true } }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": { "0": 2 },
+    "life": { "0": 38 },
+    "library_size": { "0": 38 },
+    "graveyard_size": { "0": 3 }
+  }
+}

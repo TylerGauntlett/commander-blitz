@@ -97,7 +97,8 @@ def reference() -> dict:
     from automtg.engine.enums import CardType, Keyword, Supertype
     from automtg.engine.triggers import TRIGGER_EVENTS
 
-    from ..loader import STATIC_EFFECTS, STATIC_FILTER_KEYS
+    from ..loader import STATIC_CONDITION_HEADS, STATIC_EFFECTS, STATIC_FILTER_KEYS
+    from ..schema import CostModel
 
     return {
         "ops": sorted(known_ops()),
@@ -111,6 +112,12 @@ def reference() -> dict:
         # blocked on a mechanic that already shipped.  Tromokratis was.
         "static_effects": sorted(STATIC_EFFECTS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        # What a static's "as long as ..." clause may ask. A *third* language,
+        # neither `condition_keys` (which is the effect-side `if`) nor
+        # `static_filter_keys` -- and absent from the packet until Vampire
+        # Nocturnus, so a worker had no way to know a static could be
+        # conditional at all, let alone what it could be conditional on.
+        "static_condition_keys": sorted(STATIC_CONDITION_HEADS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know
         #: "if this creature has no +1/+1 counters on it" is sayable, and files
@@ -121,6 +128,13 @@ def reference() -> dict:
         "selector_keys": sorted(SELECTOR_KEYS),
         "condition_keys": sorted(CONDITION_KEYS),
         "value_keys": sorted(VALUE_KEYS),
+        # What an activated ability may charge. Omitted entirely until
+        # `tap_permanents` shipped and nothing could use it: a worker shown
+        # `ops` but not `cost_keys` has no way to tell a cost from an effect,
+        # so every "<cost>: <effect>" card either guesses or files a gap for a
+        # cost that already exists. Derived from the model the loader
+        # validates against, for the same reason `static_effects` is.
+        "cost_keys": sorted(CostModel.model_fields),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
@@ -128,6 +142,10 @@ def reference() -> dict:
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
             " against `{\"const\": 0}` and needs no new op.",
+            "`static_condition_keys` is what a static ability's optional"
+            " `condition` may ask -- an \"as long as ...\" clause that switches"
+            " the whole static on and off as the board moves. It is a third"
+            " language, neither `condition_keys` nor `static_filter_keys`.",
             "`selector_keys` is what an effect's `objects` or a target spec's"
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"
@@ -138,6 +156,11 @@ def reference() -> dict:
             " unclaimed means the card is only half implemented.",
             "An instant or sorcery puts its effects in `spell_effects`; a"
             " permanent puts them in `abilities`.",
+            "`cost_keys` is what an activated ability's `cost` may contain."
+            " A printed \"<cost>: <effect>\" line splits into a `cost` from"
+            " that list and `effects` from `ops` -- paying with an op instead"
+            " moves the payment to resolution and lets the ability be"
+            " activated when it could not be paid for.",
             "A static ability's filter may only read printed characteristics.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",

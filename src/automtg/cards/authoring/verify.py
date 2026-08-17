@@ -30,6 +30,7 @@ expectation are authored together and rejected together.
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -214,6 +215,7 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
     that matters -- so which one is being asked for has to be said out loud
     rather than settled by whichever legality happens to list first.
     """
+    matches = []
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
             continue
@@ -221,8 +223,20 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
-            return action
-    return None
+            matches.append(action)
+    if not matches:
+        return None
+    # The **front** face, whenever one is offered. A modal DFC is offered twice
+    # -- Malakir Rebirth as a cast and Malakir Mire as a land drop -- and the
+    # payload under test describes the front: its `oracle_text`, its `mana_cost`
+    # and its `spell_effects` are the front's. Exercising the back would judge
+    # an Instant by where a Land ended up, which is a gate failure no expectation
+    # could ever answer.
+    #
+    # `_land_actions` runs before `_cast_actions`, so without this the land line
+    # simply wins on ordering -- the same kind of accident `kicked` already
+    # disambiguates for a spell offered twice.
+    return next((a for a in matches if not a.second_face), matches[0])
 
 
 # ----------------------------------------------------------------------
@@ -360,6 +374,7 @@ def verify(
     *,
     oracle_text: str | None = None,
     supersedes: bool = False,
+    companions: Sequence[dict] | None = None,
 ) -> Verdict:
     """Run every gate over one candidate.
 
@@ -419,9 +434,19 @@ def verify(
         return verdict
     existing = {c.id: c for c in registry if c.id != card.id}
     try:
-        merged = CardRegistry({**existing, card.id: card})
-        from ..loader import validate_token_references
+        # A transforming card is **two** entries and one object: the front names
+        # its `back_face` and `link_faces` derives the pointer back. The back
+        # face has to be in the pool before the front can compile against it, so
+        # it arrives here rather than in a second answer file -- one card, one
+        # answer, however many faces it has.
+        pool = {**existing, card.id: card}
+        for extra in companions or ():
+            extra_card = compile_card(CardModel.model_validate(extra))
+            pool[extra_card.id] = extra_card
+        from ..loader import link_faces, validate_token_references
 
+        link_faces(pool)
+        merged = CardRegistry(pool)
         validate_token_references({c.id: c for c in merged})
     except AutoMtgError as exc:
         verdict.failed_gate = "registry"
@@ -481,10 +506,17 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     # what it enchanted, and state-based actions correctly bin it a moment later
     # -- the card working exactly as printed. Rejecting that would throw away
     # every Aura whose own effect can finish its host.
-    allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
-    if card.is_permanent and obj.zone not in allowed:
+    # The face that was actually played, which is not always the one under test:
+    # a modal DFC played as its land half is a permanent even though the card
+    # this gate was handed is an Instant. `find_play` prefers the front, so this
+    # is the belt to that braces -- and it is the honest question either way,
+    # since "did it end up where this kind of card ends up" is about the face
+    # that resolved.
+    played = game.state.card_of(obj)
+    allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
+    if played.is_permanent and obj.zone not in allowed:
         return [f"{card.id} is a permanent but ended in {obj.zone.value}"]
-    if not card.is_permanent and obj.zone is not Zone.GRAVEYARD:
+    if not played.is_permanent and obj.zone is not Zone.GRAVEYARD:
         return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
 
@@ -662,6 +694,24 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.emerge is not None and stripped.lower().startswith("emerge "):
         return True
     if card.evoke is not None and stripped.lower().startswith("evoke "):
+        return True
+
+    # "As an additional cost to cast this spell, sacrifice a creature" is the
+    # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
+    # ability that could honestly claim it. This did not surface while the only
+    # cards carrying one were instants and sorceries, because `claimed_lines`
+    # treats `spell_effects` as accounting for every line of a spell. A creature
+    # with an additional cost -- Demon of Catastrophes -- has no `spell_effects`
+    # at all, and its printed cost went unclaimed.
+    if card.additional_cost is not None and stripped.lower().startswith(
+        "as an additional cost"
+    ):
+        return True
+
+    # "Devoid (This card has no color.)" is self-implementing -- but only if the
+    # card really is colourless, which is why this is a check and not a skip. A
+    # card printing Devoid while carrying colours has not implemented it.
+    if stripped.lower().startswith("devoid") and not card.colors:
         return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")

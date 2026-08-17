@@ -40,6 +40,11 @@ class EffectContext:
     loop_value: Any = None
     #: Card id of the source, for log messages.
     source_name: str = ""
+    #: How many times this ability has resolved this turn, *counting this one*.
+    #: Set by ``stack.resolve_top``; 0 for a spell, which has no ability index
+    #: and cannot ask.  Carried here rather than looked up from the ledger
+    #: because the ability index is not otherwise part of an effect's world.
+    resolutions: int = 0
 
     def target_refs(self, target_id: str) -> tuple[TargetRef, ...]:
         return self.targets.get(target_id, ())
@@ -128,9 +133,23 @@ def ask_yes_no(
 
 
 def ask_mode(
-    ctx: EffectContext, prompt: str, labels: Sequence[str], chooser: int, count: int = 1
+    ctx: EffectContext,
+    prompt: str,
+    labels: Sequence[str],
+    chooser: int,
+    count: int = 1,
+    up_to: int | None = None,
 ) -> Generator[PendingDecision, list[int], list[int]]:
-    """Ask the controller to choose one or more modes of a modal spell."""
+    """Ask the controller to choose one or more modes of a modal spell.
+
+    ``up_to`` makes ``count`` a floor rather than an exact number: "Choose one.
+    If you control a commander as you cast this spell, you may choose both
+    instead" -- Akroma's Will. Without it a range is unsayable, and the
+    short-circuit below turns "choose up to two of two" into "take both", which
+    is a different card every time taking one was the better line.
+    """
+    maximum = count if up_to is None else max(count, up_to)
+    # Nothing to ask when every mode has to be taken anyway.
     if len(labels) <= count:
         return list(range(len(labels)))
     decision = PendingDecision(
@@ -139,7 +158,7 @@ def ask_mode(
         prompt=prompt,
         options=tuple(DecisionOption(label=label, value=i) for i, label in enumerate(labels)),
         min_count=count,
-        max_count=count,
+        max_count=min(maximum, len(labels)),
         context={"source": ctx.source_oid, "source_name": ctx.source_name},
     )
     answer = yield decision

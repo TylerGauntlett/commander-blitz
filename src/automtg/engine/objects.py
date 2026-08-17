@@ -40,12 +40,76 @@ class GameObject:
     damage: int = 0
     #: Set when damage from a deathtouch source was dealt this turn.
     deathtouched: bool = False
+    #: Which zone this card was cast from, recorded by `stack.push_spell`.
+    #: Rebound is "if you cast this spell **from your hand**", and that clause
+    #: is the loop guard: a rebounded spell is cast from exile, so without it
+    #: the card would rebound again every upkeep for ever.
+    cast_from_hand: bool = False
+    #: Which **colours of mana were actually spent** casting this -- sunburst
+    #: (702.43a) and converge. Recorded by `pay_mana`, which is the only moment
+    #: it is knowable: `ManaPool.spend` decrements six integers and afterwards
+    #: one blue mana is indistinguishable from another. Counts mana spent on the
+    #: *generic* part too, which is what both keywords say -- a Sunburst artifact
+    #: cast for `{4}` off five different lands enters with five counters.
+    colors_spent: frozenset[str] = frozenset()
+    #: "If a creature dealt damage this way would die this turn, exile it
+    #: instead." A zone name, replacing the graveyard as this permanent's
+    #: destination when it would die. Per-object and turn-scoped -- cleared at
+    #: cleanup with the other until-end-of-turn effects, and by
+    #: `reset_permanent_state`, so it cannot ride the card out of the zone it
+    #: was redirected into.
+    dies_to: str | None = None
+    #: Which **permanents' mana abilities made the mana that paid for this** --
+    #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
+    #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
+    #: instant: the pool holds six integers and the permanent that made a pip is
+    #: unrecoverable the moment the pip is gone.
+    mana_sources_spent: frozenset[int] = frozenset()
+    #: The player owed a free cast at their next upkeep -- rebound (702.87a).
+    #: Written on the *exiled card* rather than anywhere else, the way
+    #: `suspended_by` is, because the thing waiting is the card itself.
+    rebound_by: int | None = None
+    #: Regeneration shields (701.15): "the **next** time this permanent would be
+    #: destroyed this turn, instead …". A count rather than a boolean, because
+    #: "regenerate it twice" is two shields and each is spent by one
+    #: destruction. Cleared at cleanup with the rest of the until-end-of-turn
+    #: state -- it is one of the few things whose whole content is that it
+    #: expires.
+    regeneration_shields: int = 0
     counters: dict[str, int] = field(default_factory=dict)
     attached_to: int | None = None
+    #: What this was attached to a moment ago -- last-known information for the
+    #: leave-the-battlefield events. `zones.move_object` calls `_detach_all`
+    #: *before* it fires LEAVES_BATTLEFIELD and DIES, so by the time a "whenever
+    #: equipped creature dies" trigger is matched the Equipment is attached to
+    #: nothing and `attached_to` can never be the answer. Written only by
+    #: `_detach_all` and cleared by `attach`; a stale value is harmless because
+    #: oids are never reused, so it can only ever match the object it named.
+    last_attached_to: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
+    #: What ``until_eot`` held a moment before this object left the battlefield.
+    #: Last-known information, in the same style as `last_attached_to`:
+    #: `move_object` calls `reset_permanent_state` -- which empties `until_eot` --
+    #: *before* it fires LEAVES_BATTLEFIELD and DIES, so a triggered ability
+    #: granted until end of turn is gone by the time its own death event goes
+    #: out. Malakir Rebirth is the whole card: "that creature gains 'when this
+    #: creature dies, return it to the battlefield'".
+    #:
+    #: Written by `move_object` and cleared as the object next enters the
+    #: battlefield, so it can only ever answer for the departure it describes.
+    left_with: tuple[TempEffect, ...] = ()
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False
+    #: One-way words a permanent has become: ``renowned``, and whatever the next
+    #: set prints. Generic where `monstrous` is a field of its own, because the
+    #: pattern turned out to repeat and each new adjective would otherwise be a
+    #: boolean, a condition leaf and an op -- three edits to say one word.
+    #:
+    #: `monstrous` is deliberately *not* folded in here: it carries a
+    #: `became_monstrous` event and an op that reads it, and rewriting a shipped
+    #: mechanic to prove a point about tidiness is not what this is for.
+    flags: set[str] = field(default_factory=set)
     #: "Those creatures don't untap during their controllers' untap steps for as
     #: long as you control this creature" -- the oid of the permanent holding
     #: them down.  The untap step clears it once that permanent is gone, which is
@@ -55,15 +119,88 @@ class GameObject:
     #: Survives zone changes only in the sense that it is cleared when the card
     #: is finally cast -- see `engine/suspend.py`.
     suspended_by: int | None = None
+    #: Whose foretold card this is, while it waits face down in exile, and the
+    #: turn it was put there. Both are needed: 702.143a says "on a **later**
+    #: turn", so a card foretold and cast on the same turn would be the printed
+    #: cost paid in two instalments with the discount thrown in.
+    #: Soulbond (702.94a): the creature this one is paired with. Symmetric --
+    #: both objects carry the link -- because "as long as this creature is
+    #: paired" is asked of *either* of them, and a one-sided link would make
+    #: only one of the two buffed.
+    #:
+    #: Not `attached_to`, which is one-way, is read by `attached` filters as
+    #: "the thing I am on", and carries the state-based action that bins an Aura
+    #: attached to nothing. A pair is neither attached nor doomed by breaking.
+    paired_with: int | None = None
+    #: **Face down** (707.2). A permanent whose *derived* characteristics are a
+    #: 2/2 colourless creature with no name, no other types and no abilities,
+    #: with the real card still underneath -- morph, megamorph and manifest.
+    #:
+    #: Distinct from a card hidden **in exile**, which is `revealed_to` and is
+    #: what foretell needed: hiding a card nobody can interact with is not
+    #: showing it, while a face-down permanent is a characteristics problem.
+    #:
+    #: Cleared by `reset_permanent_state`: a face-down permanent that leaves the
+    #: battlefield is revealed, and one that comes back is a new object.
+    face_down: bool = False
+    #: Cloaked (701.61a) rather than merely manifested. The shell is the same
+    #: 2/2 in both, and the only difference is the **ward {2}** the cloak rule
+    #: puts on it -- which comes from the rule, not from the card underneath, so
+    #: it cannot live on either and has to be a flag the engine reads.
+    cloaked: bool = False
+    #: Set on the resolving spell and read a moment later by
+    #: `_place_after_resolution`, because `reset_permanent_state` clears
+    #: `face_down` on the way onto the battlefield. Identity state, like
+    #: `cast_kicked`, so it survives that reset.
+    pending_face_down: bool = False
+    #: Cipher (702.97a): the creature this exiled card is **encoded on**. Haunt's
+    #: link pointed a third way -- the card in exile names a creature, and the
+    #: card is what has to notice that creature connecting. The two are separate
+    #: fields rather than one "linked_to", because a card could in principle be
+    #: both and because the triggers that read them ask different questions.
+    encoded_on: int | None = None
+    #: Haunt (702.55a): the creature this exiled card is haunting. The link
+    #: points at the **victim**, which is the opposite direction from
+    #: `exiled_by`, and it has to: haunt's second trigger fires when the
+    #: *haunted* creature dies, and the haunting card is the thing that has to
+    #: still be somewhere to notice.
+    haunting: int | None = None
+    foretold_by: int | None = None
+    foretold_turn: int = -1
     #: A creature cast off suspend has haste.  Not an until-end-of-turn effect:
     #: it lasts as long as the permanent does, which is the only reason suspend
     #: is ever better than simply waiting.
     hasted_by_suspend: bool = False
+    #: Keywords granted for as long as this permanent lasts -- riot's "or with
+    #: haste". Deliberately *not* an `until_eot` `TempEffect`: those are wiped
+    #: at cleanup, and a riot creature that lost its haste at end of turn would
+    #: be indistinguishable from one that took the counter. Reset with the rest
+    #: of the battlefield state, because a permanent that leaves and returns
+    #: makes the choice again.
+    granted_keywords: set[str] = field(default_factory=set)
+    #: The same thing for a whole ability: "It gains 'when this creature dies,
+    #: draw a card'", with no printed duration -- Clavileño. Stored as the same
+    #: `TempEffect` pointer `until_eot` holds, so `granted_abilities` reads both
+    #: alike, but kept out of the list `clear_until_eot` sweeps. A grant with no
+    #: "until end of turn" on it lasts as long as the permanent does, and one
+    #: that wore off at cleanup would be a strictly weaker card.
+    granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
     #: "That land doesn't untap during its controller's next untap step."  A
     #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
     #: which holds for as long as its source is on the battlefield.  Two
     #: different lifetimes, so two different fields.
     skip_next_untap: bool = False
+    #: Seats that have been *shown* this card while it sits in a hidden zone.
+    #: "Look at target player's hand" (Glasses of Urza) is private information:
+    #: it is not `reveal`, which is public and tells the whole table. Recorded
+    #: on the card rather than as an event, because what a player is entitled to
+    #: see has to be answerable every time `player_view` is built, not only in
+    #: the instant the ability resolved.
+    #:
+    #: Cleared by `reset_permanent_state`: a card that changes zones is a new
+    #: object, and having seen a card in somebody's hand does not entitle you to
+    #: keep seeing it after it has been played and bounced back.
+    revealed_to: set[int] = field(default_factory=set)
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -95,6 +232,81 @@ class GameObject:
     #: *current* zone, which for any resolving sorcery is the stack, identically
     #: whether it was cast from hand or from the graveyard.
     cast_from_graveyard: bool = False
+    #: Whether this object was cast for its **overload** cost. Same contract as
+    #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
+    #: permanent's own enters trigger may read it.
+    cast_overloaded: bool = False
+    #: How many times this object's additional cost was paid as it was cast --
+    #: casualty and replicate. On the object rather than only the StackItem,
+    #: because a "when you cast this spell" trigger reads it while the spell is
+    #: still on the stack and a permanent's enters trigger may read it after.
+    cast_additional: int = 0
+    #: Whether this object was cast **transformed** -- disturb. Kept beside the
+    #: other `cast_*` flags rather than relying on `transformed`, because
+    #: `reset_permanent_state` clears that on the way onto the battlefield
+    #: (712.13a, "enters front face up") and disturb is the one case that must
+    #: survive it.
+    cast_transformed: bool = False
+    #: **Phasing** (702.26c): this permanent is phased out and "treated as
+    #: though it does not exist". It is out of `state.battlefield` while this is
+    #: set, so nothing has to consult the flag -- it is here so the untap step
+    #: can find it again, and so the log can say which it is.
+    phased_out: bool = False
+    #: Set on a permanent that phased out only because what it was attached to
+    #: did (702.26e, "indirectly phases out"). It phases back in with its host
+    #: rather than on its own schedule, which is the whole of the difference.
+    phased_out_indirectly: bool = False
+    #: **Mutate** (702.140a): the synthesised card this merged permanent *is* --
+    #: the card on top, carrying the abilities of everything under it.
+    #:
+    #: A whole ``CardDef`` rather than a pair of ids, because `card_of` is the
+    #: single place derived card identity is decided and every reader already
+    #: goes through it. Building the union once, here, means legality, triggers,
+    #: `chars` and the serializer all see one ability list with one set of
+    #: indices, and none of them needed changing.
+    merged_card: Any = None
+    #: The oids of the cards **underneath** this permanent. They stay in
+    #: ``state.objects`` and in no zone list -- the same place a card on the
+    #: stack lives -- so nothing that walks the battlefield sees them, and
+    #: `zones.move_object` sends the whole pile wherever the permanent goes.
+    merged_under: tuple[int, ...] = ()
+    #: Set on a card that is *part of* another permanent: the oid of the pile it
+    #: was merged into. The back-link, so a card in limbo can say why.
+    merged_into: int | None = None
+    #: Whether this object was cast for its **bestow** cost (702.103a). Beside
+    #: the other `cast_*` flags and, like them, deliberately *not* cleared by
+    #: `reset_permanent_state`: it is what makes the permanent an Aura once it
+    #: has landed, so a flag wiped on the way onto the battlefield would leave
+    #: an ordinary creature attached to something.
+    cast_bestowed: bool = False
+    #: Whether this object is currently showing its **second castable face** --
+    #: the Adventure half, the Aftermath half, one half of a split card.
+    #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so
+    #: the cost, the type line, the targets, the effects and the name in the log
+    #: are all that face's with nothing else changed.
+    #:
+    #: True only while the card is a *spell*: it is set as the spell is put on
+    #: the stack and cleared as it leaves, because a card that showed one face
+    #: on the stack and another wherever it landed would be two cards to
+    #: everyone watching.
+    showing_second_face: bool = False
+    #: **Adventure** (715.3d): this card is in exile having gone on an
+    #: adventure, and its owner may cast the *front* face from there.
+    #:
+    #: A flag rather than a reuse of ``exiled_by``: nothing exiled it, the card
+    #: put itself there on resolution, and there is no permanent for the link to
+    #: point at.
+    on_adventure: bool = False
+    #: "You may play the exiled card this turn." Florian, and the impulse-draw
+    #: family generally. The player who may play it, and the turn on which they
+    #: may -- both, because the permission expires and a card left in exile with
+    #: a bare boolean would be castable for the rest of the game.
+    #:
+    #: Distinct from `on_adventure`, which is permanent and free of a turn, and
+    #: from `play_exiled`, which casts *without paying* and does it immediately.
+    #: This one is a permission with a duration, and the cost is still owed.
+    playable_by: int | None = None
+    playable_turn: int = -1
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -104,6 +316,23 @@ class GameObject:
     #: The turn the requirement was placed, which is what makes
     #: ``"this_turn"`` expire.
     must_attack_turn: int = 0
+    #: The mirror: which attacker this creature must block, if able (provoke,
+    #: and the lure family).  An oid rather than a bool, because a block
+    #: requirement always names *what* to block -- "blocks this creature if
+    #: able" -- where an attack requirement names nothing.  Scoped to one
+    #: combat and cleared when blockers are locked in, so unlike
+    #: ``must_attack`` there is no duration to carry.
+    must_block: int | None = None
+    #: Detain (701.30a): "until **your** next turn, that permanent can't attack
+    #: or block and its activated abilities can't be activated". The pid of the
+    #: player who detained it, cleared by that player's own untap step.
+    #:
+    #: Not a `TempEffect`, for the reason `must_attack` is not: `until_eot` is
+    #: wiped at cleanup, and detain has to outlive the turn it was cast in --
+    #: usually by a whole turn cycle. Not a turn *number* either, because
+    #: "your next turn" moves when a player is eliminated; the player is the
+    #: durable thing to name, exactly as `frozen_by` names a permanent.
+    detained_by: int | None = None
 
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
@@ -127,6 +356,36 @@ class GameObject:
     #: part of what the object *is*, not something that happened to it.
     copy_overrides: dict[str, Any] | None = None
 
+    #: "It becomes a Vampire in addition to its other types." Captivating
+    #: Vampire — a *one-shot* type change with no duration, which is a different
+    #: thing from the `add_subtype` **static** even though they read alike: the
+    #: static applies continuously to whatever currently matches its filter,
+    #: while this is written onto one object and stays there.
+    #:
+    #: Object state rather than a static's output, which is what makes it safe
+    #: for a static's `affects` filter to read: nothing in the characteristics
+    #: pipeline can change it, so no static comes to depend on another static.
+    #: That matters for the card it was built for — Captivating Vampire's own
+    #: "other Vampire creatures you control get +1/+1" has to see the creature
+    #: it just converted.
+    #:
+    #: Reset with the rest of the battlefield state: a permanent that leaves and
+    #: comes back is a new object, and arrives with its printed type line.
+    added_subtypes: tuple[str, ...] = ()
+
+    #: Which face of a transforming double-faced card this permanent is showing.
+    #:
+    #: The whole of the mechanic, because `GameState.card_of` is a single choke
+    #: point: flip this and every reader of the card's characteristics -- the
+    #: layers, legality, combat, the serializer -- sees the other face with no
+    #: change of its own.
+    #:
+    #: Reset with the rest of the battlefield state, which is rule 712.13a: a
+    #: permanent that leaves and comes back is a new object and enters with its
+    #: **front** face up. Getting this wrong hands somebody a 5/5 lord for a
+    #: blink.
+    transformed: bool = False
+
     #: "…exile it until this permanent leaves the battlefield." The oid of the
     #: permanent that exiled *this* card, so its own leaves-trigger can find it
     #: again.
@@ -145,17 +404,43 @@ class GameObject:
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
+        self.must_block = None
+        self.detained_by = None
+        self.granted_keywords = set()
+        self.granted_abilities_permanent = []
         self.tapped = False
         self.damage = 0
         self.deathtouched = False
+        self.regeneration_shields = 0
         self.counters = {}
         self.attached_to = None
+        self.last_attached_to = None
+        self.paired_with = None
+        self.face_down = False
+        self.cloaked = False
         self.until_eot = []
+        self.dies_to = None
         self.monstrous = False
+        # A permanent that left and came back is a new object as far as the
+        # rules are concerned, so it is no longer renowned either.
+        self.flags = set()
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
         self.chosen_type = None
+        self.added_subtypes = ()
+        self.transformed = False
+        # A permanent that left the battlefield is no longer a pile: the cards
+        # under it were sent along by `move_object` before this ran.
+        self.merged_card = None
+        self.merged_under = ()
+        self.merged_into = None
+        # The creature came back off its adventure and is on the battlefield;
+        # there is nothing left in exile for anyone to cast.
+        self.on_adventure = False
+        self.playable_by = None
+        self.playable_turn = -1
+        self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.
@@ -203,7 +488,9 @@ class GameObject:
         well as legality: a locked land that still taps for mana would make the
         whole effect worth nothing against the only decks that mind it.
         """
-        return any(t.kind == "lock_abilities" for t in self.until_eot)
+        return self.detained_by is not None or any(
+            t.kind == "lock_abilities" for t in self.until_eot
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -215,12 +502,17 @@ class GameObject:
             "tapped": self.tapped,
             "damage": self.damage,
             "counters": dict(self.counters),
+            "added_subtypes": list(self.added_subtypes),
+            "transformed": self.transformed,
             "attached_to": self.attached_to,
             "is_token": self.is_token,
             "is_commander": self.is_commander,
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
+            "flags": sorted(self.flags),
+            "detained_by": self.detained_by,
+            "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
