@@ -9545,6 +9545,126 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_human_soldier",
+      "name": "Test Human Soldier",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ]
+    },
+    {
+      "id": "t_elf_scout",
+      "name": "Test Elf Scout",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Scout"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_shieldmaiden",
+      "name": "Test Shieldmaiden",
+      "oracle_text": "First strike\nAt the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.",
+      "mana_cost": "{2}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "first_strike"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "permanents_entered_this_turn": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Human"
+                  ],
+                  "exclude_self": true
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_knight_2_2_r_trample_haste",
+              "amount": {
+                "const": 2
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "subtypes": [
+                      "Human"
+                    ]
+                  }
+                },
+                "right": {
+                  "const": 6
+                }
+              },
+              "then": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

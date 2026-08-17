@@ -8,6 +8,7 @@ without any ``TYPE_CHECKING`` gymnastics.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -353,6 +354,73 @@ class DelayedTrigger:
     turn: int = 0
 
 
+@dataclass(frozen=True)
+class EnteredPermanent:
+    """One permanent as it was **at the moment it entered the battlefield**.
+
+    "If another Human entered the battlefield under your control this turn"
+    (Éowyn, Shieldmaiden).  A past-tense question about an *event*, and the
+    board cannot answer it in either direction: `exists` over the battlefield is
+    true when a Human has sat there since turn three and nothing entered, and
+    false when a Human entered this turn and died before combat.  Both are
+    ordinary lines of play, which is why the ledger has to remember the arrival
+    itself.
+
+    A **snapshot** rather than a bare oid, and that is the whole design.  The
+    record has to be readable after the object has left -- the entered-and-died
+    case is exactly what the clause is for -- and once it has, nothing can be
+    asked of it: a token is popped out of `state.objects` entirely, a card in a
+    graveyard reports *printed* characteristics rather than derived ones, and
+    `reset_permanent_state` has emptied whatever a continuous effect had granted
+    it.  `creatures_attacked` above stores oids because its readers only count
+    them and reach for the ones still on the battlefield; this one is asked
+    *which*, filtered by subtype and controller, so the answer has to travel
+    with the record.
+
+    Read off **derived** characteristics at the moment of entry, which is the
+    call `combat_damage_types` makes one field down and for the same reason: a
+    changeling and a creature a static has made a Human both entered as Humans,
+    and by the time the trigger is checked the static may be gone.
+
+    ``controller`` is likewise controller-at-entry.  "Entered the battlefield
+    under your control" is a fact about the arrival (rule 109.5 / 400.7): a
+    creature that entered under an opponent and was stolen afterwards did not
+    enter under yours, and one that entered under yours and was stolen away
+    still did.
+    """
+
+    oid: int
+    controller: int
+    types: frozenset[str] = frozenset()
+    subtypes: frozenset[str] = frozenset()
+    colors: frozenset[str] = frozenset()
+
+    def matches(
+        self,
+        *,
+        controllers: Iterable[int],
+        types: Iterable[str] = (),
+        subtypes: Iterable[str] = (),
+        colors: Iterable[str] = (),
+    ) -> bool:
+        """Does this arrival answer a card's filter?
+
+        Spelled exactly as `selectors.matches` spells the same four clauses, so
+        a card author who knows one knows the other: ``types`` is all-of ("an
+        artifact creature" is both), ``subtypes`` and ``colors`` are any-of ("a
+        Human or an Elf").  A clause left out filters nothing.
+        """
+        if self.controller not in set(controllers):
+            return False
+        if types and not set(types).issubset(self.types):
+            return False
+        if subtypes and not (set(subtypes) & self.subtypes):
+            return False
+        if colors and not (set(colors) & self.colors):
+            return False
+        return True
+
+
 @dataclass
 class TurnLedger:
     """Tallies of what has happened during the current turn.
@@ -470,6 +538,23 @@ class TurnLedger:
     #: the same argument `creatures_attacked` makes above.
     object_flags: dict[int, set[str]] = field(default_factory=dict)
 
+    #: Every permanent that has **entered the battlefield** this turn, in the
+    #: order it arrived, as :class:`EnteredPermanent` snapshots.
+    #:
+    #: A list rather than a map keyed by player or by oid, because both keys
+    #: lose something a card asks for.  Keyed by player it could not answer
+    #: "*another* **Human**", which is the filter Éowyn prints and the reason
+    #: the snapshot carries characteristics at all.  Keyed by oid it would
+    #: collapse the permanent that entered, left and entered again into one
+    #: arrival -- and a flicker really is two of them (400.7: a new object each
+    #: time), so a card counting arrivals must see both.
+    #:
+    #: Nothing is ever removed while the turn lasts.  A permanent that entered
+    #: and then died still entered, exactly as an attacker that died still
+    #: attacked, and that is the case the board-shaped near miss (`exists`)
+    #: gets wrong.  Cleared at cleanup with everything else here.
+    permanents_entered: list[EnteredPermanent] = field(default_factory=list)
+
     @property
     def attacked(self) -> set[int]:
         """The players who declared an attacker this turn -- raid's question.
@@ -525,6 +610,7 @@ class TurnLedger:
         self.cards_to_graveyard = 0
         self.ability_resolutions.clear()
         self.object_flags.clear()
+        self.permanents_entered.clear()
 
 
 @dataclass

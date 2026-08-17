@@ -21103,6 +21103,99 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "human_knight_2_2_r_trample_haste"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "subtypes": [
+                      "Human"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                "right": {
+                  "const": 6
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "permanents_entered_this_turn": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Human"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "eowyn_shieldmaiden",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{U}{R}{W}",
+      "name": "Éowyn, Shieldmaiden",
+      "oracle_text": "First strike\nAt the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

@@ -320962,12 +320962,12 @@
     },
     "Éowyn, Shieldmaiden": {
       "edhrec_rank": 4513,
-      "gate": "template",
+      "gate": null,
       "name": "Éowyn, Shieldmaiden",
-      "reason": "no template for: At the beginning of combat on your turn, if another Human entered the battlefield under yo",
+      "reason": "",
       "scryfall_id": "dd4a00ff-2206-4e12-a0ab-61ed82c9e6c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Óin the Brave": {
