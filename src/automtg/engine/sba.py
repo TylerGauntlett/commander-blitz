@@ -148,6 +148,16 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     state.attack_restrictions = [
         r for r in state.attack_restrictions if pid not in (r.attacker, r.defender)
     ]
+    # This one is not hygiene. "Until your next turn" is cleared in that
+    # player's untap step, and an eliminated player never has another one -- so
+    # a prohibition keyed to a seat that has left would last for the rest of the
+    # game. (`detained_by` has the same clock and the same hole; it is left
+    # alone here because it is a different capability's bug, not this one's.)
+    state.block_prohibitions = [
+        r
+        for r in state.block_prohibitions
+        if not (r.duration == "until_your_next_turn" and r.player == pid)
+    ]
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

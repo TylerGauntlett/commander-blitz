@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>86 ops"]
+    ctx --> ops["op registry<br/>87 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-86 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+87 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
@@ -3872,6 +3872,70 @@ about the shape of the finished declaration.
 Both are statics rather than keywords for the reason `lock_abilities` is one: a
 keyword is a *characteristic*, and these are permissions. Listing "can't block"
 among a creature's keywords would be a lie about what the card says.
+
+### The `cant_block` **op** — the same sentence with a clock
+
+    Aragorn, King of Gondor — "Whenever Aragorn attacks, up to one target
+                               creature can't block this turn. If you're the
+                               monarch, creatures can't block this turn."
+    Taunt from the Rampart  — "Until your next turn, those creatures can't
+                               block."
+
+The static above is a fact about a permanent that is currently on the
+battlefield: it needs a source standing there, it ends the moment that source
+leaves, and its `affects` filter may read only *printed* characteristics. Those
+three properties are exactly what these two cards need inverted. So `cant_block`
+is **also an op**, and the two are kept apart by the key they sit under —
+`"effect": "cant_block"` inside a static ability, `"op": "cant_block"` in an
+effect list.
+
+```jsonc
+// Aragorn's first clause: the creature is named when the trigger resolves,
+// which no printed-characteristics filter can pick out
+{ "op": "cant_block", "objects": { "target": "t1" }, "duration": "this_turn" }
+
+// Aragorn's second clause: global, and a continuous effect for the rest of the
+// turn rather than a snapshot of the battlefield
+{ "op": "cant_block", "all_creatures": true, "duration": "this_turn" }
+
+// Taunt from the Rampart: a sorcery, so nothing is left behind to own a static
+{ "op": "cant_block", "objects": { "controller": "opponent", "types": ["Creature"] },
+  "duration": "until_your_next_turn" }
+```
+
+**Exactly one of `objects` and `all_creatures`**, refused at load time
+otherwise, because the two are not a general and a special case of each other:
+
+| | |
+|---|---|
+| `objects` | the set chosen **at resolution**. "Those creatures" and "up to one target creature" are fixed the moment the effect resolves; a creature that enters afterwards was not one of them |
+| `all_creatures` | *every* creature, live. "Creatures can't block this turn" is a turn-scoped continuous effect, so it catches creatures that enter later in the turn too — which is precisely what a mark written onto each creature could not do |
+
+Neither guess is safe for a `cant_block` carrying neither. "Nobody" makes the
+ability do nothing at all; "everybody" turns Aragorn's *targeted* half into a
+one-sided Falter the moment its optional target is declined. Hence the guard.
+
+**`duration` is required too**, and the two are different clocks:
+`this_turn` is cleared by the cleanup step, `until_your_next_turn` in the
+controller's own untap step, beside detain and keyed the same way — by *who*
+imposed it, never by a turn number, because eliminating a player moves
+everybody else's "next turn". `cant_attack_player`'s `this_combat` has no
+counterpart here on purpose: blockers are declared *inside* the combat that
+would clear it, so a combat-scoped "can't block" is indistinguishable from none.
+
+It lives on the table (`GameState.block_prohibitions`, a list of
+`structs.BlockProhibition`) beside `attack_restrictions` and for the same
+reason — the effect belongs to no permanent — and it is read by
+`combat.block_prohibited`, called from `can_block` beside `block_forbidden` and
+`detained_by`. Placing it there rather than in the characteristics layer is what
+keeps that layer reading permanents only.
+
+**`detain` is not a substitute**, and the reason is specific rather than
+stylistic: detain also forbids attacking and activating abilities, and Taunt
+from the Rampart's *other* sentence goads the same creatures into attacking.
+Detaining them would print a card that contradicts itself. `grant_ability`
+cannot carry a temporary static either — `loader.py` refuses any grantable
+ability that is not triggered.
 
 ## Attack requirements
 

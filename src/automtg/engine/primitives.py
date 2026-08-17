@@ -855,6 +855,75 @@ def clear_attack_restrictions(state: GameState, duration: str) -> None:
     ]
 
 
+def forbid_block(
+    state: GameState,
+    objects: Iterable[int] | None,
+    duration: str = "this_turn",
+    player: int | None = None,
+    source: int | None = None,
+) -> bool:
+    """""Can't block" for ``duration``, on ``objects`` or on every creature.
+
+    ``objects`` is a fixed set of oids chosen when the effect resolved, or
+    ``None`` for the global form -- "creatures can't block this turn" -- which is
+    a continuous effect and not a snapshot, so a creature that enters later in
+    the turn is caught by it too.  Passing an empty iterable is *not* the global
+    form: "up to one target creature can't block" with no target chosen restricts
+    nobody, and collapsing that into "all creatures" would be the worst possible
+    misreading.
+
+    Returns whether anything was recorded, so the op above can distinguish a
+    restriction it imposed from one it silently dropped.  Two cases are refused,
+    and both are a restriction that could never bite:
+
+    * an empty ``objects`` -- see above;
+    * ``until_your_next_turn`` with no ``player``, which has no clock at all and
+      would therefore last forever.
+
+    Deduplicated on the whole entry, because "can't block" does not stack: two
+    copies would only make the eventual clear-up quadratic.  Note that a global
+    entry never merges with one naming a set, and rightly so -- they expire the
+    same way but mean different things while they live.
+    """
+    from .structs import BLOCK_PROHIBITION_DURATIONS, BlockProhibition
+
+    if duration not in BLOCK_PROHIBITION_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown block prohibition duration {duration!r}")
+    oids = None if objects is None else tuple(dict.fromkeys(objects))
+    if oids is not None and not oids:
+        return False
+    if duration == "until_your_next_turn" and player is None:
+        return False
+    entry = BlockProhibition(
+        objects=oids, duration=duration, player=player, source=source
+    )
+    if entry in state.block_prohibitions:
+        return False
+    state.block_prohibitions.append(entry)
+    return True
+
+
+def clear_block_prohibitions(
+    state: GameState, duration: str, player: int | None = None
+) -> None:
+    """Drop the block prohibitions of one duration -- their wearing-off.
+
+    Called from two places, one per duration, and the second one takes a player:
+    `turn._cleanup_step` clears ``this_turn`` for everybody, and
+    `turn._untap_step` clears the ``until_your_next_turn`` entries belonging to
+    whoever is untapping -- beside detain, on detain's clock, and for detain's
+    reason.  "Your next turn" is not a turn number: eliminate a player and it
+    moves, so the entry names the player and the untap step asks.
+    """
+    if not state.block_prohibitions:
+        return
+    state.block_prohibitions = [
+        r
+        for r in state.block_prohibitions
+        if r.duration != duration or (player is not None and r.player != player)
+    ]
+
+
 def clear_until_eot(state: GameState) -> None:
     """Cleanup step: remove damage and every until-end-of-turn effect."""
     for oid in state.battlefield:

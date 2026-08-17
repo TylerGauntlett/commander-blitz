@@ -3,8 +3,7 @@
   "name": "Taunt from the Rampart",
   "oracle_text": "Goad all creatures your opponents control. Until your next turn, those creatures can't block. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
   "blocked_sentences": [
-    "Goad all creatures your opponents control.",
-    "Until your next turn, those creatures can't block."
+    "Goad all creatures your opponents control."
   ],
   "needs": [
     {
@@ -18,12 +17,6 @@
       "kind": "engine",
       "what": "A per-creature attack-target restriction in combat legality: for a goaded creature, the defending players/planeswalkers offered must exclude those controlled by any player who goaded it, whenever at least one other legal defender exists (\"if able\" -- with only the goader left to attack, the creature may attack them). Concretely, `combat.legal_defenders` / `legal_planeswalker_defenders` / `add_attacker` need to take the attacking oid into account and filter by it, and `attack_required` must stay consistent with that filtered set so a creature is not compelled to make an attack legality then refuses.",
       "why_existing_wont_do": "Nothing in the engine restricts *which* defender a given attacker may choose. `combat.legal_defenders` is `[pid for pid in state.alive() if pid != state.active_player]` -- it takes no attacker argument at all -- and `add_attacker(state, oid, defender, planeswalker=...)` accepts any of them, so the choice is per-declaration and global rather than per-creature. `cant_attack`/`attack_forbidden` is the nearest restriction and is all-or-nothing (the creature cannot attack anyone); `block_restriction` restricts blockers, not attack targets. Without this, a goad op would let the goaded creature swing straight back at the player who goaded it, which is the half of goad that makes the card a Red/White political spell rather than a symmetrical Overrun."
-    },
-    {
-      "capability": "cant_block",
-      "kind": "op",
-      "what": "A one-shot op imposing \"can't block\" on chosen creatures until the op's controller's next turn -- the block half of `detain` on detain's clock, without detain's attack and activated-ability restrictions. Same storage shape as `detain` (a player id written on the object, cleared by that player's untap step) and read in `combat.can_block` beside the existing `detained_by` check.",
-      "why_existing_wont_do": "`detain` has exactly the right duration and mechanism but forbids attacking and activating abilities too, and is documented as deliberately one indivisible op -- using it here would forbid the very attacks the same sentence's goad demands, producing a card that does the opposite of what it prints. `cant_block` exists only as a `static_effects` entry read by `characteristics.block_forbidden` off `_battlefield_statics`: it needs a permanent source on the battlefield (a sorcery has none), lasts only while that source is there, and its `affects` filter may read only printed characteristics, so it cannot name the set chosen at resolution nor expire at a player's next turn. `grant_keyword` has no \"can't block\" keyword in `keywords`; `defender` is not a substitute because it also stops the creature attacking. `must_block` and `block_restriction` are a requirement and an attacker-side restriction respectively, neither of which stops a creature blocking."
     }
   ],
   "closest_existing": [
@@ -35,5 +28,9 @@
     "block_restriction",
     "must_block"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "resolved": [
+    "cant_block"
+  ],
+  "resolved_note": "`cant_block` shipped as an op beside the static of the same name. This card's half is `{\"op\": \"cant_block\", \"objects\": {\"controller\": \"opponent\", \"types\": [\"Creature\"]}, \"duration\": \"until_your_next_turn\"}` -- the set is fixed when the sorcery resolves, and the entry is a `structs.BlockProhibition` on `GameState.block_prohibitions`, cleared in the controller's own untap step beside detain. It is read by the new `combat.block_prohibited` seam in `can_block`, and it stops blocking and nothing else, which is exactly why detain could not be used: detain would forbid the attacks this card's other half demands. Only `goad` is still missing, and with it the whole card loads. No partial answer was written: a Taunt from the Rampart that stopped the blocks without compelling the attacks is a different card."
 }

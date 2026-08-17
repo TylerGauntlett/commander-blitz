@@ -19,6 +19,7 @@ from .events import EventType
 from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
+    clear_block_prohibitions,
     clear_until_eot,
     untap_all,
     untap_permanent,
@@ -213,6 +214,11 @@ def _untap_step(state: GameState) -> None:
     for obj in state.objects.values():
         if obj.detained_by == player.pid:
             obj.detained_by = None
+    # "Until your next turn, those creatures can't block." (Taunt from the
+    # Rampart.) Detain's clock exactly, so it is cleared in the same breath and
+    # keyed the same way -- by *who* imposed it, never by a turn number, because
+    # eliminating a player moves everybody else's "next turn".
+    clear_block_prohibitions(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -492,6 +498,10 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # this restriction belongs to no permanent at all -- Call for Aid is a
     # sorcery, and the seat it restricts is its own caster's.
     clear_attack_restrictions(state, "this_turn")
+    # "…can't block **this turn**." Beside it and for the same reason: Aragorn's
+    # global clause is a continuous effect owned by no permanent, so
+    # `clear_until_eot` -- which walks the battlefield -- has nothing to find.
+    clear_block_prohibitions(state, "this_turn")
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

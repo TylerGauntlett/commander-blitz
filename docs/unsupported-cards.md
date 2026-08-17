@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**31 cards** blocked by **34** capabilities.
+**30 cards** blocked by **33** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cant-block](#cant-block) | 2 | 2089 | op |
 | [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
@@ -48,26 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
-
-## cant-block
-
-Blocks **2** cards.
-
-- **(op)** A one-shot op that imposes "can't block" on chosen creatures for the rest of the turn -- `objects` for the targeted form ("up to one target creature can't block this turn") and a way to say it of every creature on the battlefield for the global form ("creatures can't block this turn", which must also catch creatures that enter later in the turn, so it is a turn-scoped continuous effect and not a per-object mark).
-  <br>Why the existing vocabulary won't do: `cant_block` exists only as a `static_effects` entry: it lives in an ability on a permanent, is read by `characteristics.block_forbidden` off `_battlefield_statics`, lasts exactly as long as its source is on the battlefield, and its `affects` filter may read only printed characteristics -- so it cannot name a creature chosen when a trigger resolves and cannot expire at cleanup. `detain` is the only op that stops blocking and is wrong twice over: it also forbids attacking and activating abilities, and it lasts until the detainer's next turn rather than this turn. `grant_ability` cannot carry the static instead -- `loader.py` explicitly rejects any grantable ability that is not triggered, because a granted static would have to enter the characteristics pipeline from a non-source object. `block_restriction` points the other way (it restricts who may block a given attacker) and `must_block` is a requirement, not a restriction.
-- **(op)** A one-shot op imposing "can't block" on chosen creatures until the op's controller's next turn -- the block half of `detain` on detain's clock, without detain's attack and activated-ability restrictions. Same storage shape as `detain` (a player id written on the object, cleared by that player's untap step) and read in `combat.can_block` beside the existing `detained_by` check.
-  <br>Why the existing vocabulary won't do: `detain` has exactly the right duration and mechanism but forbids attacking and activating abilities too, and is documented as deliberately one indivisible op -- using it here would forbid the very attacks the same sentence's goad demands, producing a card that does the opposite of what it prints. `cant_block` exists only as a `static_effects` entry read by `characteristics.block_forbidden` off `_battlefield_statics`: it needs a permanent source on the battlefield (a sorcery has none), lasts only while that source is there, and its `affects` filter may read only printed characteristics, so it cannot name the set chosen at resolution nor expire at a player's next turn. `grant_keyword` has no "can't block" keyword in `keywords`; `defender` is not a substitute because it also stops the creature attacking. `must_block` and `block_restriction` are a requirement and an attacker-side restriction respectively, neither of which stops a creature blocking.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
-  - Goad all creatures your opponents control.
-  - Until your next turn, those creatures can't block.
-- **Aragorn, King of Gondor** (rank 4083) — `aragorn_king_of_gondor`
-  - When Aragorn enters, you become the monarch.
-  - Whenever Aragorn attacks, up to one target creature can't block this turn. If you're the monarch, creatures can't block this turn.
-
-</details>
 
 ## ability-activated-trigger
 
@@ -317,7 +296,6 @@ Blocks **1** card.
 
 - **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
   - Goad all creatures your opponents control.
-  - Until your next turn, those creatures can't block.
 
 </details>
 
