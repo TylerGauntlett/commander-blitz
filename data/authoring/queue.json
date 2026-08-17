@@ -304982,12 +304982,12 @@
     },
     "Voldaren Estate": {
       "edhrec_rank": 2443,
-      "gate": "template",
+      "gate": null,
       "name": "Voldaren Estate",
-      "reason": "no template for: {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell",
+      "reason": "",
       "scryfall_id": "dd0ee2f1-d5be-4f60-a128-7011eef71f11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voldaren Pariah // Abolisher of Bloodlines": {

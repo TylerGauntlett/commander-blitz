@@ -1,23 +1,26 @@
 {
   "card_id": "malakir_rebirth_malakir_mire",
   "name": "Malakir Rebirth // Malakir Mire",
-  "oracle_text": "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",
+  "oracle_text": "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"\n//\nThis land enters tapped.\n{T}: Add {B}.",
   "blocked_sentences": [
-    "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\""
+    "Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\""
   ],
   "needs": [
     {
-      "capability": "modal-dfc",
-      "kind": "replacement",
-      "what": "modal double-faced cards: a second, separately playable face with its own cost and type line, chosen as the card is played. Here the front is an Instant and the back is a Land, so the back must go down the land-drop path (no stack, consumes the land drop) while the front is cast normally.",
-      "why_existing_wont_do": "docs/rules-coverage.md:52 states the position outright -- transforming DFCs are modelled but \"a back face here is a face, not a second castable card\" -- and :157 lists modal double-faced cards as not implemented. `back_face` exists but only ever describes the face a permanent shows after transforming; nothing offers it as a way to play the card. The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer[\"card\"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined \"A // B\" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason."
+      "capability": "granted-leave-triggers",
+      "kind": "trigger",
+      "what": "A triggered ability handed to another permanent by `grant_ability` must be able to fire on that permanent's *own departure* -- `dies` and `leaves_battlefield` with `source: \"self\"`. Two things have to change together. (1) `GameObject.reset_permanent_state` (src/automtg/engine/objects.py:373) empties `until_eot`, and `move_object` calls it at src/automtg/engine/zones.py:106, *before* it fires LEAVES_BATTLEFIELD and DIES at zones.py:147/172 -- so the grant is already gone when the death event goes out. The grant needs the same last-known-information snapshot treatment `was_creature`, `was_attacking` and `had_counters` already get a few lines above (zones.py:73-85), which is the engine's stated explicit-LKI pattern. (2) The leave-trigger scan in src/automtg/engine/triggers.py:258-268 walks only `card.abilities` for the object that just left; every other branch of that generator pairs a battlefield walk with a `granted_abilities` walk (triggers.py:231-235), and this one has no such pairing, so a granted leave-trigger has no path to queue even with the grant intact.",
+      "why_existing_wont_do": "Verified empirically against the real engine, not inferred. Granting the ability to a creature and then moving it to the graveyard leaves `until_eot == []`, `granted_abilities(state, oid) == []` and `state.pending_triggers == []`; the byte-identical ability *printed* on the same creature queues normally (\"Probe Printed Bear: When this creature dies, ...\"). So `grant_ability` itself is fine and needs no change -- its until-end-of-turn duration is real, granted *triggered* abilities already work (herd_heirloom in data/cards/auto/templates.cards.json grants a `deals_combat_damage_to_player` trigger through `grantable_abilities`), and the resolution effect is expressible today as `return_from_graveyard` with `destination: \"battlefield\"`, `tapped: true` and `objects: {\"self_only\": true, \"zone\": \"graveyard\"}` -- that exact spec resolves correctly for the printed version. The gap is only that the grant does not survive the one event this card cares about. `delay` (src/automtg/engine/effects/ops_control.py:361) is not a substitute: a DelayedTrigger fires at a named *step*, never on an event, so it cannot say \"when this creature dies\" at all, and scheduling the return at the next end step would be a different card. Nor is a printed ability on some other permanent an option: the printed sentence says the *creature* gains it, which is what makes it follow the creature and what makes it a legal target-selected grant.",
+      "scope_note": "The land half is NOT blocked. The `modal-dfc` capability this record previously named has shipped for exactly this shape and is verified working for this card: `second_face` / `second_face_zone: \"hand\"` on the Instant front pointing at a Land back, offered by `_land_actions` as a PLAY_LAND with `second_face=True`, using no stack, spending the land drop, and entering tapped off the *land's* own `self_enters_tapped` replacement because `_play_land` sets `showing_second_face` before the move. Built as scratchpad cards in the real shape, the land line is enumerated, arrives as the land, and arrives tapped. `This land enters tapped.` and `{T}: Add {B}.` are both plainly sayable. Only the front's granted dies-trigger stands between this card and an answer file -- close `granted-leave-triggers` and the whole card is writable."
     }
   ],
   "closest_existing": [
-    "back_face",
-    "transform",
-    "kicker",
-    "evoke"
+    "grant_ability",
+    "grantable_abilities",
+    "return_from_graveyard",
+    "second_face",
+    "delay",
+    "snapshot"
   ],
   "confidence": "high"
 }

@@ -52,6 +52,12 @@ class CostModel(BaseModel):
     pay_life: int | dict[str, Any] = 0
     remove_counters: dict[str, Any] | None = None
     exile_from_graveyard: dict[str, Any] | None = None
+    #: "This ability costs {1} less to activate for each Vampire you control."
+    #: The same ``{"count": {filter}}`` shape a card's `cost_reduction` uses, but
+    #: read from the *activation* path -- which the card-level field never
+    #: reaches, because both existing reductions discount casting a spell.
+    #: Generic only and clamped at zero, like every other reduction.
+    mana_reduction: dict[str, Any] | None = None
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
     #: A value expression multiplying the ``mana`` half, and the only part of a
     #: cost that is not fixed when the card is written. Read only where an

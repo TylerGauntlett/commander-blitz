@@ -444,6 +444,11 @@ def _second_face_actions(
     if SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
         return []
     face = state.registry.get(card.second_face)
+    # A land half is **played**, not cast, and `_land_actions` offers it. Without
+    # this, a modal DFC's land face was offered both ways -- and the cast line
+    # would put a land on the stack, which is not a thing that can happen.
+    if face.is_land:
+        return []
     if not _timing_ok(face, sorcery_speed):
         return []
     tuples = enumerate_target_tuples(

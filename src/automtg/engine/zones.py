@@ -94,6 +94,13 @@ def move_object(
     # moment later -- the same snapshot `had_counters` needs and for the same
     # reason.
     merged = tuple(obj.merged_under) if was_on_battlefield else ()
+    # The until-end-of-turn effects this object was carrying, snapshotted for
+    # the same reason `had_counters` is: `reset_permanent_state` empties
+    # `until_eot` a few lines below and the leave-the-battlefield events fire
+    # *after* that. A triggered ability granted until end of turn -- Malakir
+    # Rebirth's "that creature gains 'when this creature dies, return it'" --
+    # would otherwise be gone before its own death event went out, every time.
+    left_with = tuple(obj.until_eot) if was_on_battlefield else ()
 
     _remove_from_zone(state, obj)
 
@@ -104,6 +111,7 @@ def move_object(
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
 
+    obj.left_with = left_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top)
     state.bump_chars()
 
@@ -261,6 +269,8 @@ def _enter_battlefield(
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
     obj.tapped = forced_tapped
+    # A fresh arrival answers for nothing that happened before it.
+    obj.left_with = ()
 
     for replacement in card.replacements:
         event = replacement.get("event")

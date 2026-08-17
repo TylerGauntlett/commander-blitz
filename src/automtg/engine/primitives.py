@@ -704,7 +704,11 @@ def granted_abilities(state: GameState, oid: int):
     obj = state.objects.get(oid)
     if obj is None:
         return
-    for temp in obj.until_eot:
+    # `left_with` is the departure snapshot: an object that has just left the
+    # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
+    # its own leave-the-battlefield triggers have not fired yet. Empty for
+    # everything else, so this reads as plain `until_eot` in every other case.
+    for temp in (*obj.until_eot, *obj.left_with):
         if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
             continue
         source = state.objects.get(temp.source)
