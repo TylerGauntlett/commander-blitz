@@ -1,3 +1,103 @@
+## An anthem with a size — "+1/+1 for each charge counter on this artifact"
+
+### Overview
+
+**Door of Destinies** — "As this artifact enters, choose a creature type. Whenever
+you cast a spell of the chosen type, put a charge counter on this artifact.
+Creatures you control of the chosen type get +1/+1 for each charge counter on this
+artifact."
+
+Two of those three lines already worked, in the shapes Vanquisher's Banner ships:
+`choose_type` on a `self_enters` trigger, and a `spell_cast` trigger filtered by
+`{"subtypes": [{"chosen_type_of": "self"}]}` adding a `charge` counter to
+`self_only`. The third was blocked, and not on the anthem — on its **magnitude**.
+
+It has to be a static. The buff applies continuously to whatever creatures of the
+chosen type are on the battlefield at any moment, *including ones that arrive after
+the counters do*, so no op reaches it: `pump` wears off at end of turn, and
+`add_counters` putting +1/+1 counters onto the creatures themselves is a different
+card twice over — the creatures already out would not grow when a later charge
+counter landed, and creatures cast afterwards would arrive unsized.
+
+But a static's magnitude is a **fourth** language, deliberately narrower than the
+effect-side `VALUE_KEYS`, and `counters_on` was not in it: the loader refused the
+leaf and `characteristics._static_value` would have read 0 for it anyway.
+
+### What shipped
+
+`counters_on` in `STATIC_VALUE_KEYS` and in `characteristics._static_value`,
+validated by one shared `validate_counters_on` that both languages call — the
+third member of that family after `validate_mana_symbols` and
+`validate_per_player_count`, and shared for the reason they are: the same leaf
+validated in one language only loads in a card that then quietly reads 0. Tier A,
+and no op.
+
+Legal inside a static for the reason the `counters` **condition** head has been
+since Arixmethes: a counter is a pipeline *input*: primitives place and remove
+them and no layer can touch one, so an anthem's magnitude reading one cannot come
+to depend on another static's output and the fixed order of layers-lite stays
+acyclic. What that head could not do is the point — it compares the count against
+a fixed amount and yields on or off, so it can switch a fixed anthem on and off
+and never size one. A ladder of threshold-conditioned +1/+1 statics is the kludge
+it invites, and it is unbounded, and each rung's `text` would be a sentence the
+card does not print, which the residual gate reads.
+
+`count` is the other near miss and fails on a category: it counts *objects*
+matching a filter, and counters are not objects, so no combination of
+`STATIC_FILTER_KEYS` expresses "the number of charge counters on this artifact".
+
+The magnitude needs no invalidation machinery of its own. `chars` is cached
+against `state.char_version`, which `add_counters` and `remove_counters` both
+bump, so the anthem grows the instant a counter lands and shrinks again when one
+leaves — and a creature cast on turn nine is sized by the counters that landed on
+turns four through eight, which is the whole card.
+
+### The silent zero, which was the actual bug
+
+`_static_value` ended in `return 0`. So a leaf the loader had not been taught —
+or, worse, one taught to the loader and misspelled in the engine — was an anthem
+that loaded clean, printed as the card does and gave +0/+0 for ever, with nothing
+anywhere raising. That is the exact failure the whole validation pass exists to
+refuse, and it was sitting inside the pass.
+
+It raises now. Three things make that safe rather than a new crash surface:
+statics reach the pipeline only through `_battlefield_statics`, which reads
+`ability.static` off cards the loader compiled; every magnitude on that path has
+been through `_validate_static_value`; and `None` is still 0, because a `buff`
+with no `toughness` is a real card. An unknown leaf reaching the engine now means
+the two languages have drifted, which is a bug in the loader and should read like
+one.
+
+The load-time half was tightened to match. `{}` is refused explicitly — it passes
+a set-difference check and would have fallen off the end of the evaluator — and
+`counters_on` requires **both** its keys in both languages: `counter` defaults to
+`+1/+1` in the evaluator, so a Door of Destinies that omitted `charge` would be
+sized by a counter kind the artifact never receives; and `objects` is not
+`{"self_only": true}` when omitted, it is every permanent the filter language
+defaults to, which on the static side is everything its controller has. The kind
+goes through the 122.1c near-miss check `add_counters` already used, which moved
+beside the shared validator so both languages get the same one.
+
+### What the packet was not showing
+
+The gap existed partly because a worker could not see the language it needed.
+`static_value_keys` was absent from the authoring packet entirely, so a worker
+shown `value_keys` alone read the effect-side list as the whole vocabulary — and
+a worker shown nothing assumed an anthem's `power` is a `const` and filed a gap
+for a sentence that, with this leaf, is now writable. It is in the packet now,
+with a note, beside `static_condition_keys` which was added for Vampire Nocturnus
+for exactly the same reason.
+
+### What it unblocked
+
+Door of Destinies, verified through all six gates. Its expectation is the
+permanent landing with **zero** charge counters: the verifier's sandbox casts the
+card under test and nothing else, so no spell of the chosen type is ever cast and
+the anthem is correctly +0/+0 there. Asserting a number that position cannot
+produce would have been asserting a fiction; the scaling itself is pinned in
+`tests/unit/test_counter_scaled_anthem.py`, which is where behaviour that needs a
+board belongs.
+
 ## "Can't block", with a clock and no permanent behind it
 
 ### Overview

@@ -27,12 +27,13 @@ from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
+    validate_counter_kind,
+    validate_counters_on,
     validate_mana_symbols,
     validate_per_player_count,
     validate_value,
 )
 from automtg.engine.enums import (
-    KEYWORD_COUNTERS,
     AbilityKind,
     CardType,
     Color,
@@ -1576,19 +1577,58 @@ STATIC_LIFE_PLAYERS = frozenset({"you", "opponent", "each_opponent", "each_playe
 STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 
 
+#: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
+#: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
+#:
+#: A **fourth** language, and much smaller than the effect-side `VALUE_KEYS`:
+#: every leaf here reads a pipeline *input*, because anything reading a derived
+#: characteristic would let one static depend on another's output and the fixed
+#: order of layers-lite has no way to resolve that. Named rather than built
+#: inline so the authoring packet can show it -- a worker shown `value_keys` and
+#: not this one reads the effect-side list as the whole language, which is how
+#: Door of Destinies came to be filed as a gap.
+STATIC_VALUE_KEYS = (
+    frozenset({"const", "count", "mana_symbols", "counters_on"})
+    | STATIC_LIFE_KEYS
+    | PER_PLAYER_COUNT_KEYS
+)
+
+
 def _validate_static_value(value: Any, where: str) -> None:
     """Static abilities allow ``const``, ``count`` and the per-player leaves."""
-    allowed = {"const", "count", "mana_symbols"} | STATIC_LIFE_KEYS | PER_PLAYER_COUNT_KEYS
     if isinstance(value, int):
         return
     if not isinstance(value, Mapping):
         raise DslError(f"{where}: static values must be an int, 'const' or 'count'")
-    if set(value) - allowed:
+    if set(value) - STATIC_VALUE_KEYS:
         raise DslError(
-            f"{where}: static values may only use {sorted(allowed)}, got {sorted(value)}"
+            f"{where}: static values may only use {sorted(STATIC_VALUE_KEYS)}, "
+            f"got {sorted(value)}"
         )
+    if not value:
+        # `{}` passes the difference check above and then falls off the end of
+        # `_static_value` -- which used to mean 0, and now means a crash. Named
+        # here so it is a load error with a name on it instead.
+        raise DslError(f"{where}: an empty object is not a static value")
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    if "counters_on" in value:
+        # "Creatures you control of the chosen type get +1/+1 for each charge
+        # counter on this artifact" -- Door of Destinies. Safe inside a static
+        # for exactly the reason the `counters` *condition* head already is: a
+        # counter is a pipeline **input**, placed and removed by primitives, and
+        # no layer can change one. So an anthem sized by a counter count cannot
+        # come to depend on another static's output, and the fixed order stays
+        # acyclic. The condition head could only switch a fixed anthem on and
+        # off; this scales one.
+        #
+        # The filter goes through the *static* counting validator, so it obeys
+        # the same printed-face-and-owner rule every static filter does.
+        validate_counters_on(
+            value["counters_on"],
+            f"{where}.counters_on",
+            validate_objects=_validate_static_count_filter,
+        )
     if "mana_symbols" in value:
         # Chroma, and Primalcrux is the reason it is here as well as in the
         # effect language: "its power and toughness are each equal to the number
@@ -1789,36 +1829,11 @@ def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any]
     return dict(amount) if isinstance(amount, Mapping) else amount
 
 
-def _check_counter_kind(kind: Any, where: str) -> None:
-    """Refuse a counter kind that *nearly* names a keyword (122.1c).
-
-    A counter kind is a free string on purpose -- charge, quest, slumber, lore,
-    age -- so there is no vocabulary to check it against, with one exception.
-    A **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
-    the characteristics pipeline), and the match is exact: `"vigilance"` makes a
-    vigilant creature and `"Vigilance"`, `"vigilance counter"` and
-    `"first strike"` each make a tally nobody consults, on a card that loads
-    clean and reads as printed.
-
-    That is the one failure mode this whole validation pass exists to refuse,
-    and unusually it is detectable, because the near miss normalises onto a
-    keyword the engine implements. A kind that normalises onto nothing is left
-    alone -- it is somebody's charge counter, and guessing at typos in an open
-    vocabulary would refuse cards that are correct.
-    """
-    if not isinstance(kind, str) or not kind:
-        raise DslError(f"{where}: a counter kind must be a non-empty string, got {kind!r}")
-    normalised = kind.strip().lower().replace("-", " ").replace("_", " ")
-    for suffix in (" counters", " counter"):
-        if normalised.endswith(suffix):
-            normalised = normalised[: -len(suffix)]
-    normalised = "_".join(normalised.split())
-    if normalised != kind and normalised in KEYWORD_COUNTERS:
-        raise DslError(
-            f"{where}: write a keyword counter as the exact keyword name -- "
-            f"{normalised!r}, not {kind!r}. A keyword counter grants its keyword "
-            f"(122.1c) and the lookup is exact, so {kind!r} would be an inert tally"
-        )
+#: Refuse a counter kind that *nearly* names a keyword (122.1c).  Lives in
+#: ``effects/values.py`` because ``counters_on`` reads a kind in both value
+#: languages and one copy of the near-miss rule is the point; aliased here for
+#: the trigger, replacement and ``add_counters`` call sites that predate it.
+_check_counter_kind = validate_counter_kind
 
 
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:

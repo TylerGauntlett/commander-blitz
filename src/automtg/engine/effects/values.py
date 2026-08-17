@@ -25,6 +25,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..characteristics import chars, min_count, min_life
+from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from .context import EffectContext
@@ -489,6 +490,89 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
     validate_objects(spec["objects"], f"{where}.objects")
 
 
+def validate_counter_kind(kind: Any, where: str) -> None:
+    """Refuse a counter kind that *nearly* names a keyword (122.1c).
+
+    A counter kind is a free string on purpose -- charge, quest, slumber, lore,
+    age -- so there is no vocabulary to check it against, with one exception.
+    A **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
+    the characteristics pipeline), and the match is exact: `"vigilance"` makes a
+    vigilant creature and `"Vigilance"`, `"vigilance counter"` and
+    `"first strike"` each make a tally nobody consults, on a card that loads
+    clean and reads as printed.
+
+    That is the one failure mode this whole validation pass exists to refuse,
+    and unusually it is detectable, because the near miss normalises onto a
+    keyword the engine implements. A kind that normalises onto nothing is left
+    alone -- it is somebody's charge counter, and guessing at typos in an open
+    vocabulary would refuse cards that are correct.
+
+    Here rather than in the loader, where it was written, because
+    ``counters_on`` names a kind in **both** value languages and the near-miss
+    rule has to be the same one in each: a kind spelled ``"vigilance counter"``
+    is an inert tally whether the reader is an effect or a static's magnitude.
+    """
+    if not isinstance(kind, str) or not kind:
+        raise DslError(f"{where}: a counter kind must be a non-empty string, got {kind!r}")
+    normalised = kind.strip().lower().replace("-", " ").replace("_", " ")
+    for suffix in (" counters", " counter"):
+        if normalised.endswith(suffix):
+            normalised = normalised[: -len(suffix)]
+    normalised = "_".join(normalised.split())
+    if normalised != kind and normalised in KEYWORD_COUNTERS:
+        raise DslError(
+            f"{where}: write a keyword counter as the exact keyword name -- "
+            f"{normalised!r}, not {kind!r}. A keyword counter grants its keyword "
+            f"(122.1c) and the lookup is exact, so {kind!r} would be an inert tally"
+        )
+
+
+def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None) -> None:
+    """Shared by the effect-side and static-side value validators.
+
+    Both languages accept ``counters_on`` -- "double the number of +1/+1
+    counters on this creature" is an amount, and "+1/+1 for each charge counter
+    on this artifact" is a static's magnitude -- and they differ only in which
+    filter language checks ``objects``, so that is the parameter. Same shape and
+    same reason as :func:`validate_mana_symbols`.
+
+    Three refusals, and each of them is a card that would otherwise load clean
+    and read a plausible wrong number:
+
+    ``counter`` is **required**. It defaults to ``+1/+1`` in the evaluator, so a
+    Door of Destinies that forgot to say ``charge`` would be an anthem sized by
+    a counter kind the artifact never receives -- permanently +0/+0.
+
+    ``objects`` is **required**, for the reason chroma and domain require it: an
+    empty selector is not "this permanent", it is every permanent the filter
+    language defaults to. On the static side that is everything its controller
+    has, so the anthem would silently sum charge counters across the board.
+
+    The kind itself goes through :func:`validate_counter_kind`, so a keyword
+    near-miss is refused here exactly as it is on ``add_counters``.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    unknown = set(spec) - {"counter", "objects"}
+    if unknown:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    if "counter" not in spec:
+        raise DslError(
+            f"{where}: needs 'counter' -- the kind being counted, which defaults "
+            f"to '{PLUS_ONE}' in the evaluator and so would read 0 for ever on a "
+            f"permanent that carries some other kind"
+        )
+    validate_counter_kind(spec["counter"], f"{where}.counter")
+    if not spec.get("objects"):
+        raise DslError(
+            f"{where}: needs 'objects' -- an empty selector is not "
+            f"{{\"self_only\": true}}, it is every permanent the filter defaults to"
+        )
+    if validate_objects is None:
+        from .selectors import validate_selector as validate_objects
+    validate_objects(spec["objects"], f"{where}.objects")
+
+
 def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = None) -> None:
     """Shared by the effect-side and static-side value validators.
 
@@ -561,6 +645,8 @@ def validate_value(expr: Any, where: str) -> None:
         validate_selector(expr["count"], f"{where}.count")
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
+    if "counters_on" in expr:
+        validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     for key in PER_PLAYER_COUNT_KEYS & set(expr):
         validate_per_player_count(expr[key], f"{where}.{key}")
     if "distinct" in expr:

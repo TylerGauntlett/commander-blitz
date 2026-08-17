@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **29** capabilities.
+**25 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [commander-mana-value](#commander-mana-value) | 1 | 6142 | value |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
-| [counter-scaled-anthem](#counter-scaled-anthem) | 1 | 1083 | value |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [damage-prevention](#damage-prevention) | 1 | 2498 | op, trigger_event |
 | [dash](#dash) | 1 | 6918 | cost |
@@ -130,20 +129,6 @@ Blocks **1** card.
 - **Verge Rangers** (rank 5364) — `verge_rangers`
   - You may look at the top card of your library any time.
   - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
-
-</details>
-
-## counter-scaled-anthem
-
-Blocks **1** card.
-
-- **(value)** A leaf in the *static* value language that reads a counter count off the static's own source, so a `buff` (or `set_pt`) static's `power`/`toughness` can be "for each <kind> counter on this permanent" -- i.e. allow `{"counters_on": {"counter": "charge", "objects": {"self_only": true}}}` (or an equivalent source-scoped `counters` value form) wherever `{"const": n}` is legal inside a static ability, and let the anthem's magnitude be recomputed as counters are added and removed
-  <br>Why the existing vocabulary won't do: The buff has to be a static ability, because it must apply continuously to whatever creatures of the chosen type are on the battlefield at any moment, including ones that arrive after the counters do -- so no op will do: `pump` is until-end-of-turn, and `add_counters` putting +1/+1 counters onto the creatures themselves is a different card (it would not scale existing creatures when a later charge counter arrives, and would not size up creatures cast afterwards). But the static value language is deliberately narrower than `value_keys`: `_validate_static_value` in src/automtg/cards/loader.py permits only `const`, `count`, `mana_symbols`, `min_life_of` and `max_life_of`, and `_static_value` in src/automtg/engine/characteristics.py returns 0 for anything else -- so the `counters_on` leaf that exists in the effect-side value language is rejected at load time here, and there is no way to reach a counter count from inside a static's magnitude. `count` cannot substitute: it counts *objects* matching a filter, and counters are not objects, so no `static_filter_keys` combination can express "the number of charge counters on this artifact". The `counters` head in `static_condition_keys` proves counters on the source are already a safe pipeline input for a static to read -- but it is a boolean threshold test (`_condition_met` compares the count against a fixed amount and yields on/off), so it can only switch a fixed-size anthem on and off, never scale one. Emulating unbounded scaling with a ladder of counter-threshold-conditioned +1/+1 statics is both unbounded and a different card, and each such static's `text` would be a sentence the card does not print, which the residual gate reads. Scope note: the card's other two lines need nothing new -- `choose_type` on a `self_enters` trigger, and a `spell_cast` trigger filtered by `{"subtypes": [{"chosen_type_of": "self"}]}` running `add_counters` with a `charge` kind on `self_only`, the same shapes Vanquisher's Banner already uses. Only the scaling anthem is blocked, so closing this one value leaf makes the whole card writable.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Door of Destinies** (rank 1083) — `door_of_destinies`
-  - Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact.
 
 </details>
 

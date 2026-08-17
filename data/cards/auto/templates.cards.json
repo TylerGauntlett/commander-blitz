@@ -18199,6 +18199,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_type",
+              "prompt": "Choose a creature type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell of the chosen type, put a charge counter on this artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact.",
+          "toughness": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "door_of_destinies",
+      "mana_cost": "{4}",
+      "name": "Door of Destinies",
+      "oracle_text": "As this artifact enters, choose a creature type.\nWhenever you cast a spell of the chosen type, put a charge counter on this artifact.\nCreatures you control of the chosen type get +1/+1 for each charge counter on this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

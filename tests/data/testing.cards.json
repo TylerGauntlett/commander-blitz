@@ -9252,6 +9252,87 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_charge_banner",
+      "name": "Test Charge Banner",
+      "oracle_text": "Creatures you control get +1/+1 for each charge counter on this artifact.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1 for each charge counter on this artifact.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "toughness": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_charge_engine",
+      "name": "Test Charge Engine",
+      "oracle_text": "Test Charge Engine's power and toughness are each equal to the number of charge counters on it.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Charge Engine's power and toughness are each equal to the number of charge counters on it.",
+          "effect": "set_pt",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "toughness": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }
