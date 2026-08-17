@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **9** capabilities.
+**3 cards** blocked by **8** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
-| [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
 
 ## any-number-of-targets
 
@@ -138,19 +137,5 @@ Blocks **1** card.
 - **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
   - If a creature dealt damage this way would die this turn, exile it instead
   - Any number of target creatures you control phase out
-
-</details>
-
-## triggered-ability-target-choice
-
-Blocks **1** card.
-
-- **(decision)** a triggered ability with targets must let its controller choose them as it goes on the stack (603.3d), rather than taking the first enumerated option. `stack.push_triggered_ability` calls `enumerate_target_tuples(..., limit=1)` and assigns `options[0]`; for a `kind: "player"` target the order is `state.alive()`, i.e. seat order, so the chosen player is always seat 0 -- the ability's own controller in every game this card is played in. The choice needs to become a real decision, which means a suspended push (the trigger already goes on the stack from `promote_pending`, so this is a generator boundary that does not exist yet) or a pre-resolution target-choice step, plus an auto-answer entry in `verify.py`'s table so the authoring gates do not hang.
-  <br>Why the existing vocabulary won't do: Not a selector or vocabulary gap -- the selector half shipped. A selector may now carry `player`, the full player spec, and `{"zone": "graveyard", "player": {"target": "t1"}, "count": "all"}` empties exactly the named player's graveyard; `tests/unit/test_target_player_zone.py` is the witness and the card compiles and passes all six gates. What is wrong is *who gets named*. Written as a triggered ability the card always exiles its controller's own graveyard, which is not a weaker Bojuka Bog but a card nobody would play. Writing it as a spell instead is not available: it is a Land, and legality enumerates one cast line per legal target only for things that are cast. Hard-coding `controller: "opponent"` is the approximation to refuse -- it is right in a duel and wrong at a pod, where it would exile all three opponents' graveyards at once, which is Relic of Progenitus.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bojuka Bog** (rank 24) — `bojuka_bog`
-  - When this land enters, exile target player's graveyard.
 
 </details>
