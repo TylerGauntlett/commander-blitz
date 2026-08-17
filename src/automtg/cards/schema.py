@@ -79,6 +79,12 @@ class TargetModel(BaseModel):
     #: `count: N, optional: true` is not the same thing and cannot stand in: it
     #: means "exactly N, or none", forbidding every size between 1 and N-1.
     count: int | Literal["any"] = 1
+    #: "**For each player**, exile up to one target nonland permanent that
+    #: player controls." The same set of legal choices as "any number of target
+    #: nonland permanents, no two controlled by the same player" -- which is
+    #: what this says, and why it is a constraint on the *combination* rather
+    #: than one spec per seat. Requires ``count: "any"``.
+    one_per_player: bool = False
     optional: bool = False
 
 

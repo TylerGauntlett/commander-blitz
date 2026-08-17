@@ -34,6 +34,10 @@ class TargetSpec:
     #: last, because `filter_legal` slices the stored refs spec by spec and a
     #: variable-size spec in the middle would make the split ambiguous.
     count: int | str = 1
+    #: At most one chosen object per controller -- "for each player, up to one
+    #: target permanent that player controls". Only meaningful with
+    #: ``count == "any"``.
+    one_per_player: bool = False
     optional: bool = False
 
 

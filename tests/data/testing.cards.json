@@ -8300,6 +8300,43 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_one_each",
+      "name": "Test One Each",
+      "oracle_text": "For each player, exile up to one target nonland permanent that player controls.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": "any",
+          "one_per_player": true,
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }
