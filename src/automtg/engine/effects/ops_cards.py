@@ -251,17 +251,40 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
-    """Move these cards to the bottom of their owner's library, shuffled.
+    """"…put the rest on the bottom of your library in a random order."
 
-    Only these: the rest of the library keeps the order it had, which is the
-    whole difference between this and `shuffle_library`.
+    Cascade, ripple, hideaway, `reveal_until`, and every "look at the top N"
+    card that does not simply leave them there. Not a shuffle: shuffling
+    reorders the *whole* library and would destroy a stacked top somebody else
+    set up, which is a different game action with a different cost. The
+    randomness is over these cards only.
+
+    The cards arrive in two states and each needs its own move. Cascade's are in
+    **exile**, and those have to travel through `move_object` -- an object whose
+    `zone` and whose containing list disagree is a card every other reader in
+    the engine sees differently. `look_at_top`'s and `reveal_until`'s never left
+    the library, and for those `move_object` would announce a zone change that
+    did not happen, once per card -- which for a `reveal_until` that ran the
+    library out is once for the whole deck. Those are spliced within the list
+    instead. Both branches append in the same shuffled order, so a mixed set --
+    ripple's, whose declined match is in exile and whose misses never moved --
+    still lands in one random order rather than two.
     """
     if not oids:
         return
-    moving = set(oids)
+    order = ctx.state.rng.shuffled(list(oids))
+    staying = {
+        oid
+        for oid in order
+        if (obj := ctx.state.objects.get(oid)) is not None and obj.zone is Zone.LIBRARY
+    }
     player = ctx.state.players[pid]
-    remaining = [oid for oid in player.library if oid not in moving]
-    player.library = remaining + ctx.state.rng.shuffled(list(oids))
+    player.library = [oid for oid in player.library if oid not in staying]
+    for oid in order:
+        if oid in staying:
+            ctx.state.players[pid].library.append(oid)
+        else:
+            move_object(ctx.state, oid, Zone.LIBRARY, to_player=pid, cause="bottomed")
 
 
 def _matches_in_zone(
@@ -658,22 +681,6 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
-def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
-    """"…put the rest on the bottom of your library in a random order."
-
-    Cascade, ripple, and every "look at the top N" card that does not simply
-    leave them there. Not a shuffle: shuffling reorders the *whole* library and
-    would destroy a stacked top somebody else set up, which is a different game
-    action with a different cost. The randomness is over these cards only.
-    """
-    for oid in ctx.state.rng.shuffled(list(oids)):
-        # Through `move_object` rather than by editing the list: half of these
-        # are in **exile** and half never left the library, and an object whose
-        # `zone` and whose containing list disagree is a card every other reader
-        # in the engine sees differently.
-        move_object(ctx.state, oid, Zone.LIBRARY, to_player=pid, cause="bottomed")
-
-
 def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     """"You may cast it without paying its mana cost."  Returns whether it was.
 
@@ -847,6 +854,75 @@ def op_ripple(ctx: EffectContext, spec: Mapping[str, Any]):
         if not cast:
             rest.append(oid)
     _bottom_in_random_order(ctx, pid, rest)
+
+
+@register("reveal_until")
+def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Reveal cards from the top of your library until you reveal a creature
+    card that shares a creature type with it. Put that card into your hand and
+    the rest on the bottom of your library in a random order." — Heirloom Blade.
+
+    Cascade's walk with the stop test lifted out into an ordinary selector,
+    which is the one thing cascade and ripple could not be asked for: cascade's
+    test is hardcoded to "nonland card with lesser mana value than this spell"
+    and ripple's to "the same name as this spell", and there is no parameter on
+    either that a card could substitute a selector into.
+
+    Three things separate it from `look_at_top`, and every one of them is the
+    card rather than a preference:
+
+    - the depth is **unbounded** and decided by the library, so there is no
+      ``amount``. An amount large enough to fake "until" would reveal the whole
+      deck and randomize all of it every time the trigger resolved.
+    - there is **no choice**: the scan stops at the first match and that match
+      is what moves, so nothing here is a decision and the op is not a
+      generator. `look_at_top` offers every match inside its window and lets the
+      player take the best one, which is a strictly better card.
+    - the cards walked past are **public**. That is the difference between a
+      reveal and a look, and it is information the whole table paid for.
+
+    Running the library out with no match is an outcome, not an error: everything
+    revealed goes to the bottom in a random order and nothing reaches the
+    destination. It is the line's worst case rather than its edge case — an
+    Equipment on an empty-ish library sees it every game — and it is also the
+    reason "the rest" is bottomed in a *random* order and not left in place:
+    otherwise a failed scan would hand its controller a known deck.
+    """
+    selector = spec.get("objects") or spec.get("selector") or {}
+    destination = DESTINATIONS[str(spec.get("destination", "hand"))]
+    # Defaulted **on**, unlike `look_at_top`'s. "Look at" leaves what you did not
+    # take on top in order, and that is what looking means; there is no printed
+    # "reveal until" that leaves the revealed cards where they were, so an
+    # omitted key here would silently make a card that keeps the top of its
+    # library face up and in order.
+    rest_to_bottom = bool(spec.get("rest_to_bottom", True))
+
+    for pid in select_players(ctx, spec.get("player", "you")):
+        # A snapshot taken up front, because a reveal changes no zone: unlike
+        # cascade, which exiles as it walks and so can keep reading `library[0]`,
+        # nothing moves here until the scan is over.
+        revealed: list[int] = []
+        hit: int | None = None
+        for oid in list(ctx.state.players[pid].library):
+            revealed.append(oid)
+            if _matches_library(ctx, oid, selector):
+                hit = oid
+                break
+        if not revealed:
+            continue
+
+        ctx.state.emit(
+            "reveal",
+            player=pid,
+            source=ctx.source_oid,
+            cards=[ctx.state.objects[o].def_id for o in revealed],
+        )
+        # The match moves first. Bottoming first would put it among "the rest"
+        # and there would be nothing left on top to take.
+        if hit is not None:
+            _move_found(ctx, [hit], pid, destination, spec, False, "reveal_until")
+        if rest_to_bottom:
+            _bottom_in_random_order(ctx, pid, [oid for oid in revealed if oid != hit])
 
 
 @register("two_piles")

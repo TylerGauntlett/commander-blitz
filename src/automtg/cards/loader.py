@@ -1980,6 +1980,30 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}: unknown look_at_top destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+    if op == "reveal_until":
+        # The selector *is* the "until", so an omitted one is not a smaller
+        # version of the card -- an empty selector matches the very first card
+        # revealed, and "reveal until you reveal a creature card that shares a
+        # type" would quietly become "put the top card into your hand".
+        selector = effect.get("objects") or effect.get("selector")
+        if not isinstance(selector, Mapping) or not selector:
+            raise DslError(
+                f"{where}: reveal_until needs a non-empty 'objects' -- "
+                f"the selector is the card it stops at"
+            )
+        # An `amount` would be read by nobody: the depth is the library's, not
+        # the card's, and a card that wrote one would believe it was bounded.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: reveal_until takes no 'amount' -- the scan is unbounded; "
+                f"use look_at_top for a bounded window"
+            )
+        destination = str(effect.get("destination", "hand"))
+        if destination not in DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown reveal_until destination {destination!r} "
+                f"(implemented: {sorted(DESTINATIONS)})"
+            )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
     # ability that later plays it would still work, so nothing downstream would
