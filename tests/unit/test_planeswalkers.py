@@ -226,3 +226,58 @@ class TestAttackingOne:
         self.swing_at_the_walker(game, bear, walker)
         assert game.state.combat.attackers[bear] == 1
         assert game.state.combat.attacking_planeswalker[bear] == walker
+
+
+class TestTheActionSpaceCanSayIt:
+    """The RL encoder is the one consumer that cannot simply be handed a new
+    kind of target: its indices are flat and fixed, so a planeswalker needs a
+    *slot*. `DEF_CAP` rose from 3 to 8 for this, which moved the action-space
+    size and therefore invalidated every checkpoint trained before it."""
+
+    def test_attacking_a_planeswalker_has_an_index(self, builder):
+        from automtg.ai import action_space
+
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 5 + [BEAR])
+            .battlefield(1, [WALKER])
+            .hand(0, [])
+            .library(0, ["swamp"] * 20)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+            .build()
+        )
+        walker = only_oid(game, WALKER, 1)
+        pass_until(game, lambda g: g.state.step is Step.DECLARE_ATTACKERS)
+
+        table = action_space.build(game.state)
+        swings = [
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ADD_ATTACKER
+            and any(ref.id == walker and ref.kind == "object" for ref in a.targets)
+        ]
+        assert swings, "legality never offered the attack"
+        assert not [a for a in table.dropped if a in swings], (
+            "the encoder dropped it -- no slot"
+        )
+        assert all(table.encode(a) is not None for a in swings)
+
+    def test_a_player_and_a_planeswalker_do_not_share_a_slot(self, builder):
+        """A player id and an object id are both ints, and 1 is a legal value of
+        each -- so the slot map is keyed by a tagged id rather than a bare one."""
+        from automtg.ai.action_space import _Slots
+
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 5 + [BEAR])
+            .battlefield(1, [WALKER])
+            .hand(0, [])
+            .library(0, ["swamp"] * 20)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+            .build()
+        )
+        slots = _Slots(game.state, 0, None)
+        assert len(set(slots.defenders.values())) == len(slots.defenders)
+        assert len(slots.defenders) == 2  # one opponent, one planeswalker
