@@ -20,6 +20,7 @@ from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_goad,
     clear_unblockables,
     clear_until_eot,
     untap_all,
@@ -254,6 +255,11 @@ def _untap_step(state: GameState) -> None:
     # Rampart.) Detain's clock exactly, so it is cleared in the same breath and
     # keyed the same way -- by *who* imposed it, never by a turn number, because
     # eliminating a player moves everybody else's "next turn".
+    # Goad (701.38a): "until **your** next turn, that creature attacks each
+    # combat if able and attacks a player other than you if able." Detain's
+    # clock again, keyed the same way -- but dropping only *this* player's mark,
+    # because a creature two opponents goaded is still goaded by the other one.
+    clear_goad(state, player.pid)
     clear_block_prohibitions(state, "until_your_next_turn", player.pid)
     # "Until your next turn, target creature an opponent controls can't be
     # blocked." (Sly Instigator.) The same clock read from the other end of the

@@ -14,6 +14,7 @@ from .enums import Keyword, LossReason, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE
 from .player import COMMANDER_DAMAGE_THRESHOLD
+from .primitives import clear_goad
 from .zones import destroy, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -167,6 +168,13 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for u in state.unblockables
         if not (u.duration == "until_your_next_turn" and u.player == pid)
     ]
+    # And the same hole in goad's mark. It is *more* than a stale flag here:
+    # a goad nobody can clear compels every combat for the rest of the game, and
+    # its target restriction would keep pointing at an empty seat -- which, with
+    # the goader gone, is a defender `alive()` never offers, so the "if able"
+    # escape could never fire either. Cleared with `clear_goad`, the same call
+    # the untap step makes, because this *is* that player's last untap step.
+    clear_goad(state, pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

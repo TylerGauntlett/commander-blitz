@@ -10214,6 +10214,33 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_goader",
+      "name": "Test Goader",
+      "oracle_text": "Goad all creatures your opponents control.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "goad",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

@@ -904,6 +904,68 @@ def clear_attack_restrictions(state: GameState, duration: str) -> None:
     ]
 
 
+def goad_creature(state: GameState, oid: int, player: int) -> bool:
+    """"Goad that creature" (701.38a) -- ``player`` is the one it must attack around.
+
+    One rules-relevant thing, said in one word: the creature is written down as
+    goaded **by this player**, and everything goad means is read back off that
+    mark. `combat.attack_required` makes it attack each combat while the mark is
+    there, and `combat.attack_target_forbidden` keeps it off the marked player
+    while anybody else is available.
+
+    The datum is *who*, never *when*. "Until your next turn" is not a turn
+    number -- eliminate a player and it moves -- so the clock is
+    `turn._untap_step` asking which marks belong to whoever is untapping, exactly
+    as detain does one line above it.
+
+    A **set** rather than detain's single pid, because two opponents goading the
+    same creature is two live obligations: the second one's clock runs from the
+    second one's untap step, and the creature has to attack around both of them.
+    Adding a mark that is already there changes nothing and returns ``False``, so
+    a second copy of the same goad neither stacks nor extends.
+
+    Returns whether anything was recorded. Refused, as `restrict_attack` refuses
+    its own dead cases, when the mark could never bite:
+
+    * a creature that is not on the battlefield -- it left in response, and a
+      mark on a card in a graveyard would ride back onto the battlefield with it
+      if `reset_permanent_state` ever stopped clearing it;
+    * a player who is out of the game, whose untap step is never coming, so the
+      goad would last for the rest of the game;
+    * goading your own creature *for yourself* -- a creature cannot attack its
+      own controller, so "attacks a player other than you" would be vacuous and
+      the compulsion would be a one-sided Bident with no author. (Goading a
+      creature you do not control is the normal case and is not this.)
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(player):
+        return False
+    if obj.controller == player:
+        return False
+    if player in obj.goaded_by:
+        return False
+    obj.goaded_by.add(player)
+    return True
+
+
+def clear_goad(state: GameState, player: int) -> None:
+    """Drop every goad ``player`` placed -- goad's wearing-off.
+
+    Called from `turn._untap_step`, in the same breath as detain and the
+    ``until_your_next_turn`` block prohibitions and for the same reason: 701.38a
+    ends a goad "until your next turn", and the only moment that phrase can be
+    resolved is the start of the goading player's own turn.
+
+    Note what this does *not* do: a creature goaded by two players loses one mark
+    here and keeps the other. That is why the field is a set and why the clear-up
+    takes a player rather than emptying it.
+    """
+    for obj in state.objects.values():
+        obj.goaded_by.discard(player)
+
+
 def forbid_block(
     state: GameState,
     objects: Iterable[int] | None,
