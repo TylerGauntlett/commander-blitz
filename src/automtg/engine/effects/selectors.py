@@ -102,6 +102,11 @@ SELECTOR_KEYS = frozenset(
         #: A literal `subtypes` list cannot stand in either: which type matters
         #: is a property of the deck the card is played in.
         "shares_a_type_with_commander",
+        #: "When **that mana** is spent to cast a spell…" -- Path of Ancestry,
+        #: Opal Palace. A trigger filter only, matched against the spell: the
+        #: permanents whose mana abilities paid for it are recorded on the spell
+        #: by `pay_mana`, which is the only instant they are knowable.
+        "paid_by",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
         #: same reason: `colors` takes a literal list written into the card, and

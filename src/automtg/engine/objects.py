@@ -52,6 +52,12 @@ class GameObject:
     #: *generic* part too, which is what both keywords say -- a Sunburst artifact
     #: cast for `{4}` off five different lands enters with five counters.
     colors_spent: frozenset[str] = frozenset()
+    #: Which **permanents' mana abilities made the mana that paid for this** --
+    #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
+    #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
+    #: instant: the pool holds six integers and the permanent that made a pip is
+    #: unrecoverable the moment the pip is gone.
+    mana_sources_spent: frozenset[int] = frozenset()
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.

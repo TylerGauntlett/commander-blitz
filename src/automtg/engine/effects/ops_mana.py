@@ -17,7 +17,7 @@ from .values import evaluate_value
 def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
     produced = parse_mana_production(str(spec.get("mana", "")))
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].mana_pool.add_tuple(produced)
+        ctx.state.players[pid].mana_pool.add_tuple(produced, source=ctx.source_oid)
         ctx.state.emit(
             EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=spec.get("mana", "")
         )
@@ -35,7 +35,7 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     scaled = tuple(v * count for v in unit)
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].mana_pool.add_tuple(scaled)
+        ctx.state.players[pid].mana_pool.add_tuple(scaled, source=ctx.source_oid)
         ctx.state.emit(
             EventType.MANA_ADDED,
             player=pid,
