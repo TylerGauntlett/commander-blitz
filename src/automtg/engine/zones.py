@@ -70,6 +70,24 @@ def move_object(
         target_player = owner
         cause = cause or "commander_replacement"
 
+    # -- "if it would die this turn, exile it instead" ----------------------
+    # Gallifrey Falls, Anger of the Gods, the whole exile-wrath family. Applied
+    # here rather than in `destroy` because the printed word is **die**, which
+    # is broader than "be destroyed": a creature sacrificed, or one whose
+    # toughness went to zero, has also died, and neither of those routes through
+    # `destroy` at all. This is the single funnel every one of them shares.
+    #
+    # After the commander replacement above, which outranks it: a commander that
+    # would be exiled instead of dying still goes to the command zone if its
+    # owner says so (903.9a replaces the *new* destination, not the old one).
+    if (
+        obj.dies_to
+        and from_zone is Zone.BATTLEFIELD
+        and to_zone is Zone.GRAVEYARD
+    ):
+        to_zone = Zone(obj.dies_to)
+        target_player = owner
+
     was_creature = from_zone is Zone.BATTLEFIELD and "Creature" in chars(state, oid).types
     was_on_battlefield = from_zone is Zone.BATTLEFIELD
     # Snapshotted here for the same reason `was_creature` is: by the time a

@@ -14,7 +14,7 @@ from .enums import Keyword, LossReason, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .zones import move_object
+from .zones import destroy, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -261,8 +261,18 @@ def _creature_deaths(state: GameState) -> bool:
             # instead, which is true.
             damagers = state.damage_ledger.get(oid, ())
             by = state.last_damager.get(oid) if len(damagers) == 1 else None
-            move_object(state, oid, Zone.GRAVEYARD, cause="lethal_damage", by=by)
-            changed = True
+            # Through `destroy`, not `move_object`: lethal damage **destroys**
+            # (704.5g), so a regeneration shield and totem armor both replace
+            # it. `destroy`'s own docstring already claimed this routed through
+            # it, and it did not -- a regenerating creature that took lethal
+            # damage died with its shield unspent.
+            #
+            # The indestructible test above stays where it is rather than being
+            # left to `destroy`: `changed` has to report whether the board
+            # actually moved, and `destroy` returning False is the only way to
+            # know.
+            if destroy(state, oid, cause="lethal_damage", by=by):
+                changed = True
     return changed
 
 

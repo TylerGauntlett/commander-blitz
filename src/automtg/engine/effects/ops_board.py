@@ -28,7 +28,7 @@ from ..structs import TempEffect
 from ..zones import destroy, exile, move_object, sacrifice
 from . import register
 from .context import EffectContext
-from .selectors import choose_objects, pick_from_pool, resolve_pool
+from .selectors import ZONE_NAMES, choose_objects, pick_from_pool, resolve_pool
 from .values import evaluate_value
 
 
@@ -39,6 +39,35 @@ def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
         # `by` is what makes the log and the exit animation able to say
         # "Destroyed by Vandalblast" rather than just "Destroyed".
         destroy(ctx.state, oid, by=ctx.source_oid)
+
+
+@register("replace_deaths")
+def op_replace_deaths(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"If [these creatures] would die this turn, exile them instead."
+
+    Gallifrey Falls, Anger of the Gods, the whole exile-wrath family.
+
+    The set is **snapshotted now**, which is what the printed wording says: "a
+    creature dealt damage this way" is decided as the spell resolves, and a
+    creature that arrives afterwards was dealt no damage by it. Evaluated lazily
+    at death time it would catch the whole board for the rest of the turn, which
+    is a different and much stronger card.
+
+    Marked per object rather than registered as a global replacement, because
+    that is what the set-is-fixed reading makes it: a property of these
+    permanents until the turn ends. `move_object` reads it, so **every** way of
+    dying is covered -- the printed word is "die", which is broader than
+    "destroyed", and a sacrificed creature or one whose toughness hit zero never
+    goes near `destroy`.
+    """
+    destination = str(spec.get("destination", "exile"))
+    if destination not in ZONE_NAMES:
+        raise DslError(f"replace_deaths: unknown destination {destination!r}")
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Redirect deaths", "replace")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.dies_to = destination
 
 
 @register("phase_out")

@@ -52,6 +52,13 @@ class GameObject:
     #: *generic* part too, which is what both keywords say -- a Sunburst artifact
     #: cast for `{4}` off five different lands enters with five counters.
     colors_spent: frozenset[str] = frozenset()
+    #: "If a creature dealt damage this way would die this turn, exile it
+    #: instead." A zone name, replacing the graveyard as this permanent's
+    #: destination when it would die. Per-object and turn-scoped -- cleared at
+    #: cleanup with the other until-end-of-turn effects, and by
+    #: `reset_permanent_state`, so it cannot ride the card out of the zone it
+    #: was redirected into.
+    dies_to: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -406,6 +413,7 @@ class GameObject:
         self.paired_with = None
         self.face_down = False
         self.until_eot = []
+        self.dies_to = None
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the
         # rules are concerned, so it is no longer renowned either.

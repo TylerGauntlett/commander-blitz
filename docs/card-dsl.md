@@ -1805,6 +1805,38 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## "If it would die this turn, exile it instead"
+
+```jsonc
+{"op": "damage", "objects": {"types": ["Creature"], "controller": "any"},
+ "amount": {"const": 4}},
+{"op": "replace_deaths", "destination": "exile",
+ "objects": {"types": ["Creature"], "controller": "any", "damaged_by": "self"}}
+```
+
+`replacements` is a three-value whitelist and every value is about a permanent
+**entering** the battlefield. This is the moment one leaves.
+
+The redirect is written **on the objects**, not registered on the state, because
+that is what the printed wording means: "a creature dealt damage this way" is a
+set decided as the spell resolves, and a creature that arrives afterwards was
+dealt no damage by it. Read lazily at death time it would bury the whole board
+for the rest of the turn — a different and much stronger card.
+
+Read by `move_object` rather than by `destroy`, because the printed word is
+**die**, which is broader than "be destroyed": a sacrificed creature has died,
+and so has one whose toughness reached zero, and neither goes near `destroy`.
+`move_object` is the funnel all of them share.
+
+Expires at cleanup with the other until-end-of-turn effects — "would die *this
+turn*". Indestructible still wins, because a creature that is never destroyed
+never dies and there is nothing to replace.
+
+`damaged_by: "self"` is the selector half, answered from the same per-turn
+damage ledger the trigger filter reads. `damaged` cannot stand in: it means
+"has damage marked on it", which is true of a creature something else burned a
+moment ago and false of one this spell killed outright.
+
 ## "Any number of target creatures"
 
 ```jsonc
