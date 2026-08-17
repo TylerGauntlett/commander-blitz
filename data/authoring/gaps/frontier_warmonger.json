@@ -1,0 +1,32 @@
+{
+  "card_id": "frontier_warmonger",
+  "name": "Frontier Warmonger",
+  "oracle_text": "Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.",
+  "blocked_sentences": [
+    "Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "batch_attack_trigger",
+      "kind": "trigger_event",
+      "what": "A once-per-declaration attack trigger that knows who was attacked: \"Whenever one or more creatures attack <player>\". It must fire once for each (attack declaration, defending player) pair -- one trigger however many creatures were declared against that player -- accept the existing `defending` clause (`you` | `opponent` | `any`) so \"one of your opponents\" can be asked, and accept `controller: \"any\"` for the attacking side, because this card's attackers may be controlled by any player and not only by its controller. Concretely: `combat.declare_attackers` (engine/combat.py:250-260) fires one bare ATTACKERS_DECLARED carrying only `player` and `attackers`; it needs to fire one per distinct value of `combat.attackers` (the oid -> defending-player map already recorded at combat.py:220), each carrying `defender` plus the subset of attackers declared against that defender, and a DSL name for it in TRIGGER_EVENTS (e.g. `creatures_attack_player`). The planeswalker half of the printed line needs no extra work -- `combat.attackers[oid]` is always the defending *player* even when `attacking_planeswalker[oid]` is set -- so `defending: \"opponent\"` already covers \"or a planeswalker they control\".",
+      "why_existing_wont_do": "`you_attack` and `attacks` are the two candidates and each fails on a different half. `you_attack` is the right *shape* (ATTACKERS_DECLARED, once per declaration -- triggers.py:48-52) but carries no `defender`, so a `defending` clause on it never matches at all: `_defender_matches` (triggers.py:417-433) returns False the moment `event.data[\"defender\"]` is absent, and the ability would be inert forever. Dropping the clause is not a fallback, it is a different and actively harmful card: plain `you_attack` with `controller: \"any\"` also fires when an opponent's creatures attack *me*, handing menace to the creatures I am about to block, which the printed line never does. `attacks` is the other direction -- it carries `defender` and supports `defending: \"opponent\"` -- but it is the per-creature ATTACKS event, so a three-creature swing fires it three times and each copy can speak about one attacker only. That substitution is the exact one the codebase already rejected in writing: the comment at triggers.py:48-52 records that `you_attack` was added *because* `attacks` \"is per creature and would fire three times on a three-creature swing\", so implementing a printed \"one or more\" trigger on `attacks` contradicts the engine's own settled reading. The same missing event is behind a large family of queued cards that cannot even be faked per-creature, because they count or sweep the batch -- \"Whenever one or more creatures attack you, you gain 1 life for each attacking creature\", \"Whenever one or more creatures attack, this enchantment deals damage to each of those creatures\", \"Whenever one or more creatures you control attack, each defending player divides...\" (data/authoring/queue.json:193177, 156947, 211767)."
+    },
+    {
+      "capability": "batch_attack_trigger",
+      "kind": "selector",
+      "what": "A binding naming the creatures that caused the trigger, so \"those creatures\" is `{\"binding\": \"attackers\"}` in the effect's `objects`. The selector machinery for this already exists and is unused here: `resolve_pool` treats `binding` as a pool (effects/selectors.py:161-170) and `_bound_oids` (selectors.py:271-287) already accepts a *list* of oids under one name, the way `blockers` is carried for `becomes_blocked`. What is missing is one line of plumbing -- `attackers` is not in `EVENT_BINDING_KEYS` (triggers.py:402-414), so even though ATTACKERS_DECLARED puts `attackers=sorted(combat.attackers)` on the event, `event_bindings` drops it and no effect can see the set. It must be the per-defender subset described in the need above, not the whole declaration, or a pod attack split across two players would grant menace to creatures attacking me as well.",
+      "why_existing_wont_do": "`{\"zone\": \"battlefield\", \"attacking\": true}` is the near miss and says something strictly larger than \"those creatures\". `attacking` is a bare boolean checked as `combat.attacking(oid)` (selectors.py:459-462) with no notion of *whom* the creature is attacking, and `selector_keys` has no defending-player key at all -- so in any game where one declaration is split between me and an opponent it grants menace to the creatures attacking me, and it would also pick up creatures declared in an earlier combat this turn. `{\"binding\": \"subject\"}` is the other near miss and is a single oid: `_subject_oid` returns None for `you_attack` (it is absent from OBJECT_SUBJECT_TRIGGERS, triggers.py:99-139) and for `attacks` it is the one attacker, which is the per-creature reading this card does not have. `snapshot` does not help either -- the attackers have not left, they simply cannot be named."
+    }
+  ],
+  "closest_existing": [
+    "you_attack",
+    "attacks",
+    "defending (TriggerSpec clause, works only on events carrying `defender`)",
+    "attacking (selector, boolean with no defender)",
+    "binding (selector; already supports list-valued bindings via _bound_oids)",
+    "blockers (the existing list-valued event binding this should copy)"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Only the trigger is blocked. Everything after the comma is one plain op -- `grant_keyword` with `keywords: [\"menace\"]` and its default `until_end_of_turn` duration (ops_board.py:752-768), and `menace` is in the packet's keyword list -- and the card has no other printed line: it is a 4/4 Human Warrior for {3}{R} whose entire text is this ability. No partial answer was written because subtracting the trigger leaves nothing, and the two plausible approximations are both wrong in ordinary two-player play rather than merely imprecise in a pod: `you_attack` with a `defending` clause is inert, and `you_attack` without one grants menace to creatures attacking its own controller."
+}

@@ -1,0 +1,29 @@
+{
+  "card_id": "relentless_assault",
+  "name": "Relentless Assault",
+  "oracle_text": "Untap all creatures that attacked this turn. After this main phase, there is an additional combat phase followed by an additional main phase.",
+  "blocked_sentences": [
+    "Untap all creatures that attacked this turn.",
+    "After this main phase, there is an additional combat phase followed by an additional main phase."
+  ],
+  "needs": [
+    {
+      "capability": "attacked_this_turn_objects",
+      "kind": "selector",
+      "what": "A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. Relentless Assault resolves in a main phase, after the combat whose attackers it wants to untap, so the creatures it names cannot be found from live combat state. Also wanted by Aggravated Assault, Seize the Day and Waves of Aggression, which print the same untap clause.",
+      "why_existing_wont_do": "`attacking` is the closest selector key and is strictly live combat state: `effects/selectors.py:459` answers it with `state.combat and combat.attacking(oid)`, and `combat.end_combat` sets `state.combat = None`, so in the main phase where this sorcery resolves `attacking` is false for every creature and the untap would hit nothing. `tapped` is not a substitute -- it also matches creatures tapped for mana or by a tapper, and misses vigilant attackers the card is still supposed to untap. The `attacked_this_turn` *value* exists but is per **player**: `structs.py:237` stores `attacked: set[int]` of player ids and `values.py:273` counts players in it, so it answers raid's \"did you attack\" and knows nothing about which creatures did. `damaged_by` is the only per-object turn ledger in the selector language and records damage dealt, which misses attackers that were blocked without dealing damage or removed before damage."
+    }
+  ],
+  "closest_existing": [
+    "attacking",
+    "attacked_this_turn",
+    "tapped",
+    "damaged_by",
+    "untap",
+    "delay",
+    "postcombat_main",
+    "must_attack",
+    "set_flag"
+  ],
+  "confidence": "high"
+}

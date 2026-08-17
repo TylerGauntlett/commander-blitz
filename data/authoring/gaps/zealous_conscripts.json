@@ -1,0 +1,27 @@
+{
+  "card_id": "zealous_conscripts",
+  "name": "Zealous Conscripts",
+  "oracle_text": "Haste\nWhen this creature enters, gain control of target permanent until end of turn. Untap that permanent. It gains haste until end of turn.",
+  "blocked_sentences": [
+    "When this creature enters, gain control of target permanent until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "temporary_control",
+      "kind": "op",
+      "what": "An until-end-of-turn duration on `gain_control` -- `{\"op\": \"gain_control\", \"objects\": {\"target\": \"t1\"}, \"duration\": \"until_end_of_turn\"}` -- that hands the permanent back to its previous controller in the cleanup step. Concretely: `primitives.change_control` (src/automtg/engine/primitives.py:466) already computes `previous = obj.controller` before overwriting it, so the temporary form is that same call plus a record of `previous` that survives to cleanup, and a reverse `change_control` when the turn ends. The natural home is the per-object until-end-of-turn store `GameObject.until_eot`, which `primitives.clear_until_eot` (line 761) already walks over `state.battlefield` and clears at cleanup -- but clearing a dict entry is not enough here, because handing control back has to re-run the three rules `change_control` hangs off it: reset `entered_turn` again (302.6 -- the permanent has not been under its original controller since their turn began either), remove it from combat (506.4), and `bump_chars()` because every static filtered on `controller` reads differently. Ordering matters against the rest of cleanup: rule 514.2 damage wipe and the handback happen in the same step, and the handback must not resurrect a permanent that left the battlefield during the turn (`clear_until_eot` iterating `state.battlefield` gives that for free, but a stolen permanent that changed controller a second time must not be handed to the wrong player, so the stored `previous` should be validated rather than trusted). The loader check at src/automtg/cards/loader.py:1789 that currently raises on a `duration` key is the gate to relax, and it should keep rejecting any spelling other than `until_end_of_turn`/`permanent` the way `grant_keyword` does at line 1798. Wanted by the whole Act of Treason family: Act of Treason, Threaten, Zealous Conscripts, Traitorous Blood, Mark of Mutiny, Harness by Force, Kari Zev's Expertise, Insurrection.",
+      "why_existing_wont_do": "`gain_control` is the closest op and is permanent-only by explicit design: `primitives.change_control`'s docstring says \"there is deliberately no until-end-of-turn form. That would need a continuous-effect layer and a cleanup-step handback\", and the loader *refuses* a `duration` key rather than ignoring one (loader.py:1789-1793) precisely so this card cannot be written as a permanent steal -- which would be strictly better than the printed card, since the opponent never gets the permanent back. Approximating is therefore not an option the DSL leaves open. Nothing else in `ops` moves control: `animate`, `set_pt` and `grant_keyword` all have until-end-of-turn durations, but they write characteristics into the same object's until-EOT layer and none of them touches `GameObject.controller`, which is not a layered characteristic but the field zone and combat membership are keyed off. `pump` and `grant_ability` are the same shape and equally irrelevant. `delay` can defer an effect to a named step, but `DELAY_STEPS` is `upkeep`, `draw_step`, `begin_combat`, `end_step` -- there is no `cleanup` entry, and an `end_step`-delayed reverse steal would give the permanent back a step early (visible: the opponent could untap and block with it, and rule 514 effects are supposed to outlast the end step), besides being a second independent effect that a `set_flag`/`if` pair cannot reliably bind back to the same object once the target has moved. `snapshot` reads a value off a departed object and cannot re-point a control change. `lock_abilities` and `detain` restrict a permanent the opponent still controls, which is a different sentence -- they cannot make it attack for you, which is the entire point of this card. The other two clauses of this trigger are individually expressible (`untap` on `{\"target\": \"t1\"}`, and `grant_keyword` haste with `duration: until_end_of_turn`), so this one op is the whole blocker for the line."
+    }
+  ],
+  "closest_existing": [
+    "gain_control",
+    "grant_keyword",
+    "animate",
+    "set_pt",
+    "delay",
+    "untap",
+    "detain",
+    "lock_abilities"
+  ],
+  "confidence": "high"
+}

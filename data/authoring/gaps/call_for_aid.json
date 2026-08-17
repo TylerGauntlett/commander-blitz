@@ -1,0 +1,31 @@
+{
+  "card_id": "call_for_aid",
+  "name": "Call for Aid",
+  "oracle_text": "Gain control of all creatures target opponent controls until end of turn. Untap those creatures. They gain haste until end of turn. You can't attack that player this turn. You can't sacrifice those creatures this turn.",
+  "blocked_sentences": [
+    "You can't attack that player this turn.",
+    "You can't sacrifice those creatures this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cant_attack_player",
+      "kind": "op",
+      "what": "A spell/ability effect op that installs a turn-long restriction forbidding a named player (the spell's target player, captured as a binding) from being attacked by the effect's controller -- i.e. a per-defending-player attack legality check, distinct from forbidding a creature from attacking at all",
+      "why_existing_wont_do": "The closest thing in reference is the `cant_attack` static_effect, and it falls short three ways: (1) it is a static ability, so it must live in `abilities` on a battlefield permanent -- a Sorcery only has `spell_effects` from `ops`, and there is no op that installs a static or an until-end-of-turn restriction; (2) `attack_forbidden` in engine/characteristics.py matches its `affects` filter against the attacking *creature* object, so the restriction it expresses is \"these creatures can't attack\", never \"these creatures can't attack this particular player\" -- there is no defending-player parameter in the check at all; (3) a static filter may only read printed characteristics, so it could not name a player chosen on resolution. `must_attack`/`must_block` are obligations pointing the other way, and `set_flag` only writes an adjective onto a battlefield permanent for a later `has_flag` condition to read -- nothing in combat legality consults flags, and the restriction here is on a player, not on an object"
+    },
+    {
+      "capability": "cant_sacrifice",
+      "kind": "op",
+      "what": "A spell/ability effect op that marks a set of permanents as unsacrificeable for the turn, so that any cost or effect that would sacrifice them (a `sacrifice` cost, the `sacrifice` op) cannot choose them -- the restriction that stops a borrowed creature being eaten before control reverts",
+      "why_existing_wont_do": "Nothing in `ops` or `static_effects` expresses a sacrifice prohibition; there is no `cant_be_sacrificed` anywhere in the engine. `lock_abilities` is the nearest relative -- it is an until-end-of-turn TempEffect that stops a permanent's activated abilities being activated -- but it gates the wrong thing: it cannot stop the `sacrifice` cost of an ability whose source is a *different* permanent (an Altar-style outlet), and it cannot stop the `sacrifice` op or any edict-style effect. `replace_deaths` redirects a permanent's death after the fact rather than making the sacrifice illegal, which is a different game action and lets the creature leave the battlefield anyway. `indestructible` via `grant_keyword` explicitly does not prevent sacrifice"
+    }
+  ],
+  "closest_existing": [
+    "cant_attack",
+    "cant_block",
+    "must_attack",
+    "lock_abilities",
+    "replace_deaths"
+  ],
+  "confidence": "high"
+}

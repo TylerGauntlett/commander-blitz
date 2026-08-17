@@ -6,7 +6,7 @@ decision (discarding to hand size).  Everything else runs straight through.
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
@@ -23,6 +23,7 @@ from .primitives import (
     untap_permanent,
 )
 from .sba import declare_draw
+from .state import MAX_EXTRA_PHASES_PER_TURN
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -82,6 +83,45 @@ DELAY_STEPS = {
     "begin_combat": Step.BEGIN_COMBAT,
     "end_step": Step.END_STEP,
 }
+
+
+#: The phases a card can add to a turn, and the step each one starts at.
+#:
+#: Two, because printed cards grant two: "there is an additional combat phase"
+#: (506.1) and "an additional main phase" (505.1). A main phase inserted after a
+#: combat is a *postcombat* main phase by 505.1b, so it is the POSTCOMBAT_MAIN
+#: step rather than a third kind.
+EXTRA_PHASE_STEPS = {
+    "combat": Step.BEGIN_COMBAT,
+    "main": Step.POSTCOMBAT_MAIN,
+}
+
+#: The last step of every phase an extra phase may be inserted after -- a main
+#: phase, or a combat phase.
+#:
+#: Not every phase boundary, and the omission is the rule rather than laziness.
+#: Every printed grant times itself off one of these two ("after this phase",
+#: "after this main phase"), so an extra combat granted during an upkeep -- an
+#: Aggravated Assault activation is legal there -- waits for the precombat main
+#: to end rather than jumping in front of it, which is what the card says and how
+#: it is ruled.
+PHASE_END_STEPS = frozenset(
+    {Step.PRECOMBAT_MAIN, Step.END_OF_COMBAT, Step.POSTCOMBAT_MAIN}
+)
+
+
+def grant_extra_phases(state: GameState, kinds: Sequence[str]) -> list[str]:
+    """Queue extra phases for the turn in progress; say which were queued.
+
+    The one way onto :attr:`GameState.extra_phases`, so the loop guard cannot be
+    routed around. Everything past ``MAX_EXTRA_PHASES_PER_TURN`` is dropped: the
+    rules would let Aggravated Assault take combats until its controller runs out
+    of mana, and a self-play run would sit in that turn for ever.
+    """
+    room = MAX_EXTRA_PHASES_PER_TURN - state.extra_phases_taken - len(state.extra_phases)
+    queued = [kind for kind in kinds if kind in EXTRA_PHASE_STEPS][: max(0, room)]
+    state.extra_phases.extend(queued)
+    return queued
 
 
 def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
@@ -445,7 +485,11 @@ def step_grants_priority(state: GameState) -> bool:
 
 
 def next_step(state: GameState) -> Step | None:
-    """The step that follows the current one, or ``None`` to start a new turn."""
+    """The step that follows the current one, or ``None`` to start a new turn.
+
+    Called exactly once per transition, from :func:`advance`, and it **consumes**
+    the extra-phase queue when it diverts into one -- see :func:`_after_phase`.
+    """
     step = state.step
     combat = state.combat
 
@@ -463,7 +507,55 @@ def next_step(state: GameState) -> Step | None:
         return Step.COMBAT_DAMAGE
     if step is Step.CLEANUP:
         return None if not state.cleanup_repeat else Step.CLEANUP
+    if step in PHASE_END_STEPS:
+        return _after_phase(state, step)
     return Step(int(step) + 1)
+
+
+def _after_phase(state: GameState, step: Step) -> Step:
+    """The step after a main or combat phase, honouring the extra-phase queue.
+
+    ``Step`` is an ordered ``IntEnum`` and a turn is otherwise a straight walk up
+    the integers, so a repeated phase has no representation of its own. It does
+    not need one: an extra phase is the *same* steps entered again, and what has
+    to be remembered is only that the phase the turn was about to enter is still
+    owed. Hence one queue and one bookmark.
+
+    - Something queued: enter it, and bookmark the natural successor the first
+      time, because that is where the turn resumes. The bookmark is not
+      overwritten by a later diversion -- a grant made *during* an extra phase is
+      inserted inside the same detour, so there is one place to come back to.
+    - Nothing queued but a bookmark set: the detour is over, resume there.
+      Reached from the extra phase's own last step, which is why the natural
+      successor cannot be used: after an inserted combat it is ``POSTCOMBAT_MAIN``,
+      and Combat Celebrant's extra combat grants no main phase.
+    - Neither: the ordinary walk.
+
+    Worked through for Relentless Assault, cast in a precombat main -- "after
+    this main phase, there is an additional combat phase followed by an additional
+    main phase". The queue is ``["combat", "main"]`` and the bookmark
+    ``BEGIN_COMBAT``, so the turn runs precombat main, combat, main, *then* the
+    combat and postcombat main it always had: two combats and three main phases,
+    with the extra pair where the card says they are. The additional main phase is
+    a ``POSTCOMBAT_MAIN`` step because 505.1b makes any main phase after a combat
+    a postcombat one -- so the ``postcombat_main`` trigger event fires for it,
+    which is what the per-phase firing site in :func:`begin_step` was written for.
+
+    An extra land drop is not a consequence: ``lands_played`` is reset by the
+    untap step, so the additional main phase is another sorcery window and not
+    another land.
+    """
+    natural = Step(int(step) + 1)
+    if state.extra_phases:
+        kind = state.extra_phases.pop(0)
+        if state.resume_step is None:
+            state.resume_step = natural
+        state.extra_phases_taken += 1
+        return EXTRA_PHASE_STEPS[kind]
+    if state.resume_step is not None:
+        resume, state.resume_step = state.resume_step, None
+        return resume
+    return natural
 
 
 def advance(state: GameState) -> None:
@@ -486,6 +578,12 @@ def advance(state: GameState) -> None:
 
 def _begin_next_turn(state: GameState) -> None:
     state.cleanup_repeat = False
+    # An extra phase belongs to the turn that was granted it. A grant with no
+    # phase left to follow -- Aggravated Assault activated in an end step -- does
+    # nothing, rather than handing the next player a combat they did not pay for.
+    state.extra_phases.clear()
+    state.resume_step = None
+    state.extra_phases_taken = 0
     before = state.active_idx
     state.active_idx = state.next_alive_index(state.active_idx)
     state.turn += 1

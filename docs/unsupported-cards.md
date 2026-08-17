@@ -10,5 +10,675 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**38 cards** blocked by **40** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [per-opponent-count](#per-opponent-count) | 3 | 633 | selector, value |
+| [attacked-this-turn-objects](#attacked-this-turn-objects) | 2 | 657 | selector |
+| [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
+| [cant-block](#cant-block) | 2 | 2089 | op |
+| [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
+| [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
+| [keyword-counters](#keyword-counters) | 2 | 4643 | engine |
+| [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
+| [addendum](#addendum) | 1 | 550 | engine |
+| [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
+| [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
+| [commander-mana-value](#commander-mana-value) | 1 | 6142 | value |
+| [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
+| [counter-scaled-anthem](#counter-scaled-anthem) | 1 | 1083 | value |
+| [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
+| [damage-prevention](#damage-prevention) | 1 | 2498 | op, trigger_event |
+| [dash](#dash) | 1 | 6918 | cost |
+| [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
+| [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
+| [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
+| [end-of-combat](#end-of-combat) | 1 | 4737 | trigger_event |
+| [exert](#exert) | 1 | 1000 | value |
+| [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
+| [goad](#goad) | 1 | 2089 | engine, op |
+| [library-depth-placement](#library-depth-placement) | 1 | 10639 | op |
+| [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
+| [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
+| [multikicker](#multikicker) | 1 | 4605 | cost |
+| [nonbasic-permanent-selector](#nonbasic-permanent-selector) | 1 | 890 | selector |
+| [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
+| [optional-pool-choice](#optional-pool-choice) | 1 | 6835 | selector |
+| [permanents-entered-this-turn](#permanents-entered-this-turn) | 1 | 4513 | value |
+| [reveal-until](#reveal-until) | 1 | 3831 | op |
+| [saga](#saga) | 1 | 7121 | engine |
+| [temporary-control](#temporary-control) | 1 | 2341 | op |
+| [unblockable](#unblockable) | 1 | 18 | op |
+| [variable-enters-with-counters](#variable-enters-with-counters) | 1 | 4800 | replacement |
+| [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
+| [ward](#ward) | 1 | 4062 | keyword, static_effect |
+| [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
+
+## per-opponent-count
+
+Blocks **3** cards.
+
+- **(value)** A value leaf that evaluates a count of matching objects **one player at a time** and aggregates it existentially or universally, so a condition can ask "does any single opponent control more lands than you". Concretely, the pair `{"max_count_of": {"player": "each_opponent", "objects": {"zone": "battlefield", "types": ["Land"]}}}` (the existential -- "an opponent controls more X than you") and `{"min_count_of": ...}` (the universal -- "each opponent controls more X than you" / "you control more X than each other player"), exactly mirroring the existing `min_life_of` / `max_life_of` split and for exactly the reason recorded in the comment above them in `engine/effects/values.py`. Implementation: add both names to `VALUE_KEYS`, and evaluate by running `resolve_pool` once per player returned by `select_players(ctx, spec["player"])` with the pool scoped to that one player -- the evaluator has to inject the scope itself (the way `for_each_player` injects `each_player`) rather than asking the card author for it, since a card written before the loop has no binding to name. `validate_value` needs the matching branch so a misspelling is a load error instead of a silent 0. It must be reachable from a trigger's `condition`, because the printed clause is an intervening-if (`TriggerSpec.condition`, checked in `triggers._matches` at both trigger time and resolution) and not an `if` op in the body.
+  <br>Why the existing vocabulary won't do: `count` is the only object-counting leaf, and it resolves a single pool: `{"count": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}` **sums across the whole table**, because `_zone_players`/`matches` treat `controller: "opponent"` as "every opponent at once". That is the printed card in a duel and a different, strictly better card at a pod. `lands_you_control` reads only your own side, so it supplies the right-hand side of the comparison and nothing else. `min_life_of`/`max_life_of` are the shape needed, but they are hard-wired to life totals. `distinct` counts distinct values over one pool, `extreme` ranks only on power/toughness/mana_value, and `exists` filters objects -- none can relate a land's controller's land count back to yours. The one per-player mechanism that does exist, `for_each_player` plus `controller: {"binding": "each_player"}`, is an **op**: it cannot appear inside a trigger's `condition` at all, and putting the test in the effects body instead would run the search once per qualifying opponent -- up to three Plains onto the battlefield at a four-player pod off a card that fetches one -- as well as dropping the on-trigger half of the intervening-if.
+- **(selector)** let a static condition ask about a single opponent rather than the opponents as a group -- 'an opponent controls more lands than you' is true when any one opponent's land count exceeds yours
+  <br>Why the existing vocabulary won't do: In a static count filter the only handle is `controller: "opponent"`, and `_matches_static_filter` implements that as 'not controlled by you', so `{"count": {"types": ["Land"], "controller": "opponent"}}` sums every opponent's lands. `player` is in `selector_keys` but not in `STATIC_FILTER_KEYS`/`STATIC_COUNT_FILTER_KEYS`, so a static cannot name a seat. Correct at two players, wrong in multiplayer, where the pooled total crosses your land count long before any single opponent does.
+- **(value)** A value leaf that counts matching objects **one player at a time** and aggregates existentially or universally, so a condition can ask "does any single opponent control more lands than I do". Concretely the pair `{"max_count_of": {"player": "each_opponent", "objects": {"zone": "battlefield", "types": ["Land"]}}}` (the existential -- "an opponent controls more X than you") and `{"min_count_of": ...}` (the universal -- "each opponent controls more X than you"), mirroring the existing `min_life_of` / `max_life_of` split and for exactly the reason recorded in the comment above them in `engine/effects/values.py`. Implementation: add both names to `VALUE_KEYS`, evaluate by running `resolve_pool` once per player returned by `select_players(ctx, spec["player"])` with the pool scoped to that single player (the evaluator injects the scope itself, the way `for_each_player` injects `each_player`, since a card written outside a loop has no binding to name), and give `validate_value` the matching branch so a misspelling is a load error rather than a silent 0. For this card it must be reachable from an **activated ability's** `condition` -- the field that already carries "Activate only if you control five or more Vampires" on bloodline_keeper -- so no new plumbing is needed beyond the leaf itself, and the activation gate must be re-checked at activation time (it is an activation restriction, not an intervening-if: unlike a trigger's condition it is never rechecked on resolution).
+  <br>Why the existing vocabulary won't do: `count` is the only object-counting leaf and it resolves a single merged pool: `{"count": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}` **sums across the whole table**, because `matches` and `_zone_players` in `engine/effects/selectors.py` treat `controller: "opponent"` as "every opponent at once" -- the code says so in a comment there. `lands_you_control` reads only your own side, so it can supply the right-hand side of the comparison and nothing else. `min_life_of`/`max_life_of` are exactly the right shape but are hard-wired to life totals. `exists` filters objects and cannot relate a land's controller's land count back to yours; `distinct` counts distinct values over one pool; `extreme` ranks only on power/toughness/mana_value. The one per-player mechanism that does exist -- `for_each_player` with `controller: {"binding": "each_player"}` -- is an **op**, so it cannot appear in an activated ability's `condition` at all, and moving the test into `effects` would be a different card: it would make the ability legal to activate whenever any board state existed, paying {W} and the tap for nothing when you are ahead on lands, and would run the tutor once per qualifying opponent.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Knight of the White Orchid** (rank 633) — `knight_of_the_white_orchid`
+  - When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.
+- **Weathered Wayfarer** (rank 1421) — `weathered_wayfarer`
+  - {W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you.
+- **Verge Rangers** (rank 5364) — `verge_rangers`
+  - You may look at the top card of your library any time.
+  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
+
+</details>
+
+## attacked-this-turn-objects
+
+Blocks **2** cards.
+
+- **(selector)** A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. Relentless Assault resolves in a main phase, after the combat whose attackers it wants to untap, so the creatures it names cannot be found from live combat state. Also wanted by Aggravated Assault, Seize the Day and Waves of Aggression, which print the same untap clause.
+  <br>Why the existing vocabulary won't do: `attacking` is the closest selector key and is strictly live combat state: `effects/selectors.py:459` answers it with `state.combat and combat.attacking(oid)`, and `combat.end_combat` sets `state.combat = None`, so in the main phase where this sorcery resolves `attacking` is false for every creature and the untap would hit nothing. `tapped` is not a substitute -- it also matches creatures tapped for mana or by a tapper, and misses vigilant attackers the card is still supposed to untap. The `attacked_this_turn` *value* exists but is per **player**: `structs.py:237` stores `attacked: set[int]` of player ids and `values.py:273` counts players in it, so it answers raid's "did you attack" and knows nothing about which creatures did. `damaged_by` is the only per-object turn ledger in the selector language and records damage dealt, which misses attackers that were blocked without dealing damage or removed before damage.
+- **(selector)** A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. With it, Windbrisk Heights' unlock is an ordinary intervening condition and needs nothing else new: `{"op": "if", "condition": {"cmp": ">=", "left": {"count": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "attacked_this_turn": true}}, "right": {"const": 3}}, "then": [{"op": "may", "effects": [{"op": "play_exiled"}]}]}`. Note the count must survive the creature leaving the battlefield to be fully correct (an attacker that died in combat still attacked), so the ledger should hold oids rather than be recomputed from live permanents. Wanted identically by the other hideaway lands' siblings that count attackers (Mosswort Bridge counts total power of creatures you control, but Windbrisk Heights, Hellrider-style raid variants and Aggravated Assault/Seize the Day all want the per-object attacker record already requested by relentless_assault).
+  <br>Why the existing vocabulary won't do: `attacked_this_turn` in `value_keys` is the closest thing and is per **player**, not per creature: `structs.py:237` stores `attacked: set[int]` of player ids -- its own comment says "a set rather than a count because raid asks only whether it happened" -- and `values.py:273` returns `sum(1 for p in pids if p in ledger.attacked)`, so `{"attacked_this_turn": "you"}` is 1 whether you attacked with one creature or ten. A `cmp` of it against `{"const": 3}` would therefore never be true, and against `{"const": 1}` it would silently turn Windbrisk Heights into a raid land that unlocks off a single attacker -- the approximation this card most invites. The `attacking` selector key is strictly live combat state (`selectors.py:459` answers it with `state.combat and combat.attacking(oid)`, and `end_combat` sets `state.combat = None`), so `{"count": {"attacking": true}}` reads 0 in the postcombat main phase where this ability is most often activated, and it also misses attackers that died during combat. `tapped` catches creatures tapped for mana or by a tapper and misses vigilant attackers. `set_flag`/`has_flag` could record the fact, but only from an ability this card does not print, and the residual gate requires every ability's `text` to be a printed line.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Windbrisk Heights** (rank 657) — `windbrisk_heights`
+  - {W}, {T}: You may play the exiled card without paying its mana cost if you attacked with three or more creatures this turn.
+- **Relentless Assault** (rank 1545) — `relentless_assault`
+  - Untap all creatures that attacked this turn.
+  - After this main phase, there is an additional combat phase followed by an additional main phase.
+
+</details>
+
+## cant-attack-player
+
+Blocks **2** cards.
+
+- **(op)** A spell/ability effect op that installs a turn-long restriction forbidding a named player (the spell's target player, captured as a binding) from being attacked by the effect's controller -- i.e. a per-defending-player attack legality check, distinct from forbidding a creature from attacking at all
+  <br>Why the existing vocabulary won't do: The closest thing in reference is the `cant_attack` static_effect, and it falls short three ways: (1) it is a static ability, so it must live in `abilities` on a battlefield permanent -- a Sorcery only has `spell_effects` from `ops`, and there is no op that installs a static or an until-end-of-turn restriction; (2) `attack_forbidden` in engine/characteristics.py matches its `affects` filter against the attacking *creature* object, so the restriction it expresses is "these creatures can't attack", never "these creatures can't attack this particular player" -- there is no defending-player parameter in the check at all; (3) a static filter may only read printed characteristics, so it could not name a player chosen on resolution. `must_attack`/`must_block` are obligations pointing the other way, and `set_flag` only writes an adjective onto a battlefield permanent for a later `has_flag` condition to read -- nothing in combat legality consults flags, and the restriction here is on a player, not on an object
+- **(op)** An effect op that installs an attack restriction naming both sides -- one specific player (here the triggering opponent, `{"binding": "event_player"}`) may not attack one specific other player (the ability's controller) -- and that expires at end of combat rather than end of turn, because the printed duration is "this combat" and a turn with extra combats must re-ask the tax each time. The legality check for declaring attackers needs a defending-player parameter it currently does not have, so the restriction can be consulted as "this attacker's controller may not choose this defender" while leaving that creature free to attack anyone else.
+  <br>Why the existing vocabulary won't do: The nearest thing in `reference` is the `cant_attack` static_effect, and it misses three ways: (1) it is a static ability, so it must sit in `abilities` on a battlefield permanent -- a triggered ability's `else` branch can only run ops, and no op installs a static or a combat-scoped restriction; (2) `attack_forbidden` in engine/characteristics.py matches the `affects` filter against the attacking *creature*, so what it can say is "these creatures can't attack", never "can't attack this player" -- there is no defender in the check, and blanking the opponent's whole attack step is a strictly stronger card than taxing attacks on me alone; (3) a static filter may read only printed characteristics, so it could not name a player identified when the trigger resolved. `must_attack`/`must_block`/`block_restriction` are obligations or point at blockers instead. `detain` is per-object, forbids blocking and activating too, and lasts until the detainer's next turn. `set_flag` writes an adjective on a permanent and nothing in combat legality reads flags. The same capability was recorded from the opposite direction by `call_for_aid` ("You can't attack that player this turn", turn-scoped, restricting the effect's own controller); this card needs the third-party, combat-scoped form, so one op should carry attacker-player, defender-player and duration rather than two near-duplicates being built.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Champions of Minas Tirith** (rank 5253) — `champions_of_minas_tirith`
+  - When this creature enters, you become the monarch.
+  - At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.
+- **Call for Aid** (rank 7420) — `call_for_aid`
+  - You can't attack that player this turn.
+  - You can't sacrifice those creatures this turn.
+
+</details>
+
+## cant-block
+
+Blocks **2** cards.
+
+- **(op)** A one-shot op that imposes "can't block" on chosen creatures for the rest of the turn -- `objects` for the targeted form ("up to one target creature can't block this turn") and a way to say it of every creature on the battlefield for the global form ("creatures can't block this turn", which must also catch creatures that enter later in the turn, so it is a turn-scoped continuous effect and not a per-object mark).
+  <br>Why the existing vocabulary won't do: `cant_block` exists only as a `static_effects` entry: it lives in an ability on a permanent, is read by `characteristics.block_forbidden` off `_battlefield_statics`, lasts exactly as long as its source is on the battlefield, and its `affects` filter may read only printed characteristics -- so it cannot name a creature chosen when a trigger resolves and cannot expire at cleanup. `detain` is the only op that stops blocking and is wrong twice over: it also forbids attacking and activating abilities, and it lasts until the detainer's next turn rather than this turn. `grant_ability` cannot carry the static instead -- `loader.py` explicitly rejects any grantable ability that is not triggered, because a granted static would have to enter the characteristics pipeline from a non-source object. `block_restriction` points the other way (it restricts who may block a given attacker) and `must_block` is a requirement, not a restriction.
+- **(op)** A one-shot op imposing "can't block" on chosen creatures until the op's controller's next turn -- the block half of `detain` on detain's clock, without detain's attack and activated-ability restrictions. Same storage shape as `detain` (a player id written on the object, cleared by that player's untap step) and read in `combat.can_block` beside the existing `detained_by` check.
+  <br>Why the existing vocabulary won't do: `detain` has exactly the right duration and mechanism but forbids attacking and activating abilities too, and is documented as deliberately one indivisible op -- using it here would forbid the very attacks the same sentence's goad demands, producing a card that does the opposite of what it prints. `cant_block` exists only as a `static_effects` entry read by `characteristics.block_forbidden` off `_battlefield_statics`: it needs a permanent source on the battlefield (a sorcery has none), lasts only while that source is there, and its `affects` filter may read only printed characteristics, so it cannot name the set chosen at resolution nor expire at a player's next turn. `grant_keyword` has no "can't block" keyword in `keywords`; `defender` is not a substitute because it also stops the creature attacking. `must_block` and `block_restriction` are a requirement and an attacker-side restriction respectively, neither of which stops a creature blocking.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
+  - Goad all creatures your opponents control.
+  - Until your next turn, those creatures can't block.
+- **Aragorn, King of Gondor** (rank 4083) — `aragorn_king_of_gondor`
+  - When Aragorn enters, you become the monarch.
+  - Whenever Aragorn attacks, up to one target creature can't block this turn. If you're the monarch, creatures can't block this turn.
+
+</details>
+
+## conditional-cost-reduction
+
+Blocks **2** cards.
+
+- **(cost)** A flat cost reduction on an activated ability, gated on a condition rather than scaled by a count: "this ability costs {3} less to activate if <condition>". Needs an amount plus a `condition` on the same cost node, applied by `costs.ability_mana` so that `can_pay` and `pay` agree, and clamped at zero over the generic part like every other reduction.
+  <br>Why the existing vocabulary won't do: `mana_reduction` is the closest and is the wrong arithmetic: it is documented in `schema.py` as the `{"count": {filter}}` shape -- "costs {1} less for each Vampire you control" -- so it multiplies a per-object count and has no slot for a boolean condition. Writing this card's equip with it would mean finding a filter whose match count is 3 when you are the monarch and 0 otherwise, which no filter over permanents can express. The card-level `cost_reduction` field is also unusable here: `carddef.py` notes both existing reductions discount *casting a spell* and never reach the activation path an equip cost is charged on. Splitting the line into two abilities (equip {4} and equip {1}) is not available either, since nothing could turn the cheap one off when you are not the monarch.
+- **(cost)** A cost reduction scoped to a single cast variant -- "this spell costs {X} less to cast THIS WAY" -- so a discount can be attached to the flashback/`graveyard_cost` line and not to the printed hand cast. Suggested shape: a `reduction` key inside the `CostModel` that `flashback`/`graveyard_cost` already is (beside its `mana`), taking the same value the card-level `cost_reduction` takes, and read by `legality._cast_variant` only on the branch that selected that cost, plus the matching branch in `game._cast` so the spell is paid at the price it was offered at. Every alternative cost in the engine (`evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate`, `alternative_cost`) would gain the same rider for free.
+  <br>Why the existing vocabulary won't do: The two reductions in `cost_keys`/the card schema are both variant-blind. `legality._cast_variant` picks the cost per variant at `legality.py:848-867` (`if flashback and card.flashback is not None: cost = card.flashback.mana`) but then applies `discount = cost_reduction(state, pid, card)` unconditionally at `legality.py:875`, and `game._cast` mirrors that at `game.py:268` -- so a card-level `cost_reduction` would take {X} off the printed {4}{W} hand cast as well, which the card does not say and which would silently make Visions of Glory a one-mana sorcery in a deck with a 6-drop commander. The `mana_reduction` cost key is not a way in either: `costs.ability_mana` (`costs.py:407-432`) is the only reader, and its docstring says it exists precisely because the two cast-path reductions never reach an *activated ability* -- a flashback cast is a cast, so it goes through `_cast_variant` and never through `ability_mana`. There is no third place to hang the discount: `spell_cost_reduction` is the Warden-of-Evos-Isle static, which discounts a *different* card from the battlefield and cannot be printed on the card being discounted.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crown of Gondor** (rank 5614) — `crown_of_gondor`
+  - When a legendary creature you control enters, if there is no monarch, you become the monarch
+  - Equip {4}. This ability costs {3} less to activate if you're the monarch
+- **Visions of Glory** (rank 6142) — `visions_of_glory`
+  - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
+
+</details>
+
+## effect-result-binding
+
+Blocks **2** cards.
+
+- **(selector)** A way for a later effect to name the token an earlier effect just created -- an `as` field on `create_token` and `copy_permanent` that records the new tokens' oids into `ctx.bindings`, exactly as `sacrifice`'s `as` records the objects it consumed, so a following `delay` can carry `{"objects": {"binding": "the_token"}}` into its scheduled `exile`. `delay` already captures `dict(ctx.bindings)` when it schedules, so the binding would survive to the later step with no further work; the missing half is only that the two token-creating ops write nothing down.
+  <br>Why the existing vocabulary won't do: `op_create_token` and `op_copy_permanent` in `effects/ops_board.py` both call `create_token(...)` and discard its result -- neither reads an `as` key -- so there is no binding for the `binding` / `exclude_binding` selector keys or the `binding` value key to read, even though those keys exist and `sacrifice` demonstrates the pattern. Reconstructing the token from a selector instead does not work: `is_token` matches every token you control, and `{"is_token": true, "attacking": true}` would also catch tokens made by anything else attacking that turn, so a second Flamerush Rider trigger, or any other token-making attack trigger, makes the card exile the wrong object. `exiled_with` and `haunted_by` link back to a *source*, not to objects an effect produced. `snapshot` copies characteristics off an object for later reading, not an identity a later effect can act on.
+- **(op)** An `as` key on the `exile` op that records the oids it consumed into `ctx.bindings`, so a later effect in the same resolution can count them: `{"op": "exile", "objects": {...}, "as": "exiled"}` then `{"count": {"binding": "exiled", "types": ["Creature"]}}`. Two halves: (1) `op_exile` in `src/automtg/engine/effects/ops_board.py` writes `ctx.bindings[str(name)] = list(oids)` after `choose_objects` and before the move loop, byte-for-byte the three lines `op_sacrifice` already has directly below it; (2) `resolve_pool`/`matches` must apply a selector's remaining filter clauses (here `types`) to an oid list arriving via `binding`, because the card needs the *creature* subset of the exiled set, not its cardinality. Today the binding branch of `resolve_pool` returns the bound oids unfiltered, so a `types` clause alongside `binding` is silently ignored -- which would turn "number of creature cards" into "number of cards" without any error.
+  <br>Why the existing vocabulary won't do: The engine already has this exact idiom under this exact name, on two other ops, for this exact printed shape -- `op_sacrifice`'s `as` is devour ("it enters with twice that many +1/+1 counters") and `op_reveal`'s `as` is documented as "this creature enters with X +1/+1 counters, where X is the number of cards revealed this way". `exile` is the one member of the family that never got it, so the read-back half (`{"count": {"binding": ...}}`) already works and only the write side is missing. Nothing else in `reference` reaches the set: `snapshot` captures one object's characteristics under a name (`capture_snapshot(state, oids[0])`), not a count, and there is no general last-known-information system. `exiled_with: "self"` reads `GameObject.exiled_by`, but `op_exile` only writes that field when `until_leaves` is true, and `until_leaves` is the Oblivion Ring link -- "exile it until this permanent leaves the battlefield" -- so borrowing it would declare a return this card does not have and would make the creature hand back the whole graveyard if the O-Ring return is ever driven off that link. Counting the graveyard *before* exiling it (`{"count": {"zone": "graveyard", "player": {"target": "t1"}, "types": ["Creature"]}}` placed ahead of the `exile`) is the near miss: it is numerically equal only because this particular card empties the whole zone, and it requires emitting the card's two printed sentences in the opposite order from the one printed, so it neither says nor generalises to "exiled this way".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flamerush Rider** (rank 4737) — `flamerush_rider`
+  - Exile the token at end of combat.
+- **Grey Host Reinforcements** (rank 11982) — `grey_host_reinforcements`
+  - When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.
+
+</details>
+
+## keyword-counters
+
+Blocks **2** cards.
+
+- **(engine)** Counters whose kind is a keyword name -- a vigilance counter, a lifelink counter, a flying counter -- must actually grant that keyword to the permanent they sit on, read in the derived-characteristics keyword-grant layer the same way +1/+1 counters are read in the P/T layer, so that `add_counters` with `counter: "vigilance"` produces a vigilant creature rather than a tally nobody consults.
+  <br>Why the existing vocabulary won't do: `add_counters` accepts any `counter` string, but the only counter kinds the characteristics pipeline reads are `+1/+1` and `-1/-1` for power and toughness; nothing consults counters when computing keywords, so a `vigilance`/`lifelink` counter placed today is inert bookkeeping and the creature comes back with neither keyword. `grant_keyword` is the closest op and is the wrong shape twice over: it hands out a keyword directly with no counter to carry it, and its grants are either until-end-of-turn or tied to a continuous effect on a live source -- whereas a keyword counter is permanent, travels with the creature, survives Gilraen leaving, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` with a `counters` condition cannot stand in either: `static_filter_keys` has no way to point a static on Gilraen at one specific other creature, and the counters would still not exist as the thing being read.
+- **(engine)** Counters whose kind is a keyword name -- here an indestructible counter -- must actually grant that keyword to the permanent they sit on, read in the keyword-derivation layer the way `+1/+1` counters are read in the P/T layer, so `{"op": "add_counters", "counter": "indestructible"}` produces an indestructible creature. Same request as `gilraen_dunedain_protector` (vigilance and lifelink counters); this card adds `indestructible` to the set of keywords that must be reachable that way, and needs it placeable on a targeted permanent someone else may control.
+  <br>Why the existing vocabulary won't do: `op_add_counters` (`engine/effects/ops_board.py:284-290`) accepts any `counter` string and just tallies it via `add_counters`; nothing in `src/` matches /indestructible.*counter/ or any keyword-counter lookup, and the only kinds the characteristics pipeline consults are `+1/+1` and `-1/-1`. So the op loads and the card would print "put an indestructible counter on it" while leaving the target exactly as killable as before -- an inert clause, which is the specific failure the brief says is worse than nothing. `grant_keyword` is the closest op and is the wrong shape: its grant is a duration-bound temporary effect (`loader.py:1798` validates the duration precisely because a misspelled one silently falls back to until-end-of-turn), whereas an indestructible counter is permanent, rides on the creature after the Saga is sacrificed by its own final-chapter rule, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` on the Saga cannot substitute either -- `static_filter_keys` has no way to point a static at one specific creature chosen when the chapter resolved, and the Saga sacrifices itself immediately afterwards, taking any continuous effect with it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gilraen, Dúnedain Protector** (rank 4643) — `gilraen_dunedain_protector`
+  - If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.
+- **Oath of Eorl** (rank 7121) — `oath_of_eorl`
+  - (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)
+  - I — Create two 1/1 white Human Soldier creature tokens.
+  - II — Create two 2/2 red Human Knight creature tokens with trample and haste.
+  - III — Put an indestructible counter on up to one target Human. You become the monarch.
+
+</details>
+
+## ability-activated-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** A DSL trigger event -- `ability_activated` -- that fires when a player activates an activated ability of a permanent, so a card can hang a triggered ability off somebody else's activation. Three pieces: (1) an entry in `TRIGGER_EVENTS` mapping the DSL name to the already-defined `EventType.ABILITY_ACTIVATED`; (2) `game.py:_activate` must use `triggers.fire` instead of `state.emit` at the ABILITY_ACTIVATED emission (line ~488), because `emit` only appends to the log and never calls `collect`, so nothing can ever hear the event as it stands; (3) the event's source permanent must become the trigger's `subject`, i.e. the new name added to `OBJECT_SUBJECT_TRIGGERS` with `_subject_oid` reading the activating permanent's oid off the payload (the emission already passes `source=oid`), so that `TriggerSpec.filter` can express "of an artifact, creature, or land on the battlefield" via the existing `matches_card_filter` types check. `TriggerSpec.controller: "opponent"` then covers "an opponent activates", and `_actor` must return `event.player` (the activating player) for this event rather than the subject's controller, since the subject is the opponent's own permanent in the common case but need not be -- an opponent activating an equip on a creature they do not control must still trigger.
+  <br>Why the existing vocabulary won't do: `trigger_events` in the packet lists 29 DSL events and none is about ability activation. `spell_cast` is the closest -- it is also "an opponent did a thing that used the stack" and already supports `controller: "opponent"` -- but it fires on `EventType.SPELL_CAST` from casting a card off the stack, which is a disjoint set of actions from activating an ability of a permanent already on the battlefield; a Harsh Mentor built on `spell_cast` would punish every instant and sorcery and never punish an equip or a fetchland. `becomes_target` is the other near miss and answers a different question -- it fires on the object being pointed at, so it cannot see an ability with no targets (crack a Signet, sac an Evolving Wilds) and would misfire on every targeted spell. `EventType.ABILITY_ACTIVATED` does exist in `engine/events.py` and is emitted in both activation paths, but via `state.emit`, whose own docstring says it "only records" and leaves the trigger bus to the caller -- so today it is a log line with no listener, and there is no DSL name that could subscribe to it even if there were.
+- **(trigger_event)** A way for an `ability_activated` trigger to exclude mana abilities -- the printed "if it isn't a mana ability" clause. Concretely: put the activated ability's mana-ability status on the ABILITY_ACTIVATED payload (the engine already knows it -- `Ability.is_mana_ability`, read at `legality.py:_is_mana_ability` and `costs.offerable_mana_ability`) and give the trigger spec a boolean restriction on it, e.g. `TriggerSpec.mana_ability: false`, checked in `_matches` beside the existing `not_cause` and `counter` restrictions. Note that the second emission site, `game.py:_activate_mana` (line ~704), emits the identical event type for mana abilities and deliberately bypasses the stack, so it must either keep emitting without firing or fire with the flag set -- but the two paths must stop being indistinguishable to a listener.
+  <br>Why the existing vocabulary won't do: The intervening-if is `condition`, drawn from `condition_keys` (all, any, cast_from_graveyard, cmp, combat_damage_by, evoked, exists, has_city_s_blessing, has_flag, is_your_turn, kicked, left, not, overloaded, right, zone_is), and every one of those asks about the board or about the trigger's own card -- none can ask a property of the ability that fired. `TriggerSpec.filter` runs through `matches_card_filter` against the *source permanent*, so it can say "an artifact, creature, or land" but has no reach into which of that permanent's abilities was used; filtering the permanent's types cannot substitute, because the very permanents this clause is about -- lands and mana artifacts -- are also the permanents whose non-mana abilities Harsh Mentor is printed to punish (a fetchland's sacrifice ability, a Signet's tap-for-mana: same object, opposite answers). Approximating by dropping the clause turns a 2/2 that taxes activated abilities into a Manabarbs that pings every land tap, which is a strictly harsher and different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Harsh Mentor** (rank 2388) — `harsh_mentor`
+  - Whenever an opponent activates an ability of an artifact, creature, or land on the battlefield, if it isn't a mana ability, this creature deals 2 damage to that player.
+
+</details>
+
+## addendum
+
+Blocks **1** card.
+
+- **(engine)** a condition key that asks whether this spell was cast during its controller's own main phase -- e.g. {"cast_during": "main"} or {"cast_in_phase": ["precombat_main", "postcombat_main"]}. It must read the phase/step recorded at the moment the spell was *put on the stack*, not the phase at resolution, so the engine also has to stamp the casting phase (and the caster-vs-active-player relationship) onto the spell object when it is cast, the way `kicked`, `evoked` and `overloaded` already stamp cast-time choices.
+  <br>Why the existing vocabulary won't do: `is_your_turn` is the closest condition in `condition_keys`, but it only compares state.active_player to the source's controller -- it says nothing about the phase, so it would return true for a Formation cast during your own combat or end step, where Addendum must not apply. It is also evaluated at resolution rather than at cast time. `has_flag` reads a flag written by `set_flag` on a permanent's own object and there is no effect that runs at cast time to write one, and `zone_is` reports the source's current zone, not when or where it was cast. No key in `condition_keys` (nor any value in `value_keys`) exposes the turn's phase or step at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbreakable Formation** (rank 550) — `unbreakable_formation`
+  - Addendum — If you cast this spell during your main phase, put a +1/+1 counter on each of those creatures and they gain vigilance until end of turn.
+
+</details>
+
+## batch-attack-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** A once-per-declaration attack trigger that knows who was attacked: "Whenever one or more creatures attack <player>". It must fire once for each (attack declaration, defending player) pair -- one trigger however many creatures were declared against that player -- accept the existing `defending` clause (`you` | `opponent` | `any`) so "one of your opponents" can be asked, and accept `controller: "any"` for the attacking side, because this card's attackers may be controlled by any player and not only by its controller. Concretely: `combat.declare_attackers` (engine/combat.py:250-260) fires one bare ATTACKERS_DECLARED carrying only `player` and `attackers`; it needs to fire one per distinct value of `combat.attackers` (the oid -> defending-player map already recorded at combat.py:220), each carrying `defender` plus the subset of attackers declared against that defender, and a DSL name for it in TRIGGER_EVENTS (e.g. `creatures_attack_player`). The planeswalker half of the printed line needs no extra work -- `combat.attackers[oid]` is always the defending *player* even when `attacking_planeswalker[oid]` is set -- so `defending: "opponent"` already covers "or a planeswalker they control".
+  <br>Why the existing vocabulary won't do: `you_attack` and `attacks` are the two candidates and each fails on a different half. `you_attack` is the right *shape* (ATTACKERS_DECLARED, once per declaration -- triggers.py:48-52) but carries no `defender`, so a `defending` clause on it never matches at all: `_defender_matches` (triggers.py:417-433) returns False the moment `event.data["defender"]` is absent, and the ability would be inert forever. Dropping the clause is not a fallback, it is a different and actively harmful card: plain `you_attack` with `controller: "any"` also fires when an opponent's creatures attack *me*, handing menace to the creatures I am about to block, which the printed line never does. `attacks` is the other direction -- it carries `defender` and supports `defending: "opponent"` -- but it is the per-creature ATTACKS event, so a three-creature swing fires it three times and each copy can speak about one attacker only. That substitution is the exact one the codebase already rejected in writing: the comment at triggers.py:48-52 records that `you_attack` was added *because* `attacks` "is per creature and would fire three times on a three-creature swing", so implementing a printed "one or more" trigger on `attacks` contradicts the engine's own settled reading. The same missing event is behind a large family of queued cards that cannot even be faked per-creature, because they count or sweep the batch -- "Whenever one or more creatures attack you, you gain 1 life for each attacking creature", "Whenever one or more creatures attack, this enchantment deals damage to each of those creatures", "Whenever one or more creatures you control attack, each defending player divides..." (data/authoring/queue.json:193177, 156947, 211767).
+- **(selector)** A binding naming the creatures that caused the trigger, so "those creatures" is `{"binding": "attackers"}` in the effect's `objects`. The selector machinery for this already exists and is unused here: `resolve_pool` treats `binding` as a pool (effects/selectors.py:161-170) and `_bound_oids` (selectors.py:271-287) already accepts a *list* of oids under one name, the way `blockers` is carried for `becomes_blocked`. What is missing is one line of plumbing -- `attackers` is not in `EVENT_BINDING_KEYS` (triggers.py:402-414), so even though ATTACKERS_DECLARED puts `attackers=sorted(combat.attackers)` on the event, `event_bindings` drops it and no effect can see the set. It must be the per-defender subset described in the need above, not the whole declaration, or a pod attack split across two players would grant menace to creatures attacking me as well.
+  <br>Why the existing vocabulary won't do: `{"zone": "battlefield", "attacking": true}` is the near miss and says something strictly larger than "those creatures". `attacking` is a bare boolean checked as `combat.attacking(oid)` (selectors.py:459-462) with no notion of *whom* the creature is attacking, and `selector_keys` has no defending-player key at all -- so in any game where one declaration is split between me and an opponent it grants menace to the creatures attacking me, and it would also pick up creatures declared in an earlier combat this turn. `{"binding": "subject"}` is the other near miss and is a single oid: `_subject_oid` returns None for `you_attack` (it is absent from OBJECT_SUBJECT_TRIGGERS, triggers.py:99-139) and for `attacks` it is the one attacker, which is the per-creature reading this card does not have. `snapshot` does not help either -- the attackers have not left, they simply cannot be named.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frontier Warmonger** (rank 3131) — `frontier_warmonger`
+  - Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.
+
+</details>
+
+## cant-sacrifice
+
+Blocks **1** card.
+
+- **(op)** A spell/ability effect op that marks a set of permanents as unsacrificeable for the turn, so that any cost or effect that would sacrifice them (a `sacrifice` cost, the `sacrifice` op) cannot choose them -- the restriction that stops a borrowed creature being eaten before control reverts
+  <br>Why the existing vocabulary won't do: Nothing in `ops` or `static_effects` expresses a sacrifice prohibition; there is no `cant_be_sacrificed` anywhere in the engine. `lock_abilities` is the nearest relative -- it is an until-end-of-turn TempEffect that stops a permanent's activated abilities being activated -- but it gates the wrong thing: it cannot stop the `sacrifice` cost of an ability whose source is a *different* permanent (an Altar-style outlet), and it cannot stop the `sacrifice` op or any edict-style effect. `replace_deaths` redirects a permanent's death after the fact rather than making the sacrifice illegal, which is a different game action and lets the creature leave the battlefield anyway. `indestructible` via `grant_keyword` explicitly does not prevent sacrifice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Call for Aid** (rank 7420) — `call_for_aid`
+  - You can't attack that player this turn.
+  - You can't sacrifice those creatures this turn.
+
+</details>
+
+## commander-mana-value
+
+Blocks **1** card.
+
+- **(value)** A cost-time value equal to the greatest mana value among the commanders one player owns, counting both the battlefield and the command zone -- e.g. a `commander_mana_value` value key (or a `{"greatest_mana_value": <filter>}` reduction shape) evaluated with `pick: "greatest"` over `state.players[pid].command` plus that player's commander permanents on the battlefield, read off the printed card (`state.card(oid).mana_value`) since a commander in the command zone has no board state.
+  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the only reduction shapes `costs.cost_reduction` accepts are `{"count": filter}` and `{"total_power": filter}` (`costs.py:987-993`), both of which SUM over matches -- a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` (`costs.py:997-1012`) iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Visions of Glory** (rank 6142) — `visions_of_glory`
+  - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
+
+</details>
+
+## conditional-player-static
+
+Blocks **1** card.
+
+- **(engine)** make the player-wide statics honour their `condition`, i.e. route `_player_static` / `player_extra_land_drops` through `_static_active` the way `_battlefield_statics` already does, so an 'as long as ...' clause can switch `play_lands_from_library_top`, `play_lands_from_graveyard`, `no_hand_limit`, `extra_land_drops`, `double_land_mana`, `double_land_triggers` and `freeze_opponent_lands` on and off
+  <br>Why the existing vocabulary won't do: `play_lands_from_library_top` is exactly the permission this line grants, and the loader will happily validate a `condition` beside it, but the effect is read by `characteristics._player_static`, which matches on `effect` and `affects_player` and never calls `_static_active`. `_static_active` has exactly one call site, `_battlefield_statics`, which only feeds the object-characteristics pipeline. So a conditional `play_lands_from_library_top` would load and then grant the permission unconditionally -- the 'as long as an opponent controls more lands than you' clause would be silently dropped, which is worse than not implementing the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Verge Rangers** (rank 5364) — `verge_rangers`
+  - You may look at the top card of your library any time.
+  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
+
+</details>
+
+## counter-scaled-anthem
+
+Blocks **1** card.
+
+- **(value)** A leaf in the *static* value language that reads a counter count off the static's own source, so a `buff` (or `set_pt`) static's `power`/`toughness` can be "for each <kind> counter on this permanent" -- i.e. allow `{"counters_on": {"counter": "charge", "objects": {"self_only": true}}}` (or an equivalent source-scoped `counters` value form) wherever `{"const": n}` is legal inside a static ability, and let the anthem's magnitude be recomputed as counters are added and removed
+  <br>Why the existing vocabulary won't do: The buff has to be a static ability, because it must apply continuously to whatever creatures of the chosen type are on the battlefield at any moment, including ones that arrive after the counters do -- so no op will do: `pump` is until-end-of-turn, and `add_counters` putting +1/+1 counters onto the creatures themselves is a different card (it would not scale existing creatures when a later charge counter arrives, and would not size up creatures cast afterwards). But the static value language is deliberately narrower than `value_keys`: `_validate_static_value` in src/automtg/cards/loader.py permits only `const`, `count`, `mana_symbols`, `min_life_of` and `max_life_of`, and `_static_value` in src/automtg/engine/characteristics.py returns 0 for anything else -- so the `counters_on` leaf that exists in the effect-side value language is rejected at load time here, and there is no way to reach a counter count from inside a static's magnitude. `count` cannot substitute: it counts *objects* matching a filter, and counters are not objects, so no `static_filter_keys` combination can express "the number of charge counters on this artifact". The `counters` head in `static_condition_keys` proves counters on the source are already a safe pipeline input for a static to read -- but it is a boolean threshold test (`_condition_met` compares the count against a fixed amount and yields on/off), so it can only switch a fixed-size anthem on and off, never scale one. Emulating unbounded scaling with a ladder of counter-threshold-conditioned +1/+1 statics is both unbounded and a different card, and each such static's `text` would be a sentence the card does not print, which the residual gate reads. Scope note: the card's other two lines need nothing new -- `choose_type` on a `self_enters` trigger, and a `spell_cast` trigger filtered by `{"subtypes": [{"chosen_type_of": "self"}]}` running `add_counters` with a `charge` kind on `self_only`, the same shapes Vanquisher's Banner already uses. Only the scaling anthem is blocked, so closing this one value leaf makes the whole card writable.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Door of Destinies** (rank 1083) — `door_of_destinies`
+  - Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact.
+
+</details>
+
+## counter-unless-pays
+
+Blocks **1** card.
+
+- **(selector)** A player spec that names **the controller of a targeted spell**, so "unless its controller pays {N}" can charge the right seat -- e.g. `{"controller_of_target": "t1"}` in `selectors.select_players`, resolved as `[state.stack_item(sid).controller for sid in ctx.target_sids("t1")]`. With it, the whole family writes itself with existing vocabulary: `{"op": "may", "player": {"controller_of_target": "t1"}, "pay": {"mana": "{3}"}, "else": [{"op": "counter", "target": "t1"}]}`. The same key also unblocks "target spell's controller" on non-counter cards ("unless that spell's controller pays", "that spell's controller discards a card"), and the authoring queue holds dozens of `Counter target spell unless its controller pays {N}` printings waiting on exactly this one clause.
+  <br>Why the existing vocabulary won't do: The unless-pays *shape* already ships -- `may` with `pay` plus `else` is precisely it, and the loader documents that reading at loader.py:1659-1668 (Rhystic Study) -- but it can only bill a player some **trigger binding** already names. `select_players` (selectors.py:604-641) offers `{"controller_of": <binding>}`, which reads `ctx.bindings` and nothing else; bindings are written by `triggers.event_bindings` (triggers.py:394-397) and by `snapshot`, and an activated ability's StackItem carries no binding for the targets it was activated with (stack.py:622-631 passes `targets` and `bindings` as separate things). This is why ward could be written and a targeted counterspell cannot: ward's payer arrives as `controller_of: subject` off a `becomes_target` event. `{"target": "t1"}` is the obvious substitute and silently does the wrong thing: it routes to `ctx.target_players`, which keeps only refs of kind `"player"` (context.py:55-56), and a spell target is kind `"stack"` (context.py:58-59) -- so it returns `[]` and `op_may` falls back to `chooser = ctx.controller` (ops_control.py:57-58), asking Frontline Medic's own controller to pay {3} to counter the spell they just targeted. `{"controller_of": ...}` cannot be fed from the target either: `resolve_pool`'s `{"target": ...}` form seeds from `target_oids`, also object-kind only (selectors.py:165-172), so neither a selector nor a `snapshot` can reach the targeted spell to bind it. `player: "opponent"` is the tempting approximation and is refused: the targeted spell's controller is not necessarily an opponent, and with two of them `select_players` hands `op_may` a list whose first entry is an arbitrary seat.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frontline Medic** (rank 3489) — `frontline_medic`
+  - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
+
+</details>
+
+## damage-prevention
+
+Blocks **1** card.
+
+- **(op)** A one-shot prevention shield an effect can create over a *player* with a turn duration: `{"op": "prevent_damage", "players": {"player": "you"}, "amount": "all", "duration": "end_of_turn"}`, meaning "prevent all damage that would be dealt to you this turn". Three parts have to be built. (1) The op itself, which registers a shield rather than modifying anything immediately -- it resolves before the damage exists, so it must persist as turn-scoped state on the player (a `PlayerState` field cleared at cleanup, the way any until-end-of-turn effect is unwound) rather than as a battlefield static. (2) A prevention check inside `damage_player` (primitives.py:100), which today has none at all: it goes straight from the infect branch to `state.players[pid].life -= amount`, so there is no point in the player-damage path where a shield could be consulted. The check belongs at the top, before the infect branch and before `LIFE_LOST`/`DAMAGE_DEALT` fire, so prevented damage causes no life loss, no poison, no lifelink for the attacker, and no commander-damage tally -- prevented damage was never dealt. (3) The shield must emit `EventType.DAMAGE_PREVENTED` with `player` and `amount` so the trigger below can read how much it ate.
+  <br>Why the existing vocabulary won't do: `static_effects.prevent_damage` is absorb N, and is wrong on all three axes this card needs. It is keyed to a permanent: `prevented_damage(state, oid)` (characteristics.py:658) takes an object id, walks `_battlefield_statics` and `_matches` each one's `affects` against that permanent -- there is no player-facing form, and `static_filter_keys` has no way to name a player. It is per source and per instance by design ("a creature with absorb 1 blocked by three 1/1s takes nothing from any of them"), which is not "prevent all damage this turn" -- and it cannot be spelled "all" regardless, because loader.py:1073 rejects `prevent_damage` without an `amount` outright ("'prevent_damage' needs an 'amount' -- absorb N"). And it is a static, so it is continuous while the source is on the battlefield: a Squire carrying it would prevent all damage to its controller on every future turn as well, which is Worship-grade rather than a one-turn fog. `protection` is the other prevention static and is likewise per-permanent and quality-parameterised (`protected_from(state, oid, source_oid)`), and it prevents blocking, targeting and enchanting besides. The ops list has no prevention entry of any kind: `damage` deals it, `gain_life` pays it back after the fact (a different card -- the Squire's counters would never trigger and any death from that damage would already have happened), and `delay` only postpones an effect rather than installing a replacement. `set_flag`/`has_flag` can record that the ETB happened but nothing in the damage path reads flags, and `static_condition_keys` has no `has_flag` to gate a static on one.
+- **(trigger_event)** A `damage_prevented` DSL trigger, scoped to a player, exposing the prevented amount as `{"binding": "amount"}` -- so the second line is `{"kind": "triggered", "trigger": {"event": "damage_prevented", "player": "you"}, "effects": [{"op": "add_counters", "kind": "+1/+1", "amount": {"binding": "amount"}, "objects": {"self_only": true}}]}`. Two pieces: a `TRIGGER_EVENTS` entry mapping `damage_prevented` to `EventType.DAMAGE_PREVENTED`, and a switch from `state.emit` to `fire` at both existing emission sites (primitives.py:186 for protection, primitives.py:203 for absorb) plus the new player-shield site, since only `fire` puts an event on the trigger bus. The existing emissions carry `player`, `source`, `oid`, `amount` and `reason`, so the payload is already the right shape; the filter needs to distinguish a shield over a player from absorb on a permanent (the `oid` is `None` in the player case) so this trigger does not also fire off a blocked creature.
+  <br>Why the existing vocabulary won't do: `EventType.DAMAGE_PREVENTED` exists (events.py:115) and is already emitted twice, but it is not in `TRIGGER_EVENTS` (engine/triggers.py:28) and no card can subscribe to it -- loader.py:892 rejects any trigger whose event is not a key of that dict, so `damage_prevented` fails to load. Worse, both emission sites use `state.emit` rather than `fire`, unlike `LIFE_LOST` and `DAMAGE_DEALT` immediately around them, so the event only lands in `state.events` for tests to read (tests/unit/test_absorb.py:117) and never reaches the trigger bus -- adding the mapping alone would produce a trigger that silently never fires. `dealt_damage` (`EventType.DAMAGE_DEALT`, enrage) is the closest existing trigger and is exactly inverted: prevented damage is damage that was *not* dealt, so `DAMAGE_DEALT` does not fire for it, and on the turn the Squire's shield is up the printed card gets counters while a `dealt_damage` version would get none. `life_lost` fails for the same reason and is doubly wrong, since prevented damage costs no life. The `value_keys` route is no better: `damage_taken_this_turn` counts damage that landed, so it reads zero underneath a working shield, and there is no `damage_prevented_this_turn` counterpart to sum instead.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Selfless Squire** (rank 2498) — `selfless_squire`
+  - When this creature enters, prevent all damage that would be dealt to you this turn.
+  - Whenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature.
+
+</details>
+
+## dash
+
+Blocks **1** card.
+
+- **(cost)** The `evoke` alternative-cost slot must stop requiring that the alternative be *cheaper* than the printed cost, so it can carry a dash cost that is more expensive. Riders of Rohan is printed at {3}{R}{W} (mana value 5) with Dash {4}{R}{W} (mana value 6) -- you pay one more mana to buy haste plus the enters-the-battlefield trigger for a turn, then give the body back. That is a real trade a player takes, not dead weight. Concretely: relax the `evoke.mana_value() >= mana_cost.mana_value()` guard at `src/automtg/cards/loader.py:385-390` so a costlier alternative loads. The guard's stated purpose -- "an alternative nobody would take is dead weight that reads as a mechanic" -- is sound for evoke proper (Mulldrifter's evoke is strictly a discount) but it is not true of dash, where the extra mana buys haste and a re-triggerable ETB. If the guard is worth keeping in some form, the honest replacement is to reject only an alternative cost *equal* to the printed one (which really is offering two identical lines), not one that is more expensive. Alternatively split dash off as its own card-level field (`dash: "{4}{R}{W}"` writing the same `cast_evoked` flag, or a `dash_costs_more: true` opt-out beside `evoke_label`) if `evoke` is to keep its discount-only invariant.
+  <br>Why the existing vocabulary won't do: `evoke` plus `evoke_label: "dash"` is exactly the right mechanism otherwise, and `tests/unit/test_dash.py` was written to hold that claim down -- but it only covers a dasher printed at {2}{R} with dash {1}{R}, i.e. a discount. Loading this card with `evoke: "{4}{R}{W}"`, `evoke_label: "dash"`, and a `{"evoked": true}`-gated `grant_keyword` + `delay` fails at load with `DslError: riders_of_rohan: evoke '{4}{R}{W}' is not cheaper than the printed cost` (verified by compiling the card through `compile_card`). No card-level field in the DSL offers an unconditional alternative cost that may exceed the printed one. `alternative_cost` is the only other unconditional-shaped slot and is closed twice over: `loader.py:545-552` refuses it without a `condition` ("an unconditional alternative cost is 'evoke'") and this card's dash has no condition to invent, and more importantly it deliberately sets a *different* flag -- `Action.alternative`, not `evoked` (`src/automtg/engine/actions.py:84-89`, `src/automtg/engine/game.py:291-296`, `src/automtg/cards/schema.py:401-406`, whose comment is explicit that "a spectacle spell reporting `cast_evoked` would be a card quietly claiming to have been evoked"). Nothing reads back that a spell was cast for its `alternative_cost`, so the "If you do, it gains haste, and it's returned ..." half could not be gated on it at all and would have to fire on every cast, which is a different card. `kicker` points the wrong way -- it adds to the printed cost rather than replacing it, so a kicked cast would be {3}{R}{W} plus the dash price rather than {4}{R}{W} -- and while `kicked` is readable, mana value and the printed line would both be wrong. `emerge` replaces the printed cost but its price is reduced by a sacrificed creature's mana value and it may not coexist with `evoke` (`loader.py:332-336`); it is not a fixed alternative price.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riders of Rohan** (rank 6918) — `riders_of_rohan`
+  - Dash {4}{R}{W} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)
+
+</details>
+
+## delayed-object-reference
+
+Blocks **1** card.
+
+- **(op)** A way for `exile` to record which objects it moved under a name -- the `as` binding `sacrifice` and `reveal` already have -- so a later `delay` can return exactly those cards with `{"binding": "exiled"}`. "Return *that card*" from inside a delayed trigger has no expressible subject today.
+  <br>Why the existing vocabulary won't do: `{"target": "t1"}` names the exiled card correctly during the ability's own resolution, but `turn.py`'s delayed-trigger runner builds its EffectContext with `targets={}`, so a `target` selector inside a `delay`'s effects resolves to nothing; `delay` carries only `bindings` and `source_oid`. `exile` writes no binding -- it takes `objects`, `until_leaves` and `playable_this_turn` and nothing else -- so there is no name for the delay to carry. The one reachable substitute, `{"zone": "exile", "exiled_with": "self"}`, requires setting `until_leaves` on an ability that is not an O-Ring effect and is source-scoped rather than resolution-scoped: it accumulates every card Gilraen ever exiled, so a second activation's "you may return that card" would drag back a card declined on an earlier activation. `snapshot` binds a dict of characteristics, not an object a `put_onto_battlefield` can move.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gilraen, Dúnedain Protector** (rank 4643) — `gilraen_dunedain_protector`
+  - If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.
+
+</details>
+
+## delayed-triggered-ability
+
+Blocks **1** card.
+
+- **(op)** An op a spell can resolve that installs an *event-watching* delayed triggered ability for the rest of the turn (603.7): "Whenever <event> this turn, <effects>", built from a `trigger` spec out of `trigger_events` plus `effects`, expiring at cleanup, with no permanent to hang it on. This card needs the batched form of `deals_combat_damage_to_player` -- "one or more creatures you control deal combat damage to one or more players" fires once for the whole combat damage batch, not once per creature and not once per player, so the installer needs a once-per-event-batch flag (the same shape as the existing `This ability triggers only once each turn` handling) rather than firing X times when X Knights connect.
+  <br>Why the existing vocabulary won't do: `delay` is the only op that schedules anything for later and it is step-scoped, not event-scoped: `op_delay` (`engine/effects/ops_control.py:375-400`) appends a `DelayedTrigger` whose only timing knob is `step`, validated against `DELAY_STEPS = {upkeep, draw_step, begin_combat, end_step}` (`engine/turn.py:79-84`), so it can say "at the beginning of the next end step" and cannot say "whenever a creature deals combat damage". Putting the sentence in `abilities` is not open either: this is a Sorcery, and a spell's effects must live in `spell_effects` -- a triggered ability on a sorcery would be watching from the graveyard, where the card sits after it resolves, so it would either never fire or fire for the rest of the game rather than for this turn. `combat_damage_by` in `condition_keys` reads the turn ledger *backwards* (prowl: "was a player dealt combat damage this turn by a Faerie") and only by creature subtype -- it can be asked at cast time but cannot make anything happen later, and this card's whole point is that the damage comes after the sorcery resolves. `set_flag` marks a permanent and no combat damage handler reads flags.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Forth Eorlingas!** (rank 3207) — `forth_eorlingas`
+  - Create X 2/2 red Human Knight creature tokens with trample and haste.
+  - Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.
+
+</details>
+
+## draw-second-card-each-turn
+
+Blocks **1** card.
+
+- **(trigger_event)** A trigger that fires on the *ordinal* of a draw and is decided only where the ability queues -- either a new event (`draw_nth`, with an `nth` field on TriggerSpec so "your second card" is `{"event": "draw_nth", "controller": "you", "nth": 2}`) fired from `draw_cards` in src/automtg/engine/primitives.py when the tally it just bumped equals `nth`, or an equivalent queue-time-only ordinal predicate on the trigger that `resolve_top` does not re-evaluate. Wanted for both polarities, `controller: you` and `controller: opponent`, since the printed template comes in both ("whenever an opponent draws their second card each turn"). Grouping matters here: 47 entries in data/authoring/queue.json print this exact clause -- Alandra Sky Dreamer, Atlantean Cavalry, Bard the Bowman, Bloodhaze Wolverine, Construct a Cosmic Cube, Black Widow Agile Avenger and 41 others -- so one event unblocks the whole family.
+  <br>Why the existing vocabulary won't do: The closest existing shape is a `draw` trigger (`controller: "you"`, as isperia.cards.json:937 uses) carrying a `condition` of `{"cmp": "==", "left": {"cards_drawn_this_turn": "you"}, "right": {"const": 2}}`. The value is exactly right at queue time -- primitives.py:44 bumps `state.cards_drawn_this_turn[pid]` immediately *before* the `fire(EventType.DRAW, ...)` on line 45, so the tally read in `triggers._matches` is precisely the ordinal of the draw that just happened. It fails at the other end: a trigger's `condition` is an intervening-if and stack.py:633-644 evaluates it a second time on resolution (rule 603.4), by which point the tally has moved. Concretely -- draw step puts the tally at 1, then any draw-two spell resolves: its first draw takes the tally to 2 and queues the trigger, its second takes the tally to 3 and matches nothing, and when the queued trigger finally resolves the re-check reads 3, returns `skipped="condition"`, and no token is created. Prince Imrahil plus Divination, Brainstorm, or any multi-card draw -- the card's ordinary line of play -- would silently produce nothing. Relaxing the comparison to `>=` and adding `max_per_turn: 1` survives the re-check (the tally is monotonic within a turn and both it and `triggers_this_turn` clear together at untap, turn.py:136-137) and is right in every play pattern I could construct except one: a permanent that enters *after* its controller has already drawn two cards would fire on the next draw, where the printed card does not fire at all that turn. That is a real divergence in a card whose whole text is the trigger, and no gate would catch it, so it is filed rather than shipped. Nothing in `condition_keys` or `value_keys` closes the hole -- the missing piece is not a value, it is a trigger predicate that is not re-asked on resolution.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Prince Imrahil the Fair** (rank 3627) — `prince_imrahil_the_fair`
+  - Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.
+
+</details>
+
+## end-of-combat
+
+Blocks **1** card.
+
+- **(trigger_event)** A way to schedule an effect for the end of combat step -- either an `end_of_combat` entry in `turn.DELAY_STEPS` mapping to the already-existing `Step.END_OF_COMBAT`, so `{"op": "delay", "step": "end_of_combat", "effects": [...]}` fires there, or an `end_of_combat` member of `trigger_events` fired from the same site `postcombat_main` and `begin_combat` are. The delay form is the one this card wants, because "Exile the token at end of combat" is a delayed trigger created by the attack trigger's resolution and not a standing ability. It needs to fire once per combat rather than once per turn, since `Step.END_OF_COMBAT` is re-entered by every extra combat phase, and a delayed trigger scheduled during the combat damage step of one combat must fire at the end of *that* combat rather than waiting for the next turn's.
+  <br>Why the existing vocabulary won't do: `Step.END_OF_COMBAT` (= 9) already exists in `engine/enums.py` and the turn walk passes through it, but nothing can be attached to it: `turn.DELAY_STEPS` maps only `upkeep`, `draw_step`, `begin_combat` and `end_step`, and `delay`'s step is matched against that table alone, so `{"step": "end_of_combat"}` silently never becomes due and the token would live forever. The nearest reachable step from `trigger_events` is `end_step`, and substituting it is wrong in a way that matters on exactly this card: the copy would survive the entire postcombat main phase, so it could be sacrificed, tapped for an ability, or attack again in an extra combat -- the printed exile-at-end-of-combat is what stops all of that. `exile` itself carries only `until_leaves` (the O-Ring link) and `playable_this_turn`; neither is a timing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flamerush Rider** (rank 4737) — `flamerush_rider`
+  - Exile the token at end of combat.
+
+</details>
+
+## exert
+
+Blocks **1** card.
+
+- **(value)** A turn-scoped record of whether a specific permanent was exerted this turn, readable by an `if` -- e.g. a `value_keys` entry `exerted_this_turn` taking an object selector (compared against `{"const": 0}` the way `counters_on` is), tallied on `TurnLedger` when the exert choice is taken and reset with the rest of the ledger at the turn boundary. Exert itself is otherwise free and already cashed by `tests/unit/test_exert.py` (`attacks` trigger with `source: "self"`, `may`, `skip_untap`); what is missing is only the once-per-turn guard that Combat Celebrant prints because it is the exert card that can attack twice in a turn.
+  <br>Why the existing vocabulary won't do: `set_flag` / `has_flag` is the nearest shape and is deliberately one-way: `op_set_flag`'s docstring calls it "a one-way word written onto a permanent" for renown, `obj.flags` is a plain `set` that nothing in `src/automtg/engine/` ever removes from, and `clear_until_eot` does not touch it. So a flag-based guard would read "hasn't been exerted this **game**" and silently refuse the second exert on a later turn -- wrong in the direction that looks right in a one-turn test. `once_each_turn` is explicitly rejected for anything but an activated ability (`loader.py` raises: "'activate_steps' and 'once_each_turn' restrict *activating*"), and the exert choice hangs off an `attacks` trigger. `resolutions_this_turn` counts how often the ability *resolved*, which counts a declined `may` as an exert, so it answers a different question. `attacked_this_turn` is per player and asks about attacking, not exerting.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Combat Celebrant** (rank 1000) — `combat_celebrant`
+  - If this creature hasn't been exerted this turn, you may exert it as it attacks.
+  - When you do, untap all other creatures you control and after this phase, there is an additional combat phase.
+
+</details>
+
+## exile-until-event
+
+Blocks **1** card.
+
+- **(engine)** An exile whose return is keyed to a future *event* and whose lifetime is independent of the permanent that exiled it: `exile` needs an `until` duration alongside its existing `until_leaves`, taking an event (here `becomes_monarch` filtered to an opponent of the exiling controller) and returning the linked card to the battlefield under its owner's control when that event first occurs -- once, then the link is discharged. Crucially the return must survive the exiling permanent leaving the battlefield, and must never happen merely *because* it left.
+  <br>Why the existing vocabulary won't do: `exile` with `until_leaves` is the only duration it has, and `ops_board.py:101-104` documents it as the O-Ring family: it records `obj.exiled_by = ctx.source_oid` and nothing else, and the return is a separate ordinary `leaves_battlefield` triggered ability on the same card reading `{"zone": "exile", "exiled_with": "self"}`. That is wrong for Palace Jailer twice over, in opposite directions: it returns the creature on an event that must *not* return it (Palace Jailer dying leaves the creature exiled indefinitely -- the exile is a one-shot effect with a duration, not an effect the permanent maintains), and it cannot return it on the event that must (nothing links a `leaves_battlefield` trigger to a monarchy change). Writing it as `until_leaves` would hand the opponent their creature back for the price of killing a 2/2, which is a materially different and much weaker card. The `delay` op is the only mechanism in `ops` that outlives its source -- `ops_control.py:376-399` captures bindings now and fires later with no object to hang a trigger on, which is exactly the right *lifetime* -- but `DelayedTrigger` is keyed on `step` (a phase name, defaulting to `end_step`) and has no event slot, so it can schedule "at the beginning of the next end step" and cannot schedule "the next time an opponent becomes the monarch". Giving `DelayedTrigger` an optional event condition is the likely shape of this work, and would also serve the wider "exile until <event>" family.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Palace Jailer** (rank 4016) — `palace_jailer`
+  - When this creature enters, you become the monarch.
+  - When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.
+
+</details>
+
+## goad
+
+Blocks **1** card.
+
+- **(op)** A `goad` op taking `objects`, marking each chosen creature as goaded by the op's controller (701.38a): until that player's next turn the creature attacks each combat if able, and if it attacks it must attack a player other than the goading player if able. Build it the way `detain` is built -- store the *player* who goaded (e.g. `GameObject.goaded_by: set[int]`, a set because two opponents may goad the same creature) rather than a turn number, and clear that player's entry in `turn._untap_step` where detain is already cleared, since "your next turn" moves when a player is eliminated. It must then be read in two places: `combat.attack_required` (a live requirement, re-armed every combat, NOT spent by `discharge_attack_requirements`) and a new per-creature defender restriction (below).
+  <br>Why the existing vocabulary won't do: `must_attack` is the closest op and covers only the requirement half, wrongly: its two durations are `this_turn` (Bident of Thassa) and `next_combat` (Trench Behemoth), and `combat.discharge_attack_requirements` spends the flag once attackers are locked in, so it compels exactly one combat while goad compels every combat until the goader's next turn. It also carries no notion of who goaded, which is exactly the datum the attack-target half needs. The `attacks_if_able` static is the live, unspent form but is a continuous ability on a permanent read off `_battlefield_statics` -- a sorcery leaves no source on the battlefield, and a static's `affects` filter may read only printed characteristics, so it cannot mean "those creatures" (the set chosen at resolution) nor end at a player's next turn.
+- **(engine)** A per-creature attack-target restriction in combat legality: for a goaded creature, the defending players/planeswalkers offered must exclude those controlled by any player who goaded it, whenever at least one other legal defender exists ("if able" -- with only the goader left to attack, the creature may attack them). Concretely, `combat.legal_defenders` / `legal_planeswalker_defenders` / `add_attacker` need to take the attacking oid into account and filter by it, and `attack_required` must stay consistent with that filtered set so a creature is not compelled to make an attack legality then refuses.
+  <br>Why the existing vocabulary won't do: Nothing in the engine restricts *which* defender a given attacker may choose. `combat.legal_defenders` is `[pid for pid in state.alive() if pid != state.active_player]` -- it takes no attacker argument at all -- and `add_attacker(state, oid, defender, planeswalker=...)` accepts any of them, so the choice is per-declaration and global rather than per-creature. `cant_attack`/`attack_forbidden` is the nearest restriction and is all-or-nothing (the creature cannot attack anyone); `block_restriction` restricts blockers, not attack targets. Without this, a goad op would let the goaded creature swing straight back at the player who goaded it, which is the half of goad that makes the card a Red/White political spell rather than a symmetrical Overrun.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Taunt from the Rampart** (rank 2089) — `taunt_from_the_rampart`
+  - Goad all creatures your opponents control.
+  - Until your next turn, those creatures can't block.
+
+</details>
+
+## library-depth-placement
+
+Blocks **1** card.
+
+- **(op)** A way to put an object into a library at a stated depth from the top -- either a new op (`put_into_library` with `objects`, `from_top: {"const": 4}`) or a `from_top`/`depth` amount on the existing `put_on_top`, plumbed through `move_object` as an insert index instead of the current top/bottom boolean. Depth should be an amount from `value_keys` (so `{"const": 2}` covers Hinder and `{"const": 4}` covers this card), it must clamp to the end of a library shorter than the depth, and the destination player must stay the object's *owner*, not the controller, since the printed line says "its owner's library".
+  <br>Why the existing vocabulary won't do: `put_on_top` is the only op that sends a permanent to a library, and it hard-codes the destination: `move_object(..., Zone.LIBRARY, to_player=obj.owner, to_top=True, cause="tuck")` in src/automtg/engine/effects/ops_cards.py, with no depth or position in the spec it reads. `move_object` itself (src/automtg/engine/zones.py) only accepts `to_top: bool = False`, so top and bottom are the sole reachable positions -- there is no insert index anywhere in the zone layer. Nothing else composes into a fourth-from-top tuck either: `scry`, `surveil` and `look_at_top` reorder or relocate cards that are *already* in a library and cannot admit a permanent from the battlefield, and `shuffle` randomizes rather than places. Approximating with plain `put_on_top` is a strictly better card than the one printed -- the owner draws the permanent back next turn instead of in four turns, which inverts the whole point of the depth -- and approximating with a bottom-of-library tuck is strictly worse and effectively exile in a 99-card deck.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lost to Legend** (rank 10639) — `lost_to_legend`
+  - Put target nonland historic permanent into its owner's library fourth from the top.
+
+</details>
+
+## look-at-library-top
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that lets its controller alone see the top card of their library continuously -- the private half of 'play with the top card revealed', serialized to that player's seat only
+  <br>Why the existing vocabulary won't do: `reveal_library_top` is the only static for top-card visibility and it is deliberately public: `serialize` writes `library_top` into every seat's view ("an opponent who cannot see it is playing against information they are entitled to"), so using it on Verge Rangers would hand the opponent a card Verge Rangers never shows them. The `look_at_top` op is one-shot at resolution, not a continuous permission, and there is no trigger event for 'any time'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Verge Rangers** (rank 5364) — `verge_rangers`
+  - You may look at the top card of your library any time.
+  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
+
+</details>
+
+## mana-restriction
+
+Blocks **1** card.
+
+- **(value)** Let a mana ability's spend restriction name the source's *chosen* type instead of a fixed word -- i.e. accept the existing `{"chosen_type_of": "self"}` leaf (the one `subtypes` filters already take) as an entry in an ability's `mana_restriction`, and resolve it per permanent at the moment the mana is offered rather than at load time, so the restriction is whatever creature type was chosen as this land entered. Cavern of Souls, Unclaimed Territory and Path of Ancestry are the same shape.
+  <br>Why the existing vocabulary won't do: `mana_restriction` (src/automtg/cards/schema.py:143) is the closest existing thing and it is deliberately static: the loader (src/automtg/cards/loader.py:1013-1036) demands each entry be a bare alphabetic word, lowercases it, and freezes it into `Ability.mana_restriction` as a `frozenset[str]`; `_sources_of` then copies that frozen set onto every `ManaSource` (src/automtg/engine/costs.py:172) and `mana_sources` intersects it with `spell_purpose(card)`. A `{"chosen_type_of": "self"}` mapping fails the `name.replace("-", "").replace(" ", "").isalpha()` shape check, so the dynamic form is rejected at load, and there is nowhere later that a chosen type could be substituted in -- the restriction is a load-time constant by construction. Every fixed value is a different card: `mana_restriction: "creature"` makes a five-colour land that casts *any* creature (strictly better than printed), and hardcoding one subtype ignores the choice the card makes on entry. No op can substitute either, because the restriction is not something that happens on resolution -- it must be consulted while the payment solver decides which sources may pay, and a mana ability may contain only `add_mana` (or one `choose_mode` of them) anyway. Scope note: the card's other two lines need nothing new -- `{T}: Add {C}` is already written in the packet's starting point, "As this land enters, choose a creature type" is a `self_enters` trigger running `choose_type` (the shape Herald's Horn already uses), and "add one mana of any color" is the `choose_mode`-of-five-`add_mana` mana ability form. Only the spend restriction is blocked.
+- **(engine)** Make a mana spend restriction able to permit paying for an *activated ability* whose source matches, not only for casting a spell: a `purpose` derived from the ability's source permanent (its current types and subtypes) threaded into the `mana_sources(..., purpose=...)` call on the ability-activation and ability-cost-payment paths, the way `spell_purpose(card)` is already threaded into the cast paths.
+  <br>Why the existing vocabulary won't do: The restriction plumbing only ever knows about spells. `purpose` is computed in exactly one way -- `spell_purpose(card)` over a *card*'s types and subtypes (src/automtg/engine/costs.py:68-77) -- and it is only ever passed at the four cast sites (src/automtg/engine/legality.py:845, legality.py:1035, legality.py:1042, src/automtg/engine/game.py:337). Every other `mana_sources` call, including the ones that fund an activated ability's cost, passes no purpose, and `mana_sources` drops any source whose `restriction is not None` when `purpose is None` (costs.py:62-63). So restricted mana is silently unavailable for ability costs: with the first need closed and this one left open, the land would produce coloured mana that can cast a chosen-type creature but could never activate that creature's ability, which is half of what this line prints. There is no op- or cost-level workaround, because the decision is made inside the payment solver's source filter, before any effect runs.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Secluded Courtyard** (rank 222) — `secluded_courtyard`
+  - Spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type.
+
+</details>
+
+## multikicker
+
+Blocks **1** card.
+
+- **(cost)** Multikicker as a named cost: a mana-only additional cost payable any number of times whose printed "Multikicker {1}{W}" line has a claimant. The payment machinery already exists as `additional_cost` + `additional_optional` + `additional_repeatable` (replicate's slot, with Action.additional_times carrying the count), so this is a `multikicker: "{1}{W}"` field that desugars to it, plus the residual-gate exemption in verify.py::_line_is_claimed for a line starting with "multikicker"
+  <br>Why the existing vocabulary won't do: `kicker` is the named mechanic in reference but it is one-shot: loader.py compiles it to a ManaCost and Action.kicked is a bool, so "any number of times" cannot be paid twice and `condition_keys.kicked` can only answer yes/no, never how many. The repeatable slot that can (`additional_cost`/`additional_repeatable`) is unnamed, and verify.py::_line_is_claimed only forgives a printed cost line when `card.kicker` is set and the line starts with "kicker " (which "Multikicker" does not), or when `card.additional_cost` is set and the line starts with "as an additional cost" (which this wording does not) -- so a card spelling multikicker through the replicate slot loads but leaves its first printed line unclaimed and fails the residual gate. Faking the claim with a `noop` ability whose text is the Multikicker line would hide that, which is the failure the gate exists to catch
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
+  - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
+  - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
+
+</details>
+
+## nonbasic-permanent-selector
+
+Blocks **1** card.
+
+- **(selector)** A selector key that excludes a supertype -- `not_supertypes: ["Basic"]` -- so a target spec can say "nonbasic land": a permanent with the Land type that does not have the Basic supertype. Mirror of the existing positive `supertypes` check, and it must apply in target legality (a target spec's `selector`) as well as in `objects`, since this card targets.
+  <br>Why the existing vocabulary won't do: `selector_keys` carries `supertypes`, but it is a positive subset test only (`if (want := selector.get("supertypes")) and not set(want).issubset(supertypes)`), so it can require Basic and can never forbid it. The negative keys that do exist are `not_types`, `not_subtypes`, `not_colors` and `not_keywords` -- there is no `not_supertypes`, and grepping the repo finds zero occurrences of one. Approximating with `not_subtypes: ["Plains", "Island", "Swamp", "Mountain", "Forest", "Wastes"]` is a different card: it would wrongly protect every nonbasic land that carries a basic land type (Hallowed Fountain, Murmuring Bosk, Dryad Arbor) -- exactly the dual lands Field of Ruin is printed to answer -- while a Snow-Covered Forest, which is Basic and must be illegal, is only excluded by coincidence of subtype. `mana_value` cannot separate them either, since both basic and nonbasic lands have mana value 0.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Field of Ruin** (rank 890) — `field_of_ruin`
+  - {2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. Each player searches their library for a basic land card, puts it onto the battlefield, then shuffles.
+
+</details>
+
+## opponent-land-mana-colors
+
+Blocks **1** card.
+
+- **(op)** A mana ability whose set of choosable colors is computed at activation from what lands an opponent currently controls could produce (e.g. only G and U in a board where the opponent controls only a Forest and an Island among lands), rather than a fixed list of modes.
+  <br>Why the existing vocabulary won't do: A mana ability may contain only add_mana, or one choose_mode whose modes each contain only add_mana -- and choose_mode's modes are a static, author-time list, not something computed from the board at activation. There is no value_key or selector that reads what colors of mana an opponent's lands could produce (commander_color_identity is the closest color-set value_key, but it is a fixed deck property known outside the game state, not a dynamic read of opponents' lands). Authoring this as choose_mode over all five colors (the free-tier starting point) would let the ability produce colors the opponent has no land for, which is not what the card does.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fellwar Stone** (rank 17) — `fellwar_stone`
+  - {T}: Add one mana of any color that a land an opponent controls could produce.
+
+</details>
+
+## optional-pool-choice
+
+Blocks **1** card.
+
+- **(selector)** A declinable bounded choice for a selector's `count` -- the `objects`/pool equivalent of a target's `optional: true`, i.e. "choose exactly N of these, or none" (here N = 1, printed "you may reveal **a** Human or artifact card from among them"). Concretely: accept `optional: true` alongside an integer `count` in `SELECTOR_KEYS` and honour it in `selectors.pick_from_pool` by setting `min_count = 0` while `max_count` stays N, so `look_at_top` can offer at most one card and keep the rest of the effect -- the look and the `rest_to_bottom` -- mandatory. The choice must also stay *after* the look, since the whole point of the clause is that the player decides having seen the six cards.
+  <br>Why the existing vocabulary won't do: A selector's `count` accepts only `"all"`, `"any"`, or a value (`selectors.pick_from_pool`, and `validate_selector` rejects any other string), and none of the three says "up to one": a value sets `min_count == max_count`, so `count: 1` forces the reveal and silently deletes "You may" -- and worse, `if count >= len(pool): return pool` takes the card without even asking; `"any"` sets `min_count = 0, max_count = len(pool)`, which is "any number of them" and would put *every* Human and artifact among the top six into hand, a strictly stronger card. Wrapping the `look_at_top` in `may` is not equivalent in either branch: `op_may` gates the entire wrapped effects list, so declining also skips the mandatory look and the mandatory `rest_to_bottom` (a real, distinct game action -- `_bottom_in_random_order` reorders only the six looked at and deliberately is not `shuffle_library`), and it asks the yes/no *before* anything is seen, turning an informed decision into a blind one. Approximating the decline branch with a second `look_at_top` in `may.else` cannot work either, because the depth is a literal `amount` and would bottom six cards in a position where only five remain. `TargetModel.optional` already expresses exactly this shape ("exactly N, or none") but only for declared targets, and these cards are chosen from a library pool `look_at_top` bounds itself, not targeted.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Boromir, Gondor's Hope** (rank 6835) — `boromir_gondor_s_hope`
+  - You may reveal a Human or artifact card from among them and put it into your hand.
+
+</details>
+
+## permanents-entered-this-turn
+
+Blocks **1** card.
+
+- **(value)** A per-turn ledger tally of permanents that have *entered the battlefield* this turn, filterable by a selector rather than only by player -- suggested `{"permanents_entered_this_turn": {"controller": "you", "subtypes": ["Human"], "exclude_self": true}}`, read with an ordinary `cmp` against `{"const": 1}` the way morbid reads `creatures_died_this_turn`. It must record enough about each entering object to answer the selector *after that object has left* (a Human that entered and then died this turn still satisfies the printed condition), so the natural implementation is to append a snapshot of derived characteristics plus controller-at-entry to `TurnLedger` inside `GameState.emit` for `EventType.PERMANENT_ENTERS`, and clear it at cleanup with the rest of the ledger. `exclude_self` on the selector is what makes "*another* Human" sayable -- Éowyn is herself a Human, and she may well have entered this turn, which is exactly the case the word "another" exists to exclude.
+  <br>Why the existing vocabulary won't do: `TurnLedger` (`src/automtg/engine/structs.py:206-286`) has seven tallies -- `creatures_died`, `attacked`, `damage_taken`, `life_lost`, `spells_cast`, `cards_to_graveyard`, `combat_damage_types` -- and entering the battlefield is not among them; `VALUE_KEYS` (`engine/effects/values.py:30-109`) exposes exactly those, so there is no `permanents_entered_this_turn` to ask for. Nothing in `src/` matches /entered.*this_turn/ outside a test name. The closest condition leaf is `exists`, which is a *board* query: `{"exists": {"controller": "you", "subtypes": ["Human"], "zone": "battlefield", "exclude_self": true}}` asks "do you control another Human", which is a strictly different and much weaker question -- it is true when a Human has sat there since turn three and nothing entered, and false when a Human entered this turn and died, so it gets the card wrong in both directions. The other candidate is `set_flag`/`has_flag`, and it fails on two counts. It has the wrong lifetime: `op_set_flag` (`engine/effects/ops_board.py:1049-1053`) does `obj.flags.add(flag)` and flags are cleared only by `reset_permanent_state` on a zone change (`engine/objects.py:426`), never at cleanup, so a flag set the first time a Human entered would leave the intervening-if permanently satisfied for the rest of the game -- the ability would fire every combat forever. And it has the wrong shape: writing the flag needs a second `permanent_enters` triggered ability that no printed line asks for, which the residual gate would reject, since every ability's `text` must be a printed sentence. `combat_damage_by` shows the intended precedent for a characteristic-keyed ledger read (prowl matches on creature subtype), but it only watches combat damage to a player and cannot be pointed at enters-the-battlefield.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Éowyn, Shieldmaiden** (rank 4513) — `eowyn_shieldmaiden`
+  - At the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.
+
+</details>
+
+## reveal-until
+
+Blocks **1** card.
+
+- **(op)** An op that reveals cards one at a time from the top of a library until it reveals one matching an author-supplied selector (here {"types": ["Creature"], "shares_a_type_with": "subject"}), stops there, moves that one card to a destination (hand), and puts the rest of the revealed cards on the bottom of the library in a random order -- with an unbounded, board-determined scan depth, and no player choice about which card is taken (it is always the first hit). It should also terminate gracefully when the whole library is revealed without a hit, bottoming everything in a random order.
+  <br>Why the existing vocabulary won't do: The three existing library-scan ops all fix something this line leaves open. `look_at_top` bounds the pool to `amount` cards off the top -- a constant known when the card is written -- and then lets the player pick any matching card out of that whole window, so it is a bounded tutor, not a first-hit scan; naming a large amount to fake 'until' would reveal and randomize the entire library and let the player choose the best of every match instead of taking the first one. `search_library` looks at the whole library at once (also a chooser, plus rule 701.19's shuffle) rather than scanning down from the top. `cascade` is the only op with the right unbounded top-down shape, but its stop test is hardcoded to 'nonland card with lesser mana value than this spell', it exiles rather than reveals, and it offers a free cast rather than putting the card into hand -- there is no way to substitute a selector for its test. `ripple` has a fixed depth and a hardcoded same-name-as-source test. The trigger half of the line is fine (`dies` with filter `{"attached": true}`, wrapped in `may`), and `shares_a_type_with: "subject"` already exists for the 'shares a creature type with it' clause, so this gap is only the scan.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Heirloom Blade** (rank 3831) — `heirloom_blade`
+  - Whenever equipped creature dies, you may reveal cards from the top of your library until you reveal a creature card that shares a creature type with it. Put that card into your hand and the rest on the bottom of your library in a random order.
+
+</details>
+
+## saga
+
+Blocks **1** card.
+
+- **(engine)** The Saga card type as a whole (CR 714), which is four linked pieces: (1) a lore counter is put on the Saga as it enters, as part of it entering rather than as a triggered ability, so chapter I resolves off the enters-the-battlefield counter; (2) a turn-based action after the controller's draw step puts the next lore counter on every Saga that player controls; (3) a new ability kind -- a chapter ability -- that triggers when the Nth lore counter is put on the Saga *or* when it enters with that many already on it, declared as something like {"kind": "chapter", "chapter": 1, "text": "I -- ...", "effects": [...]}, so the printed "I --" / "II --" / "III --" lines each have a home the residual gate can match; (4) the state-based action that sacrifices the Saga once its lore counters are at or above its final chapter number and no chapter ability of it is on the stack. It also needs a `final_chapter` (or equivalent) field on the card so the engine knows where III ends, since that number is not derivable from the ability list if a chapter is ever unimplemented, and `Saga` accepted as a subtype that carries all of the above rather than as inert flavour text.
+  <br>Why the existing vocabulary won't do: `AbilityKind` (`src/automtg/engine/enums.py:277-280`) is exactly {activated, triggered, static} -- there is no chapter kind, and `docs/rules-coverage.md:206` lists sagas under "Not implemented" alongside planeswalkers and battles. Nothing in `src/` matches /saga/ or /lore/ (the hits are substrings of `explore` and `colors`). The nearest kludge available in `reference` is a stack of three `counter_placed` triggers -- the event does carry a `counter` kind filter (`carddef.py:243-246`, enforced at `loader.py:926-933`), so "when a lore counter is put on this" is sayable, and `cmp` against `counters_on` could gate each chapter on the resulting total -- fed by a `self_enters` trigger and a `draw_step` trigger that each `add_counters` a lore counter, plus a `sacrifice` of self on chapter III. That is an approximation in at least four visible ways, which is why it is filed rather than written: the enters-with-a-lore-counter step is a replacement-style part of entering, not a trigger, so a `self_enters` trigger would place the counter after the Saga has already entered and after other enters triggers have seen a counterless Saga; `draw_step` fires for every player's draw step unless hand-gated with `is_your_turn`, and it is "after your draw step" as a turn-based action with no priority in between, not a trigger that goes on the stack; the chapter would trigger on the *placement*, so proliferating or hand-adding a lore counter would fire chapters in the wrong pattern (and the real rule fires on the counter reaching that number, including on entry); and the sacrifice is a state-based action checked while nothing is on the stack, not an effect appended to chapter III -- appending it would sacrifice the Saga before its own chapter III finished resolving. Sagas are also the shared blocker for every Saga in the pool, so the kludge would have to be re-typed by hand on each one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oath of Eorl** (rank 7121) — `oath_of_eorl`
+  - (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)
+  - I — Create two 1/1 white Human Soldier creature tokens.
+  - II — Create two 2/2 red Human Knight creature tokens with trample and haste.
+  - III — Put an indestructible counter on up to one target Human. You become the monarch.
+
+</details>
+
+## temporary-control
+
+Blocks **1** card.
+
+- **(op)** An until-end-of-turn duration on `gain_control` -- `{"op": "gain_control", "objects": {"target": "t1"}, "duration": "until_end_of_turn"}` -- that hands the permanent back to its previous controller in the cleanup step. Concretely: `primitives.change_control` (src/automtg/engine/primitives.py:466) already computes `previous = obj.controller` before overwriting it, so the temporary form is that same call plus a record of `previous` that survives to cleanup, and a reverse `change_control` when the turn ends. The natural home is the per-object until-end-of-turn store `GameObject.until_eot`, which `primitives.clear_until_eot` (line 761) already walks over `state.battlefield` and clears at cleanup -- but clearing a dict entry is not enough here, because handing control back has to re-run the three rules `change_control` hangs off it: reset `entered_turn` again (302.6 -- the permanent has not been under its original controller since their turn began either), remove it from combat (506.4), and `bump_chars()` because every static filtered on `controller` reads differently. Ordering matters against the rest of cleanup: rule 514.2 damage wipe and the handback happen in the same step, and the handback must not resurrect a permanent that left the battlefield during the turn (`clear_until_eot` iterating `state.battlefield` gives that for free, but a stolen permanent that changed controller a second time must not be handed to the wrong player, so the stored `previous` should be validated rather than trusted). The loader check at src/automtg/cards/loader.py:1789 that currently raises on a `duration` key is the gate to relax, and it should keep rejecting any spelling other than `until_end_of_turn`/`permanent` the way `grant_keyword` does at line 1798. Wanted by the whole Act of Treason family: Act of Treason, Threaten, Zealous Conscripts, Traitorous Blood, Mark of Mutiny, Harness by Force, Kari Zev's Expertise, Insurrection.
+  <br>Why the existing vocabulary won't do: `gain_control` is the closest op and is permanent-only by explicit design: `primitives.change_control`'s docstring says "there is deliberately no until-end-of-turn form. That would need a continuous-effect layer and a cleanup-step handback", and the loader *refuses* a `duration` key rather than ignoring one (loader.py:1789-1793) precisely so this card cannot be written as a permanent steal -- which would be strictly better than the printed card, since the opponent never gets the permanent back. Approximating is therefore not an option the DSL leaves open. Nothing else in `ops` moves control: `animate`, `set_pt` and `grant_keyword` all have until-end-of-turn durations, but they write characteristics into the same object's until-EOT layer and none of them touches `GameObject.controller`, which is not a layered characteristic but the field zone and combat membership are keyed off. `pump` and `grant_ability` are the same shape and equally irrelevant. `delay` can defer an effect to a named step, but `DELAY_STEPS` is `upkeep`, `draw_step`, `begin_combat`, `end_step` -- there is no `cleanup` entry, and an `end_step`-delayed reverse steal would give the permanent back a step early (visible: the opponent could untap and block with it, and rule 514 effects are supposed to outlast the end step), besides being a second independent effect that a `set_flag`/`if` pair cannot reliably bind back to the same object once the target has moved. `snapshot` reads a value off a departed object and cannot re-point a control change. `lock_abilities` and `detain` restrict a permanent the opponent still controls, which is a different sentence -- they cannot make it attack for you, which is the entire point of this card. The other two clauses of this trigger are individually expressible (`untap` on `{"target": "t1"}`, and `grant_keyword` haste with `duration: until_end_of_turn`), so this one op is the whole blocker for the line.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zealous Conscripts** (rank 2341) — `zealous_conscripts`
+  - When this creature enters, gain control of target permanent until end of turn.
+
+</details>
+
+## unblockable
+
+Blocks **1** card.
+
+- **(op)** a resolution op that makes a chosen creature unable to be blocked at all until end of turn -- an until-end-of-turn, per-object 'can't be blocked' flag on the targeted creature (not on the granting permanent), read by combat.can_block for every would-be blocker
+  <br>Why the existing vocabulary won't do: The only 'can't be blocked' machinery is the `block_restriction` static effect, and it is unreachable three ways from an activated ability. (1) It lives in a printed static on a permanent, collected by `characteristics._battlefield_statics`, which walks `card_of(obj).abilities` only -- so it applies to whatever its `affects` filter matches, and `affects` may contain only `static_filter_keys` (printed characteristics); there is no key for 'the creature this ability targeted', so a static on Rogue's Passage cannot be aimed at the target. (2) It has no duration: a static is on while its source is on the battlefield, so it cannot expire 'this turn'. (3) `grant_ability` cannot smuggle one onto the target, because granted abilities are pointers read by `primitives.granted_abilities`, whose only consumers are in `triggers.py` -- `_battlefield_statics` never consults them, so a granted `block_restriction` would load clean and do nothing. `grant_keyword` has no matching keyword either: the evasion keywords available (menace, fear, intimidate, skulk, shadow, horsemanship, the landwalks) are all conditional restrictions on *which* creatures may block, and any of them would be an approximation of full unblockability.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rogue's Passage** (rank 18) — `rogue_s_passage`
+  - {4}, {T}: Target creature can't be blocked this turn.
+
+</details>
+
+## variable-enters-with-counters
+
+Blocks **1** card.
+
+- **(replacement)** `ReplacementModel.amount` must accept a *value expression* from `value_keys`, not just a literal integer, so `self_enters_with_counters` can say "a +1/+1 counter for each other Human you control" -- here `{"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Human"], "exclude_self": true}}`. The evaluation site already has everything it needs: `zones.py:302-304` evaluates the replacement's `condition` with `controller=obj.controller, source=obj.oid` on the board the permanent is arriving on, so the same call shape evaluates an amount. The change is `amount: int = 1` -> `amount: int | dict[str, Any] = 1` in `schema.py:231`, a `validate_value` pass beside the existing `validate_condition` in `loader.py:270-276`, and evaluating it instead of `int(replacement.get("amount", 1))` at `zones.py:324-326`. This is a large family, not one card: `data/authoring/queue.json` holds 25+ cards deferred with "no template for: ... enters with a +1/+1 counter on it for each ..." (each other creature you control, each Gate you control, each creature that died this turn, each color of mana spent to cast it / Converge, each Zombie card in your graveyard, other Kithkin, Ulasht, Verazol), and every one of them is unblocked by this single field widening.
+  <br>Why the existing vocabulary won't do: The `replacements` mechanism itself exists and is the right home -- `self_enters_with_counters` is what Mossborn Hydra uses for its fixed "enters with a +1/+1 counter on it" and what `_replacements_with_loyalty` compiles a planeswalker's starting loyalty into -- but `amount` is typed `int = 1` in `schema.py:231` under a `Strict` model config, so a value expression is a validation error and only a constant can be printed. The nearest substitute is a `self_enters` triggered ability running `add_counters` with the count as its `amount`, and it is wrong three ways on this card in particular. (1) It is a trigger, not a replacement: Éomer is on the battlefield as a 2/2 first and grows later, whereas 614.1c/121.6 mean he is never seen without the counters. (2) The second printed line deals damage *equal to Éomer's power*, so the substitute makes the card's whole payload depend on which of two simultaneous enters triggers the controller happens to order first -- 2 damage or 2+N, from a card whose printed text has no such choice in it. (3) The op route fires COUNTER_PLACED (`primitives.py:313-321`) while the replacement route calls `obj.add_counter` directly and fires nothing (`zones.py:319-326`), so the substitute would additionally wake up every `counter_placed` watcher on the board. `add_counters` inside the trigger cannot be made to behave like a replacement, and there is no other slot in `ops` for an as-enters modification.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Éomer, King of Rohan** (rank 4800) — `eomer_king_of_rohan`
+  - Éomer enters with a +1/+1 counter on it for each other Human you control.
+  - When Éomer enters, target player becomes the monarch. Éomer deals damage equal to its power to any target.
+
+</details>
+
+## variable-target-count
+
+Blocks **1** card.
+
+- **(selector)** A target spec whose number of targets is a value expression rather than a literal -- `count: {"additional_paid": true}` (or any `value_keys` entry) plus an "up to" reading, so the caster picks between zero and X targets at announcement and X is computed when the ability goes on the stack. Concretely: TargetModel.count in src/automtg/cards/schema.py is `int | Literal["any"]`, and engine/targeting.py branches on `spec.count == "any"` / `spec.count > 1` with the literal integer; both need to accept an evaluated amount, and the combination enumeration needs to offer every size from 0..X rather than exactly X
+  <br>Why the existing vocabulary won't do: The two spellings `reference` offers are both a different card. `count: "any"` is "any number of target creature cards", which unbinds the count from the kicker entirely -- Marshal's Anthem cast with no kicks would reanimate the whole graveyard for {2}{W}{W}. `count: N` is a number written into the card, and `optional: true` on top of it means "exactly N or none", forbidding every size between 1 and N-1, so neither can say "up to X". Moving the choice to resolution does not rescue it either: a selector's `count` *does* accept a value expression (selectors.pick_from_pool calls evaluate_value on it), so `return_from_graveyard` with `objects: {count: {"additional_paid": true}}` computes the right number -- but that is untargeted (no legality check at announcement, no fizzle when the cards leave, and `becomes_target` never fires) and it sets min_count == max_count, forcing *exactly* X rather than up to X. `value_keys.additional_paid` already supplies X correctly here -- `cast_additional` is set in game.py at cast time and lives on the object, which survives the zone change onto the battlefield, so a `self_enters` trigger reads it -- so the missing piece is only the target *count*, not the value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
+  - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
+  - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
+
+</details>
+
+## ward
+
+Blocks **1** card.
+
+- **(keyword)** Ward {N} as a keyword the keyword system can actually carry, i.e. a keyword that holds a cost parameter (`ward {1}`, `ward {2}`, and eventually `ward-Sacrifice a creature`) rather than a bare word. Concretely: a `Keyword.WARD` variant whose instances carry a `Cost`, stored per object alongside the plain keyword set, plus the rules-supplied triggered ability that reads it -- one `becomes_target` trigger with `controller: "opponent"` whose `may`/`pay` uses *that object's* ward cost and whose `else` counters `{"binding": "sid"}`. Once a keyword can carry a cost, ward stops being a per-card hand-written trigger and starts being grantable like every other keyword.
+  <br>Why the existing vocabulary won't do: `reference.keywords` has no `ward` entry of any kind, and it cannot get one as things stand: `KNOWN_KEYWORDS` is `frozenset(k.value for k in Keyword)` (loader.py:39), a set of bare strings validated by exact match at loader.py:251, so a keyword has nowhere to put the `{1}`. `proxy.py:323` states the position outright -- "Ward {2}", "Protection from red" and "Annihilator 2" are not in `Keyword` at all and deliberately fall through to the residual. The engine's two shipped wards are both bespoke per-card triggers hosted on the warded permanent itself (`carddef.CLOAK_WARD` for cloak, and Vein Ripper's `Ward-Sacrifice a creature.` in data/cards/auto/templates.cards.json), which is exactly the shape that does not generalise to handing ward to somebody else.
+- **(static_effect)** A static that grants ward *with its cost* to a filtered set -- either `grant_keyword` extended to accept a parameterised keyword (`{"effect": "grant_keyword", "keywords": [{"ward": "{1}"}], "affects": {...}}`), or the general form this is one instance of: a static continuous effect that gives a filtered set of permanents a *triggered ability* defined on the granting card, the continuous counterpart of the one-shot `grant_ability` op. Either way the granted ability must end up on the recipient, so it fires from the warded creature and resolves on its own once triggered.
+  <br>Why the existing vocabulary won't do: The `static_effects` list has `grant_keyword`, and its `keywords` is a plain list of bare keyword names -- no slot for the `{1}`, and no ward name to put there (see the need above). `protection` is the nearest parameterised static and is the wrong ability: protection can't-be-targeted-by is not a triggered tax, and it also prevents damage and blocking. `grant_ability` looks like the escape hatch and is not one: it is an `ops` entry, a one-shot that fires when something resolves, so from an ETB trigger it would miss every Human that enters later and would keep granting after the Vanguard died -- and card-dsl.md is explicit that only *triggered* abilities may be granted and that a granted static has no place in the characteristics pipeline. Hosting the ward trigger on the Vanguard instead (a `becomes_target` trigger with `controller: "opponent"` and a filter of `{"controller": "you", "subtypes": ["Human"], "exclude_self": true}`) is the tempting approximation and is refused here because it puts the ability on the wrong object: the trigger's source would be the Vanguard rather than the targeted Human, so an opponent who answers the ward trigger by removing the Vanguard escapes a tax that the printed card -- whose ability belongs to the creature being targeted -- still collects. The `+1/+0` half of the line is expressible on its own as a `buff` static over `{"controller": "you", "subtypes": ["Human"], "exclude_self": true}`, but it shares one printed sentence with the ward clause, so shipping it alone would claim a line it only half implements.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coppercoat Vanguard** (rank 4062) — `coppercoat_vanguard`
+  - Each other Human you control gets +1/+0 and has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)
+
+</details>
+
+## x-in-mana-cost
+
+Blocks **1** card.
+
+- **(selector)** A selector key that asks whether an object's **printed mana cost contains an {X} symbol** -- e.g. `{"has_x": true}` (and its negation) added to `SELECTOR_KEYS` and matched in `selectors.matches` as `ctx.state.card_of(obj).mana_cost.x_count > 0`. The data already exists and is parsed: `ManaCost.x_count` (mana.py:68, incremented at mana.py:90 for each `{X}` token), so this is a filter clause over an existing field, not a new characteristic. It must be legal inside a `TargetModel.selector` on a `kind: "spell"` target, which is where every card of this shape reads it ("target spell with {X} in its mana cost", "target creature spell with {X} in its mana cost").
+  <br>Why the existing vocabulary won't do: `mana_value` is the only cost reader in `SELECTOR_KEYS` and it is a numeric comparison through `_compare` against `card.mana_value` (selectors.py:495-498). `ManaCost.mana_value` counts X as 0 by default (mana.py:110-116), so an X spell is indistinguishable from the same cost without the X: Fireball `{X}{R}` and Shock `{R}` are both mana value 1, and a `mana_value` clause therefore either catches both or neither. `mana_symbols` is the DSL's only symbol-level cost reader and cannot stand in twice over: it is a `value_keys` entry rather than a selector key, so it cannot filter a pool at all, and `validate_mana_symbols` (values.py:370-374) requires `of` to be one of W/U/B/R/G -- there is no spelling for X, by design, since it was built for chroma. Nor can the restriction be moved off the selector and into a condition: `TargetModel` (schema.py:74-93) carries only `selector`, `count`, `one_per_player` and `optional`, with no condition slot, and an activated ability's own `condition` is checked by legality before targets are chosen so it cannot see the spell either. Every remaining route is an approximation that changes which spells the ability may point at.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frontline Medic** (rank 3489) — `frontline_medic`
+  - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
+
+</details>

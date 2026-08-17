@@ -1809,6 +1809,27 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.
         raise DslError(f"{where}: detain needs 'objects' naming what is detained")
+    if op == "extra_combat":
+        # "…followed by an additional main phase" is half of what Relentless
+        # Assault and Resurgence print, and a misspelled key here drops it
+        # silently -- leaving a four-mana sorcery that grants a bare extra
+        # combat, which is a different and worse card. So the flag is checked by
+        # name and by type.
+        if "extra_main" in effect and not isinstance(effect["extra_main"], bool):
+            raise DslError(
+                f"{where}: extra_combat's 'extra_main' is a flag (true/false), "
+                f"got {effect['extra_main']!r}"
+            )
+        # A phase belongs to the *turn*, not to a player: an extra combat granted
+        # during somebody else's turn is theirs (Seize the Day). Accepting a
+        # `player` and ignoring it would read as "your extra combat" and be
+        # neither.
+        for key in ("player", "controller"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
+                    f"to the turn in progress, whoever's turn that is"
+                )
     if op == "set_flag" and not effect.get("flag"):
         # A flag with no name writes nothing, so renown's once-only guard never
         # closes and the creature grows on every combat damage for ever.

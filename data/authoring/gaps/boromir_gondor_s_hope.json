@@ -1,0 +1,29 @@
+{
+  "card_id": "boromir_gondor_s_hope",
+  "name": "Boromir, Gondor's Hope",
+  "oracle_text": "Whenever Boromir enters or attacks, look at the top six cards of your library. You may reveal a Human or artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+  "blocked_sentences": [
+    "You may reveal a Human or artifact card from among them and put it into your hand."
+  ],
+  "needs": [
+    {
+      "capability": "optional_pool_choice",
+      "kind": "selector",
+      "what": "A declinable bounded choice for a selector's `count` -- the `objects`/pool equivalent of a target's `optional: true`, i.e. \"choose exactly N of these, or none\" (here N = 1, printed \"you may reveal **a** Human or artifact card from among them\"). Concretely: accept `optional: true` alongside an integer `count` in `SELECTOR_KEYS` and honour it in `selectors.pick_from_pool` by setting `min_count = 0` while `max_count` stays N, so `look_at_top` can offer at most one card and keep the rest of the effect -- the look and the `rest_to_bottom` -- mandatory. The choice must also stay *after* the look, since the whole point of the clause is that the player decides having seen the six cards.",
+      "why_existing_wont_do": "A selector's `count` accepts only `\"all\"`, `\"any\"`, or a value (`selectors.pick_from_pool`, and `validate_selector` rejects any other string), and none of the three says \"up to one\": a value sets `min_count == max_count`, so `count: 1` forces the reveal and silently deletes \"You may\" -- and worse, `if count >= len(pool): return pool` takes the card without even asking; `\"any\"` sets `min_count = 0, max_count = len(pool)`, which is \"any number of them\" and would put *every* Human and artifact among the top six into hand, a strictly stronger card. Wrapping the `look_at_top` in `may` is not equivalent in either branch: `op_may` gates the entire wrapped effects list, so declining also skips the mandatory look and the mandatory `rest_to_bottom` (a real, distinct game action -- `_bottom_in_random_order` reorders only the six looked at and deliberately is not `shuffle_library`), and it asks the yes/no *before* anything is seen, turning an informed decision into a blind one. Approximating the decline branch with a second `look_at_top` in `may.else` cannot work either, because the depth is a literal `amount` and would bottom six cards in a position where only five remain. `TargetModel.optional` already expresses exactly this shape (\"exactly N, or none\") but only for declared targets, and these cards are chosen from a library pool `look_at_top` bounds itself, not targeted.",
+      "printed_forms": [
+        "You may reveal a <type> card from among them and put it into your hand.",
+        "You may put one of them into your hand / onto the battlefield.",
+        "Exile up to one card from among them."
+      ]
+    }
+  ],
+  "closest_existing": [
+    "look_at_top with objects.count 1 (Florian, Voldaren Scion -- mandatory \"Exile one of those cards\")",
+    "count: \"any\"",
+    "may",
+    "TargetModel.optional"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Everything else on the card loads today: \"enters or attacks\" splits into two triggered abilities (`self_enters` + `attacks`, both `source: \"self\"`) sharing the printed text, as Grave Titan already does; \"a Human or artifact card\" is `any_of` over `subtypes: [\"Human\"]` and `types: [\"Artifact\"]`; and \"look at the top six ... put the rest on the bottom of your library in a random order\" is `look_at_top` with `amount: {\"const\": 6}`, `destination: \"hand\"`, `rest_to_bottom: true`. Only the optional single pick is missing, so no partial answer was written."
+}

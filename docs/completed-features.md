@@ -1,3 +1,81 @@
+## An additional combat phase — a repeated phase in a turn that only counts upward
+
+### Overview
+
+"After this main phase, there is an additional combat phase followed by an
+additional main phase" (Relentless Assault, Resurgence, Savage Beating, Waves of
+Aggression); "after this phase, there is an additional combat phase" (Combat
+Celebrant, Aggravated Assault, Hellkite Charger). Three gap records named
+`extra_combat`, and all three named the same blocker: `Step` is an ordered
+`IntEnum` of exactly thirteen values that `turn.next_step` walks one integer at a
+time, so a *repeated* phase had no representation at all. `state.cleanup_repeat`
+was the only precedent for re-entering a step, and it is a bool hardwired to
+CLEANUP; `delay` only defers an effect to one of four fixed steps.
+
+### An extra phase is not a new representation, it is a bookmark
+
+A repeated phase needs no enum value, because it is the same steps entered again.
+What has to be remembered is that the phase the turn was *about to* enter is
+still owed. So two fields:
+
+- `GameState.extra_phases` — a queue of phase **kinds** (`"combat"`, `"main"`),
+  not a combat counter, because Relentless Assault grants a main phase explicitly
+  while Combat Celebrant grants none, and a counter could not tell them apart.
+- `GameState.resume_step` — one bookmark, set on the first diversion and spent
+  when the queue runs dry.
+
+`turn._after_phase` is the whole mechanism, read only when a main or combat phase
+ends. Three consequences, each of which the obvious implementation gets wrong in
+a way that looks right in a one-line test:
+
+- An extra combat granted in a **precombat** main is inserted in front of the
+  combat the turn already had, and that combat still happens. Re-entering
+  `BEGIN_COMBAT` and walking on from there would silently eat the ordinary combat
+  phase and its postcombat main.
+- An extra combat is **not** an extra main phase. The step order puts a
+  postcombat main after every combat, so Combat Celebrant's extra combat returns
+  to the bookmark instead of falling through into a main phase it never granted.
+- "After this main phase" is not "right now". Aggravated Assault can be activated
+  during an upkeep, and its extra combat waits for the precombat main to end
+  rather than jumping in front of it — which is why the queue is read at phase
+  *ends* rather than at every step boundary.
+
+Two things then needed no code. The additional main phase is a `POSTCOMBAT_MAIN`
+step by 505.1b, so the `postcombat_main` trigger fires for it — the firing site in
+`begin_step` was already written per phase, with a comment saying "an extra combat
+gives an extra postcombat main", in anticipation of a phase that did not exist.
+And it is not an extra land drop: `lands_played` is reset by the untap step, so
+rule 305.2 holds by itself.
+
+`combat.start_combat` was already re-enterable (`end_combat` nulls
+`state.combat`), and the once-per-combat attack bookkeeping is
+`oid not in combat.attackers` on a fresh `CombatState`, so a creature untapped
+between combats can attack again with nothing added.
+
+### The op, and the seat it deliberately does not have
+
+`extra_combat` takes `amount` (Fury of the Horde's two) and `extra_main`, and no
+player. A phase belongs to the **turn**: Seize the Day is an instant, and cast on
+an opponent's turn the extra combat is theirs. The loader refuses a `player`
+rather than accepting one and ignoring it, and refuses a non-boolean
+`extra_main`, because a dropped flag turns a four-mana sorcery into a lesser card
+that loads and plays perfectly.
+
+One divergence, recorded in [rules-coverage.md](rules-coverage.md): a turn takes
+at most `MAX_EXTRA_PHASES_PER_TURN` extra phases. "Untap all creatures you
+control; there is an additional combat phase" plus enough mana is a real printed
+infinite combo and the rules let it run for ever; a self-play run cannot, and an
+unbounded turn is a hung process rather than a loss.
+
+### What it unblocked
+
+**Response // Resurgence**, whose only blocked sentence this was — a split card,
+so two entries and one object through the machinery `second_face` already had.
+The other two records are still blocked on capabilities of their own and had this
+need trimmed out rather than closed: Combat Celebrant on `exert`'s "hasn't been
+exerted this turn" guard, Relentless Assault on a per-object
+`attacked_this_turn` record.
+
 ## A mandatory additional cost — the half that "mandatory" did not deliver
 
 ### Overview
