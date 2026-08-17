@@ -496,9 +496,19 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
     carries neither -- so the ability reported as unusable when it was only
     unaimed.
 
-    Deliberately dumb: it adds the biggest creature in the pool rather than
-    solving the selector, because a helper clever enough to satisfy an arbitrary
-    filter would be a second implementation of `matches` living in the tests.
+    Deliberately dumb, the same way `_provide_the_sacrifice` and
+    `_provide_the_attacker` are: the selector is read only far enough to *choose*
+    a card and a seat, never to decide whether the result is legal. That answer
+    stays `enumerate_target_tuples`', so no second copy of `matches` moves into
+    the tests.
+
+    Three things it reads, each because a shipped card reported as unusable
+    without it. `types` — Field of Ruin targets a **land**, and the biggest
+    creature in the pool is not one. `controller` — the same card wants a land
+    *an opponent controls*, so the fodder has to be stocked on the other seat.
+    And `not_supertypes`, which is the one clause where the dumb pick is not
+    merely unhelpful but actively wrong: "nonbasic land" excludes exactly the
+    lands a naive first-by-id pick is most likely to land on.
     """
     from automtg.engine.targeting import enumerate_target_tuples
 
@@ -506,17 +516,53 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         return
     if enumerate_target_tuples(game.state, 0, ability.targets, oid):
         return
-    biggest = max(
-        (c for c in registry if c.is_creature and not c.is_token),
-        key=lambda c: (c.power or 0, c.id),
-        default=None,
-    )
-    if biggest is None:
-        return
-    obj = new_object(game.state, biggest.id, owner=0, zone=Zone.BATTLEFIELD)
-    obj.entered_turn = 0
-    game.state.battlefield.append(obj.oid)
+    for spec in ability.targets:
+        match = _target_fodder(registry, spec)
+        if match is None:
+            continue
+        obj = new_object(game.state, match.id, owner=_seat_for(game, spec), zone=Zone.BATTLEFIELD)
+        obj.entered_turn = 0
+        game.state.battlefield.append(obj.oid)
     game.state.bump_chars()
+
+
+def _seat_for(game: Game, spec) -> int:
+    """Whose board the fodder for this spec belongs on."""
+    if spec.selector.get("controller") != "opponent":
+        return 0
+    return next((p.pid for p in game.state.players if p.pid != 0), 0)
+
+
+def _target_fodder(registry, spec):
+    """One card from the pool that a target spec plausibly accepts.
+
+    A creature spec keeps the original answer -- the **biggest** creature --
+    because Herd Heirloom wants power 4 or greater and the first card by id has
+    none. Anything else takes the first match by id, the same tie-break
+    `_provide_the_sacrifice` uses.
+    """
+    if spec.kind not in ("permanent", "any"):
+        return None
+    selector = spec.selector
+    types = {str(t) for t in selector.get("types") or ["Creature"]}
+    subtypes = {str(s) for s in selector.get("subtypes") or []}
+    forbidden = {str(s) for s in selector.get("not_supertypes") or []}
+
+    def eligible(card) -> bool:
+        return (
+            not card.is_token
+            and types <= set(card.types)
+            and (not subtypes or subtypes & set(card.subtypes))
+            and not (forbidden & set(card.supertypes))
+        )
+
+    if types == {"Creature"}:
+        return max(
+            (c for c in registry if c.is_creature and eligible(c)),
+            key=lambda c: (c.power or 0, c.id),
+            default=None,
+        )
+    return next((c for c in sorted(registry, key=lambda c: c.id) if eligible(c)), None)
 
 
 def _provide_the_attacker(game: Game, registry, ability) -> None:

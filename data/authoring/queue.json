@@ -93692,12 +93692,12 @@
     },
     "Field of Ruin": {
       "edhrec_rank": 890,
-      "gate": "template",
+      "gate": null,
       "name": "Field of Ruin",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. Each pla",
+      "reason": "",
       "scryfall_id": "143147d2-2eec-41e7-b78a-592288b38630",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Field of Souls": {

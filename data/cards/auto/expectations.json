@@ -2013,6 +2013,9 @@
   "field_creeper": {
     "zone": "battlefield"
   },
+  "field_of_ruin": {
+    "zone": "battlefield"
+  },
   "fiend_hunter": {
     "battlefield_count": 32,
     "zone": "battlefield"

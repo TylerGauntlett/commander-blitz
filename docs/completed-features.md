@@ -1,3 +1,73 @@
+## "Nonbasic" — the negation the supertype filter never had
+
+### Overview
+
+`selector_keys` carried `supertypes` and it was a positive subset test only —
+`set(want).issubset(supertypes)` — so it could *require* Basic and could never
+forbid it. The negated family (`not_types`, `not_subtypes`, `not_colors`,
+`not_keywords`) simply had no supertype member, and "destroy target **nonbasic**
+land" is unsayable without one. Field of Ruin is the witness; Wasteland,
+Demolition Field, Tectonic Edge, Dust Bowl, Ruination, Encroaching Wastes and
+Dwarven Miner are the same clause behind it.
+
+`not_supertypes` is one key, four lines and a load-time guard.
+
+### The approximation that had to be refused
+
+`not_subtypes: ["Plains", "Island", "Swamp", "Mountain", "Forest"]` reads as the
+same English and is a materially different card, wrong in **both** directions:
+
+- It spares every nonbasic land that carries a basic land type — Hallowed
+  Fountain, Murmuring Bosk, Dryad Arbor, every shockland, every Triome. That is
+  precisely the mana base these cards are printed to answer, so the substitution
+  removes most of the card's reason to exist while still reading correctly.
+- It destroys Wastes, which is Basic with no subtype at all and which the printed
+  card protects. Snow-Covered Forest is excluded only by the coincidence of being
+  a Forest, not by being basic.
+
+`mana_value` is the other near miss and separates nothing: basic and nonbasic
+lands are both 0.
+
+### Both paths, because the card targets
+
+`objects` and target legality are different entry points, and a key honoured in
+only the first makes a spell that can be aimed at a Mountain and then does
+nothing on resolution. Both route through `selectors.matches`, so
+`targeting.candidates` (what legality offers) and `targeting.still_legal` (the
+re-check as the ability resolves) were covered by the same four lines —
+`test_not_supertypes.py` asserts all three call sites anyway, because "they
+happen to share a function today" is not a property a test can rely on.
+
+`triggers.matches_card_filter` is the third place, and it needed its own line:
+trigger filters are validated against the same `SELECTOR_KEYS`, so a key that
+loaded and then did nothing would be exactly the silently-wider filter this key
+exists to prevent.
+
+### Supertypes are validated, and the negation is why
+
+The `types`/`any_types`/`not_types` guard exists because a typo narrows a
+selector silently. For a negation the failure is worse and quieter: a misspelled
+positive supertype selects nothing and is obvious on the first board, where
+`not_supertypes: ["basic"]` forbids nothing at all and looks like it worked — a
+Field of Ruin that destroys Mountains. Both keys are now checked against the
+three supertypes the engine knows.
+
+### Not in the static filter language
+
+`STATIC_FILTER_KEYS` did not get it, and that is a decision rather than an
+omission. Every printed "nonbasic lands …" static is blocked on a missing static
+*effect*, not on the filter: Blood Moon and Magus of the Moon want a
+type-changing continuous effect, Back to Basics and Winter Moon an untap
+restriction, Archon of Emeria and Zhao a filtered enters-tapped replacement. The
+key would have nothing to attach to and no card to demonstrate itself on, and the
+list is deliberately a curated subset — it has no `not_subtypes` or `not_colors`
+either. It is one line to add on the day a card needs it.
+
+### Server and frontend: nothing
+
+A selector key is card vocabulary. Targets already serialize as refs and
+`LegalActionDTO.kind` is a bare string.
+
 ## "That player can't attack you" — the first prohibition with two sides
 
 ### Overview
