@@ -1,0 +1,37 @@
+{
+  "card_id": "visions_of_glory",
+  "name": "Visions of Glory",
+  "oracle_text": "Create a 1/1 white Human creature token for each creature you control.\nFlashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone."
+  ],
+  "needs": [
+    {
+      "capability": "conditional_cost_reduction",
+      "kind": "cost",
+      "what": "A cost reduction scoped to a single cast variant -- \"this spell costs {X} less to cast THIS WAY\" -- so a discount can be attached to the flashback/`graveyard_cost` line and not to the printed hand cast. Suggested shape: a `reduction` key inside the `CostModel` that `flashback`/`graveyard_cost` already is (beside its `mana`), taking the same value the card-level `cost_reduction` takes, and read by `legality._cast_variant` only on the branch that selected that cost, plus the matching branch in `game._cast` so the spell is paid at the price it was offered at. Every alternative cost in the engine (`evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate`, `alternative_cost`) would gain the same rider for free.",
+      "why_existing_wont_do": "The two reductions in `cost_keys`/the card schema are both variant-blind. `legality._cast_variant` picks the cost per variant at `legality.py:848-867` (`if flashback and card.flashback is not None: cost = card.flashback.mana`) but then applies `discount = cost_reduction(state, pid, card)` unconditionally at `legality.py:875`, and `game._cast` mirrors that at `game.py:268` -- so a card-level `cost_reduction` would take {X} off the printed {4}{W} hand cast as well, which the card does not say and which would silently make Visions of Glory a one-mana sorcery in a deck with a 6-drop commander. The `mana_reduction` cost key is not a way in either: `costs.ability_mana` (`costs.py:407-432`) is the only reader, and its docstring says it exists precisely because the two cast-path reductions never reach an *activated ability* -- a flashback cast is a cast, so it goes through `_cast_variant` and never through `ability_mana`. There is no third place to hang the discount: `spell_cost_reduction` is the Warden-of-Evos-Isle static, which discounts a *different* card from the battlefield and cannot be printed on the card being discounted."
+    },
+    {
+      "capability": "commander_mana_value",
+      "kind": "value",
+      "what": "A cost-time value equal to the greatest mana value among the commanders one player owns, counting both the battlefield and the command zone -- e.g. a `commander_mana_value` value key (or a `{\"greatest_mana_value\": <filter>}` reduction shape) evaluated with `pick: \"greatest\"` over `state.players[pid].command` plus that player's commander permanents on the battlefield, read off the printed card (`state.card(oid).mana_value`) since a commander in the command zone has no board state.",
+      "why_existing_wont_do": "Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the only reduction shapes `costs.cost_reduction` accepts are `{\"count\": filter}` and `{\"total_power\": filter}` (`costs.py:987-993`), both of which SUM over matches -- a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` (`costs.py:997-1012`) iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all."
+    }
+  ],
+  "closest_existing": [
+    "flashback",
+    "graveyard_cost",
+    "cost_reduction",
+    "mana_reduction",
+    "spell_cost_reduction",
+    "extreme (of: mana_value)",
+    "mana_value_of",
+    "max",
+    "is_commander",
+    "commander_color_identity",
+    "shares_a_type_with_commander"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Sentence 1 loads today with no engine work: `{\"op\": \"create_token\", \"token\": \"human_1_1_w\", \"amount\": {\"creatures_you_control\": true}}` in `spell_effects` -- `create_token` is in `ops`, `creatures_you_control` is in `value_keys`, and `human_1_1_w` is already a registered token (`data/cards/zurgo.cards.json:147`: Creature, subtypes [\"Human\"], 1/1, colors [\"W\"]), so the `tokens` expectation key can assert it. The flashback *cast* is also already supported and is a card-level `flashback`/`graveyard_cost` CostModel with `graveyard_cast: \"exile\"` as its default -- `data/cards/zurgo.cards.json:236-273` is a white sorcery with `\"flashback\": {\"mana\": \"{7}{W}{W}\"}` and a `cast_from_graveyard` branch, i.e. this exact card one rider short. Only the \"{X} less to cast this way\" clause is missing, and because that clause is the whole difference between this card and the flat-cost flashback already in the pool, writing it as a bare `\"flashback\": {\"mana\": \"{8}{W}{W}\"}` would be a card that is right about the price nobody pays and wrong about the price the card was designed around. Once both needs land, the answer is that one `create_token` effect plus `{\"flashback\": {\"mana\": \"{8}{W}{W}\", \"reduction\": {\"greatest_mana_value\": {\"is_commander\": true, \"controller\": \"you\", \"zone\": [\"battlefield\", \"command\"]}}}}`, and its expectation in the sandbox would read `tokens` {\"id\": \"human_1_1_w\", \"count\": 2} (the two creatures you control -- the sandbox has no commander, so the flashback rider is invisible there), `battlefield_count` 34 and `zone` \"graveyard\"."
+}

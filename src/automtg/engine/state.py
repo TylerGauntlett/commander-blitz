@@ -25,6 +25,16 @@ DEFAULT_MAX_TURNS = 60
 #: Guard against infinite trigger loops within a single step.
 MAX_TRIGGERS_PER_STEP = 200
 
+#: How many extra phases one turn may actually run (`turn.grant_extra_phases`).
+#:
+#: Sibling of `max_turns` and `MAX_TRIGGERS_PER_STEP` rather than a rules
+#: statement: "untap all creatures, there is an additional combat phase" plus a
+#: way to recur it is a real and printed infinite combo (Aggravated Assault with
+#: enough mana), and the rules let it run for ever. A self-play run cannot, and
+#: an unbounded turn is a hang rather than a loss. Twenty is far past anything a
+#: game decides on and far short of a wedged process.
+MAX_EXTRA_PHASES_PER_TURN = 20
+
 
 @dataclass
 class GameState:
@@ -144,6 +154,33 @@ class GameState:
     #: refused. There was no place to keep it; this is the place.
     day_night: str | None = None
     max_turns: int = DEFAULT_MAX_TURNS
+    #: Phases this turn has been granted and not yet begun, in the order they
+    #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).
+    #:
+    #: "After this phase, there is an additional combat phase" (Combat
+    #: Celebrant); "after this main phase, there is an additional combat phase
+    #: followed by an additional main phase" (Relentless Assault). A queue rather
+    #: than a counter because the second sentence grants a *main* phase
+    #: explicitly, and a bare combat count could not say which of the two came
+    #: next.
+    #:
+    #: On the state rather than on a player, because a phase belongs to the
+    #: **turn**: Seize the Day is an instant, and cast on an opponent's turn its
+    #: extra combat is that opponent's. Cleared at the turn boundary, so an
+    #: unspent grant -- Aggravated Assault activated in an end step, which has no
+    #: main phase left to come after -- expires rather than leaking into the next
+    #: player's turn.
+    extra_phases: list[str] = field(default_factory=list)
+    #: Where the ordinary turn resumes once the extra phases are done.
+    #:
+    #: An extra phase is *inserted*, so the phase the turn was about to enter is
+    #: still owed. One slot and not a stack: every grant made during a detour is
+    #: inserted inside that same detour (the queue above), so there is only ever
+    #: one place to come back to. See `turn.next_step`.
+    resume_step: Step | None = None
+    #: Extra phases actually entered this turn, against `MAX_EXTRA_PHASES_PER_TURN`.
+    #: Counted rather than measured off the queue because the queue drains.
+    extra_phases_taken: int = 0
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
     #: False until the current step's turn-based actions have been performed.

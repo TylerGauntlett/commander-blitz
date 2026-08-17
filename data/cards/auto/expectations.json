@@ -4935,6 +4935,16 @@
   "resistance_skywarden": {
     "zone": "battlefield"
   },
+  "response_resurgence": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "first_strike",
+        "vigilance"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "resupply": {
     "hand_size": {
       "0": 1

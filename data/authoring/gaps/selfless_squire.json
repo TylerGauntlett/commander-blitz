@@ -1,0 +1,34 @@
+{
+  "card_id": "selfless_squire",
+  "name": "Selfless Squire",
+  "oracle_text": "Flash\nWhen this creature enters, prevent all damage that would be dealt to you this turn.\nWhenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature.",
+  "blocked_sentences": [
+    "When this creature enters, prevent all damage that would be dealt to you this turn.",
+    "Whenever damage that would be dealt to you is prevented, put that many +1/+1 counters on this creature."
+  ],
+  "needs": [
+    {
+      "capability": "damage_prevention",
+      "kind": "op",
+      "what": "A one-shot prevention shield an effect can create over a *player* with a turn duration: `{\"op\": \"prevent_damage\", \"players\": {\"player\": \"you\"}, \"amount\": \"all\", \"duration\": \"end_of_turn\"}`, meaning \"prevent all damage that would be dealt to you this turn\". Three parts have to be built. (1) The op itself, which registers a shield rather than modifying anything immediately -- it resolves before the damage exists, so it must persist as turn-scoped state on the player (a `PlayerState` field cleared at cleanup, the way any until-end-of-turn effect is unwound) rather than as a battlefield static. (2) A prevention check inside `damage_player` (primitives.py:100), which today has none at all: it goes straight from the infect branch to `state.players[pid].life -= amount`, so there is no point in the player-damage path where a shield could be consulted. The check belongs at the top, before the infect branch and before `LIFE_LOST`/`DAMAGE_DEALT` fire, so prevented damage causes no life loss, no poison, no lifelink for the attacker, and no commander-damage tally -- prevented damage was never dealt. (3) The shield must emit `EventType.DAMAGE_PREVENTED` with `player` and `amount` so the trigger below can read how much it ate.",
+      "why_existing_wont_do": "`static_effects.prevent_damage` is absorb N, and is wrong on all three axes this card needs. It is keyed to a permanent: `prevented_damage(state, oid)` (characteristics.py:658) takes an object id, walks `_battlefield_statics` and `_matches` each one's `affects` against that permanent -- there is no player-facing form, and `static_filter_keys` has no way to name a player. It is per source and per instance by design (\"a creature with absorb 1 blocked by three 1/1s takes nothing from any of them\"), which is not \"prevent all damage this turn\" -- and it cannot be spelled \"all\" regardless, because loader.py:1073 rejects `prevent_damage` without an `amount` outright (\"'prevent_damage' needs an 'amount' -- absorb N\"). And it is a static, so it is continuous while the source is on the battlefield: a Squire carrying it would prevent all damage to its controller on every future turn as well, which is Worship-grade rather than a one-turn fog. `protection` is the other prevention static and is likewise per-permanent and quality-parameterised (`protected_from(state, oid, source_oid)`), and it prevents blocking, targeting and enchanting besides. The ops list has no prevention entry of any kind: `damage` deals it, `gain_life` pays it back after the fact (a different card -- the Squire's counters would never trigger and any death from that damage would already have happened), and `delay` only postpones an effect rather than installing a replacement. `set_flag`/`has_flag` can record that the ETB happened but nothing in the damage path reads flags, and `static_condition_keys` has no `has_flag` to gate a static on one."
+    },
+    {
+      "capability": "damage_prevention",
+      "kind": "trigger_event",
+      "what": "A `damage_prevented` DSL trigger, scoped to a player, exposing the prevented amount as `{\"binding\": \"amount\"}` -- so the second line is `{\"kind\": \"triggered\", \"trigger\": {\"event\": \"damage_prevented\", \"player\": \"you\"}, \"effects\": [{\"op\": \"add_counters\", \"kind\": \"+1/+1\", \"amount\": {\"binding\": \"amount\"}, \"objects\": {\"self_only\": true}}]}`. Two pieces: a `TRIGGER_EVENTS` entry mapping `damage_prevented` to `EventType.DAMAGE_PREVENTED`, and a switch from `state.emit` to `fire` at both existing emission sites (primitives.py:186 for protection, primitives.py:203 for absorb) plus the new player-shield site, since only `fire` puts an event on the trigger bus. The existing emissions carry `player`, `source`, `oid`, `amount` and `reason`, so the payload is already the right shape; the filter needs to distinguish a shield over a player from absorb on a permanent (the `oid` is `None` in the player case) so this trigger does not also fire off a blocked creature.",
+      "why_existing_wont_do": "`EventType.DAMAGE_PREVENTED` exists (events.py:115) and is already emitted twice, but it is not in `TRIGGER_EVENTS` (engine/triggers.py:28) and no card can subscribe to it -- loader.py:892 rejects any trigger whose event is not a key of that dict, so `damage_prevented` fails to load. Worse, both emission sites use `state.emit` rather than `fire`, unlike `LIFE_LOST` and `DAMAGE_DEALT` immediately around them, so the event only lands in `state.events` for tests to read (tests/unit/test_absorb.py:117) and never reaches the trigger bus -- adding the mapping alone would produce a trigger that silently never fires. `dealt_damage` (`EventType.DAMAGE_DEALT`, enrage) is the closest existing trigger and is exactly inverted: prevented damage is damage that was *not* dealt, so `DAMAGE_DEALT` does not fire for it, and on the turn the Squire's shield is up the printed card gets counters while a `dealt_damage` version would get none. `life_lost` fails for the same reason and is doubly wrong, since prevented damage costs no life. The `value_keys` route is no better: `damage_taken_this_turn` counts damage that landed, so it reads zero underneath a working shield, and there is no `damage_prevented_this_turn` counterpart to sum instead."
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "protection",
+    "dealt_damage",
+    "life_lost",
+    "damage_taken_this_turn",
+    "delay",
+    "set_flag",
+    "add_counters"
+  ],
+  "confidence": "high"
+}

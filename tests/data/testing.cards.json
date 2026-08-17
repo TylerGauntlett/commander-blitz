@@ -2459,6 +2459,71 @@
       ]
     },
     {
+      "id": "t_assault",
+      "name": "Test Assault",
+      "oracle_text": "Untap all creatures you control. After this main phase, there is an additional combat phase followed by an additional main phase.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "untap",
+          "objects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        },
+        {
+          "op": "extra_combat",
+          "extra_main": true
+        }
+      ]
+    },
+    {
+      "id": "t_second_wind",
+      "name": "Test Second Wind",
+      "oracle_text": "Whenever Test Second Wind attacks, untap all other creatures you control and after this phase, there is an additional combat phase.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warrior"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test Second Wind attacks, untap all other creatures you control and after this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "untap",
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "exclude_self": true,
+                "count": "all"
+              }
+            },
+            {
+              "op": "extra_combat"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_exerter",
       "name": "Test Exerter",
       "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",
