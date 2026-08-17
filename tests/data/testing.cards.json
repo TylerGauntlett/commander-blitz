@@ -1971,6 +1971,57 @@
       ]
     },
     {
+      "id": "t_dear_dasher",
+      "name": "Test Dear Dasher",
+      "oracle_text": "Dash {3}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "evoke": "{3}{R}",
+      "evoke_label": "dash",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "If you do, it gains haste, and it's returned to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {
+              "evoked": true
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_deathtoucher",
       "name": "Test Deathtoucher",
       "mana_cost": "{B}",
