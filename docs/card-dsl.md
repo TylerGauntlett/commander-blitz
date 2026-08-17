@@ -214,6 +214,7 @@ Every key is optional; all present keys must match.
   "self_only": true,              // this permanent only
   "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
   "count": 1,                     // an int, or "all", or "any" -- see below
+  "optional": true,               // "you may ... a card" -- exactly N, or none
   "chooser": "controller",        // controller|owner|none
   "random": false,
   "name": "Forest"
@@ -254,6 +255,39 @@ and `max_count` bounds and `PendingDecision.min_count` was always honoured, so
 `"any"` is refused at load time alongside `random` or `chooser: "none"`. Both
 would resolve the whole pool without asking, which is `"all"` under another name;
 a card that means "all" should say "all".
+
+`optional: true` beside an integer `count` is the fourth shape, and it is the
+only one that is *bounded and declinable*: **exactly N of them, or none.**
+
+```jsonc
+{ "op": "look_at_top", "amount": { "const": 6 },
+  "objects": { "count": 1, "optional": true,
+               "any_of": [ { "subtypes": ["Human"] }, { "types": ["Artifact"] } ] },
+  "destination": "hand", "rest_to_bottom": true }
+```
+
+That is Boromir, Gondor's Hope — "look at the top six cards of your library. You
+**may** reveal **a** Human or artifact card from among them and put it into your
+hand" — and every impulse card printed with the same middle sentence. Only the
+*floor* moves; the ceiling stays at the printed number, which is the whole
+difference from `"any"`: `"any"` would put every Human and artifact among the six
+into hand. A bare `count: 1` is the opposite error — the one number becomes both
+bounds, so "You may" is deleted, and `pick_from_pool`'s `count >= len(pool)`
+shortcut would take the card without even asking when the six held exactly one
+match.
+
+Wrapping the op in `may` is a third card again. `may` gates the whole effects
+list, so declining skips the mandatory look and the mandatory `rest_to_bottom`
+— a real, distinct game action, not `shuffle_library` — and it asks the yes/no
+*before* anything has been seen, which turns the one informed decision on the
+card into a blind one. The name is `TargetModel.optional`'s, deliberately: that
+field is this exact shape on the declared-target side, and these pools are not
+targeted because `look_at_top` bounds its own.
+
+Refused at load time on `"all"` or `"any"` (mandatory by definition, and already
+reaching zero, respectively — on either the key would be silently inert), and,
+for the same reason `"any"` is, alongside `random` or `chooser: "none"`: with
+nobody asked there is nobody to decline.
 
 The comparison keys (`power`, `toughness`, `mana_value`) take a full **value
 expression** on the right, which is how mentor says "target attacking creature
@@ -319,7 +353,12 @@ A union narrows nothing on its own and every key beside it still filters, so
 `{"types": ["Creature"], "any_of": [...]}` reads "a creature that is either of
 these", not "either a creature or these". A branch may not name a `zone` — that
 would read as "or anything over there" and is not what it does — and a union of
-one is refused, since that is a filter written the long way.
+one is refused, since that is a filter written the long way. A branch is matched
+in whatever zone the **outer** selector settled on, which is the other half of
+that rule: Boromir's "a Human **or** artifact card" is asked about cards in a
+library, and matching the branches against the battlefield instead made every one
+of them fail — so the op saw an empty pool and quietly never asked, which on
+screen is indistinguishable from a top six that happened to hold neither.
 
 ### Describing objects relative to *another* object
 

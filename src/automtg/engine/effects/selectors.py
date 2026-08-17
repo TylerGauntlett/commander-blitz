@@ -147,6 +147,27 @@ SELECTOR_KEYS = frozenset(
         #: pool and not about any one candidate.
         "extreme",
         "count",
+        #: "You may reveal **a** Human or artifact card from among them and put
+        #: it into your hand." -- Boromir, Gondor's Hope, and every "look at the
+        #: top N, you may take one" card printed since. Alongside an integer
+        #: `count` it means "exactly that many, or none": the pick is bounded at
+        #: N and the chooser may decline it, which is `min_count = 0` with
+        #: `max_count` left at N.
+        #:
+        #: None of the three `count` spellings says it. A value forces exactly
+        #: N -- the number becomes both bounds, so "You may" is silently deleted
+        #: -- and `"any"` is min 0 / max *pool*, which would take every Human and
+        #: artifact among the six rather than one. Wrapping the op in `may` is a
+        #: different card again: it gates the whole effect list, so declining
+        #: also skips the mandatory look and the mandatory "put the rest on the
+        #: bottom", and it asks before anything has been seen, which is the one
+        #: thing this clause is printed to prevent.
+        #:
+        #: Named after `TargetModel.optional`, which is this exact shape on the
+        #: declared-target side ("exactly N, or none"). These pools are not
+        #: targeted -- `look_at_top` bounds its own from the top of a library --
+        #: so the word had to be spelled a second time here rather than reused.
+        "optional",
         "chooser",
         "random",
         "target",
@@ -467,8 +488,17 @@ def matches(
         return False
     # Checked here, alongside the other keys, so it composes with them: the
     # union narrows nothing on its own and everything outside it still filters.
+    #
+    # A branch inherits the zone the *outer* selector settled on, not the
+    # caller's default. `validate_selector` refuses a `zone` inside a branch --
+    # "put 'zone' on the outer selector; a branch filters the pool it already
+    # chose" -- so passing the caller's default down instead re-asked the
+    # battlefield question about a pool that was never on the battlefield, and
+    # every branch failed. Silently: "a Human **or** artifact card" from a
+    # library look matched nothing at all and the op simply never asked, which
+    # reads on screen exactly like a top six that happened to hold neither.
     if (branches := selector.get("any_of")) and not any(
-        matches(ctx, oid, branch, default_zone=default_zone) for branch in branches
+        matches(ctx, oid, branch, default_zone=zone_name) for branch in branches
     ):
         return False
     if (want := selector.get("not_types")) and set(want) & types:
@@ -612,7 +642,8 @@ def choose_objects(
 ) -> Generator[Any, list[int], list[int]]:
     """Resolve a selector all the way to a concrete list of oids.
 
-    Honours ``count`` (an integer, ``"all"`` or ``"any"``), ``chooser``
+    Honours ``count`` (an integer, ``"all"`` or ``"any"``), ``optional``
+    (an integer ``count`` the chooser may decline entirely), ``chooser``
     (``controller``, ``owner`` or ``none``) and ``random``.  When a choice is
     genuinely required this suspends and asks; otherwise it returns immediately.
     """
@@ -630,7 +661,7 @@ def pick_from_pool(
     purpose: str = "choose",
     chooser: int | None = None,
 ) -> Generator[Any, list[int], list[int]]:
-    """Apply a selector's ``count``/``chooser``/``random`` to a pool already built.
+    """Apply a selector's ``count``/``optional``/``chooser``/``random`` to a built pool.
 
     Split out of ``choose_objects`` because not every pool comes from a zone.
     ``look_at_top`` bounds its own pool to the top N cards of a library and then
@@ -662,9 +693,20 @@ def pick_from_pool(
         count = max(0, min(int(count), len(pool)))
         if count == 0:
             return []
-        if count >= len(pool):
+        # "You may reveal **a** Human or artifact card from among them" -- the
+        # size is still N, but nothing is forced. Only the *floor* moves, which
+        # is what separates this from `"any"`: the ceiling stays at the printed
+        # number, so an optional 1 takes one card or none and never two.
+        #
+        # It also has to survive the shortcut below. `count >= len(pool)` returns
+        # the pool without asking, which is right for a mandatory pick -- there
+        # is nothing to decide -- and wrong here, because declining is the
+        # decision. A six-card look that turned up exactly one Human would
+        # otherwise put it in hand without the player ever being asked.
+        optional = bool(selector.get("optional"))
+        if count >= len(pool) and not optional:
             return pool
-        min_count = max_count = count
+        min_count, max_count = (0 if optional else count), count
 
     if selector.get("random"):
         return ctx.state.rng.shuffled(pool)[:max_count]
@@ -783,6 +825,26 @@ def validate_selector(selector: Any, where: str) -> None:
             raise DslError(f"{where}: count 'any' is a free choice; it cannot be random")
         if selector.get("chooser") == "none":
             raise DslError(f"{where}: count 'any' needs a chooser; use 'all' for no choice")
+    if selector.get("optional"):
+        # "Exactly N, or none" is only a sentence when there is an N. `"all"`
+        # is mandatory by definition and `"any"` already reaches down to zero,
+        # so `optional` on either is either a contradiction or a no-op -- and a
+        # no-op key on a card that means "you may" is exactly the kind of
+        # silently-ignored clause the whole key set is validated to prevent.
+        if count is None or isinstance(count, str):
+            raise DslError(
+                f"{where}: 'optional' means 'exactly N of them, or none' and needs a "
+                f"numeric count; 'all' is mandatory and 'any' already includes none"
+            )
+        # Same argument as `"any"` above, and the same two ways round it. Both
+        # of these resolve the pool without asking anybody, which deletes the
+        # "you may" the key was written to say.
+        if selector.get("random"):
+            raise DslError(f"{where}: 'optional' is a declinable choice; it cannot be random")
+        if selector.get("chooser") == "none":
+            raise DslError(
+                f"{where}: 'optional' needs a chooser; with none there is nobody to decline"
+            )
     # A misspelled type in an any-of clause matches nothing and narrows the
     # selector silently -- "target artifact or enchantmnet" would quietly become
     # "target artifact".  Checked here rather than in the loader's per-op guards
