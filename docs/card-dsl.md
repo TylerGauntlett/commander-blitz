@@ -2388,6 +2388,66 @@ Subtypes only. `types` is refused rather than dropped — "becomes an artifact i
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
 
+## Keyword counters — "with a vigilance counter on it"
+
+```jsonc
+{ "op": "add_counters", "counter": "vigilance", "amount": { "const": 1 },
+  "objects": { "target": "t1" } }
+```
+
+No new op. Rule 122.1c is "a keyword counter is a counter with a keyword
+ability's name, and a permanent with a keyword counter on it has that keyword
+ability", so the counter was always sayable — what was missing is that anything
+read it. `characteristics._compute` now folds every counter whose kind is a
+`Keyword` into the keyword set, in the **keyword-grant layer** rather than beside
+the `+1/+1` counters five layers later. The real layer system splits them the
+same way (613.1f against 613.1d) and for the same reason: one is an ability, the
+other is a size.
+
+Any keyword the engine implements works, `enums.KEYWORD_COUNTERS` being derived
+from `Keyword` rather than listed — 122.1c names no subset, and a hand-kept list
+would be a second place to forget the next card. The one exclusion is
+`INERT_KEYWORDS`: partner is a deck-construction word, so a partner counter could
+grant nothing.
+
+**The spelling is exact, and the loader enforces that.** A `counter` kind is an
+open vocabulary — charge, quest, slumber, lore, age — so there is nothing to
+check it against, with one exception: a kind that *normalises onto* a keyword
+without being spelled as one is refused.
+
+| written | outcome |
+|---|---|
+| `"vigilance"` | a vigilant creature |
+| `"Vigilance"`, `"vigilance counter"`, `"first strike"` | **refused at load** |
+| `"charge"`, `"quest"` | an ordinary tally, untouched |
+
+That guard is the whole reason this is a load error rather than a convention:
+without it the near miss compiles, resolves, writes a tally nobody consults, and
+prints as the card does — the failure every other check in the loader exists to
+refuse.
+
+It is not `grant_keyword`, and the difference is not cosmetic:
+
+| | |
+|---|---|
+| `grant_keyword` | a keyword handed over directly, until end of turn or for as long as the permanent lasts. No object, so nothing can count it, move it or take it off |
+| a keyword counter | a counter, so `counters_on` reads it, `remove_counters` and `move_counters` take it away or carry it elsewhere, `proliferate` adds another, and the client's badge shows it. It outlasts the turn and has no link to whatever placed it |
+
+Two consequences worth knowing before writing a card with one:
+
+- **It leaves with the permanent.** Counters cease to exist when a permanent
+  changes zones (121.2, `reset_permanent_state`), so a creature that dies and
+  comes back is the printed one again. That is why Gilraen, Dúnedain Protector
+  says to return the card *with* the counters on it — expressed as the
+  `self_enters_with_counters` replacement, which takes a keyword kind and is
+  guarded the same way.
+- **A static's `affects` filter still reads the printed face.** `keywords:
+  ["flying"]` does not match a creature wearing a flying counter, exactly as it
+  does not match one granted flying by an anthem. That is the no-layers
+  simplification in [rules-coverage.md](rules-coverage.md) applying evenly;
+  making counters the one *visible* kind of grant would be the inconsistency.
+  Effect selectors read derived characteristics on the battlefield and do see it.
+
 ## Transforming double-faced cards
 
 ```jsonc
