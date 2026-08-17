@@ -19,11 +19,16 @@ from .enums import COLORLESS, Keyword, Zone
 from .errors import DslError
 from .events import EventType
 from .mana import (
+    ACTIVATE,
+    CAST,
+    CHOSEN_TYPE,
     SYMBOL_INDEX,
     SYMBOLS,
     ManaCost,
+    ManaRestriction,
     ManaSource,
     Requirement,
+    SpendPurpose,
     format_symbols,
     solve_payment,
 )
@@ -37,7 +42,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def mana_sources(
-    state: GameState, pid: int, *, purpose: frozenset[str] | None = None
+    state: GameState, pid: int, *, purpose: SpendPurpose | None = None
 ) -> list[ManaSource]:
     """Every mana ability this player could activate right now.
 
@@ -45,11 +50,12 @@ def mana_sources(
     cost (pay life, sacrifice) is left for the player to activate explicitly.
 
     ``purpose`` describes what the mana would be spent on -- the lowercased card
-    types of the spell being cast.  Restricted sources ("spend this mana only to
-    cast a creature spell") are dropped unless the purpose matches, so the
-    solver never has to know restrictions exist.  ``None`` means "no particular
-    spell", and offers only unrestricted mana: an under-count rather than an
-    over-count, which is the safe direction for a number the AI reads.
+    types and subtypes of the spell being cast, or of the source whose ability
+    is being activated.  Restricted sources ("spend this mana only to cast a
+    creature spell") are dropped unless the purpose matches, so the solver never
+    has to know restrictions exist.  ``None`` means "no particular spell", and
+    offers only unrestricted mana: an under-count rather than an over-count,
+    which is the safe direction for a number the AI reads.
     """
     out: list[ManaSource] = []
     for oid in state.battlefield:
@@ -57,24 +63,102 @@ def mana_sources(
         if obj is None or obj.controller != pid or obj.tapped:
             continue
         out.extend(
-            source
-            for source in _sources_of(state, oid, obj)
-            if source.restriction is None
-            or (purpose is not None and bool(source.restriction & purpose))
+            source for source in _sources_of(state, oid, obj) if source.permits(purpose)
         )
     return out
 
 
-def spell_purpose(card: CardDef) -> frozenset[str]:
-    """What restricted mana would have to allow, to pay for this card.
+def spell_purpose(card: CardDef) -> SpendPurpose:
+    """What restricted mana would have to allow, to *cast* this card.
 
     Subtypes as well as types, because the printed clause names either: "…only
     to cast a creature spell" is a type, and "…only to cast Vampire, Cleric,
     and/or Demon spells" is three subtypes. One flat set of lowercased names on
-    both sides, intersected -- which is also what the printed "and/or" means, an
-    any-of rather than an all-of.
+    both sides, matched by :meth:`ManaSource.permits` -- which is where the
+    printed "and/or" (an any-of) and "a creature spell **of** the chosen type"
+    (an all-of) are told apart.
+
+    Tagged :data:`CAST`, which is the half of the purpose that keeps every
+    restriction shipped before Secluded Courtyard meaning what it printed.
     """
-    return frozenset(t.lower() for t in (*card.types, *card.subtypes))
+    return SpendPurpose(
+        kind=CAST, names=frozenset(t.lower() for t in (*card.types, *card.subtypes))
+    )
+
+
+def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
+    """What restricted mana would have to allow, to pay an ability's cost.
+
+    "…or activate an ability of a **creature source of the chosen type**."
+    Cavern of Souls, Unclaimed Territory, Secluded Courtyard. Restricted mana is
+    not only for spells, and until this existed the second half of every one of
+    those lines was unreachable: every `mana_sources` call that funded an
+    activation passed no purpose at all, so a restricted source was dropped
+    outright.
+
+    Tagged :data:`ACTIVATE` rather than handed over as a bare name set, because
+    the two are *not* interchangeable: Herd Heirloom's "only to cast a creature
+    spell" and this card's "or activate an ability of" are different
+    permissions, and a purpose that could not tell them apart would hand the
+    first card the second card's text.
+
+    The object's *current* characteristics on the battlefield, because that is
+    what "a creature source" asks about -- a land animated into a Vampire
+    creature really is one, and the printed face would say otherwise. Anywhere
+    else (a creature card cycling from hand is an activated ability too, rule
+    702.29a) there are no continuous effects to apply, so the printed face is
+    the whole answer, exactly as `_reduction_matches` reads it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return SpendPurpose(kind=ACTIVATE, names=frozenset())
+    if obj.on_battlefield:
+        c = chars(state, oid)
+        names = (*c.types, *c.subtypes)
+    else:
+        card = state.card_of(obj)
+        names = (*card.types, *card.subtypes)
+    return SpendPurpose(kind=ACTIVATE, names=frozenset(t.lower() for t in names))
+
+
+def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | None:
+    """This ability's spend restriction, as it stands on *this* permanent.
+
+    Every group is a set of literal lowercased names except for the one leaf
+    that cannot be known at load time: `{"chosen_type_of": "self"}`, which
+    compiles to `mana.CHOSEN_TYPE` and is substituted here with whatever type
+    the permanent chose as it entered.
+
+    A group naming the chosen type before anything has been chosen is **dropped
+    rather than widened**, so a Secluded Courtyard whose trigger has not
+    resolved yet makes mana that pays for nothing at all. That is the same
+    answer `characteristics.resolve_chosen_subtypes` gives an anthem in the same
+    position, and it is the safe one: the alternative is a five-colour land that
+    casts anything for a moment.
+
+    A restriction with nothing dynamic in it is returned untouched, so the
+    common case allocates nothing.
+    """
+    restriction = ability.mana_restriction
+    if restriction is None or not restriction.dynamic:
+        return restriction
+    chosen = obj.chosen_type if obj is not None else None
+    return ManaRestriction(
+        cast=_resolve_groups(restriction.cast, chosen),
+        activate=_resolve_groups(restriction.activate, chosen),
+    )
+
+
+def _resolve_groups(
+    groups: tuple[frozenset[str], ...], chosen: str | None
+) -> tuple[frozenset[str], ...]:
+    out: list[frozenset[str]] = []
+    for group in groups:
+        if CHOSEN_TYPE not in group:
+            out.append(group)
+        elif chosen is not None:
+            out.append((group - {CHOSEN_TYPE}) | {chosen.lower()})
+    return tuple(out)
 
 
 def available_mana(state: GameState, pid: int) -> int:
@@ -169,7 +253,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                 ),
                 is_land=is_land,
                 sort_key=(0 if is_land else 1, card.id, oid),
-                restriction=ability.mana_restriction,
+                restriction=resolve_mana_restriction(ability, obj),
             )
         )
     return out
@@ -403,7 +487,7 @@ def can_pay_mana(
     *,
     x: int = 0,
     extra_generic: int = 0,
-    purpose: frozenset[str] | None = None,
+    purpose: SpendPurpose | None = None,
 ) -> bool:
     req = cost.with_x(x)
     if extra_generic:
@@ -481,9 +565,27 @@ def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) ->
 
 
 def can_pay(
-    state: GameState, pid: int, cost: Cost | None, source_oid: int | None, *, x: int = 0
+    state: GameState,
+    pid: int,
+    cost: Cost | None,
+    source_oid: int | None,
+    *,
+    x: int = 0,
+    purpose: SpendPurpose | None = None,
 ) -> bool:
-    """Can this player pay every part of ``cost`` right now?"""
+    """Can this player pay every part of ``cost`` right now?
+
+    ``purpose`` is what restricted mana would have to be allowed to pay for, and
+    it must be the same value :func:`pay` is given -- a cost found payable on
+    restricted mana and then charged without it strands the payment.
+
+    It is a **parameter rather than something derived from ``source_oid``**,
+    because most costs reaching here are not an activation at all: "counter this
+    spell unless its controller pays {3}" and a cast's additional cost both
+    carry a source object, and neither is casting a spell or activating an
+    ability of it. Only the activation paths know to pass
+    :func:`ability_purpose`, so only they get restricted mana.
+    """
     if cost is None:
         return True
     player = state.players[pid]
@@ -547,7 +649,7 @@ def can_pay(
 
     # Mana last: it is the most expensive check.
     if not cost.mana.is_free() or cost.mana.x_count:
-        sources = mana_sources(state, pid)
+        sources = mana_sources(state, pid, purpose=purpose)
         # A source that is about to be tapped for this cost cannot also pay for it.
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
@@ -678,7 +780,7 @@ def pay(
     *,
     x: int = 0,
     extra_generic: int = 0,
-    purpose: frozenset[str] | None = None,
+    purpose: SpendPurpose | None = None,
     record_colors_on: int | None = None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
@@ -843,7 +945,7 @@ def pay_mana(
     req: Requirement,
     *,
     exclude_oid: int | None = None,
-    purpose: frozenset[str] | None = None,
+    purpose: SpendPurpose | None = None,
     record_colors_on: int | None = None,
 ) -> bool:
     """Tap sources and deduct ``req`` from the pool.

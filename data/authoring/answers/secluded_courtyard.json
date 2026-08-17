@@ -1,0 +1,123 @@
+{
+  "card": {
+    "id": "secluded_courtyard",
+    "name": "Secluded Courtyard",
+    "oracle_text": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this land enters, choose a creature type.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "choose_type",
+            "prompt": "Choose a creature type"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type.",
+        "is_mana_ability": true,
+        "mana_restriction": {
+          "cast": [
+            [
+              "creature",
+              {
+                "chosen_type_of": "self"
+              }
+            ]
+          ],
+          "activate": [
+            [
+              "creature",
+              {
+                "chosen_type_of": "self"
+              }
+            ]
+          ]
+        },
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "label": "W",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "U",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "B",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "R",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "G",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

@@ -5566,6 +5566,9 @@
   "seaside_citadel": {
     "zone": "battlefield"
   },
+  "secluded_courtyard": {
+    "zone": "battlefield"
+  },
   "secluded_glen": {
     "zone": "battlefield"
   },

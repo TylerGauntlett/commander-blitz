@@ -1267,6 +1267,15 @@ def _ability_aims(
         state, pid, oid, ability
     ):
         return None
+    # "…or activate an ability of a creature source of the chosen type." What
+    # this activation would be paying *for*, so a restricted mana source that
+    # names this permanent's types is offered here exactly as `spell_purpose` is
+    # offered on the cast path. Computed once and used by both mana questions
+    # below: an X ceiling measured without restricted mana and a cost then found
+    # payable with it would offer an X this ability cannot pay.
+    from .costs import ability_purpose
+
+    purpose = ability_purpose(state, oid)
     if ability.cost is not None and ability.cost.mana.x_count:
         from .costs import mana_sources
 
@@ -1274,12 +1283,12 @@ def _ability_aims(
             max_affordable_x(
                 ability.cost.mana,
                 state.players[pid].mana_pool,
-                mana_sources(state, pid),
+                mana_sources(state, pid, purpose=purpose),
             )
             < 0
         ):
             return None
-    if not can_pay(state, pid, ability.cost, oid, x=0):
+    if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
         return None
     return enumerate_target_tuples(state, pid, ability.targets, oid) or None
 
