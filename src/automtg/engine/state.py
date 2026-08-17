@@ -13,7 +13,14 @@ from .events import GameEvent
 from .objects import GameObject
 from .player import PlayerState
 from .rng import Rng
-from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance, TurnLedger
+from .structs import (
+    AttackRestriction,
+    CombatState,
+    DelayedTrigger,
+    StackItem,
+    TriggerInstance,
+    TurnLedger,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.cards.registry import CardRegistry
@@ -172,6 +179,21 @@ class GameState:
     #: negation of "if you're the monarch", since that negation is also true
     #: while an opponent holds it.
     monarch: int | None = None
+    #: "You can't attack that player this turn"; "they can't attack you this
+    #: combat". One entry per (attacking player, defending player) pair under a
+    #: prohibition -- see :class:`structs.AttackRestriction`.
+    #:
+    #: On the state for the reason `monarch` is: it is a fact about a pair of
+    #: *seats*, and there may be no permanent anywhere that it belongs to. Every
+    #: other attack prohibition in the engine is a fact about one creature and
+    #: lives on that creature, which is why none of them could carry a defending
+    #: player.
+    #:
+    #: A list rather than a set of pairs because two effects may impose the same
+    #: pair with different durations, and the shorter one wearing off must not
+    #: take the longer one with it. Normally empty, which is why
+    #: `combat.attack_target_forbidden` short-circuits on it.
+    attack_restrictions: list[AttackRestriction] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
     #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).
