@@ -15,6 +15,7 @@ from ..primitives import (
     attach,
     change_control,
     create_token,
+    forbid_block,
     grant_ability,
     grant_keyword,
     lock_abilities,
@@ -1268,4 +1269,67 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     for attacker in attackers:
         for defender in defenders:
             restrict_attack(ctx.state, attacker, defender, duration, source=ctx.source_oid)
+    yield from ()
+
+
+@register("cant_block")
+def op_cant_block(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"That creature can't block this turn." "Until your next turn, those
+    creatures can't block."
+
+    The same sentence the `cant_block` **static** prints, and a different thing.
+    The static is an ability on a permanent: `characteristics.block_forbidden`
+    reads it off `_battlefield_statics`, it lasts exactly as long as its source
+    sits on the battlefield, and its `affects` filter may read only printed
+    characteristics.  So it can say "creatures your opponents control can't
+    block, while I am here" and it can say nothing else -- not the creature a
+    trigger targeted, not "this turn", not "until your next turn".  This op is
+    that sentence with the source and the clock swapped round, which is why it
+    is an op and not a fourth filter key.  (`grant_ability` could not carry it
+    either: `loader.py` refuses any grantable ability that is not triggered.)
+
+    Two shapes, and both printed cards need both of them:
+
+    ``objects``        the creatures chosen **at resolution**: Aragorn's "up to
+                       one target creature can't block this turn", Taunt from
+                       the Rampart's "those creatures".  A fixed set -- a
+                       creature that enters afterwards was not one of "those".
+    ``all_creatures``  *every* creature: Aragorn's "creatures can't block this
+                       turn", the else-half of the same trigger.  A continuous
+                       effect for the rest of the turn, so it catches creatures
+                       that enter later too, which is exactly what a per-object
+                       mark could not do.
+
+    Exactly one of the two, enforced by the loader.  They are not a general and
+    a special case of each other: writing the global form as a snapshot of the
+    battlefield would be a strictly weaker card than the printed one, and
+    letting a `cant_block` with no `objects` mean "everything" would turn a
+    fizzled optional target into a one-sided Falter.
+
+    ``duration`` is required, and the two are not interchangeable:
+    ``this_turn`` is cleared by the cleanup step, ``until_your_next_turn`` in
+    the controller's own untap step, beside detain and on detain's clock.  Note
+    that detain is not a substitute for either -- it also forbids attacking and
+    activating abilities, and Taunt from the Rampart's other half *demands* the
+    attack it would forbid.
+    """
+    from ..structs import BLOCK_PROHIBITION_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in BLOCK_PROHIBITION_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_block duration {duration!r}")
+    if spec.get("all_creatures"):
+        oids: list[int] | None = None
+    else:
+        # Battlefield-filtered here rather than in the primitive: a creature
+        # already gone when the trigger resolves is not restricted, and keeping
+        # the dead oid would make the entry look like it bit somebody.
+        oids = [
+            oid
+            for oid in resolve_pool(ctx, spec.get("objects") or {})
+            if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
+        ]
+    forbid_block(
+        ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid
+    )
     yield from ()

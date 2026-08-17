@@ -10782,12 +10782,12 @@
     },
     "Aragorn, King of Gondor": {
       "edhrec_rank": 4083,
-      "gate": "template",
+      "gate": null,
       "name": "Aragorn, King of Gondor",
-      "reason": "no template for: When Aragorn enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "1c7ac04c-8510-468b-aa6f-f249bde9ff87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aragorn, the Uniter": {

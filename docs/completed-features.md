@@ -1,3 +1,102 @@
+## "Can't block", with a clock and no permanent behind it
+
+### Overview
+
+`cant_block` already existed, as a **static**: an ability on a permanent, read by
+`characteristics.block_forbidden` off `_battlefield_statics`. It is a fact about a
+permanent that is currently on the battlefield, and that gives it three properties
+which are exactly the three these two cards need inverted — it needs a source
+standing there, it ends when that source leaves, and its `affects` filter may read
+only *printed* characteristics.
+
+- **Aragorn, King of Gondor** — "Whenever Aragorn attacks, up to one target
+  creature can't block this turn. If you're the monarch, creatures can't block this
+  turn." The first half names a creature chosen when the *trigger resolves*, which
+  no printed-characteristics filter can pick out. The second is global and
+  turn-scoped, and must catch creatures that enter later in the turn.
+- **Taunt from the Rampart** — "Until your next turn, those creatures can't block."
+  A sorcery, so nothing is left behind for a static to live on, and the clock runs
+  past end of turn.
+
+So `cant_block` is now **also an op**. The two are told apart by the key they sit
+under: `"effect": "cant_block"` in a static ability, `"op": "cant_block"` in an
+effect list. Same printed sentence, different mechanism, and neither is a weaker
+version of the other.
+
+### Where the prohibition lives
+
+`GameState.block_prohibitions`, a list of `structs.BlockProhibition` — the
+creatures (or `None` for "every creature"), a duration, the player whose next turn
+ends it, and the source. Beside `attack_restrictions` and on the table for the same
+reason a sibling run put that there: the effect belongs to no permanent, and a
+resolving sorcery leaves none to own it. `TempEffect` is the near miss and fails on
+the container — `until_eot` is a list on each `GameObject`, so an effect about a set
+of creatures chosen at resolution, or about *all* creatures including ones not yet
+in play, has nowhere to be written.
+
+Named "prohibition" rather than "restriction" only to keep it apart from
+`block_restriction`, which is the *attacker*-side static ("can't be blocked by
+Humans"). That one narrows who may block a given attacker; this one stops a given
+creature blocking at all.
+
+### The two forms, and why the loader refuses a card with neither
+
+| | |
+|---|---|
+| `objects` | the set chosen **at resolution** — "those creatures", "up to one target creature". Fixed; a creature that enters afterwards was not one of them |
+| `all_creatures: true` | *every* creature, live. "Creatures can't block this turn" is a turn-scoped continuous effect, so a creature that enters later in the turn is caught too |
+
+Exactly one of the two, enforced at load time, because neither guess for a
+`cant_block` carrying neither is safe. "Nobody" makes the ability do nothing;
+"everybody" turns Aragorn's *targeted* half into a one-sided Falter the moment its
+optional target is declined. For the same reason `forbid_block` refuses an **empty**
+`objects` rather than collapsing it into the global form — a declined "up to one
+target" restricts nobody.
+
+### The two clocks
+
+`this_turn` is cleared by `turn._cleanup_step`, beside `clear_until_eot` but not
+inside it: `until_eot` walks the battlefield, and this belongs to no permanent on
+it. `until_your_next_turn` is cleared in `turn._untap_step`, in the same breath as
+detain and keyed the same way — by **who** imposed it, never by a turn number,
+because eliminating a player moves everybody else's "next turn".
+
+That last point is also why `sba._eliminate` drops the entries belonging to a seat
+that has left. Unlike the attack-restriction prune beside it, this one is not
+hygiene: an eliminated player never has another untap step, so the prohibition
+would outlive them for the rest of the game.
+
+`cant_attack_player`'s `this_combat` has deliberately no counterpart here. Blockers
+are declared *inside* the combat that would clear it, so a combat-scoped "can't
+block" would be indistinguishable from one that never existed.
+
+### Why not `detain`
+
+`detain` has exactly the right clock and storage shape, and is the documented
+precedent — but it also forbids attacking and activating abilities, and Taunt from
+the Rampart's *other* sentence goads the same creatures into attacking. Detaining
+them would print a card that contradicts its own first line. `grant_ability` cannot
+carry a temporary static either: `loader.py` refuses any grantable ability that is
+not triggered.
+
+### The legality seam
+
+`combat.block_prohibited(state, oid)`, called from `can_block` beside
+`block_forbidden` and the `detained_by` check, and guarded on the list being
+non-empty so the block mask's hot path is untouched in every game that plays none
+of these cards. Kept out of the characteristics layer on purpose: that layer reads
+permanents, and this is table state.
+
+Because `can_block` is also what `unmet_block_requirements` asks, a creature under
+this prohibition is excused from a provoke rather than compelled into an illegal
+block — "…if able" for free, at the one place both questions already met.
+
+### Server and frontend: nothing
+
+No new event, decision kind or API field. The prohibition shows up as an
+`ADD_BLOCKER` action that is not offered, and `LegalActionDTO.kind` is a bare string
+the client echoes back.
+
 ## "That player can't attack you" — the first prohibition with two sides
 
 ### Overview

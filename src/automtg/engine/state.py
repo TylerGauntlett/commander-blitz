@@ -15,6 +15,7 @@ from .player import PlayerState
 from .rng import Rng
 from .structs import (
     AttackRestriction,
+    BlockProhibition,
     CombatState,
     DelayedTrigger,
     StackItem,
@@ -194,6 +195,21 @@ class GameState:
     #: take the longer one with it. Normally empty, which is why
     #: `combat.attack_target_forbidden` short-circuits on it.
     attack_restrictions: list[AttackRestriction] = field(default_factory=list)
+    #: "That creature can't block this turn"; "until your next turn, those
+    #: creatures can't block" -- see :class:`structs.BlockProhibition`.
+    #:
+    #: Beside `attack_restrictions` and on the table for the same reason: the
+    #: restriction outlives whatever imposed it and may have been imposed by a
+    #: sorcery, so there is no permanent to hang it off. The engine's other
+    #: "can't block" is a *static* on a permanent, which is precisely the shape
+    #: that cannot say "the creature you targeted, until the end of this turn".
+    #:
+    #: A list rather than a set because the entries have different clocks and the
+    #: shorter one wearing off must not take the longer one with it, and because
+    #: an entry with ``objects=None`` ("every creature") does not merge with one
+    #: naming a set. Normally empty, which is why `combat.block_prohibited`
+    #: short-circuits on it.
+    block_prohibitions: list[BlockProhibition] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
     #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).
