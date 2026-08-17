@@ -83,6 +83,11 @@ def move_object(
     # way out. Read afterwards it is always zero, so both keywords would return
     # every creature for ever.
     had_counters = dict(obj.counters) if was_on_battlefield else {}
+    # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
+    # control back to the owner on the way out, and "whenever **you** sacrifice"
+    # is about the player who did it -- a different answer for a stolen
+    # permanent.
+    controller_before = obj.controller
 
     # Mutate: the pile goes where the permanent goes (702.140f). Read *before*
     # anything else, because `reset_permanent_state` below clears the list a
@@ -150,6 +155,21 @@ def move_object(
             was_attacking=1 if was_attacking else 0,
             had_counters=had_counters,
         )
+        # "Whenever you sacrifice a token…" -- fired beside DIES rather than
+        # instead of it, because a sacrificed permanent really does die and
+        # everything listening for that must still hear it. `controller` is the
+        # player who sacrificed, which is what "whenever **you** sacrifice"
+        # asks; `owner` would be the wrong question for a stolen permanent.
+        if cause == "sacrificed":
+            fire(
+                state,
+                EventType.SACRIFICED,
+                player=controller_before,
+                source=oid,
+                oid=oid,
+                card=card.id,
+                was_creature=was_creature,
+            )
         if to_zone is Zone.GRAVEYARD:
             fire(
                 state,
@@ -222,6 +242,10 @@ def _detach_all(state: GameState, oid: int) -> None:
             continue
         if other.attached_to == oid:
             other.attached_to = None
+            # Remembered, because this runs *before* LEAVES_BATTLEFIELD and DIES
+            # fire: a "whenever equipped creature dies" trigger asked about
+            # `attached_to` here would find nothing, every time.
+            other.last_attached_to = oid
         if other.paired_with == oid:
             other.paired_with = None
 

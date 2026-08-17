@@ -44,6 +44,10 @@ SELECTOR_KEYS = frozenset(
         #: controller is a property of the object, so `controller` is a filter
         #: there rather than a choice of which list to read.
         "player",
+        #: "Equipped creature", "enchanted creature" -- the permanent this Aura
+        #: or Equipment is attached to, read off the ability's source.  Already
+        #: in ``STATIC_FILTER_KEYS``; this is the same word on the effect side.
+        "attached",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -302,6 +306,17 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     if selector.get("self_only") and oid != ctx.source_oid:
         return False
+    # "…put a +1/+1 counter on **equipped creature**." Blade of the Bloodchief.
+    # `attached` had existed only in `STATIC_FILTER_KEYS`, where
+    # `characteristics` reads it while applying a continuous effect -- which is
+    # why "Equipped creature gets +1/-1" always worked and no *op* could reach
+    # the same creature. Read off the ability's source, and off its remembered
+    # attachment too, so a trigger that fires as the creature leaves can still
+    # find it.
+    if selector.get("attached"):
+        source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        if source is None or oid not in (source.attached_to, source.last_attached_to):
+            return False
     if (name := selector.get("exclude_binding")) is not None and oid == _bound_oid(
         ctx, str(name)
     ):

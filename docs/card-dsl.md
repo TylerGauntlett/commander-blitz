@@ -1596,6 +1596,63 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "Equipped creature" outside a static
+
+`attached` had lived only in `STATIC_FILTER_KEYS`, where `characteristics` reads
+it while applying a continuous effect — which is why "Equipped creature gets
++1/-1" always worked and no *op* could reach the same creature. It is now also an
+effect-side selector key and a trigger-filter key:
+
+```jsonc
+// Blade of the Bloodchief -- put a counter on equipped creature
+{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1},
+ "objects": {"zone": "battlefield", "attached": true, "count": "all"}}
+
+// ...and ask about it, because `exists` goes through the same resolve_pool
+{"exists": {"zone": "battlefield", "attached": true, "subtypes": ["Vampire"]}}
+
+// Skullclamp -- "whenever equipped creature dies"
+"trigger": {"event": "dies", "controller": "any", "filter": {"attached": true}}
+```
+
+Both readers answer off the **ability's source**, not the subject — the same
+argument `haunted_by` and cipher's `encoded_by` make. An Equipment knows what it
+is attached to; a dying creature does not know what was attached to it.
+
+**The dies trigger only works because of `last_attached_to`.** `move_object`
+calls `_detach_all` *before* it fires `LEAVES_BATTLEFIELD` and `DIES`, so at
+match time the Equipment is attached to nothing and `attached_to == subject` is
+false for every dies trigger that will ever be written — not sometimes, always.
+`last_attached_to` is explicit last-known information in the same style as
+`was_creature` and `had_counters`: written by `_detach_all`, cleared by `attach`
+so an Equipment moved on cannot still answer for the creature it left.
+
+Note `controller: "any"` on the trigger. `controller` is compared against the
+*subject's* controller, so `"you"` would silently drop the case where the
+equipped creature has changed control; `filter: {"attached": true}` has already
+narrowed it to the one creature that matters.
+
+## Sacrificing, and creating a token
+
+Two trigger events for Mirkwood Bats' one printed line:
+
+```jsonc
+"trigger": {"event": "token_created", "controller": "you"}
+"trigger": {"event": "sacrificed", "controller": "you", "filter": {"is_token": true}}
+```
+
+`sacrificed` fires **beside** `dies`, not instead of it — a sacrificed creature
+really does die, and everything already listening for a death must still hear
+one. It is what tells a sacrifice apart from a removal spell, which no other
+departure trigger can do.
+
+`token_created` needed no new event: `TOKEN_CREATED` had existed since tokens
+did and was `emit`ted (logged) rather than `fire`d (put through the trigger bus).
+`permanent_enters` with `{"is_token": true}` is the near miss — 111.1 makes
+creating a token and putting it onto the battlefield one act — but it also fires
+for a token that left and returned, and reads the entering permanent's controller
+rather than the creator's.
+
 ## Restricted mana that names a subtype
 
 "Spend this mana only to cast Vampire, Cleric, and/or Demon spells." —

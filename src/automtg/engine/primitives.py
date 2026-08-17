@@ -351,7 +351,11 @@ def create_token(
         move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
         if attacking is not None and state.combat is not None:
             state.combat.attackers[obj.oid] = attacking
-        state.emit(EventType.TOKEN_CREATED, player=controller, source=obj.oid, card=def_id)
+        # `fire`, not `emit`: the event has always been recorded in the log and
+        # nothing subscribed to it, so "whenever you create a token" could not be
+        # said. Fired *after* the move, so the token is on the battlefield by the
+        # time anything listening resolves.
+        fire(state, EventType.TOKEN_CREATED, player=controller, source=obj.oid, card=def_id)
         made.append(obj.oid)
     return made
 
@@ -375,6 +379,9 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     if protected_from(state, target_oid, aura_oid):
         return False
     aura.attached_to = target_oid
+    # A fresh attachment supersedes the remembered one, so an Equipment moved to
+    # a second creature cannot still answer for the first.
+    aura.last_attached_to = None
     state.bump_chars()
     fire(state, EventType.ATTACHED, player=aura.controller, source=aura_oid, oid=target_oid)
     return True

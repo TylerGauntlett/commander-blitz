@@ -65,6 +65,14 @@ class GameObject:
     regeneration_shields: int = 0
     counters: dict[str, int] = field(default_factory=dict)
     attached_to: int | None = None
+    #: What this was attached to a moment ago -- last-known information for the
+    #: leave-the-battlefield events. `zones.move_object` calls `_detach_all`
+    #: *before* it fires LEAVES_BATTLEFIELD and DIES, so by the time a "whenever
+    #: equipped creature dies" trigger is matched the Equipment is attached to
+    #: nothing and `attached_to` can never be the answer. Written only by
+    #: `_detach_all` and cleared by `attach`; a stale value is harmless because
+    #: oids are never reused, so it can only ever match the object it named.
+    last_attached_to: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
@@ -359,6 +367,7 @@ class GameObject:
         self.regeneration_shields = 0
         self.counters = {}
         self.attached_to = None
+        self.last_attached_to = None
         self.paired_with = None
         self.face_down = False
         self.until_eot = []

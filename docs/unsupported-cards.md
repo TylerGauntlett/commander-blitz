@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**21 cards** blocked by **31** capabilities.
+**18 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,8 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [per-player-loop](#per-player-loop) | 2 | 1141 | op, selector |
 | [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
-| [attached-selector](#attached-selector) | 1 | 2433 | selector |
-| [attached-trigger](#attached-trigger) | 1 | 40 | trigger_event |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [choose-both](#choose-both) | 1 | 191 | decision |
 | [cloak](#cloak) | 1 | 6625 | engine |
@@ -37,9 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
 | [reflecting-mana](#reflecting-mana) | 1 | 9 | op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
-| [sacrifice-trigger](#sacrifice-trigger) | 1 | 228 | trigger_event |
 | [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
-| [token-created](#token-created) | 1 | 228 | trigger_event |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
 | [tutor-to-top](#tutor-to-top) | 1 | 5982 | op, selector |
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
@@ -166,34 +162,6 @@ Blocks **1** card.
 
 - **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
   - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
-
-</details>
-
-## attached-selector
-
-Blocks **1** card.
-
-- **(selector)** an `attached` key in the effect-side selector language (`selector_keys`), naming the permanent this Aura or Equipment is currently attached to, so a triggered or activated ability can operate on the enchanted/equipped creature: `{"op": "add_counters", "objects": {"attached": true}, ...}`. It must also compose with the other selector keys so an `if`/`exists` condition can ask about that creature's printed or derived characteristics -- `{"exists": {"attached": true, "subtypes": ["Vampire"]}}` for the Vampire clause -- and it must resolve to nothing when the source is unattached, so the trigger is a no-op rather than an error while the Equipment sits on the battlefield alone
-  <br>Why the existing vocabulary won't do: `attached` exists today only in `static_filter_keys`: `characteristics.py` reads `selector.get("attached")` against `source.attached_to` when applying a *continuous* effect, which is why "Equipped creature gets +1/+0 and has flying" works, but `SELECTOR_KEYS` in `engine/effects/selectors.py` has no such key, so no `op` can reach the attached creature. `binding` and `exclude_binding` name what a trigger bound -- here the creature that died, not the equipped one -- and the `creature_dies` event carries no attachment binding. `target` would make the counters a targeted choice the printed line does not offer and would also let the ability be put on the stack pointing at a creature the Equipment is not on. `self_only` names the Equipment itself. Every Equipment currently in the pool has only static abilities plus the `attach` equip ability, so nothing exercises this path yet.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blade of the Bloodchief** (rank 2433) — `blade_of_the_bloodchief`
-  - Whenever a creature dies, put a +1/+1 counter on equipped creature. If equipped creature is a Vampire, put two +1/+1 counters on it instead.
-
-</details>
-
-## attached-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a way for a triggered ability on an Aura or Equipment to be about the permanent it is attached to, rather than about any permanent matching a printed-face filter -- an `attached: true` key accepted by a trigger's `filter` (validated by `validate_selector` and honoured by `triggers.matches_card_filter`) that passes only when the event's subject is the object named by the source's `attached_to`. It must also carry last-known information for the leave-the-battlefield events: `zones.move_object` calls `_detach_all` at line 89, clearing every `attached_to` pointing at the dying creature, *before* it fires `LEAVES_BATTLEFIELD` and `DIES` at lines 113-138, so at match time the Equipment is already attached to nothing and a naive `source.attached_to == subject_oid` test can never be true for a dies trigger. The engine's existing explicit-LKI pattern (`was_creature`, `was_attacking`, `had_counters` snapshotted before the move) is the shape to follow: snapshot what was attached to the object on the way out and let the filter read it. This unblocks the whole "Whenever equipped/enchanted creature <does something>" family -- the queue holds dozens, including several more `equipped creature dies` cards
-  <br>Why the existing vocabulary won't do: `attached` today exists only in `static_filter_keys`: `characteristics.py:516` reads `selector.get("attached")` against `source.attached_to` while applying a *continuous* effect, which is why "Equipped creature gets +1/-1" and the `attach`-based "Equip {1}" both work on this very card. Trigger filters go through a different function -- `triggers.matches_card_filter` reads the printed card face plus last-known controller and has no attachment key at all, and `selector_keys` (which `validate_selector` enforces on `trigger.filter`) does not list `attached`, so the clause cannot even be written. `source: "self"` is wrong because the Equipment is not what dies. A bare `creature_dies` with `controller: "you"` would draw two cards every time *any* creature you control died, which is a strictly better card and exactly the kind of quiet approximation that must not ship. `binding`/`exclude_binding` name what the event bound -- here the creature that died, which is the right object but by coincidence, giving no way to require that it was the equipped one -- and the DIES event payload carries no attachment data. The `grant_ability` op is not a substitute either: `ops_board.py:386` grants until end of turn only, it needs an ability to run it in the first place (the equip ability, whose printed line is "Equip {1}"), and a grant would survive the Equipment moving away
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skullclamp** (rank 40) — `skullclamp`
-  - Whenever equipped creature dies, draw two cards.
 
 </details>
 
@@ -398,20 +366,6 @@ Blocks **1** card.
 
 </details>
 
-## sacrifice-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A DSL trigger event that fires when a permanent is *sacrificed*, distinguishable from every other way of leaving the battlefield -- "Whenever you sacrifice a token/creature/permanent, ...". Two shapes would work: a new `SACRIFICED` engine event fired from `zones.sacrifice` alongside LEAVES_BATTLEFIELD/DIES, or -- cheaper -- carry the `cause` string that `move_object` already computes onto the LEAVES_BATTLEFIELD and DIES payloads and give `TriggerSpec` a positive `cause` filter to match the existing negative `not_cause`. Either way the subject oid must stay readable so an ordinary trigger `filter` of `{"is_token": true}` selects it, and the `controller: "you"` clause must mean the sacrificing player -- for sacrifice that is the sacrificed permanent's controller, which `_actor` already derives from the subject, so no new actor logic is needed. It must fire for noncreature tokens too: Mirkwood Bats counts a Treasure sacrificed for mana, not just creatures.
-  <br>Why the existing vocabulary won't do: `dies`, `creature_dies` and `leaves_battlefield` are the only leave triggers and none of them can tell a sacrifice from anything else. `zones.sacrifice` (zones.py:263) does tag the move `cause="sacrificed"`, but that tag only reaches the ZONE_CHANGE payload -- the LEAVES_BATTLEFIELD and DIES events `move_object` fires (zones.py:113-138) carry `oid`, `card`, `was_creature`, `was_attacking` and `had_counters` and no `cause` at all -- and ZONE_CHANGE has no entry in `TRIGGER_EVENTS`, so nothing in the DSL can subscribe to the one event that knows. `TriggerSpec.not_cause` is a *negative* filter ("refuse to fire on this cause") and is checked against `event.data.get("cause")`, which is absent on both leave events, so it cannot be inverted into the positive test this needs. Writing the card as `dies` with `{"is_token": true}` is the approximation the DSL notes forbid: Mirkwood Bats would drain every opponent when a token is killed in combat, destroyed by a wrath, or hit by removal, none of which is a sacrifice.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mirkwood Bats** (rank 228) — `mirkwood_bats`
-  - Whenever you create or sacrifice a token, each opponent loses 1 life.
-
-</details>
-
 ## split-cards-authoring
 
 Blocks **1** card.
@@ -424,20 +378,6 @@ Blocks **1** card.
 - **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
   - Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead
   - Fuse
-
-</details>
-
-## token-created
-
-Blocks **1** card.
-
-- **(trigger_event)** A DSL trigger name bound to the token-creation event, so "Whenever you create a token" can be said as printed. The engine event already exists and is already populated -- `EventType.TOKEN_CREATED` (events.py:31), emitted per token by `create_tokens` with `player=controller` and `source=<token oid>` (primitives.py:303). Two small changes finish it: emit it through `triggers.fire` rather than `state.emit`, so it reaches `collect` at all, and add a `"token_created": EventType.TOKEN_CREATED` row to `TRIGGER_EVENTS` plus membership in `OBJECT_SUBJECT_TRIGGERS` so a `filter` can ask about the token that was made. `_actor` should read `event.player` for it, because the clause asks who *created* the token, not who ends up controlling it.
-  <br>Why the existing vocabulary won't do: `permanent_enters` with a filter of `{"is_token": true}` and `controller: "you"` is the near miss, and it is close enough to be tempting -- rule 111.1 makes creating a token and putting it onto the battlefield the same act, so it fires at the right moment nearly every time. It is still not what the card prints. `permanent_enters` derives its `controller` clause from the *token's* controller (`_actor` falls through to the subject's controller), so a token you create under another player's control -- which the printed "whenever **you** create" still counts -- would not trigger, and a token an opponent's effect puts under your control would trigger when it should not. The exact signal already exists in the event log and is one `fire` call away from being usable; approximating it with an enters trigger would bake a controller/creator confusion into every future "whenever you create a token" card, of which this is only the first.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mirkwood Bats** (rank 228) — `mirkwood_bats`
-  - Whenever you create or sacrifice a token, each opponent loses 1 life.
 
 </details>
 

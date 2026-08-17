@@ -177,6 +177,10 @@ const SILENT = new Set([
   // card. Leaving `dies` audible would toll twice for one creature and flash an
   // oid that is no longer in the DOM, which is what it did for its whole life.
   "dies",
+  // Fired *beside* `dies` for the very same card, so that a trigger can tell a
+  // sacrifice from a removal spell. Narrating it would toll a third time for
+  // one creature, on top of the `zone_change` that already owns the departure.
+  "sacrificed",
   "leaves_battlefield",
   "untapped",
   "ability_resolved",
