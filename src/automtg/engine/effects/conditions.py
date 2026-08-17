@@ -49,6 +49,12 @@ CONDITION_KEYS = frozenset(
         "no_monarch",
         # "…if it isn't renowned". A one-way word written by `set_flag`.
         "has_flag",
+        # "If this creature hasn't been **exerted this turn**" -- the same
+        # question with the other lifetime, written by `set_turn_flag` and
+        # cleared with the rest of the turn ledger. Its own key rather than a
+        # duration on `has_flag`, because a card that reached for the wrong one
+        # would be wrong only on the *second* turn, which no one-turn test sees.
+        "has_turn_flag",
         # Prowl: "…if a player was dealt combat damage this turn by a Faerie or
         # a Rogue". A list of creature subtypes, true when *any* of them dealt
         # combat damage to a player this turn.
@@ -130,6 +136,18 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         # thing that can have become the word.
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         return obj is not None and str(cond["has_flag"]) in obj.flags
+    if "has_turn_flag" in cond:
+        # Combat Celebrant's "if this creature hasn't been exerted this turn",
+        # written as `{"not": {"has_turn_flag": "exerted"}}`. Asked of the
+        # ability's own source, the way `has_flag` above is.
+        #
+        # Read off the turn ledger and not off the object, so it answers `False`
+        # again on the next turn without anything having to remember to erase
+        # it -- and so a source that has left the battlefield still answers
+        # truthfully about what it did while it was there.
+        return ctx.source_oid is not None and ctx.state.turn_ledger.has_object_flag(
+            ctx.source_oid, str(cond["has_turn_flag"])
+        )
     if "has_city_s_blessing" in cond:
         from .selectors import select_players
 
@@ -237,6 +255,17 @@ def validate_condition(cond: Any, where: str) -> None:
                 f"{where}.is_monarch: must name one of {sorted(PLAYER_SPEC_NAMES)} "
                 f"or a target/binding, got {who!r}"
             )
+    # A flag name that is not a name matches nothing, so the guard never bites
+    # and the once-each-turn clause it was written for is simply absent from a
+    # card that reads as though it has one. `true` is the tempting mistake --
+    # it stringifies to `"True"`, which no `set_turn_flag` ever wrote.
+    if "has_turn_flag" in cond and not (
+        isinstance(cond["has_turn_flag"], str) and cond["has_turn_flag"]
+    ):
+        raise DslError(
+            f"{where}.has_turn_flag: needs the name of a flag written by "
+            f"set_turn_flag, got {cond['has_turn_flag']!r}"
+        )
     if "combat_damage_by" in cond:
         wanted = cond["combat_damage_by"]
         names = [wanted] if isinstance(wanted, str) else wanted

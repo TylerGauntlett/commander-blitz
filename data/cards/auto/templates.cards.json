@@ -13095,6 +13095,78 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "flag": "exerted",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "set_turn_flag"
+                },
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "skip_untap"
+                },
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "untap"
+                },
+                {
+                  "op": "extra_combat"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exert Combat Celebrant?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "If this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase. (An exerted creature won't untap during your next untap step.)",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_turn_flag": "exerted"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "combat_celebrant",
+      "mana_cost": "{2}{R}",
+      "name": "Combat Celebrant",
+      "oracle_text": "If this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase. (An exerted creature won't untap during your next untap step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
