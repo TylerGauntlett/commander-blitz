@@ -87,6 +87,20 @@ class TestBothHalvesAreOffered:
         line = next(a for a in land_lines(game) if a.second_face)
         assert "MDFC Land" in (line.label or "")
 
+    def test_the_land_half_is_not_also_offered_as_a_cast(self, builder):
+        """Offered both ways, the cast line would put a land on the stack.
+
+        `_second_face_actions` builds a cast variant for every second face, and
+        it had no idea some of them are lands. Asserting only that the PLAY_LAND
+        line exists let that through -- the line was there *and* so was a cast.
+        """
+        game = board(builder)
+        assert not [
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and a.second_face
+        ]
+
 
 class TestPlayingTheLandHalf:
     def play_the_land(self, game):

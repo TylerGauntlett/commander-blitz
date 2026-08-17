@@ -7629,6 +7629,101 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_scaling_ability",
+      "name": "Test Scaling Ability",
+      "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each Vampire you control.",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each Vampire you control.",
+          "cost": {
+            "mana": "{5}",
+            "tap": true,
+            "mana_reduction": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": [
+                  "Vampire"
+                ]
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rebirth",
+      "name": "Test Rebirth",
+      "oracle_text": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",
+      "mana_cost": "{B}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield tapped under its owner's control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "controller": "any"
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "destination": "battlefield",
+              "tapped": true,
+              "objects": {
+                "zone": "graveyard",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "grant_ability",
+          "objects": {
+            "target": "t1"
+          },
+          "ability_index": 0
+        }
+      ]
     }
   ]
 }

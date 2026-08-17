@@ -99,6 +99,10 @@ class Cost:
     pay_life: int | Mapping[str, Any] = 0
     remove_counters: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
+    #: "This ability costs {1} less to activate for each Vampire you control."
+    #: Applied by `costs.ability_mana`, which both `can_pay` and `pay` call so an
+    #: ability offered at the reduced price is also paid at it.
+    mana_reduction: Mapping[str, Any] | None = None
 
     @staticmethod
     def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
@@ -139,6 +143,9 @@ class Cost:
             ),
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
+            ),
+            mana_reduction=(
+                dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
         )
 

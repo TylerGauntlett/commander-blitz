@@ -367,6 +367,34 @@ def can_pay_mana(
     )
 
 
+def ability_mana(state: GameState, pid: int, cost: Cost, x: int = 0) -> Requirement:
+    """What this ability's mana half actually costs right now.
+
+    "This ability costs {1} less to activate for each Vampire you control."
+    Both existing reductions discount *casting a spell* -- a card's own
+    `cost_reduction` and the `spell_cost_reduction` static -- and both are read
+    only from the cast path, so an activated ability's price was the literal
+    string written on the card.
+
+    Generic only and clamped at zero, like every other reduction: "costs {1}
+    less" never reaches through the generic part into the coloured pips.
+
+    One helper, called by `can_pay` and by `pay`, because an ability offered at
+    the reduced price and then charged the printed one would strand the payment
+    -- the same care `life_cost` and `mana_produced` already take.
+    """
+    req = cost.mana.with_x(x)
+    spec = cost.mana_reduction
+    if not spec:
+        return req
+    less = sum(1 for _ in _reduction_matches(state, pid, spec.get("count") or {}))
+    return Requirement(
+        colored=req.colored,
+        generic=max(0, req.generic - less),
+        hybrid=req.hybrid,
+    )
+
+
 def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
     """How much life this cost asks for, right now.
 
@@ -452,7 +480,9 @@ def can_pay(
         # A source that is about to be tapped for this cost cannot also pay for it.
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
-        if solve_payment(cost.mana.with_x(x), player.mana_pool, sources) is None:
+        if solve_payment(
+            ability_mana(state, pid, cost, x), player.mana_pool, sources
+        ) is None:
             return False
     return True
 
@@ -605,7 +635,7 @@ def pay(
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
     # cannot strand the payment.
-    req = cost.mana.with_x(x)
+    req = ability_mana(state, pid, cost, x)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the

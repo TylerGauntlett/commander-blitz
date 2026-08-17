@@ -6909,6 +6909,28 @@
       "graveyard"
     ]
   },
+  "voldaren_estate": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 0,
+      "id": "blood_token"
+    },
+    "zone": "battlefield"
+  },
   "volunteer_militia": {
     "zone": "battlefield"
   },

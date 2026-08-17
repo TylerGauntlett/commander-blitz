@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**10 cards** blocked by **21** capabilities.
+**9 cards** blocked by **20** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [any-number-of-targets](#any-number-of-targets) | 1 | 9863 | targeting |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
@@ -24,9 +23,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [dies-exile-replacement](#dies-exile-replacement) | 1 | 9863 | replacement |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
+| [granted-leave-triggers](#granted-leave-triggers) | 1 | 243 | trigger |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
-| [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
@@ -35,20 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## activated-ability-cost-reduction
-
-Blocks **1** card.
-
-- **(cost)** a mana cost on an *activated* ability that shrinks by {1} for each permanent matching a filter its controller controls, clamped at {0} -- i.e. a scaling generic component on an ability cost, evaluated when the ability is offered and again when it is paid
-  <br>Why the existing vocabulary won't do: Both existing reductions discount *casting a spell*, not activating an ability: a card's `cost_reduction` field is Ghalta's 'this spell costs {X} less to cast', and the `spell_cost_reduction` static discounts other players' spells via `affects_spells`; both are read only from the cast path (`costs.cost_reduction`, called from the cast/legality code). An activated ability's `cost.mana` is a fixed literal mana string with no place for a count-derived term, and `times` in a cost repeats the whole cost rather than scaling its generic part.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Voldaren Estate** (rank 2443) — `voldaren_estate`
-  - {5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control.
-
-</details>
 
 ## additional-cost
 
@@ -183,6 +168,20 @@ Blocks **1** card.
 
 </details>
 
+## granted-leave-triggers
+
+Blocks **1** card.
+
+- **(trigger)** A triggered ability handed to another permanent by `grant_ability` must be able to fire on that permanent's *own departure* -- `dies` and `leaves_battlefield` with `source: "self"`. Two things have to change together. (1) `GameObject.reset_permanent_state` (src/automtg/engine/objects.py:373) empties `until_eot`, and `move_object` calls it at src/automtg/engine/zones.py:106, *before* it fires LEAVES_BATTLEFIELD and DIES at zones.py:147/172 -- so the grant is already gone when the death event goes out. The grant needs the same last-known-information snapshot treatment `was_creature`, `was_attacking` and `had_counters` already get a few lines above (zones.py:73-85), which is the engine's stated explicit-LKI pattern. (2) The leave-trigger scan in src/automtg/engine/triggers.py:258-268 walks only `card.abilities` for the object that just left; every other branch of that generator pairs a battlefield walk with a `granted_abilities` walk (triggers.py:231-235), and this one has no such pairing, so a granted leave-trigger has no path to queue even with the grant intact.
+  <br>Why the existing vocabulary won't do: Verified empirically against the real engine, not inferred. Granting the ability to a creature and then moving it to the graveyard leaves `until_eot == []`, `granted_abilities(state, oid) == []` and `state.pending_triggers == []`; the byte-identical ability *printed* on the same creature queues normally ("Probe Printed Bear: When this creature dies, ..."). So `grant_ability` itself is fine and needs no change -- its until-end-of-turn duration is real, granted *triggered* abilities already work (herd_heirloom in data/cards/auto/templates.cards.json grants a `deals_combat_damage_to_player` trigger through `grantable_abilities`), and the resolution effect is expressible today as `return_from_graveyard` with `destination: "battlefield"`, `tapped: true` and `objects: {"self_only": true, "zone": "graveyard"}` -- that exact spec resolves correctly for the printed version. The gap is only that the grant does not survive the one event this card cares about. `delay` (src/automtg/engine/effects/ops_control.py:361) is not a substitute: a DelayedTrigger fires at a named *step*, never on an event, so it cannot say "when this creature dies" at all, and scheduling the return at the next end step would be a different card. Nor is a printed ability on some other permanent an option: the printed sentence says the *creature* gains it, which is what makes it follow the creature and what makes it a legal target-selected grant.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
+  - Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
+
+</details>
+
 ## mana-spent-trigger
 
 Blocks **1** card.
@@ -208,20 +207,6 @@ Blocks **1** card.
 
 - **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
   - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
-
-</details>
-
-## modal-dfc
-
-Blocks **1** card.
-
-- **(replacement)** modal double-faced cards: a second, separately playable face with its own cost and type line, chosen as the card is played. Here the front is an Instant and the back is a Land, so the back must go down the land-drop path (no stack, consumes the land drop) while the front is cast normally.
-  <br>Why the existing vocabulary won't do: docs/rules-coverage.md:52 states the position outright -- transforming DFCs are modelled but "a back face here is a face, not a second castable card" -- and :157 lists modal double-faced cards as not implemented. `back_face` exists but only ever describes the face a permanent shows after transforming; nothing offers it as a way to play the card. The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer["card"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined "A // B" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
-  - Choose target creature. You lose 2 life. Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
 
 </details>
 

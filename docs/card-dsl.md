@@ -1596,6 +1596,39 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## An activated ability that gets cheaper
+
+```jsonc
+"cost": {"mana": "{5}", "tap": true,
+         "mana_reduction": {"count": {
+             "zone": "battlefield", "controller": "you", "subtypes": ["Vampire"]}}}
+```
+
+Both existing reductions discount *casting a spell* — a card's own
+`cost_reduction` and the `spell_cost_reduction` static — and both are read only
+from the cast path, so an activated ability's price was the literal string on the
+card at every board state. `Cost.mana_reduction` takes the same
+`{"count": {filter}}` shape, applied by `costs.ability_mana`, which `can_pay` and
+`pay` both call so the offer and the charge cannot disagree. Generic only,
+clamped at zero.
+
+## A granted ability that fires on its own creature's death
+
+Granting a triggered ability worked, and until-end-of-turn worked. The one
+combination that did not was a granted ability firing on the *departure* of the
+creature it was granted to — Malakir Rebirth — and it failed twice over:
+
+- `move_object` calls `reset_permanent_state`, which empties `until_eot`, and
+  only then fires `LEAVES_BATTLEFIELD` and `DIES`. `GameObject.left_with` is the
+  departure snapshot, in the same style as `had_counters` and `last_attached_to`:
+  written before the reset, cleared as the object next enters the battlefield.
+- The leave-the-battlefield branch of `triggers._candidates` walked printed
+  abilities only. Every other branch pairs that walk with `granted_abilities`;
+  this one now does too.
+
+The tell that it was an engine problem rather than a card one: the
+byte-identical *printed* ability on the same creature always worked.
+
 ## A modal DFC whose other half is a land
 
 Malakir Rebirth // Malakir Mire — an Instant on the front, a Land on the back,

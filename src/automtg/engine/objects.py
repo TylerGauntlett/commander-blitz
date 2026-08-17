@@ -74,6 +74,17 @@ class GameObject:
     #: oids are never reused, so it can only ever match the object it named.
     last_attached_to: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
+    #: What ``until_eot`` held a moment before this object left the battlefield.
+    #: Last-known information, in the same style as `last_attached_to`:
+    #: `move_object` calls `reset_permanent_state` -- which empties `until_eot` --
+    #: *before* it fires LEAVES_BATTLEFIELD and DIES, so a triggered ability
+    #: granted until end of turn is gone by the time its own death event goes
+    #: out. Malakir Rebirth is the whole card: "that creature gains 'when this
+    #: creature dies, return it to the battlefield'".
+    #:
+    #: Written by `move_object` and cleared as the object next enters the
+    #: battlefield, so it can only ever answer for the departure it describes.
+    left_with: tuple[TempEffect, ...] = ()
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False

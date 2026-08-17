@@ -262,7 +262,15 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         obj = state.objects.get(subject)
         if obj is not None:
             card = state.card_of(obj)
-            for ability in card.abilities:
+            # Printed abilities and granted ones both. Every other branch of
+            # this generator pairs a `card.abilities` walk with
+            # `granted_abilities`; this one did not, so an ability granted to a
+            # creature could never fire on that creature's own death -- which is
+            # the whole of Malakir Rebirth.
+            from .primitives import granted_abilities
+
+            granted = [a for _granter, a in granted_abilities(state, subject)]
+            for ability in (*card.abilities, *granted):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
