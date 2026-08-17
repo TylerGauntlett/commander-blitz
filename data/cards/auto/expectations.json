@@ -5867,6 +5867,13 @@
   "somberwald_dryad": {
     "zone": "battlefield"
   },
+  "sorin_imperious_bloodlord": {
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "soul_of_the_rapids": {
     "zone": "battlefield"
   },

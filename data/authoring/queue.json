@@ -253442,12 +253442,12 @@
     },
     "Sorin, Imperious Bloodlord": {
       "edhrec_rank": 3985,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Imperious Bloodlord",
-      "reason": "no template for: +1: Target creature you control gains deathtouch and lifelink until end of turn. If it's a",
+      "reason": "",
       "scryfall_id": "219d3e48-e0b1-472d-ac45-11c14b292c9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sorin, Lord of Innistrad": {
