@@ -8337,6 +8337,31 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_cloaker",
+      "name": "Test Cloaker",
+      "oracle_text": "Cloak the top card of your library.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "manifest",
+          "player": "you",
+          "amount": {
+            "const": 1
+          },
+          "cloak": true
+        }
+      ]
     }
   ]
 }

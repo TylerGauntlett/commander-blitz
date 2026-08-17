@@ -1837,6 +1837,34 @@ damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
 
+## Cloak — manifest with ward {2}
+
+```jsonc
+{"op": "manifest", "player": "you", "amount": {"const": 1}, "cloak": true}
+```
+
+Rule 701.61a: "put it onto the battlefield face down as a 2/2 creature with
+ward {2}. Turn it face up any time for its mana cost if it's a creature card."
+
+Read against what the engine has, that is **manifest plus ward** and nothing
+else — the second sentence is 701.34c verbatim, which manifest already ships. So
+`cloak` is a flag rather than an op, and everything under the ward is inherited.
+
+**The ward cannot come from the card.** Rule 707.2 says a face-down permanent
+has no abilities, and the card underneath is usually not even a creature. The
+cloak *rule* grants it, so the engine carries it: `carddef.CLOAK_WARD`, beside
+`BESTOW_TARGET`, which is a rules-supplied target for the same reason.
+
+Written as a plain `manifest` the card loads, plays and looks right, and its
+cloaked permanents are free to remove — which is most of what the keyword is
+worth.
+
+Two readers had to learn about it, and missing either is silent:
+`triggers._candidate_abilities`, which skips a face-down permanent's abilities
+wholesale, and `stack.ability_of`, which resolves an ability *by index* off the
+source's card — index 0 on a cloaked permanent runs whatever the hidden card
+prints first.
+
 ## "For each player, up to one target permanent that player controls"
 
 ```jsonc

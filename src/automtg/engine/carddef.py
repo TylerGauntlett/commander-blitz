@@ -630,3 +630,33 @@ def build_type_line(
     if subtypes:
         return f"{left} - {' '.join(sorted(subtypes))}"
     return left
+
+
+#: Ward {2} on a **cloaked** permanent (701.61a).
+#:
+#: A rules-supplied ability, like `BESTOW_TARGET` above is a rules-supplied
+#: target. It has to be: rule 707.2 says a face-down permanent has *no*
+#: abilities, so the ward cannot come from the card underneath -- and it must
+#: not, because that card is usually not even a creature. The cloak rule is what
+#: grants it, so the engine is what carries it.
+#:
+#: The effect is the shipped ward idiom verbatim (`t_warded` in the test pool):
+#: a `becomes_target` trigger, a `may` routed to the *caster* rather than to the
+#: ability's controller, a mana `pay`, and a `counter` of the offending spell in
+#: the `else`.
+CLOAK_WARD = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=0,
+    text="Ward {2}",
+    trigger=TriggerSpec(event="becomes_target", controller="opponent", source="self"),
+    effects=(
+        {
+            "op": "may",
+            "player": {"binding": "event_player"},
+            "prompt": "Pay {2} for ward?",
+            "pay": {"mana": "{2}"},
+            "else": [{"op": "counter", "sid": {"binding": "sid"}}],
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)

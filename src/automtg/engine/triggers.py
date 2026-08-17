@@ -220,6 +220,16 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             # card's triggers do not listen. Checked here rather than at each
             # trigger, because this is the one place that walks a card's
             # abilities on behalf of an object.
+            #
+            # Except the one the *rules* put there. A cloaked permanent has ward
+            # {2} (701.61a), which comes from the cloak rule and not from the
+            # card underneath -- and must not come from the card, since that
+            # card is usually not even a creature. So it is supplied here, in
+            # the same breath as the sentence that says everything else is gone.
+            if obj.cloaked:
+                from .carddef import CLOAK_WARD
+
+                yield obj, CLOAK_WARD
             return
         card = state.card_of(obj)
         for ability in card.abilities:

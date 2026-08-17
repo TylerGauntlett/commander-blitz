@@ -143,6 +143,11 @@ class GameObject:
     #: Cleared by `reset_permanent_state`: a face-down permanent that leaves the
     #: battlefield is revealed, and one that comes back is a new object.
     face_down: bool = False
+    #: Cloaked (701.61a) rather than merely manifested. The shell is the same
+    #: 2/2 in both, and the only difference is the **ward {2}** the cloak rule
+    #: puts on it -- which comes from the rule, not from the card underneath, so
+    #: it cannot live on either and has to be a flag the engine reads.
+    cloaked: bool = False
     #: Set on the resolving spell and read a moment later by
     #: `_place_after_resolution`, because `reset_permanent_state` clears
     #: `face_down` on the way onto the battlefield. Identity state, like
@@ -412,6 +417,7 @@ class GameObject:
         self.last_attached_to = None
         self.paired_with = None
         self.face_down = False
+        self.cloaked = False
         self.until_eot = []
         self.dies_to = None
         self.monstrous = False
