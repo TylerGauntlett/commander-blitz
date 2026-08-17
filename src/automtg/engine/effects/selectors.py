@@ -34,6 +34,16 @@ SELECTOR_KEYS = frozenset(
     {
         "zone",
         "controller",
+        #: Whose hand/graveyard/library/exile to walk, as a full player spec
+        #: rather than the three words ``controller`` allows -- so
+        #: ``{"target": "t1"}`` scopes a zone to the one player a trigger
+        #: targeted.  Bojuka Bog: "exile **target player's** graveyard", which
+        #: `controller: "any"` would turn into Relic of Progenitus.
+        #:
+        #: Battlefield selectors ignore it, and correctly: a permanent's
+        #: controller is a property of the object, so `controller` is a filter
+        #: there rather than a choice of which list to read.
+        "player",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -236,6 +246,16 @@ def _bound_oids(ctx: EffectContext, name: str) -> list[int]:
 
 
 def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
+    """Whose hand/graveyard/library/exile this selector walks.
+
+    ``player`` is the full player spec and takes precedence, because it can say
+    things ``controller`` cannot: "target player's graveyard" is Bojuka Bog, and
+    the nearest `controller` value -- `"any"` with `count: "all"` -- exiles every
+    graveyard at the table, which is Relic of Progenitus. `select_players`
+    already understood `{"target": ...}`; it simply had no caller here.
+    """
+    if "player" in selector:
+        return select_players(ctx, selector["player"])
     controller = selector.get("controller", "you")
     if controller == "you":
         return [ctx.controller]
@@ -551,6 +571,17 @@ def validate_selector(selector: Any, where: str) -> None:
     controller = selector.get("controller")
     if controller is not None and controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
+    if "player" in selector:
+        # Only zones that *belong* to a player have an owner to choose. On the
+        # battlefield and the stack the list is shared, so `player` would be
+        # silently ignored -- and a card that says "target player's" and quietly
+        # means "everyone's" is the failure this validation exists to prevent.
+        zone_name = selector.get("zone", "battlefield")
+        if zone_name in ("battlefield", "stack"):
+            raise DslError(
+                f"{where}: 'player' scopes a zone somebody owns; the {zone_name} "
+                f"is shared -- use 'controller' to filter it"
+            )
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):
         raise DslError(f"{where}: unknown count {count!r}; use 'all', 'any' or a value")

@@ -62642,12 +62642,12 @@
     },
     "Deadly Dispute": {
       "edhrec_rank": 129,
-      "gate": "template",
+      "gate": null,
       "name": "Deadly Dispute",
-      "reason": "no template for: Draw two cards and create a Treasure token",
+      "reason": "",
       "scryfall_id": "e0f658ff-323e-4e32-beaa-1d5753b4f081",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadly Embrace": {
@@ -195392,12 +195392,12 @@
     },
     "Painful Truths": {
       "edhrec_rank": 1669,
-      "gate": "template",
+      "gate": null,
       "name": "Painful Truths",
-      "reason": "no template for: Converge — You draw X cards and lose X life, where X is the number of colors of mana spent",
+      "reason": "",
       "scryfall_id": "faa82f09-0693-4cc6-8770-8c6a35aa627b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Painsmith": {

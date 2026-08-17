@@ -1,0 +1,58 @@
+{
+  "card": {
+    "id": "deadly_dispute",
+    "name": "Deadly Dispute",
+    "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDraw two cards and create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "mana_cost": "{1}{B}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "additional_cost": {
+      "sacrifice": {
+        "controller": "you",
+        "any_types": [
+          "Artifact",
+          "Creature"
+        ]
+      }
+    },
+    "spell_effects": [
+      {
+        "op": "draw",
+        "amount": {
+          "const": 2
+        }
+      },
+      {
+        "op": "create_token",
+        "token": "treasure_token",
+        "amount": {
+          "const": 1
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "graveyard_size": {
+      "0": 4
+    },
+    "tokens": {
+      "id": "treasure_token",
+      "count": 1
+    },
+    "battlefield_count": 32
+  }
+}

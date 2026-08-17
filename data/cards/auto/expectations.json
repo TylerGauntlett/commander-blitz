@@ -1350,6 +1350,23 @@
   "deadeye_harpooner": {
     "zone": "battlefield"
   },
+  "deadly_dispute": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "deadly_insect": {
     "zone": "battlefield"
   },
@@ -4217,6 +4234,21 @@
     "target_pt_delta": {
       "power": 3,
       "toughness": 3
+    },
+    "zone": "graveyard"
+  },
+  "painful_truths": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
     },
     "zone": "graveyard"
   },

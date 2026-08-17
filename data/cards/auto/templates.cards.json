@@ -15496,6 +15496,46 @@
       ]
     },
     {
+      "additional_cost": {
+        "sacrifice": {
+          "any_types": [
+            "Artifact",
+            "Creature"
+          ],
+          "controller": "you"
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "deadly_dispute",
+      "mana_cost": "{1}{B}",
+      "name": "Deadly Dispute",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDraw two cards and create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -47911,6 +47951,38 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "painful_truths",
+      "mana_cost": "{2}{B}",
+      "name": "Painful Truths",
+      "oracle_text": "Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "colors_of_mana_spent": true
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "colors_of_mana_spent": true
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

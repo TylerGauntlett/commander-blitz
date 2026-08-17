@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **35** capabilities.
+**23 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [additional-cost](#additional-cost) | 2 | 129 | cost, value |
 | [batched-enters-trigger](#batched-enters-trigger) | 2 | 425 | trigger_event |
 | [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
 | [missing-token-definitions](#missing-token-definitions) | 2 | 3474 | engine |
@@ -22,6 +21,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [per-player-loop](#per-player-loop) | 2 | 1141 | op, selector |
 | [subtype-restricted-mana](#subtype-restricted-mana) | 2 | 2443 | engine |
 | [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
+| [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [attached-selector](#attached-selector) | 1 | 2433 | selector |
 | [attached-trigger](#attached-trigger) | 1 | 40 | trigger_event |
 | [blood-token](#blood-token) | 1 | 2443 | engine |
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-type](#chosen-type) | 1 | 148 | selector, static_effect |
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
-| [converge](#converge) | 1 | 1669 | value |
 | [entering-power-filter](#entering-power-filter) | 1 | 425 | selector |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
 | [life-loss-trigger](#life-loss-trigger) | 1 | 883 | trigger_event, value |
@@ -43,32 +42,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [sacrifice-trigger](#sacrifice-trigger) | 1 | 228 | trigger_event |
 | [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
-| [target-player-zone](#target-player-zone) | 1 | 24 | selector |
 | [token-created](#token-created) | 1 | 228 | trigger_event |
+| [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
 | [tutor-to-top](#tutor-to-top) | 1 | 5982 | op, selector |
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
 | [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## additional-cost
-
-Blocks **2** cards.
-
-- **(cost)** A card-level field holding a *mandatory, non-mana* additional cost paid as the spell is cast from hand -- a full `Cost` (here `sacrifice` with the selector `{"any_types": ["Artifact", "Creature"]}`, controller you) charged at cast time alongside the printed mana cost. Legality must refuse to offer the cast at all when the cost cannot be paid, and the payment must happen while the spell goes on the stack, not on resolution. The `Cost` struct and its `sacrifice` selector already exist and are already charged this way for graveyard casts; what is missing is a place to hang one on an ordinary cast from hand.
-  <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is wrong twice over: it is mana-only (`_cast_variant` computes `card.mana_cost.plus(card.kicker)`, a `ManaCost`, so it cannot sacrifice anything) and it is optional by construction (legality deliberately offers the spell as both unkicked and kicked). Deadly Dispute's cost is neither. `emerge`/`emerge_subtype` does sacrifice a creature at cast time, but it is an *alternative* cost that replaces the printed mana cost and is then reduced by the sacrificed creature's mana value -- casting Deadly Dispute for {1}{B} plus a sacrifice is not what emerge would charge. `flashback`/`graveyard_cost` and `retrace` are the only paths that pay a non-mana `Cost` at cast time (`can_pay(state, pid, card.flashback.without_mana(), oid)`), but both are gated on casting from the graveyard, so neither applies to a spell cast from hand. Putting the sacrifice in `spell_effects` as the `sacrifice` op is the approximation the DSL notes forbid: it moves the payment to resolution, so the spell could be cast with no artifact or creature to sacrifice and would still draw two cards.
-- **(cost)** A card-level field holding an *optional, non-mana, variable-count* additional cost paid as the spell is cast from hand: a full `Cost` whose `sacrifice` selector (`{"types": ["Creature"], "controller": "you"}`) takes *any number the caster chooses, including zero*, charged at cast time alongside the printed {1}{B}. Two things beyond deadly_dispute's mandatory version: the payment must be offered rather than required (the spell is legal with no creatures at all), and the count must be player-chosen at cast time rather than fixed by the selector's `count`, so the caster picks a set of creatures and the whole set is sacrificed as one payment while the spell goes on the stack.
-  <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is mana-only -- `CardDef.kicker` is a mana-cost *string* and the cast variant is `mana_cost.plus(kicker)`, a `ManaCost`, so it cannot sacrifice anything. `Cost.sacrifice` (in `carddef.py`) is exactly the right shape but is only reachable from an activated ability's `cost` or from a graveyard-cast path (`flashback`/`graveyard_cost`/`retrace`), never from an ordinary cast from hand; it is also a single fixed selector, so even mounted on a spell it would demand exactly N creatures rather than "one or more, your choice how many". Moving the sacrifice into `spell_effects` with the `sacrifice` op is the approximation the DSL notes forbid: it pays on resolution, which makes the copies impossible to have made (they must already be on the stack) and lets the spell be cast with the sacrifice unpaid.
-- **(value)** A value expression for "the number of permanents sacrificed to pay this spell's additional cost", available to the reflexive trigger's effects so `copy_spell`'s `amount` can be that count. The payment must record how many objects it consumed and expose them as a binding on the trigger.
-  <br>Why the existing vocabulary won't do: `value_keys` has no reading of what a cost consumed. `creatures_died_this_turn` is the closest, and it is wrong: it counts every creature that died this turn from any source -- combat, an earlier removal spell, a second Plumb the Forbidden -- so on a real board it would copy the spell too many times. `creatures_you_control` counts what survives, not what was paid. `count` over a selector cannot name "the ones sacrificed this way" because nothing marks them.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deadly Dispute** (rank 129) — `deadly_dispute`
-  - As an additional cost to cast this spell, sacrifice an artifact or creature.
-- **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
-  - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
-
-</details>
 
 ## batched-enters-trigger
 
@@ -197,6 +176,22 @@ Blocks **1** card.
 
 </details>
 
+## additional-cost
+
+Blocks **1** card.
+
+- **(cost)** A card-level field holding an *optional, non-mana, variable-count* additional cost paid as the spell is cast from hand: a full `Cost` whose `sacrifice` selector (`{"types": ["Creature"], "controller": "you"}`) takes *any number the caster chooses, including zero*, charged at cast time alongside the printed {1}{B}. Two things beyond deadly_dispute's mandatory version: the payment must be offered rather than required (the spell is legal with no creatures at all), and the count must be player-chosen at cast time rather than fixed by the selector's `count`, so the caster picks a set of creatures and the whole set is sacrificed as one payment while the spell goes on the stack.
+  <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is mana-only -- `CardDef.kicker` is a mana-cost *string* and the cast variant is `mana_cost.plus(kicker)`, a `ManaCost`, so it cannot sacrifice anything. `Cost.sacrifice` (in `carddef.py`) is exactly the right shape but is only reachable from an activated ability's `cost` or from a graveyard-cast path (`flashback`/`graveyard_cost`/`retrace`), never from an ordinary cast from hand; it is also a single fixed selector, so even mounted on a spell it would demand exactly N creatures rather than "one or more, your choice how many". Moving the sacrifice into `spell_effects` with the `sacrifice` op is the approximation the DSL notes forbid: it pays on resolution, which makes the copies impossible to have made (they must already be on the stack) and lets the spell be cast with the sacrifice unpaid.
+- **(value)** A value expression for "the number of permanents sacrificed to pay this spell's additional cost", available to the reflexive trigger's effects so `copy_spell`'s `amount` can be that count. The payment must record how many objects it consumed and expose them as a binding on the trigger.
+  <br>Why the existing vocabulary won't do: `value_keys` has no reading of what a cost consumed. `creatures_died_this_turn` is the closest, and it is wrong: it counts every creature that died this turn from any source -- combat, an earlier removal spell, a second Plumb the Forbidden -- so on a real board it would copy the spell too many times. `creatures_you_control` counts what survives, not what was paid. `count` over a selector cannot name "the ones sacrificed this way" because nothing marks them.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
+  - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
+
+</details>
+
 ## attached-selector
 
 Blocks **1** card.
@@ -312,20 +307,6 @@ Blocks **1** card.
 
 - **Path of Ancestry** (rank 14) — `path_of_ancestry`
   - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-
-</details>
-
-## converge
-
-Blocks **1** card.
-
-- **(value)** A value key (e.g. `colors_of_mana_spent`) usable as an amount inside a spell's own `spell_effects`, returning how many distinct mana colors were spent paying that spell's cost -- 0 to 5. Requires the payment path to record the multiset of coloured symbols actually spent on a given cast and hang it off that spell's stack object, so the value can be read at resolution. `draw` and `lose_life` already take an arbitrary amount, so once the value exists the card is two ordinary ops.
-  <br>Why the existing vocabulary won't do: Nothing in `value_keys` can see how a spell was paid for. `x` reads the chosen value of X in the mana cost, which Painful Truths does not have -- its X is a property of the payment, not a declared cost. `const` is fixed; `count` counts objects matching a selector, and the mana spent is not an object; `lands_you_control` counts permanents, which is at best a proxy that is wrong whenever a land is tapped for a colour already produced or is not tapped at all. On the condition side, `kicked` and `evoked` are the only keys that read anything about *how* a spell was cast, and both are single booleans set by an alternative/additional cost, with no numeric or colour payload. Underneath, the information is discarded at payment time: `pay_mana` (src/automtg/engine/costs.py) calls `ManaPool.spend(req)`, which decrements `self.amounts` per symbol in place -- including choosing hybrid halves and paying generic from the most plentiful symbols -- and returns None, then emits `EventType.MANA_SPENT` carrying only `amount=req.total`. The chosen colours exist inside `spend` and are thrown away, so even a new op could not recover them without that plumbing.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Painful Truths** (rank 1669) — `painful_truths`
-  - Converge — You draw X cards and lose X life, where X is the number of colors of mana spent to cast this spell.
 
 </details>
 
@@ -501,20 +482,6 @@ Blocks **1** card.
 
 </details>
 
-## target-player-zone
-
-Blocks **1** card.
-
-- **(selector)** let a selector scope a non-battlefield zone to a player chosen as a target, so `exile` with `{"zone": "graveyard", "count": "all", "player": {"target": "t1"}}` (a target spec of kind `player`) empties exactly that one player's graveyard. Concretely: `_zone_owners` in effects/selectors.py should accept a player spec resolved through `select_players` -- which already understands `{"target": ...}` -- instead of only the three literal controller words, and `validate_selector` must let that key through.
-  <br>Why the existing vocabulary won't do: `_zone_owners` reads `controller`, and `validate_selector` restricts it to "you", "opponent" or "any" -- none of which is "the one player this trigger targeted", and `"any"` with `count: "all"` exiles every graveyard, which is Relic of Progenitus rather than Bojuka Bog. The `{"target": "t1"}` selector shorthand cannot stand in either: `EffectContext.target_oids` keeps only refs with `kind == "object"`, so a player target seeds an empty pool. `select_players` does resolve `{"target": ...}` to a targeted player, but only ops carrying a `player` spec (`draw`, `mill`, `discard`, `look_at_hand`) call it, and `exile` takes only an `objects` selector.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bojuka Bog** (rank 24) — `bojuka_bog`
-  - When this land enters, exile target player's graveyard.
-
-</details>
-
 ## token-created
 
 Blocks **1** card.
@@ -526,6 +493,20 @@ Blocks **1** card.
 
 - **Mirkwood Bats** (rank 228) — `mirkwood_bats`
   - Whenever you create or sacrifice a token, each opponent loses 1 life.
+
+</details>
+
+## triggered-ability-target-choice
+
+Blocks **1** card.
+
+- **(decision)** a triggered ability with targets must let its controller choose them as it goes on the stack (603.3d), rather than taking the first enumerated option. `stack.push_triggered_ability` calls `enumerate_target_tuples(..., limit=1)` and assigns `options[0]`; for a `kind: "player"` target the order is `state.alive()`, i.e. seat order, so the chosen player is always seat 0 -- the ability's own controller in every game this card is played in. The choice needs to become a real decision, which means a suspended push (the trigger already goes on the stack from `promote_pending`, so this is a generator boundary that does not exist yet) or a pre-resolution target-choice step, plus an auto-answer entry in `verify.py`'s table so the authoring gates do not hang.
+  <br>Why the existing vocabulary won't do: Not a selector or vocabulary gap -- the selector half shipped. A selector may now carry `player`, the full player spec, and `{"zone": "graveyard", "player": {"target": "t1"}, "count": "all"}` empties exactly the named player's graveyard; `tests/unit/test_target_player_zone.py` is the witness and the card compiles and passes all six gates. What is wrong is *who gets named*. Written as a triggered ability the card always exiles its controller's own graveyard, which is not a weaker Bojuka Bog but a card nobody would play. Writing it as a spell instead is not available: it is a Land, and legality enumerates one cast line per legal target only for things that are cast. Hard-coding `controller: "opponent"` is the approximation to refuse -- it is right in a duel and wrong at a pod, where it would exile all three opponents' graveyards at once, which is Relic of Progenitus.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bojuka Bog** (rank 24) — `bojuka_bog`
+  - When this land enters, exile target player's graveyard.
 
 </details>
 

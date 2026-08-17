@@ -1767,6 +1767,10 @@
     "artist": "Ryan Pancoast",
     "scryfall_id": "a018decf-25e1-45fc-be7d-2523dcfb7a4c"
   },
+  "deadly_dispute": {
+    "artist": "Mark Brooks",
+    "scryfall_id": "e0f658ff-323e-4e32-beaa-1d5753b4f081"
+  },
   "deadly_insect": {
     "artist": "Scott Kirschner",
     "scryfall_id": "d8222dd3-12fa-4c4c-baf4-46eb6e07289c"
@@ -5407,6 +5411,10 @@
   "overprotect": {
     "artist": "Pavel Kolomeyets",
     "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a"
+  },
+  "painful_truths": {
+    "artist": "Winona Nelson",
+    "scryfall_id": "faa82f09-0693-4cc6-8770-8c6a35aa627b"
   },
   "painted_bluffs": {
     "artist": "Mark Poole",
