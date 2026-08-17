@@ -20,6 +20,7 @@ from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
+    from .structs import TempEffect
 
 
 # ----------------------------------------------------------------------
@@ -502,8 +503,14 @@ def transform(state: GameState, oid: int, *, to_back: bool | None = None) -> boo
     return True
 
 
-def change_control(state: GameState, oid: int, pid: int, source: int | None = None) -> bool:
-    """"Gain control of target creature." Rule 800.4a, permanently.
+def change_control(
+    state: GameState,
+    oid: int,
+    pid: int,
+    source: int | None = None,
+    duration: str = "permanent",
+) -> bool:
+    """"Gain control of target creature." Rule 800.4a.
 
     The object does not move: ``GameObject.controller`` is a field and
     ``state.battlefield`` is one shared list, so the whole change is that field
@@ -524,20 +531,55 @@ def change_control(state: GameState, oid: int, pid: int, source: int | None = No
     its **owner**, so a stolen creature that dies still goes to the graveyard of
     the player who brought it.
 
-    There is deliberately no until-end-of-turn form. That would need a
-    continuous-effect layer and a cleanup-step handback, and half of it -- a
-    permanent steal wearing Act of Treason's text -- is a strictly better card
-    than the printed one.  ``loader`` refuses a ``duration`` key rather than
-    ignoring it.
+    ``duration`` is ``"permanent"`` (Captivating Vampire) or
+    ``"until_end_of_turn"`` (Act of Treason).  The temporary form is this same
+    call plus one ``TempEffect`` recording the seat it came from, and the
+    handback in ``clear_until_eot`` is this same function pointed the other way
+    -- which is the whole reason it is written as a re-entry rather than as an
+    assignment to ``controller``.  All three rules above apply on the way *back*
+    too, and none of them is symmetric with itself:
+
+    - the permanent has not been under its original controller since **their**
+      turn began either -- somebody else had it in between -- so ``entered_turn``
+      is stamped with the handback rather than restored to what it was before
+      the steal (302.6);
+    - the handback is a second control change and removes it from combat
+      (506.4).  Structural rather than observable: ``state.combat`` is ``None``
+      by the cleanup step, so it is one branch inside a call being made anyway,
+      and the alternative is a rule that holds only until somebody adds a phase;
+    - and every ``controller``-filtered static reads differently a second time,
+      so the characteristics cache is dropped in both directions.
+
+    The tidy wrong version is to save the controller and ``entered_turn``
+    together and put both back -- "as it was" -- which hands somebody a creature
+    that is not newly under their control, and loses the cache drop outright.
     """
+    from .structs import CONTROL_DURATIONS
+
+    if duration not in CONTROL_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown control duration {duration!r}")
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield or obj.controller == pid:
+        # Including the no-op: "gain control of a permanent you control" changes
+        # nothing, so there is nothing to hand back either.  Recording one would
+        # invent a control change at cleanup that no card asked for.
         return False
     previous = obj.controller
     obj.controller = pid
     obj.entered_turn = state.turn
     if state.combat is not None:
         state.combat.remove(oid)
+    if duration == "until_end_of_turn":
+        from .structs import TempEffect
+
+        obj.until_eot.append(
+            TempEffect(
+                kind="control",
+                source=source,
+                previous_controller=previous,
+                new_controller=pid,
+            )
+        )
     state.bump_chars()
     fire(
         state,
@@ -856,7 +898,14 @@ def clear_attack_restrictions(state: GameState, duration: str) -> None:
 
 
 def clear_until_eot(state: GameState) -> None:
-    """Cleanup step: remove damage and every until-end-of-turn effect."""
+    """Cleanup step: remove damage and every until-end-of-turn effect.
+
+    Every kind but one ends by being dropped.  ``control`` ends by being *run*:
+    the steal already happened, and what expires is the permanent sitting on the
+    wrong side of the board, so the entries are collected on the way past and
+    handed back below.
+    """
+    handbacks: list[tuple[int, TempEffect]] = []
     for oid in state.battlefield:
         obj = state.objects.get(oid)
         if obj is None:
@@ -873,8 +922,55 @@ def clear_until_eot(state: GameState) -> None:
         # make every creature Gallifrey Falls ever touched permanently
         # un-buriable.
         obj.dies_to = None
+        handbacks.extend((oid, temp) for temp in obj.until_eot if temp.kind == "control")
         obj.until_eot.clear()
     state.bump_chars()
+    _hand_back_control(state, handbacks)
+
+
+def _hand_back_control(state: GameState, handbacks: list[tuple[int, TempEffect]]) -> None:
+    """"…until end of turn" for a control change: give the permanents back.
+
+    Three things decide who gets what, and each of them is a way of being wrong
+    that a bare ``obj.controller = previous`` would be:
+
+    * **Only permanents still on the battlefield.**  Free, and deliberately so:
+      the entries were read out of ``state.battlefield``, and a permanent that
+      died or was exiled during the turn had ``until_eot`` emptied by
+      ``reset_permanent_state`` on the way out.  A stolen creature sacrificed
+      for value is gone, not returned -- which is the whole reason the Act of
+      Treason plus sacrifice-outlet line is a real line.
+    * **Newest first.**  Two steals stack: A takes it from its owner, then B
+      takes it from A, and both effects end in this same step.  Undone in the
+      order they were made, the first handback would find the wrong controller
+      and stop; undone newest-first, B gives it to A and A gives it to its
+      owner, which is where it started.
+    * **Only if the steal is still the reason.**  ``new_controller`` is checked
+      against the current controller rather than trusted, because a *permanent*
+      control change made afterwards outlives this one (a later continuous
+      effect in the same layer still applies).  Mind Control on a creature
+      somebody Act of Treason'd does not evaporate at end of turn, and handing
+      it to the original controller would undo a card that never ended.
+
+    A seat that has left the game is skipped for the same reason: 800.4 takes a
+    departed player's permanents with them, so there is nobody to hand it to and
+    the current controller keeps it rather than the permanent falling into a
+    seat that is not playing.
+    """
+    for oid, temp in reversed(handbacks):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        previous, gained = temp.previous_controller, temp.new_controller
+        if previous is None or (gained is not None and obj.controller != gained):
+            continue
+        if not state.is_alive(previous):
+            continue
+        # The reverse steal goes through `change_control` and not through the
+        # field, so 302.6, 506.4 and the characteristics bump all apply coming
+        # home as well.  `permanent` because this handback is the end of the
+        # duration, not a new one to unwind next turn.
+        change_control(state, oid, previous, source=temp.source, duration="permanent")
 
 
 def untap_all(state: GameState, pid: int) -> list[int]:
