@@ -1,0 +1,66 @@
+{
+  "card": {
+    "id": "lost_to_legend",
+    "name": "Lost to Legend",
+    "oracle_text": "Put target nonland historic permanent into its owner's library fourth from the top. (Artifacts, legendaries, and Sagas are historic.)",
+    "mana_cost": "{W}{W}",
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "types": [
+      "Instant"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "controller": "any",
+          "not_types": [
+            "Land"
+          ],
+          "any_of": [
+            {
+              "types": [
+                "Artifact"
+              ]
+            },
+            {
+              "supertypes": [
+                "Legendary"
+              ]
+            },
+            {
+              "subtypes": [
+                "Saga"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "put_on_top",
+        "objects": {
+          "target": "t1"
+        },
+        "from_top": {
+          "const": 4
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5,
+    "library_size": {
+      "1": 21
+    }
+  }
+}

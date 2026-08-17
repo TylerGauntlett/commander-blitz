@@ -165,6 +165,81 @@ either. It is one line to add on the day a card needs it.
 
 A selector key is card vocabulary. Targets already serialize as refs and
 `LegalActionDTO.kind` is a bare string.
+## Library depth placement — the zone layer had two positions, and a card asked for a fourth
+
+### Overview
+
+One gap record named `library_depth_placement`: **Lost to Legend**, "Put target
+nonland historic permanent into its owner's library **fourth from the top**."
+
+Everything else on the line was already sayable. "Nonland historic permanent" is
+`not_types: ["Land"]` beside an `any_of` over Artifact, the Legendary supertype
+and the Saga subtype — `any_of` unions whole sub-selectors, so it ORs the three
+readings of *historic* correctly, artifact creatures and all. The single blocker
+was the depth, and it was missing further down than the op layer: `move_object`
+took `to_top: bool`, which is `list.insert(0)` or `list.append`, so **top and
+bottom were the only positions a library had**. There was no insert index
+anywhere in the zone layer.
+
+Neither rounding is an approximation of the printed card; each is a different
+card, in opposite directions. On **top**, the owner draws the permanent back on
+their very next draw step — the reverse of what paying two white mana for the
+depth buys. On the **bottom** of a 99-card Commander deck, it is exile with
+extra steps. `scry`, `surveil` and `look_at_top` cannot stand in either: all
+three reorder or relocate cards that are *already* in a library and none can
+admit a permanent from the battlefield.
+
+### The shape
+
+`move_object` grew `to_index`, a library position counted from the top, and
+`put_on_top` grew `from_top`, the **printed ordinal** counted from 1. Extending
+the existing op rather than adding a `put_into_library` beside it keeps every
+tuck in one place, so a future Hinder and this card cannot drift apart on the
+owner question or the clamp — and it costs the op count nothing, since the whole
+family already routed through `put_on_top`.
+
+An ordinal rather than a raw index because that is the sentence on the card:
+`1` is the top, `2` is Hinder and Condemn, `4` is this. It is a value expression
+like every other numeric field, so a card can compute a depth off the board.
+`to_index` is optional, defaults to `None`, and is ignored outside a library, so
+the thirty-odd existing `move_object` callers — draw, mill, discard, dies,
+fizzle, mulligan, the merged-under pile — pass nothing and behave exactly as
+before.
+
+### The three things that are only visible when they are wrong
+
+- **The ordinal.** Fourth from the top is index 3. A card tucked third is drawn a
+  turn early, which is most of what the depth is for.
+- **The clamp**, in both directions. A library shorter than the depth takes the
+  card as deep as it goes, which is the printed rule. The *floor* is the half
+  that would have been silent: `list.insert` already appends an index past the
+  end, but a **negative** index counts back from the bottom, so an ordinal that
+  computed to zero on an empty board would bury a card second-from-bottom and
+  nothing would ever say so. Hence an explicit `max(0, min(i, len))` rather than
+  trusting the list.
+- **The owner.** `to_player=obj.owner`, never the controller — rule 400.3 read
+  forwards. Only a stolen permanent can tell the difference, and there a
+  controller's-library tuck hands the thief the victim's card for good.
+
+The loader refuses two shapes that would otherwise load clean and play as a
+better card than the one printed: `from_top` on any op that does not read it
+(`draw` and friends take `amount` and ignore the rest), and a zero or negative
+ordinal (the op floors it, but a card that needed correcting was authored wrong).
+
+### What it unblocked
+
+**Lost to Legend**, the whole card, through the **agent tier** — there is no
+template for "fourth from the top", and `--tier templates --retry` harvests
+nothing, which is the right outcome rather than a half-reading template that
+would make a cheaper card than the printed one.
+
+The authoring gate can prove the permanent left the battlefield and landed in
+its **owner's** library (the sandbox's target is the opponent's artifact, so
+`opponent_battlefield_count` and the opponent's `library_size` both move, and a
+caster's-library tuck would fail on player 0's count). It cannot prove the
+*depth*: no expectation key reads a library's order. That is why
+`tests/unit/test_library_depth.py` carries the ordinal, the clamp and the
+owner-vs-controller claim directly.
 
 ## "That player can't attack you" — the first prohibition with two sides
 
