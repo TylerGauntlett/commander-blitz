@@ -744,6 +744,15 @@ def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
     depending on how many the caster chose, which is a bug no board would show.
     """
     specs = tuple(_compile_target(t, where) for t in models)
+    for spec in specs:
+        # A per-player cap is a constraint on how many of a *variable-size*
+        # choice may share a controller. On a fixed-size spec it either changes
+        # nothing or makes the spec unsatisfiable, and both are silent.
+        if spec.one_per_player and spec.count != "any":
+            raise DslError(
+                f"{where}: 'one_per_player' needs 'count': 'any' -- "
+                f"it caps a variable-size choice, and a fixed one has no room to cap"
+            )
     variable = [i for i, spec in enumerate(specs) if spec.count == "any"]
     if len(variable) > 1:
         raise DslError(
@@ -765,6 +774,7 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         kind=model.kind,
         selector=dict(model.selector),
         count=model.count,
+        one_per_player=model.one_per_player,
         optional=model.optional,
     )
 

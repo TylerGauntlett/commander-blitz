@@ -110,6 +110,31 @@ def can_be_targeted(
     return Keyword.HEXPROOF.value not in keywords
 
 
+def _one_each(state: GameState, refs: Sequence[TargetRef]) -> bool:
+    """Are these objects controlled by pairwise different players?
+
+    "For each player, exile up to one target nonland permanent that player
+    controls" is the same set of legal choices as "any number of target nonland
+    permanents, no two controlled by the same player" -- so it is a constraint
+    on the combination rather than one target spec per seat.
+
+    Written this way on purpose. One spec per seat would have to be `optional`,
+    and `filter_legal` splits the stored refs by *position*: a declined optional
+    contributes nothing to the flat tuple, so every spec after it would read the
+    wrong refs back. That is a bug no board would show, and this shape cannot
+    have it -- there is one spec, and it swallows whatever was chosen.
+    """
+    seen: set[int] = set()
+    for ref in refs:
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            continue
+        if obj.controller in seen:
+            return False
+        seen.add(obj.controller)
+    return True
+
+
 def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
     """How many real candidates fit under ``limit`` beside the decline option."""
     return max(1, limit - len(empty))
@@ -158,6 +183,7 @@ def enumerate_target_tuples(
                 tuple(c)
                 for size in range(len(options), 0, -1)
                 for c in itertools.combinations(options, size)
+                if not spec.one_per_player or _one_each(state, c)
             ]
             per_spec.append(list(dict.fromkeys([*subsets[: _room(limit, [()])], ()])))
         elif spec.count > 1:

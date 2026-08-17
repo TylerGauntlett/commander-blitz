@@ -1837,6 +1837,35 @@ damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
 
+## "For each player, up to one target permanent that player controls"
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": "any",
+              "one_per_player": true,
+              "selector": {"not_types": ["Land"]}}]}
+```
+
+Unexplained Absence. A cap on the *combination*, not one spec per seat: "any
+number of target nonland permanents, no two controlled by the same player" is
+the same set of legal choices as "for each player, up to one", and it scales
+with the pod because the pod is what it counts.
+
+**A hand-authored pair of specs is the approximation to refuse.** "Up to one you
+control" beside "up to one an opponent controls" reproduces the card in a duel
+and silently offers two targets instead of four in the four-player game it is
+printed for.
+
+**And the shape avoids a bug, not just repetition.** One spec per seat would
+have to be `optional`, and `filter_legal` splits stored refs by *position* — a
+declined optional contributes nothing to the flat tuple, so every spec after it
+reads the wrong refs back on resolution. The spell would fizzle, or hit the
+wrong permanent, depending on how many targets the caster declined. One spec
+that swallows whatever was chosen cannot have that bug.
+
+Needs `count: "any"`; refused at load time otherwise, because on a fixed-size
+spec the cap either changes nothing or makes the spec unsatisfiable, and both
+are silent.
+
 ## "Any number of target creatures"
 
 ```jsonc
