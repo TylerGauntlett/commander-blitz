@@ -295,10 +295,18 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             _check_counter_kind(
                 replacement.counter, f"{where}.replacements[{i}].counter"
             )
-        for kind in (replacement.modify or {}).get("counters") or {}:
+        # How many, which may be a value expression -- "a +1/+1 counter on it
+        # for each other Human you control". Checked for the same reason the
+        # condition below is: `zones._enter_battlefield` only evaluates it when
+        # a permanent actually enters, so an unknown value key would be a
+        # mid-game crash rather than a card that refuses to load.
+        validate_value(replacement.amount, f"{where}.replacements[{i}].amount")
+        for kind, amount in ((replacement.modify or {}).get("counters") or {}).items():
             # The other spelling of the same clause: `modify: {"counters": {...}}`
-            # keyed by kind. `zones._enter_battlefield` reads whichever is there.
+            # keyed by kind. `zones._enter_battlefield` reads whichever is there,
+            # and evaluates either as a value -- so both are checked as one.
             _check_counter_kind(kind, f"{where}.replacements[{i}].modify.counters")
+            validate_value(amount, f"{where}.replacements[{i}].modify.counters.{kind}")
         if replacement.condition is None:
             continue
         # Without this the tree is only checked when a permanent actually

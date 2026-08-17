@@ -2726,6 +2726,58 @@ tapped **unconditionally**, never untapped: a free untapped dual is a strict
 upgrade over the printed card, and the one direction this must never fail in is
 handing a deck a better mana base than the one it was built with.
 
+## "Enters with a counter on it **for each** …"
+
+"Éomer enters with a +1/+1 counter on it for each other Human you control."
+
+`amount` on a `replacements` entry is `int | dict`: a plain integer, or the full
+value DSL, evaluated exactly where the `condition` above it is — same source,
+same controller, same board.
+
+```jsonc
+"replacements": [{
+  "event": "self_enters_with_counters",
+  "counter": "+1/+1",
+  "amount": {"count": {
+    "zone": "battlefield", "controller": "you",
+    "subtypes": ["Human"], "exclude_self": true}}
+}]
+```
+
+The other spelling of the same clause takes a value too, one per kind:
+
+```jsonc
+{"event": "self_enters_with_counters",
+ "modify": {"counters": {"+1/+1": {"count": {...}}, "charge": 2}}}
+```
+
+`exclude_self` is load-bearing here for the reason it is on a slowland:
+`_add_to_zone` runs before `_enter_battlefield`, so the permanent is already on
+the battlefield when its own amount is counted, and "for each **other** Human"
+without it makes every lone copy a 3/3.
+
+Converge works from here unchanged — `{"colors_of_mana_spent": true}` reads
+`obj.colors_spent`, and an oid survives the zone change onto the battlefield, so
+"for each color of mana spent to cast it" is the same object it was on the stack.
+
+**Do not substitute a `self_enters` trigger running `add_counters`.** It is a
+different card, in three ways that a board can see:
+
+- 614.1c makes this a replacement. A trigger puts the permanent on the
+  battlefield at its printed size and grows it later, so anything that looks in
+  between — another enters trigger, a static, a state-based action — sees a
+  creature the printed card never is.
+- A second simultaneous enters trigger has to be **ordered**, and the order is
+  the controller's. Éomer's third line deals damage equal to *its power*, so the
+  substitute makes the card's whole payload a choice: 2 damage or 2 + N, from
+  printed text containing no such choice.
+- `add_counters` fires `COUNTER_PLACED`; this route calls `add_counter` directly
+  and fires nothing. The substitute additionally wakes every `counter_placed`
+  watcher on the board.
+
+`tests/unit/test_variable_enters_with_counters.py` runs all three claims against
+`t_marshal_trigger`, which is the substitute written out as a card.
+
 ## Creature-lands
 
 "Until end of turn, this land becomes a 4/4 white and blue Elemental creature

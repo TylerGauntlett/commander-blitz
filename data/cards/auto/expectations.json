@@ -1828,6 +1828,16 @@
     },
     "zone": "graveyard"
   },
+  "eomer_king_of_rohan": {
+    "counters": {
+      "amount": 0,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "battlefield"
+  },
   "eowyn_fearless_knight": {
     "battlefield_count": 33,
     "zone": "battlefield"
