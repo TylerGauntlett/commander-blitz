@@ -149,6 +149,12 @@
     "file": "akoum_refuge.jpg",
     "scryfall_id": "fd9b7070-7702-4e10-ad66-b2782590810e"
   },
+  "akroma_s_will": {
+    "artist": "Zuzanna Wu\u017cyk",
+    "bytes": 58480,
+    "file": "akroma_s_will.jpg",
+    "scryfall_id": "674e08ef-5291-4465-99c0-7313698f7a93"
+  },
   "alabaster_host_sanctifier": {
     "artist": "Konstantin Porubov",
     "bytes": 91542,
@@ -8545,6 +8551,12 @@
     "bytes": 88449,
     "file": "plover_knights.jpg",
     "scryfall_id": "d84fdc31-43f8-4cb9-b9a8-4ad3d1e90edb"
+  },
+  "plumb_the_forbidden": {
+    "artist": "Andrey Kuzinskiy",
+    "bytes": 41359,
+    "file": "plumb_the_forbidden.jpg",
+    "scryfall_id": "79c27df1-0c05-4208-a80c-73185ab35424"
   },
   "plumeveil": {
     "artist": "Nils Hamm",

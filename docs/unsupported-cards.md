@@ -10,42 +10,22 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**7 cards** blocked by **16** capabilities.
+**5 cards** blocked by **12** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [any-number-of-targets](#any-number-of-targets) | 1 | 9863 | targeting |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
-| [choose-both](#choose-both) | 1 | 191 | decision |
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-color-identity](#commander-color-identity) | 1 | 14 | op |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [dies-exile-replacement](#dies-exile-replacement) | 1 | 9863 | replacement |
-| [grant-protection](#grant-protection) | 1 | 191 | op |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
-| [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
-
-## additional-cost
-
-Blocks **1** card.
-
-- **(cost)** A card-level field holding an *optional, non-mana, variable-count* additional cost paid as the spell is cast from hand: a full `Cost` whose `sacrifice` selector (`{"types": ["Creature"], "controller": "you"}`) takes *any number the caster chooses, including zero*, charged at cast time alongside the printed {1}{B}. Two things beyond deadly_dispute's mandatory version: the payment must be offered rather than required (the spell is legal with no creatures at all), and the count must be player-chosen at cast time rather than fixed by the selector's `count`, so the caster picks a set of creatures and the whole set is sacrificed as one payment while the spell goes on the stack.
-  <br>Why the existing vocabulary won't do: `kicker` is the only additional cost a hand-cast spell can carry, and it is mana-only -- `CardDef.kicker` is a mana-cost *string* and the cast variant is `mana_cost.plus(kicker)`, a `ManaCost`, so it cannot sacrifice anything. `Cost.sacrifice` (in `carddef.py`) is exactly the right shape but is only reachable from an activated ability's `cost` or from a graveyard-cast path (`flashback`/`graveyard_cost`/`retrace`), never from an ordinary cast from hand; it is also a single fixed selector, so even mounted on a spell it would demand exactly N creatures rather than "one or more, your choice how many". Moving the sacrifice into `spell_effects` with the `sacrifice` op is the approximation the DSL notes forbid: it pays on resolution, which makes the copies impossible to have made (they must already be on the stack) and lets the spell be cast with the sacrifice unpaid.
-- **(value)** A value expression for "the number of permanents sacrificed to pay this spell's additional cost", available to the reflexive trigger's effects so `copy_spell`'s `amount` can be that count. The payment must record how many objects it consumed and expose them as a binding on the trigger.
-  <br>Why the existing vocabulary won't do: `value_keys` has no reading of what a cost consumed. `creatures_died_this_turn` is the closest, and it is wrong: it counts every creature that died this turn from any source -- combat, an earlier removal spell, a second Plumb the Forbidden -- so on a real board it would copy the spell too many times. `creatures_you_control` counts what survives, not what was paid. `count` over a selector cannot name "the ones sacrificed this way" because nothing marks them.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
-  - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
-
-</details>
 
 ## any-number-of-targets
 
@@ -73,21 +53,6 @@ Blocks **1** card.
 
 - **Florian, Voldaren Scion** (rank 3482) — `florian_voldaren_scion`
   - At the beginning of each of your postcombat main phases, look at the top X cards of your library, where X is the total amount of life your opponents lost this turn. Exile one of those cards and put the rest on the bottom of your library in a random order. You may play the exiled card this turn.
-
-</details>
-
-## choose-both
-
-Blocks **1** card.
-
-- **(decision)** A modal spell whose mode count is a floor rather than an exact number: choose one, and if a cast-time condition holds the controller *may* choose additional modes. Needs `choose_mode` to take an optional upper bound (e.g. `up_to`, gated by a `condition` evaluated as the spell is cast) so the decision is offered as min 1 / max 2 rather than forced.
-  <br>Why the existing vocabulary won't do: `choose_mode` has a `count`, but `ask_mode` builds the decision with `min_count = max_count = count`, and short-circuits with `if len(labels) <= count: return list(range(len(labels)))`. So a count of 2 over 2 modes does not ask at all -- it silently executes both. Making count conditional (`sum` of `{"const": 1}` and a `count` over an `is_commander` selector) computes the right *number*, but produces a card that must choose both whenever a commander is out, deleting the printed choice. There is no way to express an optional extra mode.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Akroma's Will** (rank 191) — `akroma_s_will`
-  - Choose one. If you control a commander as you cast this spell, you may choose both instead.
-  - • Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.
 
 </details>
 
@@ -146,21 +111,6 @@ Blocks **1** card.
 - **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
   - If a creature dealt damage this way would die this turn, exile it instead
   - Any number of target creatures you control phase out
-
-</details>
-
-## grant-protection
-
-Blocks **1** card.
-
-- **(op)** An effect op that grants protection from a set of qualities (colors, types, subtypes) to a pool of permanents until end of turn -- the effect half of the existing `protection` static, usable from `spell_effects`, with `from_colors` naming all five colors for "protection from each color".
-  <br>Why the existing vocabulary won't do: `protection` exists only as a *printed static ability* on a permanent: `characteristics.protection_from` collects candidates from `_battlefield_statics`, which walks `card.abilities` of battlefield objects only and never consults granted or temporary effects. `grant_keyword` cannot carry it -- `loader.py` deliberately excludes `protection` from the keyword list because it is parameterised ("protection from Wizards" names a quality, and four rules read it). `grant_ability` hands over an entry from the granter's `grantable_abilities` as an until-EOT `TempEffect(kind='ability')`, which `granted_abilities` surfaces to triggers and legality, but the statics pipeline never reads it -- so a granted protection static would be inert.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Akroma's Will** (rank 191) — `akroma_s_will`
-  - Choose one. If you control a commander as you cast this spell, you may choose both instead.
-  - • Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.
 
 </details>
 
@@ -233,20 +183,6 @@ Blocks **1** card.
 
 - **Florian, Voldaren Scion** (rank 3482) — `florian_voldaren_scion`
   - At the beginning of each of your postcombat main phases, look at the top X cards of your library, where X is the total amount of life your opponents lost this turn. Exile one of those cards and put the rest on the bottom of your library in a random order. You may play the exiled card this turn.
-
-</details>
-
-## reflexive-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A "When you do, ..." reflexive trigger on a spell: an ability attached to an *optional cost or optional action* that triggers only when that option was actually taken, resolves before the spell it belongs to, and carries bindings from the payment. Here it must fire as Plumb the Forbidden is cast (creatures were sacrificed), put its `copy_spell` on the stack above the original, and not fire at all when zero creatures were sacrificed.
-  <br>Why the existing vocabulary won't do: No event in `trigger_events` observes a cost being paid. `spell_cast` fires for the whole cast and cannot tell whether the optional additional cost was taken, and it is a normal trigger that goes on the stack independently rather than a reflexive one bound to the payment. The `kicked` condition in `condition_keys` is the nearest read-back of an optional cost, but it is a *resolution-time* `if` inside `spell_effects` -- by the time a `{"if": {"kicked": true}}` runs, the spell is already the top of the stack resolving, so a `copy_spell` from there would copy a spell that is no longer copyable in the way rule 706.10 wants and would resolve after, not before, the original. `creature_dies`/`dies` do fire from the sacrifice, but they are per-creature triggers on the creatures, not on the spell, and cannot distinguish creatures sacrificed to pay this cost from any other death.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plumb the Forbidden** (rank 1154) — `plumb_the_forbidden`
-  - As an additional cost to cast this spell, you may sacrifice one or more creatures. When you do, copy this spell for each creature sacrificed this way.
 
 </details>
 
