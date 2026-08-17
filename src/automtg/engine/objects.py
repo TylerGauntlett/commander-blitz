@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from .enums import Zone
+from .enums import Step, Zone
 from .structs import TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
@@ -236,6 +236,22 @@ class GameObject:
     #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
     #: permanent's own enters trigger may read it.
     cast_overloaded: bool = False
+    #: **Which step this object was cast in** -- addendum's "if you cast this
+    #: spell during your main phase". Recorded by `stack.push_spell`, because
+    #: that is the moment 608.2 is talking about: the spell can be cast in a
+    #: main phase and resolve after something on the stack above it has moved
+    #: the game on, so a phase read at resolution is a different question and
+    #: often a different answer.
+    #:
+    #: ``None`` on anything that was never cast -- a token, a permanent put onto
+    #: the battlefield by an effect -- which is the honest reading of a clause
+    #: about how the card was *cast*.
+    cast_step: Step | None = None
+    #: Whether the caster was the **active player** when it was cast, which is
+    #: the other half of "your main phase". Stored as the relation rather than
+    #: as a player id so that a later change of control cannot rewrite history:
+    #: the sentence is about who cast it, and that is settled at cast time.
+    cast_on_own_turn: bool = False
     #: How many times this object's additional cost was paid as it was cast --
     #: casualty and replicate. On the object rather than only the StackItem,
     #: because a "when you cast this spell" trigger reads it while the spell is
