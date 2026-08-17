@@ -1837,7 +1837,38 @@ damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
 
-## Cloak — manifest with ward {2}
+## Planeswalkers
+
+```jsonc
+{"types": ["Planeswalker"], "supertypes": ["Legendary"],
+ "subtypes": ["Sorin"], "loyalty": 4,
+ "abilities": [
+   {"kind": "activated", "text": "+1: You gain 2 life.",
+    "cost": {"loyalty": 1},
+    "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]},
+   {"kind": "activated", "text": "-3: Draw a card.",
+    "cost": {"loyalty": -3},
+    "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]}]}
+```
+
+`loyalty` is a number on the card; it compiles into a
+`self_enters_with_counters` replacement, because loyalty **is** counters
+(306.5b) and everything the engine does with counters then reads it for free.
+
+`cost.loyalty` is signed. Not `remove_counters`, which can only take them off --
+a plus ability adds. And it is a *cost*, so it is paid as the ability goes on
+the stack and is not refunded if the ability is countered, which is what makes
+loyalty spendable in response to removal.
+
+**Do not write `sorcery_speed_only`**: 606.3's timing is the rule speaking, not
+the card, so the loader applies it. One omitted flag and the planeswalker ticks
+up at instant speed on somebody else's turn.
+
+**One loyalty ability per permanent per turn**, not per ability. `once_each_turn`
+counts a single ability, so on a three-ability planeswalker it would allow two
+pluses and then a minus.
+
+
 
 ```jsonc
 {"op": "manifest", "player": "you", "amount": {"const": 1}, "cloak": true}

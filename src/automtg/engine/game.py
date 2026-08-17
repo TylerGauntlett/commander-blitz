@@ -155,8 +155,18 @@ class Game:
     def _dispatch_attackers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state
         if action.kind is ActionKind.ADD_ATTACKER:
-            defender = action.targets[0].id
-            add_attacker(state, action.source, defender)
+            ref = action.targets[0]
+            if ref.kind == "player":
+                add_attacker(state, action.source, ref.id)
+            else:
+                # A planeswalker. Its controller is the defending player
+                # (506.2), so `attackers[oid]` still records a player and every
+                # existing read of it stays true.
+                walker = state.objects.get(ref.id)
+                if walker is not None:
+                    add_attacker(
+                        state, action.source, walker.controller, planeswalker=ref.id
+                    )
             return  # the decision stays open for more attackers
         state.pending_decision = None
         self._run(finish_attackers(state))

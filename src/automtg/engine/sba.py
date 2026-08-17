@@ -38,6 +38,7 @@ def check(state: GameState) -> bool:
     changed |= _tokens_and_attachments(state)
     changed |= _counter_annihilation(state)
     changed |= _creature_deaths(state)
+    changed |= _planeswalker_deaths(state)
     changed |= _legend_rule(state)
     changed |= _ascend(state)
     return changed
@@ -235,6 +236,31 @@ def _counter_annihilation(state: GameState) -> bool:
             changed = True
     if changed:
         state.bump_chars()
+    return changed
+
+
+def _planeswalker_deaths(state: GameState) -> bool:
+    """704.5i: a planeswalker with zero loyalty goes to its owner's graveyard.
+
+    A sibling of `_creature_deaths`'s zero-toughness branch, and the same shape
+    for the same reason: this is not destruction, so it goes through
+    `move_object` rather than `destroy` and indestructible does not save it.
+
+    Loyalty is counters, so "zero loyalty" is "no loyalty counters" -- which is
+    also what a planeswalker that somehow lost its enters-with-counters
+    replacement would read, and binning it is right: 306.5b says a planeswalker
+    with no loyalty counters on it has zero loyalty.
+    """
+    changed = False
+    for oid in list(state.battlefield):
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        if "Planeswalker" not in chars(state, oid).types:
+            continue
+        if obj.counter("loyalty") <= 0:
+            move_object(state, oid, Zone.GRAVEYARD, cause="zero_loyalty")
+            changed = True
     return changed
 
 

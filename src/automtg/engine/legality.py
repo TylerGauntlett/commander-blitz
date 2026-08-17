@@ -88,6 +88,7 @@ def _choice_actions(decision: PendingDecision) -> list[Action]:
 def _attacker_actions(state: GameState, pid: int) -> list[Action]:
     out: list[Action] = []
     defenders = combat_mod.legal_defenders(state)
+    walkers = combat_mod.legal_planeswalker_defenders(state)
     for oid in combat_mod.legal_attackers(state):
         name = state.card(oid).name
         for defender in defenders:
@@ -97,6 +98,19 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
                     source=oid,
                     targets=(TargetRef.player(defender),),
                     label=f"Attack p{defender} with {name}",
+                )
+            )
+        # 506.2: a planeswalker is a *third* thing a creature may attack, beside
+        # its controller. Offered as its own action carrying the planeswalker's
+        # oid, so the choice is made once at declaration and nothing downstream
+        # has to re-derive it.
+        for walker in walkers:
+            out.append(
+                Action(
+                    kind=ActionKind.ADD_ATTACKER,
+                    source=oid,
+                    targets=(TargetRef.obj(walker),),
+                    label=f"Attack {state.card(walker).name} with {name}",
                 )
             )
     # "…attacks this combat if able" is enforced by withholding the way out of
@@ -1223,6 +1237,20 @@ def _ability_aims(
         return None
     if ability.once_each_turn and state.turn_ledger.activations(oid, ability.index):
         return None
+    # 606.3: a loyalty ability may be activated only during your own main phase
+    # when the stack is empty (which `sorcery_speed_only` already covers), and
+    # only if **no** loyalty ability of this permanent has been activated this
+    # turn. The second half is a limit on the *permanent*: Sorin has three, and
+    # `once_each_turn` -- which counts one ability -- would let him plus twice
+    # and then minus, three cards' worth of a card.
+    if ability.cost is not None and ability.cost.loyalty is not None:
+        siblings = state.card(oid).abilities
+        if any(
+            state.turn_ledger.activations(oid, other.index)
+            for other in siblings
+            if other.cost is not None and other.cost.loyalty is not None
+        ):
+            return None
     if ability.activation_condition is not None and not _activation_allowed(
         state, pid, oid, ability
     ):

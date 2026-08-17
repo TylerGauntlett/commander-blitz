@@ -211,6 +211,33 @@ def load_deck_file(path: Path) -> DeckModel:
 # ----------------------------------------------------------------------
 
 
+def _replacements_with_loyalty(model: CardModel) -> tuple[dict[str, Any], ...]:
+    """A card's replacements, plus the one its starting loyalty implies.
+
+    Loyalty **is** counters (306.5b), so a planeswalker's starting loyalty is an
+    enters-with-counters replacement and nothing new runs when one arrives.
+    Everything the engine already does with counters -- proliferate, the client's
+    badge, `counters_on` -- reads loyalty for free because there is nothing else
+    to read.
+
+    Written here rather than asked of the card's author, because a planeswalker
+    that entered with no loyalty would be binned by the zero-loyalty state-based
+    action the instant it resolved, and nothing would say why.
+    """
+    out = [r.model_dump() for r in model.replacements]
+    if model.loyalty is not None:
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": "loyalty",
+                "amount": model.loyalty,
+                "modify": {},
+                "condition": None,
+            }
+        )
+    return tuple(out)
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -610,12 +637,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         subtypes=subtypes,
         power=model.power,
         toughness=model.toughness,
+        loyalty=model.loyalty,
         keywords=frozenset(model.keywords),
         colors=colors,
         color_identity=identity,
         targets=targets,
         spell_effects=tuple(model.spell_effects),
-        replacements=tuple(r.model_dump() for r in model.replacements),
+        replacements=_replacements_with_loyalty(model),
         abilities=abilities,
         grantable_abilities=grantable,
         type_line=build_type_line(supertypes, types, subtypes),
@@ -1019,7 +1047,12 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_reflects=mana_reflects,
         mana_identity=mana_identity,
         mana_restriction=mana_restriction,
-        sorcery_speed_only=model.sorcery_speed_only,
+        # 606.3: a loyalty ability may be activated "any time they could cast a
+        # sorcery". That is the rule speaking, not the card, so it is applied
+        # here rather than left to an author to remember -- one omitted flag and
+        # the planeswalker ticks up at instant speed on somebody else's turn.
+        sorcery_speed_only=model.sorcery_speed_only or (cost is not None
+        and cost.loyalty is not None),
         activation_condition=(
             dict(model.condition) if kind is AbilityKind.ACTIVATED and model.condition else None
         ),

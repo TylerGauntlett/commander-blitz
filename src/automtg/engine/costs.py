@@ -506,6 +506,14 @@ def can_pay(
         amount = int(cost.remove_counters.get("amount", 1))
         if obj is None or obj.counter(kind) < amount:
             return False
+    if cost.loyalty is not None and cost.loyalty < 0:
+        # 606.3: a minus ability may only be activated if there is enough
+        # loyalty to pay it. A plus or a zero is always payable, which is why
+        # only the negative half is tested -- and why this is not
+        # `remove_counters`, which can never add.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.counter("loyalty") < -cost.loyalty:
+            return False
     if cost.exile_from_graveyard is not None and not _graveyard_pool(
         state, pid, cost, source_oid
     ):
@@ -767,6 +775,17 @@ def pay(
             str(cost.remove_counters.get("counter", "+1/+1")),
             int(cost.remove_counters.get("amount", 1)),
         )
+
+    if cost.loyalty is not None and source_oid is not None:
+        # A **cost**, so it is paid as the ability goes on the stack and is not
+        # refunded if the ability is countered or does nothing -- which is what
+        # makes a planeswalker's loyalty spendable in response to removal.
+        from .primitives import add_counters, remove_counters
+
+        if cost.loyalty > 0:
+            add_counters(state, source_oid, "loyalty", cost.loyalty)
+        elif cost.loyalty < 0:
+            remove_counters(state, source_oid, "loyalty", -cost.loyalty)
 
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)

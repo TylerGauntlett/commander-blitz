@@ -223,7 +223,17 @@ def damage_permanent(
     withers = source_oid is not None and (
         _has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT)
     )
-    if withers:
+    # 306.8: damage dealt to a planeswalker removes that many loyalty counters.
+    # Read here, beside wither, for the same reason wither is read here: this is
+    # the one point every damage source already passes through, and marking
+    # `obj.damage` on a planeswalker instead would be invisible -- nothing
+    # compares a planeswalker's damage to anything, so it would take no damage
+    # at all and never die.
+    from .characteristics import chars as _chars
+
+    if "Planeswalker" in _chars(state, oid).types:
+        remove_counters(state, oid, "loyalty", amount)
+    elif withers:
         add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
     else:
         obj.damage += amount

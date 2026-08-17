@@ -8362,6 +8362,62 @@
           "cloak": true
         }
       ]
+    },
+    {
+      "id": "t_walker",
+      "name": "Test Walker",
+      "oracle_text": "+1: You gain 2 life.\n-3: Draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Planeswalker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Sorin"
+      ],
+      "loyalty": 4,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "-3: Draw a card.",
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

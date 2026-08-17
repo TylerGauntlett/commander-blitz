@@ -106,6 +106,10 @@ class Cost:
     #: cannot price the same cost differently.
     pay_life: int | Mapping[str, Any] = 0
     remove_counters: Mapping[str, Any] | None = None
+    #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
+    #: cost", because `0:` is a real and different thing -- a printed zero
+    #: ability still counts as the one loyalty ability that turn.
+    loyalty: int | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: "This ability costs {1} less to activate for each Vampire you control."
     #: Applied by `costs.ability_mana`, which both `can_pay` and `pay` call so an
@@ -149,6 +153,12 @@ class Cost:
             remove_counters=(
                 dict(spec["remove_counters"]) if spec.get("remove_counters") else None
             ),
+            # `is not None`, not truthiness: `0:` is a printed loyalty cost and
+            # a falsy one, and reading it as "no loyalty cost" would make a zero
+            # ability free to use twice in a turn.
+            loyalty=(
+                int(spec["loyalty"]) if spec.get("loyalty") is not None else None
+            ),
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
@@ -179,6 +189,7 @@ class Cost:
             and not self.discard_self
             and not self.pay_life
             and self.remove_counters is None
+            and self.loyalty is None
             and self.exile_from_graveyard is None
         )
 
@@ -205,6 +216,8 @@ class Cost:
             parts.append(f"Pay {amount} life")
         if self.remove_counters:
             parts.append("Remove counters")
+        if self.loyalty is not None:
+            parts.append(f"{self.loyalty:+d}")
         if self.exile_from_graveyard:
             parts.append("Exile from graveyard")
         return ", ".join(parts) or "{0}"
@@ -384,6 +397,10 @@ class CardDef:
     targets: tuple[TargetSpec, ...] = ()
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     replacements: tuple[Mapping[str, Any], ...] = ()
+    #: Starting loyalty. Kept as a characteristic as well as compiled into a
+    #: replacement, because the client shows it on the card in hand where no
+    #: object exists to carry counters yet.
+    loyalty: int | None = None
     abilities: tuple[Ability, ...] = ()
     #: Abilities this card can *hand to something else* -- the quoted text in
     #: `gains trample and "Whenever this creature deals combat damage to a

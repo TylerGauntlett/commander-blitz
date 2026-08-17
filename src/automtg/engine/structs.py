@@ -304,6 +304,13 @@ class CombatState:
 
     #: attacker oid -> the player being attacked
     attackers: dict[int, int] = field(default_factory=dict)
+    #: attacker oid -> the **planeswalker** it is attacking, when it is
+    #: attacking one. A parallel map rather than a union in `attackers`, which
+    #: is read in about fifteen places: a planeswalker's controller *is* the
+    #: defending player (506.2), so every existing read of `attackers[oid]`
+    #: keeps meaning what it meant and stays true. Only declaration, damage
+    #: assignment and serialization have to know the difference.
+    attacking_planeswalker: dict[int, int] = field(default_factory=dict)
     #: blocker oid -> the attacker it is blocking
     blockers: dict[int, int] = field(default_factory=dict)
     #: attacker oid -> ordered list of blocker oids (damage assignment order)
