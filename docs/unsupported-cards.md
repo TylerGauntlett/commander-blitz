@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**9 cards** blocked by **20** capabilities.
+**8 cards** blocked by **19** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [dies-exile-replacement](#dies-exile-replacement) | 1 | 9863 | replacement |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
-| [granted-leave-triggers](#granted-leave-triggers) | 1 | 243 | trigger |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
@@ -165,20 +164,6 @@ Blocks **1** card.
 - **Akroma's Will** (rank 191) — `akroma_s_will`
   - Choose one. If you control a commander as you cast this spell, you may choose both instead.
   - • Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.
-
-</details>
-
-## granted-leave-triggers
-
-Blocks **1** card.
-
-- **(trigger)** A triggered ability handed to another permanent by `grant_ability` must be able to fire on that permanent's *own departure* -- `dies` and `leaves_battlefield` with `source: "self"`. Two things have to change together. (1) `GameObject.reset_permanent_state` (src/automtg/engine/objects.py:373) empties `until_eot`, and `move_object` calls it at src/automtg/engine/zones.py:106, *before* it fires LEAVES_BATTLEFIELD and DIES at zones.py:147/172 -- so the grant is already gone when the death event goes out. The grant needs the same last-known-information snapshot treatment `was_creature`, `was_attacking` and `had_counters` already get a few lines above (zones.py:73-85), which is the engine's stated explicit-LKI pattern. (2) The leave-trigger scan in src/automtg/engine/triggers.py:258-268 walks only `card.abilities` for the object that just left; every other branch of that generator pairs a battlefield walk with a `granted_abilities` walk (triggers.py:231-235), and this one has no such pairing, so a granted leave-trigger has no path to queue even with the grant intact.
-  <br>Why the existing vocabulary won't do: Verified empirically against the real engine, not inferred. Granting the ability to a creature and then moving it to the graveyard leaves `until_eot == []`, `granted_abilities(state, oid) == []` and `state.pending_triggers == []`; the byte-identical ability *printed* on the same creature queues normally ("Probe Printed Bear: When this creature dies, ..."). So `grant_ability` itself is fine and needs no change -- its until-end-of-turn duration is real, granted *triggered* abilities already work (herd_heirloom in data/cards/auto/templates.cards.json grants a `deals_combat_damage_to_player` trigger through `grantable_abilities`), and the resolution effect is expressible today as `return_from_graveyard` with `destination: "battlefield"`, `tapped: true` and `objects: {"self_only": true, "zone": "graveyard"}` -- that exact spec resolves correctly for the printed version. The gap is only that the grant does not survive the one event this card cares about. `delay` (src/automtg/engine/effects/ops_control.py:361) is not a substitute: a DelayedTrigger fires at a named *step*, never on an event, so it cannot say "when this creature dies" at all, and scheduling the return at the next end step would be a different card. Nor is a printed ability on some other permanent an option: the printed sentence says the *creature* gains it, which is what makes it follow the creature and what makes it a legal target-selected grant.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
-  - Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
 
 </details>
 

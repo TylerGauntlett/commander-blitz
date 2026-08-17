@@ -37,12 +37,17 @@ def _expectations() -> dict:
 
 PAYLOADS = _auto_payloads()
 
-#: The back faces of transforming cards, by id. A back face is not a card in its
-#: own right: it is never cast, drawn or shuffled into a deck, so it has no
-#: expectation and no position to be verified in. It is checked *through* its
-#: front, which names it as a companion below.
+#: The second entries of two-faced cards, by id -- both links. `back_face` is a
+#: transforming card's other side and `second_face` is a modal DFC's, a split
+#: half or an Adventure; either way the entry is not a card in its own right. It
+#: is never drawn or shuffled into a deck on its own, it has no expectation --
+#: there is no position to cast it in by itself -- and it is checked *through*
+#: its front, which names it as a companion below.
 BACK_FACE_IDS = frozenset(
-    str(c["back_face"]) for c in PAYLOADS if c.get("back_face")
+    str(c[key])
+    for c in PAYLOADS
+    for key in ("back_face", "second_face")
+    if c.get(key)
 )
 
 CARD_IDS = sorted(
@@ -72,9 +77,9 @@ class TestEveryAutoCardStillPasses:
         # Verified apart, the front fails the registry gate on a `back_face`
         # pointing at a card that is not in the pool.
         companions = [
-            by_id[str(payload["back_face"])]
-            for _ in (0,)
-            if payload.get("back_face") and str(payload["back_face"]) in by_id
+            by_id[str(payload[key])]
+            for key in ("back_face", "second_face")
+            if payload.get(key) and str(payload[key]) in by_id
         ]
         verdict = V.verify(payload, expectation, hand_written, companions=companions)
         assert verdict.ok, str(verdict)
