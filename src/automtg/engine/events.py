@@ -29,6 +29,13 @@ class EventType:
     LEAVES_BATTLEFIELD = "leaves_battlefield"
     DIES = "dies"
     TOKEN_CREATED = "token_created"
+    #: "Whenever you sacrifice a token…" -- a sacrifice told apart from every
+    #: other way of leaving the battlefield. `move_object` already tags the move
+    #: `cause="sacrificed"`, but that tag reached only the ZONE_CHANGE payload;
+    #: `dies` and `leaves_battlefield` carry no cause, so no trigger could tell a
+    #: sacrifice from a removal spell, which is most of what the printed line is
+    #: about.
+    SACRIFICED = "sacrificed"
 
     # cards and the stack
     DRAW = "draw"

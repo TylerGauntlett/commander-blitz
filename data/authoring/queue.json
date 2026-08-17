@@ -25872,12 +25872,12 @@
     },
     "Blade of the Bloodchief": {
       "edhrec_rank": 2433,
-      "gate": "template",
+      "gate": null,
       "name": "Blade of the Bloodchief",
-      "reason": "no template for: Whenever a creature dies, put a +1/+1 counter on equipped creature. If equipped creature i",
+      "reason": "",
       "scryfall_id": "34e7bebf-1844-476c-a947-978393908fa2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blade of the Oni": {
@@ -173552,12 +173552,12 @@
     },
     "Mirkwood Bats": {
       "edhrec_rank": 228,
-      "gate": "template",
+      "gate": null,
       "name": "Mirkwood Bats",
-      "reason": "no template for: Whenever you create or sacrifice a token, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "8819dd6d-1127-4c73-9df7-5e5d66c20a68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirkwood Channeler": {
@@ -248102,12 +248102,12 @@
     },
     "Skullclamp": {
       "edhrec_rank": 40,
-      "gate": "template",
+      "gate": null,
       "name": "Skullclamp",
-      "reason": "no template for: Whenever equipped creature dies, draw two cards",
+      "reason": "",
       "scryfall_id": "1d8b007b-3169-4ee3-80c7-781fc096fc7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skullcrack": {

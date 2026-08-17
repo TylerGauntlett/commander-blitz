@@ -264,20 +264,24 @@ class TestThePacketCarriesTheWholeVocabulary:
         only, an effect's selector may read far more.
 
         Neither contains the other, which is the reason both have to travel.
-        The static-only keys are all one category -- **relationships between two
+        The static-only keys are one category -- **relationships between two
         permanents**, read off a field rather than off a characteristic:
-        `attached` is "enchanted creature gets +2/+2", and soulbond's two are
-        "as long as this creature is paired, **both** get +1/+1", which is one
-        static written once and applied to two creatures. All three are board
-        state, so no static can depend on another's output through them, and all
-        three are meaningless to an effect's selector, which addresses objects
-        by zone rather than by their relation to a source.
+        soulbond's two are "as long as this creature is paired, **both** get
+        +1/+1", one static written once and applied to two creatures. Both are
+        board state, so no static can depend on another's output through them.
+
+        `attached` used to be here and is now in *both* lists. The claim that it
+        was "meaningless to an effect's selector" was simply wrong: Blade of the
+        Bloodchief puts a counter on equipped creature and Skullclamp draws when
+        it dies, and neither is a continuous effect. Being static-only was the
+        reason no `op` could reach the equipped creature at all.
         """
         from automtg.cards.authoring.packet import reference
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
-        assert static - selector == {"attached", "paired", "paired_with_source"}
+        assert static - selector == {"paired", "paired_with_source"}
+        assert "attached" in static and "attached" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
 
     def test_the_static_condition_vocabulary_is_shown(self):

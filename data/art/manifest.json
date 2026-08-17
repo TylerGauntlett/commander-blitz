@@ -1148,6 +1148,11 @@
     "file": "blackcleave_goblin.jpg",
     "scryfall_id": "95986875-59f5-414f-867f-94f30cefa5d6"
   },
+  "blade_of_the_bloodchief": {
+    "artist": "Jung Park",
+    "file": "blade_of_the_bloodchief.jpg",
+    "scryfall_id": "34e7bebf-1844-476c-a947-978393908fa2"
+  },
   "blade_of_the_sixth_pride": {
     "artist": "Lars Grant-West",
     "bytes": 65672,
@@ -7189,6 +7194,11 @@
     "file": "mire_s_grasp.jpg",
     "scryfall_id": "0ae0c536-612d-4916-a8da-5aaaf14218b1"
   },
+  "mirkwood_bats": {
+    "artist": "Rafal Wechterowicz (Too Many Skulls)",
+    "file": "mirkwood_bats.jpg",
+    "scryfall_id": "8819dd6d-1127-4c73-9df7-5e5d66c20a68"
+  },
   "mirri_cat_warrior": {
     "artist": "Daren Bader",
     "bytes": 88436,
@@ -10515,6 +10525,12 @@
     "bytes": 82334,
     "file": "skeletal_snake.jpg",
     "scryfall_id": "42bd4896-4191-4479-be57-070753f8725c"
+  },
+  "skullclamp": {
+    "artist": "Lordigan",
+    "bytes": 63072,
+    "file": "skullclamp.jpg",
+    "scryfall_id": "1d8b007b-3169-4ee3-80c7-781fc096fc7a"
   },
   "skulltap": {
     "artist": "Adam Rex",

@@ -43,6 +43,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
+    #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
+    #: sacrifice is one specific way of leaving, and the printed line is about
+    #: the choice rather than the death. Fired beside DIES rather than instead
+    #: of it, so everything already listening for a death still hears one.
+    "sacrificed": EventType.SACRIFICED,
+    #: "Whenever you **create** a token…" -- the other half of the same card.
+    #: `permanent_enters` with `{"is_token": true}` is the near miss and is close
+    #: enough to be tempting (111.1 makes creating and entering one act), but it
+    #: also fires for a token that changed zones and back, and it reads the
+    #: entering permanent's controller rather than the creator's.
+    "token_created": EventType.TOKEN_CREATED,
     "draw": EventType.DRAW,
     "discard": EventType.DISCARD,
     "cycle": EventType.CYCLED,
@@ -75,6 +86,8 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "permanent_enters",
         "dies",
         "creature_dies",
+        "sacrificed",
+        "token_created",
         "leaves_battlefield",
         "spell_cast",
         "attacks",
@@ -461,6 +474,22 @@ def matches_card_filter(
     # below, and answered off the *ability source* rather than off the subject:
     # the haunted creature has just died and carries no record of who was
     # haunting it, while the haunting card is sitting in exile with the link.
+    # "Whenever **equipped creature** dies…" -- Skullclamp. The same shape as
+    # `haunted_by` below: answered off the *ability source's* link rather than
+    # off the subject, because an Equipment knows what it is attached to and a
+    # dying creature does not know what was attached to it.
+    #
+    # `last_attached_to` is why this works at all. `zones.move_object` calls
+    # `_detach_all` before it fires LEAVES_BATTLEFIELD and DIES, so at match
+    # time the Equipment is attached to nothing and a plain `attached_to == oid`
+    # test could never be true for a dies trigger -- the exact failure this
+    # capability's gap record predicted.
+    if filt.get("attached") and oid not in (
+        ability_source.attached_to,
+        ability_source.last_attached_to,
+    ):
+        return False
+
     haunted_by = filt.get("haunted_by")
     if haunted_by is not None and (
         haunted_by != "self" or ability_source.haunting != oid

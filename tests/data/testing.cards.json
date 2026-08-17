@@ -7090,6 +7090,210 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_clamp",
+      "name": "Test Clamp",
+      "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/-1.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": 1,
+          "toughness": -1
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever equipped creature dies, draw two cards.",
+          "trigger": {
+            "event": "dies",
+            "controller": "any",
+            "filter": {
+              "attached": true
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {1}",
+          "cost": {
+            "mana": "{1}"
+          },
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_blade",
+      "name": "Test Blade",
+      "oracle_text": "Whenever a creature dies, put a +1/+1 counter on equipped creature.\nEquip {1}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature dies, put a +1/+1 counter on equipped creature.",
+          "trigger": {
+            "event": "dies",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "attached": true,
+                "count": "all"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {1}",
+          "cost": {
+            "mana": "{1}"
+          },
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bats",
+      "name": "Test Bats",
+      "oracle_text": "Whenever you create or sacrifice a token, each opponent loses 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you create or sacrifice a token, each opponent loses 1 life.",
+          "trigger": {
+            "event": "token_created",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you create or sacrifice a token, each opponent loses 1 life.",
+          "trigger": {
+            "event": "sacrificed",
+            "controller": "you",
+            "filter": {
+              "is_token": true
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
