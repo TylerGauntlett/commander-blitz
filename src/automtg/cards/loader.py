@@ -892,6 +892,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_amount: Mapping[str, Any] | None = None
     mana_rider: tuple[Mapping[str, Any], ...] = ()
     mana_reflects: Mapping[str, Any] | None = None
+    mana_identity = False
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -922,6 +923,26 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # `offerable_mana_ability` both decide this is not a mana source at
             # all -- so the ability would never be offered or tapped, whatever
             # the opponent's lands did.
+            mana_options = _ANY_COLOR_OPTIONS
+            mana_amount = None
+        elif any(
+            isinstance(e, Mapping) and e.get("in_commander_identity") for e in mana_effects
+        ):
+            # "Add one mana of any color in your commander's color identity."
+            # Command Tower, Arcane Signet, Path of Ancestry. The same shape as
+            # `reflecting` and for the same reason -- the colours are a question
+            # about the game, not about the card -- but the question is asked of
+            # the command zone rather than of the board.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a commander-identity mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the identity's colours to join"
+                )
+            mana_identity = True
+            # The static superset, for the same reason `reflecting` needs one:
+            # an empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source, so the
+            # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
         else:
@@ -962,6 +983,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_amount=mana_amount,
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
+        mana_identity=mana_identity,
         mana_restriction=mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         activation_condition=(
@@ -1839,8 +1861,15 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     # `reflecting` is the one add_mana that names no symbols: "one mana of any
     # color that a land an opponent controls could produce" reads them off the
     # board, so the card names the permanents to ask instead.
-    if op == "add_mana" and "mana" not in effect and "reflecting" not in effect:
-        raise DslError(f"{where}: add_mana needs 'mana' (or 'reflecting')")
+    if (
+        op == "add_mana"
+        and "mana" not in effect
+        and "reflecting" not in effect
+        and not effect.get("in_commander_identity")
+    ):
+        raise DslError(
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
+        )
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
