@@ -539,8 +539,21 @@ def _cast_options(
     if card.additional_cost is not None and state.objects[oid].zone is Zone.HAND:
         first = 0 if card.additional_optional else 1
         last = _additional_ceiling(state, pid, oid, card)
-        if not card.additional_optional and last < 1:
-            out = []  # the printed line is not castable without the cost
+        if not card.additional_optional:
+            # The free line is withdrawn *whenever* the cost is mandatory, not
+            # only when it happens to be unpayable. Clearing it just in the
+            # unpayable case is the same thing as never charging it: a player
+            # holding a creature was offered both Village Rites lines and
+            # `find_play` took the first, so the card was a one-mana draw-two
+            # that sacrificed nothing. An unpayable cost then falls out of the
+            # same statement, because the loop below adds nothing when
+            # `last` is 0 and the printed spell is simply not castable.
+            #
+            # Everything is dropped, not just the plain variant: with a
+            # mandatory additional cost, *every* way of casting the spell owes
+            # it (601.2f), so an evoke or kicker line that skipped it would be
+            # the same bug wearing a different name.
+            out = []
         for times in range(max(first, 1), last + 1):
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic,

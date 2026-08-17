@@ -663,6 +663,24 @@ def _covered(card: CardDef, line: str) -> bool:
         return True
     if card.evoke is not None and stripped.lower().startswith("evoke "):
         return True
+
+    # "As an additional cost to cast this spell, sacrifice a creature" is the
+    # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
+    # ability that could honestly claim it. This did not surface while the only
+    # cards carrying one were instants and sorceries, because `claimed_lines`
+    # treats `spell_effects` as accounting for every line of a spell. A creature
+    # with an additional cost -- Demon of Catastrophes -- has no `spell_effects`
+    # at all, and its printed cost went unclaimed.
+    if card.additional_cost is not None and stripped.lower().startswith(
+        "as an additional cost"
+    ):
+        return True
+
+    # "Devoid (This card has no color.)" is self-implementing -- but only if the
+    # card really is colourless, which is why this is a check and not a skip. A
+    # card printing Devoid while carrying colours has not implemented it.
+    if stripped.lower().startswith("devoid") and not card.colors:
+        return True
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:
