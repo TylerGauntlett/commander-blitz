@@ -103872,12 +103872,12 @@
     },
     "Gallifrey Falls // No More": {
       "edhrec_rank": 9863,
-      "gate": "template",
+      "gate": null,
       "name": "Gallifrey Falls // No More",
-      "reason": "no template for: Gallifrey Falls deals 4 damage to each creature. If a creature dealt damage this way would",
+      "reason": "",
       "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gallifrey Stands": {

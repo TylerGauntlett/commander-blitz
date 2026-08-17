@@ -2210,6 +2210,15 @@
       "0": 1
     }
   },
+  "gallifrey_falls_no_more": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 3,
+      "1": 0
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "game_trail": {
     "zone": "battlefield"
   },

@@ -10,30 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **5** capabilities.
+**1 card** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [any-number-of-targets](#any-number-of-targets) | 1 | 9863 | targeting |
 | [cloak](#cloak) | 1 | 6625 | engine |
-| [dies-exile-replacement](#dies-exile-replacement) | 1 | 9863 | replacement |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
-| [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
-
-## any-number-of-targets
-
-Blocks **1** card.
-
-- **(targeting)** A target spec with an unbounded, caster-chosen size -- 'any number of target creatures you control', as on Cryptic Command's cousins, Aetherize-style bounces and every 'any number of target' spell. The count is chosen as the spell is cast and may be zero; today a spec's size is a compile-time constant.
-  <br>Why the existing vocabulary won't do: `TargetModel.count` is `int = 1` (src/automtg/cards/schema.py:71) -- a fixed number baked into the card, not a value the caster picks. `engine/targeting.py:150` enumerates `itertools.combinations(options, min(spec.count, len(options)))`, i.e. subsets of *exactly* that size, so there is no representation of a variable-size selection at any layer. `optional: true` adds precisely one extra option, the empty tuple, so `count: N, optional: true` is 'exactly N, or none' -- not 'up to N' and certainly not 'any number'. Picking some large N and calling it 'any number' is an approximation twice over: it caps a printed unbounded choice, and it forbids every size between 1 and N-1. Strictly this need is smaller than the other two -- No More would still be unwritable with it solved, because the phase-out op is what the sentence's verb is -- but it is a separate vocabulary item that blocks the sentence on its own and is worth closing independently.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
-  - If a creature dealt damage this way would die this turn, exile it instead
-  - Any number of target creatures you control phase out
-
-</details>
 
 ## cloak
 
@@ -50,21 +32,6 @@ Blocks **1** card.
 
 </details>
 
-## dies-exile-replacement
-
-Blocks **1** card.
-
-- **(replacement)** A replacement effect, lasting for the rest of the turn and scoped to the set of creatures this spell damaged, that changes where a creature goes when it would die: 'if [these creatures] would die this turn, exile [them] instead'. Two pieces the engine has neither of: (a) a turn-duration mark on an object recording 'this was dealt damage by this source', and (b) an authorable hook at the moment a creature is put into the graveyard from the battlefield that can redirect the destination to exile. Anger of the Gods, Flame Sweep-style exile wraths, Merciless Eviction's cousins and Rest in Peace-adjacent 'exile instead of dying' effects all want the same hook.
-  <br>Why the existing vocabulary won't do: `ReplacementModel` (src/automtg/cards/schema.py:202) is a three-value Literal -- `self_enters`, `self_enters_tapped`, `self_enters_with_counters` -- and its own docstring calls itself 'one of the four whitelisted replacement effects'. Every one is about a permanent *entering*; this is the moment one leaves, and there is no `event` spelling for it. The engine does have a death-replacement site, `zones.destroy` (src/automtg/engine/zones.py:320), but it is hard-coded to exactly three mechanisms -- indestructible, a regeneration shield, totem armor -- none of them reachable from a card's own text, and its docstring says so explicitly ('checked here rather than as `replacements` entries because that whitelist is about a permanent entering'). Worse for this card, the lethal-damage state-based action does not route through `destroy` at all: `sba._creature_deaths` (src/automtg/engine/sba.py:264) calls `move_object(..., Zone.GRAVEYARD, cause='lethal_damage')` directly, so the very deaths this card is about would bypass a hook added to `destroy`. Nothing in `ops`, `static_effects` or `trigger_events` substitutes. `damage` (src/automtg/engine/effects/ops_life.py:57) takes only `amount`/`objects`/`player`/`target` -- there is no exile rider on it. The nearest authorable shape is a delayed trigger on `dies` filtered by `damaged_by`, and it is a *different card*: the creature would really die, its dies-triggers and any 'whenever a creature dies' on the board would all fire, and it would sit in the graveyard long enough to be seen there before being exiled -- which is precisely what a replacement effect exists to prevent. `delay` (src/automtg/engine/effects/ops_control.py:361) cannot even do that much: a `DelayedTrigger` fires at a named *step*, not on an event, so it has no way to react to a death when the death happens. And an instant has no `abilities` list to hang a lasting triggered ability on anyway -- its effects live in `spell_effects` and are gone when it resolves.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
-  - If a creature dealt damage this way would die this turn, exile it instead
-  - Any number of target creatures you control phase out
-
-</details>
-
 ## per-player-loop
 
 Blocks **1** card.
@@ -77,20 +44,5 @@ Blocks **1** card.
 - **Unexplained Absence** (rank 6625) — `unexplained_absence`
   - For each permanent exiled this way, its controller cloaks the top card of their library. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)
   - For each player, exile up to one target nonland permanent that player controls
-
-</details>
-
-## phase-out-effect
-
-Blocks **1** card.
-
-- **(op)** An effect op that phases a permanent out on demand -- 'target creature phases out', the one-shot half of phasing, as printed on Teferi's Veil, Vanishing, Reality Acid's cousins and every 'phase out' blink-substitute. It should phase the permanent out immediately (and phase it back in before its controller's next untap step), taking whatever is attached to it along, exactly as the keyword already does.
-  <br>Why the existing vocabulary won't do: Phasing shipped as a *keyword read by the untap step* and nothing else. `engine/turn.py` owns the whole mechanism -- `_phase_out` at line 278 and `_phase_in` are module-private, and the only caller is the untap-step walk at line 274, which toggles permanents whose derived keywords contain `phasing`. Grep confirms it: outside `turn.py`, the only mentions of `phased_out` anywhere in `src/` are the two field declarations on `GameObject` (src/automtg/engine/objects.py:218,222). There is no registered op for it -- the complete op registry (every `@register` in `engine/effects/`) has 79 entries and none of them is `phase_out`. The two workarounds both make a different card: `grant_keyword: phasing` gives the creature the *keyword*, which does nothing now and then flickers it out and back on every one of its controller's untap steps forever after -- it neither phases out this turn nor stops next turn; and `exile` plus a `delay` to return it is a real zone change, so the creature loses its counters, its Auras, its damage and its 'continuously on the battlefield' status, triggers every leave- and enter-the-battlefield ability on the table, and comes back as a new object -- the four things docs/rules-coverage.md's phasing row spends its whole argument establishing that phasing does *not* do.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
-  - If a creature dealt damage this way would die this turn, exile it instead
-  - Any number of target creatures you control phase out
 
 </details>
