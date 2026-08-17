@@ -409,6 +409,23 @@ def _matches(
     ) is not spec.mana_ability:
         return False
 
+    # "Whenever you draw your **second** card each turn." An ordinal is a fact
+    # about the draw that just happened, and `draw_cards` writes it onto the
+    # event, so it is answered here -- once, where the ability queues -- and
+    # never again.
+    #
+    # The condition form of the same clause is the near miss, and it is wrong in
+    # the card's ordinary line of play rather than at an edge: intervening-ifs
+    # are re-checked on resolution (603.4), and the draw-two spell that queued
+    # the trigger with the tally at 2 has already pushed it to 3 by then, so the
+    # ability resolves as `skipped="condition"` and Prince Imrahil makes no
+    # token off a Divination. Written with `>=` and `max_per_turn: 1` it
+    # survives the re-check and gains the opposite fault: a permanent entering
+    # after two draws fires on the third card, where the printed card is silent
+    # for the rest of the turn. This asks the only question that is stable.
+    if spec.nth is not None and event.data.get("nth") != spec.nth:
+        return False
+
     actor = _actor(state, spec.event, event, subject_oid)
     if actor is not None:
         if spec.controller == "you" and actor != obj.controller:

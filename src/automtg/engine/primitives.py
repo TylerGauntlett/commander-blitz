@@ -42,8 +42,15 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # "…for each card you've drawn this turn." Counted here rather than off
         # the DRAW event, so that every draw counts however it was caused and a
         # card can never be drawn without the tally seeing it.
-        state.cards_drawn_this_turn[pid] = state.cards_drawn_this_turn.get(pid, 0) + 1
-        fire(state, EventType.DRAW, player=pid, source=oid, oid=oid)
+        nth = state.cards_drawn_this_turn.get(pid, 0) + 1
+        state.cards_drawn_this_turn[pid] = nth
+        # "Whenever you draw your **second** card each turn." The ordinal of
+        # *this* draw, put on the event so the answer is fixed where the ability
+        # queues. The tally itself cannot be asked later: it keeps moving, and a
+        # trigger's `condition` is re-evaluated on resolution (603.4), so the
+        # same draw-two spell that queued the trigger has already carried the
+        # tally past 2 by the time anything re-reads it.
+        fire(state, EventType.DRAW, player=pid, source=oid, oid=oid, nth=nth)
     return drawn
 
 
