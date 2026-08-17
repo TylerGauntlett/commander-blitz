@@ -1596,6 +1596,38 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "Whenever you attack"
+
+```jsonc
+"trigger": {"event": "you_attack", "controller": "you"}
+```
+
+Once per combat in which its controller declared one or more attackers, whatever
+the number. `attacks` is the near miss and is per *creature* — written that way,
+Clavileño would make three Demons on a three-creature swing.
+
+No new event: `ATTACKERS_DECLARED` was already produced once by `combat.py` after
+the declaration closes, and was `emit`ted (logged) rather than `fire`d (put
+through the trigger bus) — the same shape `token_created` had.
+
+## Granting an ability for as long as the permanent lasts
+
+```jsonc
+{"op": "grant_ability", "ability": 0, "duration": "permanent",
+ "objects": {"target": "t1"}}
+```
+
+The option `grant_keyword` already carried. Without it every granted ability went
+into `until_eot` and was swept at cleanup — and a grant whose printed text names
+no duration is a strictly weaker card that way, identical on the turn it is made
+and gone by the next.
+
+The two durations live in different lists, because only one is swept.
+`granted_abilities` reads both alike, so nothing downstream had to learn the
+difference — and `move_object` snapshots **both** into `left_with`, because a
+creature's death is exactly when a granted dies-trigger is asked about and
+neither list survives `reset_permanent_state`.
+
 ## An activated ability that gets cheaper
 
 ```jsonc

@@ -100,7 +100,9 @@ def move_object(
     # *after* that. A triggered ability granted until end of turn -- Malakir
     # Rebirth's "that creature gains 'when this creature dies, return it'" --
     # would otherwise be gone before its own death event went out, every time.
-    left_with = tuple(obj.until_eot) if was_on_battlefield else ()
+    left_with = (
+        (*obj.until_eot, *obj.granted_abilities_permanent) if was_on_battlefield else ()
+    )
 
     _remove_from_zone(state, obj)
 
