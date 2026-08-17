@@ -2107,6 +2107,9 @@
   "flameborn_viron": {
     "zone": "battlefield"
   },
+  "flamerush_rider": {
+    "zone": "battlefield"
+  },
   "flaming_sword": {
     "zone": [
       "battlefield",

@@ -1,3 +1,101 @@
+## At end of combat — the one delay step that is not once a turn
+
+### Overview
+
+Flamerush Rider — "Whenever this creature attacks, create a token that's a copy
+of another target attacking creature and that's tapped and attacking. **Exile the
+token at end of combat.**"
+
+`Step.END_OF_COMBAT` has existed since the turn structure was written and the
+turn has always walked through it. Nothing could ever be attached to it:
+`turn.DELAY_STEPS` named `upkeep`, `draw_step`, `begin_combat` and `end_step`,
+and `delay`'s step is matched against that table alone, so
+`{"step": "end_of_combat"}` was a load error. One entry in one dict fixes the
+first half.
+
+Substituting the nearest reachable step is not an option, and this is the card
+that shows why. A token exiled at the **end step** survives the whole postcombat
+main phase: it can be sacrificed for value, tapped for an ability, or — since
+`extra_combat` shipped — attack again in a second combat. The printed line exists
+to stop exactly that, and a card that stopped none of it would play like a
+different, better card, with nothing on screen saying so.
+
+### Which combat, and why the question is new
+
+The other four delay steps happen once a turn, so naming the step is the whole of
+naming the moment. A combat phase does not, and that changed the week
+`extra_combat` landed: Relentless Assault, Combat Celebrant, Aggravated Assault
+and Seize the Day all give a turn two or three combat phases, and
+`Step.END_OF_COMBAT` is re-entered by every one of them.
+
+So the semantics are decided rather than inherited. "At end of combat" means
+**the end of the combat the delay was created in** (603.7), and — for one created
+in a main phase, an upkeep, or the end of combat step itself, where there is no
+combat to belong to — the end of the next combat to begin.
+
+`CombatState` cannot say which combat that is: `combat.end_combat` throws it away
+as the END_OF_COMBAT step begins, and that runs *before* `_run_delayed` reads
+anything. So the identity is a number that outlives the phase —
+`GameState.combat_number`, incremented by `combat.start_combat`, the one place a
+combat begins. `op_delay` stamps it onto the `DelayedTrigger`:
+
+```python
+return state.combat_number if state.combat is not None else state.combat_number + 1
+```
+
+and `turn._delay_due` compares it against the combat that is ending now. Only
+`end_of_combat` carries a stamp; the four older steps compare on the name alone
+and are byte-for-byte unchanged.
+
+Monotonic for the whole game rather than reset per turn, so a number is never
+reused. A delay scheduled in a postcombat main names "the combat after this one",
+which may be an extra combat later this turn or the first one next turn — and
+either way is the same integer, with no second field saying which turn it meant.
+
+### What the stamp changes today: nothing observable
+
+Worth saying plainly, because the diff invites the question. In the turn machine
+as it stands, "the combat it was created in" and "the next END_OF_COMBAT step to
+come round" are the same step, always. Every combat that begins reaches its own
+end of combat step before any later one begins — including a combat nobody
+attacked in, which `turn.next_step` routes straight from declare-attackers to
+END_OF_COMBAT — and `_run_delayed` runs after `begin_step` for the current step,
+so a delay created during a combat cannot be seen by a step that has already gone
+by. A bare step-name match would pick the same moment in every reachable line of
+play.
+
+The stamp is what makes that a *statement* instead of a coincidence. It is the
+difference between an exile timed to a combat and one timed to whichever end of
+combat step arrives next, and only the first stays right if anything ever ends a
+combat phase early. `TestTheStampIsAGuard` in `tests/unit/test_end_of_combat.py`
+is that invariant, asserted on `_delay_due` directly, because it is the half no
+card can demonstrate.
+
+### The card
+
+**Unblocked one card: Flamerush Rider.** Its other need,
+`effect_result_binding`, was closed by an earlier run — `copy_permanent` takes an
+`as` that records the oids it made, so "the token" is nameable and `delay`
+snapshots `dict(ctx.bindings)` when it schedules, which carries the record to
+whatever step the exile is scheduled for. Everything else was already shipped
+vocabulary: "another target attacking creature" is a `permanent` target with
+`{"attacking": true, "exclude_self": true}`, `copy_permanent` already took
+`tapped` and `attacking`, and dash is the `evoke` + `evoke_label` mechanism whose
+price guard a sibling run had already relaxed for dash costs that exceed the
+printed line.
+
+Authored in the **agent tier**. `--tier templates --retry` harvested nothing:
+`templates.py` has no reader for "create a token that's a copy of another target
+attacking creature", and writing one for a single card would be a template that
+half-reads a sentence.
+
+The behaviour gate declines combat in its fixed sandbox, so the attack trigger
+never fires there and the card honestly asserts the weak `{"zone": "battlefield"}`
+fallback that Combat Celebrant and every other attack-triggered creature asserts.
+The real coverage is `tests/unit/test_end_of_combat.py`, which plays the card
+through a turn with two combats and checks each copy against the end of the
+combat that made it.
+
 ## Dash — the alternative cost that is allowed to cost more
 
 ### Overview
@@ -932,7 +1030,9 @@ needed nothing new. Flamerush Rider loses this need and keeps its other one:
 `Step.END_OF_COMBAT` exists and the turn walks through it, but `turn.DELAY_STEPS`
 maps only four steps, so `{"op": "delay", "step": "end_of_combat"}` never becomes
 due. `delay` already snapshots `ctx.bindings` when it schedules, so the recorded
-token will survive to that step the moment the step is reachable.
+token will survive to that step the moment the step is reachable. *(That step is
+now reachable — see "At end of combat" above, which is the run that shipped the
+card.)*
 ## Conditional cost reduction — the discount that can be switched off, and the one that belongs to a variant
 
 ### Overview

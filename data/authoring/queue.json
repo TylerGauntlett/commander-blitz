@@ -96392,12 +96392,12 @@
     },
     "Flamerush Rider": {
       "edhrec_rank": 4737,
-      "gate": "template",
+      "gate": null,
       "name": "Flamerush Rider",
-      "reason": "no template for: Whenever this creature attacks, create a token that's a copy of another target attacking c",
+      "reason": "",
       "scryfall_id": "0de4181f-652e-4eab-8de0-57a346c51994",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flames of the Blood Hand": {

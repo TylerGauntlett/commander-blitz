@@ -30,6 +30,7 @@ from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
+    from .structs import DelayedTrigger
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int], None]:
@@ -84,6 +85,7 @@ DELAY_STEPS = {
     "upkeep": Step.UPKEEP,
     "draw_step": Step.DRAW,
     "begin_combat": Step.BEGIN_COMBAT,
+    "end_of_combat": Step.END_OF_COMBAT,
     "end_step": Step.END_STEP,
 }
 
@@ -139,13 +141,16 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
     Fired by *step name*, and a trigger scheduled during a step therefore waits
     for that step's next occurrence: `begin_step` for the current step has
     already run by the time any effect resolves.
+
+    With one qualifier, because one of the steps is not once a turn -- see
+    :func:`_delay_due`.
     """
     from .effects import execute
     from .effects.context import EffectContext
 
     if not state.delayed_triggers:
         return
-    due = [d for d in state.delayed_triggers if DELAY_STEPS.get(d.step) is state.step]
+    due = [d for d in state.delayed_triggers if _delay_due(state, d)]
     if not due:
         return
     state.delayed_triggers = [d for d in state.delayed_triggers if d not in due]
@@ -159,6 +164,36 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
             source_name=delayed.description,
         )
         yield from execute(ctx, list(delayed.effects))
+
+
+def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
+    """Is this delayed trigger due in the step just entered?
+
+    The step name, and for ``end_of_combat`` the **combat** as well.
+
+    A turn has one upkeep, one draw step and one end step, so for those the name
+    is the whole of the timing. Since `extra_combat` it can have several combat
+    phases, and `Step.END_OF_COMBAT` is therefore re-entered within one turn --
+    at which point "at end of combat" stops being a step and becomes a step *of
+    a particular combat*. `op_delay` records which one; this compares it against
+    the combat that is ending now.
+
+    Read *after* `combat.end_combat` has cleared `state.combat`, which is why the
+    comparison is against `state.combat_number` and not against the combat
+    object: the number outlives the phase by exactly the width of this step.
+
+    Equality rather than "this one or any later one": a delay whose combat has
+    somehow gone by is not due at a *different* combat's end. Nothing reachable
+    skips an `END_OF_COMBAT` step -- a combat with no attackers still walks
+    through it (see :func:`next_step`) -- so the strict form is what the card
+    says, and the loose one would quietly re-time the exile onto the extra
+    combat the card exists to keep the token out of.
+    """
+    if DELAY_STEPS.get(delayed.step) is not state.step:
+        return False
+    if delayed.combat is not None:
+        return delayed.combat == state.combat_number
+    return True
 
 
 def _monarch_draw(state: GameState) -> Generator[Any, list[int], None]:
