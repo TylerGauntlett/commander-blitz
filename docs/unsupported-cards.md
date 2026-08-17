@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **38** capabilities.
+**34 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [attacked-this-turn-objects](#attacked-this-turn-objects) | 2 | 657 | selector |
 | [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
 | [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
@@ -52,25 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
-
-## attacked-this-turn-objects
-
-Blocks **2** cards.
-
-- **(selector)** A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. Relentless Assault resolves in a main phase, after the combat whose attackers it wants to untap, so the creatures it names cannot be found from live combat state. Also wanted by Aggravated Assault, Seize the Day and Waves of Aggression, which print the same untap clause.
-  <br>Why the existing vocabulary won't do: `attacking` is the closest selector key and is strictly live combat state: `effects/selectors.py:459` answers it with `state.combat and combat.attacking(oid)`, and `combat.end_combat` sets `state.combat = None`, so in the main phase where this sorcery resolves `attacking` is false for every creature and the untap would hit nothing. `tapped` is not a substitute -- it also matches creatures tapped for mana or by a tapper, and misses vigilant attackers the card is still supposed to untap. The `attacked_this_turn` *value* exists but is per **player**: `structs.py:237` stores `attacked: set[int]` of player ids and `values.py:273` counts players in it, so it answers raid's "did you attack" and knows nothing about which creatures did. `damaged_by` is the only per-object turn ledger in the selector language and records damage dealt, which misses attackers that were blocked without dealing damage or removed before damage.
-- **(selector)** A per-object, turn-scoped record of having been declared as an attacker this turn, readable from a selector -- e.g. a `selector_keys` entry `attacked_this_turn: true` matched against a set of attacker oids tallied on `TurnLedger` when attackers are declared and cleared with the rest of the ledger at the turn boundary. With it, Windbrisk Heights' unlock is an ordinary intervening condition and needs nothing else new: `{"op": "if", "condition": {"cmp": ">=", "left": {"count": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "attacked_this_turn": true}}, "right": {"const": 3}}, "then": [{"op": "may", "effects": [{"op": "play_exiled"}]}]}`. Note the count must survive the creature leaving the battlefield to be fully correct (an attacker that died in combat still attacked), so the ledger should hold oids rather than be recomputed from live permanents. Wanted identically by the other hideaway lands' siblings that count attackers (Mosswort Bridge counts total power of creatures you control, but Windbrisk Heights, Hellrider-style raid variants and Aggravated Assault/Seize the Day all want the per-object attacker record already requested by relentless_assault).
-  <br>Why the existing vocabulary won't do: `attacked_this_turn` in `value_keys` is the closest thing and is per **player**, not per creature: `structs.py:237` stores `attacked: set[int]` of player ids -- its own comment says "a set rather than a count because raid asks only whether it happened" -- and `values.py:273` returns `sum(1 for p in pids if p in ledger.attacked)`, so `{"attacked_this_turn": "you"}` is 1 whether you attacked with one creature or ten. A `cmp` of it against `{"const": 3}` would therefore never be true, and against `{"const": 1}` it would silently turn Windbrisk Heights into a raid land that unlocks off a single attacker -- the approximation this card most invites. The `attacking` selector key is strictly live combat state (`selectors.py:459` answers it with `state.combat and combat.attacking(oid)`, and `end_combat` sets `state.combat = None`), so `{"count": {"attacking": true}}` reads 0 in the postcombat main phase where this ability is most often activated, and it also misses attackers that died during combat. `tapped` catches creatures tapped for mana or by a tapper and misses vigilant attackers. `set_flag`/`has_flag` could record the fact, but only from an ability this card does not print, and the residual gate requires every ability's `text` to be a printed line.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Windbrisk Heights** (rank 657) — `windbrisk_heights`
-  - {W}, {T}: You may play the exiled card without paying its mana cost if you attacked with three or more creatures this turn.
-- **Relentless Assault** (rank 1545) — `relentless_assault`
-  - Untap all creatures that attacked this turn.
-  - After this main phase, there is an additional combat phase followed by an additional main phase.
-
-</details>
 
 ## cant-attack-player
 

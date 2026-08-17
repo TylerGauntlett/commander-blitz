@@ -72,6 +72,14 @@ SELECTOR_KEYS = frozenset(
         "not_keywords",
         "tapped",
         "attacking",
+        #: "Untap all creatures that **attacked this turn**" -- Relentless
+        #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
+        #: live combat state and is false for everything by the time these
+        #: sorceries resolve: they are cast in a main phase, after the combat
+        #: they are talking about, and `end_combat` has set `state.combat` to
+        #: `None`. Answered from `TurnLedger.creatures_attacked`, the same
+        #: per-turn record the `attackers_this_turn` value counts.
+        "attacked_this_turn",
         "blocking",
         "is_commander",
         "is_token",
@@ -454,6 +462,17 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
             return False
+
+    # Deliberately *outside* the combat block below, because it is the one attack
+    # question that is not about combat: it reads the turn ledger, so it still
+    # answers in the postcombat main phase where `state.combat` is `None` -- which
+    # is the only phase either card asking it is ever cast in. It also stays true
+    # for a creature that has since left combat (506.4): being removed from combat
+    # does not undo a declaration.
+    if "attacked_this_turn" in selector and state.turn_ledger.has_attacked(oid) != bool(
+        selector["attacked_this_turn"]
+    ):
+        return False
 
     combat = state.combat
     if "attacking" in selector and bool(combat and combat.attacking(oid)) != bool(

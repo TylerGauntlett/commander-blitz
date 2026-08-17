@@ -1655,6 +1655,86 @@ asserts the turn boundary instead of hoping for it, and positions that hold an
 instant and a land, so a legal cast exists and priority genuinely stops in each
 step.
 
+## Which creatures attacked this turn — the per-object half of the same record
+
+### Overview
+
+The ledger above recorded the **seat**: `attacked` was a `set[int]` of player
+ids, and its own comment said why — *"a set rather than a count because raid asks
+only whether it happened."* That is exactly right for raid, and it is the whole
+of six mechanics. Two printed cards ask which *creatures*, and neither can be
+written from it:
+
+| | |
+|---|---|
+| **Relentless Assault** | "Untap all creatures that attacked this turn." A sorcery, so it resolves in a main phase, after the combat whose attackers it wants |
+| **Windbrisk Heights** | "{W}, {T}: You may play the exiled card without paying its mana cost **if you attacked with three or more creatures this turn**." Activated in a postcombat main phase, which is the point of the card |
+
+### Every near miss, and why each is a different card
+
+| | |
+|---|---|
+| `attacking` | The closest selector key, and strictly **live** combat state: `selectors.matches` answers it with `state.combat and combat.attacking(oid)`, and `combat.end_combat` sets `state.combat = None`. In the phase where either card is used it is false for every creature, so Relentless Assault would untap nothing and Windbrisk Heights would read 0 — a card that looks implemented and does nothing, which is the failure the whole format exists to refuse |
+| `tapped` | The tempting approximation, and wrong in **both** directions at once: it catches a creature tapped for mana or by a tapper, and misses a vigilant attacker — the creature Relentless Assault most wants to untap. Both halves are covered by tests, because an approximation wrong in only one direction is at least visible |
+| `{"attacked_this_turn": "you"}` | The per-**player** value. It is 1 whether you swung with one creature or ten, so `>= 3` can never be true. Relaxing the comparison to `>= 1` is the trap: it loads, it passes every gate, and it ships Windbrisk Heights as a raid land that unlocks off a single attacker |
+| `damaged_by` | The only other per-object turn ledger in the filter language, and it records damage *dealt* — so it misses an attacker that was blocked without connecting, and one removed before the damage step |
+| `set_flag` / `has_flag` | Could record the fact, but only from an ability neither card prints, and the residual gate requires every ability's `text` to be a printed line. It is also one-way and never cleared, so the flag would mean "this game" rather than "this turn" |
+
+### The design: one field, two readers, no new condition vocabulary
+
+`TurnLedger.creatures_attacked` maps player id → the set of oids that player
+declared. It is folded in `GameState.emit` from `ATTACKERS_DECLARED`'s own
+`attackers` payload, which `combat.finish_attackers` fills from the **locked-in**
+declaration — after attack requirements discharge and after banding — so no
+emitter changed and none can route around it. Exactly the argument the six
+tallies above make.
+
+**`attacked` is now derived rather than stored.** It is `set(creatures_attacked)`,
+so "did you attack" and "which creatures did you attack with" are one fact read
+two ways and no write can leave them disagreeing. Every existing reader — raid's
+value, the ledger tests — kept working unchanged, which is the point of keeping
+the name.
+
+The two readers are both ordinary vocabulary:
+
+- the selector key **`attacked_this_turn`**, deliberately placed *outside* the
+  `combat = state.combat` block in `matches` because it is the one attack
+  question that is not about combat;
+- the value **`attackers_this_turn`**, beside the other five ledger values.
+
+So Windbrisk Heights' unlock is an ordinary `cmp` and the condition language
+needed nothing added to it — the same claim the original ledger made.
+
+### The boundary that makes oids the right thing to store
+
+Rule 506.4: **removal from combat does not undo a declaration.** A creature that
+attacked and then died, was bounced, or was removed from combat still attacked
+this turn, so nothing is ever taken out of the record — it is cleared only with
+the rest of the ledger at cleanup.
+
+That is why `attackers_this_turn` is not spelled
+`{"count": {"attacked_this_turn": true}}`. A count is over the *board*, and three
+attackers one of which traded leaves the board count at 2 — Windbrisk Heights
+locked in the very turn it was supposed to open, in the most ordinary line of
+play the card has. `tests/unit/test_attacked_this_turn_objects.py` asserts both
+numbers in the same position, 3 against 2, so the divergence is pinned rather
+than described.
+
+### What was deliberately left out
+
+`attacked_this_turn` is **not** in `STATIC_FILTER_KEYS`. It would be safe there —
+the ledger is not a derived characteristic, so no static could depend on another
+static's output through it — but no printed card asks, and vocabulary with
+nothing asking for it is vocabulary that invites a card to be written wrongly.
+The same call `is_monarch` got in the static condition language.
+
+### What it unblocked
+
+Both cards, immediately: **Relentless Assault** (its `extra_combat` half having
+landed in the previous run) and **Windbrisk Heights**, the first hideaway land in
+the pool. Aggravated Assault, Seize the Day and Waves of Aggression print the
+same untap clause and are now expressible with no further engine work.
+
 ## Transforming double-faced cards
 
 ### Overview

@@ -217922,12 +217922,12 @@
     },
     "Relentless Assault": {
       "edhrec_rank": 1545,
-      "gate": "template",
+      "gate": null,
       "name": "Relentless Assault",
-      "reason": "no template for: Untap all creatures that attacked this turn. After this main phase, there is an additional",
+      "reason": "",
       "scryfall_id": "e473a591-9aae-4af2-9b25-96820b317df8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relentless Dead": {
@@ -313442,12 +313442,12 @@
     },
     "Windbrisk Heights": {
       "edhrec_rank": 657,
-      "gate": "template",
+      "gate": null,
       "name": "Windbrisk Heights",
-      "reason": "no template for: Hideaway 4",
+      "reason": "",
       "scryfall_id": "0a70d498-1fe2-4136-94bc-18fc163cbc7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windbrisk Raptor": {
