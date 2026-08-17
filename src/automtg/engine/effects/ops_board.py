@@ -20,6 +20,7 @@ from ..primitives import (
     lock_abilities,
     pump,
     remove_counters,
+    restrict_attack,
     tap_permanent,
     transform,
     untap_permanent,
@@ -1183,4 +1184,48 @@ def op_must_attack(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         obj.must_attack = duration
         obj.must_attack_turn = ctx.state.turn
+    yield from ()
+
+
+@register("cant_attack_player")
+def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"You can't attack that player this turn." "They can't attack you this combat."
+
+    The first attack prohibition in the engine that names a **defending player**.
+    Everything else that stops an attack is a fact about one creature -- the
+    `cant_attack` static, `defender`, being tapped, being detained -- and
+    `characteristics.attack_forbidden` matches its filter against the attacking
+    creature with no defender in the question at all.  So "can't attack *this
+    player*" was not a weaker version of any of them; it was a different sentence,
+    and it needed `combat.attack_target_forbidden` to have somewhere to be asked.
+
+    Three parameters, and every one of them is load-bearing on a printed card:
+
+    ``attacker``  the player who may not attack. Call for Aid means the spell's
+                  own controller (`"you"`); Champions of Minas Tirith means the
+                  opponent whose combat it is (`{"binding": "event_player"}`).
+    ``defender``  the player who may not be attacked -- the mirror image of the
+                  above on those two cards, which is exactly why both had to be
+                  spelled out rather than one inferred as "the other one".
+    ``duration``  ``this_turn`` or ``this_combat``. Required, not defaulted: see
+                  `structs.AttackRestriction`.
+
+    Both selectors are full player specs and may name several players, in which
+    case the cross-product is installed -- "creatures your opponents control
+    can't attack you" is `each_opponent` against `you`, one sentence and one op.
+
+    Nothing is written on any permanent, and that is the point: a resolving
+    sorcery leaves no source on the battlefield to hang a static off, which is
+    the first of the three reasons the `cant_attack` static could not do this job.
+    """
+    from ..structs import ATTACK_RESTRICTION_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_attack_player duration {duration!r}")
+    attackers = _players(ctx, spec.get("attacker"))
+    defenders = _players(ctx, spec.get("defender"))
+    for attacker in attackers:
+        for defender in defenders:
+            restrict_attack(ctx.state, attacker, defender, duration, source=ctx.source_oid)
     yield from ()

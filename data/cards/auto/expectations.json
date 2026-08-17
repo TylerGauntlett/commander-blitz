@@ -1000,6 +1000,9 @@
   "champion_of_arashin": {
     "zone": "battlefield"
   },
+  "champions_of_minas_tirith": {
+    "zone": "battlefield"
+  },
   "changeling_sentinel": {
     "zone": "battlefield"
   },

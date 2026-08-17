@@ -1,3 +1,97 @@
+## "That player can't attack you" — the first prohibition with two sides
+
+### Overview
+
+Two cards asked for it from opposite directions, and the readers of both said so:
+Call for Aid's "You can't attack that player this turn" and Champions of Minas
+Tirith's "If they don't, they can't attack you this combat". Each is the other with
+the attacking and defending players swapped, so one op carries both rather than two
+near-duplicates being built.
+
+The engine had one related thing, the `cant_attack` static, and it was the wrong
+*shape* rather than a weaker version. `characteristics.attack_forbidden` matches
+its `affects` filter against the **attacking creature** and takes no defending
+player at all, so what it can express is "these creatures can't attack", never
+"can't attack this player". Blanking an opponent's whole attack step is a strictly
+stronger card than taxing attacks on one seat, and nothing about the substitution
+would have looked wrong.
+
+Two more reasons a static could not have carried it, either, and they are the ones
+that generalise past this card: a static must live in `abilities` on a battlefield
+permanent, and a resolving sorcery leaves none — no op installs a static; and a
+static's filter may read only printed characteristics, so it could never name a
+player identified when the spell resolved.
+
+### Where the restriction lives
+
+`GameState.attack_restrictions`, a list of `structs.AttackRestriction` — an
+attacking player, a defending player, a duration and the source. On the table
+beside `monarch` and `day_night`, and that is forced rather than aesthetic: this is
+a fact about a pair of **seats**, and neither of them need own a permanent for it
+to be true.
+
+`TempEffect` was the near miss, and it fails on the container rather than on the
+clock: `until_eot` is a list on each `GameObject`, so a restriction that belongs to
+no object has nowhere to be written. Detain's `detained_by`-plus-untap-step pattern
+is the other precedent and fails the same way for the same reason — it is a field
+on the one permanent it restricts.
+
+A list rather than a set of pairs, because two effects may impose the same pair
+with different durations and the shorter one wearing off must not take the longer
+one with it. Deduplicated on the whole tuple: "can't attack" does not stack, so a
+second Champions taxing the same opponent in the same combat records nothing.
+
+### The legality seam, and the shape left for goad
+
+`combat.legal_defenders` was `[pid for pid in state.alive() if pid !=
+state.active_player]` — no attacker argument at all, so the choice of defender was
+per-declaration and global. It, `legal_planeswalker_defenders` and `add_attacker`
+now all take the attacking oid and route through one predicate,
+`attack_target_forbidden(state, oid, defender, planeswalker=…)`.
+
+One predicate and not a filter in each of the three, because an action legality
+offers and `add_attacker` then refuses is a declaration that cannot be completed.
+
+`can_attack` also asks whether the creature has **any** defender left, guarded on
+the restriction list being non-empty so the attack mask's hot path is untouched in
+every game that plays none of these cards. That is not redundant with the above:
+`attack_required` is a requirement AND `can_attack`, so a creature compelled to
+attack with every defender forbidden would otherwise have "Done attacking"
+withheld by legality with no `ADD_ATTACKER` left to offer — a step with no legal
+action in it.
+
+`planeswalker` is a parameter of the predicate rather than something it infers,
+and that is the seam `goad` was recorded needing. **This** restriction exempts
+planeswalkers: "creatures can't attack you" restricts attacking the *player*, and
+506.2 makes a planeswalker a third thing that can be attacked with its controller
+merely the defending player — which is why a Ghostly Prison charges nothing when
+the attack goes at a planeswalker. Goad's "attacks a player other than you if
+able" is the opposite answer, since attacking your planeswalker does not discharge
+that requirement. A future goad run adds its clause inside
+`attack_target_forbidden` and touches none of the three callers.
+
+### Why `duration` is required rather than defaulted
+
+`this_turn` is cleared at cleanup beside `clear_until_eot`; `this_combat` is
+cleared by `combat.end_combat`. Neither is the safe default, which is the whole
+argument for refusing a card that omits the word:
+
+- `this_combat` read as `this_turn` blanks the extra combat a Relentless Assault
+  bought, taxing it with a toll that was already paid.
+- `this_turn` read as `this_combat` expires before the combat Call for Aid was
+  cast in even begins to matter — the spell resolves in a main phase and means the
+  whole turn.
+
+Champions' trigger fires at the beginning of *each* combat, so the combat-scoped
+duration is not merely shorter: it is what makes the tax re-asked rather than
+paid once.
+
+### Server and frontend: nothing
+
+No new event, decision kind or API field. A restriction shows up as an
+`ADD_ATTACKER` action that is not offered, and `LegalActionDTO.kind` is a bare
+string the client echoes back, so the UI is consistent without knowing why.
+
 ## The monarch — a designation whose word is worth nothing
 
 ### Overview

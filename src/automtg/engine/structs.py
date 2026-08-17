@@ -82,6 +82,59 @@ class TempEffect:
         }
 
 
+#: The two durations an :class:`AttackRestriction` can carry, and the printed
+#: sentence each one is.  Kept beside the class rather than as an enum because
+#: every other duration in the DSL is a bare string a card file writes.
+ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
+
+
+@dataclass(frozen=True)
+class AttackRestriction:
+    """"That player can't attack you." A prohibition naming **both** sides.
+
+    The engine's other attack prohibitions are facts about one creature --
+    `cant_attack`, `defender`, being tapped -- and every one of them is stored on
+    the creature, because that is what they are about.  This one is about a
+    *pair of players*, and neither of them need own a permanent for it to exist:
+    Call for Aid is a sorcery that restricts its own caster.  So it lives on the
+    table (:attr:`GameState.attack_restrictions`) beside `monarch` and
+    `day_night`, and for the same reason those do.
+
+    ``attacker`` may not declare an attacker against ``defender``.  Both are
+    recorded, rather than one plus "the other guy", because the two printed
+    shapes point opposite ways: Call for Aid restricts the spell's controller
+    from attacking the player it targeted, Champions of Minas Tirith restricts
+    the triggering opponent from attacking the ability's controller.  One field
+    each is the whole of that difference.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"this_combat"`` (cleared when the combat phase ends).  They are not
+    interchangeable and neither is the safe default: a turn-scoped restriction
+    read as combat-scoped misses the extra combat a Relentless Assault hands
+    out, and a combat-scoped one read as turn-scoped taxes that extra combat for
+    free.  That is why the op requires the word.
+    """
+
+    #: The player who may not attack.
+    attacker: int
+    #: The player who may not be attacked.
+    defender: int
+    duration: str = "this_turn"
+    #: The permanent or spell that installed it, for the log.  Not part of the
+    #: lifetime: unlike `frozen_by` this outlives its source leaving the
+    #: battlefield, because a resolved one-shot effect does not care what
+    #: happens to the card that made it.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "attacker": self.attacker,
+            "defender": self.defender,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""

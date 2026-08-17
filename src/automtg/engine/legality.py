@@ -87,10 +87,14 @@ def _choice_actions(decision: PendingDecision) -> list[Action]:
 
 def _attacker_actions(state: GameState, pid: int) -> list[Action]:
     out: list[Action] = []
-    defenders = combat_mod.legal_defenders(state)
-    walkers = combat_mod.legal_planeswalker_defenders(state)
     for oid in combat_mod.legal_attackers(state):
         name = state.card(oid).name
+        # Per attacker, not once for the whole declaration: "that player can't
+        # attack you" is a restriction on a *pair*, so two creatures the same
+        # player controls can have different defender lists in the same combat
+        # once one of them was borrowed from somebody else.
+        defenders = combat_mod.legal_defenders(state, oid)
+        walkers = combat_mod.legal_planeswalker_defenders(state, oid)
         for defender in defenders:
             out.append(
                 Action(

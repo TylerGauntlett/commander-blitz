@@ -1,0 +1,80 @@
+{
+  "card": {
+    "id": "champions_of_minas_tirith",
+    "name": "Champions of Minas Tirith",
+    "oracle_text": "When this creature enters, you become the monarch.\nAt the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.",
+    "mana_cost": "{5}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 4,
+    "toughness": 6,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you become the monarch.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "become_monarch",
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.",
+        "trigger": {
+          "event": "begin_combat",
+          "controller": "opponent",
+          "condition": {
+            "is_monarch": "you"
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": {
+              "binding": "event_player"
+            },
+            "prompt": "Pay {X}, where X is the number of cards in your hand, or you can't attack Champions of Minas Tirith's controller this combat?",
+            "pay": {
+              "mana": "{1}",
+              "times": {
+                "cards_in_hand": {
+                  "binding": "event_player"
+                }
+              }
+            },
+            "else": [
+              {
+                "op": "cant_attack_player",
+                "attacker": {
+                  "binding": "event_player"
+                },
+                "defender": "you",
+                "duration": "this_combat"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

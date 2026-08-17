@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>84 ops"]
+    ctx --> ops["op registry<br/>86 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-84 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+86 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,7 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
@@ -3784,6 +3784,76 @@ creature.
 `name` is readable in a static's **condition** — inside `exists` or `count` —
 but deliberately not in `affects`. "Unless you control a creature named X" is a
 question about the board; "each creature named X gets +1/+1" is not a card.
+
+## "That player can't attack you"
+
+    Call for Aid — "…You can't attack that player this turn."
+    Champions of Minas Tirith — "…that opponent may pay {X} … If they don't,
+                                 they can't attack you this combat."
+
+Every prohibition above is a fact about **one creature**, and so is every other
+one in the engine: `cant_attack`, `defender`, being tapped, being detained.
+`characteristics.attack_forbidden` matches its filter against the *attacking
+creature* and takes no defending player at all, so "can't attack **this
+player**" is not a weaker version of any of them — it is a different sentence,
+and it needed a place to be asked.
+
+```jsonc
+// Call for Aid — self-directed, turn-scoped, installed by a resolving sorcery
+{ "op": "cant_attack_player", "attacker": "you",
+  "defender": { "target": "t1" }, "duration": "this_turn" }
+
+// Champions of Minas Tirith — third-party, combat-scoped, from a triggered
+// ability's `else` branch: the payer is the one restricted, and the ability's
+// controller is the one protected
+{ "op": "cant_attack_player", "attacker": { "binding": "event_player" },
+  "defender": "you", "duration": "this_combat" }
+```
+
+One op with three parameters rather than two near-duplicates, because the two
+printed shapes point **opposite ways**: each is the other with `attacker` and
+`defender` swapped. Both are full player specs and may name several players, in
+which case the cross-product is installed, so "creatures your opponents control
+can't attack you" is `each_opponent` against `you`.
+
+It lives on the **table**, not on a permanent: `GameState.attack_restrictions`,
+a list of `structs.AttackRestriction`, beside `monarch` and `day_night`. That is
+forced rather than chosen. Call for Aid is a sorcery, so there is no source left
+on the battlefield to hang a static off; no op installs a static anyway; and a
+static's `affects` filter may read only printed characteristics, so it could
+never name a player chosen on resolution. A `TempEffect` is the wrong container
+for the same kind of reason — `until_eot` is a list on each *object*, and this
+restriction belongs to no object at all.
+
+**`duration` is required, not defaulted**, and it is the one field where a
+sensible-looking default is wrong in both directions. `this_combat` is cleared by
+`combat.end_combat`, so a turn with an extra combat phase re-asks Champions'
+tax — its trigger fires at the beginning of each combat, and the previous
+combat's restriction went with the combat that bought it. `this_turn` is cleared
+at cleanup beside `clear_until_eot`, because Call for Aid resolves in a main
+phase and means the whole turn, extra combats included.
+
+Three things it deliberately does **not** do:
+
+| | |
+|---|---|
+| stop the creature attacking at all | it narrows the choice — the same creature still attacks anybody else, and a version that blanked the attack step would be a strictly stronger card than either witness |
+| point both ways | stopping A attacking B says nothing about B attacking A |
+| reach planeswalkers | "creatures can't attack you" restricts attacking the *player*; a planeswalker they control is a different thing being attacked (506.2), which is why a Ghostly Prison charges nothing for it |
+
+The legality seam is `combat.attack_target_forbidden(state, oid, defender,
+planeswalker=…)`, and `legal_defenders`, `legal_planeswalker_defenders` and
+`add_attacker` all take the attacking oid and route through it. One predicate,
+because an action legality offers and `add_attacker` then refuses is a
+declaration that cannot be completed. `can_attack` also asks whether *any*
+defender is left, which is not redundant: `attack_required` is a requirement AND
+`can_attack`, so a compelled creature with every defender forbidden would
+otherwise have "Done attacking" withheld with no `ADD_ATTACKER` to offer.
+
+`goad` is the next thing that wants this seam — "attacks a player other than you
+if able" is a per-creature restriction on *which* defender, and unlike this one
+it does reach planeswalkers, which is why `attack_target_forbidden` is told which
+kind of attack it is being asked about rather than inferring it.
 
 ## Block restrictions
 

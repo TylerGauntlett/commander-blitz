@@ -43282,12 +43282,12 @@
     },
     "Champions of Minas Tirith": {
       "edhrec_rank": 5253,
-      "gate": "template",
+      "gate": null,
       "name": "Champions of Minas Tirith",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "34301efe-7085-476b-90e6-7ecd778b2970",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champions of the Perfect": {

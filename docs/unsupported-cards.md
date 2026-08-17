@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **38** capabilities.
+**35 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [attacked-this-turn-objects](#attacked-this-turn-objects) | 2 | 657 | selector |
-| [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
 | [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
 | [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
@@ -69,26 +68,6 @@ Blocks **2** cards.
 - **Relentless Assault** (rank 1545) — `relentless_assault`
   - Untap all creatures that attacked this turn.
   - After this main phase, there is an additional combat phase followed by an additional main phase.
-
-</details>
-
-## cant-attack-player
-
-Blocks **2** cards.
-
-- **(op)** A spell/ability effect op that installs a turn-long restriction forbidding a named player (the spell's target player, captured as a binding) from being attacked by the effect's controller -- i.e. a per-defending-player attack legality check, distinct from forbidding a creature from attacking at all
-  <br>Why the existing vocabulary won't do: The closest thing in reference is the `cant_attack` static_effect, and it falls short three ways: (1) it is a static ability, so it must live in `abilities` on a battlefield permanent -- a Sorcery only has `spell_effects` from `ops`, and there is no op that installs a static or an until-end-of-turn restriction; (2) `attack_forbidden` in engine/characteristics.py matches its `affects` filter against the attacking *creature* object, so the restriction it expresses is "these creatures can't attack", never "these creatures can't attack this particular player" -- there is no defending-player parameter in the check at all; (3) a static filter may only read printed characteristics, so it could not name a player chosen on resolution. `must_attack`/`must_block` are obligations pointing the other way, and `set_flag` only writes an adjective onto a battlefield permanent for a later `has_flag` condition to read -- nothing in combat legality consults flags, and the restriction here is on a player, not on an object
-- **(op)** An effect op that installs an attack restriction naming both sides -- one specific player (here the triggering opponent, `{"binding": "event_player"}`) may not attack one specific other player (the ability's controller) -- and that expires at end of combat rather than end of turn, because the printed duration is "this combat" and a turn with extra combats must re-ask the tax each time. The legality check for declaring attackers needs a defending-player parameter it currently does not have, so the restriction can be consulted as "this attacker's controller may not choose this defender" while leaving that creature free to attack anyone else.
-  <br>Why the existing vocabulary won't do: The nearest thing in `reference` is the `cant_attack` static_effect, and it misses three ways: (1) it is a static ability, so it must sit in `abilities` on a battlefield permanent -- a triggered ability's `else` branch can only run ops, and no op installs a static or a combat-scoped restriction; (2) `attack_forbidden` in engine/characteristics.py matches the `affects` filter against the attacking *creature*, so what it can say is "these creatures can't attack", never "can't attack this player" -- there is no defender in the check, and blanking the opponent's whole attack step is a strictly stronger card than taxing attacks on me alone; (3) a static filter may read only printed characteristics, so it could not name a player identified when the trigger resolved. `must_attack`/`must_block`/`block_restriction` are obligations or point at blockers instead. `detain` is per-object, forbids blocking and activating too, and lasts until the detainer's next turn. `set_flag` writes an adjective on a permanent and nothing in combat legality reads flags. The same capability was recorded from the opposite direction by `call_for_aid` ("You can't attack that player this turn", turn-scoped, restricting the effect's own controller); this card needs the third-party, combat-scoped form, so one op should carry attacker-player, defender-player and duration rather than two near-duplicates being built.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Champions of Minas Tirith** (rank 5253) — `champions_of_minas_tirith`
-  - When this creature enters, you become the monarch.
-  - At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.
-- **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't attack that player this turn.
-  - You can't sacrifice those creatures this turn.
 
 </details>
 
@@ -205,7 +184,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't attack that player this turn.
   - You can't sacrifice those creatures this turn.
 
 </details>
