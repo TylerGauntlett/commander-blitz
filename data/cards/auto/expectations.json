@@ -68,6 +68,32 @@
       "0": 41
     }
   },
+  "akroma_s_will": {
+    "battlefield_count": 32,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "flying",
+        "vigilance",
+        "double_strike"
+      ]
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "alabaster_host_sanctifier": {
     "zone": "battlefield"
   },
@@ -4527,6 +4553,22 @@
   },
   "plover_knights": {
     "zone": "battlefield"
+  },
+  "plumb_the_forbidden": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "plumeveil": {
     "zone": "battlefield"

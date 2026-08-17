@@ -5352,12 +5352,12 @@
     },
     "Akroma's Will": {
       "edhrec_rank": 191,
-      "gate": "template",
+      "gate": null,
       "name": "Akroma's Will",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "674e08ef-5291-4465-99c0-7313698f7a93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Akroma, Angel of Fury": {
@@ -202832,12 +202832,12 @@
     },
     "Plumb the Forbidden": {
       "edhrec_rank": 1154,
-      "gate": "template",
+      "gate": null,
       "name": "Plumb the Forbidden",
-      "reason": "no template for: As an additional cost to cast this spell, you may sacrifice one or more creatures. When yo",
+      "reason": "",
       "scryfall_id": "79c27df1-0c05-4208-a80c-73185ab35424",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plumecreed Escort": {
