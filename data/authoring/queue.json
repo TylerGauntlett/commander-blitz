@@ -149622,12 +149622,12 @@
     },
     "Knight of the White Orchid": {
       "edhrec_rank": 633,
-      "gate": "template",
+      "gate": null,
       "name": "Knight of the White Orchid",
-      "reason": "no template for: When this creature enters, if an opponent controls more lands than you, you may search you",
+      "reason": "",
       "scryfall_id": "ec4b5e6c-87a4-4e1b-b54a-b36bc6031af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight's Pledge": {
@@ -310132,12 +310132,12 @@
     },
     "Weathered Wayfarer": {
       "edhrec_rank": 1421,
-      "gate": "template",
+      "gate": null,
       "name": "Weathered Wayfarer",
-      "reason": "no template for: {W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuf",
+      "reason": "",
       "scryfall_id": "09656d96-c366-49ec-b687-cad903de1385",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weatherlight": {

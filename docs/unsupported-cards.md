@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **40** capabilities.
+**37 cards** blocked by **39** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [extra-combat](#extra-combat) | 3 | 1000 | engine, op |
-| [per-opponent-count](#per-opponent-count) | 3 | 633 | selector, value |
 | [attacked-this-turn-objects](#attacked-this-turn-objects) | 2 | 657 | selector |
 | [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
@@ -82,29 +81,6 @@ Blocks **3** cards.
   - After this main phase, there is an additional combat phase followed by an additional main phase.
 - **Response // Resurgence** (rank 5272) — `response_resurgence`
   - After this main phase, there is an additional combat phase followed by an additional main phase.
-
-</details>
-
-## per-opponent-count
-
-Blocks **3** cards.
-
-- **(value)** A value leaf that evaluates a count of matching objects **one player at a time** and aggregates it existentially or universally, so a condition can ask "does any single opponent control more lands than you". Concretely, the pair `{"max_count_of": {"player": "each_opponent", "objects": {"zone": "battlefield", "types": ["Land"]}}}` (the existential -- "an opponent controls more X than you") and `{"min_count_of": ...}` (the universal -- "each opponent controls more X than you" / "you control more X than each other player"), exactly mirroring the existing `min_life_of` / `max_life_of` split and for exactly the reason recorded in the comment above them in `engine/effects/values.py`. Implementation: add both names to `VALUE_KEYS`, and evaluate by running `resolve_pool` once per player returned by `select_players(ctx, spec["player"])` with the pool scoped to that one player -- the evaluator has to inject the scope itself (the way `for_each_player` injects `each_player`) rather than asking the card author for it, since a card written before the loop has no binding to name. `validate_value` needs the matching branch so a misspelling is a load error instead of a silent 0. It must be reachable from a trigger's `condition`, because the printed clause is an intervening-if (`TriggerSpec.condition`, checked in `triggers._matches` at both trigger time and resolution) and not an `if` op in the body.
-  <br>Why the existing vocabulary won't do: `count` is the only object-counting leaf, and it resolves a single pool: `{"count": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}` **sums across the whole table**, because `_zone_players`/`matches` treat `controller: "opponent"` as "every opponent at once". That is the printed card in a duel and a different, strictly better card at a pod. `lands_you_control` reads only your own side, so it supplies the right-hand side of the comparison and nothing else. `min_life_of`/`max_life_of` are the shape needed, but they are hard-wired to life totals. `distinct` counts distinct values over one pool, `extreme` ranks only on power/toughness/mana_value, and `exists` filters objects -- none can relate a land's controller's land count back to yours. The one per-player mechanism that does exist, `for_each_player` plus `controller: {"binding": "each_player"}`, is an **op**: it cannot appear inside a trigger's `condition` at all, and putting the test in the effects body instead would run the search once per qualifying opponent -- up to three Plains onto the battlefield at a four-player pod off a card that fetches one -- as well as dropping the on-trigger half of the intervening-if.
-- **(selector)** let a static condition ask about a single opponent rather than the opponents as a group -- 'an opponent controls more lands than you' is true when any one opponent's land count exceeds yours
-  <br>Why the existing vocabulary won't do: In a static count filter the only handle is `controller: "opponent"`, and `_matches_static_filter` implements that as 'not controlled by you', so `{"count": {"types": ["Land"], "controller": "opponent"}}` sums every opponent's lands. `player` is in `selector_keys` but not in `STATIC_FILTER_KEYS`/`STATIC_COUNT_FILTER_KEYS`, so a static cannot name a seat. Correct at two players, wrong in multiplayer, where the pooled total crosses your land count long before any single opponent does.
-- **(value)** A value leaf that counts matching objects **one player at a time** and aggregates existentially or universally, so a condition can ask "does any single opponent control more lands than I do". Concretely the pair `{"max_count_of": {"player": "each_opponent", "objects": {"zone": "battlefield", "types": ["Land"]}}}` (the existential -- "an opponent controls more X than you") and `{"min_count_of": ...}` (the universal -- "each opponent controls more X than you"), mirroring the existing `min_life_of` / `max_life_of` split and for exactly the reason recorded in the comment above them in `engine/effects/values.py`. Implementation: add both names to `VALUE_KEYS`, evaluate by running `resolve_pool` once per player returned by `select_players(ctx, spec["player"])` with the pool scoped to that single player (the evaluator injects the scope itself, the way `for_each_player` injects `each_player`, since a card written outside a loop has no binding to name), and give `validate_value` the matching branch so a misspelling is a load error rather than a silent 0. For this card it must be reachable from an **activated ability's** `condition` -- the field that already carries "Activate only if you control five or more Vampires" on bloodline_keeper -- so no new plumbing is needed beyond the leaf itself, and the activation gate must be re-checked at activation time (it is an activation restriction, not an intervening-if: unlike a trigger's condition it is never rechecked on resolution).
-  <br>Why the existing vocabulary won't do: `count` is the only object-counting leaf and it resolves a single merged pool: `{"count": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}` **sums across the whole table**, because `matches` and `_zone_players` in `engine/effects/selectors.py` treat `controller: "opponent"` as "every opponent at once" -- the code says so in a comment there. `lands_you_control` reads only your own side, so it can supply the right-hand side of the comparison and nothing else. `min_life_of`/`max_life_of` are exactly the right shape but are hard-wired to life totals. `exists` filters objects and cannot relate a land's controller's land count back to yours; `distinct` counts distinct values over one pool; `extreme` ranks only on power/toughness/mana_value. The one per-player mechanism that does exist -- `for_each_player` with `controller: {"binding": "each_player"}` -- is an **op**, so it cannot appear in an activated ability's `condition` at all, and moving the test into `effects` would be a different card: it would make the ability legal to activate whenever any board state existed, paying {W} and the tap for nothing when you are ahead on lands, and would run the tutor once per qualifying opponent.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Knight of the White Orchid** (rank 633) — `knight_of_the_white_orchid`
-  - When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.
-- **Weathered Wayfarer** (rank 1421) — `weathered_wayfarer`
-  - {W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you.
-- **Verge Rangers** (rank 5364) — `verge_rangers`
-  - You may look at the top card of your library any time.
-  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
 
 </details>
 

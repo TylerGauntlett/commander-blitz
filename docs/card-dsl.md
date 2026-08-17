@@ -366,6 +366,11 @@ Anywhere a number is expected:
 { "life_of": "you" }                            // SUMS over its player spec
 { "min_life_of": "each_opponent" }              // the lowest, one player at a time
 { "max_life_of": "each_opponent" }              // the highest
+{ "max_count_of": { "player": "each_opponent",  // "an opponent controls more
+                    "objects": { "zone": "battlefield",   //  lands than you"
+                                 "types": ["Land"] } } }
+{ "min_count_of": { "player": "each_opponent",  // "…EACH opponent controls more"
+                    "objects": { "types": ["Creature"] } } }
 { "cards_in_hand": "each_opponent" }
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
@@ -460,6 +465,64 @@ anthem changes who has coven and "all lands are Islands" changes what counts for
 domain, so a static reading it would be switched on and off by another static's
 output — the one dependency [layers-lite](adr/0001-layers-lite.md) forbids. The
 static value whitelist already refuses it, and a test pins that it stays refused.
+
+### Counting one player at a time
+
+```jsonc
+// Knight of the White Orchid — "if an opponent controls more lands than you"
+{ "cmp": ">",
+  "left":  { "max_count_of": { "player": "each_opponent",
+                               "objects": { "zone": "battlefield",
+                                            "types": ["Land"] } } },
+  "right": { "lands_you_control": true } }
+```
+
+`count` resolves **one** pool, and `controller: "opponent"` means every opponent
+at once — so `{"count": {"types": ["Land"], "controller": "opponent"}}` is the
+*sum* across the table. In a duel that is the printed card. At a four-player pod
+it is a different and strictly better one: three opponents holding two lands each
+total six and beat your five, so Knight of the White Orchid becomes an
+unconditional two-mana 2/2 that ramps and Weathered Wayfarer an unconditional
+repeatable land tutor, while both printed cards are switched **off** whenever you
+are the one ahead on lands.
+
+So the pair asks about one player at a time, then aggregates:
+
+| | reads | says |
+|---|---|---|
+| `max_count_of` | the largest of the per-player counts | "**an** opponent controls more X than you" — the existential |
+| `min_count_of` | the smallest | "**each** opponent controls more X than you" — the universal |
+
+Exactly the [`life_of` / `min_life_of` split](#an-opponent-has-10-or-less-life),
+and the empty-table bias goes the same way: `max_count_of` over nobody is 0, so
+the existential is correctly false; `min_count_of` returns `NO_PLAYERS_COUNT`, so
+the universal is vacuously true rather than claiming every departed opponent is
+ahead of you.
+
+`for_each_player` is the only other per-player mechanism and cannot stand in: it
+is an **op**, so it cannot appear in a condition at all, and moving the test into
+the body would run the search once per qualifying opponent — up to three Plains
+off a card that fetches one — as well as dropping the on-trigger half of an
+intervening-`if`.
+
+**The scope is injected, not written.** A condition is not inside a loop, so
+there is no binding for the card to name; the evaluator sets one per player the
+way `for_each_player` sets `each_player`. Which word carries it depends on the
+zone, and that is the split `validate_selector` already spells out: the
+battlefield and the stack are shared, so a player is a `controller` filter over
+the one pool, while a hand, library, graveyard or exile *belongs* to somebody, so
+a player chooses whose list to walk. Writing `controller` or `player` inside
+`objects` is a load error rather than a clause silently overwritten — and
+`controller: "opponent"` there is precisely the summing filter this leaf exists
+to replace.
+
+`player` is not defaulted either. `each_opponent` and `each_player` are different
+cards, and a default would read identically in the card file.
+
+Both work in the `if`-effect language, in a trigger's intervening-`if`, in an
+activated ability's `condition` and in a static's `condition` — four call sites
+and two separately validated languages, so a leaf added to one would load in a
+card that then quietly read 0.
 
 ### Counting an event rather than the board
 
@@ -927,7 +990,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two static values (`{"const": n}` or `{"count": filter}`) |
+| `{"cmp": op, "left": …, "right": …}` | compares two static values — `const`, `count`, `mana_symbols`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -950,6 +1013,15 @@ too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
 can change what a player's life is.
 
 `life_of` itself is deliberately *not*, and the difference is the whole point.
+
+`max_count_of` / `min_count_of` are here for the same reason `count` is — they
+read printed characteristics and board state, one player at a time — and they are
+here *at all* because "as long as an opponent controls more lands than you" is one
+of the shapes a printed static takes. See
+[counting one player at a time](#counting-one-player-at-a-time); the two
+languages validate the leaf separately, and the filter inside it obeys whichever
+rules its own language has, so a graveyard count here is a printed face and an
+owner and nothing else.
 
 #### "The top card of your library is black"
 

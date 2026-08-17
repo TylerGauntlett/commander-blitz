@@ -363,16 +363,19 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     broken. Bloodline Keeper says "activate only if you control five or more
     Vampires" and the generic board has none.
 
-    Deliberately dumb, exactly as `_provide_the_target` is. It reads two shapes --
-    ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``, which
-    it satisfies by adding permanents, and the same comparison over
-    ``life_lost_this_turn``, which it satisfies by taking the life. A helper clever
-    enough to solve an arbitrary condition would be a second implementation of
-    `evaluate` living in the tests, and the first thing it would hide is a bug in
-    the first.
+    Deliberately dumb, exactly as `_provide_the_target` is. It reads three shapes
+    -- ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``,
+    which it satisfies by adding permanents; the same comparison over
+    ``life_lost_this_turn``, which it satisfies by taking the life; and a
+    per-player ``max_count_of``, which it satisfies by stocking one opponent's
+    board. A helper clever enough to solve an arbitrary condition would be a
+    second implementation of `evaluate` living in the tests, and the first thing
+    it would hide is a bug in the first.
     """
     condition = getattr(ability, "activation_condition", None)
     if not isinstance(condition, dict) or "cmp" not in condition:
+        return
+    if _satisfy_a_per_player_count(game, registry, condition):
         return
     left = condition.get("left") or {}
     right = condition.get("right") or {}
@@ -395,9 +398,67 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     selector = left["count"]
     if selector.get("zone", "battlefield") != "battlefield":
         return
+    match = _fodder_for(registry, selector)
+    if match is None:
+        return
+    for _ in range(int(right["const"])):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
+
+
+def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
+    """"Activate only if an opponent controls more lands than you" -- Weathered Wayfarer.
+
+    Seventh of the family, and the one board the generic sandbox gets *backwards*
+    rather than merely leaving bare: it deals you thirty lands to the opponent's
+    two, so this clause is false by a wide margin and the ability is correctly not
+    offered. Every other helper here adds something missing; this one has to
+    out-build a mana base.
+
+    Stocked on **one** opponent's side, not spread across the table. A per-player
+    leaf that could be satisfied by the pooled total is the exact bug it exists to
+    prevent, so a harness that spread the lands around would make the gate agree
+    with the implementation it is supposed to check.
+
+    Returns whether it handled the condition, so the caller can stop.
+    """
+    left = condition.get("left") or {}
+    if "max_count_of" not in left:
+        return False
+    from automtg.engine.effects.context import EffectContext
+    from automtg.engine.effects.values import evaluate_value
+
+    spec = left["max_count_of"]
+    selector = spec.get("objects") or {}
+    if selector.get("zone", "battlefield") != "battlefield":
+        return True
+    match = _fodder_for(registry, selector)
+    if match is None:
+        return True
+    # The right-hand side through the engine's own evaluator rather than a
+    # reimplementation of it: "more lands than you" is measured against a board
+    # this harness has already dealt, and no `const` says how big that is.
+    ctx = EffectContext(state=game.state, controller=0)
+    opponent = next((p.pid for p in game.state.players if p.pid != 0), None)
+    if opponent is None:
+        return True
+    for _ in range(evaluate_value(ctx, condition.get("right")) + 1):
+        fodder = new_object(game.state, match.id, owner=opponent, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
+    game.state.bump_chars()
+    return True
+
+
+def _fodder_for(registry, selector: dict):
+    """The first card in the pool matching a counting filter's types.
+
+    Shared by the two branches of `_satisfy_the_activation_condition` that satisfy
+    a count by putting permanents out, so "what counts as one of those" cannot
+    drift between them.
+    """
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     types = {str(t) for t in selector.get("types") or ["Creature"]}
-    match = next(
+    return next(
         (
             c
             for c in sorted(registry, key=lambda c: c.id)
@@ -408,11 +469,6 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
         ),
         None,
     )
-    if match is None:
-        return
-    for _ in range(int(right["const"])):
-        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
-        game.state.battlefield.append(fodder.oid)
 
 
 def _stock_the_hand(game: Game, ability) -> None:
