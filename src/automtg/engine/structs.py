@@ -165,6 +165,15 @@ class TriggerInstance:
     controller: int
     bindings: dict[str, Any] = field(default_factory=dict)
     description: str = ""
+    #: Which card the ability is printed on, snapshotted when the trigger fired.
+    #:
+    #: A **token** that triggers on its own death is gone by the time the
+    #: trigger is drained: the token state-based action pops it out of
+    #: `state.objects` rather than moving it to a graveyard, so unlike every
+    #: other permanent there is no object left to read the card off. The engine's
+    #: explicit-LKI pattern, in the one place a card cannot reach with a
+    #: `snapshot` op of its own.
+    def_id: str = ""
     #: Set when this ability was *granted* -- the oid of the permanent whose
     #: `grantable_abilities` it came from.  Resolution has to look there rather
     #: than at the source's own abilities, which do not include it.
