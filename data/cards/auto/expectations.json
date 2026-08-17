@@ -760,6 +760,16 @@
   "boreal_shelf": {
     "zone": "battlefield"
   },
+  "boromir_gondor_s_hope": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "boros_guildgate": {
     "zone": "battlefield"
   },
