@@ -205782,12 +205782,12 @@
     },
     "Prince Imrahil the Fair": {
       "edhrec_rank": 3627,
-      "gate": "template",
+      "gate": null,
       "name": "Prince Imrahil the Fair",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature to",
+      "reason": "",
       "scryfall_id": "d563f5af-6735-4541-8d5f-d58ab8389e8b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prince of Thralls": {
