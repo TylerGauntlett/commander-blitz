@@ -1116,7 +1116,29 @@ characteristics — the loader rejects anything else. See
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
 `block_restriction` · `prevent_damage` ·
 `extra_land_drops`, plus the player-wide ones below.
-Values inside a static may only be `{"const": n}` or `{"count": filter}`.
+
+A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
+of a `cmp` in its condition — is a fourth language, `STATIC_VALUE_KEYS`, and much
+smaller than the effect-side `value_keys`:
+
+| leaf | reads |
+|---|---|
+| `{"const": n}` | a literal |
+| `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
+| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks |
+| `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
+| `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
+| `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
+
+Everything in that table reads a **pipeline input**, which is the whole rule: a
+leaf that read a *derived* characteristic would let one static's magnitude depend
+on another static's output, and the fixed order of
+[layers-lite](adr/0001-layers-lite.md) has no way to resolve that. A leaf outside
+the table is a `DslError` at load, and — since the loader is the only thing
+standing between a card and `characteristics._static_value` — an unknown leaf
+reaching the engine raises there too rather than reading 0. That direction
+matters: a static magnitude that silently reads 0 is an anthem that loads clean,
+prints as the card does, and does nothing.
 
 `set_types` **replaces** the printed types rather than adding to them —
 Arixmethes is "a land (it's not a creature)", which `add_subtype` cannot say. A
@@ -1127,6 +1149,46 @@ Arixmethes is "a land (it's not a creature)", which `add_subtype` cannot say. A
   "power":     { "count": { "controller": "you", "types": ["Land"] } },
   "toughness": { "count": { "controller": "you", "types": ["Land"] } } }
 ```
+
+### "+1/+1 for each charge counter on this artifact"
+
+```jsonc
+// Door of Destinies — the third line
+{ "kind": "static", "effect": "buff",
+  "affects": { "controller": "you", "types": ["Creature"],
+               "subtypes": [ { "chosen_type_of": "self" } ] },
+  "power":     { "counters_on": { "counter": "charge",
+                                  "objects": { "self_only": true } } },
+  "toughness": { "counters_on": { "counter": "charge",
+                                  "objects": { "self_only": true } } } }
+```
+
+An anthem with a **size**. It has to be a static and not an op, twice over:
+`pump` wears off at end of turn, and `add_counters` putting +1/+1 counters onto
+the creatures themselves is a different card — the creatures already out would
+not grow when a later charge counter landed, and creatures cast afterwards would
+arrive unsized.
+
+Safe inside a static for the reason the [`counters`
+condition](#as-long-as) head already was: a counter is a pipeline input, placed
+and removed by primitives, and no layer can touch one. That head is a
+**threshold** though — it compares the count against a fixed amount and yields on
+or off — so it can switch a fixed anthem on and off and never size one. Nor can
+`count` stand in: it counts *objects* matching a filter, and counters are not
+objects, so no filter reaches "the number of charge counters on this artifact".
+
+The magnitude is re-read on every cache miss like every other static value —
+`chars` is cached against `state.char_version`, which `add_counters` bumps — so
+the anthem grows the instant a counter lands and shrinks again when one leaves.
+
+`counter` and `objects` are both **required**, in this language and in the
+effect-side one. `counter` defaults to `+1/+1` in the evaluator, so a Door of
+Destinies that omitted `charge` would be an anthem sized by a counter kind the
+artifact never receives; and an omitted `objects` is not `{"self_only": true}`,
+it is every permanent the filter language defaults to, which on the static side
+is everything its controller has. The kind goes through the same 122.1c
+near-miss check `add_counters` uses (see "Keyword counters" below), so
+`"vigilance counter"` is a load error rather than an inert tally.
 
 ### "As long as…"
 
@@ -1156,7 +1218,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two static values — `const`, `count`, `mana_symbols`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |

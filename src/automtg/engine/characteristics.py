@@ -451,13 +451,21 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     input*. Nothing in the fixed-order characteristics pipeline can change what
     a player's life is, so reading one cannot make a static depend on another
     static's output.
+
+    Vocabulary this does not know is a :class:`DslError`, not a 0. A static's
+    magnitude that silently reads 0 is an anthem that loads clean, prints as the
+    card does and does nothing -- the exact failure the whole validation pass
+    exists to refuse -- and every expression reaching here has been through
+    :func:`automtg.cards.loader._validate_static_value`, so an unknown leaf means
+    the two languages have drifted and the loader is the thing to fix. ``None``
+    is still 0, because a `buff` with no `toughness` is a real card.
     """
     if expr is None:
         return 0
     if isinstance(expr, int):
         return expr
     if not isinstance(expr, Mapping):
-        return 0
+        raise DslError(f"unparsable static value {expr!r}")
     if "const" in expr:
         return int(expr["const"])
     if "count" in expr:
@@ -491,7 +499,32 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return max(_counts_per_player(state, expr["max_count_of"], source), default=0)
     if "min_count_of" in expr:
         return min_count(_counts_per_player(state, expr["min_count_of"], source))
-    return 0
+    if "counters_on" in expr:
+        # "Creatures you control of the chosen type get +1/+1 for each charge
+        # counter on this artifact" -- Door of Destinies. The `counters`
+        # *condition* head has read the same number since Arixmethes, but as a
+        # threshold: it can switch a fixed anthem on and off and never size one.
+        #
+        # Safe here for the reason that head is safe. A counter is a pipeline
+        # **input** -- primitives place and remove them, no layer can -- so an
+        # anthem's magnitude reading one cannot come to depend on another
+        # static's output, and the fixed order stays acyclic. The pool is walked
+        # with the same printed-characteristics filter `count` uses, which is an
+        # input too.
+        #
+        # The magnitude is recomputed like every other static value: `chars` is
+        # cached against `state.char_version`, which `add_counters` bumps, so
+        # the anthem grows the instant the counter lands and shrinks again when
+        # it leaves.
+        spec = expr["counters_on"] or {}
+        kind = str(spec.get("counter", PLUS_ONE))
+        return sum(
+            obj.counter(kind)
+            for obj in _matching_objects(
+                state, spec.get("objects") or {"self_only": True}, source
+            )
+        )
+    raise DslError(f"unknown static value {sorted(expr)}")
 
 
 def _counts_per_player(
