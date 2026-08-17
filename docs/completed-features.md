@@ -1,3 +1,122 @@
+## "You may reveal **a** … card from among them" — an optional pool choice
+
+### Overview
+
+Boromir, Gondor's Hope looks at the top six cards of your library, offers you at
+most one Human or artifact card from among them, and puts the rest on the bottom
+in a random order. The middle sentence is a **declinable bounded pick** — "exactly
+one of these, or none" — and the selector language had no spelling for it. Every
+"look at the top N, you may take one" impulse card says the same thing.
+
+`count` had three spellings and each of the three is a different, wrong card:
+
+- a **value** makes the one number both the minimum and the maximum, so `count: 1`
+  silently deletes the printed "You may". Sharper still, `pick_from_pool`
+  short-circuits on `count >= len(pool)` and returns the pool without asking at
+  all — so a top six holding exactly one Human put it in hand with no decision
+  ever offered;
+- **`"any"`** is min 0 / max *pool*, which is "any number of them": it would put
+  **every** Human and artifact among the six into hand, a strictly better card;
+- **`"all"`** is mandatory by definition.
+
+Wrapping the whole `look_at_top` in `may` is not equivalent in either branch.
+`op_may` gates the entire effects list, so declining also skips the mandatory
+look and the mandatory `rest_to_bottom` — a real, distinct game action, since
+`_bottom_in_random_order` reorders only the six looked at and is deliberately not
+`shuffle_library`. And it asks the yes/no *before* anything has been seen, which
+turns the one informed decision on the card into a blind one. Approximating the
+decline branch with a second `look_at_top` in `may.else` cannot work either: the
+depth is a literal `amount`, so it would bottom six cards from a position where
+only five remain.
+
+### What shipped
+
+`optional: true` beside an integer `count`, honoured in
+`selectors.pick_from_pool` as `min_count = 0` with `max_count` left at N. Only
+the **floor** moves; the ceiling stays at the printed number, which is the entire
+difference from `"any"`.
+
+The name is `TargetModel.optional`'s, deliberately rather than a new word: that
+field is this exact shape ("exactly N, or none") on the declared-target side, and
+its own docstring already spelled out the distinction from `count: "any"`. What
+it could not reach is a pool nothing targeted — `look_at_top` bounds its own from
+the top of a library — so the word had to be said a second time on the selector
+side rather than reused.
+
+Nothing below the decision layer was missing. `ask_objects` has always taken
+distinct `min_count`/`max_count` bounds and `PendingDecision.min_count` has
+always been honoured, so this is a spelling and not a mechanism — the same shape
+of change `count: "any"` was. **No new op, no new `DecisionKind`, no server or
+frontend work**: `CHOOSE_OBJECTS` with a floor of zero already renders, and
+`_choice_actions` already offers the `Done` action that a zero minimum makes
+legal.
+
+### The shortcut that had to learn about it
+
+`if count >= len(pool): return pool` is right for a mandatory pick — there is
+nothing left to decide — and is the deletion of "You may" here, because
+**declining is the decision**. It is guarded rather than removed, so a bare
+`count: N` over a pool of N still resolves without a pointless question.
+
+### The load-time guards
+
+`optional` on `"all"` or `"any"` is refused: the first is mandatory by
+definition, the second already reaches zero, so on either the key would be
+silently inert — and a card whose whole point is "you may" quietly losing the
+word is the failure the key-set validation exists to prevent. Refused alongside
+`random` and `chooser: "none"` too, for `"any"`'s reason: both resolve the pool
+without asking anybody, and with nobody asked there is nobody to decline.
+
+### An `any_of` branch inherits the outer zone
+
+Boromir is the first card to ask a union about cards that are **not on the
+battlefield**, and it found a bug that had been silent because every shipped
+`any_of` is a battlefield selector. `matches` passed the *caller's* `default_zone`
+down into each branch instead of the zone the outer selector had settled on, so
+"a Human **or** artifact card" from a library look tested every branch against
+the battlefield, matched nothing, and the op simply never asked — which on screen
+is indistinguishable from a top six that happened to hold neither.
+
+The fix is the other half of a rule `validate_selector` already enforces: a
+branch may not name a `zone`, because "a branch filters the pool it already
+chose". It now inherits that pool's zone. No shipped card changes behaviour.
+
+### What it unblocked
+
+**Boromir, Gondor's Hope**, verified through all six gates, and it was the only
+gap record naming the capability. "Enters or attacks" splits into two triggered
+abilities sharing the printed line, as Grave Titan already does.
+
+**Gate 5 cannot exercise the pick, and the expectation says so honestly.** The
+authoring sandbox deals player 0 a library of forty basic lands, so the top six
+hold no Human and no artifact: the pool is empty, nothing is revealed, and the
+six go to the bottom. The expectation asserts exactly that — hand unchanged at
+zero, library unchanged at forty, the creature on the battlefield — which is what
+the printed card does in that position. Asserting a revealed card would be
+asserting something the board cannot show. The discriminating evidence is
+`tests/unit/test_optional_pool_choice.py`, which is where §3 of the skill puts it:
+engine work gets exactly the coverage its unit test writes.
+
+**No template.** The shape is high-frequency, but `templates.py` matches one
+whole printed *line* against `^…$` sentence patterns that are each a single op
+with a countable outcome. Boromir's line is three sentences behind a two-event
+trigger introducer that does not exist, and the three printed forms the gap
+record collected — "put it into your hand", "put one of them onto the
+battlefield", "exile up to one card from among them" — are three different
+sentences, not one with a parameter. A template read off this one card would be a
+guess, and rule 3 says refuse what cannot be read exactly. The cards stay in the
+agent tier, where the next `/author-cards` picks them up now that the DSL can say
+the sentence.
+
+### Guarded by
+
+`tests/unit/test_optional_pool_choice.py` — the range it asks for (floor zero,
+ceiling N), the pool-of-one boundary where the old shortcut fired, both answers
+coming back, the three spellings it is *not*, Boromir's trigger end to end
+(including that declining still bottoms the rest, and that the question comes
+after the look), the `any_of`-in-a-library fix with the battlefield case pinned
+beside it, and every load-time guard.
+
 ## "Can't block", with a clock and no permanent behind it
 
 ### Overview

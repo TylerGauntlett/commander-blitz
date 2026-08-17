@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **29** capabilities.
+**25 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -34,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-restriction](#mana-restriction) | 1 | 222 | engine, value |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
 | [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
-| [optional-pool-choice](#optional-pool-choice) | 1 | 6835 | selector |
 | [permanents-entered-this-turn](#permanents-entered-this-turn) | 1 | 4513 | value |
 | [reveal-until](#reveal-until) | 1 | 3831 | op |
 | [saga](#saga) | 1 | 7121 | engine |
@@ -337,20 +336,6 @@ Blocks **1** card.
 
 - **Fellwar Stone** (rank 17) — `fellwar_stone`
   - {T}: Add one mana of any color that a land an opponent controls could produce.
-
-</details>
-
-## optional-pool-choice
-
-Blocks **1** card.
-
-- **(selector)** A declinable bounded choice for a selector's `count` -- the `objects`/pool equivalent of a target's `optional: true`, i.e. "choose exactly N of these, or none" (here N = 1, printed "you may reveal **a** Human or artifact card from among them"). Concretely: accept `optional: true` alongside an integer `count` in `SELECTOR_KEYS` and honour it in `selectors.pick_from_pool` by setting `min_count = 0` while `max_count` stays N, so `look_at_top` can offer at most one card and keep the rest of the effect -- the look and the `rest_to_bottom` -- mandatory. The choice must also stay *after* the look, since the whole point of the clause is that the player decides having seen the six cards.
-  <br>Why the existing vocabulary won't do: A selector's `count` accepts only `"all"`, `"any"`, or a value (`selectors.pick_from_pool`, and `validate_selector` rejects any other string), and none of the three says "up to one": a value sets `min_count == max_count`, so `count: 1` forces the reveal and silently deletes "You may" -- and worse, `if count >= len(pool): return pool` takes the card without even asking; `"any"` sets `min_count = 0, max_count = len(pool)`, which is "any number of them" and would put *every* Human and artifact among the top six into hand, a strictly stronger card. Wrapping the `look_at_top` in `may` is not equivalent in either branch: `op_may` gates the entire wrapped effects list, so declining also skips the mandatory look and the mandatory `rest_to_bottom` (a real, distinct game action -- `_bottom_in_random_order` reorders only the six looked at and deliberately is not `shuffle_library`), and it asks the yes/no *before* anything is seen, turning an informed decision into a blind one. Approximating the decline branch with a second `look_at_top` in `may.else` cannot work either, because the depth is a literal `amount` and would bottom six cards in a position where only five remain. `TargetModel.optional` already expresses exactly this shape ("exactly N, or none") but only for declared targets, and these cards are chosen from a library pool `look_at_top` bounds itself, not targeted.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Boromir, Gondor's Hope** (rank 6835) — `boromir_gondor_s_hope`
-  - You may reveal a Human or artifact card from among them and put it into your hand.
 
 </details>
 
