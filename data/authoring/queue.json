@@ -221822,12 +221822,12 @@
     },
     "Riders of Rohan": {
       "edhrec_rank": 6918,
-      "gate": "template",
+      "gate": null,
       "name": "Riders of Rohan",
-      "reason": "no template for: When this creature enters, create two 2/2 red Human Knight creature tokens with trample an",
+      "reason": "",
       "scryfall_id": "e76a2b11-a087-42cf-8356-ef9edbac244a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riders of the Mark": {

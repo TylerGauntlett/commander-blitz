@@ -5195,8 +5195,19 @@ evoked Mulldrifter is still a five-drop to everything that counts one.
 Its two halves are checked together like kicker's, and half of it fails the same
 silent way: an evoke cost nothing reads is a cheaper cast that never dies, and an
 `{"evoked": true}` clause with no cost can never fire. Both load cleanly, so both
-are load errors. An evoke cost that is not actually cheaper is refused too — an
-alternative nobody would take is dead weight that reads as a mechanic.
+are load errors.
+
+The price is checked too, and what it is checked against depends on
+`evoke_label`. An alternative costing **exactly** the printed cost is refused
+under every label: that is one cast offered twice, and the second line is dead
+weight that reads as a mechanic. An alternative costing **more** than the printed
+cost is refused only when the card calls it evoke, because evoke buys nothing
+with the price but the discount — a Mulldrifter evoked is a Mulldrifter that
+dies, and paying extra for that is a line no player takes. **Dash** buys
+something, so it may be the dearer one: Riders of Rohan is printed `{3}{R}{W}`
+and dashes for `{4}{R}{W}`, and the extra mana buys haste plus the enters trigger
+for a turn before the body goes back to hand. Renaming the cost is the card
+saying, in the action list and on screen, that it is not evoke.
 
 "It's sacrificed when it enters" is an ordinary `self_enters` trigger gated on
 `{"evoked": true}`, which works because the flag is written onto the object at

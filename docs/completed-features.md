@@ -1,3 +1,89 @@
+## Dash — the alternative cost that is allowed to cost more
+
+### Overview
+
+Dash needed no engine work and still needs none. `docs/keywords.md` has called it
+*free* since the census and `tests/unit/test_dash.py` cashes that claim rather
+than asserting it: `evoke` is not "the evoke keyword", it is the mechanism evoke,
+dash and blitz share — an alternative mana cost that replaces the printed one,
+offered from hand only, plus a flag the card reads back with `{"evoked": true}`.
+`evoke_label` is what the card calls that cost on screen; `grant_keyword` gives
+the haste; `delay` with `step: "end_step"` schedules the return.
+
+What had no home was a **price**. The loader refused any `evoke` cost that was
+not strictly cheaper than the printed one:
+
+```
+DslError: riders_of_rohan: evoke '{4}{R}{W}' is not cheaper than the printed cost
+```
+
+Riders of Rohan is printed `{3}{R}{W}` and dashes for `{4}{R}{W}` — one mana
+*more*. So the card did not load at all, and the whole of the gap was that one
+comparison.
+
+### The guard was right, about evoke
+
+Its stated reason is sound and worth keeping: *an alternative nobody would take is
+dead weight that reads as a mechanic*. That argument is about the discount. Evoke
+buys nothing else with the price — a Mulldrifter evoked is a Mulldrifter that
+dies — so an evoke cost above the printed one is a line no player ever takes, and
+a card offering it looks implemented while being one line short.
+
+Dash buys something. The extra mana buys haste, and the enters trigger for a turn,
+before the body goes back to hand: two Human Knights this turn and a 4/4 that
+attacks immediately, for one more mana than the 4/4 alone. That is a trade
+players take, and Riders of Rohan is printed on the assumption that they do.
+
+### What the guard reads now
+
+Two comparisons where there was one, split on `evoke_label`:
+
+| | |
+|---|---|
+| **equal** to the printed cost | refused under *every* label. Two lines at one price is the same cast offered twice, and the second is dead weight however it is worded — this is the shape the original guard existed for that no keyword can excuse |
+| **more** than the printed cost | refused only when `evoke_label` is its default `"evoked"`. Evoke keeps its discount-only invariant exactly as before, with the original message |
+| **more**, under a renamed label | allowed. The card has said out loud, in the action list and on screen, that it is not evoke |
+
+`evoke_label` was cosmetic until now, and making a display string load-bearing was
+the deliberate part of the call. It is the honest discriminator available: the
+label is the card's own statement of which keyword it prints, it is the same
+string the player reads on the cast line, and a card that renames the cost to dodge
+the guard has to lie visibly to do it. `src/automtg/cards/schema.py` records that
+the field is no longer only for the screen.
+
+### The three shapes that were rejected before this one
+
+| | |
+|---|---|
+| A blanket relax to `>` | The gap record's first suggestion, and a regression dressed as a fix: a typo'd evoke cost — the actual authoring error, printed `{2}{U}` and evoke `{5}{U}` — would then load clean and offer a line nobody takes. A guard that permits anything is not a relaxed guard |
+| A `dash:` field of its own | Duplicates the entire `evoke` machinery to write the same `cast_evoked` flag, then needs mutual-exclusion guards against `evoke`, `emerge` and `bestow`, and blitz would want a third copy tomorrow. `evoke_label` already exists precisely because these are one mechanism under three words |
+| `alternative_cost` | Closed twice over. The loader refuses it without a `condition`, and dash has no condition to invent; and it deliberately sets `Action.alternative` rather than `cast_evoked`, which nothing reads back — so "If you do, it gains haste…" could not be gated at all and would fire on every cast, which is a different card |
+
+`kicker` points the wrong way (additive: a kicked cast would be `{3}{R}{W}` *plus*
+the dash price), and `emerge` may not coexist with `evoke` and has no fixed price.
+
+### Guarded by
+
+`tests/unit/test_dash.py`, which already held the mechanism down and now holds the
+price too. `t_dear_dasher` in `tests/data/testing.cards.json` is Riders' shape at
+test scale — printed `{2}{R}`, dash `{3}{R}` — and the tests assert the dearer line
+is *offered*, costs four lands rather than three, and still reaches the same
+`evoked` flag the cheap one does, because loading is not the claim. Alongside it
+`TestThePriceGuardStillCatchesDeadWeight` pins both errors the guard must keep
+catching: a dearer evoke proper, with and without the label written out, and an
+equal price under either label. `tests/unit/test_evoke.py`'s existing
+`test_an_evoke_cost_that_is_not_cheaper_is_refused` is unchanged and still passes
+on the original message.
+
+**Unblocked one card: Riders of Rohan**, whose only remaining need this was.
+Agent tier, all six gates; `--tier templates --retry` harvested nothing
+(`no template 200`), as expected — no template reads a Dash line. The sandbox
+casts the printed cost, so `cast_evoked` is never set there and the card
+legitimately asserts the ETB half only: `{"zone": "battlefield", "tokens":
+{"id": "human_knight_2_2_r_trample_haste", "count": 2}, "battlefield_count": 35}`,
+the same three numbers Grave Titan asserts for the same shape. The dash half is
+witnessed by the unit test instead.
+
 ## "Can't block", with a clock and no permanent behind it
 
 ### Overview
