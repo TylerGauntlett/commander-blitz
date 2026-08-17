@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-until](#reveal-until) | 1 | 3831 | op |
 | [saga](#saga) | 1 | 7121 | engine |
 | [unblockable](#unblockable) | 1 | 18 | op |
-| [variable-enters-with-counters](#variable-enters-with-counters) | 1 | 4800 | replacement |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
@@ -395,21 +394,6 @@ Blocks **1** card.
 
 - **Rogue's Passage** (rank 18) — `rogue_s_passage`
   - {4}, {T}: Target creature can't be blocked this turn.
-
-</details>
-
-## variable-enters-with-counters
-
-Blocks **1** card.
-
-- **(replacement)** `ReplacementModel.amount` must accept a *value expression* from `value_keys`, not just a literal integer, so `self_enters_with_counters` can say "a +1/+1 counter for each other Human you control" -- here `{"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Human"], "exclude_self": true}}`. The evaluation site already has everything it needs: `zones.py:302-304` evaluates the replacement's `condition` with `controller=obj.controller, source=obj.oid` on the board the permanent is arriving on, so the same call shape evaluates an amount. The change is `amount: int = 1` -> `amount: int | dict[str, Any] = 1` in `schema.py:231`, a `validate_value` pass beside the existing `validate_condition` in `loader.py:270-276`, and evaluating it instead of `int(replacement.get("amount", 1))` at `zones.py:324-326`. This is a large family, not one card: `data/authoring/queue.json` holds 25+ cards deferred with "no template for: ... enters with a +1/+1 counter on it for each ..." (each other creature you control, each Gate you control, each creature that died this turn, each color of mana spent to cast it / Converge, each Zombie card in your graveyard, other Kithkin, Ulasht, Verazol), and every one of them is unblocked by this single field widening.
-  <br>Why the existing vocabulary won't do: The `replacements` mechanism itself exists and is the right home -- `self_enters_with_counters` is what Mossborn Hydra uses for its fixed "enters with a +1/+1 counter on it" and what `_replacements_with_loyalty` compiles a planeswalker's starting loyalty into -- but `amount` is typed `int = 1` in `schema.py:231` under a `Strict` model config, so a value expression is a validation error and only a constant can be printed. The nearest substitute is a `self_enters` triggered ability running `add_counters` with the count as its `amount`, and it is wrong three ways on this card in particular. (1) It is a trigger, not a replacement: Éomer is on the battlefield as a 2/2 first and grows later, whereas 614.1c/121.6 mean he is never seen without the counters. (2) The second printed line deals damage *equal to Éomer's power*, so the substitute makes the card's whole payload depend on which of two simultaneous enters triggers the controller happens to order first -- 2 damage or 2+N, from a card whose printed text has no such choice in it. (3) The op route fires COUNTER_PLACED (`primitives.py:313-321`) while the replacement route calls `obj.add_counter` directly and fires nothing (`zones.py:319-326`), so the substitute would additionally wake up every `counter_placed` watcher on the board. `add_counters` inside the trigger cannot be made to behave like a replacement, and there is no other slot in `ops` for an as-enters modification.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Éomer, King of Rohan** (rank 4800) — `eomer_king_of_rohan`
-  - Éomer enters with a +1/+1 counter on it for each other Human you control.
-  - When Éomer enters, target player becomes the monarch. Éomer deals damage equal to its power to any target.
 
 </details>
 

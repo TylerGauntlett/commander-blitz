@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING, Any
 from .carddef import CardDef
 from .characteristics import chars
 from .effects.conditions import evaluate_condition
+from .effects.context import EffectContext
+from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
@@ -342,13 +344,24 @@ def _enter_battlefield(
             # written that way entered with no counters at all and nothing said
             # so, which is the exact failure the DSL's load-time checks exist to
             # prevent. Fall back only when `modify` has nothing in it.
+            # "…for each other Human you control" (Éomer, King of Rohan). The
+            # amount is a value expression, evaluated on the board the permanent
+            # is arriving on with the arrival as the source -- the same context
+            # the condition above is judged in, so `exclude_self` means "other"
+            # and the count is the one 614.1c says the permanent is never seen
+            # without.  A trigger running `add_counters` could not do this: it
+            # would put the permanent on the battlefield at its printed size
+            # first, and on Éomer, whose other enters trigger deals damage equal
+            # to his power, the whole payload would turn on trigger ordering.
+            ctx = EffectContext(state=state, controller=obj.controller, source_oid=obj.oid)
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
-                    obj.add_counter(str(kind), int(amount))
+                    obj.add_counter(str(kind), evaluate_value(ctx, amount))
             else:
                 obj.add_counter(
-                    str(replacement.get("counter", "+1/+1")), int(replacement.get("amount", 1))
+                    str(replacement.get("counter", "+1/+1")),
+                    evaluate_value(ctx, replacement.get("amount", 1)),
                 )
 
     state.bump_chars()
