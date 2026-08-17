@@ -2210,6 +2210,44 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
                 f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
             )
+    if op == "goad":
+        # A goad with no selector goads nobody: the spell resolves, the log says
+        # nothing, and every creature attacks exactly as it pleases. Detain's
+        # guard, for detain's reason.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: goad needs 'objects' naming the creatures goaded"
+            )
+        # No `duration` key at all, and that is the point of the op rather than an
+        # omission: 701.38a has exactly one clock ("until your next turn") and it
+        # is keyed to the goading *player*, not to a turn number. Accepting a
+        # duration would invite `this_turn` -- which is `must_attack`, a strictly
+        # weaker card that looks identical in a one-turn test.
+        if "duration" in effect:
+            raise DslError(
+                f"{where}: goad takes no 'duration' -- it lasts until the goading "
+                f"player's next turn (701.38a), which is a player and not a number. "
+                f"Use must_attack for a one-combat requirement"
+            )
+        # The goader defaults to the effect's controller, which is every printed
+        # goad; when a card does spell it out it must be a player the engine can
+        # resolve, checked the way `cant_attack_player`'s two sides are.
+        if "player" in effect:
+            who = effect["player"]
+            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+                raise DslError(
+                    f"{where}.player: unknown player spec {who!r} "
+                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
+                )
+            if (
+                isinstance(who, Mapping)
+                and "target" in who
+                and str(who["target"]) not in target_ids
+            ):
+                raise DslError(
+                    f"{where}.player: references target {who['target']!r} "
+                    f"which the card does not declare"
+                )
     if op == "cant_block":
         # Two keys, and every way of getting them wrong loads cleanly and plays
         # a different card.

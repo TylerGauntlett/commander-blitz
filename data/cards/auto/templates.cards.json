@@ -73687,6 +73687,47 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "taunt_from_the_rampart",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Taunt from the Rampart",
+      "oracle_text": "Goad all creatures your opponents control. Until your next turn, those creatures can't block. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "goad"
+        },
+        {
+          "duration": "until_your_next_turn",
+          "objects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "cant_block"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

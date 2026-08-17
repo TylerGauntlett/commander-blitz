@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-90 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+91 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -175,7 +175,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `unblockable` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
@@ -4715,10 +4715,83 @@ defender is left, which is not redundant: `attack_required` is a requirement AND
 `can_attack`, so a compelled creature with every defender forbidden would
 otherwise have "Done attacking" withheld with no `ADD_ATTACKER` to offer.
 
-`goad` is the next thing that wants this seam — "attacks a player other than you
+`goad`, below, is the other user of this seam — "attacks a player other than you
 if able" is a per-creature restriction on *which* defender, and unlike this one
 it does reach planeswalkers, which is why `attack_target_forbidden` is told which
 kind of attack it is being asked about rather than inferring it.
+
+## Goad
+
+    Taunt from the Rampart — "Goad all creatures your opponents control. Until
+                              your next turn, those creatures can't block."
+
+```jsonc
+{ "op": "goad",
+  "objects": { "zone": "battlefield", "controller": "opponent",
+               "types": ["Creature"] } }
+```
+
+Rule 701.38a is **two rules in one word**, and both of them "if able": until the
+goading player's next turn the creature *attacks each combat if able*, and it
+*attacks a player other than the goading player if able*.
+
+Neither half was expressible, and the second half did not exist in the engine at
+all:
+
+| | |
+|---|---|
+| `must_attack` | one-shot. `combat.discharge_attack_requirements` spends the flag when attackers lock in, so `this_turn` and `next_combat` each compel exactly **one** combat where goad compels every combat until its goader untaps. It also records no goader, which is the datum the other half is about |
+| the `attacks_if_able` static | the live, unspent form — but a continuous ability on a permanent. A sorcery leaves no source on the battlefield, and a static's `affects` filter reads only printed characteristics, so it can say neither "those creatures" (the set chosen at resolution) nor "until your next turn" |
+| nothing at all | restricted **which** defender an attacker may pick. `cant_attack`/`attack_forbidden` is all-or-nothing, `block_restriction` restricts blockers. Without the second half a goaded creature swings straight back at the player who goaded it, which is the whole political point of the card |
+
+The datum written down is the **player**, in `GameObject.goaded_by` — detain's
+field, and forced for detain's reason plus one more. "Until your next turn" is
+not a turn number (eliminate a player and it moves), so `turn._untap_step` clears
+the marks belonging to whoever is untapping, beside detain and the
+`until_your_next_turn` block prohibitions. And the target restriction *has* to
+know who: a goad is a fact about a pair.
+
+It is a **set**, unlike detain's single pid, because two opponents may goad the
+same creature: each clock runs from its own untap step, and the creature must
+attack around both — so a creature goaded by every other player is free to
+attack any of them, which is the "if able" escape doing its job.
+
+There is deliberately **no `duration` key**, and the loader refuses one. 701.38a
+has exactly one clock and it is a player; accepting a duration would invite
+`this_turn`, which is `must_attack` — a strictly weaker card that looks identical
+in a one-combat test. `objects` is required for detain's reason: a goad with no
+selector goads nobody and the card would resolve saying nothing. `player` is the
+goader and defaults to the effect's controller, which is every printed goad.
+
+Both halves are read live, in the two places the seam already provides:
+
+| | |
+|---|---|
+| `combat.attack_required` | the compulsion, beside `must_attack` and the `attacks_if_able` static, and **not** touched by `discharge_attack_requirements` — which is what makes the next combat compelled too |
+| `combat.attack_target_forbidden` | the target restriction, in the per-attacker/per-defender predicate `cant_attack_player` built |
+
+**Goad reaches planeswalkers**, the opposite answer from `cant_attack_player`,
+and the two are opposite for the same reason. "Creatures can't attack you" is a
+sentence about being attacked, and attacking somebody's planeswalker is not
+attacking them (506.2) — the Ghostly Prison ruling. "Attacks a player *other than
+you* if able" is a sentence about where the attack is aimed, and the goader's
+planeswalker is the goader. Reading goad the Ghostly Prison way would let every
+goad on a board with a walker be dodged while the log said the requirement had
+been met. That is why the predicate takes `planeswalker` as a parameter instead
+of inferring it.
+
+The two "if able" escapes are both load-bearing, and each is a way the step could
+otherwise become impossible:
+
+- **A creature that cannot attack owes nothing.** `attack_required` is the
+  requirement *and* `can_attack`, so a tapped, summoning-sick or otherwise
+  blocked creature is excused — and, crucially, a goaded creature on somebody
+  else's turn is excused too, or the goading player could never finish a
+  declaration.
+- **With only the goader left to attack, it attacks the goader.** The restriction
+  fires only while some *other* defender — a player, or a planeswalker a third
+  party controls — is legally attackable, which is why a goad can never empty the
+  defender list and never makes a creature unable to attack.
 
 ## Block restrictions
 
