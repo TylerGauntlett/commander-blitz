@@ -14,7 +14,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
@@ -29,20 +28,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [saga](#saga) | 1 | 7121 | engine |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
-
-## addendum
-
-Blocks **1** card.
-
-- **(engine)** a condition key that asks whether this spell was cast during its controller's own main phase -- e.g. {"cast_during": "main"} or {"cast_in_phase": ["precombat_main", "postcombat_main"]}. It must read the phase/step recorded at the moment the spell was *put on the stack*, not the phase at resolution, so the engine also has to stamp the casting phase (and the caster-vs-active-player relationship) onto the spell object when it is cast, the way `kicked`, `evoked` and `overloaded` already stamp cast-time choices.
-  <br>Why the existing vocabulary won't do: `is_your_turn` is the closest condition in `condition_keys`, but it only compares state.active_player to the source's controller -- it says nothing about the phase, so it would return true for a Formation cast during your own combat or end step, where Addendum must not apply. It is also evaluated at resolution rather than at cast time. `has_flag` reads a flag written by `set_flag` on a permanent's own object and there is no effect that runs at cast time to write one, and `zone_is` reports the source's current zone, not when or where it was cast. No key in `condition_keys` (nor any value in `value_keys`) exposes the turn's phase or step at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Unbreakable Formation** (rank 550) — `unbreakable_formation`
-  - Addendum — If you cast this spell during your main phase, put a +1/+1 counter on each of those creatures and they gain vigilance until end of turn.
-
-</details>
 
 ## batch-attack-trigger
 

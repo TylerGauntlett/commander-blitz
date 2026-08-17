@@ -944,6 +944,7 @@ its mana, and a cost of five that settled for four would be a different card.
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
 { "has_flag": "renowned" }                    // a word written by `set_flag`, for the game
 { "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
+{ "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 ```
 
 `is_monarch` takes a player spec, so "if an opponent is the monarch" is
@@ -979,6 +980,10 @@ they are two keys over two stores rather than one key with a duration — see
 ["If this creature hasn't been exerted this turn"](#if-this-creature-hasnt-been-exerted-this-turn)
 below. Both ask about the ability's own source, which is the only thing that can
 have become the word.
+
+`cast_during` is addendum, and it is the only condition here that reads a fact
+about a moment that has already passed — see
+[Addendum](#addendum--the-phase-a-spell-was-cast-in) below.
 
 ## Triggers
 
@@ -1440,9 +1445,9 @@ Each node names **exactly one** form:
 
 This is a **mirror** of the `if`-effect condition language in
 `engine/effects/conditions.py`, not that language. The keys it does not have —
-`zone_is`, `kicked`, `evoked` — are not oversights: they read a resolving
-object's state, and a static is evaluated for every permanent on every cache
-miss. Borrowing one is a `DslError` at load.
+`zone_is`, `kicked`, `evoked`, `cast_during` — are not oversights: they read a
+resolving object's state, and a static is evaluated for every permanent on every
+cache miss. Borrowing one is a `DslError` at load.
 
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
@@ -2293,6 +2298,11 @@ castable or activatable, before anything reaches the stack, so `kicked`,
 `evoked`, `overloaded` and `cast_from_graveyard` read `False` every time. A card
 written with one of those would have a discount clause that can never fire, and
 nothing on a board would ever say so, so the loader refuses them.
+
+`cast_during` is refused with them and is the worst of the five: the phase stamp
+is written as the spell goes on the stack, which has not happened yet — and a
+card being priced for its **second** cast still carries the stamp from its first,
+so this one would not read a harmless `False`, it would read a stale `True`.
 
 Splitting the printed line into two abilities — equip {4} and equip {1} — is not
 the same card: nothing could switch the cheap one off.
@@ -5875,6 +5885,49 @@ scans the graveyard alongside the hand. The additional cost reuses
 A creature cast off suspend has haste, recorded on the object rather than in
 `until_eot`: it lasts as long as the permanent does, and it is the only reason
 suspend is ever better than waiting.
+
+## Addendum — the phase a spell was cast in
+
+```jsonc
+// Unbreakable Formation — "Creatures you control gain indestructible until end
+//   of turn. Addendum — If you cast this spell during your main phase, put a
+//   +1/+1 counter on each of those creatures and they gain vigilance…"
+"spell_effects": [
+  { "op": "grant_keyword", "keywords": ["indestructible"],
+    "objects": { "controller": "you", "count": "all",
+                 "types": ["Creature"], "zone": "battlefield" } },
+  { "op": "if", "condition": { "cast_during": "your_main" },
+    "then": [ { "op": "add_counters", "counter": "+1/+1", … },
+              { "op": "grant_keyword", "keywords": ["vigilance"], … } ] }
+]
+```
+
+The vocabulary is generated rather than listed: a phase name — `beginning`,
+`precombat_main`, `combat`, `postcombat_main`, `ending` — or `main` for either
+main phase, each optionally prefixed `your_` to *also* require that the caster
+was the active player. Anything else is a `DslError` at load, because a name the
+turn structure does not have would match nothing and the addendum clause would
+never fire on a card that prints one.
+
+**`is_your_turn` is the near miss, and it is wrong twice over.** It compares
+`state.active_player` to the controller, so it says nothing about the phase — a
+Formation flashed in during your own combat or your own end step, which is
+exactly when you cast it, would collect an addendum it is not owed. And it is
+evaluated where it is *read*, which is not where the sentence is about: "if you
+**cast** this spell during your main phase" is a fact about rule 601, settled
+before anything responded to the spell and before the resolution that asks.
+
+So `stack.push_spell` stamps two facts on the object — `cast_step`, and whether
+the caster was the active player at that moment — beside the `cast_kicked`,
+`cast_evoked`, `cast_overloaded` and `cast_from_graveyard` stamps that already
+record cast-time choices, and for the same reason they exist: the StackItem is
+gone by the time a permanent's own enters trigger could ask. Both halves are
+recorded because "your main phase" is a phase *and* a turn, and the second is
+stored as the **relation** rather than as a player id, so a later change of
+control cannot rewrite who cast it.
+
+Nothing was cast reads `False`. A token, or a permanent an effect put onto the
+battlefield, has no cast at all, and "if you cast this spell" is not true of it.
 
 ## "This spell can't be countered"
 
