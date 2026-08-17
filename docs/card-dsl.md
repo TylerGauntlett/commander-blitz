@@ -1805,6 +1805,32 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## "…that shares a creature type with your commander"
+
+```jsonc
+{"filter": {"types": ["Creature"], "shares_a_type_with_commander": "you"}}
+```
+
+Path of Ancestry. Takes a **player**, which is why it is not a spelling of
+`shares_a_type_with`: that key resolves its argument through `_bound_oid`, i.e.
+it names an object bound earlier in the same effect. Nothing binds the
+commander, the commander is not what the trigger is about, and it is usually in
+the command zone — so there is nothing to find and the clause is always false.
+
+`is_commander` is the other near-miss and asks the opposite question: it is a
+predicate on the object being tested, not a reference to compare a different
+object against, and it is a battlefield test.
+
+**A literal `subtypes` list is the approximation to refuse.** Which creature
+type matters is a property of the deck the card is played in, not of the card —
+writing `["Vampire"]` into Path of Ancestry is a different card in every other
+deck, and one that loads and looks implemented.
+
+Works in a trigger filter and in an effect selector alike; both call
+`characteristics.commander_subtypes`, so they cannot disagree. The union across
+a player's commanders, read through `chars` on the battlefield and off the
+printed card elsewhere.
+
 ## Commander-identity mana — "any color in your commander's color identity"
 
 ```jsonc

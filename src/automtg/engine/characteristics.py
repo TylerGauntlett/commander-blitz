@@ -1032,3 +1032,32 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
                 continue
             total += _static_value(state, static.get("amount"), obj)
     return total
+
+
+def commander_subtypes(state: GameState, pid: int) -> frozenset[str]:
+    """Every creature type this player's commanders currently have.
+
+    The union across their commanders, so a partner pair contributes both
+    halves' types -- "shares a creature type with your commander" is satisfied
+    by either one.
+
+    Read through `chars` where the commander is on the battlefield and off the
+    printed card otherwise: an animated or type-changed general really does
+    share its new type, and a commander sitting in the command zone -- where it
+    is for most of the game -- has only what is printed on it.
+
+    Lives here rather than in `selectors` because both halves of the filter
+    language ask it: `selectors.matches` for effects, and
+    `triggers.matches_card_filter` for trigger filters, which is the one Path of
+    Ancestry actually reaches.
+    """
+    out: set[str] = set()
+    for oid in state.commanders_of(pid):
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        if obj.zone is Zone.BATTLEFIELD:
+            out |= set(chars(state, oid).subtypes)
+        else:
+            out |= set(state.card_of(obj).subtypes)
+    return frozenset(out)
