@@ -425,6 +425,24 @@ export function describeEvent(
       return event.data.to === "player"
         ? `${who} ${v("take", "takes")} ${amount} damage`
         : `${amount} damage to ${card ?? "a permanent"}`;
+    /*
+     * Prevention over a *player* -- Selfless Squire, Fog.
+     *
+     * The one damage event with nothing else to show for it. Prevented damage
+     * was never dealt, so there is no `life_lost` line, no `damage_dealt` line
+     * and no change on the board: left unnarrated, a fogged alpha strike is a
+     * turn in which the log says nothing happened at all.
+     *
+     * The *permanent* shape (absorb, protection) is deliberately still silent.
+     * Its payload carries an `oid` rather than a card id, so there is no name to
+     * put in the sentence, and absorb's residue already prints its own
+     * `damage_dealt` line with the reduced number -- the reader is not left
+     * wondering there. Narrating it as "a permanent" would be a worse line than
+     * none.
+     */
+    case "damage_prevented":
+      if (amount === null || amount <= 0 || event.data.to !== "player") return null;
+      return `${who} ${v("prevent", "prevents")} ${amount} damage`;
     // Ten poison ends the game at any life total, so a player quietly
     // accruing them with a healthy life total needs saying out loud.
     case "poison_added": {
