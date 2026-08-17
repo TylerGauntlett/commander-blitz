@@ -91,6 +91,17 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "…a creature spell that shares a creature type with **your
+        #: commander**." Path of Ancestry. Takes a *player* rather than a
+        #: binding name, which is why it is not a spelling of the clause above:
+        #: nothing binds the commander, the commander is not what the trigger is
+        #: about, and it is usually in the command zone rather than on the
+        #: battlefield, so `_bound_oid` has nothing to find and `is_commander`
+        #: asks the wrong question -- it is a predicate on the object being
+        #: tested, not a reference to compare a different object against.
+        #: A literal `subtypes` list cannot stand in either: which type matters
+        #: is a property of the deck the card is played in.
+        "shares_a_type_with_commander",
         #: "…and each other creature that shares a color with it" -- radiance.
         #: The colour twin of the clause above, and it needs its own key for the
         #: same reason: `colors` takes a literal list written into the card, and
@@ -231,6 +242,27 @@ def _bound_oid(ctx: EffectContext, name: str) -> int | None:
     return int(value) if isinstance(value, int) else None
 
 
+def _commander_subtypes(ctx: EffectContext, who: str) -> frozenset[str]:
+    """Every creature type the named players' commanders currently have.
+
+    A separate clause from `shares_a_type_with` rather than a reserved binding
+    name, because it takes a **player** and not an object: nothing binds the
+    commander, the commander is not what the effect is about, and it is usually
+    in the command zone rather than on the battlefield, so `_bound_oid` has
+    nothing to find.
+
+    The set itself comes from `characteristics.commander_subtypes`, shared with
+    `triggers.matches_card_filter` so the two halves of the filter language
+    cannot disagree about what a commander's types are.
+    """
+    from ..characteristics import commander_subtypes
+
+    out: set[str] = set()
+    for pid in select_players(ctx, who):
+        out |= commander_subtypes(ctx.state, pid)
+    return frozenset(out)
+
+
 def _bound_oids(ctx: EffectContext, name: str) -> list[int]:
     """Every object bound under ``name`` -- one, or a whole set of them.
 
@@ -328,6 +360,10 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         theirs = chars(state, other).subtypes if state.objects.get(other) else frozenset()
         if not (subtypes & theirs):
             return False
+    if (who := selector.get("shares_a_type_with_commander")) is not None and not (
+        subtypes & _commander_subtypes(ctx, str(who))
+    ):
+        return False
     if (name := selector.get("shares_a_color_with")) is not None:
         # Radiance. The colour twin of the clause above, and the boundary is the
         # same one intimidate has: a **colorless** object shares a colour with

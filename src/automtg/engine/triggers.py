@@ -553,6 +553,24 @@ def matches_card_filter(
     supertypes = filt.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
+    # "…a creature spell that shares a creature type with your commander."
+    # Path of Ancestry. Answered here as well as in `selectors.matches` because
+    # this is the half a *trigger* filter reaches, and the printed subtypes are
+    # the right side of the comparison for a spell on the stack.
+    who = filt.get("shares_a_type_with_commander")
+    if who is not None:
+        from .characteristics import commander_subtypes
+
+        seats = (
+            [ability_source.controller]
+            if who in ("you", "controller")
+            else [p.pid for p in state.players if p.pid != ability_source.controller]
+        )
+        theirs: set[str] = set()
+        for seat in seats:
+            theirs |= commander_subtypes(state, seat)
+        if not (card.subtypes & theirs):
+            return False
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):
         return False

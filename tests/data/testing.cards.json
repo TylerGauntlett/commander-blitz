@@ -8101,6 +8101,40 @@
       "toughness": 5,
       "colors": [],
       "color_identity": []
+    },
+    {
+      "id": "t_kindred_watcher",
+      "name": "Test Kindred Watcher",
+      "oracle_text": "Whenever you cast a creature spell that shares a creature type with your commander, you gain 1 life.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell that shares a creature type with your commander, you gain 1 life.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "shares_a_type_with_commander": "you"
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
