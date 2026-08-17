@@ -17,8 +17,13 @@ only assigned the field:
   that dies belongs in its owner's graveyard (rule 400.3); getting this wrong
   hands somebody a permanent card advantage every time they steal something.
 
-The engine has no until-end-of-turn form, and `test_the_loader_refuses` is
-what stops that absence being papered over by a card that asks for one.
+This module is the **permanent** steal, which is what `gain_control` means with
+no `duration` on it and what every card written before Act of Treason meant. The
+until-end-of-turn form and its cleanup-step handback live in
+`test_temporary_control.py`; what stays here is the guard that made it safe to
+add one — a `duration` the engine does not recognise is still a load error, so a
+misspelling cannot quietly become the permanent steal that is a strictly better
+card than the one it is pretending to be.
 """
 
 from __future__ import annotations
@@ -167,10 +172,12 @@ class TestTheLoaderRefuses:
         with pytest.raises(DslError, match="nothing to take"):
             compile_card(self._card({"op": "gain_control"}))
 
-    def test_a_duration_is_refused_rather_than_ignored(self):
-        """An until-end-of-turn steal that never hands the creature back is a
+    def test_an_unknown_duration_is_refused_rather_than_ignored(self):
+        """Two spellings are implemented and everything else is a load error.
+        A `duration` the engine does not read would be understood as "until end
+        of turn" by whoever wrote it and silently keep the creature, which is a
         strictly better card than the one it is pretending to be."""
-        with pytest.raises(DslError, match="no duration"):
+        with pytest.raises(DslError, match="unknown gain_control duration"):
             compile_card(
                 self._card(
                     {
@@ -180,3 +187,8 @@ class TestTheLoaderRefuses:
                     }
                 )
             )
+
+    def test_no_duration_still_means_permanent(self):
+        """The default did not move, so no shipped card did either."""
+        card = compile_card(self._card({"op": "gain_control", "objects": {"target": "t1"}}))
+        assert "duration" not in card.spell_effects[0]

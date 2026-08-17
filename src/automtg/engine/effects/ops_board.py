@@ -447,22 +447,27 @@ def op_transform(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("gain_control")
 def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Gain control of target creature." Captivating Vampire.
+    """"Gain control of target creature." Captivating Vampire, Act of Treason.
 
     ``player`` says who gains it and defaults to the ability's controller, which
     is what every "*you* gain control" line means; the spec exists because "target
     opponent gains control of" is the same effect pointed elsewhere.
 
-    Permanent only -- see :func:`automtg.engine.primitives.change_control` for
-    why there is no until-end-of-turn form and why the loader refuses to let a
-    card ask for one silently.
+    ``duration`` is ``"permanent"`` or ``"until_end_of_turn"``.  The default is
+    ``"permanent"`` because that is what every card written before this meant,
+    not because it is the safer reading -- it is the *stronger* one, and it is
+    the loader rather than this default that keeps a misspelling from silently
+    becoming it.  The two are different cards and not degrees of one, which is
+    why neither is ever inferred from the rest of the effect.  See
+    :func:`automtg.engine.primitives.change_control` for the handback.
     """
     players = _players(ctx, spec.get("player", "you"))
     if not players:
         return
+    duration = str(spec.get("duration", "permanent"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
     for oid in oids:
-        change_control(ctx.state, oid, players[0], source=ctx.source_oid)
+        change_control(ctx.state, oid, players[0], source=ctx.source_oid, duration=duration)
 
 
 @register("regenerate")
