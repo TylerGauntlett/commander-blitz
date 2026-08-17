@@ -8188,6 +8188,42 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_phase_out",
+      "name": "Test Phase Out",
+      "oracle_text": "Target creature phases out.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "phase_out",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }
