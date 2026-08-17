@@ -230,6 +230,7 @@
     "selector_keys": [
       "any_of",
       "any_types",
+      "attached",
       "attacking",
       "binding",
       "blocked",
@@ -256,6 +257,7 @@
       "not_subtypes",
       "not_types",
       "object_kind",
+      "player",
       "power",
       "random",
       "self_only",
@@ -351,8 +353,10 @@
       "land_played",
       "leaves_battlefield",
       "permanent_enters",
+      "sacrificed",
       "self_enters",
       "spell_cast",
+      "token_created",
       "upkeep",
       "you_gain_life"
     ],

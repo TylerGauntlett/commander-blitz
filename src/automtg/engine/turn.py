@@ -129,6 +129,7 @@ def _untap_step(state: GameState) -> None:
     # Draws made during that turn are still "this turn" in that window, so
     # clearing before it would zero the count while the turn is still running.
     state.cards_drawn_this_turn.clear()
+    state.triggers_this_turn.clear()
     # Detain ends at the start of the *detaining* player's next turn (701.30a),
     # so it is cleared here and keyed by who placed it -- naming the player
     # rather than a turn number is what keeps it right when somebody is

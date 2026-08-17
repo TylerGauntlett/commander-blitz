@@ -208,6 +208,16 @@ class TriggerSpec:
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.
     counter: str | None = None
+    #: "This ability triggers only once each turn." A cap on how many times this
+    #: ability may *queue* in one turn, counted per permanent.
+    #:
+    #: It also stands in for "whenever **one or more** creatures enter" on every
+    #: printed card carrying both clauses -- and both cards that asked for this
+    #: carry both. Two tokens entering together queue the ability twice and the
+    #: cap drops the second, which is the answer batching the events would give.
+    #: A card printing "one or more" *without* a per-turn cap would still be
+    #: wrong, and is still a gap.
+    max_per_turn: int | None = None
 
 
 def count_mode_specs(effects: Any) -> int:

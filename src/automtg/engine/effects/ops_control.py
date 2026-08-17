@@ -245,6 +245,41 @@ def op_for_each(ctx: EffectContext, spec: Mapping[str, Any]):
             ctx.bindings["each"] = previous_each
 
 
+@register("for_each_player")
+def op_for_each_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Run a body once per player, binding that player as ``each_player``.
+
+    "**Each opponent** sacrifices a creature with the greatest mana value among
+    creatures **they** control" -- Soul Shatter. `for_each` iterates objects and
+    there was no player-shaped loop, so the only way to write this was one
+    `sacrifice` over `{"controller": "opponent"}`, which removes *one* permanent
+    across the union of every opponent's board rather than one each.
+
+    The binding is what makes the body's selectors right: a nested selector says
+    `{"controller": {"binding": "each_player"}}` and is scoped to that one
+    player, so `extreme` takes their own maximum and `chooser` asks them. With
+    `"opponent"` instead, `extreme` computes a single global maximum over the
+    merged pool and at a pod spares whoever's best creature is smaller.
+
+    In APNAP order, which is what `select_players` already returns.
+    """
+    players = select_players(ctx, spec.get("players", "each_opponent"))
+    body = spec.get("effects") or []
+    previous = ctx.bindings.get("each_player")
+    try:
+        for pid in players:
+            # Elimination mid-loop: a player who has left is not still asked.
+            if not ctx.state.is_alive(pid):
+                continue
+            ctx.bindings["each_player"] = pid
+            yield from execute(ctx, body)
+    finally:
+        if previous is None:
+            ctx.bindings.pop("each_player", None)
+        else:
+            ctx.bindings["each_player"] = previous
+
+
 @register("repeat")
 def op_repeat(ctx: EffectContext, spec: Mapping[str, Any]):
     """Run a body ``amount`` times, binding the 0-based iteration as ``iteration``."""

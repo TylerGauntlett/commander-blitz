@@ -542,11 +542,28 @@ def matches_card_filter(
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False
+    # Power and toughness are read off the board when the subject is still on
+    # it, and off the printed face otherwise. Everything above this line is a
+    # characteristic no layer can change, which is why the rest of this function
+    # can read the card face and be right about a creature that has already
+    # died -- but P/T is the one thing anthems and counters move.
+    #
+    # Welcoming Vampire is the witness: "creatures you control with power 2 or
+    # less enter". A printed 2/2 entering under an anthem is a 3/3 and must not
+    # trigger it, and reading `card.power` says it does.
+    from .characteristics import chars
+
+    live = chars(state, oid) if obj.on_battlefield else None
     power = filt.get("power")
-    if power is not None and not _compare(card.power or 0, power):
+    if power is not None and not _compare(
+        (live.power if live else card.power) or 0, power
+    ):
         return False
     toughness = filt.get("toughness")
-    return not (toughness is not None and not _compare(card.toughness or 0, toughness))
+    return not (
+        toughness is not None
+        and not _compare((live.toughness if live else card.toughness) or 0, toughness)
+    )
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
@@ -581,6 +598,19 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> int | No
 
 
 def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent) -> None:
+    # "This ability triggers only once each turn." Counted here, where the
+    # ability *queues*, because that is the printed word: an ability that
+    # triggered and then fizzled has still used its one for the turn.
+    #
+    # Keyed by (permanent, ability index) rather than by card, so two Welcoming
+    # Vampires each get their own draw.
+    spec_cap = ability.trigger.max_per_turn if ability.trigger is not None else None
+    if spec_cap is not None:
+        key = (obj.oid, ability.index)
+        if state.triggers_this_turn.get(key, 0) >= spec_cap:
+            return
+        state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
+
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:
         raise RulesLoopError(

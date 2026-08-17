@@ -20612,12 +20612,12 @@
     },
     "Baron Bertram Graywater": {
       "edhrec_rank": 4270,
-      "gate": "template",
+      "gate": null,
       "name": "Baron Bertram Graywater",
-      "reason": "no template for: Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature t",
+      "reason": "",
       "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baron Helmut Zemo": {
@@ -253872,12 +253872,12 @@
     },
     "Soul Shatter": {
       "edhrec_rank": 1141,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Shatter",
-      "reason": "no template for: Each opponent sacrifices a creature or planeswalker with the greatest mana value among cre",
+      "reason": "",
       "scryfall_id": "25bc7936-4c85-47d5-8ac4-094403bd5edb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul Shepherd": {
@@ -310682,12 +310682,12 @@
     },
     "Welcoming Vampire": {
       "edhrec_rank": 425,
-      "gate": "template",
+      "gate": null,
       "name": "Welcoming Vampire",
-      "reason": "no template for: Whenever one or more other creatures you control with power 2 or less enter, draw a card. ",
+      "reason": "",
       "scryfall_id": "a6ed954c-17e5-45e4-9fba-8eedcad8f9b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Welder Automaton": {

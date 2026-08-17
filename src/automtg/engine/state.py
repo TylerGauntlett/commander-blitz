@@ -120,6 +120,17 @@ class GameState:
     #: per-turn counter there, reset by the active player's own untap. This one
     #: cannot live by that rule, because you draw on other players' turns too.
     cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
+    #: "This ability triggers only once each turn." Keyed by
+    #: ``(source_oid, ability_index)`` -- per *permanent*, not per card, because
+    #: two Welcoming Vampires each get their own draw. Counted where triggers
+    #: are queued rather than where they resolve: the printed word is
+    #: "triggers", and a capped ability that queued and then fizzled has still
+    #: used its one for the turn.
+    #:
+    #: On the state beside `cards_drawn_this_turn` and for the same reason --
+    #: an ability can trigger on somebody else's turn, so this cannot live on
+    #: the active player.
+    triggers_this_turn: dict[tuple[int, int], int] = field(default_factory=dict)
     #: "…if a creature died this turn", "…if you attacked this turn". See
     #: `structs.TurnLedger`: the other per-turn tallies, folded from the event
     #: stream in `emit` rather than counted at six separate primitives.

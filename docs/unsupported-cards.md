@@ -10,26 +10,23 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**18 cards** blocked by **27** capabilities.
+**15 cards** blocked by **24** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [batched-enters-trigger](#batched-enters-trigger) | 2 | 425 | trigger_event |
 | [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
-| [missing-token-definitions](#missing-token-definitions) | 2 | 3474 | engine |
-| [once-each-turn-trigger](#once-each-turn-trigger) | 2 | 425 | trigger_event |
-| [per-player-loop](#per-player-loop) | 2 | 1141 | op, selector |
 | [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [choose-both](#choose-both) | 1 | 191 | decision |
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
-| [entering-power-filter](#entering-power-filter) | 1 | 425 | selector |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
 | [life-loss-trigger](#life-loss-trigger) | 1 | 883 | trigger_event, value |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
+| [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
+| [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
 | [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
@@ -41,24 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
 | [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## batched-enters-trigger
-
-Blocks **2** cards.
-
-- **(trigger_event)** a way to say "whenever one or more <matching> permanents enter" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. Needs the entering permanents to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered
-  <br>Why the existing vocabulary won't do: `permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` is called once per object, so a `{"is_token": true, "controller": "you"}` filter queues N copies when N tokens enter together -- an anthem-style token maker would make N Vampires instead of one. `not_cause` only suppresses a trigger by cause and `condition` is evaluated per event, so neither can collapse a batch
-- **(trigger_event)** a way to say "whenever one or more <matching> permanents enter" -- one trigger for a whole simultaneous batch of ENTERS_BATTLEFIELD events rather than one per object. The entering permanents need to be gathered into a single event (or the queued triggers deduplicated per batch) before `collect` queues anything, with the batch exposed as a binding so an effect can still read how many entered
-  <br>Why the existing vocabulary won't do: `permanent_enters` maps one-to-one onto `EventType.ENTERS_BATTLEFIELD` and `triggers.fire` runs once per object, so a `{"types": ["Creature"], "controller": "you", "exclude_self": true, "power": {"op": "<=", "value": 2}}` filter queues N triggers when N small creatures enter together and draws N cards where the card draws one. `not_cause` only suppresses by zone-change cause and `condition` is evaluated per event, so neither collapses a batch. Note this need cannot be papered over by the per-turn cap above and vice versa: the cap alone still queues N triggers (only the first would do anything), and the batching alone still draws once per later enter this turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
-  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
-- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
-  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
-
-</details>
 
 ## commander-color-identity
 
@@ -75,63 +54,6 @@ Blocks **2** cards.
   - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
 - **War Room** (rank 140) — `war_room`
   - {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.
-
-</details>
-
-## missing-token-definitions
-
-Blocks **2** cards.
-
-- **(engine)** a `vampire_rogue_1_1_b_lifelink` token in `data/cards/tokens.cards.json` -- a 1/1 black Creature -- Vampire Rogue with lifelink -- for `create_token` to name
-  <br>Why the existing vocabulary won't do: `loader.validate_token_references` refuses to load any card whose `create_token` names a token that is not in the pool, and the pool's nearest token, `vampire_1_1_b_lifelink`, has subtypes `["Vampire"]` only. Using it would print the wrong type line and silently drop the Rogue subtype that Rogue-tribal cards read. A card answer file defines one card and cannot add a token definition, so this has to come from an /extend-dsl run -- the same route `clue_token` took for Bygone Bishop
-- **(engine)** a 4/3 white and black Creature -- Vampire Demon token with flying in `data/cards/tokens.cards.json` (e.g. `vampire_demon_4_3_wb_flying`) for `create_token` to name. The "tapped" half needs nothing new -- `op_create_token` already forwards `spec["tapped"]` into `primitives.create_token`
-  <br>Why the existing vocabulary won't do: `loader.validate_token_references` refuses to load any card whose `create_token` names a token absent from the pool. The pool holds four Vampire tokens -- `vampire_1_1_b`, `vampire_1_1_bw`, `vampire_1_1_b_lifelink`, `vampire_2_2_b_flying` -- and none is 4/3, none has the Demon subtype, and the only white-and-black one is a vanilla 1/1. Substituting `vampire_2_2_b_flying` would be the wrong size, the wrong colors and would drop the Demon type that this very card's own "isn't a Demon" clause reads. A card answer file defines one card and cannot add a token definition, so it has to come from an /extend-dsl run
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
-  - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
-- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
-  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
-
-</details>
-
-## once-each-turn-trigger
-
-Blocks **2** cards.
-
-- **(trigger_event)** a per-turn cap on a triggered ability, declared on the trigger itself -- e.g. `"trigger": {"event": "permanent_enters", "filter": {"is_token": true, "controller": "you"}, "max_per_turn": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It must be counted in `triggers.collect`/`_matches` per (source object, ability index) against the turn ledger, reset at cleanup, and it must be a *trigger*-count cap, not a resolution-count one: a trigger that was countered or removed from the stack still spends the turn's allowance
-  <br>Why the existing vocabulary won't do: `TriggerSpec`/`TriggerModel` are strict models with only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- there is no per-turn limiter, so the trigger fires on every matching event. The two near misses both say something different. `set_flag`/`{"has_flag": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at end of turn), so it would make this once *ever* rather than once each turn. `{"cmp": {"left": {"resolutions_this_turn": true}, ...}}` is the engine's "Do this only once each turn" (Deep Gnome Terramancer wording): `ctx.resolutions` is set by `stack.resolve_top` and counts resolutions of the ability, so the trigger still goes on the stack every time and a countered or fizzled first copy would leave the allowance unspent -- the printed line here restricts triggering, not resolving
-- **(trigger_event)** a per-turn cap declared on a triggered ability's trigger -- e.g. `"trigger": {"event": "permanent_enters", "filter": {...}, "max_per_turn": 1}` -- so that once the ability has triggered that many times this turn, later matching events do not queue it at all. It has to be enforced where triggers are collected (`triggers.collect`/`_matches`), counted per (source object, ability index) in the turn ledger and reset at cleanup, and it must count *triggers*, not resolutions: a trigger that is countered or removed from the stack has still spent the turn's allowance
-  <br>Why the existing vocabulary won't do: `once_each_turn` exists on `Ability` but is an *activation* restriction, and `loader._compile_ability` raises `DslError` outright when it appears on anything that is not an activated ability ("'activate_steps' and 'once_each_turn' restrict *activating*, so they only mean anything on an activated ability"); `legality` is the only reader, and a trigger never passes through it. `TriggerSpec`/`TriggerModel` carry only `event`, `controller`, `source`, `filter`, `condition`, `defending`, `not_cause` and `counter` -- no limiter. The two near misses say something different: `set_flag`/`{"has_flag": ...}` is a one-way word (`objects.py` clears `flags` only on a zone change, never at cleanup), so it would make this once *ever* rather than once each turn; and `{"cmp": ..., "left": {"resolutions_this_turn": "self"}}` gates *resolving*, not triggering -- `ctx.resolutions` is set by `stack.resolve_top`, so the trigger still goes on the stack every time and a countered first copy would leave the allowance unspent. docs/rules-coverage.md already names `resolutions_this_turn` "the wrong number" for exactly this cap
-
-<details><summary>Cards waiting on this</summary>
-
-- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
-  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
-- **Baron Bertram Graywater** (rank 4270) — `baron_bertram_graywater`
-  - Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.
-
-</details>
-
-## per-player-loop
-
-Blocks **2** cards.
-
-- **(op)** a control op that runs a body once per player from a `players` spec (`each_opponent`, `each_player`), binding the current player so nested effects and their selectors resolve against that one player -- so that `sacrifice`, `destroy` and friends can happen once per opponent instead of once in total
-  <br>Why the existing vocabulary won't do: `for_each` iterates *objects* and binds `each` to an oid; there is no player-shaped loop. The `player` spec (`select_players`) exists but only ops that act on a player directly -- `discard`, `mill`, `shuffle`, `draw`, `lose_life` -- read it; `sacrifice` takes only an `objects` selector, so a single sacrifice op over `{"controller": "opponent", "count": 1}` removes one permanent across the union of all opponents' boards, not one from each. `count: "all"` overshoots and takes every matching permanent from every opponent.
-- **(selector)** a way for a selector's `controller` clause to name a player bound by the enclosing loop (e.g. `"controller": {"player": "each"}`), so that `extreme` and `chooser` are evaluated within that one player's permanents
-  <br>Why the existing vocabulary won't do: `controller` accepts only `"you"`, `"opponent"` (meaning every opponent at once) or anything else (all players), so the pool for "among creatures and planeswalkers they control" cannot be scoped to a single opponent. `extreme` then computes one global maximum over the merged pool -- in a 3-player game the opponent with the smaller top mana value would be spared entirely -- and `chooser: "owner"` asks only the owner of `pool[0]`, so one opponent would be choosing another opponent's sacrifice.
-- **(selector)** A target requirement that instantiates once per player at cast time -- "for each player, exile up to one target nonland permanent that player controls" -- so the number of optional targets scales with the size of the pod and each target is constrained to a *different* player's permanents. Also needs the resolving effect to identify, per exiled permanent, which player controlled it, so the follow-on clause can act on that player.
-  <br>Why the existing vocabulary won't do: `targets` is a fixed list of `TargetSpec` written at authoring time (see TargetSpec in src/automtg/engine/carddef.py: id, kind, selector, count, optional). `optional: true` gives "up to one", and `controller` in a selector gives "you" or "opponent", so a hand-written pair of specs reproduces the card only in a two-player game; in a four-player Commander game -- which is what this card is printed for -- it would silently offer two targets instead of four. That is an approximation, not the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Soul Shatter** (rank 1141) — `soul_shatter`
-  - Each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control.
-- **Unexplained Absence** (rank 6625) — `unexplained_absence`
-  - For each permanent exiled this way, its controller cloaks the top card of their library. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)
-  - For each player, exile up to one target nonland permanent that player controls
 
 </details>
 
@@ -223,20 +145,6 @@ Blocks **1** card.
 
 </details>
 
-## entering-power-filter
-
-Blocks **1** card.
-
-- **(selector)** a trigger filter whose `power`/`toughness` comparison reads the subject's *current* characteristics as it exists on the battlefield rather than its printed ones, for "creatures you control with power 2 or less enter"
-  <br>Why the existing vocabulary won't do: `triggers.matches_card_filter` compares against `card.power` (the printed face) by design, because trigger subjects are frequently gone by the time the filter runs. That is right for a `dies` trigger and wrong here: a printed 1/1 that enters as a 3/3 under an anthem, or with counters from a replacement effect, would still trigger. A subject that has just entered is still on the battlefield, so the derived characteristics are available -- but the filter never asks for them, and there is no key to request the derived reading
-
-<details><summary>Cards waiting on this</summary>
-
-- **Welcoming Vampire** (rank 425) — `welcoming_vampire`
-  - Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.
-
-</details>
-
 ## grant-protection
 
 Blocks **1** card.
@@ -282,6 +190,20 @@ Blocks **1** card.
 
 </details>
 
+## missing-token-definitions
+
+Blocks **1** card.
+
+- **(engine)** a 4/3 white and black Creature -- Vampire Demon token with flying in `data/cards/tokens.cards.json` (e.g. `vampire_demon_4_3_wb_flying`) for `create_token` to name. The "tapped" half needs nothing new -- `op_create_token` already forwards `spec["tapped"]` into `primitives.create_token`
+  <br>Why the existing vocabulary won't do: `loader.validate_token_references` refuses to load any card whose `create_token` names a token absent from the pool. The pool holds four Vampire tokens -- `vampire_1_1_b`, `vampire_1_1_bw`, `vampire_1_1_b_lifelink`, `vampire_2_2_b_flying` -- and none is 4/3, none has the Demon subtype, and the only white-and-black one is a vanilla 1/1. Substituting `vampire_2_2_b_flying` would be the wrong size, the wrong colors and would drop the Demon type that this very card's own "isn't a Demon" clause reads. A card answer file defines one card and cannot add a token definition, so it has to come from an /extend-dsl run
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clavileño, First of the Blessed** (rank 3474) — `clavileno_first_of_the_blessed`
+  - Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains "When this creature dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying."
+
+</details>
+
 ## modal-dfc
 
 Blocks **1** card.
@@ -293,6 +215,21 @@ Blocks **1** card.
 
 - **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
   - Choose target creature. You lose 2 life. Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
+
+</details>
+
+## per-player-loop
+
+Blocks **1** card.
+
+- **(selector)** A target requirement that instantiates once per player at cast time -- "for each player, exile up to one target nonland permanent that player controls" -- so the number of optional targets scales with the size of the pod and each target is constrained to a *different* player's permanents. Also needs the resolving effect to identify, per exiled permanent, which player controlled it, so the follow-on clause can act on that player.
+  <br>Why the existing vocabulary won't do: `targets` is a fixed list of `TargetSpec` written at authoring time (see TargetSpec in src/automtg/engine/carddef.py: id, kind, selector, count, optional). `optional: true` gives "up to one", and `controller` in a selector gives "you" or "opponent", so a hand-written pair of specs reproduces the card only in a two-player game; in a four-player Commander game -- which is what this card is printed for -- it would silently offer two targets instead of four. That is an approximation, not the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unexplained Absence** (rank 6625) — `unexplained_absence`
+  - For each permanent exiled this way, its controller cloaks the top card of their library. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)
+  - For each player, exile up to one target nonland permanent that player controls
 
 </details>
 

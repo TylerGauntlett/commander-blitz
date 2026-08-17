@@ -603,6 +603,10 @@
     "artist": "Rockey Chen",
     "scryfall_id": "6e4bf840-802d-47d5-bffd-8ba495e19cf6"
   },
+  "baron_bertram_graywater": {
+    "artist": "Johan Grenier",
+    "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf"
+  },
   "barony_vampire": {
     "artist": "Daarken",
     "scryfall_id": "b0130d04-05f2-44f5-bd6c-8b11f798b69e"
@@ -7204,6 +7208,10 @@
     "artist": "Anthony Palumbo",
     "scryfall_id": "2a1aed7d-4236-4d44-9366-ee03e15469bc"
   },
+  "soul_shatter": {
+    "artist": "Wylie Beckert",
+    "scryfall_id": "25bc7936-4c85-47d5-8ac4-094403bd5edb"
+  },
   "soulbound_guardians": {
     "artist": "Erica Yang",
     "scryfall_id": "62e8128f-9858-4c48-ab43-1beca3db70e5"
@@ -8883,6 +8891,10 @@
   "weight_of_the_underworld": {
     "artist": "Wesley Burt",
     "scryfall_id": "839dcbcb-1061-4cba-a2f7-e7b01531c6a0"
+  },
+  "welcoming_vampire": {
+    "artist": "Lorenzo Mastroianni",
+    "scryfall_id": "a6ed954c-17e5-45e4-9fba-8eedcad8f9b9"
   },
   "wetland_sambar": {
     "artist": "James Zapata",

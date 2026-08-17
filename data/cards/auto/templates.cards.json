@@ -4877,6 +4877,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "vampire_rogue_1_1_b_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true
+            },
+            "max_per_turn": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "any_types": [
+                "Creature",
+                "Artifact"
+              ],
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}, Sacrifice another creature or artifact: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "baron_bertram_graywater",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Baron Bertram Graywater",
+      "oracle_text": "Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.\n{1}{B}, Sacrifice another creature or artifact: Draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -64220,6 +64296,49 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "soul_shatter",
+      "mana_cost": "{2}{B}",
+      "name": "Soul Shatter",
+      "oracle_text": "Each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "chooser": "owner",
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "extreme": {
+                  "of": "mana_value",
+                  "pick": "greatest"
+                },
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -79433,6 +79552,60 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "power": {
+                "op": "<=",
+                "value": 2
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "welcoming_vampire",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Welcoming Vampire",
+      "oracle_text": "Flying\nWhenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
