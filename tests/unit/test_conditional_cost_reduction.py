@@ -468,10 +468,16 @@ class TestTheLoaderRefusesTheSilentShapes:
         )
         assert card.abilities[0].cost.mana_reduction["amount"] == 2
 
-    def test_a_filter_may_only_count_the_battlefield(self):
-        """`costs._reduction_matches` walks `state.battlefield` and nothing else,
-        so any other zone would load and match nothing."""
-        with pytest.raises(DslError, match="battlefield only"):
+    def test_a_filter_may_only_count_the_zones_that_are_walked(self):
+        """`costs._reduction_matches` walks the battlefield and the command zone,
+        and nothing else, so any other zone would load and match nothing.
+
+        (The command zone arrived with `greatest_mana_value` --
+        `tests/unit/test_commander_mana_value.py` is where that half is pinned.
+        The graveyard is still refused, which is what this test was always
+        about.)
+        """
+        with pytest.raises(DslError, match="counts \\['battlefield', 'command'\\] only"):
             compile_spec(
                 ability_card({"count": {"types": ["Creature"], "zone": "graveyard"}})
             )

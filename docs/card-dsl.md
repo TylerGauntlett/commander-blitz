@@ -2301,9 +2301,52 @@ strings with no node to hang a rider on. It is also refused on
 `additional_cost`, whose mana is folded into the spell's price and never priced
 on its own.
 
-All three readers — the card-level field, an ability's cost, a graveyard cast's
-cost — go through one function, `costs.reduction_amount`, so "for each" and "if"
-cannot come to mean different things in different slots.
+### …by the greatest mana value of a commander you own
+
+```jsonc
+// Visions of Glory — "Flashback {8}{W}{W}. This spell costs {X} less to cast
+//  this way, where X is the greatest mana value of a commander you own on the
+//  battlefield or in the command zone."
+"flashback": {"mana": "{8}{W}{W}",
+              "mana_reduction": {"greatest_mana_value": {
+                  "is_commander": true, "owner": "you",
+                  "zone": ["battlefield", "command"]}}}
+```
+
+`greatest_mana_value` is a **maximum**, and that is why it is a fourth arithmetic
+key rather than a filter on `count`. `count` and `total_power` both add over
+their matches, so either of them written here would give a player with two
+partner commanders their mana values *added together* — a different and larger
+discount, on a card that reads as though it were right.
+
+The filter widened with it, in three ways:
+
+- **`zone` may be a list**, drawn from `battlefield` and `command` — the two
+  zones `costs._reduction_matches` walks, both public and both readable before
+  anything is on the stack. One pool with one maximum over it, rather than two
+  filters producing two numbers something then has to combine. Any other zone is
+  a load error, because it would match nothing for ever. `total_power` stays
+  battlefield-only whatever the list says: power is a characteristic only
+  permanents have.
+- **`is_commander`** is honoured. It was always a legal key to *write* and was
+  silently ignored, and it is the only thing separating your general from the
+  identical legend somebody else cast.
+- **`owner`** (`"you"` or `"opponent"`) sits beside `controller`, because the
+  printed word here is "own": in the command zone the two agree, and on the
+  battlefield a commander an opponent has stolen is still one you own.
+  `controller` defaults to `"you"` only while the filter has said nothing about
+  ownership, so every reduction written before this still means what it meant.
+  It is not a static-filter key — a static applies to permanents, where control
+  is the question.
+
+The mana value is the **printed** one, off `state.card(oid)`: a commander in the
+command zone has no board state to read it from. No match is a real answer and
+gives no discount, so the player without a commander pays what the card prints.
+
+All four readers — the card-level field, an ability's cost, a graveyard cast's
+cost, and the maximum above — go through one function,
+`costs.reduction_amount`, so "for each", "if" and "the greatest" cannot come to
+mean different things in different slots.
 
 ## A granted ability that fires on its own creature's death
 

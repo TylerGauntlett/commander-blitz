@@ -1038,6 +1038,12 @@ def reduction_amount(
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
     - ``{"total_power": {filter}}`` -- Ghalta.
+    - ``{"greatest_mana_value": {filter}}`` -- Visions of Glory, "where X is the
+      greatest mana value of a commander you own".  A **maximum**, which is why
+      it is a fourth shape rather than a filter on `count`: the other two sum,
+      and a player with two partner commanders would have their mana values
+      added rather than the greater one taken -- a different and larger number,
+      quietly, on a card that reads as though it were right.
 
     ``condition`` gates the whole thing: false, the reduction is zero, and the
     printed price stands.  It is an ordinary condition from the condition DSL,
@@ -1068,6 +1074,18 @@ def reduction_amount(
         return sum(
             max(0, chars(state, oid).power)
             for oid in _reduction_matches(state, pid, spec["total_power"])
+        )
+    if "greatest_mana_value" in spec:
+        # The **printed** mana value, off the card rather than the object, and
+        # `default=0` because nothing matching is a real answer: a player whose
+        # commander has been exiled, or who has none at all, gets no discount
+        # and pays the price the card prints.
+        return max(
+            (
+                state.card(oid).mana_value
+                for oid in _reduction_matches(state, pid, spec["greatest_mana_value"])
+            ),
+            default=0,
         )
     return 0
 
@@ -1100,22 +1118,101 @@ def variant_reduction(
     return reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
 
 
+#: Zones a cost reduction's filter may count, and where each one's objects live.
+#:
+#: The battlefield and the command zone, and no others.  Both are **public** and
+#: both are readable before anything is on the stack, which is the whole
+#: requirement -- but the command zone had to be added on its own merits: it is
+#: where a commander sits for most of a game, so a reduction written about "a
+#: commander you own" and evaluated over the battlefield alone would read zero
+#: at exactly the moment the printed card is about it.
+REDUCTION_ZONES = frozenset({"battlefield", "command"})
+
+
+def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
+    """Every object a reduction filter naming ``zones`` may look at.
+
+    The command zone is per-player rather than global -- there is no
+    `state.command` to walk the way there is a `state.battlefield` -- so every
+    seat's is concatenated and the ownership keys below narrow it, exactly as
+    they narrow the battlefield.
+    """
+    if "battlefield" in zones:
+        yield from state.battlefield
+    if "command" in zones:
+        for player in state.players:
+            yield from player.command
+
+
 def _reduction_matches(state: GameState, pid: int, filt: Any):
-    for oid in state.battlefield:
+    """The objects one reduction filter picks out, across the zones it names.
+
+    ``controller`` and ``owner`` are both here and they are not the same
+    question.  Every existing reduction counts permanents *you control*, which is
+    what "for each Vampire you control" says.  Visions of Glory says "a commander
+    you **own**", and the two part company on precisely the boards commanders are
+    played on: a commander in the command zone is controlled by nobody in
+    particular (the object's controller is its owner there, so `controller`
+    happens to answer), while a commander an opponent has stolen with Control
+    Magic is still one you own and still counts for the printed line.
+
+    ``zone`` defaults to the battlefield, so every filter written before the
+    command zone was reachable means what it always meant.
+
+    Types and subtypes come from `chars` on the battlefield and from the printed
+    face anywhere else.  A card in the command zone is not a permanent: no
+    continuous effect applies to it, and asking the characteristics pipeline
+    would let a static that forgot to say "creatures you control" reach into a
+    zone no static can touch.
+    """
+    zones = _filter_zones(filt)
+    for oid in _reduction_zone_oids(state, zones):
         obj = state.objects.get(oid)
         if obj is None:
             continue
-        controller = filt.get("controller", "you")
+        owner = filt.get("owner")
+        # "You control" is the default only while the filter has said nothing
+        # about ownership. A filter that named `owner` and not `controller` is
+        # asking the other question, and a defaulted control check on top of it
+        # would silently re-impose the answer the card went out of its way not
+        # to ask for -- a commander an opponent stole is one you own and *not*
+        # one you control, so the default would drop exactly the case `owner`
+        # was written for.
+        controller = filt.get("controller", None if owner else "you")
         if controller == "you" and obj.controller != pid:
             continue
         if controller == "opponent" and obj.controller == pid:
             continue
-        c = chars(state, oid)
-        if (want := filt.get("types")) and not set(want).issubset(c.types):
+        if owner == "you" and obj.owner != pid:
             continue
-        if (want := filt.get("subtypes")) and not set(want) & set(c.subtypes):
+        if owner == "opponent" and obj.owner == pid:
+            continue
+        if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
+            continue
+        if obj.on_battlefield:
+            c = chars(state, oid)
+            types, subtypes = c.types, c.subtypes
+        else:
+            card = state.card_of(obj)
+            types, subtypes = card.types, card.subtypes
+        if (want := filt.get("types")) and not set(want).issubset(types):
+            continue
+        if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
             continue
         yield oid
+
+
+def _filter_zones(filt: Any) -> frozenset[str]:
+    """The zones a filter names, as a set -- one zone or a list of them.
+
+    A list rather than a second filter key, because "on the battlefield **or** in
+    the command zone" is one pool with one maximum taken over it, and two
+    filters would be two maxima that something then has to combine.
+    """
+    zone = filt.get("zone", "battlefield")
+    if isinstance(zone, str):
+        return frozenset({zone})
+    return frozenset(str(z) for z in zone)
 
 
 def zone_of(state: GameState, oid: int) -> Zone:

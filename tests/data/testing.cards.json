@@ -9946,6 +9946,71 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_commander_two",
+      "name": "Test Small General",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_commander_five",
+      "name": "Test Large General",
+      "mana_cost": "{3}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 4,
+      "toughness": 4
+    },
+    {
+      "id": "t_commander_flashback",
+      "name": "Test Commander Flashback",
+      "oracle_text": "Draw a card.\nFlashback {8}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.",
+      "mana_cost": "{4}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "flashback": {
+        "mana": "{8}{W}",
+        "mana_reduction": {
+          "greatest_mana_value": {
+            "is_commander": true,
+            "owner": "you",
+            "zone": [
+              "battlefield",
+              "command"
+            ]
+          }
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
     }
   ]
 }
