@@ -7571,6 +7571,64 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_mdfc_front",
+      "name": "Test MDFC Front",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{B}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "second_face": "t_mdfc_land",
+      "second_face_zone": "hand",
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_mdfc_land",
+      "name": "Test MDFC Land",
+      "oracle_text": "Test MDFC Land enters tapped.\n{T}: Add {B}.",
+      "types": [
+        "Land"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {B}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{B}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
