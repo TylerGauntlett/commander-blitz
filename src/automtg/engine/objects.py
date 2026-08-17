@@ -333,6 +333,24 @@ class GameObject:
     #: "your next turn" moves when a player is eliminated; the player is the
     #: durable thing to name, exactly as `frozen_by` names a permanent.
     detained_by: int | None = None
+    #: Goad (701.38a): "until **your** next turn, that creature attacks each
+    #: combat if able and attacks a player other than you if able". The pids of
+    #: the players who goaded it, each cleared by that player's own untap step.
+    #:
+    #: Detain's field with two differences, and both are forced by the rule.
+    #:
+    #: A **set**, not one pid: two opponents may goad the same creature, each
+    #: clock runs from their own next turn, and each of them is a player the
+    #: creature must attack around. Detain can be a single pid because a second
+    #: detain says nothing the first does not; a second goad does.
+    #:
+    #: And it is a *requirement plus a target restriction* where detain is a
+    #: prohibition, which is why it could not be spelled as `must_attack`: that
+    #: field is one-shot and `combat.discharge_attack_requirements` spends it
+    #: when attackers lock in, so it compels one combat where goad compels every
+    #: combat until the goader untaps. This is read live in
+    #: `combat.attack_required` and never spent.
+    goaded_by: set[int] = field(default_factory=set)
 
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
@@ -406,6 +424,10 @@ class GameObject:
         self.must_attack = None
         self.must_block = None
         self.detained_by = None
+        # A permanent that left and came back is a new object (400.7), so it is
+        # no longer the creature anybody goaded -- blink your own goaded
+        # creature and it owes nothing, which is the printed answer.
+        self.goaded_by = set()
         self.granted_keywords = set()
         self.granted_abilities_permanent = []
         self.tapped = False
@@ -512,6 +534,9 @@ class GameObject:
             "monstrous": self.monstrous,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
+            # Sorted rather than the set itself, so the snapshot is JSON and is
+            # comparable between two runs of the same game.
+            "goaded_by": sorted(self.goaded_by),
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,

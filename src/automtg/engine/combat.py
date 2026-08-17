@@ -91,7 +91,10 @@ def can_attack(state: GameState, oid: int) -> bool:
     #
     # Guarded on the list being non-empty, which it is in every game that does
     # not play one of these cards, because this is the hot path of the attack
-    # mask.
+    # mask. Goad is deliberately **not** part of that guard: its clause in
+    # `attack_target_forbidden` only fires while some other defender is
+    # available, so a goad can never empty both lists and a goaded creature is
+    # never made unable to attack by the goad itself.
     if state.attack_restrictions and not (
         legal_defenders(state, oid) or legal_planeswalker_defenders(state, oid)
     ):
@@ -110,11 +113,17 @@ def attack_required(state: GameState, oid: int) -> bool:
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    # Two sources, one enforcement point. The `must_attack` op writes a
+    # Three sources, one enforcement point. The `must_attack` op writes a
     # one-shot flag that `discharge_attack_requirements` spends; a printed
-    # "attacks each combat if able" is a static, read live and never spent.
-    # Both are "…if able", so both go through `can_attack` below.
-    if not attack_compelled(state, oid):
+    # "attacks each combat if able" is a static, read live and never spent; and
+    # a goad is a mark on the creature, also read live and also never spent --
+    # `discharge_attack_requirements` touches `must_attack` and nothing else, so
+    # a goaded creature is compelled again by the *next* combat and the one
+    # after, until its goader untaps. That is the whole reason goad could not be
+    # `must_attack` with a third duration.
+    #
+    # All three are "…if able", so all three go through `can_attack` below.
+    if not attack_compelled(state, oid) and not obj.goaded_by:
         if obj.must_attack is None:
             return False
         if obj.must_attack == "this_turn" and obj.must_attack_turn != state.turn:
@@ -225,13 +234,78 @@ def attack_target_forbidden(
     restriction that *does* reach planeswalkers -- goad's "attacks a player other
     than you if able", where attacking your planeswalker does not discharge the
     requirement -- can say so here without touching the three callers again.
+
+    That future arrived, and it is the second clause below. **Goad reaches
+    planeswalkers** where an attack restriction does not, and the two answers are
+    opposite for the same reason: "creatures can't attack *you*" is a sentence
+    about being attacked, and attacking somebody's planeswalker is not attacking
+    them (506.2); "attacks a player *other than you* if able" is a sentence about
+    who the attack is aimed at, and swinging at the goader's planeswalker aims it
+    at the goader just as squarely. Reading goad the way Ghostly Prison is read
+    would leave every goad in a game with a planeswalker on the table free to be
+    dodged, and the log would say the requirement had been met.
     """
-    if planeswalker is None and state.attack_restrictions:
-        obj = state.objects.get(oid)
-        if obj is not None:
-            for restriction in state.attack_restrictions:
-                if restriction.attacker == obj.controller and restriction.defender == defender:
-                    return True
+    obj = state.objects.get(oid)
+    if planeswalker is None and state.attack_restrictions and obj is not None:
+        for restriction in state.attack_restrictions:
+            if restriction.attacker == obj.controller and restriction.defender == defender:
+                return True
+    # Goad's second half (701.38a): "…and attacks a player other than you if
+    # able". `defender` is the defending *player* for both attack kinds -- a
+    # planeswalker's controller is the defending player (506.2) and
+    # `legal_planeswalker_defenders` passes it -- so one membership test covers
+    # the walker as well as the seat, which is what "goad reaches planeswalkers"
+    # means in code.
+    #
+    # "…if able" is the guard, and it is the difference between a restriction and
+    # a rule that can make a declaration impossible: with the goader the only
+    # thing left to attack, the creature attacks the goader.
+    if obj is not None and obj.goaded_by and defender in obj.goaded_by:
+        return _has_non_goader_defender(state, oid, obj.goaded_by)
+    return False
+
+
+def _has_non_goader_defender(state: GameState, oid: int, goaders: set[int]) -> bool:
+    """Is there anything this creature could attack that no goader controls?
+
+    Goad's "if able", asked once per goaded pair. It has to consider **both**
+    attack kinds -- a planeswalker controlled by a third player is somewhere else
+    to swing, and a goaded creature offered only the goader's seat because the
+    engine forgot about walkers would be forced into an attack the rules do not
+    require.
+    (Rule 701.38b: the requirement is discharged by attacking any other player,
+    or by attacking a planeswalker any other player controls.)
+
+    It re-enters `attack_target_forbidden`, and that is not a loop: every
+    candidate here is already filtered to a defender **no goader controls**, so
+    the goad clause there cannot fire on it and cannot call back. Two levels
+    deep, always, whatever the number of goaders. Asked the other way round --
+    "is any defender legal" through `legal_defenders` -- it would be a plain
+    infinite recursion, which is the trap this shape exists to avoid.
+
+    A goader who has left the game is skipped by `alive()` and by the
+    battlefield's controller check, so the last opponent standing being the only
+    remaining goader still leaves them attackable.
+    """
+    others = [
+        pid
+        for pid in state.alive()
+        if pid != state.active_player and pid not in goaders
+    ]
+    for pid in others:
+        if not attack_target_forbidden(state, oid, pid):
+            return True
+    open_seats = set(others)
+    for pw in state.battlefield:
+        pw_obj = state.objects.get(pw)
+        if pw_obj is None or pw_obj.controller not in open_seats:
+            continue
+        if "Planeswalker" not in chars(state, pw).types:
+            continue
+        if not attack_target_forbidden(
+            state, oid, pw_obj.controller, planeswalker=pw
+        ):
+            return True
     return False
 
 
