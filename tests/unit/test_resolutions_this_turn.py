@@ -52,7 +52,10 @@ def fire(game, oid: int, ability_index: int = 0, **bindings) -> None:
     trig = TriggerInstance(
         source_oid=oid, ability_index=ability_index, controller=0, bindings=bindings
     )
-    push_triggered_ability(game.state, trig)
+    # A generator since 603.3d: these triggers have no targets, so it asks
+    # nothing and runs straight through.
+    for _ in push_triggered_ability(game.state, trig):
+        raise AssertionError("this trigger chooses nothing")
     gen = resolve_top(game.state)
     answer: list[int] = []
     while True:

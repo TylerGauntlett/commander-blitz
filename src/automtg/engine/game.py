@@ -761,9 +761,13 @@ class Game:
                 return
 
             if state.pending_triggers:
-                triggers.drain_to_stack(state)
+                # Set before the drain, not after: a trigger that stops to ask
+                # for its targets suspends the loop here, and the resumption
+                # comes back through `apply` rather than through this branch.
                 state.passes_in_row = 0
                 state.priority_idx = state.active_idx
+                if not self._run(triggers.drain_to_stack(state)):
+                    return
                 continue
 
             if not state.step_started:

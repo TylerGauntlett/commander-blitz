@@ -230,3 +230,19 @@ def filter_legal(
         buckets[spec.id] = kept
     remains = any(bool(v) for v in buckets.values())
     return {k: tuple(v) for k, v in buckets.items()}, (remains or not had_targets)
+
+
+def describe_ref(state: GameState, ref: TargetRef) -> str:
+    """A player-facing name for one chosen target.
+
+    Lives here rather than in `legality` because a *triggered* ability chooses
+    its targets too, and `stack` cannot import `legality` -- legality imports
+    stack.
+    """
+    if ref.kind == "player":
+        return state.players[ref.id].name or f"p{ref.id}"
+    if ref.kind == "stack":
+        item = state.stack_item(ref.id)
+        return item.description if item else f"stack#{ref.id}"
+    obj = state.objects.get(ref.id)
+    return state.card_of(obj).name if obj else f"#{ref.id}"

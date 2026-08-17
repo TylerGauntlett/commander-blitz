@@ -222,7 +222,22 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
     return pool[index] if index < len(pool) else None
 
 
-def push_triggered_ability(state: GameState, trig: TriggerInstance) -> StackItem:
+def push_triggered_ability(
+    state: GameState, trig: TriggerInstance
+) -> Generator[Any, list[int], StackItem]:
+    """Put one triggered ability on the stack, asking for its targets.
+
+    Rule 603.3d: the controller chooses the targets **as the ability is put on
+    the stack**, not as it resolves. This used to take `options[0]` off a
+    `limit=1` enumeration, which is not a weaker choice but a fixed one -- and
+    for a `kind: "player"` target the enumeration order is `state.alive()`, so
+    the ability always named seat 0. Bojuka Bog exiled its own controller's
+    graveyard in every game it was ever played in, and nothing on the board
+    said so, because the ability did resolve and did exile a graveyard.
+
+    A generator, so the choice can become a real decision. That is why
+    `drain_to_stack` is one too, and why `_advance` drives it through `_run`.
+    """
     obj = state.objects.get(trig.source_oid)
     def_id = obj.def_id if obj else "?"
     item = StackItem(
@@ -237,18 +252,59 @@ def push_triggered_ability(state: GameState, trig: TriggerInstance) -> StackItem
         description=trig.description,
         granted_by=trig.granted_by,
     )
-    # A triggered ability with targets chooses them as it goes on the stack.
     ability = ability_of(state, item)
     if ability is not None and ability.targets:
-        from .targeting import enumerate_target_tuples
-
-        options = enumerate_target_tuples(
-            state, trig.controller, ability.targets, trig.source_oid, limit=1
-        )
-        item.targets = options[0] if options else ()
+        item.targets = yield from _choose_trigger_targets(state, trig, ability)
     state.stack.append(item)
     announce_targets(state, item)
     return item
+
+
+def _choose_trigger_targets(
+    state: GameState, trig: TriggerInstance, ability: Ability
+) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+    """Ask the trigger's controller which of the legal target tuples it takes.
+
+    Enumerated at the ordinary cap, the same one casting uses -- a trigger is
+    not entitled to fewer choices than a spell with the same targeting line.
+
+    Nothing is asked when there is one option or none, which is most triggers:
+    "when this dies, it deals damage to *its controller*" has one legal tuple
+    and asking would be a decision with a single button.
+    """
+    from .actions import DecisionOption, PendingDecision
+    from .enums import DecisionKind
+    from .targeting import describe_ref, enumerate_target_tuples
+
+    options = enumerate_target_tuples(
+        state, trig.controller, ability.targets, trig.source_oid
+    )
+    if not options:
+        return ()
+    if len(options) == 1:
+        return options[0]
+    decision = PendingDecision(
+        kind=DecisionKind.CHOOSE_OBJECTS,
+        player=trig.controller,
+        prompt=f"Choose targets for {trig.description}" if trig.description else "Choose targets",
+        options=tuple(
+            DecisionOption(
+                label=", ".join(describe_ref(state, ref) for ref in combo) or "no targets",
+                ref=combo[0] if len(combo) == 1 else None,
+                value=index,
+            )
+            for index, combo in enumerate(options)
+        ),
+        min_count=1,
+        max_count=1,
+        context={"source": trig.source_oid, "source_name": trig.description},
+    )
+    answer = yield decision
+    # An empty answer is not "decline": the targets are not optional at this
+    # level -- `enumerate_target_tuples` already folded any optional spec in as
+    # its own tuple. Falling back to the first keeps a seat that answers
+    # nothing from silently fizzling its own trigger.
+    return options[answer[0]] if answer else options[0]
 
 
 def resolve_top(state: GameState) -> Generator[Any, list[int], None]:
