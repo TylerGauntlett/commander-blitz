@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-89 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+90 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -175,7 +175,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `unblockable` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
@@ -4287,6 +4287,66 @@ from the Rampart's *other* sentence goads the same creatures into attacking.
 Detaining them would print a card that contradicts itself. `grant_ability`
 cannot carry a temporary static either — `loader.py` refuses any grantable
 ability that is not triggered.
+
+### The `unblockable` op — the same wire, read from the attacker's end
+
+    Rogue's Passage — "{4}, {T}: Target creature can't be blocked this turn."
+    Slip Through Space, Thassa, Manifold Key, Key to the City — the same line
+    Sly Instigator — "Until your next turn, target creature an opponent
+                      controls can't be blocked."
+
+`cant_block` above names a would-be **blocker** and takes it out of every block.
+This names an **attacker** and takes every blocker out of the block against it.
+They are two sentences, no card prints them together, and they meet only in
+`combat.can_block`:
+
+```jsonc
+// Rogue's Passage: the creature is named when the activated ability resolves,
+// and it is not the permanent that granted it
+{ "op": "unblockable", "objects": { "target": "t1" }, "duration": "this_turn" }
+```
+
+The engine's *other* "can't be blocked" is the `block_restriction` static below
+("can't be blocked by Humans"), and it cannot say this line for three reasons
+that are worth keeping straight, because each one alone would have been fixable:
+
+| | |
+|---|---|
+| it needs a permanent | a static is an ability on something standing on the battlefield; Rogue's Passage may be destroyed in response to its own ability and the creature stays unblockable |
+| it has no clock | a static is on exactly as long as its source is, so it cannot end "this turn" |
+| its filters read printed characteristics | there is no `static_filter_keys` entry meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
+
+`grant_ability` cannot smuggle a static across either: granted abilities are
+pointers read by `triggers.py` alone, and `characteristics._battlefield_statics`
+never consults them — a granted `block_restriction` loads clean and does nothing.
+And the evasion **keywords** (menace, fear, intimidate, skulk, shadow,
+horsemanship, the landwalks) are all conditions on *which* creatures may block,
+so granting one is an approximation of a printed line, which is a different card.
+
+**`objects` is required and there is no `all_creatures` counterpart.** That
+asymmetry with `cant_block` is deliberate: no printed one-shot makes an
+unrestricted *everything* unblockable, and the plural forms that come close are
+controller-scoped ("creatures you control can't be blocked this turn" — Keeper of
+Keys, Glaring Spotlight), which a global flag would read as making the
+opponent's creatures unblockable too. That is a strictly better card, so the
+shape is refused at load time rather than approximated; those cards stay
+unexpressible until somebody stores the filter instead of the oids.
+
+**`duration` is required**, and it is the same pair `cant_block` takes, cleared
+by the same two hooks: `this_turn` at the cleanup step, `until_your_next_turn` in
+the granting player's own untap step, keyed by *who* granted it because
+eliminating a player moves everybody else's "next turn". `sba` drops the entries
+of a seat that has left, for the reason it drops that seat's block prohibitions:
+a player who never untaps again never clears them.
+
+It lives on the table (`GameState.unblockables`, a list of
+`structs.Unblockable`) beside `block_prohibitions`, and is read by
+`combat.unblockable` inside `can_block`. The two predicates never consult each
+other — a creature that is prohibited from blocking *and* facing an unblockable
+attacker is refused by whichever runs first, which is the same answer. Because
+`can_block` is also what block *requirements* ask, a creature provoked into
+blocking an unblockable attacker is excused rather than compelled into an
+illegal block.
 
 ## Attack requirements
 

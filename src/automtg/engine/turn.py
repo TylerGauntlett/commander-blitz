@@ -20,6 +20,7 @@ from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_unblockables,
     clear_until_eot,
     untap_all,
     untap_permanent,
@@ -219,6 +220,10 @@ def _untap_step(state: GameState) -> None:
     # keyed the same way -- by *who* imposed it, never by a turn number, because
     # eliminating a player moves everybody else's "next turn".
     clear_block_prohibitions(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, target creature an opponent controls can't be
+    # blocked." (Sly Instigator.) The same clock read from the other end of the
+    # block, so it is cleared in the same breath and keyed the same way.
+    clear_unblockables(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -502,6 +507,11 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # global clause is a continuous effect owned by no permanent, so
     # `clear_until_eot` -- which walks the battlefield -- has nothing to find.
     clear_block_prohibitions(state, "this_turn")
+    # "Target creature can't be blocked **this turn**." (Rogue's Passage.)
+    # Beside it and owned by no permanent for the same reason: the land that
+    # granted it may have been destroyed in response, and the creature that has
+    # it keeps the evasion until this line runs.
+    clear_unblockables(state, "this_turn")
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

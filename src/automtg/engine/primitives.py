@@ -957,12 +957,82 @@ def clear_block_prohibitions(
     reason.  "Your next turn" is not a turn number: eliminate a player and it
     moves, so the entry names the player and the untap step asks.
     """
-    if not state.block_prohibitions:
-        return
-    state.block_prohibitions = [
-        r
-        for r in state.block_prohibitions
-        if r.duration != duration or (player is not None and r.player != player)
+    state.block_prohibitions = _expired(state.block_prohibitions, duration, player)
+
+
+def make_unblockable(
+    state: GameState,
+    objects: Iterable[int],
+    duration: str = "this_turn",
+    player: int | None = None,
+    source: int | None = None,
+) -> bool:
+    """""Can't be blocked" for ``duration``, on the creatures named.
+
+    The mirror of :func:`forbid_block`, and everything that function says about
+    where the record lives applies here -- but pointing at the *attacker* rather
+    than the blocker, so it is a second list and not a flag on the first.
+
+    ``objects`` is fixed when the effect resolves and is never a wildcard: unlike
+    "creatures can't block this turn", no printed one-shot grants unblockability
+    to everything at once (see :class:`structs.Unblockable`).  An empty
+    ``objects`` records nothing and returns ``False`` -- "up to one target
+    creature" with no target taken makes nobody unblockable, and there is no
+    reading of the empty set that could mean anything else here.
+
+    ``until_your_next_turn`` with no ``player`` is refused for the reason
+    :func:`forbid_block` refuses it: nothing would ever clear it, so a printed
+    one-turn evasion would silently become a permanent one.
+
+    Returns whether anything was recorded.  Deduplicated on the whole entry --
+    two copies of "can't be blocked" say nothing a single one does not.
+    """
+    from .structs import UNBLOCKABLE_DURATIONS, Unblockable
+
+    if duration not in UNBLOCKABLE_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown unblockable duration {duration!r}")
+    oids = tuple(dict.fromkeys(objects))
+    if not oids:
+        return False
+    if duration == "until_your_next_turn" and player is None:
+        return False
+    entry = Unblockable(objects=oids, duration=duration, player=player, source=source)
+    if entry in state.unblockables:
+        return False
+    state.unblockables.append(entry)
+    return True
+
+
+def clear_unblockables(
+    state: GameState, duration: str, player: int | None = None
+) -> None:
+    """Drop the "can't be blocked" grants of one duration -- their wearing-off.
+
+    Called from the two hooks `clear_block_prohibitions` is called from, in the
+    same breath and on the same clocks: `turn._cleanup_step` for ``this_turn``,
+    `turn._untap_step` for the ``until_your_next_turn`` entries belonging to
+    whoever is untapping.  Rogue's Passage says "this turn", and the turn it
+    means ends at cleanup like every other one.
+    """
+    state.unblockables = _expired(state.unblockables, duration, player)
+
+
+def _expired(entries: list, duration: str, player: int | None):
+    """The entries of a timed table that survive one wearing-off.
+
+    Shared by the two clear-ups above because the rule is the same and the two
+    lists are the same shape: an entry goes when its ``duration`` is the one
+    being cleared, and -- when a ``player`` is named, which is only ever for
+    ``until_your_next_turn`` -- when it is that player's.  Returns a new list
+    rather than mutating, and short-circuits on the empty one, which is the
+    normal case in a game that plays none of these cards.
+    """
+    if not entries:
+        return entries
+    return [
+        e
+        for e in entries
+        if e.duration != duration or (player is not None and e.player != player)
     ]
 
 
