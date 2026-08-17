@@ -225,8 +225,32 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
             )
             _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+        # "…and put the rest on the bottom of your library in a random order."
+        # Florian. Shuffling instead is a different game action: it reorders the
+        # *whole* deck, and everything under the cards you looked at was already
+        # in an order somebody may be counting on.
+        #
+        # "The rest" means what was looked at and not taken -- including cards
+        # the selector filtered out of the pool, which were still looked at.
+        if spec.get("rest_to_bottom", False):
+            taken = set(picked) if pool else set()
+            _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
+
+
+def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
+    """Move these cards to the bottom of their owner's library, shuffled.
+
+    Only these: the rest of the library keeps the order it had, which is the
+    whole difference between this and `shuffle_library`.
+    """
+    if not oids:
+        return
+    moving = set(oids)
+    player = ctx.state.players[pid]
+    remaining = [oid for oid in player.library if oid not in moving]
+    player.library = remaining + ctx.state.rng.shuffled(list(oids))
 
 
 def _matches_in_zone(
