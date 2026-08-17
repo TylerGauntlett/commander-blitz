@@ -1596,6 +1596,53 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "Choose one that hasn't been chosen"
+
+```jsonc
+{"op": "choose_mode", "count": 1, "once_each": true, "modes": [...]}
+```
+
+Spent modes are **struck off the offered list**, not offered and then ignored: an
+ability that listed a used mode and did nothing would read as a mode that
+fizzled, and the point of the printed clause is that the card runs out.
+
+Recorded as ordinary `flags` on the source, which gives the right lifetime for
+free — `reset_permanent_state` clears them on a zone change, and 712.13a makes a
+permanent that left and came back a new object that may choose again. Keyed by
+printed *label* rather than index, so reordering a card's modes cannot silently
+re-open a spent one.
+
+With one mode left there is nothing to choose between, so `ask_mode` does not
+stop to ask and the survivor is taken without a prompt. When every mode is spent
+the ability still triggers and resolves, and does nothing.
+
+**Refused inside a spell's `spell_effects`.** A spell's top-level modes are
+chosen at cast time (601.2b, `Game._ask_modes`), a path this filter never sees —
+the spent modes would still be offered and the flag written for nothing. It is
+meaningless there anyway: a spell is a new object each cast.
+
+## A transforming card is one answer, not two
+
+The engine has shipped transforming DFCs for a long time — `card_of` picks a
+face, `back_face` links them, `bloodline_keeper` / `lord_of_lineage` is a shipped
+pair. Only the *authoring* path was missing: `collect_answers` read
+`answer["card"]` as a single dict, and a card that is two entries could not be
+written at all.
+
+An answer may now carry a `back` beside its `card`:
+
+```jsonc
+{"card": { ..., "back_face": "<back id>" },
+ "back": { ...no mana cost... },
+ "expectation": { ... }}
+```
+
+The back gets no expectation of its own: a back face is never cast or drawn, so
+there is no position to assert anything in — what it does is proven through the
+front, the only face the gates can reach. `link_faces` refuses a one-way link, so
+a front naming a back that was not supplied fails the registry gate rather than
+shipping a transform ability pointing at nothing.
+
 ## Reflecting mana — "any color that a land an opponent controls could produce"
 
 ```jsonc

@@ -78902,12 +78902,12 @@
     },
     "Edgar, Charmed Groom // Edgar Markov's Coffin": {
       "edhrec_rank": 3522,
-      "gate": "template",
+      "gate": null,
       "name": "Edgar, Charmed Groom // Edgar Markov's Coffin",
-      "reason": "no template for: Other Vampires you control get +1/+1",
+      "reason": "",
       "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Edgar, King of Figaro": {
@@ -307932,12 +307932,12 @@
     },
     "War Room": {
       "edhrec_rank": 140,
-      "gate": "template",
+      "gate": null,
       "name": "War Room",
-      "reason": "no template for: {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw ",
+      "reason": "",
       "scryfall_id": "caf2dc02-9989-4e5f-8b9b-76ff416f8070",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "War Screecher": {

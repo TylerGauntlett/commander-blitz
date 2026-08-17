@@ -1653,6 +1653,10 @@
   "eclipsed_steppe": {
     "zone": "battlefield"
   },
+  "edgar_charmed_groom_edgar_markov_s_coffin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ekundu_griffin": {
     "zone": "battlefield"
   },
@@ -6980,6 +6984,20 @@
     "zone": "battlefield"
   },
   "war_mammoth": {
+    "zone": "battlefield"
+  },
+  "war_room": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "warclamp_mastiff": {

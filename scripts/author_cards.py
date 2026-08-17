@@ -322,6 +322,24 @@ def _drop_hand_written(card_ids: set[str]) -> int:
     return removed
 
 
+def _companion_faces(answer: dict) -> list[dict]:
+    """The extra card entries an answer carries beside its main one.
+
+    A transforming double-faced card is two ``CardDef``s linked by ``back_face``
+    and one ``GameObject``, and the authoring pipeline emitted exactly one entry
+    per answer file. The back travels with the front rather than arriving as a
+    second answer, because a second answer would need its own expectation and a
+    back face has no position it can be cast in -- what it does is proven
+    through the front, which is the only face the gates can reach.
+    """
+    back = answer.get("back")
+    if back is None:
+        return []
+    if isinstance(back, dict):
+        return [dict(back)]
+    return [dict(b) for b in back]
+
+
 def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> dict[str, int]:
     """Verify what came back, and commit only what passes.
 
@@ -349,12 +367,22 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
         payload["id"] = card_id
         payload["source"] = "auto"
         expectation = answer.get("expectation") or {}
+        # A transforming card is two entries and one object, so one answer may
+        # carry a `back` face beside its `card`. The engine has always supported
+        # the mechanic -- `card_of`, `back_face`, the shipped bloodline_keeper
+        # pair -- and only this path was missing.
+        backs = _companion_faces(answer)
 
         catalog = index.lookup(payload.get("name", ""), token=False)
         oracle = catalog.oracle_text if catalog else payload.get("oracle_text", "")
         replaces = supersede and card_id in in_pool
         verdict = V.verify(
-            payload, expectation, registry, oracle_text=oracle, supersedes=replaces
+            payload,
+            expectation,
+            registry,
+            oracle_text=oracle,
+            supersedes=replaces,
+            companions=backs,
         )
 
         entry = by_name.get(payload.get("name", ""))
@@ -371,6 +399,13 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
         if not dry_run:
             cards[card_id] = payload
             expectations[card_id] = expectation
+            for back in backs:
+                # No expectation of its own: a back face is never cast or drawn,
+                # so there is no position in which to assert anything about it.
+                # What it does is proven through the front, which is the only
+                # face the gates can reach.
+                back["source"] = "auto"
+                cards[str(back["id"])] = back
         if replaces:
             superseded.add(card_id)
             tally["superseded"] += 1

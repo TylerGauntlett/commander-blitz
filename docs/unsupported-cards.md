@@ -10,21 +10,22 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**12 cards** blocked by **21** capabilities.
+**11 cards** blocked by **20** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [commander-color-identity](#commander-color-identity) | 2 | 14 | op, value |
 | [activated-ability-cost-reduction](#activated-ability-cost-reduction) | 1 | 2443 | cost |
 | [additional-cost](#additional-cost) | 1 | 1154 | cost, value |
 | [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [choose-both](#choose-both) | 1 | 191 | decision |
 | [cloak](#cloak) | 1 | 6625 | engine |
+| [commander-color-identity](#commander-color-identity) | 1 | 14 | op |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
+| [modes-not-yet-chosen](#modes-not-yet-chosen) | 1 | 7529 | engine |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [permanent-granted-ability](#permanent-granted-ability) | 1 | 3474 | op |
 | [play-from-exile](#play-from-exile) | 1 | 3482 | op |
@@ -32,27 +33,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 1154 | trigger_event |
 | [split-cards-authoring](#split-cards-authoring) | 1 | 9863 | authoring |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
-| [two-faced-card-authoring](#two-faced-card-authoring) | 1 | 7529 | engine |
-| [variable-cost-amount](#variable-cost-amount) | 1 | 140 | cost |
 | [whenever-you-attack](#whenever-you-attack) | 1 | 3474 | trigger_event |
-
-## commander-color-identity
-
-Blocks **2** cards.
-
-- **(op)** an `add_mana` form whose colour options are the union of the colour identities of the activating player's commanders, resolved when the ability is activated rather than baked at load -- e.g. `{"op": "add_mana", "any_color_of": "commander_color_identity"}`, offering exactly those colours (and nothing at all, the ability being unactivatable, for a colourless commander). `Player.commanders` already holds the oids and `CardDef.color_identity` is already a `frozenset[str]`, so the data exists; what does not is a path from a mana ability to it. `cards/loader.py:_mana_options`/`_sum_mana` bake a fixed tuple of 6-tuples at load, and `engine/costs.py` (`mana_options`/`offerable_mana_ability`) plus the mode chips built in `engine/legality.py` and the castability solver in `engine/mana.py` (`ManaSource.options`/`producible`) all read that constant, so every one of them has to consult a resolver taking `GameState` and the activating player instead.
-  <br>Why the existing vocabulary won't do: `add_mana` takes a literal `mana` string parsed once at load, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which `_sum_mana` restricts mana abilities to -- has its mode list written into the card. That is exactly what the packet's `starting_point` does, and it is wrong rather than incomplete: five fixed modes is Command Tower in a five-colour deck and a strictly better card in every deck narrower than that, letting the land pay for spells the printed card cannot pay for. There is no way to prune the modes either -- a mana ability may contain only `add_mana`, so `if` and every `condition_keys` entry is rejected inside one, and `_validate_mana_amount` additionally forbids amounts depending on X, targets, bindings or a loop because a mana ability is activated mid-payment. Nothing in `selector_keys` or `value_keys` reads a commander's colour identity: `is_commander` selects the commander as an *object* and `colors` reads a permanent's current colour, which is not the same set (colour identity includes mana symbols in rules text and is read off the card in the command zone, which may not be on the battlefield at all). This shares its engine work with the `reflecting_mana` gap (Exotic Orchard) -- both need a mana ability's option set to become a function of GameState -- but the source of truth is different (the command zone, not the battlefield), so it is a distinct card group: Command Tower, Arcane Signet, Commander's Sphere and Opal Palace all want this one.
-- **(value)** A value leaf returning how many distinct colours are in the union of the colour identities of a player's commanders -- 0 to 5, and 0 for a colourless commander or an empty command zone -- e.g. `{"commander_color_identity": {"controller": "you"}}`, readable wherever an amount is read (and, per the need above, from a cost). The data already exists and is already the right shape: `Player.commanders` (src/automtg/engine/player.py:53) holds the oids, `state.commanders_of(pid)` (engine/state.py:406) returns them, and `CardDef.color_identity` (engine/carddef.py:325) is a `frozenset[str]`, so the leaf is a union over `card_of(oid).color_identity` and a `len`. What is missing is a name for it in the value language. It must read the *printed card* in whatever zone the commander is in -- typically the command zone, and this card is played specifically in decks where the commander is not on the battlefield.
-  <br>Why the existing vocabulary won't do: Nothing in `value_keys` reads a colour identity. `distinct` is the only leaf that counts distinct values over a pool, and `DISTINCT_OF` in engine/effects/values.py:111 is a closed two-entry tuple, `("power", "basic_land_type")`, with a load error for anything else -- and it resolves its pool through `resolve_pool`, i.e. over objects in a zone, so it could not see a commander in the command zone even if a third `of` existed. `colors_of_mana_spent` is a fact about how a spell was paid for, read off `obj.colors_spent`, not about a card's identity, and War Room's ability is not a spell cast at all. `count` with the `is_commander` selector counts commanders as *objects* -- two partners are two, and a five-colour commander is one, which is the wrong number in both directions -- and `selectors.py` documents `is_commander` as a battlefield-object predicate. The `colors` selector key reads a permanent's current, derived colour, which is not colour identity: identity is printed, includes mana symbols in rules text and in activation costs, and is immune to the colour-changing effects `colors` deliberately sees. This is the same missing fact as the `commander-color-identity` need already recorded for Path of Ancestry (Command Tower, Arcane Signet, Commander's Sphere), but a different consumer: that one needs it to shape a mana ability's colour options, this one needs it as an integer in a cost, so closing it for mana abilities alone leaves War Room blocked.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Path of Ancestry** (rank 14) — `path_of_ancestry`
-  - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-- **War Room** (rank 140) — `war_room`
-  - {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.
-
-</details>
 
 ## activated-ability-cost-reduction
 
@@ -128,6 +109,20 @@ Blocks **1** card.
 
 </details>
 
+## commander-color-identity
+
+Blocks **1** card.
+
+- **(op)** an `add_mana` form whose colour options are the union of the colour identities of the activating player's commanders, resolved when the ability is activated rather than baked at load -- e.g. `{"op": "add_mana", "any_color_of": "commander_color_identity"}`, offering exactly those colours (and nothing at all, the ability being unactivatable, for a colourless commander). `Player.commanders` already holds the oids and `CardDef.color_identity` is already a `frozenset[str]`, so the data exists; what does not is a path from a mana ability to it. `cards/loader.py:_mana_options`/`_sum_mana` bake a fixed tuple of 6-tuples at load, and `engine/costs.py` (`mana_options`/`offerable_mana_ability`) plus the mode chips built in `engine/legality.py` and the castability solver in `engine/mana.py` (`ManaSource.options`/`producible`) all read that constant, so every one of them has to consult a resolver taking `GameState` and the activating player instead.
+  <br>Why the existing vocabulary won't do: `add_mana` takes a literal `mana` string parsed once at load, and the only sanctioned way to offer a choice -- a single `choose_mode` of `add_mana`s, which `_sum_mana` restricts mana abilities to -- has its mode list written into the card. That is exactly what the packet's `starting_point` does, and it is wrong rather than incomplete: five fixed modes is Command Tower in a five-colour deck and a strictly better card in every deck narrower than that, letting the land pay for spells the printed card cannot pay for. There is no way to prune the modes either -- a mana ability may contain only `add_mana`, so `if` and every `condition_keys` entry is rejected inside one, and `_validate_mana_amount` additionally forbids amounts depending on X, targets, bindings or a loop because a mana ability is activated mid-payment. Nothing in `selector_keys` or `value_keys` reads a commander's colour identity: `is_commander` selects the commander as an *object* and `colors` reads a permanent's current colour, which is not the same set (colour identity includes mana symbols in rules text and is read off the card in the command zone, which may not be on the battlefield at all). This shares its engine work with the `reflecting_mana` gap (Exotic Orchard) -- both need a mana ability's option set to become a function of GameState -- but the source of truth is different (the command zone, not the battlefield), so it is a distinct card group: Command Tower, Arcane Signet, Commander's Sphere and Opal Palace all want this one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Path of Ancestry** (rank 14) — `path_of_ancestry`
+  - {T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)
+
+</details>
+
 ## commander-type-filter
 
 Blocks **1** card.
@@ -196,6 +191,20 @@ Blocks **1** card.
 
 - **Malakir Rebirth // Malakir Mire** (rank 243) — `malakir_rebirth_malakir_mire`
   - Choose target creature. You lose 2 life. Until end of turn, that creature gains "When this creature dies, return it to the battlefield tapped under its owner's control."
+
+</details>
+
+## modes-not-yet-chosen
+
+Blocks **1** card.
+
+- **(engine)** A modal ability whose already-taken modes are struck off the list on later resolutions: `choose_mode` needs to record, per source permanent, which mode indices that ability has already run, and offer only the rest -- with the whole ability doing nothing once every mode is spent. Roughly a `once_each: true` (or `exclude_chosen`) flag on `choose_mode` plus a per-object ledger of used indices, keyed by ability so two modal abilities on one permanent do not share a tally.
+  <br>Why the existing vocabulary won't do: `op_choose_mode` (src/automtg/engine/effects/ops_control.py) builds its labels straight from `spec['modes']` every time it resolves and calls `ask_mode` with the full list; a mode is a `{label, effects}` pair and the loader's per-mode validation (`_validate_effect`, src/automtg/cards/loader.py) accepts no availability condition, so there is no place to hang "only if not yet chosen". Nothing in the engine tracks mode usage -- there is no `chosen_modes`/`modes_used` field on a game object, and `Game._ask_modes` likewise passes the printed list through untouched. The nearest tool, `set_flag`/`has_flag`, only writes a word on the permanent and reads it back inside an `if`: guarding each mode's body with `{"not": {"has_flag": "henrika_mode_1"}}` still OFFERS the used mode, so a player could pick a spent mode and have the trigger resolve for nothing, which is not the printed choice. The alternative approximation -- leaving the modes unguarded -- is strictly a different, much stronger card: a Henrika that can transform every combat, or drain every combat. Both are refused as approximations.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Henrika Domnathi // Henrika, Infernal Seer** (rank 7529) — `henrika_domnathi_henrika_infernal_seer`
+  - At the beginning of combat on your turn, choose one that hasn't been chosen —
 
 </details>
 
@@ -296,37 +305,6 @@ Blocks **1** card.
 
 - **Bojuka Bog** (rank 24) — `bojuka_bog`
   - When this land enters, exile target player's graveyard.
-
-</details>
-
-## two-faced-card-authoring
-
-Blocks **1** card.
-
-- **(engine)** a way for the authoring pipeline to produce a transforming double-faced card -- two linked card entries from one packet. NOTE: unlike the other two, the ENGINE already supports this mechanic (GameState.card_of, CardDef.back_face, primitives.transform, and the shipped bloodline_keeper / lord_of_lineage pair). Only the authoring path is missing, so this is cheaper than it looks and may be resolved by hand-authoring the card into data/cards/ rather than by any engine change.
-  <br>Why the existing vocabulary won't do: The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer["card"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined "A // B" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason. Henrika additionally needs a `choose one that hasn't been chosen` mode tracker across separate trigger resolutions, which `ask_mode` does not provide.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Henrika Domnathi // Henrika, Infernal Seer** (rank 7529) — `henrika_domnathi_henrika_infernal_seer`
-  - At the beginning of combat on your turn, choose one that hasn't been chosen —
-  - • Each player sacrifices a creature of their choice
-  - • You draw a card and you lose 1 life
-  - • Transform Henrika
-
-</details>
-
-## variable-cost-amount
-
-Blocks **1** card.
-
-- **(cost)** A cost whose life payment is a value expression evaluated when the ability is activated rather than an integer written on the card -- e.g. `{"mana": "{3}", "tap": true, "pay_life": {"commander_color_identity": {"controller": "you"}}}`. Concretely `CostModel.pay_life` (src/automtg/cards/schema.py:48) and `Cost.pay_life` (src/automtg/engine/carddef.py:96) are `int`, coerced once by `Cost.from_spec` with `int(spec.get("pay_life", 0) or 0)`; the affordability test `can_pay` (src/automtg/engine/costs.py:344, `player.life < cost.pay_life`) and the charge in `pay` (costs.py:552, `lose_life(state, pid, cost.pay_life, ...)`) both read that constant, as does `Cost.describe` and `is_tap_only`. All four need to resolve the amount through a value evaluator given the activating player and the source, at the moment legality offers the action and again when the cost is charged, and both readings must agree so an ability cannot be offered at a price it is then not charged.
-  <br>Why the existing vocabulary won't do: `cost_keys` has `pay_life`, and it is exactly the right cost -- it is the *amount* that cannot be spelled. There is no cost key that takes a value expression for life. `times` is the one part of a cost that is not fixed at authoring time, and its own schema comment says it multiplies the **mana** half only and is read "where an ``EffectContext`` exists to evaluate it -- i.e. by `may`'s `pay`, not by an activated ability's cost, which is charged before any effect runs" -- so it neither reaches `pay_life` nor runs at the moment War Room needs it. Moving the payment into the effects, as `lose_life` with an amount, is the documented wrong answer: the packet's own notes say paying with an op "moves the payment to resolution and lets the ability be activated when it could not be paid for", which for War Room means drawing at 1 life against a five-colour commander, a strictly better card than the printed one. A `const` stand-in is worse still, because it is right only for decks of one particular colour count.
-
-<details><summary>Cards waiting on this</summary>
-
-- **War Room** (rank 140) — `war_room`
-  - {3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.
 
 </details>
 

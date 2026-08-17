@@ -18821,6 +18821,164 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Vampire"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Vampires you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "op": "transform",
+              "to_back": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Edgar dies, return it to the battlefield transformed under its owner's control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "back_face": "edgar_markov_s_coffin",
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "edgar_charmed_groom_edgar_markov_s_coffin",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Edgar, Charmed Groom // Edgar Markov's Coffin",
+      "oracle_text": "Other Vampires you control get +1/+1.\nWhen Edgar dies, return it to the battlefield transformed under its owner's control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_1_1_wb_lifelink"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "bloodline",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "bloodline",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "bloodline",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "counter": "bloodline",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "remove_counters"
+                },
+                {
+                  "op": "transform",
+                  "to_back": false
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, create a 1/1 white and black Vampire creature token with lifelink and put a bloodline counter on Edgar Markov's Coffin. Then if there are three or more bloodline counters on it, remove those counters and transform it.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "edgar_markov_s_coffin",
+      "name": "Edgar Markov's Coffin",
+      "oracle_text": "At the beginning of your upkeep, create a 1/1 white and black Vampire creature token with lifelink and put a bloodline counter on Edgar Markov's Coffin. Then if there are three or more bloodline counters on it, remove those counters and transform it.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -78797,6 +78955,53 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "pay_life": {
+              "commander_color_identity": "you"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "war_room",
+      "name": "War Room",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

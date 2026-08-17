@@ -2147,9 +2147,18 @@
     "artist": "Leon Tukker",
     "scryfall_id": "93ca39ae-0173-44ba-8c66-9f52f468983d"
   },
+  "edgar_charmed_groom_edgar_markov_s_coffin": {
+    "artist": "Volkan Ba\u01f5a",
+    "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca"
+  },
   "edgar_markov": {
     "artist": "Betty Jiang",
     "scryfall_id": "089b6e6f-c178-4612-866f-da9cbc01b442"
+  },
+  "edgar_markov_s_coffin": {
+    "artist": "Volkan Ba\u01f5a",
+    "back": true,
+    "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca"
   },
   "ekundu_griffin": {
     "artist": "David A. Cherry",
@@ -8376,6 +8385,10 @@
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
+  "vampire_1_1_wb_lifelink": {
+    "artist": "Volkan Ba\u01f5a",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
   "vampire_2_2_b_flying": {
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
@@ -8775,6 +8788,10 @@
   "war_mammoth": {
     "artist": "Jeff A. Menges",
     "scryfall_id": "c38912a6-0327-411a-9499-d659b635e2bd"
+  },
+  "war_room": {
+    "artist": "Milivoj \u0106eran",
+    "scryfall_id": "caf2dc02-9989-4e5f-8b9b-76ff416f8070"
   },
   "warclamp_mastiff": {
     "artist": "David Palumbo",

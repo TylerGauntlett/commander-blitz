@@ -367,6 +367,28 @@ def can_pay_mana(
     )
 
 
+def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
+    """How much life this cost asks for, right now.
+
+    Almost always the integer written on the card. War Room's is a value
+    expression -- "pay life equal to the number of colors in your commanders'
+    color identity" -- and is the only part of a cost besides `times` that is
+    not fixed when the card is written.
+
+    One helper, because `can_pay` and `pay` must not be able to disagree: a cost
+    checked at one price and charged at another either strands the payment or
+    hands out a discount. The same care `mana_produced` and `mana_options_of`
+    already take, for the same reason.
+    """
+    spec = cost.pay_life
+    if isinstance(spec, int):
+        return spec
+    from .effects.values import evaluate_value
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return max(0, int(evaluate_value(ctx, spec)))
+
+
 def can_pay(
     state: GameState, pid: int, cost: Cost | None, source_oid: int | None, *, x: int = 0
 ) -> bool:
@@ -394,7 +416,8 @@ def can_pay(
     # action afterwards, not a reason the cost was illegal.  `<=` would stop a
     # fetchland being cracked at 1 life, which is precisely when somebody wants
     # to.
-    if cost.pay_life and player.life < cost.pay_life:
+    life = life_cost(state, pid, cost, source_oid)
+    if life and player.life < life:
         return False
     if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
         return False
@@ -603,7 +626,7 @@ def pay(
         return False
 
     if cost.pay_life:
-        lose_life(state, pid, cost.pay_life, source=source_oid)
+        lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:
         pool = _discard_pool(state, pid, cost)

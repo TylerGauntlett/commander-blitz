@@ -30,6 +30,7 @@ expectation are authored together and rejected together.
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -360,6 +361,7 @@ def verify(
     *,
     oracle_text: str | None = None,
     supersedes: bool = False,
+    companions: Sequence[dict] | None = None,
 ) -> Verdict:
     """Run every gate over one candidate.
 
@@ -419,9 +421,19 @@ def verify(
         return verdict
     existing = {c.id: c for c in registry if c.id != card.id}
     try:
-        merged = CardRegistry({**existing, card.id: card})
-        from ..loader import validate_token_references
+        # A transforming card is **two** entries and one object: the front names
+        # its `back_face` and `link_faces` derives the pointer back. The back
+        # face has to be in the pool before the front can compile against it, so
+        # it arrives here rather than in a second answer file -- one card, one
+        # answer, however many faces it has.
+        pool = {**existing, card.id: card}
+        for extra in companions or ():
+            extra_card = compile_card(CardModel.model_validate(extra))
+            pool[extra_card.id] = extra_card
+        from ..loader import link_faces, validate_token_references
 
+        link_faces(pool)
+        merged = CardRegistry(pool)
         validate_token_references({c.id: c for c in merged})
     except AutoMtgError as exc:
         verdict.failed_gate = "registry"

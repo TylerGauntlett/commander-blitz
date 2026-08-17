@@ -3,24 +3,26 @@
   "name": "Henrika Domnathi // Henrika, Infernal Seer",
   "oracle_text": "Flying\nAt the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
   "blocked_sentences": [
-    "At the beginning of combat on your turn, choose one that hasn't been chosen —",
-    "• Each player sacrifices a creature of their choice",
-    "• You draw a card and you lose 1 life",
-    "• Transform Henrika"
+    "At the beginning of combat on your turn, choose one that hasn't been chosen —"
   ],
   "needs": [
     {
-      "capability": "two-faced-card-authoring",
+      "capability": "modes-not-yet-chosen",
       "kind": "engine",
-      "what": "a way for the authoring pipeline to produce a transforming double-faced card -- two linked card entries from one packet. NOTE: unlike the other two, the ENGINE already supports this mechanic (GameState.card_of, CardDef.back_face, primitives.transform, and the shipped bloodline_keeper / lord_of_lineage pair). Only the authoring path is missing, so this is cheaper than it looks and may be resolved by hand-authoring the card into data/cards/ rather than by any engine change.",
-      "why_existing_wont_do": "The authoring pipeline emits exactly one card entry per answer file (`collect_answers` reads `answer[\"card\"]` as a single dict), and a double-faced card is two card entries linked by `back_face`. Gate 3 compounds it: `collect_answers` looks the oracle text up by the payload's name, and a front face authored under its own name misses the catalog's joined \"A // B\" row. The repo's existing two-faced cards (bloodline_keeper / lord_of_lineage) are hand-written in data/cards/ for exactly this reason. Henrika additionally needs a `choose one that hasn't been chosen` mode tracker across separate trigger resolutions, which `ask_mode` does not provide."
+      "what": "A modal ability whose already-taken modes are struck off the list on later resolutions: `choose_mode` needs to record, per source permanent, which mode indices that ability has already run, and offer only the rest -- with the whole ability doing nothing once every mode is spent. Roughly a `once_each: true` (or `exclude_chosen`) flag on `choose_mode` plus a per-object ledger of used indices, keyed by ability so two modal abilities on one permanent do not share a tally.",
+      "why_existing_wont_do": "`op_choose_mode` (src/automtg/engine/effects/ops_control.py) builds its labels straight from `spec['modes']` every time it resolves and calls `ask_mode` with the full list; a mode is a `{label, effects}` pair and the loader's per-mode validation (`_validate_effect`, src/automtg/cards/loader.py) accepts no availability condition, so there is no place to hang \"only if not yet chosen\". Nothing in the engine tracks mode usage -- there is no `chosen_modes`/`modes_used` field on a game object, and `Game._ask_modes` likewise passes the printed list through untouched. The nearest tool, `set_flag`/`has_flag`, only writes a word on the permanent and reads it back inside an `if`: guarding each mode's body with `{\"not\": {\"has_flag\": \"henrika_mode_1\"}}` still OFFERS the used mode, so a player could pick a spent mode and have the trigger resolve for nothing, which is not the printed choice. The alternative approximation -- leaving the modes unguarded -- is strictly a different, much stronger card: a Henrika that can transform every combat, or drain every combat. Both are refused as approximations."
     }
   ],
   "closest_existing": [
-    "back_face",
-    "transform",
-    "kicker",
-    "evoke"
+    "choose_mode",
+    "set_flag",
+    "has_flag",
+    "monstrosity"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "notes": [
+    "The two-faced authoring half of this card is SOLVED and must not be re-opened. An answer file may now carry a `back` key beside `card`, the front face names it with `back_face`, `link_faces` refuses a one-way link, and `tests/cards/test_authoring.py::TestATransformingCardIsOneAnswer` witnesses it. The engine side (GameState.card_of, CardDef.back_face, the `transform` op, the shipped bloodline_keeper / lord_of_lineage pair in data/cards/edgar.cards.json) was never missing.",
+    "Every other printed line is already expressible: `flying` is a keyword; `begin_combat` is a trigger event; \"Each player sacrifices a creature of their choice\" is the `for_each_player` + `sacrifice` idiom already shipped on Zurgo's \"each opponent sacrifices a creature of their choice\"; \"You draw a card and you lose 1 life\" is `draw` + `lose_life`; \"Transform Henrika\" is the `transform` op. Only the modal exclusion clause blocks the card.",
+    "The packet carries only the front face's own lines (flying and the modal trigger) plus the joined type line, so the back face's printed text is not in hand here; whatever it turns out to be, nothing blocks writing it, because the front face is what cannot be said. When `modes-not-yet-chosen` lands, this card should be re-queued as a single two-faced answer, not re-triaged as an authoring-pipeline problem."
+  ]
 }
