@@ -303452,12 +303452,12 @@
     },
     "Visions of Glory": {
       "edhrec_rank": 6142,
-      "gate": "template",
+      "gate": null,
       "name": "Visions of Glory",
-      "reason": "no template for: Create a 1/1 white Human creature token for each creature you control",
+      "reason": "",
       "scryfall_id": "11675d8a-cd81-4055-bdbd-2e709e12ba66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Visions of Phyrexia": {
