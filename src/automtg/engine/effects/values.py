@@ -96,6 +96,10 @@ VALUE_KEYS = frozenset(
         # Sunburst artifact cast for {4} off five different lands enters with
         # five counters, and its printed cost has no coloured pip at all.
         "colors_of_mana_spent",
+        #: "…the number of colors in your commanders' color identity". A deck
+        #: fact rather than a board one, so it is the same number wherever the
+        #: commander currently is.
+        "commander_color_identity",
         # "…for each creature sacrificed this way" / "copy it for each time you
         # paid" -- casualty and replicate. How many times the card's additional
         # cost was paid, which nothing else records: the sacrificed creatures are
@@ -217,6 +221,23 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_of" in expr:
         pids = _players(ctx, expr["life_of"])
         return sum(ctx.state.players[p].life for p in pids)
+    if "commander_color_identity" in expr:
+        # "Pay life equal to the number of colors in your commanders' color
+        # identity." War Room. The union across a player's commanders, so
+        # partners count once between them for a colour they share -- which is
+        # what "your commanders' color identity" means, singular.
+        #
+        # Read off the **printed** identity rather than derived colours: colour
+        # identity is a deck-construction fact fixed by the card, and it is the
+        # same number whether the commander is in the command zone, on the
+        # battlefield, or in a graveyard.
+        colors: set[str] = set()
+        for pid in _players(ctx, expr["commander_color_identity"]):
+            for oid in ctx.state.commanders_of(pid):
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    colors |= set(ctx.state.card_of(obj).color_identity)
+        return len(colors)
     if "min_life_of" in expr:
         pids = _players(ctx, expr["min_life_of"])
         return min_life([ctx.state.players[p].life for p in pids])

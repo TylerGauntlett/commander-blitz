@@ -1851,6 +1851,18 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     if op == "for_each_player" and not effect.get("effects"):
         raise DslError(f"{where}: for_each_player needs 'effects' to run per player")
 
+    # "Choose one that hasn't been chosen" belongs to a permanent's repeated
+    # ability, not to a spell. A spell's top-level modes are picked at *cast*
+    # time (601.2b, `Game._ask_modes`), which never sees this filter -- so the
+    # spent modes would still be offered and the flag written for nothing. And
+    # the clause is meaningless there anyway: a spell is a new object each cast,
+    # with no record of the last one.
+    if op == "choose_mode" and effect.get("once_each") and ".spell_effects[" in where:
+        raise DslError(
+            f"{where}: 'once_each' is for a permanent's repeated modal ability; "
+            f"a spell chooses its modes as it is cast and remembers nothing"
+        )
+
     for key in ("then", "else", "effects"):
         if key in effect:
             for i, sub in enumerate(effect[key] or []):

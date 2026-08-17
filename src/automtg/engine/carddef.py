@@ -93,7 +93,10 @@ class Cost:
     #: lets the player pick, so a Krosan Tusker could be "cycled" by pitching
     #: something else and staying in hand.
     discard_self: bool = False
-    pay_life: int = 0
+    #: An integer, or a value expression evaluated at payment time -- see
+    #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
+    #: cannot price the same cost differently.
+    pay_life: int | Mapping[str, Any] = 0
     remove_counters: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
 
@@ -126,7 +129,11 @@ class Cost:
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
             ),
             discard_self=bool(spec.get("discard_self", False)),
-            pay_life=int(spec.get("pay_life", 0) or 0),
+            pay_life=(
+                dict(spec["pay_life"])
+                if isinstance(spec.get("pay_life"), Mapping)
+                else int(spec.get("pay_life", 0) or 0)
+            ),
             remove_counters=(
                 dict(spec["remove_counters"]) if spec.get("remove_counters") else None
             ),
@@ -155,7 +162,7 @@ class Cost:
             and self.tap_permanents is None
             and self.discard == 0
             and not self.discard_self
-            and self.pay_life == 0
+            and not self.pay_life
             and self.remove_counters is None
             and self.exile_from_graveyard is None
         )
@@ -179,7 +186,8 @@ class Cost:
         if self.discard_self:
             parts.append("Discard this card")
         if self.pay_life:
-            parts.append(f"Pay {self.pay_life} life")
+            amount = self.pay_life if isinstance(self.pay_life, int) else "X"
+            parts.append(f"Pay {amount} life")
         if self.remove_counters:
             parts.append("Remove counters")
         if self.exile_from_graveyard:

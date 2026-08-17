@@ -309,3 +309,80 @@ class TestThePacketCarriesTheWholeVocabulary:
         ref = reference()
         assert "counters_on" in ref["value_keys"]
         assert "cmp" in ref["condition_keys"]
+
+class TestATransformingCardIsOneAnswer:
+    """Henrika Domnathi, Edgar Charmed Groom -- two faces, one answer file.
+
+    The *engine* has shipped transforming double-faced cards for a long time:
+    `card_of` picks a face, `back_face` links them, and bloodline_keeper /
+    lord_of_lineage is a shipped pair. Only the authoring path was missing --
+    `collect_answers` read `answer["card"]` as a single dict, so a card that is
+    two entries could not be written at all.
+
+    The back travels with the front rather than as a second answer, because a
+    second answer would need its own expectation and a back face has no position
+    it can be cast in. What it does is proven through the front.
+    """
+
+    def front_and_back(self):
+        front = {
+            "id": "t_two_faced_probe",
+            "name": "Two Faced Probe",
+            "oracle_text": "Flying",
+            "mana_cost": "{1}{B}",
+            "types": ["Creature"],
+            "subtypes": ["Vampire"],
+            "power": 2,
+            "toughness": 2,
+            "keywords": ["flying"],
+            "colors": ["B"],
+            "color_identity": ["B"],
+            "back_face": "t_two_faced_probe_back",
+        }
+        back = {
+            "id": "t_two_faced_probe_back",
+            "name": "Two Faced Probe Back",
+            "oracle_text": "Deathtouch",
+            "types": ["Creature"],
+            "subtypes": ["Vampire"],
+            "power": 3,
+            "toughness": 3,
+            "keywords": ["deathtouch"],
+            "colors": ["B"],
+            "color_identity": ["B"],
+        }
+        return front, back
+
+    def test_a_front_with_its_back_passes(self, real_registry):
+        from automtg.cards.authoring import verify as V
+
+        front, back = self.front_and_back()
+        verdict = V.verify(
+            front, {"zone": "battlefield"}, real_registry, companions=[back]
+        )
+        assert verdict.ok, verdict.reason
+
+    def test_a_front_without_its_back_is_refused(self, real_registry):
+        """The dangling link is a registry failure, not a silent half-card.
+
+        This is the gate that makes the feature safe: `link_faces` refuses a
+        one-way link, so an answer that forgot its back face cannot ship a
+        creature whose transform ability points at nothing.
+        """
+        from automtg.cards.authoring import verify as V
+
+        front, _ = self.front_and_back()
+        verdict = V.verify(front, {"zone": "battlefield"}, real_registry)
+        assert verdict.failed_gate == "registry"
+        assert "back_face" in verdict.reason
+
+    def test_the_collector_reads_one_back_or_several(self):
+        from scripts.author_cards import _companion_faces
+
+        assert _companion_faces({"card": {}}) == []
+        assert _companion_faces({"card": {}, "back": {"id": "a"}}) == [{"id": "a"}]
+        assert _companion_faces({"card": {}, "back": [{"id": "a"}, {"id": "b"}]}) == [
+            {"id": "a"},
+            {"id": "b"},
+        ]
+

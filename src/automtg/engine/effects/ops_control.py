@@ -171,14 +171,53 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     count = evaluate_value(ctx, spec.get("count", 1))
     if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
         count = len(modes)
+
+    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+
+    # "Choose one **that hasn't been chosen** --" (Henrika Domnathi). The spent
+    # modes are struck off the list rather than offered and then ignored: an
+    # ability that offered a spent mode and did nothing would read on screen as
+    # a mode that fizzled, and the whole point of the clause is that the card
+    # runs out.
+    #
+    # Recorded as ordinary `flags` on the source, which gives the right lifetime
+    # for free: `reset_permanent_state` clears them on a zone change, and 712.13a
+    # says a permanent that left and came back is a new object that may choose
+    # again -- the same rule flip and transform already lean on.
+    once_each = bool(spec.get("once_each"))
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    offered = list(range(len(modes)))
+    if once_each and source is not None:
+        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
+        if not offered:
+            # Every mode is spent. The ability still triggered and still
+            # resolved; there is simply nothing left to choose.
+            return
+
     chosen = list(ctx.modes)
     if chosen:
         ctx.modes = ()
+    elif once_each:
+        picked = yield from ask_mode(
+            ctx, "Choose", [labels[i] for i in offered], ctx.controller, max(1, count)
+        )
+        chosen = [offered[i] for i in picked]
     else:
-        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
         chosen = yield from ask_mode(ctx, "Choose", labels, ctx.controller, max(1, count))
+
     for index in chosen:
+        if once_each and source is not None:
+            source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])
+
+
+def _mode_flag(label: str) -> str:
+    """The flag marking one mode as already taken.
+
+    Keyed by the printed label rather than the index, so a card whose modes are
+    reordered does not silently re-open a spent one.
+    """
+    return f"mode_chosen:{label}"
 
 
 #: Guard on the "pay again?" loop, matching `may`'s and `repeat`'s. One

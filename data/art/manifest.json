@@ -3226,11 +3226,23 @@
     "file": "eclipsed_steppe.jpg",
     "scryfall_id": "93ca39ae-0173-44ba-8c66-9f52f468983d"
   },
+  "edgar_charmed_groom_edgar_markov_s_coffin": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 57252,
+    "file": "edgar_charmed_groom_edgar_markov_s_coffin.jpg",
+    "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca"
+  },
   "edgar_markov": {
     "artist": "Betty Jiang",
     "bytes": 51771,
     "file": "edgar_markov.jpg",
     "scryfall_id": "089b6e6f-c178-4612-866f-da9cbc01b442"
+  },
+  "edgar_markov_s_coffin": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 56049,
+    "file": "edgar_markov_s_coffin.jpg",
+    "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca"
   },
   "ekundu_griffin": {
     "artist": "David A. Cherry",
@@ -12682,6 +12694,12 @@
     "file": "vampire_1_1_bw.jpg",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
+  "vampire_1_1_wb_lifelink": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 86766,
+    "file": "vampire_1_1_wb_lifelink.jpg",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
   "vampire_2_2_b_flying": {
     "artist": "Volkan Ba\u01f5a",
     "bytes": 86766,
@@ -13285,6 +13303,12 @@
     "bytes": 95169,
     "file": "war_mammoth.jpg",
     "scryfall_id": "c38912a6-0327-411a-9499-d659b635e2bd"
+  },
+  "war_room": {
+    "artist": "Milivoj \u0106eran",
+    "bytes": 54823,
+    "file": "war_room.jpg",
+    "scryfall_id": "caf2dc02-9989-4e5f-8b9b-76ff416f8070"
   },
   "warclamp_mastiff": {
     "artist": "David Palumbo",

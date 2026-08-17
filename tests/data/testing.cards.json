@@ -7457,6 +7457,120 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_war_room",
+      "name": "Test War Room",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card.",
+          "cost": {
+            "mana": "{3}",
+            "tap": true,
+            "pay_life": {
+              "commander_color_identity": "you"
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_henrika",
+      "name": "Test Henrika",
+      "oracle_text": "At the beginning of combat on your turn, choose one that hasn't been chosen —\n• You gain 1 life.\n• You draw a card and you lose 1 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, choose one that hasn't been chosen —",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "once_each": true,
+              "modes": [
+                {
+                  "label": "Gain 1 life",
+                  "effects": [
+                    {
+                      "op": "gain_life",
+                      "player": "you",
+                      "amount": {
+                        "const": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Draw and lose 1",
+                  "effects": [
+                    {
+                      "op": "draw",
+                      "player": "you",
+                      "amount": {
+                        "const": 1
+                      }
+                    },
+                    {
+                      "op": "lose_life",
+                      "player": "you",
+                      "amount": {
+                        "const": 1
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

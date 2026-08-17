@@ -503,6 +503,31 @@
           ]
         }
       ]
+    },
+    {
+      "id": "vampire_1_1_wb_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 white and black Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
     }
   ]
 }

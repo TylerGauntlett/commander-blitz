@@ -45,7 +45,11 @@ class CostModel(BaseModel):
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
-    pay_life: int = 0
+    #: Usually an integer. A mapping is a value expression evaluated when the
+    #: cost is paid -- War Room's "pay life equal to the number of colors in
+    #: your commanders' color identity", the only life cost that is not fixed
+    #: when the card is written.
+    pay_life: int | dict[str, Any] = 0
     remove_counters: dict[str, Any] | None = None
     exile_from_graveyard: dict[str, Any] | None = None
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
