@@ -155,6 +155,40 @@ def damage_player(
     """Deal damage to a player, applying lifelink and commander damage tracking."""
     if amount <= 0:
         return 0
+    # "Prevent all damage that would be dealt to you this turn" (615.1). Checked
+    # *first*, above everything, because prevented damage was never dealt: no
+    # life lost, no poison counters, no lifelink for the attacker, no
+    # commander-damage tally and no `DAMAGE_DEALT` for the turn ledger to count.
+    # Every one of those is a separate way the shield would leak if this sat
+    # further down, and the infect branch is the sharpest -- a shielded player
+    # who still took the poison would lose to a fog.
+    #
+    # This is the point the gap record said did not exist: the function went
+    # straight from the infect check to `life -= amount`, so there was nowhere in
+    # the player-damage path for a prevention to be consulted at all. The
+    # permanent path has had one since absorb (`damage_permanent`, twenty lines
+    # down); this is its player-side counterpart.
+    if shielded(state, pid):
+        # `fire`, not `emit`: emit only writes the log, which is what both
+        # existing DAMAGE_PREVENTED sites did and is why `damage_prevented`
+        # could not be a trigger. Selfless Squire's second line reads `amount`
+        # off this event, so a prevention nothing announces is a shield that
+        # eats the damage and pays nothing back.
+        #
+        # `to="player"`, matching `DAMAGE_DEALT`'s key of the same name: the
+        # event covers both shapes and the trigger has to tell them apart, or a
+        # blocked creature's absorb would give the Squire counters too.
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="damage_shield",
+        )
+        return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -229,12 +263,18 @@ def damage_permanent(
     from .characteristics import prevented_damage, protected_from
 
     if protected_from(state, oid, source_oid):
-        state.emit(
+        # `fire`, not `emit`, and `to="permanent"`: see the player-side site in
+        # `damage_player`. This one has always been a log line with nothing
+        # subscribed; putting it on the bus costs nothing and makes the two
+        # halves of the event answerable by the same trigger name.
+        fire(
+            state,
             EventType.DAMAGE_PREVENTED,
             player=obj.controller,
             source=source_oid,
             oid=oid,
             amount=amount,
+            to="permanent",
             reason="protection",
         )
         return 0
@@ -246,12 +286,14 @@ def damage_permanent(
     if (shield := prevented_damage(state, oid)) > 0:
         blocked = min(shield, amount)
         amount -= blocked
-        state.emit(
+        fire(
+            state,
             EventType.DAMAGE_PREVENTED,
             player=obj.controller,
             source=source_oid,
             oid=oid,
             amount=blocked,
+            to="permanent",
             reason="prevent_damage",
         )
         if amount <= 0:
@@ -1084,6 +1126,77 @@ def clear_unblockables(
     means ends at cleanup like every other one.
     """
     state.unblockables = _expired(state.unblockables, duration, player)
+
+
+def shield_player(
+    state: GameState,
+    pid: int,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """"Prevent all damage that would be dealt to you this turn."
+
+    One rules-relevant thing and no questions asked, like every primitive here:
+    it records the shield.  *Which* seats are shielded is the effect layer's job,
+    which is why this takes a single ``pid`` and the op loops -- "prevent all
+    damage that would be dealt to you and to permanents you control" is a
+    different sentence and would be a different record, not a wider version of
+    this one.
+
+    The record lives on :attr:`GameState.damage_shields` rather than on the
+    `PlayerState`, beside the other two timed tables and for the same reason
+    they are there: it is a turn-scoped continuous effect owned by no permanent.
+    A `PlayerState` field would work for the one duration that exists today and
+    would have to move the first time a shield outlived a turn or covered a seat
+    that then left the game.
+
+    Deduplicated on the whole entry.  Two copies of "prevent all damage to you
+    this turn" say nothing one does not -- there is no pool to add to, since the
+    shield is not consumed by use -- and a second entry would only make cleanup
+    do the work twice.  A shield over a player who has already lost is refused:
+    nothing can be dealt damage after that, so recording one would be a
+    permanent no-op sitting in the table.
+
+    Returns whether anything was recorded, so the op can distinguish a shield it
+    installed from one it dropped.
+    """
+    from .structs import DAMAGE_SHIELD_DURATIONS, DamageShield
+
+    if duration not in DAMAGE_SHIELD_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown damage shield duration {duration!r}")
+    if not state.is_alive(pid):
+        return False
+    entry = DamageShield(player=pid, duration=duration, source=source)
+    if entry in state.damage_shields:
+        return False
+    state.damage_shields.append(entry)
+    return True
+
+
+def shielded(state: GameState, pid: int) -> bool:
+    """Whether all damage to ``pid`` is currently being prevented.
+
+    Short-circuits on the empty table, which is every game that plays none of
+    these cards -- and this is asked on every point of damage dealt to a player,
+    so the empty case is the one that has to cost nothing.
+    """
+    return any(s.player == pid for s in state.damage_shields)
+
+
+def clear_damage_shields(state: GameState, duration: str) -> None:
+    """Drop the damage shields of one duration -- their wearing-off.
+
+    Called once, from `turn._cleanup_step`, beside `clear_block_prohibitions`
+    and `clear_unblockables` and on the same clock.  It does **not** go through
+    :func:`_expired` despite the identical shape, and the difference is the
+    ``player`` field: on the other two tables that field means "whose next turn
+    ends this", while a `DamageShield`'s is the seat being protected.  Sharing
+    the helper would read correctly today -- the only caller passes no player --
+    and would silently mean the wrong thing the first time anybody passed one.
+    """
+    if not state.damage_shields:
+        return
+    state.damage_shields = [s for s in state.damage_shields if s.duration != duration]
 
 
 def _expired(entries: list, duration: str, player: int | None):

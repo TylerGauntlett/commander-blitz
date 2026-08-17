@@ -378,6 +378,139 @@ is only reachable through the `if`, so an addendum that failed to fire fails the
 gate — the +1/+1 counters land on your creatures rather than on the card itself,
 which is the one thing the `counters` expectation key can see, so the keyword the
 same branch grants is what carries the claim.
+## Damage prevention over a player — a shield with a clock, and the event that was emitted at nobody
+
+### Overview
+
+Selfless Squire: *"Flash. When this creature enters, prevent all damage that
+would be dealt to you this turn. Whenever damage that would be dealt to you is
+prevented, put that many +1/+1 counters on this creature."*
+
+Two printed lines that only work together, which is why they are one capability
+rather than two runs: the shield prevents, the event carries how much it ate, the
+trigger reads it back. Either half alone is a card that does nothing — a shield
+nothing announces pays no counters, and a trigger with nothing to listen to never
+fires.
+
+### The op is not the static of the same name
+
+`prevent_damage` already existed as a **static** — absorb N (702.63a) — and it is
+inverted on all three axes this card needs. It is keyed to an **object**:
+`characteristics.prevented_damage(state, oid)` takes an object id, walks
+`_battlefield_statics` and matches each entry's `affects` against that permanent,
+and `static_filter_keys` has no way to name a *seat* at all. It is per source and
+per instance **by design** — that clause is what makes absorb 1 printable, since
+a creature with it blocked by three 1/1s takes nothing from any of them — which
+is not "prevent all damage this turn". And it cannot be spelled `"all"`
+regardless, because the loader refuses it without an `amount`.
+
+Worst of all it is a *static*, so it is continuous while its source stands on the
+battlefield. A Squire carrying one would prevent all damage to its controller on
+every future turn as well, which is Worship-grade rather than a one-turn fog.
+`protection` is the engine's other prevention and is likewise per-permanent and
+quality-parameterised, and it stops blocking, targeting and enchanting besides.
+
+This is exactly the relationship `cant_block` the op has with `cant_block` the
+static, and the same three inversions: the subject, the clock, and who owns it.
+So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
+`block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
+belongs to no permanent, which is the point — the Squire has **flash** and is
+flashed in as a surprise blocker, so it may die to the very combat its shield was
+for, and Fog leaves no permanent behind at all.
+
+The op modifies nothing when it resolves. It cannot: the damage does not exist
+yet. The whole of its behaviour is the record it leaves for `damage_player`.
+
+### The hook it needed did not exist
+
+`damage_player` went straight from the infect branch to
+`state.players[pid].life -= amount`. There was no point anywhere in the
+player-damage path where a prevention could be consulted — the permanent path has
+had one since absorb, and this was its missing counterpart.
+
+The check goes in at the very **top**, above everything, because prevented damage
+was *never dealt*:
+
+- no life lost, and no `LIFE_LOST` for "whenever an opponent loses life";
+- **no poison** — the sharpest one, and the reason the check is above the infect
+  branch rather than inside the `else` beside the life subtraction. A shielded
+  player who still took the counters would lose to a fog;
+- no lifelink for the attacker;
+- no commander-damage tally;
+- no `DAMAGE_DEALT`, so the turn ledger's `damage_taken` stays at zero.
+
+Each of those is a separate leak, and each would be a wrong *number* rather than
+an error. `tests/unit/test_damage_prevention.py` asserts all five separately.
+
+There is deliberately **no `amount`** on the op, and the loader refuses the key
+rather than reading it. Absorb-N over a player — "prevent the next 3 damage that
+would be dealt to any target this turn" (Healing Salve) — is a different effect
+with a pool that drains and a target that may be a creature instead. Written as a
+shield with a number it would load clean and prevent *everything*: a strictly
+better card, silently, which is the exact failure the validation pass exists to
+catch. `duration` is required for the reason `cant_block`'s is.
+
+### The event had been emitted at nobody
+
+`EventType.DAMAGE_PREVENTED` has existed since absorb and was already emitted at
+two sites — and it was unreachable twice over, the same way `ability_activated`
+was. Both sites called `state.emit`, which only writes the log and leaves the
+trigger bus to the caller, and no name in `TRIGGER_EVENTS` mapped to it, so
+`loader.py` rejected `damage_prevented` outright and no card could have
+subscribed even if something had fired.
+
+**Adding the mapping alone would have produced a trigger that silently never
+fires.** All three sites now `fire` — the same one-word fix the cycling trigger's
+"`fire`, not `emit`: emit only writes the log" comment was written for.
+
+One event, two shapes, and it now says which in a `to` key exactly as
+`DAMAGE_DEALT` does. Without that scoping the Squire would be paid every time one
+of its controller's creatures shrugged off a blocker with absorb, or protection
+turned aside a Shock. The subject of the player half is a **player**, so
+`damage_prevented` is absent from `OBJECT_SUBJECT_TRIGGERS` and `_actor` returns
+`event.player` — which is what makes `controller: "you"` read "damage that would
+be dealt to *you*".
+
+The near misses are wrong rather than merely absent. `dealt_damage` is exactly
+inverted: prevented damage is damage that was never dealt, so `DAMAGE_DEALT` does
+not fire for it and a Squire built on it grows only on the turns its own shield is
+**down**. `life_lost` fails the same way and is doubly wrong, since prevented
+damage costs no life. And `damage_taken_this_turn` reads zero underneath a working
+shield by construction, so the value-key route could not carry "that many" either.
+
+### Not Tier D, but the frontend was still changed
+
+A new `EventType` is the one change that forces frontend work and this is not one
+— the type already existed, and `fire` calls `emit`, so switching the two existing
+sites adds no new line to the log. Both silent-swallow sites were checked
+deliberately anyway, and the **new** site is the one that mattered.
+
+`damage_prevented` had never been narrated in either `labels.ts::describeEvent` or
+`events.ts::beatsFor`; both default to silence. That was harmless while prevention
+only ever meant absorb, because absorb's residue still prints a `damage_dealt`
+line with the reduced number. A shield over a player prints nothing at all: no
+life lost, no damage dealt, no board change, so a fogged alpha strike was a turn
+in which the log said nothing happened. Both files now narrate the **player**
+shape only — the permanent shape carries an `oid` rather than a card id, so there
+is no name to put in the sentence, and "a permanent" would be a worse line than
+none.
+
+`bun run build`, `bun run lint` and `bun run test` were run: the build is clean,
+the 720 unit tests pass, and lint reports the same 183 pre-existing formatting
+errors across the same 21 files as on a clean tree, none of them under
+`src/logic/`.
+
+### What the gate can and cannot see
+
+The authoring verifier declines combat, so nothing in the fixed sandbox ever
+damages a player: the Squire's shield goes up on its ETB and is never tested, and
+the card honestly asserts the weak `{"zone": "battlefield"}`. No gate was
+weakened to get it there. `tests/unit/test_damage_prevention.py` is where the real
+coverage lives — the shield actually preventing, the five things prevented damage
+must not do, the counters matching the prevented amount, the shield surviving its
+own source's death, the wearing-off at cleanup played through the real turn
+structure, and the boundary where the damage is zero and no prevention event is
+manufactured out of a hit that was never going to land.
 
 ## Ward — the keyword that had to carry a price, and then had to be given away
 

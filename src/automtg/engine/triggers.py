@@ -126,6 +126,35 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: equipping a creature you control activates their ability on your
     #: permanent, and the printed line says that triggers.
     "ability_activated": EventType.ABILITY_ACTIVATED,
+    #: "Whenever damage that would be dealt to you is prevented, put that many
+    #: +1/+1 counters on this creature." -- Selfless Squire. The amount is
+    #: `{"binding": "amount"}`, carried by `EVENT_BINDING_KEYS` like every other
+    #: "that much".
+    #:
+    #: `EventType.DAMAGE_PREVENTED` had existed since absorb and was emitted at
+    #: two sites, both through `state.emit` -- a log line with no name in this
+    #: dict and no listener if it had one. Adding the mapping alone would have
+    #: produced a trigger that silently never fires, so all three sites now
+    #: `fire` (see the "`fire`, not `emit`" comments in `primitives.py`).
+    #:
+    #: `dealt_damage` is the nearest existing trigger and is exactly inverted:
+    #: prevented damage is damage that was *never* dealt, so `DAMAGE_DEALT` does
+    #: not fire for it at all -- a Squire built on it gets counters only on the
+    #: turns its own shield is down. `life_lost` fails the same way and is doubly
+    #: wrong, since prevented damage costs no life, and the `damage_taken_this_turn`
+    #: value key reads zero underneath a working shield by construction.
+    #:
+    #: The subject is a **player**, so it is absent from `OBJECT_SUBJECT_TRIGGERS`
+    #: and `event_player` is the player whose damage was prevented. That is what
+    #: makes `controller: "you"` read "damage that would be dealt to *you*", and
+    #: it is why the scoping is not `source: "self"` -- the event's `source` is
+    #: the creature that was swinging.
+    #:
+    #: Scoped to the **player** half of the event by `_matches` below, for the
+    #: reason `dealt_damage` is scoped to the permanent half: one event covers two
+    #: shapes, and without the check a blocked absorb creature would pay the
+    #: Squire too.
+    "damage_prevented": EventType.DAMAGE_PREVENTED,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -381,6 +410,20 @@ def _matches(
         if spec.source == "self" and subject_oid != obj.oid:
             return False
 
+    # The mirror of the `dealt_damage` check above, taking the other half.
+    # `DAMAGE_PREVENTED` covers a shield over a player and absorb or protection on
+    # a permanent, and says which with the same `to` key `DAMAGE_DEALT` uses.
+    # Selfless Squire's line is "damage that would be dealt to **you**", so the
+    # permanent half is not it: without this, a creature with absorb blocking a
+    # Grizzly Bears would hand the Squire a counter, and so would protection
+    # turning aside a Shock aimed at a teammate's permanent.
+    #
+    # `!=` against the value rather than `== "permanent"` for the reason the
+    # `mana_ability` check below spells out: an emission that forgot to say would
+    # otherwise pass, and wider is the dangerous direction.
+    if spec.event == "damage_prevented" and event.data.get("to") != "player":
+        return False
+
     # "…if it wasn't put onto the battlefield with this ability." The loop guard,
     # and it has to be checked here rather than as a condition, because by the
     # time the ability resolves the cause is no longer anywhere to be read.
@@ -554,7 +597,13 @@ def _actor(
     # your creature -- their ability, your permanent -- without triggering, and
     # would fire on your own Signet the moment you tapped it under an
     # opponent's Harsh Mentor.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated"):
+    # `damage_prevented` is listed rather than left to the fallthrough for the
+    # reason `becomes_monarch` is: what the clause means is load-bearing. The
+    # actor is the player whose damage was prevented, so `controller: "you"`
+    # reads "damage that would be dealt to **you**" -- and the fallthrough would
+    # reach the same answer today only because the player half of the event
+    # carries no `oid`. Saying it here means the answer does not depend on that.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
