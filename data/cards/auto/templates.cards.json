@@ -7024,6 +7024,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life, you gain that much life. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "opponent",
+            "event": "life_lost"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodthirsty_conqueror",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Bloodthirsty Conqueror",
+      "oracle_text": "Flying, deathtouch\nWhenever an opponent loses life, you gain that much life. (Damage causes loss of life.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
