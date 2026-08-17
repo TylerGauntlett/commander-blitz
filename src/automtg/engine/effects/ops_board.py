@@ -107,6 +107,13 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     Two halves rather than one op, because the card really is two abilities and
     a player can respond between them -- and because what comes back, and under
     whose control, differs between O-Ring and Fiend Hunter.
+
+    ``as`` is "…equal to the number of creature cards exiled **this way**" --
+    Grey Host Reinforcements. The same record `sacrifice` and `reveal` keep, for
+    the same reason: the exiled cards land in a shared exile zone among
+    everything else that has ever been exiled, so no selector can name them
+    afterwards. Not ``until_leaves``, which is the O-Ring *link* and declares a
+    return; a card that only counts what it exiled hands nothing back.
     """
     link = bool(spec.get("until_leaves"))
     # "You may play the exiled card this turn." Florian, and the impulse-draw
@@ -115,6 +122,11 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     # printed price, and it expires with the turn.
     playable = bool(spec.get("playable_this_turn"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
+    if name := spec.get("as"):
+        # Written before the move, so the binding records what this op exiled
+        # rather than whatever is in exile once it is done -- exactly where
+        # `op_sacrifice` writes its own.
+        ctx.bindings[str(name)] = list(oids)
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
         if playable:
@@ -195,18 +207,36 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("create_token")
 def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put tokens onto the battlefield, optionally remembering which ones.
+
+    ``as`` is "Exile **the token** at end of combat" -- Flamerush Rider. A later
+    effect has to name the object this one just made, and no selector can:
+    `is_token` matches every token you control, and `{"is_token": true,
+    "attacking": true}` also catches tokens some other attack trigger made this
+    turn, so a second copy of the same card would exile the wrong permanent.
+    The oids `create_token` returns are the only thing that identifies them, and
+    they were being discarded.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
     attacking = _attack_target(ctx) if spec.get("attacking") else None
+    made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
-        create_token(
-            ctx.state,
-            token,
-            pid,
-            amount,
-            tapped=bool(spec.get("tapped")),
-            attacking=attacking,
+        made.extend(
+            create_token(
+                ctx.state,
+                token,
+                pid,
+                amount,
+                tapped=bool(spec.get("tapped")),
+                attacking=attacking,
+            )
         )
+    if name := spec.get("as"):
+        # Written after the op, unlike `sacrifice`'s, which is written before:
+        # that one records a *choice* the player made and this one records
+        # objects that did not exist until the op ran.
+        ctx.bindings[str(name)] = made
 
 
 @register("copy_permanent")
@@ -230,6 +260,11 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     The source need not be on the battlefield: embalm copies a card in the
     *graveyard*, and `self_only` reaches it there because an oid survives every
     zone change.
+
+    ``as`` records the copies, the same way `create_token`'s does and for the
+    same card: Flamerush Rider's "create a token that's a copy of another target
+    attacking creature… Exile **the token** at end of combat." The binding holds
+    the copies, never the thing copied -- ``{"target": …}`` already names that.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oids = resolve_pool(ctx, spec.get("objects"))
@@ -237,20 +272,25 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     controllers = _players(ctx, spec.get("controller", "you"))
     overrides = spec.get("except_") or spec.get("except")
+    made: list[int] = []
     for oid in oids:
         source = ctx.state.objects.get(oid)
         if source is None:
             continue
         for pid in controllers:
-            create_token(
-                ctx.state,
-                source.def_id,
-                pid,
-                amount,
-                tapped=bool(spec.get("tapped")),
-                attacking=_attack_target(ctx) if spec.get("attacking") else None,
-                overrides=dict(overrides) if overrides else None,
+            made.extend(
+                create_token(
+                    ctx.state,
+                    source.def_id,
+                    pid,
+                    amount,
+                    tapped=bool(spec.get("tapped")),
+                    attacking=_attack_target(ctx) if spec.get("attacking") else None,
+                    overrides=dict(overrides) if overrides else None,
+                )
             )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = made
 
 
 def _attack_defender(ctx: EffectContext) -> int | None:

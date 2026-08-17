@@ -91,6 +91,91 @@ paid once.
 No new event, decision kind or API field. A restriction shows up as an
 `ADD_ATTACKER` action that is not offered, and `LegalActionDTO.kind` is a bare
 string the client echoes back, so the UI is consistent without knowing why.
+## "This way", and "the token" — naming what an earlier effect just did
+
+### Overview
+
+Two gap records named `effect_result_binding`, and they are the same missing
+thing in two ops:
+
+- **Grey Host Reinforcements** — "exile target player's graveyard. Put a number
+  of +1/+1 counters on this creature equal to the number of creature cards exiled
+  **this way**." So `exile` has to publish what it exiled.
+- **Flamerush Rider** — "create a token that's a copy of another target attacking
+  creature… Exile **the token** at end of combat." So `create_token` and
+  `copy_permanent` have to publish what they made.
+
+Rule 608.2 resolves a one-shot effect's instructions in order, and the later
+instruction on both cards is about the objects the earlier one touched. The
+engine already had the idiom under this exact name: `as` on `sacrifice` (devour's
+"it enters with twice that many +1/+1 counters") and on `reveal` ("X is the number
+of cards revealed this way"), read back through `{"count": {"binding": …}}`. The
+**read** side was live. Only the write side was missing, on the three ops that
+never got it.
+
+### The write side, and where the line is written
+
+`op_exile` gained the three lines `op_sacrifice` has directly below it, in the
+same place — *before* the move loop, so the binding records what this op exiled
+rather than whatever happens to be in exile once it is done.
+
+The two token-making ops are the mirror image and write *after*, because the oids
+did not exist until the op ran: `create_token` has always **returned** the oids it
+made and both callers discarded them. `copy_permanent` records the copies, never
+the thing copied — `{"target": …}` already names that.
+
+Nothing else in the language reaches either set:
+
+| | why it cannot be recovered |
+|---|---|
+| the exiled cards | they land in the shared exile zone among everything ever exiled there. `exiled_with: "self"` reads `GameObject.exiled_by`, which `op_exile` only writes when `until_leaves` is set — and that is the Oblivion Ring *link*, so borrowing it declares a return this card does not have |
+| the token | `is_token` matches every token you control, and `{"is_token": true, "attacking": true}` also catches tokens another attack trigger made this turn, so a second copy of the same card exiles the wrong permanent |
+
+Counting the graveyard *before* the exile is the near miss on the first card: it
+is numerically equal only because this particular card empties the whole zone, it
+needs the two printed sentences in the opposite order from the one printed, and it
+does not generalise to "this way".
+
+### The read side had a silent hole in it
+
+`resolve_pool`'s `binding` branch does apply the rest of the selector — that is
+what lets Coiling Oracle ask "is the card I just bound a land?". But `matches`
+defaults an absent `zone` clause to the battlefield, and an object recorded by
+`as` has, by construction, just changed zones. So the selector Grey Host
+Reinforcements needs, `{"binding": "exiled", "types": ["Creature"]}`, matched
+nothing at all: not narrowed, **emptied**. Counted 0, put no counters on, and
+complained about nothing, because nothing was malformed. Devour and amplify never
+noticed because they read the bare `{"binding": …}`, which short-circuits before
+`matches` is reached.
+
+So an absent `zone` now means different things on the two shorthands, which is
+the honest reading of what each one is:
+
+- `binding` — no default zone. A binding is a **record** of the past.
+- `target` — the battlefield, unchanged. A target really is re-checked as the
+  spell resolves (608.2b), so "destroy target creature" whose creature is already
+  in a graveyard has no legal target left, and that default is the check.
+
+A `zone` the card *writes* still filters on either, so "…the exiled cards that are
+still in exile" remains sayable. The alternative — making `binding` plus a filter
+clause a load error — was rejected: it would refuse the printed sentence rather
+than express it, and Coiling Oracle already relies on the combination.
+
+### The loader guard
+
+`RECORDING_OPS` lives beside `OPS` in `engine/effects/__init__.py`, so the guard
+and the implementations cannot drift. Seven ops record; an `as` on any other is
+now a load error. That failure mode is exactly the one this capability exists to
+fix, and it looks right on the page: "destroy the creatures, then draw a card for
+each destroyed this way" would load, resolve, and draw nothing.
+
+**Unblocked one card: Grey Host Reinforcements.** Its "Flying, ward {3}" line is
+the shipped ward idiom (`CLOAK_WARD`'s shape, as printed on Vein Ripper) and
+needed nothing new. Flamerush Rider loses this need and keeps its other one:
+`Step.END_OF_COMBAT` exists and the turn walks through it, but `turn.DELAY_STEPS`
+maps only four steps, so `{"op": "delay", "step": "end_of_combat"}` never becomes
+due. `delay` already snapshots `ctx.bindings` when it schedules, so the recorded
+token will survive to that step the moment the step is reachable.
 
 ## The monarch — a designation whose word is worth nothing
 
