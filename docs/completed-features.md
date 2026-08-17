@@ -1,3 +1,125 @@
+## The monarch — a designation whose word is worth nothing
+
+### Overview
+
+Eight cards in the pool print "you become the monarch" and `docs/rules-coverage.md`
+listed the mechanic under **Not implemented**, on the line grouping it with the
+initiative as a designated-player mechanic with nowhere to live. That was a
+decision, and it was already stale: day/night had answered the same objection —
+"a game-wide designated state the engine has no place to keep" — with one field on
+`GameState`. So `state.monarch` is an optional player id sitting beside
+`day_night`, because the crown belongs to the **table** rather than to a player or
+a permanent.
+
+One field is also the whole of rule 721.4. "Only one player can be the monarch at
+a time; if a player becomes the monarch, the current monarch ceases to be" is
+arithmetic when the designation *is* the field: giving the crown away takes it off
+the previous holder with nothing written to do so. `has_city_s_blessing` is the
+right shape for player-level state and the wrong semantics — one-way and
+non-exclusive by design, which is the opposite of a designation exactly one player
+holds and that moves between them, and every write site would have had to remember
+to clear the others.
+
+### The interesting part is that the op is not the feature
+
+`become_monarch` is four lines. A card carrying only that would load, resolve,
+change one integer and never do anything again — and it would read exactly like a
+working card. What makes the crown a card-a-turn engine, and a five-mana 2/2 body
+a fair rate, is rule 721.3's pair of **inherent triggered abilities**. They have
+no source and are controlled by the game, so neither is written on a card:
+
+- **The end-step draw** is `turn._monarch_draw`, beside the day/night switch. It
+  is the monarch's *own* end step, which is one comparison because `END_STEP` only
+  fires on the active player's turn — and a version that drew on every end step
+  would hand out one card per opponent per round, which at a pod is three or four
+  cards a turn cycle. It goes through `replacements.draw` rather than
+  `primitives.draw_cards`, so it can be dredged, madnessed or miracled like any
+  other draw, which is also why it is a generator.
+- **The combat-damage transfer** is `combat._monarch_transfer`: "whenever a
+  creature deals combat damage to the monarch, that creature's controller becomes
+  the monarch". This is the half the printed cards are *priced against* — on most
+  boards it is the only ordinary way the crown ever moves, and it is the only
+  thing that can ever end Palace Jailer's exile.
+
+### Why the transfer is not inside `damage_player`
+
+`damage_player` is the single funnel for combat damage to a player and looks like
+the obvious home. It is the wrong one, and the reason is the batch. Combat damage
+is dealt simultaneously (510.2), and `deal_combat_damage` already collects every
+assignment before applying any — so the monarch can be read **once, before the
+batch**, which is the one true answer to "who was the monarch" for the whole step.
+Read one hit at a time instead, a second creature connecting in the same step
+would find the crown already moved by the first and transfer nothing.
+
+With every attacker belonging to the active player that mistake is invisible,
+because the answer comes out right anyway. It is the snapshot being right that
+keeps it right, so `test_monarch.py` pins the snapshot rather than the outcome.
+Ties go to the APNAP-earliest damager, since the active player puts their trigger
+on the stack first and first on is last off.
+
+### `None` is a third state, not the absence of one
+
+Crown of Gondor reads "when a legendary creature you control enters, **if there is
+no monarch**, you become the monarch", and that is not `{"not": {"is_monarch":
+"you"}}`. The negation is true in two situations — nobody holds the crown, and an
+*opponent* holds it — and the second is precisely the case the card must not fire
+in. Written as the negation it stops being a way to claim a vacancy and becomes a
+repeatable steal. So there are two condition keys, `is_monarch` (taking a player
+spec) and `no_monarch` (a literal boolean, because `"false"` is a non-empty string
+and would read as `true` in exactly that case).
+
+### One event, both routes
+
+`BECAME_MONARCH` is fired by `primitives.become_monarch`, which is the only writer
+— the op calls it and so does the combat transfer. That is what lets
+`becomes_monarch` be a single trigger event covering both, and it is why Palace
+Jailer's "until an opponent becomes the monarch" can be one clause. The near miss
+is `deals_combat_damage_to_player`, which fires on the damage rather than on the
+designation: every watcher would have to re-derive "and that player was the
+monarch, so the crown just moved", and would still miss the route where an
+opponent's own card crowns them with no damage anywhere.
+
+Re-designating the player who already holds it is a **no-op that fires nothing**.
+The event means the crown *moved*; a version that fired anyway would hand the
+creature back the moment Palace Jailer's own controller re-crowned themselves.
+
+`becomes_monarch` is the first trigger event this repo has added whose subject is
+a **player**, so it is absent from `OBJECT_SUBJECT_TRIGGERS` and `_actor` names the
+*new* monarch. Reading the crown's previous holder instead would end the Jailer's
+exile at the moment it must not.
+
+### The frontend work a new event forces
+
+`describeEvent` and `beatsFor` both have a `default` fallthrough, so an unnarrated
+event is dropped in silence and no test says so. Both were given a case, and the
+argument for the second is that the consequence of the crown moving is *invisible*
+on the board: nothing changes zones, nothing changes stats, and the monarch simply
+starts drawing an extra card at every end step. A player who did not notice losing
+it sees a stream of unexplained draws. A banner, toned from the viewer's side,
+since gaining and losing the crown are one event told two ways.
+
+Nothing on the server or in the API changed, which is the general rule for a new
+event: `day_night` and `has_city_s_blessing` are not serialized either.
+
+### 721.5, which no duel can reach
+
+A monarch who leaves the game hands the crown to the active player. It is three
+lines in `sba._eliminate`, unreachable at two players — the monarch losing ends
+the game — and it is the boundary that is silent in all three directions when it
+is missing: the crown sits on a seat that has gone, the end-step draw finds nobody
+to draw for, and every "there is no monarch" reads False for the rest of the game.
+
+### What it unblocked
+
+**Faramir, Steward of Gondor**, whose two lines are a `permanent_enters` trigger
+filtered to legendary creatures of mana value 4 or greater and an `end_step`
+trigger with `is_monarch` as its intervening-if. The other seven monarch cards
+stay blocked on capabilities that are not the monarch — `cant_block`,
+`cant_attack_player`, `conditional_cost_reduction`,
+`variable_enters_with_counters`, `delayed_triggered_ability`, `saga` plus
+`keyword_counters`, and `exile_until_event` — and their gap records were trimmed
+rather than retired, so the report now says what each is actually waiting for.
+
 ## A mandatory additional cost — the half that "mandatory" did not deliver
 
 ### Overview

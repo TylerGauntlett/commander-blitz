@@ -95,6 +95,20 @@ describe("describeEvent", () => {
     ).toBe("AI 1 is eliminated (21 commander damage)");
   });
 
+  it("narrates the crown changing hands", () => {
+    // A new engine event is silently dropped by the `default` fallthrough, and
+    // nothing else in the log would say the monarch moved: no permanent changes
+    // zones and no stat changes. The consequence is invisible too -- the monarch
+    // draws at every one of their end steps -- so a player who did not notice
+    // losing it just sees their opponent quietly drawing more cards.
+    expect(describeEvent(event({ type: "became_monarch", player: 0 }), names, 0)).toBe(
+      "You become the monarch",
+    );
+    expect(describeEvent(event({ type: "became_monarch", player: 1 }), names, 0)).toBe(
+      "AI 1 becomes the monarch",
+    );
+  });
+
   it("prettifies a card id rather than printing the raw slug", () => {
     expect(
       describeEvent(event({ type: "land_played", data: { card: "sol_ring" } }), names),

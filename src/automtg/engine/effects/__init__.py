@@ -67,6 +67,7 @@ from . import (
     ops_control,  # noqa: F401
     ops_life,  # noqa: F401
     ops_mana,  # noqa: F401
+    ops_player,  # noqa: F401
     ops_stack,  # noqa: F401
 )
 

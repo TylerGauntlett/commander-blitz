@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "faramir_steward_of_gondor",
+    "name": "Faramir, Steward of Gondor",
+    "oracle_text": "Whenever a legendary creature you control with mana value 4 or greater enters, you become the monarch.\nAt the beginning of your end step, if you're the monarch, create two 1/1 white Human Soldier creature tokens.",
+    "mana_cost": "{1}{W}{U}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Human",
+      "Noble"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "U",
+      "W"
+    ],
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a legendary creature you control with mana value 4 or greater enters, you become the monarch.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "types": [
+              "Creature"
+            ],
+            "supertypes": [
+              "Legendary"
+            ],
+            "mana_value": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "become_monarch",
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, if you're the monarch, create two 1/1 white Human Soldier creature tokens.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "you",
+          "condition": {
+            "is_monarch": "you"
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "human_soldier_1_1_w",
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

@@ -86,6 +86,16 @@ class EventType:
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
     BECAME_MONSTROUS = "became_monstrous"
+    #: The monarch designation moved to a player (721.2, 721.4). ``player`` is
+    #: the **new** monarch and ``data["previous"]`` whoever held it before, or
+    #: ``None`` if nobody did.
+    #:
+    #: Its own type for the reason CONTROL_CHANGED and TRANSFORMED have theirs:
+    #: nothing moves, so nothing else in the log would say that the table's most
+    #: valuable designation just changed hands. Fired only when it *changes* --
+    #: becoming the monarch while already the monarch is a no-op, so "an opponent
+    #: becomes the monarch" (Palace Jailer's duration) means what it says.
+    BECAME_MONARCH = "became_monarch"
     #: A permanent's power/toughness or keywords changed without a counter and
     #: without a zone change -- a pump, an animated land, a granted keyword.
     #:

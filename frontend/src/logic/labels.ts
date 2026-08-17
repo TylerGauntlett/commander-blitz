@@ -373,6 +373,22 @@ export function describeEvent(
     // the board becomes a different card with nothing in the log to say why.
     case "transformed":
       return `${card ?? "A permanent"} transforms`;
+    /*
+     * The crown changing hands.
+     *
+     * Nothing moves and no permanent is involved -- the monarch is a designation
+     * the table shares -- so no other line in this switch covers it, and the
+     * `default` below would have dropped it in silence. That silence would be
+     * expensive: the monarch draws an extra card every one of their end steps and
+     * the only ordinary way to take it is to connect in combat, so a player who
+     * did not notice losing it sees a stream of unexplained draws.
+     *
+     * Named without the card that granted it on purpose. Most crowns move by the
+     * game's own combat-damage rule, which has no source at all, and phrasing it
+     * around one would leave the commonest case with a blank in it.
+     */
+    case "became_monarch":
+      return `${who} ${v("become", "becomes")} the monarch`;
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":

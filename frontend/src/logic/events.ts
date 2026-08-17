@@ -530,6 +530,33 @@ export function beatsFor(
         return;
       }
 
+      /*
+       * The crown changing hands, which is a table-level moment and not a board
+       * one: no permanent to flash, no number to float, nothing on screen that
+       * changed. A banner is the only shape that fits, and it is the same shape
+       * the other two table-level moments use -- the turn change and an
+       * elimination.
+       *
+       * Worth a beat at all because the consequence is invisible: the monarch
+       * draws at every one of their end steps, and the usual way it moves is a
+       * creature connecting, so without this the player who just lost it sees
+       * only their opponent quietly drawing more cards. Held about as long as a
+       * transform, and toned "good" or "danger" from the viewer's side, since
+       * gaining and losing the crown are the same event told two ways.
+       */
+      case "became_monarch": {
+        const mine = event.player === viewerSeat;
+        push({
+          hold: 520,
+          sound: "chime",
+          banner: {
+            text: mine ? "You are the monarch" : `${who} is the monarch`,
+            tone: mine ? "good" : "danger",
+          },
+        });
+        return;
+      }
+
       case "attackers_declared":
         push({
           hold: 520,

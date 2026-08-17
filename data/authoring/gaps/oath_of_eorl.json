@@ -1,12 +1,12 @@
 {
   "card_id": "oath_of_eorl",
   "name": "Oath of Eorl",
-  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create two 1/1 white Human Soldier creature tokens.\nII — Create two 2/2 red Human Knight creature tokens with trample and haste.\nIII — Put an indestructible counter on up to one target Human. You become the monarch.",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI \u2014 Create two 1/1 white Human Soldier creature tokens.\nII \u2014 Create two 2/2 red Human Knight creature tokens with trample and haste.\nIII \u2014 Put an indestructible counter on up to one target Human. You become the monarch.",
   "blocked_sentences": [
     "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)",
-    "I — Create two 1/1 white Human Soldier creature tokens.",
-    "II — Create two 2/2 red Human Knight creature tokens with trample and haste.",
-    "III — Put an indestructible counter on up to one target Human. You become the monarch."
+    "I \u2014 Create two 1/1 white Human Soldier creature tokens.",
+    "II \u2014 Create two 2/2 red Human Knight creature tokens with trample and haste.",
+    "III \u2014 Put an indestructible counter on up to one target Human. You become the monarch."
   ],
   "needs": [
     {
@@ -20,18 +20,6 @@
       "kind": "engine",
       "what": "Counters whose kind is a keyword name -- here an indestructible counter -- must actually grant that keyword to the permanent they sit on, read in the keyword-derivation layer the way `+1/+1` counters are read in the P/T layer, so `{\"op\": \"add_counters\", \"counter\": \"indestructible\"}` produces an indestructible creature. Same request as `gilraen_dunedain_protector` (vigilance and lifelink counters); this card adds `indestructible` to the set of keywords that must be reachable that way, and needs it placeable on a targeted permanent someone else may control.",
       "why_existing_wont_do": "`op_add_counters` (`engine/effects/ops_board.py:284-290`) accepts any `counter` string and just tallies it via `add_counters`; nothing in `src/` matches /indestructible.*counter/ or any keyword-counter lookup, and the only kinds the characteristics pipeline consults are `+1/+1` and `-1/-1`. So the op loads and the card would print \"put an indestructible counter on it\" while leaving the target exactly as killable as before -- an inert clause, which is the specific failure the brief says is worse than nothing. `grant_keyword` is the closest op and is the wrong shape: its grant is a duration-bound temporary effect (`loader.py:1798` validates the duration precisely because a misspelled one silently falls back to until-end-of-turn), whereas an indestructible counter is permanent, rides on the creature after the Saga is sacrificed by its own final-chapter rule, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` on the Saga cannot substitute either -- `static_filter_keys` has no way to point a static at one specific creature chosen when the chapter resolved, and the Saga sacrifices itself immediately afterwards, taking any continuous effect with it."
-    },
-    {
-      "capability": "monarch",
-      "kind": "engine",
-      "what": "The monarch designation as game state: at most one player is the monarch at a time, that player draws a card at the beginning of their end step, and a player becomes the monarch whenever a creature they control deals combat damage to the monarch. Needs the designation stored on GameState (a player id or None) plus those two automatic behaviours wired into the end step and the combat damage step. Already requested by `aragorn_king_of_gondor`, `champions_of_minas_tirith`, `crown_of_gondor`, `faramir_steward_of_gondor`, `palace_jailer` and `forth_eorlingas`; this card adds nothing beyond them (it never asks \"if you're the monarch\", so it does not need an `is_monarch` condition).",
-      "why_existing_wont_do": "Nothing in `src/` matches /monarch/ at all, and `docs/rules-coverage.md:242-244` records the monarch and the initiative as not implemented while the city's blessing and day/night are. `set_flag`/`has_flag` is the nearest thing in `reference` and stores an opaque per-card boolean on a battlefield permanent: it is not exclusive across players, nothing moves it when a creature deals combat damage to its holder, and no end-step draw hangs off it. It is doubly wrong here because the Saga sacrifices itself as soon as chapter III finishes, so there would be no permanent left to carry the flag. `has_city_s_blessing` is the only player-level designation in `condition_keys` and is a different, non-exclusive, permanent one (ascend)."
-    },
-    {
-      "capability": "monarch",
-      "kind": "op",
-      "what": "An op that makes a player the monarch -- `become_monarch` with a player selector (\"you\" is all this card needs) -- setting the designation above and firing whatever watches it change. Same request as `aragorn_king_of_gondor`, `champions_of_minas_tirith` and `forth_eorlingas`; noted here because this card needs it callable from inside a chapter ability's `effects`, i.e. resolving as the second half of chapter III alongside the counter placement.",
-      "why_existing_wont_do": "No op in `ops` grants a player-level designation. `set_flag` is the closest and writes a card-scoped flag with no game-wide meaning; there is no monarch state for any op to set until the engine need above lands."
     }
   ],
   "closest_existing": [
@@ -51,8 +39,12 @@
     "has_city_s_blessing",
     "keyword_counters (already requested by gilraen_dunedain_protector)",
     "human_knight_2_2_r_trample_haste (already requested by forth_eorlingas)",
-    "monarch (already requested by aragorn_king_of_gondor, champions_of_minas_tirith, crown_of_gondor, faramir_steward_of_gondor, palace_jailer, forth_eorlingas)"
+    "become_monarch / is_monarch / no_monarch / becomes_monarch (shipped)"
   ],
   "confidence": "high",
-  "rest_is_expressible": "Every printed line is blocked, so no partial answer was written -- and unusually, the reminder line is the blocker for the other three rather than flavour text: with no chapter ability kind there is no trigger any of I, II or III can hang on, so even the parts that are otherwise easy have nowhere to live. What already exists: `{3}{R}{W}` with types [\"Enchantment\"] and subtypes [\"Saga\"] loads today (subtypes are not validated against a list the way types and supertypes are at `loader.py:244-249`), `create_token` with `amount: {\"const\": 2}` is a solved pattern once the two tokens are registered, and \"up to one target Human\" is a plain target spec -- `subtypes: [\"Human\"]` with `optional: true`, the shape used at `auto/templates.cards.json:19519` and `isperia.cards.json:1175`. That leaves the four capabilities above. Also worth recording for whoever closes this: even fully unblocked, the sandbox can only observe chapter I. The harness casts the card and stops, so exactly one lore counter is on it at measurement time -- the honest expectation would be `zone: \"battlefield\"`, `battlefield_count: 35` (32 + the Saga + two Soldiers), `tokens: {\"id\": \"human_soldier_1_1_w\", \"count\": 2}` and `counters: {\"kind\": \"lore\", \"amount\": 1}`. Chapters II and III need later turns, and the monarch's end-step draw needs an end step, neither of which the fixed position reaches."
+  "rest_is_expressible": "Every printed line is blocked, so no partial answer was written -- and unusually, the reminder line is the blocker for the other three rather than flavour text: with no chapter ability kind there is no trigger any of I, II or III can hang on, so even the parts that are otherwise easy have nowhere to live. What already exists: `{3}{R}{W}` with types [\"Enchantment\"] and subtypes [\"Saga\"] loads today (subtypes are not validated against a list the way types and supertypes are at `loader.py:244-249`), `create_token` with `amount: {\"const\": 2}` is a solved pattern once the two tokens are registered, and \"up to one target Human\" is a plain target spec -- `subtypes: [\"Human\"]` with `optional: true`, the shape used at `auto/templates.cards.json:19519` and `isperia.cards.json:1175`. That leaves the four capabilities above. Also worth recording for whoever closes this: even fully unblocked, the sandbox can only observe chapter I. The harness casts the card and stops, so exactly one lore counter is on it at measurement time -- the honest expectation would be `zone: \"battlefield\"`, `battlefield_count: 35` (32 + the Saga + two Soldiers), `tokens: {\"id\": \"human_soldier_1_1_w\", \"count\": 2}` and `counters: {\"kind\": \"lore\", \"amount\": 1}`. Chapters II and III need later turns, and the monarch's end-step draw needs an end step, neither of which the fixed position reaches.",
+  "resolved": [
+    "monarch"
+  ],
+  "resolved_note": "`monarch` shipped: `GameState.monarch`, the two inherent triggered abilities of rule 721.3 (the end-step draw and the combat-damage transfer), the `become_monarch` op with a player selector, the `is_monarch` and `no_monarch` condition keys and the `becomes_monarch` trigger event. The needs listed here are what is still missing."
 }

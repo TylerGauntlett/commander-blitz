@@ -93,6 +93,23 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: event existed; what did not was the untap *step* saying which permanents
     #: it untapped, which is where inspired fires nearly every time.
     "becomes_untapped": EventType.UNTAPPED,
+    #: "…until an opponent becomes the monarch" (Palace Jailer). The one monarch
+    #: card that must be *woken up* by the designation moving rather than merely
+    #: asking about it with `is_monarch`.
+    #:
+    #: `deals_combat_damage_to_player` is the near miss and is the wrong
+    #: abstraction: it fires on the damage rather than on the designation, so
+    #: every watcher would have to re-derive "and that player was the monarch,
+    #: so the crown just moved" -- and it would still miss the other route in,
+    #: where an opponent's own card makes them the monarch with no damage
+    #: anywhere. Both routes go through `primitives.become_monarch`, so this one
+    #: name covers both.
+    #:
+    #: The subject is a **player**, so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS` and `event_player` is the new monarch. That is
+    #: what makes `controller: "opponent"` read "an opponent becomes the
+    #: monarch".
+    "becomes_monarch": EventType.BECAME_MONARCH,
 }
 
 #: Triggers whose subject is an object rather than a player.
@@ -458,7 +475,12 @@ def _actor(
     # casts one", so reading the actor off the subject -- the creature being
     # targeted, whose controller is nearly always the trigger's own controller
     # -- would make heroic fire on everything and ward on nothing.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target"):
+    # `becomes_monarch` is listed rather than left to the fallthrough, because
+    # what it means is load-bearing: the actor is the player who *became* the
+    # monarch, so `controller: "opponent"` reads "an opponent becomes the
+    # monarch" -- which is the whole of Palace Jailer's duration and would be a
+    # strictly better card if it read the crown's previous holder instead.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")

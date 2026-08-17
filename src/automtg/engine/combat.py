@@ -25,7 +25,7 @@ from .characteristics import (
 )
 from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
-from .primitives import damage_permanent, damage_player, tap_permanent
+from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
 from .triggers import fire
 
@@ -755,6 +755,11 @@ def deal_combat_damage(
             )
         assignments.extend(_divide(state, blocker_oid, power, band))
 
+    # Read before a single point lands: the monarch's own inherent trigger asks
+    # who was the monarch *when the damage was dealt*, and the transfer below
+    # would otherwise be answering a question its own first hit had changed.
+    monarch_before = state.monarch
+
     for assignment in assignments:
         if assignment.to_player is not None:
             damage_player(
@@ -765,8 +770,62 @@ def deal_combat_damage(
                 state, assignment.to_object, assignment.amount, assignment.source, is_combat=True
             )
 
+    _monarch_transfer(state, monarch_before, assignments)
+
     if first_strike_step:
         combat.first_strike_done = True
+
+
+def _monarch_transfer(
+    state: GameState, monarch_before: int | None, assignments: list[DamageAssignment]
+) -> None:
+    """"Whenever a creature deals combat damage to the monarch, that creature's
+    controller becomes the monarch" (721.3).
+
+    One of the monarch's two inherent triggered abilities. It has no source and
+    is controlled by the game, which is why it lives here rather than on a card
+    -- and it is what makes the designation *worth* something: on most boards it
+    is the only way the crown ever moves, and it is the only thing that can ever
+    end Palace Jailer's exile.
+
+    Here rather than inside `damage_player`, and the reason is the batch. Combat
+    damage is dealt simultaneously (510.2) and this collects every assignment
+    before applying any, so `monarch_before` is the one true answer to "who was
+    the monarch" for the whole step. Folded into `damage_player` it would read the
+    field one hit at a time, and a second creature connecting in the same step
+    would find the crown already moved by the first and transfer nothing.
+
+    **Divergence, shared with `delay` and the day/night switch:** this resolves
+    inline rather than going on the stack, so nothing can respond between the
+    damage and the crown changing hands. Observable only to somebody who would
+    answer the transfer differently from the damage that caused it.
+
+    Ties are 603.3b rather than iteration order. Several players' creatures
+    hitting the same monarch each trigger, the active player puts theirs on the
+    stack first, and first on is last off -- so the APNAP-earliest damager is the
+    one whose trigger resolves last and wins. Unreachable while every attacker
+    belongs to the active player, and written the right way round so it stays
+    correct when that changes.
+    """
+    if monarch_before is None:
+        return
+    by_player: dict[int, int] = {}
+    for assignment in assignments:
+        if assignment.to_player != monarch_before or assignment.amount <= 0:
+            continue
+        source = state.objects.get(assignment.source)
+        # "A **creature**": read off derived types, for the reason every other
+        # combat check does -- an animated Equipment that got through is a
+        # creature, and the printed face would say otherwise.
+        if source is None or "Creature" not in chars(state, source.oid).types:
+            continue
+        by_player.setdefault(source.controller, source.oid)
+    if not by_player:
+        return
+    for pid in state.turn_order():
+        if pid in by_player:
+            become_monarch(state, pid, source=by_player[pid])
+            return
 
 
 def _declare_bands(state: GameState) -> Generator[Any, list[int], None]:

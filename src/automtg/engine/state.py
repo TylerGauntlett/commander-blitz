@@ -143,6 +143,25 @@ class GameState:
     #: reason daybound was called "a game-wide designated state" when it was
     #: refused. There was no place to keep it; this is the place.
     day_night: str | None = None
+    #: The monarch (721). ``None`` until a spell or ability makes somebody the
+    #: monarch (721.2), then the player id of whoever holds it.
+    #:
+    #: Beside `day_night` and for the same reason: it belongs to the **table**
+    #: rather than to a player or a permanent, and `rules-coverage.md` called it
+    #: "a designated-player mechanic the engine has no place to keep". This is
+    #: the place.
+    #:
+    #: **One field is the whole of 721.4** ("only one player can be the monarch
+    #: at a time; if a player becomes the monarch, the current monarch ceases to
+    #: be"). A per-player boolean -- `has_city_s_blessing`'s shape -- would let
+    #: two players hold it, and exclusivity would then be a rule somebody has to
+    #: remember to enforce at every write. Here it is arithmetic.
+    #:
+    #: ``None`` is a *third* state and not the absence of one, which is why this
+    #: is not a plain int: "if there is no monarch" (Crown of Gondor) is not the
+    #: negation of "if you're the monarch", since that negation is also true
+    #: while an opponent holds it.
+    monarch: int | None = None
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
