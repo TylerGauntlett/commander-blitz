@@ -2819,6 +2819,10 @@
   "hedron_crawler": {
     "zone": "battlefield"
   },
+  "heirloom_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "helionaut": {
     "zone": "battlefield"
   },
