@@ -235,7 +235,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
-    targets = tuple(_compile_target(t, where) for t in model.targets)
+    targets = _compile_targets(model.targets, where)
     target_ids = {t.id for t in targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
@@ -734,6 +734,30 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
     )
 
 
+def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
+    """Compile a card's or ability's target list, with the one ordering rule.
+
+    At most one spec may be ``count: "any"``, and it must come last.
+    `targeting.filter_legal` splits the stored refs spec by spec, and a
+    variable-size spec in the middle leaves no way to say where its refs end and
+    the next spec's begin -- so the spell would fizzle or keep the wrong targets
+    depending on how many the caster chose, which is a bug no board would show.
+    """
+    specs = tuple(_compile_target(t, where) for t in models)
+    variable = [i for i, spec in enumerate(specs) if spec.count == "any"]
+    if len(variable) > 1:
+        raise DslError(
+            f"{where}: only one target may be 'any number of' -- "
+            f"two variable-size specs cannot be told apart once chosen"
+        )
+    if variable and variable[0] != len(specs) - 1:
+        raise DslError(
+            f"{where}: an 'any number of' target must come last, "
+            f"or the targets after it cannot be identified"
+        )
+    return specs
+
+
 def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     validate_selector(model.selector, f"{where}.target[{model.id}]")
     return TargetSpec(
@@ -760,7 +784,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
-    targets = tuple(_compile_target(t, where) for t in model.targets)
+    targets = _compile_targets(model.targets, where)
     target_ids = {t.id for t in targets}
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_ids)

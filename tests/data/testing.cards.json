@@ -8224,6 +8224,42 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_any_number_bounce",
+      "name": "Test Recall All",
+      "oracle_text": "Return any number of target creatures to their owners' hands.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "return_to_hand",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }

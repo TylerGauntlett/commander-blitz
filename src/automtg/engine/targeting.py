@@ -147,7 +147,20 @@ def enumerate_target_tuples(
         # Kraken whose "tap up to four target creatures" defaulted to tapping
         # none would be a different card.
         empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-        if spec.count > 1:
+        if spec.count == "any":
+            # "Any number of target creatures." A size the caster picks, so
+            # every subset is a legal choice -- ordered **largest first**, for
+            # the reason above: whatever takes a tuple without asking takes the
+            # first, and "any number" defaulting to none is a spell that does
+            # nothing. The empty subset comes last and always exists, because
+            # "any number" includes zero whether or not the spec is `optional`.
+            subsets = [
+                tuple(c)
+                for size in range(len(options), 0, -1)
+                for c in itertools.combinations(options, size)
+            ]
+            per_spec.append(list(dict.fromkeys([*subsets[: _room(limit, [()])], ()])))
+        elif spec.count > 1:
             combos = [
                 tuple(c) for c in itertools.combinations(options, min(spec.count, len(options)))
             ]
@@ -221,7 +234,11 @@ def filter_legal(
     index = 0
     had_targets = False
     for spec in specs:
-        take = spec.count if spec.count > 1 else 1
+        # An `"any"` spec swallows whatever is left. The loader guarantees there
+        # is at most one and that it comes last, which is what makes this
+        # unambiguous -- a variable-size spec in the middle would leave no way
+        # to say where its refs end and the next spec's begin.
+        take = len(refs) - index if spec.count == "any" else max(1, spec.count)
         chunk = list(refs[index : index + take])
         index += take
         kept = [r for r in chunk if still_legal(state, controller, spec, r, source_oid)]
