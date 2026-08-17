@@ -726,15 +726,12 @@ def validate_value(expr: Any, where: str) -> None:
         validate_selector(expr["count"], f"{where}.count")
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
-<<<<<<< HEAD
     if "counters_on" in expr:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
-=======
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
         )
->>>>>>> worktree-agent-a503b437c8fee3cbc
     for key in PER_PLAYER_COUNT_KEYS & set(expr):
         validate_per_player_count(expr[key], f"{where}.{key}")
     if "distinct" in expr:
