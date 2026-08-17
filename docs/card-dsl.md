@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-87 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+88 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,7 +140,6 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
 `put_on_top` sends a permanent to a library, and `from_top` says **how deep**:
 
 ```jsonc
@@ -176,8 +175,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `set_turn_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `cant_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
 | Players | `become_monarch` |
