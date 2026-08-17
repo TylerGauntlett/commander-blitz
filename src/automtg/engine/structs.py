@@ -135,6 +135,77 @@ class AttackRestriction:
         }
 
 
+#: The two durations a :class:`BlockProhibition` can carry.  Neither is the one
+#: `AttackRestriction` uses, and that is not an oversight -- see the class.
+BLOCK_PROHIBITION_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class BlockProhibition:
+    """"That creature can't block this turn." A "can't block" with a **clock**.
+
+    The engine already had "can't block" as a static (`cant_block`, read by
+    `characteristics.block_forbidden` off `_battlefield_statics`), and it is the
+    wrong shape three ways over for a one-shot effect: it needs a permanent
+    source sitting on the battlefield, it lasts exactly as long as that source is
+    there, and its `affects` filter may read only printed characteristics -- so
+    it can neither name a creature chosen when a trigger resolves nor end at a
+    fixed moment.  This is the same sentence with those three properties
+    inverted, so it lives on the table (:attr:`GameState.block_prohibitions`)
+    beside `attack_restrictions`, for the reason given there: the effect belongs
+    to no permanent, and a sorcery leaves none behind to own it.
+
+    **"Prohibition" rather than "restriction"** only to keep two different things
+    apart: `block_restriction` is already the *attacker*-side static ("this
+    creature can't be blocked by Humans", read by
+    `characteristics.block_restrictions`).  That one narrows who may block a
+    given attacker; this one stops a given creature blocking at all.
+
+    Two forms, and the difference is whether the set is fixed at resolution:
+
+    ``objects``  a tuple of oids -- "up to one target creature can't block this
+                 turn", "those creatures can't block".  The set is chosen when
+                 the effect resolves and never grows; a creature that enters
+                 afterwards was not one of them.
+    ``None``     **every** creature -- Aragorn's "creatures can't block this
+                 turn".  Deliberately not a snapshot of the battlefield: that
+                 sentence is a turn-scoped continuous effect and catches
+                 creatures that enter later in the turn, which is exactly why an
+                 op writing a mark onto each creature could not express it.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"until_your_next_turn"`` (cleared in :attr:`player`'s untap step, where
+    detain is already cleared).  The second is not a turn *number*: eliminate a
+    player and "your next turn" moves, which is why the player is recorded and
+    the deadline is not.  `AttackRestriction`'s ``this_combat`` is absent because
+    no printed "can't block" is scoped to one combat -- a blocking restriction
+    that ended with the combat would be indistinguishable from one that never
+    existed, since blockers are declared inside it.
+    """
+
+    #: The creatures restricted, or ``None`` for "every creature".  A tuple
+    #: rather than a set so the record stays hashable and comparable, which is
+    #: what lets the primitive deduplicate on the whole entry.
+    objects: tuple[int, ...] | None = None
+    duration: str = "this_turn"
+    #: Whose next turn ends it.  Meaningful only for ``until_your_next_turn``;
+    #: recorded for both because it is also who imposed the restriction, which is
+    #: what `sba` needs to drop the entries whose clock can never come again.
+    player: int | None = None
+    #: The permanent or spell that installed it, for the log.  Not part of the
+    #: lifetime: a resolved one-shot effect does not care what happens to the
+    #: card that made it.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "objects": None if self.objects is None else list(self.objects),
+            "duration": self.duration,
+            "player": self.player,
+            "source": self.source,
+        }
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""
