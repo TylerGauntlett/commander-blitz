@@ -128952,12 +128952,12 @@
     },
     "Horn of Gondor": {
       "edhrec_rank": 1975,
-      "gate": "template",
+      "gate": null,
       "name": "Horn of Gondor",
-      "reason": "no template for: When enters, create a 1/1 white Human Soldier creature token",
+      "reason": "",
       "scryfall_id": "7565ff54-15be-4365-826a-2fcbd40f2ee9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horn of Plenty": {
@@ -160342,12 +160342,12 @@
     },
     "Lossarnach Captain": {
       "edhrec_rank": 3845,
-      "gate": "template",
+      "gate": null,
       "name": "Lossarnach Captain",
-      "reason": "no template for: Whenever this creature or another Human you control enters, tap target creature an opponen",
+      "reason": "",
       "scryfall_id": "08b78cd2-7c52-4dcd-b063-1ac5e96420d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lost Auramancers": {

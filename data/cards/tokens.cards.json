@@ -157,6 +157,52 @@
       "is_token": true
     },
     {
+      "id": "human_knight_2_2_r_trample_haste",
+      "name": "Human Knight Token",
+      "oracle_text": "2/2 red Human Knight creature token with trample and haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "human_soldier_1_1_w",
+      "name": "Human Soldier Token",
+      "oracle_text": "1/1 white Human Soldier creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "illusion_1_1_u_flying",
       "name": "Illusion",
       "oracle_text": "1/1 blue Illusion creature token with flying.",

@@ -2916,6 +2916,10 @@
   "horizon_scholar": {
     "zone": "battlefield"
   },
+  "horn_of_gondor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "horned_turtle": {
     "zone": "battlefield"
   },
@@ -3572,6 +3576,14 @@
     "life": {
       "0": 41
     }
+  },
+  "lossarnach_captain": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "lost_legion": {
     "zone": "battlefield"

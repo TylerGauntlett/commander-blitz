@@ -3605,6 +3605,10 @@
     "artist": "Karl Kopinski",
     "scryfall_id": "0584e234-4ce9-4e17-a1cf-d6dafc4e1374"
   },
+  "horn_of_gondor": {
+    "artist": "Yigit Koroglu",
+    "scryfall_id": "7565ff54-15be-4365-826a-2fcbd40f2ee9"
+  },
   "horn_of_greed": {
     "artist": "Winslow Mortimer & Mike Esposito",
     "scryfall_id": "e37487e4-c553-4495-a839-6a96209eaaa1"
@@ -3652,6 +3656,14 @@
   "human_1_1_w": {
     "artist": "David \u00c1lvarez",
     "scryfall_id": "25b0644d-4934-4495-9b6e-c31d1d10c298"
+  },
+  "human_knight_2_2_r_trample_haste": {
+    "artist": "Wayne Wu",
+    "scryfall_id": "546bda77-e3a8-4f2a-ba9c-94fb0b9ff183"
+  },
+  "human_soldier_1_1_w": {
+    "artist": "Jarel Threat",
+    "scryfall_id": "6007af81-4541-4b55-90ea-03d365362ae5"
   },
   "humble_budoka": {
     "artist": "Christopher Moeller",
@@ -4477,6 +4489,10 @@
   "los_diablos_missile_base": {
     "artist": "Rockey Chen",
     "scryfall_id": "2123fcb5-8181-47ab-9a2d-7ede5b5118e8"
+  },
+  "lossarnach_captain": {
+    "artist": "Justine Cruz",
+    "scryfall_id": "08b78cd2-7c52-4dcd-b063-1ac5e96420d4"
   },
   "lost_legion": {
     "artist": "Anastasia Ovchinnikova",

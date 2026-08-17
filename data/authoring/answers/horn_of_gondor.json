@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "horn_of_gondor",
+    "name": "Horn of Gondor",
+    "oracle_text": "When Horn of Gondor enters, create a 1/1 white Human Soldier creature token.\n{3}, {T}: Create X 1/1 white Human Soldier creature tokens, where X is the number of Humans you control.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Horn of Gondor enters, create a 1/1 white Human Soldier creature token.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "human_soldier_1_1_w",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: Create X 1/1 white Human Soldier creature tokens, where X is the number of Humans you control.",
+        "cost": {
+          "mana": "{3}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "human_soldier_1_1_w",
+            "amount": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": [
+                  "Human"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
