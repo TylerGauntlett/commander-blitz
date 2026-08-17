@@ -1162,6 +1162,9 @@
   "colossodon_yearling": {
     "zone": "battlefield"
   },
+  "combat_celebrant": {
+    "zone": "battlefield"
+  },
   "commercial_district": {
     "zone": "battlefield"
   },

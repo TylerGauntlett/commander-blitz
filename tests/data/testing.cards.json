@@ -2581,6 +2581,73 @@
       ]
     },
     {
+      "id": "t_celebrant",
+      "name": "Test Celebrant",
+      "oracle_text": "Vigilance\nIf this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "If this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "condition": {
+              "not": {
+                "has_turn_flag": "exerted"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Exert Test Celebrant?",
+              "effects": [
+                {
+                  "op": "set_turn_flag",
+                  "flag": "exerted",
+                  "objects": {
+                    "self_only": true
+                  }
+                },
+                {
+                  "op": "skip_untap",
+                  "objects": {
+                    "self_only": true
+                  }
+                },
+                {
+                  "op": "untap",
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "exclude_self": true,
+                    "count": "all"
+                  }
+                },
+                {
+                  "op": "extra_combat"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_exerter",
       "name": "Test Exerter",
       "oracle_text": "You may exert Test Exerter as it attacks. When you do, it gets +2/+2 until end of turn. (It won't untap during your next untap step.)",
