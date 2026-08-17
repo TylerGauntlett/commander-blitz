@@ -97882,12 +97882,12 @@
     },
     "Florian, Voldaren Scion": {
       "edhrec_rank": 3482,
-      "gate": "template",
+      "gate": null,
       "name": "Florian, Voldaren Scion",
-      "reason": "no template for: At the beginning of each of your postcombat main phases, look at the top X cards of your l",
+      "reason": "",
       "scryfall_id": "3377d600-e43f-4cce-ae3f-541e519ee4ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Floriferous Vinewall": {

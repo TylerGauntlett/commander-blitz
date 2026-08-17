@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **12** capabilities.
+**4 cards** blocked by **9** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [any-number-of-targets](#any-number-of-targets) | 1 | 9863 | targeting |
-| [bottom-of-library-random](#bottom-of-library-random) | 1 | 3482 | op |
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-color-identity](#commander-color-identity) | 1 | 14 | op |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
@@ -23,8 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [per-player-loop](#per-player-loop) | 1 | 6625 | selector |
 | [phase-out-effect](#phase-out-effect) | 1 | 9863 | op |
-| [play-from-exile](#play-from-exile) | 1 | 3482 | op |
-| [postcombat-main-phase](#postcombat-main-phase) | 1 | 3482 | trigger_event |
 | [triggered-ability-target-choice](#triggered-ability-target-choice) | 1 | 24 | decision |
 
 ## any-number-of-targets
@@ -39,20 +36,6 @@ Blocks **1** card.
 - **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
   - If a creature dealt damage this way would die this turn, exile it instead
   - Any number of target creatures you control phase out
-
-</details>
-
-## bottom-of-library-random
-
-Blocks **1** card.
-
-- **(op)** a disposition for looked-at/revealed cards that puts the unchosen remainder on the bottom of the library in a random order, as a sibling of the existing put-on-top behaviour
-  <br>Why the existing vocabulary won't do: ops has `put_on_top` and `shuffle`, but nothing that addresses the bottom of the library, and shuffling the whole library is a different game action (it would also reorder the rest of the deck, which matters to any other effect that set up the top). `look_at_top` selects cards to look at but there is no stated bottom-in-random-order remainder disposition to pair it with.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Florian, Voldaren Scion** (rank 3482) — `florian_voldaren_scion`
-  - At the beginning of each of your postcombat main phases, look at the top X cards of your library, where X is the total amount of life your opponents lost this turn. Exile one of those cards and put the rest on the bottom of your library in a random order. You may play the exiled card this turn.
 
 </details>
 
@@ -155,34 +138,6 @@ Blocks **1** card.
 - **Gallifrey Falls // No More** (rank 9863) — `gallifrey_falls_no_more`
   - If a creature dealt damage this way would die this turn, exile it instead
   - Any number of target creatures you control phase out
-
-</details>
-
-## play-from-exile
-
-Blocks **1** card.
-
-- **(op)** an effect that exiles a card and grants its controller permission to play (cast, or put down as a land) that specific exiled card until end of turn -- the 'impulse draw' pattern. Needs the exiled card tracked as a playable object with a duration, and the play-legality check taught to consult that grant
-  <br>Why the existing vocabulary won't do: ops has `exile`, which moves the card and stops; nothing grants permission to play a card from exile. The `exiled_with` selector can find cards a source exiled, but selectors only feed effects' `objects`, so it can address the card without making it playable. The `play_lands_from_graveyard` / `play_lands_from_library_top` static_effects are the closest permission-granting things in the vocabulary, and they cover the wrong zone, are lands-only, and are permanent statics rather than a per-card until-end-of-turn grant. Substituting `draw` or `return_to_hand` would be an approximation: it changes card advantage, dodges the this-turn deadline, and makes the card unplayable-from-exile text vanish.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Florian, Voldaren Scion** (rank 3482) — `florian_voldaren_scion`
-  - At the beginning of each of your postcombat main phases, look at the top X cards of your library, where X is the total amount of life your opponents lost this turn. Exile one of those cards and put the rest on the bottom of your library in a random order. You may play the exiled card this turn.
-
-</details>
-
-## postcombat-main-phase
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event that fires at the beginning of each postcombat main phase of the controller's turn -- i.e. the engine's turn structure must emit a distinct main-phase-two beginning event, scoped to 'your' turns, and fire it on every such phase rather than once per turn (extra combat phases give extra postcombat mains)
-  <br>Why the existing vocabulary won't do: trigger_events carries phase-boundary events for upkeep, draw_step, begin_combat and end_step only. begin_combat is the nearest phase event but fires before combat, not after it, so a card hung on it would read life lost before combat damage -- exactly the value this card is meant to see. There is no main-phase event of either kind, and no way to say 'each of your' as opposed to 'once on your turn'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Florian, Voldaren Scion** (rank 3482) — `florian_voldaren_scion`
-  - At the beginning of each of your postcombat main phases, look at the top X cards of your library, where X is the total amount of life your opponents lost this turn. Exile one of those cards and put the rest on the bottom of your library in a random order. You may play the exiled card this turn.
 
 </details>
 

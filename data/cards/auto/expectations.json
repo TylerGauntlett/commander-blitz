@@ -2042,6 +2042,18 @@
   "flooded_strand": {
     "zone": "battlefield"
   },
+  "florian_voldaren_scion": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "flying_dolphin_fish": {
     "zone": "battlefield"
   },
