@@ -23707,6 +23707,112 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "the_token",
+              "attacking": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "the_token"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_of_combat",
+              "text": "Exile the token at end of combat."
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, create a token that's a copy of another target attacking creature and that's tapped and attacking. Exile the token at end of combat.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Dash {2}{R}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": "{2}{R}{R}",
+      "evoke_label": "dash",
+      "id": "flamerush_rider",
+      "mana_cost": "{4}{R}",
+      "name": "Flamerush Rider",
+      "oracle_text": "Whenever this creature attacks, create a token that's a copy of another target attacking creature and that's tapped and attacking. Exile the token at end of combat.\nDash {2}{R}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
