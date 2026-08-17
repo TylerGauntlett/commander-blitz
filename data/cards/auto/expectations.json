@@ -4439,6 +4439,9 @@
   "pardic_wanderer": {
     "zone": "battlefield"
   },
+  "path_of_ancestry": {
+    "zone": "battlefield"
+  },
   "patron_of_the_vein": {
     "battlefield_count": 33,
     "counters": {
