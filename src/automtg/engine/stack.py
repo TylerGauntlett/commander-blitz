@@ -56,6 +56,15 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    # Addendum (Ravnica Allegiance): "if you cast this spell during your main
+    # phase". Stamped here, with `cast_from_hand`, because this is the moment
+    # the sentence is about and the only moment it is knowable -- the spell can
+    # be cast in a main phase and resolve after a response has carried the game
+    # into combat, so a phase read at resolution answers a different question.
+    # Both halves are recorded: which step, and whether the caster was the
+    # active player, because "your main phase" is both.
+    obj.cast_step = state.step
+    obj.cast_on_own_turn = state.active_player == controller
     # Bestow (702.103a). Recorded on the object as well as the stack item,
     # because it outlives the spell: it is what makes the resolved permanent an
     # Aura, and `chars` asks the object rather than the stack.

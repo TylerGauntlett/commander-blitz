@@ -6923,6 +6923,16 @@
   "umbral_expanse": {
     "zone": "battlefield"
   },
+  "unbreakable_formation": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "indestructible",
+        "vigilance"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "undead_minotaur": {
     "zone": "battlefield"
   },
