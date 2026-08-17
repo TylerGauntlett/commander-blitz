@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **29** capabilities.
+**25 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
 | [optional-pool-choice](#optional-pool-choice) | 1 | 6835 | selector |
 | [permanents-entered-this-turn](#permanents-entered-this-turn) | 1 | 4513 | value |
-| [reveal-until](#reveal-until) | 1 | 3831 | op |
 | [saga](#saga) | 1 | 7121 | engine |
 | [unblockable](#unblockable) | 1 | 18 | op |
 | [variable-enters-with-counters](#variable-enters-with-counters) | 1 | 4800 | replacement |
@@ -365,20 +364,6 @@ Blocks **1** card.
 
 - **Éowyn, Shieldmaiden** (rank 4513) — `eowyn_shieldmaiden`
   - At the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.
-
-</details>
-
-## reveal-until
-
-Blocks **1** card.
-
-- **(op)** An op that reveals cards one at a time from the top of a library until it reveals one matching an author-supplied selector (here {"types": ["Creature"], "shares_a_type_with": "subject"}), stops there, moves that one card to a destination (hand), and puts the rest of the revealed cards on the bottom of the library in a random order -- with an unbounded, board-determined scan depth, and no player choice about which card is taken (it is always the first hit). It should also terminate gracefully when the whole library is revealed without a hit, bottoming everything in a random order.
-  <br>Why the existing vocabulary won't do: The three existing library-scan ops all fix something this line leaves open. `look_at_top` bounds the pool to `amount` cards off the top -- a constant known when the card is written -- and then lets the player pick any matching card out of that whole window, so it is a bounded tutor, not a first-hit scan; naming a large amount to fake 'until' would reveal and randomize the entire library and let the player choose the best of every match instead of taking the first one. `search_library` looks at the whole library at once (also a chooser, plus rule 701.19's shuffle) rather than scanning down from the top. `cascade` is the only op with the right unbounded top-down shape, but its stop test is hardcoded to 'nonland card with lesser mana value than this spell', it exiles rather than reveals, and it offers a free cast rather than putting the card into hand -- there is no way to substitute a selector for its test. `ripple` has a fixed depth and a hardcoded same-name-as-source test. The trigger half of the line is fine (`dies` with filter `{"attached": true}`, wrapped in `may`), and `shares_a_type_with: "subject"` already exists for the 'shares a creature type with it' clause, so this gap is only the scan.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heirloom Blade** (rank 3831) — `heirloom_blade`
-  - Whenever equipped creature dies, you may reveal cards from the top of your library until you reveal a creature card that shares a creature type with it. Put that card into your hand and the rest on the bottom of your library in a random order.
 
 </details>
 

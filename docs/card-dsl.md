@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-88 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+89 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `hideaway` `play_exiled` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -4519,7 +4519,7 @@ reveal two cards; and the land half asks **nothing**, because 701.40a offers the
 choice only on the "otherwise" branch and a yes/no there would let a player
 decline a free card.
 
-## Cascade and ripple — walking a library
+## Cascade, ripple and `reveal_until` — walking a library
 
 ```jsonc
 // "When you cast this spell…" -- an ordinary cast trigger.
@@ -4554,6 +4554,44 @@ Ripple is not cascade with a parameter: "the same name as this spell" is a
 comparison against the *source*, which no selector key names. `name` takes a
 literal written into the card — true for ripple, and wrong the moment anything
 copies it.
+
+`reveal_until` is the third walk, and the one whose stop test is written by the
+card:
+
+```jsonc
+// Heirloom Blade -- "reveal cards from the top of your library until you reveal
+// a creature card that shares a creature type with it. Put that card into your
+// hand and the rest on the bottom of your library in a random order."
+{ "op": "reveal_until", "player": "you",
+  "objects": { "types": ["Creature"], "shares_a_type_with": "subject" },
+  "destination": "hand", "rest_to_bottom": true }
+```
+
+Cascade's shape with `objects` in place of its hardcoded "nonland card with
+lesser mana value", and the bottoming is literally the same function. Neither of
+the other two could be asked this question: cascade exiles instead of revealing
+and offers a free cast instead of a card, ripple's depth is fixed and its test is
+the source's name, and neither has a parameter a selector fits into.
+
+`look_at_top` is the near miss an author reaches for, and it makes a different
+card twice over. Its window is `amount` cards — a constant known when the card is
+written, and one large enough to fake "until" would reveal and randomize the
+whole library on every resolution. And it offers *every* match inside that window
+and lets the player take the best one; "until you reveal" takes the **first**,
+which is why `reveal_until` asks nothing and is not a generator.
+
+Running the library out with no match is an outcome and not an error: everything
+revealed goes to the bottom in a random order and nothing reaches `destination`.
+That is also why the order is random rather than the revealed one — after a
+failed scan the controller has seen their whole library, and leaving it in order
+would hand them a fully known deck.
+
+`rest_to_bottom` defaults to **true** here and to false on `look_at_top`, and the
+defaults disagree because the words do: "look at" means the cards you did not
+take stay on top in order, and no printed "reveal until" leaves them there. The
+loader refuses an `amount` (the scan is unbounded — use `look_at_top` for a
+window) and an empty `objects` (an empty selector matches the first card
+revealed, quietly turning the card into "put the top card into your hand").
 
 ## Connive
 
