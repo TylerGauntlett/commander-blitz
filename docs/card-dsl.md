@@ -1711,6 +1711,40 @@ Legality and payment must ask that question identically; both derive it from
 `costs.spell_purpose`. With no spell in mind, restricted mana is not counted at
 all: an under-count, which is the safe direction for a number the AI reads.
 
+A restriction may also name **which action** the mana is allowed to pay for, and
+**the type its own permanent chose**:
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "mana_restriction": {
+    "cast":     [["creature", { "chosen_type_of": "self" }]],
+    "activate": [["creature", { "chosen_type_of": "self" }]]
+  },
+  "cost": { "tap": true }, "effects": [ ... ] }
+```
+
+Secluded Courtyard, Cavern of Souls, Unclaimed Territory — "Spend this mana only
+to cast a creature spell of the chosen type **or activate an ability of a
+creature source of the chosen type**." Three things are load-bearing:
+
+- **A bare string or list is the `cast` half alone.** Every card printed before
+  this one says "only to cast", and an `activate` permission handed out by name
+  alone would have quietly rewritten Herd Heirloom, Ancient Ziggurat and Master
+  of Dark Rites without a line of their JSON changing. `costs.SpendPurpose`
+  carries the kind for that reason; `costs.ability_purpose` is the activation
+  half, threaded through `legality._ability_aims` and `game._activate` exactly as
+  `spell_purpose` is threaded through the four cast sites.
+- **A nested list is an all-of.** `["Vampire", "Cleric", "Demon"]` is the printed
+  "and/or", an any-of of three one-name groups. `[["creature", …]]` is one
+  two-name group, and it has to be: `creature` alone casts every creature ever
+  printed, which is strictly better than the card.
+- **`{"chosen_type_of": "self"}`** is the one entry that is not a literal name —
+  the same leaf `subtypes` filters take on Vanquisher's Banner. It is substituted
+  per permanent by `costs.resolve_mana_restriction` when the mana is offered, not
+  at load time, because the type does not exist until the land is on the
+  battlefield. A group naming it before anything is chosen is **dropped, not
+  widened**: the land pays for nothing rather than for everything.
+
 ## Adding an op
 
 1. Write the function in the right `effects/ops_*.py` and decorate it with
@@ -3001,10 +3035,16 @@ subtypes as well as card types:
 "mana_restriction": ["Vampire", "Cleric", "Demon"]
 ```
 
-Both ends are one flat set of lowercased names, intersected: `spell_purpose`
-builds `(*card.types, *card.subtypes)` and a source is offered when the two sets
-meet. The printed "and/or" is an any-of, so one matching name is enough — a
-Vampire that is not a Cleric still qualifies.
+Both ends are one flat set of lowercased names: `spell_purpose` builds
+`(*card.types, *card.subtypes)` and `ManaSource.permits` offers the source when
+any one **group** of the restriction is a subset of it. The printed "and/or" is
+an any-of, so one matching name is enough — a Vampire that is not a Cleric still
+qualifies, because each name is its own one-name group.
+
+Groups are what let the *other* printed shape be exact. "A creature spell **of
+the chosen type**" is a conjunction, written as one nested group
+`[["creature", {"chosen_type_of": "self"}]]`; see **Restricted mana** above for
+that form and for the `cast`/`activate` split.
 
 Enforced by *filtering sources* before the solver sees them, so the solver's
 inner loop never learns restrictions exist. Subtypes are open-ended in Magic, so

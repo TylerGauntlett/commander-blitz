@@ -257,15 +257,27 @@ class TestASubtypeRestriction:
         )
 
     def test_a_list_of_subtypes_compiles(self):
+        """Three one-name groups: "and/or" is an any-of, so any group matching wins."""
         card = self.card(["Vampire", "Cleric", "Demon"])
-        assert card.abilities[0].mana_restriction == frozenset(
-            {"vampire", "cleric", "demon"}
-        )
+        assert set(card.abilities[0].mana_restriction.cast) == {
+            frozenset({"vampire"}),
+            frozenset({"cleric"}),
+            frozenset({"demon"}),
+        }
 
     def test_a_bare_string_still_works(self):
         """The old single-type form is unchanged."""
         card = self.card("creature")
-        assert card.abilities[0].mana_restriction == frozenset({"creature"})
+        assert card.abilities[0].mana_restriction.cast == (frozenset({"creature"}),)
+
+    def test_the_bare_form_permits_no_activation(self):
+        """"Spend this mana only to **cast** a Vampire spell" -- and nothing else.
+
+        The half that would otherwise be handed out for free the moment
+        restricted mana learned to pay for abilities at all.
+        """
+        card = self.card(["Vampire"])
+        assert card.abilities[0].mana_restriction.activate == ()
 
     def test_an_empty_list_is_refused(self):
         with pytest.raises(DslError, match="empty"):
@@ -273,16 +285,16 @@ class TestASubtypeRestriction:
 
     def test_a_purpose_reads_subtypes(self, registry):
         """Grizzly Bears is a Bear, and the set says so."""
-        assert "bear" in spell_purpose(registry.get("grizzly_bears"))
-        assert "creature" in spell_purpose(registry.get("grizzly_bears"))
+        assert "bear" in spell_purpose(registry.get("grizzly_bears")).names
+        assert "creature" in spell_purpose(registry.get("grizzly_bears")).names
 
     def test_one_matching_subtype_is_enough(self, registry, builder):
         """"and/or" is an any-of: a Vampire that is not a Cleric still qualifies."""
         card = registry.get("vampire_of_the_dire_moon")
         restriction = frozenset({"vampire", "cleric", "demon"})
-        assert restriction & spell_purpose(card)
+        assert restriction & spell_purpose(card).names
 
     def test_an_unrelated_creature_does_not_qualify(self, registry):
         restriction = frozenset({"vampire", "cleric", "demon"})
-        assert not (restriction & spell_purpose(registry.get("grizzly_bears")))
+        assert not (restriction & spell_purpose(registry.get("grizzly_bears")).names)
 
