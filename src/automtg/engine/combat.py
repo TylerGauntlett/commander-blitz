@@ -55,6 +55,10 @@ class DamageAssignment:
 
 
 def start_combat(state: GameState) -> None:
+    # `combat_number` identifies the phase, and this is the only place one
+    # begins -- so "at end of combat" can name *this* combat rather than the
+    # next `END_OF_COMBAT` step to come round. See `GameState.combat_number`.
+    state.combat_number += 1
     state.combat = CombatState(declaring_player=state.active_player)
 
 

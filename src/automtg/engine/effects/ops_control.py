@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost
 from ..costs import can_pay, pay
@@ -14,6 +14,9 @@ from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_yes_no
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ..state import GameState
 
 cost_from_spec = Cost.from_spec
 
@@ -383,21 +386,50 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The bindings are captured *now*, which is the point: by the time it fires,
     the object it was about may be in another zone or gone.
+
+    ``end_of_combat`` captures one more thing, for the same reason and at the
+    same moment: *which* combat. See :func:`_scheduled_combat`.
     """
     from ..structs import DelayedTrigger
 
     state = ctx.state
+    step = str(spec.get("step", "end_step"))
     state.delayed_triggers.append(
         DelayedTrigger(
-            step=str(spec.get("step", "end_step")),
+            step=step,
             controller=ctx.controller,
             effects=tuple(spec.get("effects") or []),
             bindings=dict(ctx.bindings),
             source_oid=ctx.source_oid,
             description=str(spec.get("text") or ctx.source_name),
             turn=state.turn,
+            combat=_scheduled_combat(state) if step == "end_of_combat" else None,
         )
     )
+
+
+def _scheduled_combat(state: GameState) -> int:
+    """Which combat an "at end of combat" delay belongs to (rule 603.7).
+
+    Every other delay step happens once a turn, so the step's *name* is enough
+    to say when it is due. A combat phase is not: `extra_combat` gives a turn
+    two or three of them, and Flamerush Rider's "exile the token at end of
+    combat" has to end the token at the end of the combat it attacked in --
+    otherwise the copy lives through the postcombat main and attacks again in
+    the extra combat, which is the precise thing the printed line stops.
+
+    Two cases, and they are the same sentence read at two moments:
+
+    - **Inside a combat phase** -- the delay was created by something that
+      happened in this combat, so it is this combat's end.
+    - **Anywhere else** -- a main phase, an upkeep, or the end of combat step
+      itself, where `combat` has already been cleared by `combat.end_combat`.
+      There is no combat to end, so it is the *next* one's, whether that turns
+      out to be an extra combat later this turn or the first combat of a later
+      turn. Which is also the right answer for a delay scheduled during an
+      end of combat step: that step's own firing has been and gone.
+    """
+    return state.combat_number if state.combat is not None else state.combat_number + 1
 
 
 @register("extra_combat")
