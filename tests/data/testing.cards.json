@@ -7982,6 +7982,57 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_bog",
+      "name": "Test Bog",
+      "oracle_text": "When this land enters, exile target player's graveyard.\n{T}: Add {B}.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this land enters, exile target player's graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {}
+            }
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "zone": "graveyard",
+                "player": {
+                  "target": "t1"
+                },
+                "count": "all"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {B}.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{B}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

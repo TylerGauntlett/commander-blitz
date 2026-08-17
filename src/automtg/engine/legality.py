@@ -24,7 +24,7 @@ from .costs import (
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
 from .mana import ManaCost, Requirement, max_affordable_x, solve_payment
 from .structs import TargetRef
-from .targeting import enumerate_target_tuples
+from .targeting import describe_ref, enumerate_target_tuples
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -932,7 +932,7 @@ def _cast_variant(
     for targets in tuples:
         label = label_base
         if targets:
-            label += " -> " + ", ".join(_describe_ref(state, ref) for ref in targets)
+            label += " -> " + ", ".join(describe_ref(state, ref) for ref in targets)
         out.append(
             Action(
                 kind=ActionKind.CAST,
@@ -1134,7 +1134,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                         label += f" ({option_label})"
                     if targets:
                         label += " -> " + ", ".join(
-                            _describe_ref(state, ref) for ref in targets
+                            describe_ref(state, ref) for ref in targets
                         )
                     out.append(
                         Action(
@@ -1311,16 +1311,6 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
             times=mana_amount(state, oid, ability),
         )
     )
-
-
-def _describe_ref(state: GameState, ref: TargetRef) -> str:
-    if ref.kind == "player":
-        return state.players[ref.id].name or f"p{ref.id}"
-    if ref.kind == "stack":
-        item = state.stack_item(ref.id)
-        return item.description if item else f"stack#{ref.id}"
-    obj = state.objects.get(ref.id)
-    return state.card_of(obj).name if obj else f"#{ref.id}"
 
 
 def summarize(state: GameState) -> list[str]:  # pragma: no cover - debug helper

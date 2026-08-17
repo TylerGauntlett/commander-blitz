@@ -673,24 +673,40 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     )
 
 
-def drain_to_stack(state: GameState) -> int:
+def drain_to_stack(state: GameState):
     """Put every pending trigger on the stack in APNAP order.
 
-    Returns how many were put on the stack.  Within a single player's triggers
-    the order is the order they were collected (stable and deterministic).
+    Within a single player's triggers the order is the order they were
+    collected (stable and deterministic).
+
+    A generator, because a triggered ability with targets asks its controller
+    to choose them as it goes on the stack (603.3d) and that is a decision like
+    any other.
+
+    Each trigger is struck off `state.pending_triggers` **after** it lands on
+    the stack, one at a time, rather than the whole list being emptied up
+    front. Mid-drain the game is neither quiescent nor finished, and emptying
+    first made it look like both: with the list cleared and nothing on the
+    stack yet, "no pending triggers and an empty stack" -- which is how the
+    tests and the auto-pass check ask whether the board has settled -- was true
+    while a player still owed an answer.
+
+    The order is a snapshot, so a trigger that fires *while* the choice is
+    being made (a `became_target` trigger, most likely) waits for the next
+    pass, exactly as it did before.
     """
     if not state.pending_triggers:
-        return 0
+        return
     from .stack import push_triggered_ability
 
-    pending = state.pending_triggers
-    state.pending_triggers = []
-    count = 0
-    for pid in state.turn_order():
-        for trig in pending:
-            if trig.controller != pid:
-                continue
-            push_triggered_ability(state, trig)
-            count += 1
+    order = [
+        trig
+        for pid in state.turn_order()
+        for trig in state.pending_triggers
+        if trig.controller == pid
+    ]
     # Triggers controlled by players who have left the game simply vanish.
-    return count
+    state.pending_triggers = list(order)
+    for trig in order:
+        yield from push_triggered_ability(state, trig)
+        state.pending_triggers = [t for t in state.pending_triggers if t is not trig]
