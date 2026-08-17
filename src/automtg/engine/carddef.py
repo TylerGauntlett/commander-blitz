@@ -11,6 +11,7 @@ loader has already validated every key and op name against the registries.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from typing import Any
@@ -666,6 +667,106 @@ def build_type_line(
     return left
 
 
+# ----------------------------------------------------------------------
+# ward -- an ability the *rules* supply, parameterised by a cost
+# ----------------------------------------------------------------------
+
+#: Every rules-supplied ability built so far, addressed by a **negative**
+#: ``Ability.index``.
+#:
+#: A printed ability is found again by indexing the card it is printed on, and a
+#: granted one by indexing the granter's ``grantable_abilities`` -- both are a
+#: position in a list somebody wrote. Ward is neither: nothing prints the trigger
+#: (a card prints the *keyword*, and the reminder text is the rules speaking),
+#: and the permanent that has it need not be the permanent that gave it. So it is
+#: interned here and addressed by a position in *this* list, negated so that
+#: `stack.ability_of` can tell one apart from an index into a card at a glance
+#: and without asking the board -- which matters, because by the time a ward
+#: trigger resolves the static that granted it may be in a graveyard.
+#:
+#: Interning rather than rebuilding is what makes `triggers._granter_of`'s
+#: identity comparison and `_queue`'s per-(object, index) tallies mean anything:
+#: two permanents with ward {1} have the *same* ability object, as two creatures
+#: with flying have the same keyword.
+_RULES_ABILITIES: list[Ability] = []
+
+#: Interned ward abilities, keyed by their canonicalised cost.
+_WARD_ABILITIES: dict[str, Ability] = {}
+
+
+def prune_cost(spec: Mapping[str, Any]) -> dict[str, Any]:
+    """A cost spec with its unset fields dropped.
+
+    A ``CostModel`` dump carries every field it did not use -- ``tap: false``,
+    ``discard: 0``, ``mana: null`` -- and ward reads the survivors twice: once to
+    key the intern table (so ``{"mana": "{1}"}`` written two ways is one ability)
+    and once to decide whether the cost is plain enough to name in a prompt.
+    """
+    return {k: v for k, v in spec.items() if v not in (None, False, 0, "", (), [], {})}
+
+
+def _mana_only(cost: Mapping[str, Any]) -> str | None:
+    """The mana string when that is the whole cost, else ``None``."""
+    return str(cost["mana"]) if set(cost) == {"mana"} else None
+
+
+def ward_ability(cost: Mapping[str, Any]) -> Ability:
+    """The rules-supplied triggered ability a permanent with ward {cost} has.
+
+    "Whenever this permanent becomes the target of a spell or ability an
+    opponent controls, counter it unless that player pays <cost>." The reminder
+    text on every ward card, and it is the *rules'* sentence rather than the
+    card's -- which is why one function builds it for every ward in the game
+    instead of each card writing the trigger out.
+
+    ``cost`` is an ordinary ``pay`` spec, the same mapping ``op_may`` charges, so
+    ward is not restricted to mana: Vein Ripper's "Ward -- Sacrifice a creature"
+    is ``{"sacrifice": {...}}`` and needs nothing here that ward {1} does not.
+
+    The ability is **interned**: the same cost always returns the same object.
+    """
+    cost = prune_cost(cost)
+    key = json.dumps(cost, sort_keys=True, default=str)
+    existing = _WARD_ABILITIES.get(key)
+    if existing is not None:
+        return existing
+    mana = _mana_only(cost)
+    ability = Ability(
+        kind=AbilityKind.TRIGGERED,
+        index=-len(_RULES_ABILITIES) - 1,
+        text=f"Ward {mana}" if mana else "Ward",
+        trigger=TriggerSpec(event="becomes_target", controller="opponent", source="self"),
+        effects=(
+            {
+                "op": "may",
+                # The *caster*, not the ability's controller. Ward taxes the
+                # player who pointed something at the permanent.
+                "player": {"binding": "event_player"},
+                "prompt": f"Pay {mana} for ward?" if mana else "Pay the ward cost?",
+                "pay": dict(cost),
+                "else": [{"op": "counter", "sid": {"binding": "sid"}}],
+            },
+        ),
+        active_zones=(Zone.BATTLEFIELD,),
+    )
+    _RULES_ABILITIES.append(ability)
+    _WARD_ABILITIES[key] = ability
+    return ability
+
+
+def rules_ability(index: int) -> Ability | None:
+    """The rules-supplied ability a negative ``ability_index`` names.
+
+    ``None`` for an index nothing was ever interned under, which resolves as a
+    no-op rather than raising -- the same contract `stack.ability_of` has for
+    every other lookup that comes up empty.
+    """
+    position = -index - 1
+    if 0 <= position < len(_RULES_ABILITIES):
+        return _RULES_ABILITIES[position]
+    return None
+
+
 #: Ward {2} on a **cloaked** permanent (701.61a).
 #:
 #: A rules-supplied ability, like `BESTOW_TARGET` above is a rules-supplied
@@ -674,23 +775,8 @@ def build_type_line(
 #: not, because that card is usually not even a creature. The cloak rule is what
 #: grants it, so the engine is what carries it.
 #:
-#: The effect is the shipped ward idiom verbatim (`t_warded` in the test pool):
-#: a `becomes_target` trigger, a `may` routed to the *caster* rather than to the
-#: ability's controller, a mana `pay`, and a `counter` of the offending spell in
-#: the `else`.
-CLOAK_WARD = Ability(
-    kind=AbilityKind.TRIGGERED,
-    index=0,
-    text="Ward {2}",
-    trigger=TriggerSpec(event="becomes_target", controller="opponent", source="self"),
-    effects=(
-        {
-            "op": "may",
-            "player": {"binding": "event_player"},
-            "prompt": "Pay {2} for ward?",
-            "pay": {"mana": "{2}"},
-            "else": [{"op": "counter", "sid": {"binding": "sid"}}],
-        },
-    ),
-    active_zones=(Zone.BATTLEFIELD,),
-)
+#: Now literally `ward_ability({"mana": "{2}"})` rather than a second copy of the
+#: same trigger: cloak's ward and a granted one are the same ability at the same
+#: price, and were two hand-written twins only because the keyword had nowhere to
+#: put its cost.
+CLOAK_WARD = ward_ability({"mana": "{2}"})
