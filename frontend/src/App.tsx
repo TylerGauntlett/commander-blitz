@@ -23,7 +23,7 @@
  * holds the only decision in this file that is not "match a path".
  */
 
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, MotionConfig } from "motion/react";
 import { Route, Routes, useLocation, useMatch } from "react-router";
 import { screenKey } from "./logic/routes";
 import { DeckDossierRoute } from "./screens/DeckDossierRoute";
@@ -47,17 +47,32 @@ export function App() {
   // against the address it was rendered for. Without it the outgoing route
   // re-matches the new URL mid-fade, loses its params, and blanks out on its
   // way off screen.
+  /*
+   * `reducedMotion="user"` rather than Motion's default of `"never"`.
+   *
+   * The board now throws sparks, knocks cards backwards and kicks the screen,
+   * and a player who has asked their system for reduced motion should get none
+   * of it. `fx/reducedMotion.ts` is the same decision for the effects that are
+   * not Framer animations -- particles and actuators run on a raw frame loop
+   * and cannot see this context.
+   *
+   * What survives either way is everything that carries meaning: numerals,
+   * captions, the log, the ring flashes. "How it felt" goes; "what happened"
+   * stays.
+   */
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={screenKey(location.pathname)}>
-        <Route path="/" element={<HomeRoute />} />
-        <Route path="/pods/:code" element={<PodRoute />} />
-        <Route path="/games/:gameId" element={<GameRoute />} />
-        <Route path="/decks" element={<DecksRoute />}>
-          <Route path=":deckId" element={<DeckDossierRoute />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={screenKey(location.pathname)}>
+          <Route path="/" element={<HomeRoute />} />
+          <Route path="/pods/:code" element={<PodRoute />} />
+          <Route path="/games/:gameId" element={<GameRoute />} />
+          <Route path="/decks" element={<DecksRoute />}>
+            <Route path=":deckId" element={<DeckDossierRoute />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AnimatePresence>
+    </MotionConfig>
   );
 }

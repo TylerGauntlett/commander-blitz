@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { GameEvent } from "../src/api/types";
-import { beatsFor, queueDuration } from "../src/logic/events";
+import { type Beat, beatsFor, queueDuration } from "../src/logic/events";
 import { describeEvent } from "../src/logic/labels";
 
 const NAMES = ["You", "Edgar AI"];
@@ -13,14 +13,29 @@ function event(
   return { type, turn: 1, step: 3, player: 0, source: null, data, ...extra };
 }
 
+/**
+ * Damage moved out of `beat.float` and into `beat.fx`.
+ *
+ * Every `damage_dealt` is now collected by `logic/choreography.ts` into a run
+ * and played as a concurrent burst -- sparks at the point of contact, a numeral
+ * thrown off that same point, the victim knocked backwards -- so the numeral is
+ * a scheduled effect rather than a property of the beat. These assert the same
+ * facts through the new shape.
+ */
+function floats(beat: Beat | undefined) {
+  return (beat?.fx ?? []).filter((fx) => fx.kind === "float");
+}
+
+function shakes(beat: Beat | undefined) {
+  return (beat?.fx ?? []).filter((fx) => fx.kind === "shake");
+}
+
 describe("beatsFor", () => {
   it("turns damage to a player into a floating numeral on that player", () => {
     const [beat] = beatsFor([event("damage_dealt", { amount: 4, to: "player" })], NAMES);
-    expect(beat.float).toEqual({
-      anchor: { kind: "player", pid: 0 },
-      value: "-4",
-      tone: "damage",
-    });
+    expect(floats(beat)).toMatchObject([
+      { at_point: { kind: "player", pid: 0 }, value: "-4", tone: "damage" },
+    ]);
   });
 
   it("anchors damage to a permanent on that permanent", () => {
@@ -28,7 +43,17 @@ describe("beatsFor", () => {
       [event("damage_dealt", { amount: 2, to: "permanent", oid: 42 })],
       NAMES,
     );
-    expect(beat.float?.anchor).toEqual({ kind: "object", oid: 42 });
+    expect(floats(beat)[0]).toMatchObject({ at_point: { kind: "object", oid: 42 } });
+  });
+
+  it("throws sparks at whatever the damage landed on", () => {
+    const [beat] = beatsFor(
+      [event("damage_dealt", { amount: 2, to: "permanent", oid: 42 })],
+      NAMES,
+    );
+    expect((beat.fx ?? []).filter((fx) => fx.kind === "emit")).toMatchObject([
+      { preset: "impact", at_point: { kind: "object", oid: 42 } },
+    ]);
   });
 
   it("shakes the screen only for big hits to a player", () => {
@@ -37,8 +62,8 @@ describe("beatsFor", () => {
       [event("damage_dealt", { amount: 2, to: "permanent", oid: 1 })],
       NAMES,
     );
-    expect(big.shake).toBeGreaterThan(0);
-    expect(small.shake).toBeUndefined();
+    expect(shakes(big).length).toBe(1);
+    expect(shakes(small).length).toBe(0);
   });
 
   it("ignores zero and negative damage", () => {
@@ -54,7 +79,7 @@ describe("beatsFor", () => {
       ],
       NAMES,
     );
-    expect(beats.filter((b) => b.float).length).toBe(1);
+    expect(beats.flatMap((b) => floats(b)).length).toBe(1);
   });
 
   it("resolves card ids to printed names when a lookup is supplied", () => {
@@ -92,14 +117,11 @@ describe("beatsFor", () => {
     expect(loss.float?.value).toBe("-5");
   });
 
-  it("flashes a permanent when it dies", () => {
-    const [beat] = beatsFor([event("dies", { card: "bear" }, { source: 9 })], NAMES);
-    expect(beat.flash).toEqual({ anchor: { kind: "object", oid: 9 }, tone: "danger" });
-  });
-
   it("drops bookkeeping events entirely", () => {
     // `mana_added` is not here even though payment is now narrated: it fires
     // once per source, and `tapped` already flashes the same permanent.
+    // A bare `zone_change` with no `from` is still noise -- `op_put_on_top`
+    // emits exactly one of those alongside the real move.
     const noise = ["mana_added", "mana_emptied", "zone_change", "step_ended", "untapped"];
     expect(
       beatsFor(
@@ -173,12 +195,144 @@ describe("beatsFor", () => {
 describe("queueDuration", () => {
   it("scales with the speed multiplier", () => {
     const beats = beatsFor([event("turn_began", { turn: 1 })], NAMES);
-    expect(queueDuration(beats, 1)).toBe(850);
-    expect(queueDuration(beats, 2)).toBe(425);
+    expect(queueDuration(beats, 1)).toBe(620);
+    expect(queueDuration(beats, 2)).toBe(310);
   });
 
   it("is zero for an empty queue", () => {
     expect(queueDuration([], 1)).toBe(0);
+  });
+});
+
+/**
+ * Cards leaving the battlefield.
+ *
+ * The board used to simply stop drawing them: `dies` produced a flash anchored
+ * to `[data-oid]`, and by the time a beat plays that element is unmounted, so
+ * the one piece of feedback the code intended to give was dropped every time.
+ * These beats carry enough to redraw the card from nothing.
+ */
+describe("exit beats", () => {
+  const leaves = (
+    oid: number,
+    data: Record<string, unknown> = {},
+    extra: Partial<GameEvent> = {},
+  ) =>
+    event(
+      "zone_change",
+      {
+        card: "grizzly_bears",
+        oid,
+        from: "battlefield",
+        to: "graveyard",
+        cause: "destroyed",
+        ...data,
+      },
+      extra,
+    );
+
+  it("describes a departure well enough to draw it", () => {
+    const [beat] = beatsFor([leaves(4, { by_card: "vandalblast" })], NAMES, undefined, 0);
+    expect(beat.exits).toEqual([
+      {
+        oid: 4,
+        cardId: "grizzly_bears",
+        name: "Grizzly Bears",
+        owner: 0,
+        to: "graveyard",
+        cause: "destroyed",
+        caption: "Destroyed by Vandalblast",
+      },
+    ]);
+  });
+
+  it("ignores a zone change that did not start on the battlefield", () => {
+    // No card on screen to fly anywhere -- and a library-origin zone change
+    // carries a card id to every seat, so drawing one would show the table an
+    // opponent's tutor target.
+    const events = [
+      leaves(4, { from: "library", to: "hand", cause: "search" }),
+      leaves(5, { from: "stack", to: "graveyard", cause: "resolved" }),
+    ];
+    expect(beatsFor(events, NAMES).flatMap((b) => b.exits ?? [])).toEqual([]);
+  });
+
+  it("ignores a zone change with no oid to anchor", () => {
+    expect(beatsFor([leaves(4, { oid: undefined })], NAMES)).toEqual([]);
+  });
+
+  it("collapses a wrath into one beat", () => {
+    // Five beats at a readable single-death pace is six seconds of stalled
+    // board. The FX layer staggers the ghosts inside the one beat instead.
+    const wrath = [0, 1, 2, 3, 4].map((oid) => leaves(oid));
+    const beats = beatsFor(wrath, NAMES, undefined, 0);
+    expect(beats).toHaveLength(1);
+    expect(beats[0].exits).toHaveLength(5);
+    expect(beats[0].text).toBe("5 permanents leave the battlefield");
+  });
+
+  it("keeps a run open across the silent events a death fires alongside it", () => {
+    // `move_object` fires `dies` and `leaves_battlefield` between each pair of
+    // zone changes. If those broke the run, no wrath would ever group.
+    const wrath = [
+      leaves(0),
+      event("leaves_battlefield", { card: "grizzly_bears" }),
+      event("dies", { card: "grizzly_bears" }),
+      leaves(1),
+      event("dies", { card: "grizzly_bears" }),
+    ];
+    expect(beatsFor(wrath, NAMES).filter((b) => b.exits)).toHaveLength(1);
+  });
+
+  it("splits a run at anything that would itself be narrated", () => {
+    // Ordering is the point: a death, the trigger it caused, then a second
+    // death is three moments, and merging the deaths would put the second on
+    // screen before its cause.
+    const beats = beatsFor(
+      [leaves(0), event("ability_triggered", { card: "blood_artist" }), leaves(1)],
+      NAMES,
+    );
+    expect(beats.filter((b) => b.exits)).toHaveLength(2);
+  });
+
+  it("holds sublinearly, so a wide board wipe does not stall the turn", () => {
+    const hold = (n: number) =>
+      beatsFor(
+        Array.from({ length: n }, (_, i) => leaves(i)),
+        NAMES,
+      )[0].hold;
+    expect(hold(1)).toBe(420);
+    expect(hold(10)).toBeLessThanOrEqual(820);
+    expect(hold(10)).toBeGreaterThan(hold(1));
+  });
+
+  it("tolls for the graveyard and exile, and not for a bounce", () => {
+    expect(beatsFor([leaves(4)], NAMES)[0].sound).toBe("toll");
+    expect(beatsFor([leaves(4, { to: "exile", cause: "exiled" })], NAMES)[0].sound).toBe(
+      "toll",
+    );
+    const bounced = leaves(4, { to: "hand", cause: "returned" });
+    expect(beatsFor([bounced], NAMES)[0].sound).toBeUndefined();
+  });
+
+  it("shakes the screen for a wipe but not for a single death", () => {
+    expect(beatsFor([leaves(0)], NAMES)[0].shake).toBeUndefined();
+    const wrath = [0, 1, 2, 3, 4, 5].map((oid) => leaves(oid));
+    expect(beatsFor(wrath, NAMES)[0].shake).toBeGreaterThan(0);
+  });
+
+  it("flies to the zone the engine used, not the one the cause implies", () => {
+    // Rule 903.9a: a destroyed commander goes to the command zone. Deriving the
+    // destination from `cause` would send the ghost to a graveyard it is not in.
+    const [beat] = beatsFor([leaves(4, { to: "command" })], NAMES, undefined, 0);
+    expect(beat.exits?.[0].to).toBe("command");
+    expect(beat.exits?.[0].caption).toBe("Destroyed — to the command zone");
+  });
+
+  it("no longer narrates `dies`, which would double every death", () => {
+    expect(beatsFor([event("dies", { card: "grizzly_bears" }, { source: 9 })], NAMES)).toEqual(
+      [],
+    );
   });
 });
 
@@ -201,7 +355,13 @@ describe("beat text comes from describeEvent", () => {
     event("damage_dealt", { amount: 3, to: "player" }),
     event("life_gained", { amount: 2 }),
     event("draw"),
-    event("dies", { card: "t_bear" }),
+    event("zone_change", {
+      card: "t_bear",
+      oid: 4,
+      from: "battlefield",
+      to: "graveyard",
+      cause: "destroyed",
+    }),
     event("player_lost", { reason: "life" }),
   ];
 

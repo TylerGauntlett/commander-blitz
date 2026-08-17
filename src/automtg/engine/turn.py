@@ -10,17 +10,15 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
-from . import suspend
+from . import replacements, suspend
 from .actions import PendingDecision
 from .characteristics import player_has_no_hand_limit, untap_also
 from .effects.context import EffectContext, ask_objects
-from .enums import DecisionKind, Step
+from .enums import DecisionKind, Keyword, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_until_eot,
-    discard_cards,
-    draw_cards,
     untap_all,
     untap_permanent,
 )
@@ -44,9 +42,11 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # card, and a spell cast this upkeep should be on the stack under
         # anything that triggers from the upkeep itself.
         suspend.tick(state, state.active_player)
+        suspend.rebound_tick(state, state.active_player)
+        _epic_copy(state, state.active_player)
         fire(state, EventType.UPKEEP, player=state.active_player)
     elif step is Step.DRAW:
-        _draw_step(state)
+        yield from _draw_step(state)
     elif step is Step.BEGIN_COMBAT:
         combat_mod.start_combat(state)
         fire(state, EventType.BEGIN_COMBAT, player=state.active_player)
@@ -55,11 +55,16 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
     elif step is Step.DECLARE_BLOCKERS:
         _declare_blockers_step(state)
     elif step is Step.FIRST_STRIKE_DAMAGE:
-        combat_mod.deal_combat_damage(state, first_strike_step=True)
+        yield from combat_mod.deal_combat_damage(state, first_strike_step=True)
     elif step is Step.COMBAT_DAMAGE:
-        combat_mod.deal_combat_damage(state, first_strike_step=False)
+        yield from combat_mod.deal_combat_damage(state, first_strike_step=False)
     elif step is Step.END_OF_COMBAT:
         combat_mod.end_combat(state)
+    elif step is Step.POSTCOMBAT_MAIN:
+        # "At the beginning of each of your postcombat main phases." Fired per
+        # phase rather than per turn, because an extra combat gives an extra
+        # postcombat main and the printed word is "each".
+        fire(state, EventType.POSTCOMBAT_MAIN, player=state.active_player)
     elif step is Step.END_STEP:
         fire(state, EventType.END_STEP, player=state.active_player)
     elif step is Step.CLEANUP:
@@ -129,6 +134,19 @@ def _untap_step(state: GameState) -> None:
     # Draws made during that turn are still "this turn" in that window, so
     # clearing before it would zero the count while the turn is still running.
     state.cards_drawn_this_turn.clear()
+    state.triggers_this_turn.clear()
+    # Detain ends at the start of the *detaining* player's next turn (701.30a),
+    # so it is cleared here and keyed by who placed it -- naming the player
+    # rather than a turn number is what keeps it right when somebody is
+    # eliminated and "your next turn" moves.
+    for obj in state.objects.values():
+        if obj.detained_by == player.pid:
+            obj.detained_by = None
+    # Phasing (702.26b) happens **before** untapping and it is a turn-based
+    # action, not an ability -- which is why it lives here beside the untap
+    # rather than in a card's effect list.
+    _phase(state, player.pid)
+    _day_night(state, player.pid)
     untap_all(state, player.pid)
     # Murkfiend Liege. Untapped after the active player's own untap so the
     # two cannot fight over `skip_next_untap`, which `untap_all` spends.
@@ -142,12 +160,207 @@ def _untap_step(state: GameState) -> None:
     )
 
 
-def _draw_step(state: GameState) -> None:
+def _day_night(state: GameState, pid: int) -> None:
+    """Set day or night, and turn the daybound permanents over (726).
+
+    Day and night are a designation the **whole table** shares, which is what
+    "a game-wide designated state the engine has no place to keep" meant when
+    this was refused. `GameState.day_night` is the place, and it is the same
+    shape `turn` and `step` already have.
+
+    Three rules, in the order 726 gives them:
+
+    - **726.2a** -- if it is neither day nor night and a daybound permanent is
+      on the battlefield, it becomes day. That is why the field starts as
+      ``None`` rather than as ``"day"``: a game with no Werewolf in it never has
+      a day, and a card that reads "if it's day" must say no rather than yes.
+    - **726.2b** -- if it is day and the player whose turn it *was* cast no
+      spells during it, it becomes night.
+    - **726.2c** -- if it is night and that player cast two or more, it becomes
+      day.
+
+    The count comes from `TurnLedger.spells_cast`, which storm already folds in
+    `emit`. Read here, at the start of the next turn, because that is when 726
+    asks -- and it is the last moment the previous turn's tally still exists,
+    since cleanup clears the ledger.
+
+    Turning the permanents over is `transform`, direction forced, because 726.3
+    is the whole content: every daybound permanent becomes its nightbound back
+    and every nightbound one becomes its daybound front, together, as the
+    designation changes.
+    """
+    from .characteristics import chars
+
+    daybound = [
+        oid
+        for oid in state.battlefield
+        if Keyword.DAYBOUND.value in chars(state, oid).keywords
+    ]
+    if state.day_night is None:
+        if not daybound:
+            return
+        state.day_night = "day"
+        state.emit("became_day", player=pid)
+        return
+
+    # Whoever's turn just ended. On the first untap of the game there is no
+    # previous turn, and the ledger is empty, which would read as "cast no
+    # spells" and make it night before anybody had a chance to play.
+    if state.turn <= 1:
+        return
+    previous = state.players[(state.active_idx - 1) % len(state.players)].pid
+    cast = state.turn_ledger.spells_cast.get(previous, 0)
+    if state.day_night == "day" and cast == 0:
+        _become(state, "night", pid)
+    elif state.day_night == "night" and cast >= 2:
+        _become(state, "day", pid)
+
+
+def _become(state: GameState, designation: str, pid: int) -> None:
+    from .characteristics import chars
+    from .primitives import transform
+
+    state.day_night = designation
+    to_back = designation == "night"
+    want = Keyword.DAYBOUND.value if to_back else Keyword.NIGHTBOUND.value
+    for oid in [
+        oid for oid in state.battlefield if want in chars(state, oid).keywords
+    ]:
+        transform(state, oid, to_back=to_back)
+    state.emit(f"became_{designation}", player=pid)
+
+
+def _phase(state: GameState, pid: int) -> None:
+    """Phase this player's permanents out and in (702.26b).
+
+    "A phased-out permanent is treated as though it does not exist" (702.26c) is
+    said by taking it out of ``state.battlefield`` and leaving it in
+    ``state.objects`` -- the same nowhere a card on the stack and a card under a
+    merged permanent already occupy. Every walk of the battlefield therefore
+    misses it: targeting, state-based actions, the characteristics statics, the
+    combat declarations and the serializer, none of which needed a test of their
+    own.
+
+    Three things follow that would each be work in a flag-based implementation:
+
+    - **No zone change.** Nothing moves, so no leaves- or enters-the-battlefield
+      trigger fires and `reset_permanent_state` never runs -- which is exactly
+      702.26c, and is why counters, auras and damage survive.
+    - **No summoning sickness.** `entered_turn` is untouched, so 702.26f ("it is
+      treated as having been continuously on the battlefield") is free.
+    - **Attachments come back attached.** `attached_to` is untouched too, and
+      the Aura phases out beside its host rather than being seen alone by the
+      state-based action that would bin it.
+
+    702.26b is a **toggle**, not two rules: a permanent phases out if it is
+    phased in and in if it is out, and each does one or the other in a given
+    untap step. So both lists are taken from the state as it stands *before*
+    anything moves -- decide, then act. Reading the battlefield as it changes
+    would send a permanent out and straight back in, or the reverse, and the
+    board would look exactly the same afterwards as if phasing did nothing.
+    """
+    from .characteristics import chars
+
+    going_in = [
+        oid
+        for oid, obj in state.objects.items()
+        if obj.phased_out and obj.controller == pid and not obj.phased_out_indirectly
+    ]
+    going_out = [
+        oid
+        for oid in state.battlefield
+        if (obj := state.objects.get(oid)) is not None
+        and obj.controller == pid
+        and Keyword.PHASING.value in chars(state, oid).keywords
+    ]
+    for oid in going_in:
+        phase_in(state, oid)
+    for oid in going_out:
+        phase_out(state, oid, indirect=False)
+    state.bump_chars()
+
+
+def phase_out(state: GameState, oid: int, *, indirect: bool = False) -> None:
+    """Phase a permanent out (702.26).
+
+    Public because phasing is no longer only the untap step's business: "target
+    creature phases out" is a printed one-shot, and the mechanism it wants is
+    exactly this one -- including 702.26e, which takes whatever is attached
+    along. A permanent phased out here has no `phasing` keyword, so the untap
+    walk phases it back in at its controller's next untap step and leaves it
+    there, which is what the printed line says.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or oid not in state.battlefield:
+        return
+    state.battlefield.remove(oid)
+    obj.phased_out = True
+    obj.phased_out_indirectly = indirect
+    state.emit("phased_out", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
+    # 702.26e: whatever is attached to it phases out with it, and is marked as
+    # having done so indirectly -- so it comes back when its host does rather
+    # than on the schedule of whoever controls it.
+    for other_id in list(state.battlefield):
+        other = state.objects.get(other_id)
+        if other is not None and other.attached_to == oid:
+            phase_out(state, other_id, indirect=True)
+
+
+def phase_in(state: GameState, oid: int) -> None:
+    """Phase a permanent back in, and whatever went out attached to it."""
+    obj = state.objects.get(oid)
+    if obj is None or not obj.phased_out:
+        return
+    obj.phased_out = False
+    obj.phased_out_indirectly = False
+    state.battlefield.append(oid)
+    state.emit("phased_in", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
+    for other_id, other in state.objects.items():
+        if other.phased_out and other.phased_out_indirectly and other.attached_to == oid:
+            phase_in(state, other_id)
+
+
+def _epic_copy(state: GameState, pid: int) -> None:
+    """Epic: "at the beginning of each of your upkeeps, copy this spell".
+
+    A rule rather than an ability, for suspend's ticking reason: the epic card
+    is in a graveyard with no abilities of its own, and the copy belongs to the
+    game the way the untap step does.
+
+    The copy is built from a *reconstructed* stack item rather than a live one,
+    because the original left the stack the moment it resolved. Everything that
+    matters about it -- the card, the controller -- is on the object, and the
+    targets are deliberately empty: an epic spell's copies choose their own, and
+    keeping the original's would point every copy at a creature that died on the
+    turn it was cast.
+    """
+    from .effects.ops_stack import put_copy_on_stack
+    from .structs import StackItem
+
+    oid = state.players[pid].epic_source
+    if oid is None:
+        return
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    template = StackItem(
+        sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid
+    )
+    put_copy_on_stack(state, pid, template)
+
+
+def _draw_step(state: GameState) -> Generator[Any, list[int], None]:
+    """The turn's draw -- and the one place dredge and miracle can interrupt it.
+
+    A generator because those two ask a question, which is the whole reason this
+    step could not carry them before. `begin_step` already ran through
+    `Game._run`, so nothing above here changed.
+    """
     pid = state.active_player
     # In a two-player game the starting player skips their first draw.
     skip = state.turn == 1 and pid == state.starting_player and state.num_players == 2
     if not skip:
-        draw_cards(state, pid, 1)
+        yield from replacements.draw(state, pid, 1)
     fire(state, EventType.DRAW_STEP, player=pid)
 
 
@@ -201,12 +414,17 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
         picked = yield from ask_objects(
             ctx, "Discard down to seven cards", list(player.hand), excess, excess, pid, "discard"
         )
-        discard_cards(state, pid, picked)
+        yield from replacements.discard(state, pid, picked)
     clear_until_eot(state)
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.
     state.damage_ledger.clear()
+    state.last_damager.clear()
+    # And with it every other "this turn" tally. Cleanup rather than untap for
+    # the reason the comment in `_untap_step` gives in reverse: none of these can
+    # happen before turn 1, so there is nothing for them to have to survive.
+    state.turn_ledger.clear()
     # Rule 514.3a: if anything happened, players get priority and cleanup repeats.
     state.cleanup_repeat = bool(state.pending_triggers)
 

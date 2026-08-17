@@ -125,8 +125,22 @@ class Game:
         elif action.kind is ActionKind.SUSPEND:
             from . import suspend
 
-            self._run(suspend.suspend_card(state, pid, action.source))
+            # One action kind, two mechanics: both exile a card from hand to
+            # be cast later and neither uses the stack. Which one is decided by
+            # the card, since no printing has both.
+            if state.card(action.source).foretell is not None:
+                self._run(suspend.foretell_card(state, pid, action.source))
+            else:
+                self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:
+            source = state.objects.get(action.source)
+            if source is not None and source.face_down and source.on_battlefield:
+                # Turning a permanent face up borrows `ability_index` 0 because
+                # a face-down permanent has no abilities to collide with -- so
+                # it must be routed *before* anything indexes into the hidden
+                # card's ability list, which is usually empty.
+                self._run(self._turn_face_up(pid, source))
+                return
             # A mana ability does not use the stack (rule 605.3a), so it takes a
             # different path entirely: nothing to respond to, and the player
             # keeps priority afterwards.
@@ -141,11 +155,21 @@ class Game:
     def _dispatch_attackers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state
         if action.kind is ActionKind.ADD_ATTACKER:
-            defender = action.targets[0].id
-            add_attacker(state, action.source, defender)
+            ref = action.targets[0]
+            if ref.kind == "player":
+                add_attacker(state, action.source, ref.id)
+            else:
+                # A planeswalker. Its controller is the defending player
+                # (506.2), so `attackers[oid]` still records a player and every
+                # existing read of it stays true.
+                walker = state.objects.get(ref.id)
+                if walker is not None:
+                    add_attacker(
+                        state, action.source, walker.controller, planeswalker=ref.id
+                    )
             return  # the decision stays open for more attackers
         state.pending_decision = None
-        finish_attackers(state)
+        self._run(finish_attackers(state))
 
     def _dispatch_blockers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state
@@ -187,6 +211,15 @@ class Game:
         # a landfall trigger with an intervening-if that counts land drops this
         # turn has to see the post-increment value.
         state.players[pid].lands_played += 1
+        # A modal DFC played as its land half shows that face from the moment it
+        # arrives, and the flag is set *before* the move so the enters-the-
+        # battlefield replacements are read off the land rather than off the
+        # spell -- Malakir Mire enters tapped, and Malakir Rebirth does not enter
+        # at all. `reset_permanent_state` deliberately leaves this flag alone, so
+        # unlike `transformed` it survives the arrival with no second write.
+        if action.second_face:
+            state.objects[oid].showing_second_face = True
+            card = state.card_of(state.objects[oid])
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
@@ -203,6 +236,29 @@ class Game:
         oid = action.source
         obj = state.objects[oid]
         card = state.card_of(obj)
+        # Which face is being cast is chosen as the spell is announced (601.2a),
+        # so it is settled here, before anything reads a cost or a target list.
+        #
+        # Rebound locally rather than flagging the object: everything below is
+        # the second face's -- price, X, modes, splices, purpose -- and the
+        # object must not start showing that face until the spell is actually on
+        # the stack, because every `return` between here and `push_spell` is a
+        # cast that did not happen.
+        if action.second_face and card.second_face is not None:
+            card = state.registry.get(card.second_face)
+        # Fused: one spell whose cost, targets and effects are both halves'.
+        # Built here the same way legality built it to price the line, so the
+        # two cannot disagree about what is being cast.
+        elif action.fused and card.second_face is not None:
+            import dataclasses
+
+            face = state.registry.get(card.second_face)
+            card = dataclasses.replace(
+                card,
+                name=f"{card.name} // {face.name}",
+                mana_cost=card.mana_cost.plus(face.mana_cost),
+                targets=tuple(card.targets) + tuple(face.targets),
+            )
         from_command = obj.zone is Zone.COMMAND
         from .costs import commander_cost, cost_reduction, spell_purpose
 
@@ -228,10 +284,35 @@ class Game:
             cost = card.flashback.mana
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
+        elif action.bestowed and card.bestow is not None:
+            cost = card.bestow
+        elif action.mutated and card.mutate is not None:
+            cost = card.mutate
+        elif action.alternative and card.alternative_cost is not None:
+            # Prowl and spectacle. The condition that let this line be offered
+            # is not re-checked: legality asked it a moment ago, and a spell
+            # whose price changed between being offered and being paid is the
+            # bug `spell_purpose` exists to prevent elsewhere.
+            cost = card.alternative_cost
+        elif action.face_down:
+            from .legality import MORPH_COST
+
+            cost = MORPH_COST
+        elif action.foretold and card.foretell is not None:
+            cost = card.foretell
+        elif action.overloaded and card.overload is not None:
+            cost = card.overload
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
         else:
             cost = card.mana_cost
+
+        # Convoke and delve. Netted into `extra` alongside the commander tax
+        # and emerge's sacrifice, so it goes through the same clamp: `pay`
+        # floors the generic part at zero, and no amount of convoking makes a
+        # spell free of its coloured pips.
+        if action.pay_generic and card.pay_generic_with is not None:
+            extra -= action.pay_generic
 
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
@@ -242,7 +323,9 @@ class Game:
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
-        modes = yield from self._ask_modes(pid, card.name, card.cast_time_modes)
+        modes = yield from self._ask_modes(
+            pid, card.name, card.cast_time_modes, kicked=action.kicked
+        )
 
         ok = yield from pay(
             state,
@@ -252,6 +335,10 @@ class Game:
             x=x,
             extra_generic=extra,
             purpose=spell_purpose(card),
+            # Sunburst and converge. The spell is what the colours are recorded
+            # on, and this is the only moment they exist: `spend` decrements the
+            # pool and one blue mana is then indistinguishable from another.
+            record_colors_on=oid,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
@@ -279,9 +366,57 @@ class Game:
         if action.emerge_oid is not None:
             sacrifice_object(state, action.emerge_oid)
 
+        # Convoke and delve, for the same reason and at the same moment: the
+        # creature that tapped for mana above may still be convoked, which is
+        # wrong, so the tap is charged *after* payment and only untapped
+        # creatures are eligible. Expressed as an ordinary `Cost` so the player
+        # picks which ones, through the machinery every other selector cost
+        # already uses.
+        if action.pay_generic and card.pay_generic_with is not None:
+            if card.pay_generic_with == "tap_creatures":
+                spend = Cost(
+                    tap_permanents={
+                        "controller": "you",
+                        "types": ["Creature"],
+                        "tapped": False,
+                        "count": action.pay_generic,
+                    }
+                )
+            else:
+                spend = Cost(
+                    exile_from_graveyard={
+                        "controller": "you",
+                        "count": action.pay_generic,
+                        "exclude_self": True,
+                    }
+                )
+            ok = yield from pay(state, pid, spend, oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
+        # The non-mana half of an additional cost -- casualty's sacrifice,
+        # Deadly Dispute's artifact. Paid after the mana (rule 601.2g), the same
+        # order emerge's sacrifice and retrace's discard use, so a creature that
+        # tapped for mana can still be the one that is eaten.
+        if action.additional_times and card.additional_cost is not None:
+            for _ in range(action.additional_times):
+                ok = yield from pay(
+                    state, pid, card.additional_cost.without_mana(), oid
+                )
+                if not ok:  # pragma: no cover - legality already proved payability
+                    return
+            obj.cast_additional = action.additional_times
+
         if from_command:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
+
+        # Splice (702.47a): "as you cast an Arcane spell, you may reveal this
+        # card from your hand and pay its splice cost". Offered here, after the
+        # host's own costs and before it goes on the stack, which is where the
+        # printed line puts it -- and the cards are only *revealed*, so they
+        # stay in hand and can be spliced again next turn.
+        spliced = yield from self._ask_splices(pid, card, oid)
 
         item = stack.push_spell(
             state,
@@ -292,6 +427,13 @@ class Game:
             kicked=action.kicked,
             evoked=action.evoked,
             flashback=action.flashback,
+            overloaded=action.overloaded,
+            spliced=spliced,
+            face_down=action.face_down,
+            second_face=action.second_face,
+            fused=action.fused,
+            bestowed=action.bestowed,
+            mutated=action.mutated,
             modes=modes,
         )
         triggers.fire(
@@ -302,7 +444,10 @@ class Game:
             oid=oid,
             spell_oid=oid,
             sid=item.sid,
-            card=card.id,
+            # `item.def_id`, not the `card` read at the top of this method: a
+            # disturb cast turns the card over inside `push_spell`, and the log
+            # has to name the face that was actually cast.
+            card=item.def_id,
             kicked=1 if action.kicked else 0,
         )
 
@@ -311,6 +456,11 @@ class Game:
         oid = action.source
         card = state.card(oid)
         ability = card.abilities[action.ability_index]
+        # Forecast's "only once each turn" counts *activations*, and this is the
+        # moment one happens. Counted before the cost is paid, so an activation
+        # that strands mid-payment still spends the turn's allowance -- the same
+        # reading `resolutions_this_turn` takes of its own event.
+        state.turn_ledger.activated(oid, action.ability_index)
 
         x = 0
         if ability.cost is not None and ability.cost.mana.x_count:
@@ -395,8 +545,83 @@ class Game:
             )
         )
 
+    def _turn_face_up(self, pid: int, obj) -> Generator[Any, list[int], None]:
+        """Pay the price and reveal what was underneath (707.9a, 701.34c).
+
+        Which price is *how it got there*: a card cast face down for morph turns
+        up for its morph cost, and a manifested creature card for its printed
+        one. The characteristics cache is dropped because everything about the
+        permanent changes at once -- it stops being a 2/2 with no abilities and
+        becomes whatever the card says.
+        """
+        from .costs import pay
+        from .objects import PLUS_ONE
+        from .primitives import add_counters
+
+        state = self.state
+        card = state.card_of(obj)
+        cost = card.morph if card.morph is not None else card.mana_cost
+        ok = yield from pay(state, pid, Cost(mana=cost), obj.oid)
+        if not ok:  # pragma: no cover - legality already proved payability
+            return
+        obj.face_down = False
+        # The shell is gone, and the ward went with it: the card underneath is
+        # face up now and has whatever abilities it prints.
+        obj.cloaked = False
+        obj.revealed_to.clear()
+        state.bump_chars()
+        if card.morph_counter:
+            # Megamorph (702.109a), and the only difference between the two
+            # words.
+            add_counters(state, obj.oid, PLUS_ONE, 1, source=obj.oid)
+        state.emit("turned_face_up", player=pid, source=obj.oid, card=card.id)
+
+    def _ask_splices(
+        self, pid: int, card, oid: int
+    ) -> Generator[Any, list[int], tuple[str, ...]]:
+        """Offer every spliceable card in hand, one at a time.
+
+        One at a time because each is its own "you may pay", and several may be
+        spliced onto one spell -- so this is a loop of yes/no questions rather
+        than a subset, and the order they are accepted in is the order their
+        effects run.
+
+        The cards are **revealed, not spent**: they stay in hand, which is the
+        whole economy of the mechanic and the thing a naive implementation
+        loses by discarding them.
+        """
+        from .costs import can_pay, pay
+        from .effects.context import EffectContext, ask_yes_no
+
+        state = self.state
+        chosen: list[str] = []
+        candidates = [
+            other
+            for other in list(state.players[pid].hand)
+            if other != oid and state.card(other).splice is not None
+        ]
+        if not candidates:
+            return ()
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        for other in candidates:
+            spliced_card = state.card(other)
+            if spliced_card.splice_onto not in card.subtypes:
+                continue
+            price = Cost(mana=spliced_card.splice)
+            if not can_pay(state, pid, price, other):
+                continue
+            if not (yield from ask_yes_no(
+                ctx, f"Splice {spliced_card.name} onto {card.name}?", pid
+            )):
+                continue
+            if not (yield from pay(state, pid, price, other)):
+                continue
+            state.emit("spliced", player=pid, source=other, card=spliced_card.id, onto=oid)
+            chosen.append(spliced_card.id)
+        return tuple(chosen)
+
     def _ask_modes(
-        self, pid: int, name: str, spec
+        self, pid: int, name: str, spec, *, kicked: bool = False
     ) -> Generator[Any, list[int], tuple[int, ...]]:
         """Which mode, asked as the spell or ability is put on the stack.
 
@@ -418,10 +643,36 @@ class Game:
         modes = list(spec.get("modes") or [])
         if not modes:
             return ()
-        ctx = EffectContext(state=self.state, controller=pid, source_oid=None, source_name=name)
+        ctx = EffectContext(
+            state=self.state,
+            controller=pid,
+            source_oid=None,
+            source_name=name,
+            # Entwine's `all_if` reads it, and this is the only place it can be
+            # known: the flag reaches the object at resolution, and by then the
+            # modes have been answered and recorded on the stack item.
+            kicked=kicked,
+        )
         count = evaluate_value(ctx, spec.get("count", 1))
+        from .effects.conditions import evaluate as evaluate_condition
+
+        if (gate := spec.get("all_if")) is not None and evaluate_condition(ctx, gate):
+            count = len(modes)
+        # "If you control a commander as you cast this spell, you may choose
+        # both instead." Applied here as well as in `op_choose_mode`, and this
+        # is the copy that matters: a spell whose whole effect tree is one
+        # top-level `choose_mode` is answered *here* (601.2b) and never reaches
+        # the op at all. Akroma's Will is exactly that shape, so the option
+        # living only in the op was dead code for the card it was built for --
+        # the spell compiled, played, cleared every gate, and silently chose
+        # one mode.
+        up_to = None
+        if (more := spec.get("up_to_if")) is not None and evaluate_condition(
+            ctx, more.get("condition")
+        ):
+            up_to = evaluate_value(ctx, more.get("count", len(modes)))
         labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count))
+        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count), up_to)
         return tuple(chosen)
 
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
@@ -523,9 +774,13 @@ class Game:
                 return
 
             if state.pending_triggers:
-                triggers.drain_to_stack(state)
+                # Set before the drain, not after: a trigger that stops to ask
+                # for its targets suspends the loop here, and the resumption
+                # comes back through `apply` rather than through this branch.
                 state.passes_in_row = 0
                 state.priority_idx = state.active_idx
+                if not self._run(triggers.drain_to_stack(state)):
+                    return
                 continue
 
             if not state.step_started:
@@ -600,6 +855,13 @@ def _only_pass_or_mana(state: GameState, options: list[Action], player) -> bool:
             seen_pass = True
             continue
         if action.kind is not ActionKind.ACTIVATE or action.source is None:
+            return False
+        obj = state.objects.get(action.source)
+        if obj is not None and obj.face_down:
+            # Turning a permanent face up is not a mana ability, and it does not
+            # index into the hidden card's abilities at all -- it borrows index
+            # 0 because a face-down permanent has none. Auto-passing past it
+            # would take the decision away, so this window is a real one.
             return False
         ability = state.card(action.source).abilities[action.ability_index]
         if not ability.is_mana_ability:

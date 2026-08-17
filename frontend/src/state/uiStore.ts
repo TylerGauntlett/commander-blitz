@@ -62,16 +62,25 @@ function storedSpeed(): Speed {
 }
 
 /**
- * Sound starts off.
+ * Sound starts on.
  *
- * A page that makes noise before being asked is a bad guest, browsers block
- * autoplay before a gesture anyway, and the e2e suite would otherwise be
- * synthesising audio on every run.
+ * It used to start off, on the reasoning that a page making noise before being
+ * asked is a bad guest. The cost of that was that essentially nobody ever heard
+ * the game: every impact, every death toll and every one of the gesture voices
+ * that make the board feel responsive was behind a toggle in the tool strip
+ * that gave no hint there was anything to turn on.
+ *
+ * The original worry is handled anyway, and not by this flag. Browsers park an
+ * `AudioContext` until a user gesture, and `audio/sfx.ts` builds one lazily on
+ * the first sound -- so nothing can make a noise before the player has clicked
+ * something regardless of what this returns. The e2e suite mutes explicitly.
  */
 function storedMuted(): boolean {
   try {
-    return localStorage.getItem(MUTED_KEY) !== "off";
+    return localStorage.getItem(MUTED_KEY) === "on";
   } catch {
+    // No storage at all -- private mode, or vitest with no DOM. Stay quiet:
+    // a test run is the one context where silence is the safer default.
     return true;
   }
 }

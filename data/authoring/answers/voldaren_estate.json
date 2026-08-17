@@ -1,0 +1,141 @@
+{
+  "card": {
+    "id": "voldaren_estate",
+    "name": "Voldaren Estate",
+    "oracle_text": "{T}: Add {C}.\n{T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.\n{5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a Vampire spell.",
+        "is_mana_ability": true,
+        "mana_restriction": [
+          "Vampire"
+        ],
+        "cost": {
+          "tap": true,
+          "pay_life": 1
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "label": "W",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "U",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "B",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "R",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "G",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control.",
+        "cost": {
+          "mana": "{5}",
+          "tap": true,
+          "mana_reduction": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "blood_token",
+            "amount": {
+              "const": 1
+            },
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "hand_size": {
+      "0": 0
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "tokens": {
+      "id": "blood_token",
+      "count": 0
+    }
+  }
+}

@@ -10,12 +10,14 @@ UX is still "select all, confirm".
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .characteristics import (
     attack_compelled,
     attack_forbidden,
+    block_forbidden,
     block_restrictions,
     chars,
     matches_static,
@@ -64,6 +66,11 @@ def can_attack(state: GameState, oid: int) -> bool:
     if obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
         return False
     if attack_forbidden(state, oid):
+        return False
+    # Detain: "can't attack or block until your next turn". Read here rather
+    # than through a static, because it is written onto the one permanent and
+    # outlives the turn that wrote it.
+    if obj.detained_by is not None:
         return False
     combat = state.combat
     return combat is None or oid not in combat.attackers
@@ -120,6 +127,52 @@ def discharge_attack_requirements(state: GameState) -> None:
         obj.must_attack = None
 
 
+def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
+    """Creatures of ``defender`` that must block something and are not.
+
+    The mirror of :func:`unmet_attack_requirements`, and "…if able" is the same
+    whole second half: a requirement never makes an illegal block legal, so a
+    creature that was tapped, or that cannot block the attacker at all, owes
+    nothing. That is why every candidate is run through `can_block` -- provoke
+    untaps its victim precisely because a tapped creature would otherwise be
+    excused.
+
+    A creature blocking *something else* has still not met this requirement:
+    the obligation names one attacker, and rule 509.1c requires the declaration
+    to satisfy the maximum number of requirements it can.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    unmet: list[int] = []
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.must_block is None or obj.controller != defender:
+            continue
+        attacker = obj.must_block
+        if attacker not in combat.attackers or attacker in combat.removed:
+            continue
+        if combat.blockers.get(oid) == attacker:
+            continue
+        if not can_block(state, oid, attacker, defender, ignore_existing=True):
+            continue
+        unmet.append(oid)
+    return unmet
+
+
+def discharge_block_requirements(state: GameState) -> None:
+    """Spend every block requirement once blockers are locked in.
+
+    Unconditionally, whether or not it was met -- "if able" means a creature
+    that could not block owed nothing, and leaving the flag set would compel
+    the *next* combat, which no printed provoke says.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is not None:
+            obj.must_block = None
+
+
 def legal_attackers(state: GameState) -> list[int]:
     return [oid for oid in state.battlefield if can_attack(state, oid)]
 
@@ -128,10 +181,42 @@ def legal_defenders(state: GameState) -> list[int]:
     return [pid for pid in state.alive() if pid != state.active_player]
 
 
-def add_attacker(state: GameState, oid: int, defender: int) -> bool:
+def legal_planeswalker_defenders(state: GameState) -> list[int]:
+    """Planeswalkers that may be attacked, in deterministic order (506.2).
+
+    Every planeswalker controlled by a player who could be attacked. Its
+    controller is the defending player, which is why attacking one does not
+    need its own notion of "who is being attacked" -- `attackers[oid]` still
+    answers that, and still truthfully.
+    """
+    from .characteristics import chars
+
+    defenders = set(legal_defenders(state))
+    return [
+        oid
+        for oid in state.battlefield
+        if (obj := state.objects.get(oid)) is not None
+        and obj.controller in defenders
+        and "Planeswalker" in chars(state, oid).types
+    ]
+
+
+def add_attacker(
+    state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
+) -> bool:
     combat = state.combat
     if combat is None or not can_attack(state, oid) or defender not in legal_defenders(state):
         return False
+    if planeswalker is not None:
+        if planeswalker not in legal_planeswalker_defenders(state):
+            return False
+        obj = state.objects.get(planeswalker)
+        if obj is None or obj.controller != defender:
+            # The planeswalker and the player have to agree, or `attackers[oid]`
+            # -- which everything else reads as "the defending player" -- would
+            # name someone this creature is not attacking.
+            return False
+        combat.attacking_planeswalker[oid] = planeswalker
     combat.attackers[oid] = defender
     return True
 
@@ -139,13 +224,22 @@ def add_attacker(state: GameState, oid: int, defender: int) -> bool:
 def remove_attacker(state: GameState, oid: int) -> None:
     if state.combat is not None:
         state.combat.attackers.pop(oid, None)
+        state.combat.attacking_planeswalker.pop(oid, None)
 
 
-def finish_attackers(state: GameState) -> None:
-    """Lock in the attack: tap the attackers and fire their triggers."""
+def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
+    """Lock in the attack: form bands, tap the attackers and fire their triggers.
+
+    A generator because of the bands, and only because of them: 702.21b puts the
+    declaration "as a player declares attackers", so it belongs here rather than
+    anywhere later -- and the question is skipped entirely when nobody is
+    attacking with banding, which is every combat in every deck that does not
+    play a fifth-edition white creature.
+    """
     combat = state.combat
     if combat is None:
         return
+    yield from _declare_bands(state)
     combat.attackers_declared = True
     discharge_attack_requirements(state)
     for oid in list(combat.attackers):
@@ -154,7 +248,12 @@ def finish_attackers(state: GameState) -> None:
             tap_permanent(state, oid)
 
     if combat.attackers:
-        state.emit(
+        # `fire`, not `emit`: "whenever you attack" listens for this, and the
+        # event had been recorded in the log with nothing subscribed to it. Once
+        # per declaration whatever the number of attackers, which is the whole
+        # difference from the per-creature ATTACKS fired just below.
+        fire(
+            state,
             EventType.ATTACKERS_DECLARED,
             player=state.active_player,
             attackers=sorted(combat.attackers),
@@ -179,7 +278,24 @@ def finish_attackers(state: GameState) -> None:
 # ----------------------------------------------------------------------
 
 
-def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: int) -> bool:
+def can_block(
+    state: GameState,
+    blocker_oid: int,
+    attacker_oid: int,
+    defender: int,
+    *,
+    ignore_existing: bool = False,
+) -> bool:
+    """Whether this creature may be declared as a blocker of this attacker.
+
+    ``ignore_existing`` skips the "it is already blocking something" check, and
+    exists for block *requirements*. Rule 509.1c asks whether a declaration
+    satisfies the maximum number of requirements it can, which is a question
+    about what the creature is **able** to do -- and a creature that chose to
+    block a different attacker was able to block this one. Asking plain
+    `can_block` there would let any provoked creature excuse itself by blocking
+    anything else at all, which is the one thing provoke exists to prevent.
+    """
     combat = state.combat
     if combat is None or attacker_oid not in combat.attackers:
         return False
@@ -196,7 +312,16 @@ def can_block(state: GameState, blocker_oid: int, attacker_oid: int, defender: i
     bc = chars(state, blocker_oid)
     if "Creature" not in bc.types:
         return False
-    if blocker_oid in combat.blockers:
+    if not ignore_existing and blocker_oid in combat.blockers:
+        return False
+
+    # "This creature can't block." Unleash, and the mirror of `attack_forbidden`
+    # -- checked here rather than in `blocks_valid` because it is a fact about
+    # one creature, not about the shape of the whole declaration.
+    if block_forbidden(state, blocker_oid):
+        return False
+
+    if blocker.detained_by is not None:
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked
@@ -324,10 +449,37 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
         return []
     out: list[tuple[int, int]] = []
     for blocker_oid in state.battlefield:
+        # A block requirement has to narrow what is *offered*, not merely what
+        # can be finished -- which is where it stops being a mirror of
+        # `must_attack`. Attacking is not exclusive, so a creature that must
+        # attack can always be added to a declaration that already has others
+        # in it, and withholding "Done attacking" is enough. Blocking is
+        # exclusive: a provoked creature that blocks something else first has
+        # no way back, `legal_blocks` then offers nothing, and the deadlock
+        # escape in `legality._blocker_actions` hands out "Done blocking"
+        # anyway -- so the requirement would be evadable by ignoring it early.
+        required = _required_block(state, blocker_oid, defender)
         for attacker_oid in sorted(combat.attackers):
+            if required is not None and attacker_oid != required:
+                continue
             if can_block(state, blocker_oid, attacker_oid, defender):
                 out.append((blocker_oid, attacker_oid))
     return out
+
+
+def _required_block(state: GameState, blocker_oid: int, defender: int) -> int | None:
+    """The attacker this creature must block, if it must and is able to."""
+    obj = state.objects.get(blocker_oid)
+    if obj is None or obj.must_block is None or obj.controller != defender:
+        return None
+    combat = state.combat
+    attacker = obj.must_block
+    if combat is None or attacker not in combat.attackers or attacker in combat.removed:
+        return None
+    if not can_block(state, blocker_oid, attacker, defender, ignore_existing=True):
+        # "…if able". It owes nothing, so it is free to block whatever it likes.
+        return None
+    return attacker
 
 
 def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
@@ -390,6 +542,12 @@ def blocks_valid(state: GameState, defender: int) -> bool:
     combat = state.combat
     if combat is None:
         return True
+    # Provoke and the lure family. Enforced here rather than by refusing to
+    # offer anything, for the same reason menace is: the declaration is legal
+    # or not *as a whole*, and a player part-way through building one has not
+    # broken a rule yet -- they have simply not finished.
+    if unmet_block_requirements(state, defender):
+        return False
     for attacker_oid, attacker_defender in combat.attackers.items():
         if attacker_defender != defender:
             continue
@@ -446,6 +604,7 @@ def finish_blockers(state: GameState) -> None:
     for defender in set(combat.attackers.values()):
         drop_illegal_blocks(state, defender)
     combat.blockers_declared = True
+    discharge_block_requirements(state)
 
     # Damage assignment order is sorted by effective toughness ascending -- the
     # engine never asks the attacking player to order blockers.  Documented
@@ -470,6 +629,34 @@ def finish_blockers(state: GameState) -> None:
                 blocker=blocker_oid,
                 attacker=combat.blockers[blocker_oid],
             )
+
+    # Rule 509.1h, from the *attacker's* side. `BLOCKS` is one event per
+    # blocker and says nothing to the creature being blocked -- an attacker
+    # blocked by three creatures sees three unrelated events about somebody
+    # else, and an attacker blocked by nobody sees none at all.
+    #
+    # Outside the `if combat.blockers` guard on purpose: the unblocked half is
+    # the case where that guard is false, and frenzy is printed for exactly it.
+    for attacker_oid in sorted(combat.attackers):
+        if attacker_oid in combat.removed:
+            continue
+        obj = state.objects.get(attacker_oid)
+        if obj is None:
+            continue
+        blocking_it = [b for b in combat.block_order.get(attacker_oid, []) if b in combat.blockers]
+        fire(
+            state,
+            EventType.BECAME_BLOCKED if blocking_it else EventType.ATTACKED_UNBLOCKED,
+            player=obj.controller,
+            source=attacker_oid,
+            attacker=attacker_oid,
+            oid=attacker_oid,
+            card=state.card_of(obj).id,
+            # Rampage is "for each creature blocking it **beyond the first**",
+            # so the count is the number and the card does the arithmetic.
+            blockers=len(blocking_it),
+            defender=combat.attackers[attacker_oid],
+        )
 
 
 def _effective_toughness(state: GameState, oid: int) -> int:
@@ -507,8 +694,17 @@ def _deals_damage_this_step(state: GameState, oid: int, first_strike_step: bool)
     return double or not first
 
 
-def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
-    """Collect every assignment, then apply them all at once."""
+def deal_combat_damage(
+    state: GameState, *, first_strike_step: bool
+) -> Generator[Any, list[int], None]:
+    """Collect every assignment, then apply them all at once.
+
+    A generator because of banding, and only because of it: 702.21 moves the
+    choice of a creature's **damage assignment order** to the other player, and
+    a choice has to be asked. Every combat without banding in it asks nothing
+    and behaves exactly as it did -- `_ask_order` returns immediately when there
+    is nothing to order.
+    """
     combat = state.combat
     if combat is None:
         return
@@ -520,6 +716,19 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
             continue
         if not _deals_damage_this_step(state, attacker_oid, first_strike_step):
             continue
+        # 702.21: a blocking creature with banding takes this order away from
+        # the attacking player. The automatic sort *is* the attacker's choice
+        # made silently, so this is the whole of banding's defensive half.
+        chooser = _order_chooser(state, attacker_oid)
+        if chooser is not None:
+            blockers = [
+                b for b in combat.block_order.get(attacker_oid, []) if _in_combat(state, b)
+            ]
+            order = yield from _ask_order(
+                state, chooser, attacker_oid,
+                blockers, f"Order the blockers of {state.card(attacker_oid).name}",
+            )
+            combat.block_order[attacker_oid] = order
         assignments.extend(_attacker_assignments(state, attacker_oid))
 
     for blocker_oid in sorted(combat.blockers):
@@ -531,10 +740,20 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
         if not _deals_damage_this_step(state, blocker_oid, first_strike_step):
             continue
         power = chars(state, blocker_oid).power
-        if power > 0:
-            assignments.append(
-                DamageAssignment(source=blocker_oid, to_object=attacker_oid, amount=power)
+        if power <= 0:
+            continue
+        # A creature blocking a **band** has several attackers to divide its
+        # damage between, and 702.21 gives that order to the attacking player.
+        # `band_of` returns a band of one for everything else, so the ordinary
+        # case falls straight through to the single assignment below.
+        band = [b for b in combat.band_of(attacker_oid) if _in_combat(state, b)]
+        if len(band) > 1:
+            attacking = state.objects[attacker_oid].controller
+            band = yield from _ask_order(
+                state, attacking, blocker_oid, band,
+                f"Order the band for {state.card(blocker_oid).name}'s damage",
             )
+        assignments.extend(_divide(state, blocker_oid, power, band))
 
     for assignment in assignments:
         if assignment.to_player is not None:
@@ -548,6 +767,137 @@ def deal_combat_damage(state: GameState, *, first_strike_step: bool) -> None:
 
     if first_strike_step:
         combat.first_strike_done = True
+
+
+def _declare_bands(state: GameState) -> Generator[Any, list[int], None]:
+    """"One or more attacking creatures with banding and up to one without" (702.21b).
+
+    Asked as **two** questions rather than one, because that sentence is two
+    constraints and `ask_objects` expresses each of them exactly: any number
+    from the creatures with banding, then at most one from the creatures
+    without. A single question over all attackers could not say "up to one
+    without" at all, and validating the answer afterwards would mean offering a
+    choice the engine then refuses.
+
+    Looped, because a player may declare more than one band. The loop ends when
+    they stop picking, which is also how they decline to band at all.
+    """
+    from .effects.context import EffectContext, ask_objects
+
+    combat = state.combat
+    if combat is None:
+        return
+    pid = state.active_player
+    ctx = EffectContext(state=state, controller=pid, source_oid=None)
+    banded: set[int] = set()
+    for _ in range(len(combat.attackers)):
+        pool = [
+            oid
+            for oid in sorted(combat.attackers)
+            if oid not in banded
+            and Keyword.BANDING.value in chars(state, oid).keywords
+        ]
+        if not pool:
+            return
+        members = yield from ask_objects(
+            ctx, pool, 0, len(pool), "Form a band with", pid, purpose="banding"
+        )
+        if not members:
+            return
+        # "…and up to one attacking creature without banding", which has to be
+        # attacking the same player: a band is blocked as a unit, and a unit
+        # spread across two defenders is not one.
+        defender = combat.attackers[members[0]]
+        others = [
+            oid
+            for oid in sorted(combat.attackers)
+            if oid not in banded
+            and oid not in members
+            and combat.attackers[oid] == defender
+            and Keyword.BANDING.value not in chars(state, oid).keywords
+        ]
+        tagalong: list[int] = []
+        if others:
+            tagalong = yield from ask_objects(
+                ctx, others, 0, 1, "Add one creature without banding to the band",
+                pid, purpose="banding",
+            )
+        band = [*members, *tagalong]
+        combat.bands.append(band)
+        banded.update(band)
+        state.emit("band_declared", player=pid, attackers=sorted(band))
+
+
+def _order_chooser(state: GameState, attacker_oid: int) -> int | None:
+    """Who picks this attacker's damage assignment order, if not the engine.
+
+    702.21: a creature with banding on the **blocking** side takes the choice
+    away from the attacking player and gives it to its own controller. The
+    engine's automatic sort is that choice made silently on the attacker's
+    behalf, so banding's whole content here is "ask, and ask the other player".
+
+    ``None`` means nobody is asked and the automatic order stands, which is
+    every combat without banding in it.
+    """
+    combat = state.combat
+    assert combat is not None
+    for blocker_oid in combat.block_order.get(attacker_oid, []):
+        if not _in_combat(state, blocker_oid):
+            continue
+        if Keyword.BANDING.value in chars(state, blocker_oid).keywords:
+            obj = state.objects.get(blocker_oid)
+            return obj.controller if obj is not None else None
+    return None
+
+
+def _ask_order(
+    state: GameState, chooser: int, subject: int, options: list[int], prompt: str
+) -> Generator[Any, list[int], list[int]]:
+    """Ask a player to order some creatures for damage assignment.
+
+    Returns the chosen order followed by anything not chosen, so a short answer
+    is still a complete order and the caller never has to handle a partial one.
+    `ask_objects` records the order the options were taken in, which is exactly
+    what a damage assignment order is -- the engine has had the concept all
+    along and has simply been sorting it by effective toughness.
+    """
+    from .effects.context import EffectContext, ask_objects
+
+    if len(options) < 2:
+        return options
+    ctx = EffectContext(state=state, controller=chooser, source_oid=subject)
+    picked = yield from ask_objects(
+        ctx, options, 0, len(options), prompt, chooser, purpose="damage_order"
+    )
+    return [*picked, *[oid for oid in options if oid not in picked]]
+
+
+def _divide(
+    state: GameState, source_oid: int, power: int, targets: list[int]
+) -> list[DamageAssignment]:
+    """Lethal to each in order, the way an attacker already divides among blockers.
+
+    Rule 510.1c is one rule, not two: whoever is assigning, they must give each
+    creature lethal damage before assigning any to the next. So this is the same
+    walk `_attacker_assignments` makes, factored out and pointed the other way --
+    a blocker dividing among a band it is blocking.
+    """
+    deathtouch = Keyword.DEATHTOUCH.value in chars(state, source_oid).keywords
+    out: list[DamageAssignment] = []
+    remaining = power
+    for oid in targets:
+        if remaining <= 0:
+            break
+        lethal = 1 if deathtouch else max(1, _effective_toughness(state, oid))
+        assign = min(remaining, lethal)
+        out.append(DamageAssignment(source=source_oid, to_object=oid, amount=assign))
+        remaining -= assign
+    if remaining > 0 and out:
+        last = out[-1]
+        out[-1] = DamageAssignment(
+            source=last.source, to_object=last.to_object, amount=last.amount + remaining
+        )
+    return out
 
 
 def _in_combat(state: GameState, oid: int) -> bool:
@@ -571,9 +921,27 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
     defender = combat.attackers[attacker_oid]
 
     blockers = [b for b in combat.block_order.get(attacker_oid, []) if _in_combat(state, b)]
-    was_blocked = bool(combat.block_order.get(attacker_oid))
+    # 702.21e: a band is blocked as a unit. A member nobody blocked is still
+    # blocked if any of its band was, so it deals no damage to the player --
+    # which is the whole defensive value of blocking a band, and the reason a
+    # band is a unit rather than a convenience.
+    was_blocked = any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
 
     if not was_blocked:
+        # 508.1: a creature attacking a planeswalker that is still there deals
+        # its damage to the planeswalker instead of to its controller. If the
+        # planeswalker has already left -- burned down in response, or bounced
+        # -- the attacker deals no combat damage at all rather than falling
+        # through to the player, which is 506.4c and the whole risk of the
+        # attack.
+        target = combat.attacking_planeswalker.get(attacker_oid)
+        if target is not None:
+            obj = state.objects.get(target)
+            if obj is None or not obj.on_battlefield:
+                return []
+            return [
+                DamageAssignment(source=attacker_oid, to_object=target, amount=power)
+            ]
         return [DamageAssignment(source=attacker_oid, to_player=defender, amount=power)]
 
     out: list[DamageAssignment] = []

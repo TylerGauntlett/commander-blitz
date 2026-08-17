@@ -78,6 +78,14 @@ class GameBuilder:
             obj.entered_turn = self.state.turn if sick else self.state.turn - 1
             if counters:
                 obj.counters = dict(counters)
+            # A permanent placed here has to look like one that *entered*, and
+            # for a planeswalker that means its starting loyalty. Placed without
+            # it, the zero-loyalty state-based action bins it the moment the
+            # game starts -- which is correct behaviour reading a board that was
+            # never legal.
+            loyalty = self.state.registry.get(card_id).loyalty
+            if loyalty is not None and "loyalty" not in obj.counters:
+                obj.counters["loyalty"] = loyalty
             self.state.battlefield.append(obj.oid)
         self.state.bump_chars()
         return self

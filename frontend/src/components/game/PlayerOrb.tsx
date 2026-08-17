@@ -85,6 +85,11 @@ interface PileProps {
   label: string;
   count: number;
   title?: string;
+  /**
+   * "Play with the top card of your library revealed." The library alone can
+   * carry one, and only when something on the battlefield reveals it.
+   */
+  topCard?: CardView | null;
 }
 
 /**
@@ -97,9 +102,15 @@ interface PileProps {
  * The library is the exception and stays a plain element -- it is hidden
  * information, and a control that does nothing when clicked is worse than no
  * control.
+ *
+ * Unless it is not hidden. With `topCard` set the pile names the card and
+ * hovering it fills the preview rail, which is the only way this mechanic pays
+ * for itself: Vampire Nocturnus is unpilotable if you cannot tell whether your
+ * team has flying before you declare attackers.
  */
-function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
+function ZonePile({ pid, zone, name, kind, label, count, title, topCard }: PileProps) {
   const setPeek = useUiStore((s) => s.setPeek);
+  const hover = useUiStore((s) => s.hover);
   const leaves = pileLeaves(count);
 
   const body = (
@@ -116,6 +127,7 @@ function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
         </span>
       </span>
       <span className="pile__label">{label}</span>
+      {topCard && <span className="pile__revealed">{topCard.name}</span>}
     </>
   );
 
@@ -123,6 +135,7 @@ function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
     "pile",
     count > 0 ? "" : "pile--empty",
     zone === null ? "pile--static" : "",
+    topCard ? "pile--revealed" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -130,10 +143,20 @@ function ZonePile({ pid, zone, name, kind, label, count, title }: PileProps) {
     className,
     "data-testid": `pile-${pid}-${name}`,
     "data-count": count,
-    title: title ?? `${label}: ${count}`,
+    "data-revealed": topCard?.name,
+    title: topCard
+      ? `Top of library, revealed: ${topCard.name}`
+      : (title ?? `${label}: ${count}`),
   };
 
-  if (zone === null) return <div {...shared}>{body}</div>;
+  if (zone === null) {
+    if (!topCard) return <div {...shared}>{body}</div>;
+    return (
+      <div {...shared} onMouseEnter={() => hover(topCard.oid)} onMouseLeave={() => hover(null)}>
+        {body}
+      </div>
+    );
+  }
   return (
     <button type="button" {...shared} onClick={() => setPeek({ pid, zone })}>
       {body}
@@ -498,6 +521,7 @@ export function PlayerOrb({
               label="Lib"
               count={player.library_count}
               title="Cards in library"
+              topCard={player.library_top}
             />
             <ZonePile
               pid={player.pid}

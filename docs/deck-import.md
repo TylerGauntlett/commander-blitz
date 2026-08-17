@@ -1,7 +1,8 @@
 # Importing a deck
 
 Paste a public Moxfield link on the setup screen and you get a playable deck.
-The engine hand-implements about 149 cards; a real Commander deck contains a
+The engine plays about 880 cards — 219 hand-written, the rest authored by the
+[card pipeline](card-authoring.md); a real Commander deck contains a
 hundred, most of which say something nobody has written rules for. So the deal
 this feature makes is:
 
@@ -37,7 +38,7 @@ adapter, not a second card pipeline.
 
 | | What it means |
 |---|---|
-| **native** | A hand-written card in `data/cards/`. Reused whole — real rules, existing art, and the id every precon already uses. An imported deck's Forests are `forest`. |
+| **native** | A card the engine already plays — hand-written in `data/cards/` or authored into `data/cards/auto/`. Reused whole: real rules, existing art, and the id every precon already uses. An imported deck's Forests are `forest`. |
 | **full** | Generated, and nothing was lost. Vanilla and french-vanilla creatures, basic lands, taplands, duals, Signets. |
 | **partial** | Generated, non-keyword rules text inert. Every simplification is listed. |
 
@@ -85,9 +86,19 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   Abundant Growth reads `Enchanted land has "{T}: Add one mana of any color."`
   and carries `produced_mana` for all five colours; lifting that would give the
   *Aura* a five-colour mana ability. Same trap as `keywords`.
-- **Conditional taplands** enter tapped unconditionally. Generating the *upgrade*
-  would quietly hand every imported deck a better mana base than it was built
-  with.
+- **A mana ability's rider** — the sentence after the mana, as on a painland —
+  is read only for "deals N damage to you", which is the shape 34 cards in the
+  catalog print. A rider it cannot read ("Put a depletion counter on this land",
+  "Spend this mana only to cast a creature spell") means the *whole line* is not
+  generated, rather than generated without its drawback. One line short is a
+  worse card, which is the safe direction; a painless painland is a better one,
+  which is not.
+- **Conditional taplands** are read for the three printed shapes that carry the
+  cycle — a basic land subtype test, a count of other lands, a count of basic
+  lands — so checklands, slowlands, fastlands and battle lands arrive as the
+  cards in the deck list. Any other shape enters tapped unconditionally.
+  Generating the *upgrade* would quietly hand every imported deck a better mana
+  base than it was built with.
 - **Variable power/toughness.** `*` reads as 0.
 - **Lands that produce nothing** are inert. This is the biggest playability risk
   in an import, so the report has a line for it: *"37 lands, but 3 of them do

@@ -13,7 +13,7 @@ from .events import GameEvent
 from .objects import GameObject
 from .player import PlayerState
 from .rng import Rng
-from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance
+from .structs import CombatState, DelayedTrigger, StackItem, TriggerInstance, TurnLedger
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.cards.registry import CardRegistry
@@ -94,6 +94,19 @@ class GameState:
     #: object would be wiped by `reset_permanent_state` on the way to the
     #: graveyard, which is exactly the moment it is needed.
     damage_ledger: dict[int, set[int]] = field(default_factory=dict)
+    #: Who struck the killing blow: victim oid -> the *most recent* thing to
+    #: damage it. Cleared with `damage_ledger`, which it shadows.
+    #:
+    #: Presentation only -- the UI captions a death "Killed by Ulamog" -- and it
+    #: is deliberately a second map rather than an ordering imposed on
+    #: `damage_ledger`, which is rules-facing (the `damaged_by` card filter reads
+    #: it) and must not change shape for the sake of a caption.
+    #:
+    #: Only meaningful when its victim's ledger entry has exactly one damager.
+    #: A gang block writes three sources and last-writer-wins would name an
+    #: arbitrary blocker, so `sba` declines to attribute in that case rather
+    #: than blaming one of them.
+    last_damager: dict[int, int] = field(default_factory=dict)
     #: "…for each card you've drawn this turn." (Kydele, Chosen of Kruphix.)
     #:
     #: player id -> how many cards they have drawn during the current turn,
@@ -107,6 +120,29 @@ class GameState:
     #: per-turn counter there, reset by the active player's own untap. This one
     #: cannot live by that rule, because you draw on other players' turns too.
     cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
+    #: "This ability triggers only once each turn." Keyed by
+    #: ``(source_oid, ability_index)`` -- per *permanent*, not per card, because
+    #: two Welcoming Vampires each get their own draw. Counted where triggers
+    #: are queued rather than where they resolve: the printed word is
+    #: "triggers", and a capped ability that queued and then fizzled has still
+    #: used its one for the turn.
+    #:
+    #: On the state beside `cards_drawn_this_turn` and for the same reason --
+    #: an ability can trigger on somebody else's turn, so this cannot live on
+    #: the active player.
+    triggers_this_turn: dict[tuple[int, int], int] = field(default_factory=dict)
+    #: "…if a creature died this turn", "…if you attacked this turn". See
+    #: `structs.TurnLedger`: the other per-turn tallies, folded from the event
+    #: stream in `emit` rather than counted at six separate primitives.
+    turn_ledger: TurnLedger = field(default_factory=TurnLedger)
+    #: Day / night (726). ``None`` until a daybound permanent makes it day, then
+    #: ``"day"`` or ``"night"`` for the rest of the game.
+    #:
+    #: On the *state* rather than on any player, because it is one designation
+    #: the whole table shares -- the same shape `turn` and `step` have, and the
+    #: reason daybound was called "a game-wide designated state" when it was
+    #: refused. There was no place to keep it; this is the place.
+    day_night: str | None = None
     max_turns: int = DEFAULT_MAX_TURNS
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
@@ -127,11 +163,47 @@ class GameState:
         return self.objects.get(oid)
 
     def card(self, oid: int) -> CardDef:
-        """The :class:`CardDef` behind an object id."""
-        return self.registry.get(self.objects[oid].def_id)
+        """The :class:`CardDef` behind an object id -- the face it is showing.
+
+        Delegates to :meth:`card_of` rather than reading `def_id` straight out
+        of the registry, because the two must not be able to disagree about
+        which card an object *is*. They did: `costs._sources_of` planned a mana
+        payment through `card_of` and `costs.activate_mana_ability` executed it
+        through here, so a modal DFC played as its land half was planned as a
+        land and paid as an instant -- and `abilities[0]` on a card with no
+        abilities is an IndexError, not a wrong answer.
+
+        The same seam every other "one helper, two callers" note in this repo is
+        about, and the same fix: one helper.
+        """
+        return self.card_of(self.objects[oid])
 
     def card_of(self, obj: GameObject) -> CardDef:
-        return self.registry.get(obj.def_id)
+        """The face this object is currently showing.
+
+        The one place transforming double-faced cards are implemented. Every
+        other reader of a card -- the characteristics layers, legality, combat,
+        the serializer -- goes through here, so a transformed permanent shows
+        its back face everywhere at once and none of them needed changing.
+        """
+        # Mutate (702.140b): a merged permanent **is** the card on top, plus the
+        # abilities of everything under it. Asked first and answered outright,
+        # because it is not a face of the printed card at all -- it is a card
+        # synthesised at merge time, and the printed `def_id` is only one of the
+        # several cards in the pile.
+        if obj.merged_card is not None:
+            return obj.merged_card
+        card = self.registry.get(obj.def_id)
+        # A second castable face -- adventure, aftermath, a split half -- is
+        # asked first, because it is the face the card is *currently being cast
+        # as* and that is a narrower window than being transformed. Nothing
+        # prints both, and if anything did, the spell on the stack is the more
+        # specific claim.
+        if obj.showing_second_face and card.second_face is not None:
+            return self.registry.get(card.second_face)
+        if obj.transformed and card.back_face is not None:
+            return self.registry.get(card.back_face)
+        return card
 
     def player(self, pid: int) -> PlayerState:
         return self.players[pid]
@@ -275,7 +347,74 @@ class GameState:
             data=data,
         )
         self.events.append(event)
+        self._tally(event)
         return event
+
+    def _tally(self, event: GameEvent) -> None:
+        """Fold one event into :attr:`turn_ledger`.
+
+        Every branch reads the event that was going to be logged anyway, so no
+        emitter had to change and none can route around it.  It runs while the
+        object the event is about is still in ``self.objects`` -- ``emit`` is
+        called synchronously from inside the zone change, before anything is
+        forgotten -- which is why the controller of a dead creature and the
+        tokenhood of a card reaching a graveyard are both still askable here and
+        neither needed adding to a payload.
+        """
+        from .events import EventType
+
+        ledger = self.turn_ledger
+        data = event.data
+        pid = event.player
+
+        if event.type == EventType.DIES:
+            if data.get("was_creature"):
+                obj = self.objects.get(data.get("oid"))
+                # The *controller*, not `event.player`, which is the owner:
+                # a creature stolen with `gain_control` and then killed died
+                # under the thief, and "a creature you controlled died" has to
+                # agree with who was attacking with it a moment earlier.
+                who = obj.controller if obj is not None else pid
+                if who is not None:
+                    ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
+        elif event.type == EventType.ATTACKERS_DECLARED:
+            if pid is not None:
+                ledger.attacked.add(pid)
+        elif event.type == EventType.DAMAGE_DEALT:
+            # Two shapes share this event, and they say which they are: `to` is
+            # "player" or "permanent".  Only the first is life loss, and on the
+            # second `player` is the *controller of the creature that was hit*,
+            # so counting it would charge a player for their own bear taking a
+            # Shock.
+            if data.get("to") == "player" and pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.damage_taken[pid] = ledger.damage_taken.get(pid, 0) + amount
+                # `life_lost` is *not* added here any more. `damage_player` now
+                # fires LIFE_LOST itself, so folding it from both events would
+                # count every burn spell twice -- and doing it only here was
+                # already wrong for infect, which deals damage to a player and
+                # costs them no life at all.
+        elif event.type == EventType.COMBAT_DAMAGE_TO_PLAYER:
+            # Prowl. Recorded here rather than at the primitive for the reason
+            # every other tally is, and read off *derived* subtypes while the
+            # creature is still on the battlefield -- by the time a prowl spell
+            # is cast the attacker may be dead, bounced, or no longer a Faerie.
+            from .characteristics import chars
+
+            attacker = data.get("source") or event.source
+            if attacker is not None and attacker in self.objects:
+                ledger.combat_damage_types.update(chars(self, attacker).subtypes)
+        elif event.type == EventType.LIFE_LOST:
+            if pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.SPELL_CAST:
+            if pid is not None:
+                ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
+        elif event.type == EventType.ZONE_CHANGE:
+            obj = self.objects.get(data.get("oid"))
+            if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
+                ledger.cards_to_graveyard += 1
 
     def bump_chars(self) -> None:
         """Invalidate the derived-characteristics cache."""

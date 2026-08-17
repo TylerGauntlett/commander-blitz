@@ -23,6 +23,7 @@ from automtg.engine.carddef import CardDef
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from automtg.engine.game import Game
 from automtg.engine.objects import PLUS_ONE
+from automtg.engine.primitives import lose_life
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
 from tests.conftest import GameBuilder
@@ -46,7 +47,16 @@ def expectations() -> dict:
 
 
 def all_cards(registry: CardRegistry) -> list[CardDef]:
-    return [card for card in registry if not card.is_token]
+    """Every card a game can actually put into play from a deck.
+
+    Tokens are excluded because nobody casts one. Back faces are excluded for
+    the same reason and a stronger one: a back face has no mana cost and is
+    never in a hand, a library or a deck -- it only ever exists as the face a
+    permanent that is already on the battlefield turned over to. Casting one is
+    not a thing that can happen, so "it cannot be cast" is not a defect.
+    ``TestTransformingCards`` covers them where they do exist.
+    """
+    return [card for card in registry if not card.is_token and card.front_face is None]
 
 
 def card_ids(registry: CardRegistry) -> list[str]:
@@ -120,13 +130,21 @@ def _answer(game: Game, decision: PendingDecision):
 
 
 def find_play(game: Game, card_id: str):
+    matches = []
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
-            return action
-    return None
+            matches.append(action)
+    if not matches:
+        return None
+    # The front face, whenever one is offered. A modal DFC is offered twice --
+    # once as a cast and once as a land drop -- and `_land_actions` runs first,
+    # so without this the land line wins on ordering alone.
+    # `authoring/verify.py` prefers the same line, and the two harnesses have to
+    # agree or a card passes one gate and fails the other for one behaviour.
+    return next((a for a in matches if not a.second_face), matches[0])
 
 
 class TestEveryCardIsPlayable:
@@ -153,14 +171,18 @@ class TestEveryCardIsPlayable:
         assert obj is not None, f"{card_id} vanished entirely"
         assert obj.zone is not Zone.STACK, f"{card_id} never left the stack"
 
-        if card.is_permanent:
+        # The face that actually resolved, which is not always the one under
+        # test: a modal DFC played as its land half is a permanent even though
+        # the card is an Instant.
+        played = game.state.card_of(obj)
+        if played.is_permanent:
             # An Aura in the graveyard is the card working, not failing: Dead
             # Weight's -2/-2 can kill what it enchanted, and state-based actions
             # then correctly bin the Aura. `authoring/verify.py` makes the same
             # allowance, and the two harnesses have to agree or a card passes one
             # gate and fails the other for the same behaviour.
             allowed = (
-                {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
+                {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
             )
             assert obj.zone in allowed, (
                 f"{card_id} is a permanent but ended in {obj.zone.value}"
@@ -201,6 +223,8 @@ class TestActivatedAbilities:
                 game.state.players[0].zone_list(zone).append(oid)
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
+            _provide_the_tap_fodder(game, registry, ability)
+            _satisfy_the_activation_condition(game, registry, ability)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
@@ -249,6 +273,14 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     unstocked.
     """
     cost = ability.cost
+    # Loyalty, for the same reason and one step earlier: this harness puts the
+    # card on the battlefield by hand rather than through `move_object`, so the
+    # enters-with-counters replacement that carries a planeswalker's starting
+    # loyalty never runs. Every minus ability would report as unusable on a
+    # board that was never legal.
+    loyalty = game.state.registry.get(game.state.objects[oid].def_id).loyalty
+    if loyalty is not None:
+        game.state.objects[oid].counters["loyalty"] = loyalty
     spec = getattr(cost, "remove_counters", None) if cost else None
     if not spec:
         return
@@ -285,6 +317,102 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
     game.state.battlefield.append(fodder.oid)
+
+
+def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
+    """Put out enough untapped permanents for a `tap_permanents` cost.
+
+    Same family as `_provide_the_sacrifice`, and needed for the same reason:
+    the sandbox's job is to make "could not pay for it" impossible, so that
+    "not activatable" only ever means the ability is broken. Captivating
+    Vampire's cost is *five untapped Vampires* and the generic board has none,
+    which reported a working card as unusable.
+
+    The source itself is eligible among them -- it is a Vampire, and the
+    printed ruling says so -- but it arrives after this runs, so the count is
+    filled without relying on that.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "tap_permanents", None) if cost else None
+    if not spec:
+        return
+    subtypes = {str(s) for s in spec.get("subtypes") or []}
+    types = {str(t) for t in spec.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    for _ in range(int(spec.get("count", 1) or 1)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
+
+
+def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
+    """Put out whatever an "activate only if..." clause is counting.
+
+    Sixth of the same family, and added for the same reason as the other five:
+    the sandbox's job is that "not activatable" only ever means the ability is
+    broken. Bloodline Keeper says "activate only if you control five or more
+    Vampires" and the generic board has none.
+
+    Deliberately dumb, exactly as `_provide_the_target` is. It reads two shapes --
+    ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``, which
+    it satisfies by adding permanents, and the same comparison over
+    ``life_lost_this_turn``, which it satisfies by taking the life. A helper clever
+    enough to solve an arbitrary condition would be a second implementation of
+    `evaluate` living in the tests, and the first thing it would hide is a bug in
+    the first.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or "cmp" not in condition:
+        return
+    left = condition.get("left") or {}
+    right = condition.get("right") or {}
+    if "const" not in right:
+        return
+
+    # "Activate only if an opponent lost life this turn" -- Falkenrath Pit
+    # Fighter. The tally is the real one the engine keeps, so this satisfies the
+    # condition by actually taking the life rather than by writing the counter
+    # the condition reads: a card that mis-names the tally still fails.
+    if "life_lost_this_turn" in left:
+        whose = str(left["life_lost_this_turn"])
+        pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
+        for pid in pids:
+            lose_life(game.state, pid, int(right["const"]))
+        return
+
+    if "count" not in left:
+        return
+    selector = left["count"]
+    if selector.get("zone", "battlefield") != "battlefield":
+        return
+    subtypes = {str(s) for s in selector.get("subtypes") or []}
+    types = {str(t) for t in selector.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and c.front_face is None
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    for _ in range(int(right["const"])):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
 
 
 def _stock_the_hand(game: Game, ability) -> None:

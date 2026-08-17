@@ -12,7 +12,8 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
 from .characteristics import chars
-from .enums import Zone
+from .effects.conditions import evaluate_condition
+from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
 from .triggers import fire
@@ -33,18 +34,32 @@ def move_object(
     to_top: bool = False,
     tapped: bool = False,
     cause: str = "",
+    by: int | None = None,
 ) -> GameObject:
     """Move an object to another zone, firing every consequent event.
 
     ``to_player`` defaults to the object's *owner*, which is where cards always
     go in Commander (a card put into "its owner's graveyard" never lands in
     someone else's).
+
+    ``cause`` says *how* the object moved and ``by`` says *what moved it* -- the
+    resolving spell or ability, or the creature that dealt the killing blow.
+    Both ride on the ``ZONE_CHANGE`` event and are for the log and the client's
+    exit animation, which otherwise cannot say more than that a card vanished.
+    Neither is on ``DIES`` or ``LEAVES_BATTLEFIELD``: nothing reads them there,
+    and a new key in a *fired* event's data can collide with a card's trigger
+    bindings.
     """
     obj = state.objects[oid]
     from_zone = obj.zone
     card = state.card_of(obj)
     owner = obj.owner
     target_player = owner if to_player is None else to_player
+    # Resolved now rather than at emit time: a creature that traded in combat is
+    # moved in the same state-based-actions pass as the thing it killed, so by
+    # the time the event goes out the culprit may itself be out of `objects`.
+    # The client needs a card id it can turn into a printed name either way.
+    by_card = _card_id_of(state, by)
 
     # -- commander zone-change replacement (rule 903.9a) --------------------
     # Simplification: the owner always chooses the command zone.  Documented in
@@ -55,6 +70,24 @@ def move_object(
         target_player = owner
         cause = cause or "commander_replacement"
 
+    # -- "if it would die this turn, exile it instead" ----------------------
+    # Gallifrey Falls, Anger of the Gods, the whole exile-wrath family. Applied
+    # here rather than in `destroy` because the printed word is **die**, which
+    # is broader than "be destroyed": a creature sacrificed, or one whose
+    # toughness went to zero, has also died, and neither of those routes through
+    # `destroy` at all. This is the single funnel every one of them shares.
+    #
+    # After the commander replacement above, which outranks it: a commander that
+    # would be exiled instead of dying still goes to the command zone if its
+    # owner says so (903.9a replaces the *new* destination, not the old one).
+    if (
+        obj.dies_to
+        and from_zone is Zone.BATTLEFIELD
+        and to_zone is Zone.GRAVEYARD
+    ):
+        to_zone = Zone(obj.dies_to)
+        target_player = owner
+
     was_creature = from_zone is Zone.BATTLEFIELD and "Creature" in chars(state, oid).types
     was_on_battlefield = from_zone is Zone.BATTLEFIELD
     # Snapshotted here for the same reason `was_creature` is: by the time a
@@ -62,6 +95,32 @@ def move_object(
     # is nothing left to ask.  This is the engine's explicit-LKI pattern, in the
     # one place a card cannot reach with a `snapshot` op of its own.
     was_attacking = was_on_battlefield and state.combat is not None and state.combat.attacking(oid)
+    # Snapshotted for the same reason, and it is the whole of persist and
+    # undying: "if it had no -1/-1 counters on it" is asked *about a creature
+    # that has just died*, and `reset_permanent_state` empties `counters` on the
+    # way out. Read afterwards it is always zero, so both keywords would return
+    # every creature for ever.
+    had_counters = dict(obj.counters) if was_on_battlefield else {}
+    # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
+    # control back to the owner on the way out, and "whenever **you** sacrifice"
+    # is about the player who did it -- a different answer for a stolen
+    # permanent.
+    controller_before = obj.controller
+
+    # Mutate: the pile goes where the permanent goes (702.140f). Read *before*
+    # anything else, because `reset_permanent_state` below clears the list a
+    # moment later -- the same snapshot `had_counters` needs and for the same
+    # reason.
+    merged = tuple(obj.merged_under) if was_on_battlefield else ()
+    # The until-end-of-turn effects this object was carrying, snapshotted for
+    # the same reason `had_counters` is: `reset_permanent_state` empties
+    # `until_eot` a few lines below and the leave-the-battlefield events fire
+    # *after* that. A triggered ability granted until end of turn -- Malakir
+    # Rebirth's "that creature gains 'when this creature dies, return it'" --
+    # would otherwise be gone before its own death event went out, every time.
+    left_with = (
+        (*obj.until_eot, *obj.granted_abilities_permanent) if was_on_battlefield else ()
+    )
 
     _remove_from_zone(state, obj)
 
@@ -72,8 +131,27 @@ def move_object(
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
 
+    obj.left_with = left_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top)
     state.bump_chars()
+
+    # The cards that were underneath follow, each to its own owner's copy of the
+    # zone. They were in no zone list while merged, so this is the first move
+    # any of them has made since resolving -- and it goes through this same
+    # function, so each fires its own zone-change event and each ends up
+    # somewhere a card can legally be.
+    for merged_oid in merged:
+        merged_obj = state.objects.get(merged_oid)
+        if merged_obj is None:
+            continue
+        merged_obj.merged_into = None
+        # Straight to the destination rather than recursing through the
+        # battlefield: a card under a pile was never *on* the battlefield in the
+        # sense that matters here, so it has no leaves-the-battlefield trigger
+        # of its own to fire.
+        merged_obj.zone = to_zone
+        merged_obj.reset_permanent_state()
+        _add_to_zone(state, merged_obj, to_zone, merged_obj.owner, to_top=to_top)
 
     state.emit(
         EventType.ZONE_CHANGE,
@@ -81,7 +159,13 @@ def move_object(
         source=oid,
         oid=oid,
         card=card.id,
-        **{"from": from_zone.value, "to": to_zone.value, "cause": cause},
+        **{
+            "from": from_zone.value,
+            "to": to_zone.value,
+            "cause": cause,
+            "by": by,
+            "by_card": by_card,
+        },
     )
 
     if was_on_battlefield:
@@ -97,7 +181,23 @@ def move_object(
             # `{"binding": "was_attacking"}` value expression and no new
             # condition vocabulary has to exist for it.
             was_attacking=1 if was_attacking else 0,
+            had_counters=had_counters,
         )
+        # "Whenever you sacrifice a token…" -- fired beside DIES rather than
+        # instead of it, because a sacrificed permanent really does die and
+        # everything listening for that must still hear it. `controller` is the
+        # player who sacrificed, which is what "whenever **you** sacrifice"
+        # asks; `owner` would be the wrong question for a stolen permanent.
+        if cause == "sacrificed":
+            fire(
+                state,
+                EventType.SACRIFICED,
+                player=controller_before,
+                source=oid,
+                oid=oid,
+                card=card.id,
+                was_creature=was_creature,
+            )
         if to_zone is Zone.GRAVEYARD:
             fire(
                 state,
@@ -107,12 +207,21 @@ def move_object(
                 oid=oid,
                 card=card.id,
                 was_creature=was_creature,
+                had_counters=had_counters,
             )
 
     if to_zone is Zone.BATTLEFIELD:
         _enter_battlefield(state, obj, card, forced_tapped=tapped, cause=cause)
 
     return obj
+
+
+def _card_id_of(state: GameState, oid: int | None) -> str | None:
+    """The card id behind an oid, or None if there is no such object."""
+    if oid is None:
+        return None
+    obj = state.objects.get(oid)
+    return state.card_of(obj).id if obj is not None else None
 
 
 def _remove_from_zone(state: GameState, obj: GameObject) -> None:
@@ -148,11 +257,25 @@ def _add_to_zone(
 
 
 def _detach_all(state: GameState, oid: int) -> None:
-    """Unattach anything attached to a permanent that is leaving."""
+    """Unattach anything attached to a permanent that is leaving, and unpair it.
+
+    Soulbond's link is symmetric, so breaking it is two writes: the leaving
+    object's own is cleared by `reset_permanent_state`, and the *partner's* has
+    to be cleared here -- nothing else walks back along it, and a creature left
+    pointing at a card in a graveyard would keep the bonus for ever.
+    """
     for other_id in list(state.battlefield):
         other = state.objects.get(other_id)
-        if other is not None and other.attached_to == oid:
+        if other is None:
+            continue
+        if other.attached_to == oid:
             other.attached_to = None
+            # Remembered, because this runs *before* LEAVES_BATTLEFIELD and DIES
+            # fire: a "whenever equipped creature dies" trigger asked about
+            # `attached_to` here would find nothing, every time.
+            other.last_attached_to = oid
+        if other.paired_with == oid:
+            other.paired_with = None
 
 
 def _enter_battlefield(
@@ -166,9 +289,20 @@ def _enter_battlefield(
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
     obj.tapped = forced_tapped
+    # A fresh arrival answers for nothing that happened before it.
+    obj.left_with = ()
 
     for replacement in card.replacements:
         event = replacement.get("event")
+        # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
+        # rather than by a static, because the answer is only ever asked once
+        # and the board it is asked about is the one the permanent is arriving
+        # on -- `_add_to_zone` has already run, so `exclude_self` is what makes
+        # "two or more *other* lands" count the right number.
+        if not evaluate_condition(
+            state, replacement.get("condition"), controller=obj.controller, source=obj.oid
+        ):
+            continue
         if event == "self_enters_tapped" or (
             event == "self_enters" and replacement.get("modify", {}).get("tapped")
         ):
@@ -213,40 +347,99 @@ def _enter_battlefield(
 # ----------------------------------------------------------------------
 
 
-def destroy(state: GameState, oid: int, *, cause: str = "destroyed") -> bool:
-    """Destroy a permanent unless it is indestructible.  Returns True if it died."""
+def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | None = None) -> bool:
+    """Destroy a permanent unless something replaces the destruction.
+
+    Three things can stop it, and they are three different mechanisms rather
+    than one with a parameter:
+
+    | | |
+    |---|---|
+    | `indestructible` | the destruction simply does not happen |
+    | a **regeneration** shield (701.15) | it is tapped, removed from combat and its damage removed, and one shield is spent |
+    | **totem armor** (702.88a) | its damage is removed and the *Aura* is destroyed instead |
+
+    Regeneration and totem armor are checked here rather than as `replacements`
+    entries because that whitelist is about a permanent *entering the
+    battlefield*, and this is the moment one leaves. Everything that destroys --
+    the lethal-damage state-based action, the `destroy` op, deathtouch -- already
+    routes through this function, which is what makes one check enough.
+
+    Regeneration is checked **before** totem armor: a regenerating creature does
+    not leave the battlefield at all, so nothing has happened for the Aura to
+    replace. Ordered the other way, a Rancor-style shield would be eaten by a
+    creature that was going to survive anyway.
+
+    Returns True only if the permanent actually died.
+    """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     if "indestructible" in chars(state, oid).keywords:
         return False
-    move_object(state, oid, Zone.GRAVEYARD, cause=cause)
+    if obj.regeneration_shields > 0:
+        obj.regeneration_shields -= 1
+        # 701.15a in order: tap it, remove it from combat, remove all damage.
+        obj.tapped = True
+        if state.combat is not None:
+            state.combat.remove(oid)
+        obj.damage = 0
+        obj.deathtouched = False
+        state.bump_chars()
+        state.emit("regenerated", player=obj.controller, source=by, oid=oid)
+        return False
+    if (shield := _totem_armor(state, oid)) is not None:
+        obj.damage = 0
+        obj.deathtouched = False
+        state.emit("totem_armor", player=obj.controller, source=by, oid=oid, aura=shield)
+        # The Aura is *destroyed*, not sacrificed, so it goes through this same
+        # function -- which is how an indestructible totem-armour Aura keeps
+        # protecting, and how a second Aura on the same creature is not spent.
+        destroy(state, shield, cause="totem_armor", by=by)
+        return False
+    move_object(state, oid, Zone.GRAVEYARD, cause=cause, by=by)
     return True
 
 
-def sacrifice(state: GameState, oid: int) -> bool:
+def _totem_armor(state: GameState, oid: int) -> int | None:
+    """An Aura attached to ``oid`` whose controller printed totem armor, if any.
+
+    Read off *derived* keywords, so an Aura granted totem armor by something
+    else counts -- the same rule every other keyword check in the engine
+    follows.
+    """
+    for other in state.battlefield:
+        aura = state.objects.get(other)
+        if aura is None or aura.attached_to != oid:
+            continue
+        if Keyword.TOTEM_ARMOR.value in chars(state, other).keywords:
+            return other
+    return None
+
+
+def sacrifice(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Sacrifice ignores indestructible."""
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
-    move_object(state, oid, Zone.GRAVEYARD, cause="sacrificed")
+    move_object(state, oid, Zone.GRAVEYARD, cause="sacrificed", by=by)
     return True
 
 
-def exile(state: GameState, oid: int, *, cause: str = "exiled") -> bool:
+def exile(state: GameState, oid: int, *, cause: str = "exiled", by: int | None = None) -> bool:
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    move_object(state, oid, Zone.EXILE, cause=cause)
+    move_object(state, oid, Zone.EXILE, cause=cause, by=by)
     return True
 
 
-def bounce(state: GameState, oid: int) -> bool:
+def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Return a permanent to its owner's hand."""
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    move_object(state, oid, Zone.HAND, cause="returned")
+    move_object(state, oid, Zone.HAND, cause="returned", by=by)
     return True
 
 

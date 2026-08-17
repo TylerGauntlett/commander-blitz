@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
 from ..carddef import Cost
@@ -57,7 +58,15 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     chooser = players[0] if players else ctx.controller
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
     condition = spec.get("condition")
-    cost = cost_from_spec(spec.get("pay"))
+    pay_spec = spec.get("pay")
+    cost = cost_from_spec(pay_spec)
+    if cost is not None and pay_spec is not None and pay_spec.get("times") is not None:
+        # Cumulative upkeep: "pay its upkeep cost for each age counter on it".
+        # Scaled here and nowhere else, because this is the one place a cost is
+        # charged with an `EffectContext` in hand -- an activated ability's cost
+        # is settled by legality before any effect has run, so a value
+        # expression there would have nothing to read.
+        cost = replace(cost, mana=cost.mana.scaled(evaluate_value(ctx, pay_spec["times"])))
 
     if not evaluate(ctx, condition):
         yield from execute(ctx, spec.get("else") or [])
@@ -147,19 +156,126 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     second question that genuinely belongs to resolution.  The answer is
     consumed rather than read, so an inner one asks rather than silently reusing
     the outer one's modes.
+
+    ``all_if`` is **entwine**: "choose both if you pay the entwine cost". The
+    entwine price is an ordinary `kicker`, so legality already offers the spell
+    twice and taking the second line *is* the choice rule 702.42a describes --
+    which is why this forces every mode rather than offering them. Written as a
+    wider `count` it would ask which two of two, a question with one answer;
+    written as a `may` it would let a player pay the entwine cost and then
+    decline half of what they bought.
     """
     modes = list(spec.get("modes") or [])
     if not modes:
         return
     count = evaluate_value(ctx, spec.get("count", 1))
+    if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
+        count = len(modes)
+    # "Choose one. If you control a commander as you cast this spell, you **may**
+    # choose both instead." A ceiling where `all_if` is a floor: entwine forces
+    # every mode and this only permits more. The difference is the word "may",
+    # and it is the whole card whenever taking one mode is the better line.
+    up_to = None
+    if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
+        up_to = evaluate_value(ctx, more.get("count", len(modes)))
+
+    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+
+    # "Choose one **that hasn't been chosen** --" (Henrika Domnathi). The spent
+    # modes are struck off the list rather than offered and then ignored: an
+    # ability that offered a spent mode and did nothing would read on screen as
+    # a mode that fizzled, and the whole point of the clause is that the card
+    # runs out.
+    #
+    # Recorded as ordinary `flags` on the source, which gives the right lifetime
+    # for free: `reset_permanent_state` clears them on a zone change, and 712.13a
+    # says a permanent that left and came back is a new object that may choose
+    # again -- the same rule flip and transform already lean on.
+    once_each = bool(spec.get("once_each"))
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    offered = list(range(len(modes)))
+    if once_each and source is not None:
+        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
+        if not offered:
+            # Every mode is spent. The ability still triggered and still
+            # resolved; there is simply nothing left to choose.
+            return
+
     chosen = list(ctx.modes)
     if chosen:
         ctx.modes = ()
+    elif once_each:
+        picked = yield from ask_mode(
+            ctx,
+            "Choose",
+            [labels[i] for i in offered],
+            ctx.controller,
+            max(1, count),
+            up_to,
+        )
+        chosen = [offered[i] for i in picked]
     else:
-        labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-        chosen = yield from ask_mode(ctx, "Choose", labels, ctx.controller, max(1, count))
+        chosen = yield from ask_mode(
+            ctx, "Choose", labels, ctx.controller, max(1, count), up_to
+        )
+
     for index in chosen:
+        if once_each and source is not None:
+            source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])
+
+
+def _mode_flag(label: str) -> str:
+    """The flag marking one mode as already taken.
+
+    Keyed by the printed label rather than the index, so a card whose modes are
+    reordered does not silently re-open a spent one.
+    """
+    return f"mode_chosen:{label}"
+
+
+#: Guard on the "pay again?" loop, matching `may`'s and `repeat`'s. One
+#: pathological seat must not hang a game.
+MAX_JOIN_FORCES = 100
+
+
+@register("join_forces")
+def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Join forces — Starting with you, each player may pay any amount of mana."
+
+    The one effect in the pool whose cost is paid by **everybody**. Every other
+    cost in the engine hangs off one player: `may`'s `pay` grew a `player` for
+    Rhystic Study, but it asks that player once, and join forces asks the whole
+    table repeatedly and adds the answers up.
+
+    Asked one unit at a time, in turn order starting with the controller, which
+    is what the printed line says and is also the only shape the decision system
+    can carry: "any amount" has no ceiling to offer as a `choose_x`, and a seat
+    that stops paying is a seat that answered no.
+
+    Order matters and is not cosmetic. Later players see what earlier ones paid,
+    which is the whole politics of the card -- an implementation that asked
+    simultaneously, or in seat order regardless of who cast it, would be a
+    different card at a table.
+
+    ``as`` names the binding the total lands in; the card reads it back with
+    ``{"binding": …}``, the way clash reads `clash_won`.
+    """
+    unit = cost_from_spec(spec.get("pay") or {"mana": "{1}"})
+    prompt = str(spec.get("prompt") or "Pay one more into the pool?")
+    total = 0
+    for pid in ctx.state.turn_order(ctx.controller):
+        for _ in range(MAX_JOIN_FORCES):
+            if unit is None or not can_pay(ctx.state, pid, unit, ctx.source_oid):
+                break
+            if not (yield from ask_yes_no(ctx, prompt, pid)):
+                break
+            paid = yield from pay(ctx.state, pid, unit, ctx.source_oid)
+            if not paid:
+                break
+            total += 1
+    ctx.bindings[str(spec.get("as", "joined"))] = total
+    ctx.state.emit("join_forces", player=ctx.controller, source=ctx.source_oid, total=total)
 
 
 @register("for_each")
@@ -180,6 +296,41 @@ def op_for_each(ctx: EffectContext, spec: Mapping[str, Any]):
             ctx.bindings.pop("each", None)
         else:
             ctx.bindings["each"] = previous_each
+
+
+@register("for_each_player")
+def op_for_each_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Run a body once per player, binding that player as ``each_player``.
+
+    "**Each opponent** sacrifices a creature with the greatest mana value among
+    creatures **they** control" -- Soul Shatter. `for_each` iterates objects and
+    there was no player-shaped loop, so the only way to write this was one
+    `sacrifice` over `{"controller": "opponent"}`, which removes *one* permanent
+    across the union of every opponent's board rather than one each.
+
+    The binding is what makes the body's selectors right: a nested selector says
+    `{"controller": {"binding": "each_player"}}` and is scoped to that one
+    player, so `extreme` takes their own maximum and `chooser` asks them. With
+    `"opponent"` instead, `extreme` computes a single global maximum over the
+    merged pool and at a pod spares whoever's best creature is smaller.
+
+    In APNAP order, which is what `select_players` already returns.
+    """
+    players = select_players(ctx, spec.get("players", "each_opponent"))
+    body = spec.get("effects") or []
+    previous = ctx.bindings.get("each_player")
+    try:
+        for pid in players:
+            # Elimination mid-loop: a player who has left is not still asked.
+            if not ctx.state.is_alive(pid):
+                continue
+            ctx.bindings["each_player"] = pid
+            yield from execute(ctx, body)
+    finally:
+        if previous is None:
+            ctx.bindings.pop("each_player", None)
+        else:
+            ctx.bindings["each_player"] = previous
 
 
 @register("repeat")

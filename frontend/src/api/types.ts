@@ -112,9 +112,27 @@ export interface PlayerView {
    */
   commander_damage_taken: Record<string, number>;
   library_count: number;
+  /**
+   * "Play with the top card of your library revealed." Vampire Nocturnus.
+   *
+   * Null unless something on the battlefield reveals it, so there is no
+   * separate flag to check. Sent to **every** seat rather than the viewer's,
+   * because that is what the printed line does -- the card is public, and an
+   * opponent who cannot see it is playing against information they are
+   * entitled to.
+   */
+  library_top: CardView | null;
   hand_count: number;
   /** Null for everyone but the viewing seat. */
   hand: CardView[] | null;
+  /**
+   * Cards in this player's hand that the viewing seat has been *shown* -- by
+   * "look at target player's hand" and nothing else. Private information, so
+   * the server only puts a card here for the one seat entitled to it; this is
+   * what separates looking from revealing, which is public. Always empty for
+   * your own hand, which `hand` sends in full.
+   */
+  hand_revealed: CardView[];
   /**
    * Keyed by oid, viewer only. A hand card absent from this map is playable;
    * null for other seats, whose hands are hidden anyway.

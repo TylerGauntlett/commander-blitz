@@ -33,7 +33,7 @@ bumps.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
@@ -92,10 +92,37 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+#: What a face-down permanent is, whatever is underneath it (707.2).
+FACE_DOWN_CHARS = Characteristics(
+    power=2,
+    toughness=2,
+    types=frozenset({"Creature"}),
+    subtypes=frozenset(),
+    supertypes=frozenset(),
+    keywords=frozenset(),
+    colors=frozenset(),
+)
+
+
 def _compute(state: GameState, oid: int) -> Characteristics:
     obj = state.objects.get(oid)
     if obj is None:
         return Characteristics()
+    if obj.face_down and obj.on_battlefield:
+        # Rule 707.2: a face-down permanent is a 2/2 creature with no name, no
+        # mana cost, no types beyond Creature, no subtypes and no abilities --
+        # whatever card is underneath it.
+        #
+        # Returned *before* any layer, so nothing about the hidden card reaches
+        # the pipeline. It is the one place in this module that does not build
+        # on the printed face, and it has to be: `card_of` still answers with
+        # the real card, because turning it face up has to find it again.
+        #
+        # Anthems and counters therefore do not apply either, which is a
+        # documented simplification -- a real face-down creature is still
+        # affected by them, and modelling that means layering over the shell
+        # rather than replacing with it.
+        return FACE_DOWN_CHARS
     card = state.card_of(obj)
     power = card.power or 0
     toughness = card.toughness or 0
@@ -114,6 +141,28 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             subtypes.update(added)
         if (repaint := obj.copy_overrides.get("colors")) is not None:
             colors = set(repaint)
+
+    # Bestow (702.103b): "it's an Aura spell with enchant creature... it becomes
+    # a creature again if it's not attached to a creature". Applied to the
+    # printed face, before any layer, for `copy_overrides`' reason -- it is part
+    # of what this permanent *is* while it is attached, not an effect on it, so
+    # an anthem or an animate afterwards layers on top exactly as it would on a
+    # printed Aura.
+    #
+    # `attached_to` is a field the `attach` primitive writes and no layer can
+    # change, so switching on it is reading a pipeline **input**, which is the
+    # same argument `is_attached` made for reconfigure. Nothing here can come to
+    # depend on another static's output.
+    #
+    # The condition is the whole keyword: it stops being a creature when it is
+    # attached and starts again the moment it is not, and `_detach_all` clearing
+    # `attached_to` as the enchanted creature leaves is what makes that happen
+    # with nothing to remember.
+    if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+        types.discard("Creature")
+        types.add("Enchantment")
+        subtypes.add("Aura")
+        power = toughness = 0
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -142,7 +191,13 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             if _matches(state, obj, source_obj, static.get("affects")):
                 types = set(static.get("types", ()))
 
-        # 1. subtype / type grants
+        # 1. subtype / type grants.  The object's own recorded subtypes come
+        #    first -- "it becomes a Vampire in addition to its other types" is
+        #    written onto the permanent, so it is an input to this pipeline
+        #    rather than a product of it, and a static's `add_subtype` layering
+        #    on top of it is the ordinary case.
+        subtypes.update(obj.added_subtypes)
+
         for source_obj, static in statics:
             if static.get("effect") != "add_subtype":
                 continue
@@ -192,6 +247,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    arrives summoning sick and suspend is never worth doing.
         if obj.hasted_by_suspend:
             keywords.add(Keyword.HASTE.value)
+
+        # 8. Keywords granted for as long as the permanent lasts -- riot's "or
+        #    with haste", which is not a pump that wears off but part of what
+        #    the creature is from the moment it arrives. `hasted_by_suspend`
+        #    above is the same idea for one specific keyword; this is the
+        #    general form, and the two stay separate because suspend's is set
+        #    while the card is still in exile.
+        keywords.update(obj.granted_keywords)
 
     return Characteristics(
         power=power,
@@ -269,6 +332,17 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "is_attached" in cond:
+        # "Attached permanents with reconfigure aren't creatures" (702.151d) --
+        # a `set_types` static switched by this. `GameObject.attached_to` is a
+        # field written by the `attach` primitive, so it is a pipeline *input*
+        # exactly as counters are: no layer can change it, and no static can
+        # come to depend on another static's output through it.
+        #
+        # Not the `{"attached": true}` filter key, which is the opposite
+        # direction -- that names the permanent this one is attached *to*, and
+        # is how "equipped creature gets +1/+1" is written.
+        return (source.attached_to is not None) == bool(cond["is_attached"])
     if "has_city_s_blessing" in cond:
         # Player state, so a pipeline *input* exactly as a zone count is:
         # nothing in the fixed-order characteristics pipeline can change whether
@@ -276,6 +350,18 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         # static's output through it.
         pids = _static_players(state, source, cond["has_city_s_blessing"])
         return any(state.players[p].has_city_s_blessing for p in pids)
+    if "top_of_library" in cond:
+        # "As long as the top card of your library is black." A pipeline input
+        # exactly as a zone count is -- nothing in the fixed-order pipeline can
+        # change what is on top of a library -- and a sharper question than
+        # `exists` over the library, which asks whether *any* black card is
+        # anywhere in ninety-nine and is nearly always true.
+        spec = cond["top_of_library"] or {}
+        for pid in _static_players(state, source, spec.get("controller", "you")):
+            top = top_of_library(state, pid)
+            if top is not None and _matches_printed(state.card_of(top), spec):
+                return True
+        return False
     if "cmp" in cond:
         left = _static_value(state, cond.get("left"), source)
         right = _static_value(state, cond.get("right"), source)
@@ -314,6 +400,17 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "mana_symbols" in expr:
+        # Chroma -- Primalcrux's "power and toughness are each equal to the
+        # number of green mana symbols in the mana costs of permanents you
+        # control". A *printed* mana cost is a pipeline input like a zone count,
+        # so reading it here cannot make one static depend on another's output.
+        spec = expr["mana_symbols"]
+        color = str(spec.get("of", ""))
+        return sum(
+            state.card_of(obj).mana_cost.symbols_of(color)
+            for obj in _matching_objects(state, spec.get("objects") or {}, source)
+        )
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])
         return min_life([state.players[p].life for p in pids])
@@ -333,24 +430,41 @@ def _count_matching(state: GameState, selector: Mapping[str, Any], source: GameO
     read, so it is the printed face alone.  The loader refuses the board-state
     keys on the second path rather than letting them load and match nothing.
     """
+    return sum(1 for _ in _matching_objects(state, selector, source))
+
+
+def _matching_objects(
+    state: GameState, selector: Mapping[str, Any], source: GameObject
+) -> Iterator[GameObject]:
+    """The objects a static's counting filter matches.
+
+    Split out of :func:`_count_matching` when chroma arrived: `mana_symbols`
+    wants to *sum something over* the same pool rather than measure it, and two
+    copies of this walk would be two places for the two zone paths to drift.
+    """
     zone = str(selector.get("zone", "battlefield"))
     if zone == Zone.BATTLEFIELD.value:
-        count = 0
         for oid in state.battlefield:
             obj = state.objects.get(oid)
-            if obj is None:
-                continue
-            if _matches(state, obj, source, selector):
-                count += 1
-        return count
+            if obj is not None and _matches(state, obj, source, selector):
+                yield obj
+        return
 
-    count = 0
     for pid in _static_players(state, source, selector.get("controller", "you")):
         for oid in state.players[pid].zone_list(Zone(zone)):
             obj = state.objects.get(oid)
             if obj is not None and _matches_printed(state.card_of(obj), selector):
-                count += 1
-    return count
+                yield obj
+
+
+def top_of_library(state: GameState, pid: int) -> GameObject | None:
+    """The card on top of a player's library, or None for an empty one.
+
+    Index 0 is the top -- `draw_cards` and `mill_cards` both take from there,
+    so this reads the same end they do and cannot drift from them.
+    """
+    library = state.players[pid].library
+    return state.objects.get(library[0]) if library else None
 
 
 def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int]:
@@ -402,12 +516,21 @@ def resolve_chosen_subtypes(
     return {**selector, "subtypes": out}
 
 
-def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
+def _matches_printed(
+    card: CardDef, selector: Mapping[str, Any], added_subtypes: tuple[str, ...] = ()
+) -> bool:
     """The half of a static filter that reads the printed card face.
 
     Split out so the two counting paths cannot drift: a permanent on the
     battlefield is matched on this *plus* its board state, and a card in a
     graveyard or hand -- which has no board state -- on this alone.
+
+    ``added_subtypes`` is the one non-printed thing allowed in, and only on the
+    battlefield path.  "It becomes a Vampire in addition to its other types" is
+    recorded on the object, so it is a pipeline *input* exactly as a counter or
+    a tapped flag is -- reading it cannot make one static depend on another's
+    output.  Without it, Captivating Vampire's own anthem would not see the
+    creature it had just converted, which is most of the card.
     """
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
@@ -416,7 +539,7 @@ def _matches_printed(card: CardDef, selector: Mapping[str, Any]) -> bool:
     if not_types and set(not_types) & card.types:
         return False
     subtypes = selector.get("subtypes")
-    if subtypes and not (set(subtypes) & card.subtypes):
+    if subtypes and not (set(subtypes) & (card.subtypes | set(added_subtypes))):
         return False
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
@@ -470,6 +593,15 @@ def _matches(
     # `controller: "you"` would quietly stop it.
     if selector.get("attached"):
         return obj.oid == source.attached_to
+    # Soulbond. Two keys because the printed line applies to two creatures and
+    # the static is written once: `paired` is "this creature, while it has a
+    # partner" and `paired_with_source` is "the partner". Both short-circuit
+    # `controller` the way `attached` does -- a pair is a pair whoever ends up
+    # controlling either half.
+    if selector.get("paired"):
+        return obj.oid == source.oid and source.paired_with is not None
+    if selector.get("paired_with_source"):
+        return source.paired_with is not None and obj.oid == source.paired_with
 
     controller = selector.get("controller", "you")
     if controller == "you" and obj.controller != source.controller:
@@ -477,7 +609,7 @@ def _matches(
     if controller == "opponent" and obj.controller == source.controller:
         return False
 
-    if not _matches_printed(card, selector):
+    if not _matches_printed(card, selector, obj.added_subtypes):
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
@@ -523,6 +655,31 @@ def effective_toughness(state: GameState, oid: int) -> int:
     return chars(state, oid).toughness - obj.damage
 
 
+def prevented_damage(state: GameState, oid: int) -> int:
+    """How much damage from **each source** this permanent prevents -- absorb.
+
+    Per source and per instance, which is what 702.63a says and is the whole of
+    why absorb 1 is playable at all: a creature with absorb 1 blocked by three
+    1/1s takes nothing from any of them, and the same creature hit by one 3/3
+    takes two. Summed over every applicable static, so two Absorb auras stack.
+
+    Not protection with a number. Protection prevents *all* the damage and three
+    other things besides -- it also stops the creature being blocked, enchanted
+    and targeted -- so reusing it would make an absorb creature unblockable.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
@@ -547,6 +704,16 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         out.update(static.get("from_types", ()))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
+    # "Creatures you control gain protection from each color until end of turn"
+    # -- Akroma's Will. Granted protection is one `TempEffect` per quality, so it
+    # joins the printed statics' qualities in the same flat set, and the four
+    # rules that read this -- damage, enchant/equip, block, target -- all see it
+    # without knowing where it came from.
+    out.update(
+        str(temp.keyword)
+        for temp in obj.until_eot
+        if temp.kind == "protection" and temp.keyword
+    )
     return frozenset(out)
 
 
@@ -664,6 +831,30 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def block_forbidden(state: GameState, oid: int) -> bool:
+    """Is this creature under a "can't block" static?
+
+    Unleash's "this creature can't block as long as it has a +1/+1 counter on
+    it", and the plain "can't block" printed on a hundred aggressive commons.
+    The exact mirror of `attack_forbidden`, down to reusing `_matches`, and a
+    static rather than a `Keyword` for the reason `block_restriction` is one:
+    a keyword is a characteristic and this is a permission.
+
+    Unlike `attack_forbidden` this is nearly always self-referential -- the
+    static sits on the creature it stops -- but the filter is the same one, so
+    a global "creatures your opponents control can't block" costs nothing extra.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_block":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
 def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
@@ -697,7 +888,12 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
-        if not _matches_printed(card, filt):
+        # "Creature spells you cast **of the chosen type** cost {1} less."
+        # Herald's Horn. The substitution needs the permanent that made the
+        # choice, and this loop has had it all along -- `_battlefield_statics`
+        # yields the source beside the static, and only `_matches_printed`'s
+        # signature (a printed card, no object) suggested otherwise.
+        if not _matches_printed(card, resolve_chosen_subtypes(filt, source_obj)):
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
@@ -780,6 +976,22 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     return False
 
 
+def player_reveals_library_top(state: GameState, pid: int) -> bool:
+    """"Play with the top card of your library revealed." Vampire Nocturnus.
+
+    Purely a *visibility* change -- it grants no permission and moves no card,
+    which is what separates it from `play_lands_from_library_top`. The whole of
+    it is that the client is allowed to draw the card, so this is read by
+    `serialize` and by nothing in the rules.
+
+    It matters anyway, and not only as flavour: Vampire Nocturnus is a card you
+    cannot pilot without it. Whether your team has flying is a fact you are
+    supposed to know before declaring attackers, and the condition that decides
+    it is otherwise invisible.
+    """
+    return _player_static(state, pid, "reveal_library_top")
+
+
 def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     """Whether this player may play lands from their graveyard.
 
@@ -820,3 +1032,32 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
                 continue
             total += _static_value(state, static.get("amount"), obj)
     return total
+
+
+def commander_subtypes(state: GameState, pid: int) -> frozenset[str]:
+    """Every creature type this player's commanders currently have.
+
+    The union across their commanders, so a partner pair contributes both
+    halves' types -- "shares a creature type with your commander" is satisfied
+    by either one.
+
+    Read through `chars` where the commander is on the battlefield and off the
+    printed card otherwise: an animated or type-changed general really does
+    share its new type, and a commander sitting in the command zone -- where it
+    is for most of the game -- has only what is printed on it.
+
+    Lives here rather than in `selectors` because both halves of the filter
+    language ask it: `selectors.matches` for effects, and
+    `triggers.matches_card_filter` for trigger filters, which is the one Path of
+    Ancestry actually reaches.
+    """
+    out: set[str] = set()
+    for oid in state.commanders_of(pid):
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        if obj.zone is Zone.BATTLEFIELD:
+            out |= set(chars(state, oid).subtypes)
+        else:
+            out |= set(state.card_of(obj).subtypes)
+    return frozenset(out)

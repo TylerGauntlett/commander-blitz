@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "baron_bertram_graywater",
+    "name": "Baron Bertram Graywater",
+    "oracle_text": "Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.\n{1}{B}, Sacrifice another creature or artifact: Draw a card.",
+    "mana_cost": "{2}{W}{B}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Noble"
+    ],
+    "power": 3,
+    "toughness": 4,
+    "colors": [
+      "B",
+      "W"
+    ],
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "is_token": true
+          },
+          "max_per_turn": 1
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "vampire_rogue_1_1_b_lifelink",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{B}, Sacrifice another creature or artifact: Draw a card.",
+        "cost": {
+          "mana": "{1}{B}",
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "any_types": [
+              "Creature",
+              "Artifact"
+            ],
+            "exclude_self": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

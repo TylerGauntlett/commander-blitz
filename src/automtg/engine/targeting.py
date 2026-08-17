@@ -110,6 +110,31 @@ def can_be_targeted(
     return Keyword.HEXPROOF.value not in keywords
 
 
+def _one_each(state: GameState, refs: Sequence[TargetRef]) -> bool:
+    """Are these objects controlled by pairwise different players?
+
+    "For each player, exile up to one target nonland permanent that player
+    controls" is the same set of legal choices as "any number of target nonland
+    permanents, no two controlled by the same player" -- so it is a constraint
+    on the combination rather than one target spec per seat.
+
+    Written this way on purpose. One spec per seat would have to be `optional`,
+    and `filter_legal` splits the stored refs by *position*: a declined optional
+    contributes nothing to the flat tuple, so every spec after it would read the
+    wrong refs back. That is a bug no board would show, and this shape cannot
+    have it -- there is one spec, and it swallows whatever was chosen.
+    """
+    seen: set[int] = set()
+    for ref in refs:
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            continue
+        if obj.controller in seen:
+            return False
+        seen.add(obj.controller)
+    return True
+
+
 def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
     """How many real candidates fit under ``limit`` beside the decline option."""
     return max(1, limit - len(empty))
@@ -147,7 +172,21 @@ def enumerate_target_tuples(
         # Kraken whose "tap up to four target creatures" defaulted to tapping
         # none would be a different card.
         empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-        if spec.count > 1:
+        if spec.count == "any":
+            # "Any number of target creatures." A size the caster picks, so
+            # every subset is a legal choice -- ordered **largest first**, for
+            # the reason above: whatever takes a tuple without asking takes the
+            # first, and "any number" defaulting to none is a spell that does
+            # nothing. The empty subset comes last and always exists, because
+            # "any number" includes zero whether or not the spec is `optional`.
+            subsets = [
+                tuple(c)
+                for size in range(len(options), 0, -1)
+                for c in itertools.combinations(options, size)
+                if not spec.one_per_player or _one_each(state, c)
+            ]
+            per_spec.append(list(dict.fromkeys([*subsets[: _room(limit, [()])], ()])))
+        elif spec.count > 1:
             combos = [
                 tuple(c) for c in itertools.combinations(options, min(spec.count, len(options)))
             ]
@@ -221,7 +260,11 @@ def filter_legal(
     index = 0
     had_targets = False
     for spec in specs:
-        take = spec.count if spec.count > 1 else 1
+        # An `"any"` spec swallows whatever is left. The loader guarantees there
+        # is at most one and that it comes last, which is what makes this
+        # unambiguous -- a variable-size spec in the middle would leave no way
+        # to say where its refs end and the next spec's begin.
+        take = len(refs) - index if spec.count == "any" else max(1, spec.count)
         chunk = list(refs[index : index + take])
         index += take
         kept = [r for r in chunk if still_legal(state, controller, spec, r, source_oid)]
@@ -230,3 +273,19 @@ def filter_legal(
         buckets[spec.id] = kept
     remains = any(bool(v) for v in buckets.values())
     return {k: tuple(v) for k, v in buckets.items()}, (remains or not had_targets)
+
+
+def describe_ref(state: GameState, ref: TargetRef) -> str:
+    """A player-facing name for one chosen target.
+
+    Lives here rather than in `legality` because a *triggered* ability chooses
+    its targets too, and `stack` cannot import `legality` -- legality imports
+    stack.
+    """
+    if ref.kind == "player":
+        return state.players[ref.id].name or f"p{ref.id}"
+    if ref.kind == "stack":
+        item = state.stack_item(ref.id)
+        return item.description if item else f"stack#{ref.id}"
+    obj = state.objects.get(ref.id)
+    return state.card_of(obj).name if obj else f"#{ref.id}"

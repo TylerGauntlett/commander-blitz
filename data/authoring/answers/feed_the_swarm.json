@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "feed_the_swarm",
+    "name": "Feed the Swarm",
+    "oracle_text": "Destroy target creature or enchantment an opponent controls. You lose life equal to that permanent's mana value.",
+    "mana_cost": "{1}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "controller": "opponent",
+          "any_types": ["Creature", "Enchantment"]
+        }
+      }
+    ],
+    "spell_effects": [
+      { "op": "snapshot", "target": "t1", "as": "victim" },
+      { "op": "destroy", "objects": { "target": "t1" } },
+      {
+        "op": "lose_life",
+        "player": "you",
+        "amount": { "mana_value_of": { "var": "victim" } }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": { "0": 3 },
+    "opponent_battlefield_count": 5,
+    "hand_size": { "0": 0 }
+  }
+}

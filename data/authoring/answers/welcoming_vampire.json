@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "welcoming_vampire",
+    "name": "Welcoming Vampire",
+    "oracle_text": "Flying\nWhenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "max_per_turn": 1,
+          "filter": {
+            "types": ["Creature"],
+            "exclude_self": true,
+            "power": {"op": "<=", "value": 2}
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {"const": 1}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

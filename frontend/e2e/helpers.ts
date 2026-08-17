@@ -18,6 +18,10 @@ import { type Locator, type Page, expect } from "@playwright/test";
 export async function setInstant(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem("automtg.speed", "instant");
+    // Sound now defaults to *on*, so a run would otherwise synthesise a voice
+    // for every click and every beat across sixteen specs. Explicit here rather
+    // than relying on the default, which is exactly what changed underneath it.
+    window.localStorage.setItem("automtg.muted", "on");
   });
 }
 

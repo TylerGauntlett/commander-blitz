@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .enums import Zone
 from .events import EventType
+from .mana import ManaCost
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -65,6 +66,58 @@ def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[in
     return True
 
 
+#: What foretelling costs, fixed by rule 702.143a rather than by the card. The
+#: card names only the *later* price.
+FORETELL_COST = "{2}"
+
+
+def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
+    """Pay {2} and exile this card face down, to be cast on a later turn.
+
+    Suspend's special action with a different ticking rule, which is why it
+    lives here and shares `ActionKind.SUSPEND`: both exile a card from hand to
+    be cast later, neither uses the stack, and neither can be countered.
+
+    "Face down" is `revealed_to`, the engine's existing channel for information
+    one seat holds -- the card is in exile and nobody else may look at it. That
+    is the whole of what face-down means for a card *nobody can interact with*;
+    it is a much smaller claim than a face-down **permanent**, which is a
+    characteristics problem and remains unimplemented.
+    """
+    from .costs import pay
+
+    obj = state.objects[oid]
+    card = state.card_of(obj)
+    if card.foretell is None:
+        return False
+
+    ok = yield from pay(state, pid, Cost(mana=ManaCost.parse(FORETELL_COST)), None)
+    if not ok:  # pragma: no cover - legality already proved payability
+        return False
+
+    from .zones import move_object
+
+    move_object(state, oid, Zone.EXILE, cause="foretold")
+    obj.foretold_by = pid
+    obj.foretold_turn = state.turn
+    # Only its own controller may see what it is. Written after the move, since
+    # `reset_permanent_state` clears `revealed_to` on the way.
+    obj.revealed_to.add(pid)
+    state.emit("foretold", player=pid, source=oid, card=card.id)
+    return True
+
+
+def foretold_cards(state: GameState, pid: int) -> list[int]:
+    """This player's foretold cards that may be cast **now** -- a later turn."""
+    return [
+        oid
+        for oid in state.players[pid].exile
+        if (obj := state.objects.get(oid)) is not None
+        and obj.foretold_by == pid
+        and obj.foretold_turn < state.turn
+    ]
+
+
 def suspended_cards(state: GameState, pid: int) -> list[int]:
     """This player's suspended cards, oldest first for a stable tick order."""
     return [
@@ -95,10 +148,36 @@ def tick(state: GameState, pid: int) -> None:
             remaining=obj.counter(TIME_COUNTER),
         )
         if obj.counter(TIME_COUNTER) == 0:
-            cast_for_free(state, pid, oid)
+            cast_for_free(state, pid, oid, haste=True)
 
 
-def cast_for_free(state: GameState, pid: int, oid: int) -> None:
+def rebound_tick(state: GameState, pid: int) -> None:
+    """Rebound (702.87a): the free cast a rebounded spell is owed.
+
+    Lives beside suspend because it *is* suspend's second half -- "you may cast
+    this card from exile without paying its mana cost" is the same sentence, and
+    :func:`cast_for_free` is the same code. What differs is only how the card got
+    to exile and how long it waits: a time counter each upkeep, or exactly one.
+
+    The mark is cleared **before** the cast rather than after, and that is the
+    loop guard's second half: the free cast is itself a cast, so a spell that
+    resolved again with the flag still set would owe another one next upkeep.
+    (The first half is `cast_from_hand`, checked when the rider fires.)
+
+    A rebounded spell with no legal target stays in exile, unmarked -- the same
+    outcome suspend has, and what 702.87b says: the cast is optional and simply
+    does not happen.
+    """
+    for oid in [o for o in state.players[pid].exile if state.objects[o].rebound_by == pid]:
+        obj = state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            continue
+        obj.rebound_by = None
+        state.emit(EventType.TIME_COUNTER_REMOVED, player=pid, source=oid, card=obj.def_id, remaining=0)
+        cast_for_free(state, pid, oid)
+
+
+def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) -> None:
     """Put a suspended card on the stack having paid nothing for it.
 
     Still a cast: it uses the stack, it can be countered, and its targets are
@@ -117,7 +196,11 @@ def cast_for_free(state: GameState, pid: int, oid: int) -> None:
     if not options:
         return
     obj.suspended_by = None
-    obj.hasted_by_suspend = card.is_creature
+    # Haste belongs to **suspend** and to nothing else that casts for free.
+    # Cascade and ripple both put a creature onto the battlefield the ordinary
+    # way, and one that could attack immediately would be a strictly better
+    # card -- so the flag is opt-in rather than a property of casting free.
+    obj.hasted_by_suspend = haste and card.is_creature
 
     item = stack.push_spell(state, oid, pid, options[0])
     triggers.fire(

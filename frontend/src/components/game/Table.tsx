@@ -15,6 +15,8 @@
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CardView, GameView } from "../../api/types";
+import { type SoundName, play } from "../../audio/sfx";
+import { restAll } from "../../fx/actuators";
 import {
   actionsForCard,
   availableAttackers,
@@ -22,7 +24,9 @@ import {
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
+import { reset as forgetCardRects } from "../../logic/cardRects";
 import { sourcesSpentBy } from "../../logic/mana";
+import { removalsByOid } from "../../logic/removals";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -35,6 +39,7 @@ import { EventTicker } from "./EventTicker";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
 import { HandFan } from "./HandFan";
+import { ParticleLayer, clearParticles } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
 import { PlayerMat } from "./PlayerMat";
 import { PromptDialog, isModalDecision } from "./PromptDialog";
@@ -91,12 +96,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const error = useUiStore((s) => s.error);
   const setError = useUiStore((s) => s.setError);
 
-  const shake = useScreenShake(narration.current);
+  // Motion values, not state: the shake writes these every frame and going
+  // through React would re-render the whole board sixty times a second.
+  const { x: shakeX, y: shakeY } = useScreenShake(narration.current);
   const viewer = state.players[state.seat];
   const names = useMemo(() => state.players.map((p) => p.name), [state.players]);
+  // How every card in a graveyard or exile pile got there, for the zone modal.
+  // Folded from the accumulated log rather than the view, which carries no
+  // history; recomputed wholesale so an undo simply un-tells the story.
+  const removals = useMemo(() => removalsByOid(events, game.cardName), [events, game.cardName]);
   const decisionKind = state.pending?.player === state.seat ? state.pending.kind : null;
   const inCombatDecision = decisionKind !== null && COMBAT_DECISIONS.has(decisionKind);
   const locked = busy || narration.busy;
+
+  // Card positions are remembered globally, by oid, and oids restart with each
+  // game. Leaving them behind would let the first death of a new table fly out
+  // of wherever the last table's card #12 happened to be sitting.
+  useEffect(() => forgetCardRects, []);
 
   // A decision's buttons must exist exactly once in the document. Whichever
   // surface owns a decision renders its ids; everything else stands down.
@@ -117,29 +133,52 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const manualManaMutate = game.setManualMana.mutate;
 
   /**
+   * Empty the queue and put the board back at rest.
+   *
+   * Skipping used to leave whatever was mid-flight still flying: `narration`
+   * owns the beats, but the particles, the card actuators and the screen shake
+   * all run on their own clocks past the end of the beat that started them --
+   * which is exactly what makes a turn read as continuous, and exactly what you
+   * do not want the instant the player says "enough".
+   */
+  const skipNarration = narration.skip;
+  const skipAll = useCallback(() => {
+    skipNarration();
+    clearParticles();
+    restAll();
+  }, [skipNarration]);
+
+  /**
    * Whether this gesture should be dropped, and the side effect of not dropping it.
    *
-   * A click while narration is playing means "get on with it", exactly as a
-   * keypress already does. Swallowing those clicks is what made the board feel
-   * like it needed spamming: the input landed on nothing and said nothing.
+   * A click while narration is playing means "get on with it" -- *and* it means
+   * the thing that was clicked. It used to mean only the first: the queue was
+   * skipped and the gesture thrown away, so for the second or two after every
+   * action the board ignored you, and playing it felt like it needed spamming.
+   * Only a genuine in-flight request gates input now.
    */
   const narrationBusy = narration.busy;
-  const skipNarration = narration.skip;
   const gateInput = useCallback(() => {
-    if (narrationBusy) {
-      skipNarration();
-      return true;
-    }
+    if (narrationBusy) skipAll();
     return busy;
-  }, [busy, narrationBusy, skipNarration]);
+  }, [busy, narrationBusy, skipAll]);
+
+  /** A sound the player's own hand caused, played without waiting for anybody. */
+  const muted = useUiStore((s) => s.muted);
+  const mutedRef = useRef(muted);
+  mutedRef.current = muted;
+  const cue = useCallback((sound: SoundName) => {
+    if (!mutedRef.current) play(sound);
+  }, []);
 
   const act = useCallback(
     (actionId: string) => {
       if (gateInput()) return;
       endTargeting();
+      cue("drop");
       actMutate(actionId);
     },
-    [gateInput, endTargeting, actMutate],
+    [gateInput, endTargeting, actMutate, cue],
   );
 
   // ---------------------------------------------------------------- derived
@@ -324,15 +363,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     [gateInput, actions, act, beginTargeting],
   );
 
+  /**
+   * A drop, and the two ways it can fail.
+   *
+   * Both used to `return` in silence, which is the worst possible answer to a
+   * deliberate gesture: the card sprang back to the hand and nothing said
+   * whether the game had refused it or simply not noticed. `deny` is the
+   * difference between "you cannot do that" and "is this thing on".
+   */
   const onDropOnZone = useCallback(
     (card: CardView, zone: string) => {
       if (gateInput()) return;
       const [kind, , lane] = zone.split(":");
-      if (kind !== "lane") return;
-      if (!canDropOnLane(state, actions, card.oid, lane as LaneName)) return;
+      if (kind !== "lane" || !canDropOnLane(state, actions, card.oid, lane as LaneName)) {
+        cue("deny");
+        return;
+      }
       playFromHand(card);
     },
-    [gateInput, state, actions, playFromHand],
+    [gateInput, state, actions, playFromHand, cue],
   );
 
   /** Clicking a permanent: resolve a target, or stage it for combat. */
@@ -578,7 +627,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         return;
       }
       if (narration.busy && event.key !== "Escape") {
-        narration.skip();
+        skipAll();
         return;
       }
       /*
@@ -626,6 +675,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     act,
     gateInput,
     narration,
+    skipAll,
     endTargeting,
     setPeek,
     playFromHand,
@@ -678,7 +728,18 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     >
       <PhaseTrack state={state} />
 
-      <motion.div className="table__body" ref={boardRef} animate={shake}>
+      {/*
+        `data-fx-origin` marks the box every effect coordinate is relative to.
+        `FxLayer` and `CombatArrows` already resolve it through `boardRef`, but a
+        card actuator is reached from a module function with no props and no
+        context, so it finds this by walking up from the card itself.
+      */}
+      <motion.div
+        className="table__body"
+        ref={boardRef}
+        data-fx-origin
+        style={{ x: shakeX, y: shakeY }}
+      >
         <aside className="rail rail--left">
           <StackPanel state={state} />
           <EventTicker state={state} events={events} cardName={game.cardName} />
@@ -772,7 +833,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             onToggleFullControl={(value) => fullControlMutate(value)}
             onToggleManualMana={(value) => manualManaMutate(value)}
             narrating={narration.busy}
-            onSkipNarration={narration.skip}
+            onSkipNarration={skipAll}
             busy={busy}
             aiThinking={aiThinking}
             standDown={modalOwnsDecision}
@@ -780,6 +841,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         </aside>
 
         <CombatArrows state={state} boardRef={boardRef} />
+        <ParticleLayer boardRef={boardRef} />
         <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} state={state} />
       </motion.div>
 
@@ -853,7 +915,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       )}
 
       <PromptDialog state={state} actions={actions} onAct={act} disabled={locked} />
-      <ZonePeek state={state} />
+      <ZonePeek state={state} reasons={removals} />
       <GameOverScreen state={state} onRematch={onRematch} onQuit={onQuit} />
     </div>
   );

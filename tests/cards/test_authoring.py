@@ -264,16 +264,43 @@ class TestThePacketCarriesTheWholeVocabulary:
         only, an effect's selector may read far more.
 
         Neither contains the other, which is the reason both have to travel.
-        `attached` ("enchanted creature gets +2/+2") is static-only because it
-        reads board state rather than a derived characteristic; everything the
-        selector language adds on top is unreachable from a static.
+        The static-only keys are one category -- **relationships between two
+        permanents**, read off a field rather than off a characteristic:
+        soulbond's two are "as long as this creature is paired, **both** get
+        +1/+1", one static written once and applied to two creatures. Both are
+        board state, so no static can depend on another's output through them.
+
+        `attached` used to be here and is now in *both* lists. The claim that it
+        was "meaningless to an effect's selector" was simply wrong: Blade of the
+        Bloodchief puts a counter on equipped creature and Skullclamp draws when
+        it dies, and neither is a continuous effect. Being static-only was the
+        reason no `op` could reach the equipped creature at all.
         """
         from automtg.cards.authoring.packet import reference
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
-        assert static - selector == {"attached"}
+        assert static - selector == {"paired", "paired_with_source"}
+        assert "attached" in static and "attached" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
+
+    def test_the_static_condition_vocabulary_is_shown(self):
+        """A third language, and the packet showed neither of the other two in
+        its place: a worker who cannot see that a static may be conditional
+        files a gap for "as long as" clauses that already work."""
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.loader import STATIC_CONDITION_HEADS
+
+        assert set(reference()["static_condition_keys"]) == set(STATIC_CONDITION_HEADS)
+
+    def test_the_cost_vocabulary_is_shown(self):
+        """A worker shown `ops` but not `cost_keys` cannot tell a cost from an
+        effect, so every "<cost>: <effect>" card either guesses or files a gap
+        for a cost that already exists. Derived, so it cannot go stale."""
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.schema import CostModel
+
+        assert set(reference()["cost_keys"]) == set(CostModel.model_fields)
 
     def test_counters_on_is_reachable(self):
         """The specific omission that cost a card."""
@@ -282,3 +309,80 @@ class TestThePacketCarriesTheWholeVocabulary:
         ref = reference()
         assert "counters_on" in ref["value_keys"]
         assert "cmp" in ref["condition_keys"]
+
+class TestATransformingCardIsOneAnswer:
+    """Henrika Domnathi, Edgar Charmed Groom -- two faces, one answer file.
+
+    The *engine* has shipped transforming double-faced cards for a long time:
+    `card_of` picks a face, `back_face` links them, and bloodline_keeper /
+    lord_of_lineage is a shipped pair. Only the authoring path was missing --
+    `collect_answers` read `answer["card"]` as a single dict, so a card that is
+    two entries could not be written at all.
+
+    The back travels with the front rather than as a second answer, because a
+    second answer would need its own expectation and a back face has no position
+    it can be cast in. What it does is proven through the front.
+    """
+
+    def front_and_back(self):
+        front = {
+            "id": "t_two_faced_probe",
+            "name": "Two Faced Probe",
+            "oracle_text": "Flying",
+            "mana_cost": "{1}{B}",
+            "types": ["Creature"],
+            "subtypes": ["Vampire"],
+            "power": 2,
+            "toughness": 2,
+            "keywords": ["flying"],
+            "colors": ["B"],
+            "color_identity": ["B"],
+            "back_face": "t_two_faced_probe_back",
+        }
+        back = {
+            "id": "t_two_faced_probe_back",
+            "name": "Two Faced Probe Back",
+            "oracle_text": "Deathtouch",
+            "types": ["Creature"],
+            "subtypes": ["Vampire"],
+            "power": 3,
+            "toughness": 3,
+            "keywords": ["deathtouch"],
+            "colors": ["B"],
+            "color_identity": ["B"],
+        }
+        return front, back
+
+    def test_a_front_with_its_back_passes(self, real_registry):
+        from automtg.cards.authoring import verify as V
+
+        front, back = self.front_and_back()
+        verdict = V.verify(
+            front, {"zone": "battlefield"}, real_registry, companions=[back]
+        )
+        assert verdict.ok, verdict.reason
+
+    def test_a_front_without_its_back_is_refused(self, real_registry):
+        """The dangling link is a registry failure, not a silent half-card.
+
+        This is the gate that makes the feature safe: `link_faces` refuses a
+        one-way link, so an answer that forgot its back face cannot ship a
+        creature whose transform ability points at nothing.
+        """
+        from automtg.cards.authoring import verify as V
+
+        front, _ = self.front_and_back()
+        verdict = V.verify(front, {"zone": "battlefield"}, real_registry)
+        assert verdict.failed_gate == "registry"
+        assert "back_face" in verdict.reason
+
+    def test_the_collector_reads_one_back_or_several(self):
+        from scripts.author_cards import _companion_faces
+
+        assert _companion_faces({"card": {}}) == []
+        assert _companion_faces({"card": {}, "back": {"id": "a"}}) == [{"id": "a"}]
+        assert _companion_faces({"card": {}, "back": [{"id": "a"}, {"id": "b"}]}) == [
+            {"id": "a"},
+            {"id": "b"},
+        ]
+

@@ -267,7 +267,9 @@ class CardIndex:
         except sqlite3.Error:  # pragma: no cover -- an index built before `meta`
             return {}
 
-    def lookup(self, name: str, *, token: bool | None = None) -> IndexEntry | None:
+    def lookup(
+        self, name: str, *, token: bool | None = None, joined: bool = False
+    ) -> IndexEntry | None:
         """One printing by exact name, case-insensitively.
 
         ``token=True`` restricts to token printings, which is what makes an
@@ -279,9 +281,23 @@ class CardIndex:
         to the **real card**.  A deck can hold Tarmogoyf and cannot hold the
         token that shares its name, so preferring the card is the only ordering
         that makes an unqualified lookup useful.
+
+        ``joined=True`` matches one *face* of a double-faced card against the
+        joined name the catalog stores it under: the index reduces every card to
+        one row, and a transforming card's row is called "Bloodline Keeper //
+        Lord of Lineage", so neither "Bloodline Keeper" nor "Lord of Lineage"
+        finds it. Anchored on either side of the ``//`` so that a face name is
+        never matched mid-word.
         """
         if not name:
             return None
+        if joined:
+            sql = (
+                f"{self._select} WHERE is_token = 0 AND (name LIKE ? COLLATE NOCASE "
+                f"OR name LIKE ? COLLATE NOCASE)"
+            )
+            row = self._con.execute(sql, [f"{name} // %", f"% // {name}"]).fetchone()
+            return _row_to_entry(row) if row else None
         sql = f"{self._select} WHERE name = ? COLLATE NOCASE"
         params: list[object] = [name]
         if token is not None:
@@ -437,7 +453,35 @@ def resolve(card: CardDef, index: CardIndex) -> IndexEntry | None:
                 return hit
         # A few "tokens" have real printings -- Treasure and Food, for instance.
         return index.lookup(token_key(card))
+    # A double-faced card is one row in the catalog, under the joined name
+    # ("Bloodline Keeper // Lord of Lineage"), so neither face resolves on its
+    # own. Both faces look up that row; which *image* they take from it is
+    # `CardArt.back`, since `image_url` has always taken a face.
+    if (joined := dfc_key(card, index)) is not None:
+        return joined
     return index.lookup(card.name) or index.lookup(strip_token_suffix(card.name))
+
+
+def dfc_key(card: CardDef, index: CardIndex) -> IndexEntry | None:
+    """The catalog row for a two-faced card, from either of its faces.
+
+    Both links, because the catalog does not distinguish them: a modal DFC, a
+    split card and an Adventure are each one row under the joined name, exactly
+    as a transforming card is. ``back_face``/``front_face`` is the transform
+    link and ``second_face``/``parent_face`` is the second-castable-face one --
+    Malakir Mire resolves through the second, and resolved to nothing until it
+    was asked about.
+
+    Returns ``None`` for a single-faced card, so the ordinary path is untouched.
+    """
+    if (
+        card.back_face is None
+        and card.front_face is None
+        and card.second_face is None
+        and card.parent_face is None
+    ):
+        return None
+    return index.lookup(card.name, joined=True)
 
 
 # ----------------------------------------------------------------------
@@ -452,6 +496,12 @@ class CardArt:
     card_id: str
     scryfall_id: str | None = None
     artist: str | None = None
+    #: The **back** face of a transforming card. Both faces share one catalog
+    #: row and one scryfall id -- the id is the card, not the face -- so this is
+    #: what tells the two apart. Without it Lord of Lineage would download
+    #: Bloodline Keeper's illustration and a transformed permanent would show
+    #: the face it just turned away from.
+    back: bool = False
 
     @property
     def has_printing(self) -> bool:
@@ -459,7 +509,9 @@ class CardArt:
 
     def remote_url(self, size: str = ART_CROP) -> str | None:
         """Only ever used server-side, by the fetch script and the lazy fill."""
-        return image_url(self.scryfall_id, size) if self.scryfall_id else None
+        if not self.scryfall_id:
+            return None
+        return image_url(self.scryfall_id, size, back=self.back)
 
 
 def build_registry_images(registry, index: CardIndex) -> dict[str, CardArt]:
@@ -472,6 +524,7 @@ def build_registry_images(registry, index: CardIndex) -> dict[str, CardArt]:
             card_id=card.id,
             scryfall_id=entry.scryfall_id if entry else None,
             artist=entry.artist if entry else None,
+            back=card.front_face is not None,
         )
     return out
 
@@ -481,7 +534,10 @@ def write_registry_images(images: dict[str, CardArt], path: Path) -> None:
         card_id: (
             None
             if not art.has_printing
-            else {"scryfall_id": art.scryfall_id, "artist": art.artist}
+            else (
+                {"scryfall_id": art.scryfall_id, "artist": art.artist}
+                | ({"back": True} if art.back else {})
+            )
         )
         for card_id, art in sorted(images.items())
     }
@@ -508,5 +564,6 @@ def read_registry_images(path: Path | None = None) -> dict[str, CardArt]:
                 card_id=card_id,
                 scryfall_id=entry.get("scryfall_id"),
                 artist=entry.get("artist"),
+                back=bool(entry.get("back")),
             )
     return out
