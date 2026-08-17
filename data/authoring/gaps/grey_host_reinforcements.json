@@ -1,0 +1,25 @@
+{
+  "card_id": "grey_host_reinforcements",
+  "name": "Grey Host Reinforcements",
+  "oracle_text": "Flying, ward {3}\nWhen this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.",
+  "blocked_sentences": [
+    "When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way."
+  ],
+  "needs": [
+    {
+      "capability": "effect_result_binding",
+      "kind": "op",
+      "what": "An `as` key on the `exile` op that records the oids it consumed into `ctx.bindings`, so a later effect in the same resolution can count them: `{\"op\": \"exile\", \"objects\": {...}, \"as\": \"exiled\"}` then `{\"count\": {\"binding\": \"exiled\", \"types\": [\"Creature\"]}}`. Two halves: (1) `op_exile` in `src/automtg/engine/effects/ops_board.py` writes `ctx.bindings[str(name)] = list(oids)` after `choose_objects` and before the move loop, byte-for-byte the three lines `op_sacrifice` already has directly below it; (2) `resolve_pool`/`matches` must apply a selector's remaining filter clauses (here `types`) to an oid list arriving via `binding`, because the card needs the *creature* subset of the exiled set, not its cardinality. Today the binding branch of `resolve_pool` returns the bound oids unfiltered, so a `types` clause alongside `binding` is silently ignored -- which would turn \"number of creature cards\" into \"number of cards\" without any error.",
+      "why_existing_wont_do": "The engine already has this exact idiom under this exact name, on two other ops, for this exact printed shape -- `op_sacrifice`'s `as` is devour (\"it enters with twice that many +1/+1 counters\") and `op_reveal`'s `as` is documented as \"this creature enters with X +1/+1 counters, where X is the number of cards revealed this way\". `exile` is the one member of the family that never got it, so the read-back half (`{\"count\": {\"binding\": ...}}`) already works and only the write side is missing. Nothing else in `reference` reaches the set: `snapshot` captures one object's characteristics under a name (`capture_snapshot(state, oids[0])`), not a count, and there is no general last-known-information system. `exiled_with: \"self\"` reads `GameObject.exiled_by`, but `op_exile` only writes that field when `until_leaves` is true, and `until_leaves` is the Oblivion Ring link -- \"exile it until this permanent leaves the battlefield\" -- so borrowing it would declare a return this card does not have and would make the creature hand back the whole graveyard if the O-Ring return is ever driven off that link. Counting the graveyard *before* exiling it (`{\"count\": {\"zone\": \"graveyard\", \"player\": {\"target\": \"t1\"}, \"types\": [\"Creature\"]}}` placed ahead of the `exile`) is the near miss: it is numerically equal only because this particular card empties the whole zone, and it requires emitting the card's two printed sentences in the opposite order from the one printed, so it neither says nor generalises to \"exiled this way\"."
+    }
+  ],
+  "closest_existing": [
+    "sacrifice.as",
+    "reveal.as",
+    "until_leaves",
+    "exiled_with",
+    "snapshot"
+  ],
+  "confidence": "high",
+  "notes": "Only the counter clause blocks the card; everything else on it is already expressible and needs nothing new. \"Flying, ward {3}\" is `keywords: [\"flying\"]` plus the shipped ward idiom (`becomes_target` trigger with `controller: \"opponent\"`, `source: \"self\"`, then `may` routed to `{\"binding\": \"event_player\"}` with `pay: {\"mana\": \"{3}\"}` and `else: [{\"op\": \"counter\", \"sid\": {\"binding\": \"sid\"}}]`) -- the shape `CLOAK_WARD` in engine/carddef.py and Vein Ripper's \"Ward-Sacrifice a creature.\" both use. Note for whoever authors this after the gap closes: `lift_keywords` splits that line on the comma and needs *every* part in KNOWN_KEYWORDS, so \"ward_{3}\" leaves the whole line unconsumed and the ward ability's `text` must be the full printed \"Flying, ward {3}\" for the residual gate to see it claimed. \"Exile target player's graveyard\" is Bojuka Bog verbatim -- a `kind: \"player\"` target and `{\"op\": \"exile\", \"objects\": {\"zone\": \"graveyard\", \"player\": {\"target\": \"t1\"}, \"count\": \"all\"}}`, the case `_zone_owners` documents `player` as existing for. Because the harness picks the targeted player itself and the opponent's graveyard is empty in the sandbox while player 0's holds two creature cards, the expectation for the finished card cannot assert `counters` or `graveyard_size` and should be `{\"zone\": \"battlefield\", \"battlefield_count\": 33}`, matching how Bojuka Bog is asserted."
+}

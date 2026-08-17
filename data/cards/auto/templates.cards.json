@@ -36693,6 +36693,78 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "selector": {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a Plains card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_count_of": {
+                  "objects": {
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "knight_of_the_white_orchid",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "Knight of the White Orchid",
+      "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -80817,6 +80889,70 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                },
+                "player": "each_opponent"
+              }
+            },
+            "right": {
+              "lands_you_control": true
+            }
+          },
+          "cost": {
+            "mana": "{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "op": "search_library",
+              "reveal": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "weathered_wayfarer",
+      "mana_cost": "{W}",
+      "name": "Weathered Wayfarer",
+      "oracle_text": "{W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Nomad",
+        "Cleric"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

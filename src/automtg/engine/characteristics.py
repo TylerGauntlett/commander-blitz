@@ -62,6 +62,23 @@ def min_life(lives: list[int]) -> int:
     """The lowest of several life totals, biased away from vacuous truth."""
     return min(lives, default=NO_PLAYERS_LIFE)
 
+
+#: What ``min_count_of`` reports when its player spec selects nobody.
+#:
+#: The same bias ``NO_PLAYERS_LIFE`` has, for the same reason and in the same
+#: direction. ``min_count_of`` is the *universal* -- "each opponent controls more
+#: lands than you" -- so over nobody it must read as unreachably large: a minimum
+#: of 0 would say every opponent is ahead of you at the moment the last one died.
+#: ``max_count_of`` is the existential and takes a plain 0, because "an opponent
+#: controls more lands than you" over nobody is correctly false and no land count
+#: of yours is below zero.
+NO_PLAYERS_COUNT = 1_000_000
+
+
+def min_count(counts: list[int]) -> int:
+    """The lowest of several per-player counts, biased away from vacuous truth."""
+    return min(counts, default=NO_PLAYERS_COUNT)
+
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
@@ -380,8 +397,8 @@ def _compare(op: str, left: int, right: int) -> bool:
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     """Evaluate the restricted value language allowed inside static abilities.
 
-    ``{"const": n}``, ``{"count": <filter>}`` and the two per-player life leaves
-    are permitted here -- the full value language would need the selector
+    ``{"const": n}``, ``{"count": <filter>}`` and the per-player life and count
+    leaves are permitted here -- the full value language would need the selector
     engine, which needs derived characteristics, which would reintroduce
     recursion.
 
@@ -417,7 +434,61 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     if "max_life_of" in expr:
         pids = _static_players(state, source, expr["max_life_of"])
         return max([state.players[p].life for p in pids], default=0)
+    if "max_count_of" in expr:
+        # "As long as an opponent controls more lands than you." A count per
+        # player rather than over the merged pool -- `count` with
+        # `controller: "opponent"` is the *sum*, which crosses your land total at
+        # a pod long before any single opponent does.
+        #
+        # Safe inside a static for the same reason `count` is: it reads printed
+        # characteristics and board state, both pipeline inputs, so no layer can
+        # change the answer and the fixed order stays acyclic.
+        return max(_counts_per_player(state, expr["max_count_of"], source), default=0)
+    if "min_count_of" in expr:
+        return min_count(_counts_per_player(state, expr["min_count_of"], source))
     return 0
+
+
+def _counts_per_player(
+    state: GameState, spec: Mapping[str, Any], source: GameObject
+) -> list[int]:
+    """How many objects a static's filter matches, once per named player.
+
+    The static-side twin of ``values._counts_per_player``, and it splits the two
+    zone families the same way for the same reason: the battlefield is shared, so
+    a player is a filter over it, while a hand or a graveyard belongs to somebody
+    and a player chooses whose list to walk.
+
+    The pool is scoped here rather than by a ``controller`` clause on the filter,
+    because that clause has only three words -- and "not you" is the pooled
+    question this leaf exists to take apart.
+    """
+    objects = spec.get("objects") or {}
+    zone = str(objects.get("zone", Zone.BATTLEFIELD.value))
+    counts: list[int] = []
+    for pid in _static_players(state, source, spec.get("player")):
+        if zone == Zone.BATTLEFIELD.value:
+            counts.append(
+                sum(
+                    1
+                    for oid in state.battlefield
+                    if (obj := state.objects.get(oid)) is not None
+                    and obj.controller == pid
+                    # `"any"`, so `_matches` applies no controller clause of its
+                    # own on top of the scoping already done here.
+                    and _matches(state, obj, source, {**objects, "controller": "any"})
+                )
+            )
+            continue
+        counts.append(
+            sum(
+                1
+                for oid in state.players[pid].zone_list(Zone(zone))
+                if (obj := state.objects.get(oid)) is not None
+                and _matches_printed(state.card_of(obj), objects)
+            )
+        )
+    return counts
 
 
 def _count_matching(state: GameState, selector: Mapping[str, Any], source: GameObject) -> int:
