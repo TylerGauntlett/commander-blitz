@@ -837,7 +837,7 @@ def _cast_variant(
     mutated: bool = False,
     pay_generic: int = 0,
 ) -> list[Action]:
-    from .costs import cost_reduction, mana_sources, spell_purpose
+    from .costs import cost_reduction, mana_sources, spell_purpose, variant_reduction
 
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same
@@ -845,8 +845,16 @@ def _cast_variant(
     sources = mana_sources(state, pid, purpose=spell_purpose(card))
     pool = state.players[pid].mana_pool
 
+    # "This spell costs {X} less to cast **this way**": a discount belonging to
+    # the variant rather than to the card, so it is read on the branch that
+    # selected the price and nowhere else. Card-level `cost_reduction` below is
+    # variant-blind by design -- Ghalta costs less however you cast it -- and a
+    # rider written there would discount the printed hand cast too.
+    variant_less = 0
+
     if flashback and card.flashback is not None:
         cost = card.flashback.mana
+        variant_less = variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
         cost = card.emerge
     elif evoked and card.evoke is not None:
@@ -872,7 +880,7 @@ def _cast_variant(
         # Folded into the price *here* rather than paid separately, so legality
         # and the solver price the line the player is actually being offered.
         cost = cost.plus(card.additional_cost.mana.scaled(additional_times))
-    discount = cost_reduction(state, pid, card)
+    discount = cost_reduction(state, pid, card) + variant_less
     # Convoke and delve reduce the generic part, exactly as a cost reduction
     # does -- and go through the same clamp, so neither can make a spell free
     # of its coloured pips.

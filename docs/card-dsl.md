@@ -1824,13 +1824,74 @@ neither list survives `reset_permanent_state`.
              "zone": "battlefield", "controller": "you", "subtypes": ["Vampire"]}}}
 ```
 
-Both existing reductions discount *casting a spell* — a card's own
+Both card-level reductions discount *casting a spell* — a card's own
 `cost_reduction` and the `spell_cost_reduction` static — and both are read only
 from the cast path, so an activated ability's price was the literal string on the
-card at every board state. `Cost.mana_reduction` takes the same
-`{"count": {filter}}` shape, applied by `costs.ability_mana`, which `can_pay` and
-`pay` both call so the offer and the charge cannot disagree. Generic only,
-clamped at zero.
+card at every board state. `Cost.mana_reduction` speaks the same reduction
+language, applied by `costs.ability_mana`, which `can_pay` and `pay` both call so
+the offer and the charge cannot disagree. Generic only, clamped at zero.
+
+### …only under a condition
+
+```jsonc
+// Crown of Gondor — "Equip {4}. This ability costs {3} less to activate
+//                    if you're the monarch."
+"cost": {"mana": "{4}",
+         "mana_reduction": {"amount": 3, "condition": {"is_monarch": "you"}}}
+```
+
+`amount` is a **flat** number, and it is a different shape from `count` rather
+than a special case of it: "{3} less if you're the monarch" written as a `count`
+would need a filter matching exactly three permanents while the crown is yours
+and none otherwise, which no filter over a board can say. So an ungated `amount`
+is refused — that is just a cheaper printed cost — and a `condition` without an
+amount is refused for having nothing to reduce.
+
+`condition` is the ordinary condition DSL, narrowed to the heads that can be
+answered **at pricing time**: a reduction is evaluated while deciding what is
+castable or activatable, before anything reaches the stack, so `kicked`,
+`evoked`, `overloaded` and `cast_from_graveyard` read `False` every time. A card
+written with one of those would have a discount clause that can never fire, and
+nothing on a board would ever say so, so the loader refuses them.
+
+Splitting the printed line into two abilities — equip {4} and equip {1} — is not
+the same card: nothing could switch the cheap one off.
+
+### …only when cast one particular way
+
+```jsonc
+// "Flashback {8}{W}{W}. This spell costs {1} less to cast *this way*
+//  for each creature you control."
+"flashback": {"mana": "{8}{W}{W}",
+              "mana_reduction": {"count": {"controller": "you",
+                                           "types": ["Creature"]}}}
+```
+
+The card-level `cost_reduction` is **variant-blind**, and deliberately: Ghalta
+costs less however it is cast, so `legality._cast_variant` applies it to whichever
+price it just picked. A "costs {X} less to cast this way" rider written there
+would therefore discount the printed hand cast too — a card that still loads,
+still plays, and is simply cheaper than it says from a zone nobody was looking
+at.
+
+So the rider goes on the **variant's own cost node**, as the same
+`mana_reduction` key an activated ability uses, and is read by
+`costs.variant_reduction` from the flashback branch of `legality._cast_variant`
+and the matching branch of `game._cast` — both, so the spell is charged at the
+price it was offered at. Not a second key meaning the same thing: a key that can
+be written in the wrong slot is a key that will be, and it would be ignored in
+silence.
+
+`flashback`/`graveyard_cost` is the only alternative cost that can carry one,
+because it is the only one modelled as a full `Cost`. `evoke`, `emerge`,
+`overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana
+strings with no node to hang a rider on. It is also refused on
+`additional_cost`, whose mana is folded into the spell's price and never priced
+on its own.
+
+All three readers — the card-level field, an ability's cost, a graveyard cast's
+cost — go through one function, `costs.reduction_amount`, so "for each" and "if"
+cannot come to mean different things in different slots.
 
 ## A granted ability that fires on its own creature's death
 
@@ -2719,10 +2780,16 @@ that still tapped for mana would make the effect worth nothing.
   "cost_reduction": { "total_power": { "controller": "you", "types": ["Creature"] } } }
 ```
 
-Also `{"count": filter}`, for "costs {1} less for each…". Generic only, clamped
-at zero: "costs {X} less" never reaches through the generic part into the
+Also `{"count": filter}`, for "costs {1} less for each…", and `{"amount": N}`
+gated on a `condition` — see *An activated ability that gets cheaper* above,
+which documents the one reduction language all three slots share. Generic only,
+clamped at zero: "costs {X} less" never reaches through the generic part into the
 coloured pips, which is both the rule and the only thing the payment solver could
 act on. Mana value stays what is printed.
+
+This field is **variant-blind**: it discounts the card however it is cast, which
+is right for Ghalta and wrong for "costs {X} less to cast *this way*". That rider
+belongs on the variant's own cost node.
 
 Read off the board every time it is asked for, never stored — Ghalta is a
 twelve-drop or a two-drop depending on what is already in play. Legality and

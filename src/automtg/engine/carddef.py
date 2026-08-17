@@ -111,9 +111,21 @@ class Cost:
     #: ability still counts as the one loyalty ability that turn.
     loyalty: int | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
-    #: "This ability costs {1} less to activate for each Vampire you control."
-    #: Applied by `costs.ability_mana`, which both `can_pay` and `pay` call so an
-    #: ability offered at the reduced price is also paid at it.
+    #: How much less **this cost node** costs -- `{"count": filter}`,
+    #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
+    #: gated on a `condition`. One language, in `costs.reduction_amount`, shared
+    #: with the card-level `cost_reduction` so "for each" and "if" cannot drift.
+    #:
+    #: On an activated ability's cost: "This ability costs {1} less to activate
+    #: for each Vampire you control", and Crown of Gondor's "{3} less to activate
+    #: if you're the monarch". Applied by `costs.ability_mana`, which both
+    #: `can_pay` and `pay` call so an ability offered at the reduced price is also
+    #: paid at it.
+    #:
+    #: On `flashback` -- the one alternative cost that is a full `Cost` -- it is
+    #: "this spell costs {X} less to cast **this way**", applied by
+    #: `costs.variant_reduction` on the flashback branch alone, which is what
+    #: keeps it off the printed hand cast.
     mana_reduction: Mapping[str, Any] | None = None
 
     @staticmethod
@@ -507,7 +519,12 @@ class CardDef:
     #: Offering: the creature type the sacrifice must be. ``None`` is emerge
     #: proper, which takes any creature.
     emerge_subtype: str | None = None
-    #: "This spell costs {X} less to cast."  See `costs.cost_reduction`.
+    #: "This spell costs {X} less to cast."  See `costs.cost_reduction`, and
+    #: `costs.reduction_amount` for the shapes -- it is **variant-blind** by
+    #: design: Ghalta costs less however it is cast, so `_cast_variant` applies
+    #: this to whichever price it picked. A discount that belongs to one cast
+    #: variant goes on that variant's own cost node instead, as
+    #: `Cost.mana_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
     #: Retrace: castable from the graveyard for its cost plus a discarded land.
     retrace: bool = False

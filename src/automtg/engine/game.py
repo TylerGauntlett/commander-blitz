@@ -260,7 +260,12 @@ class Game:
                 targets=tuple(card.targets) + tuple(face.targets),
             )
         from_command = obj.zone is Zone.COMMAND
-        from .costs import commander_cost, cost_reduction, spell_purpose
+        from .costs import (
+            commander_cost,
+            cost_reduction,
+            spell_purpose,
+            variant_reduction,
+        )
 
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
@@ -282,6 +287,11 @@ class Game:
             extra -= state.card(action.emerge_oid).mana_cost.mana_value()
         elif action.flashback and card.flashback is not None:
             cost = card.flashback.mana
+            # "…costs {X} less to cast **this way**". Netted into `extra` on this
+            # branch alone, mirroring `legality._cast_variant`: the spell has to
+            # be charged at the price it was offered at, and a rider read on
+            # every branch would discount the printed hand cast as well.
+            extra -= variant_reduction(state, pid, card.flashback, oid)
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
         elif action.bestowed and card.bestow is not None:

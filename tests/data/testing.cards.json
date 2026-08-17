@@ -7732,6 +7732,125 @@
       ]
     },
     {
+      "id": "t_monarch_equip",
+      "name": "Test Crown Equipment",
+      "oracle_text": "Equipped creature gets +1/+1.\nEquip {4}. This ability costs {3} less to activate if you're the monarch.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "buff",
+          "text": "Equipped creature gets +1/+1.",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch.",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{4}",
+            "mana_reduction": {
+              "amount": 3,
+              "condition": {
+                "is_monarch": "you"
+              }
+            }
+          },
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "equip_target"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_flashback_discount",
+      "name": "Test Flashback Discount",
+      "oracle_text": "Draw a card.\nFlashback {8}{W}. This spell costs {1} less to cast this way for each creature you control.",
+      "mana_cost": "{4}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "flashback": {
+        "mana": "{8}{W}",
+        "mana_reduction": {
+          "count": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_conditional_flashback",
+      "name": "Test Conditional Flashback",
+      "oracle_text": "Draw a card.\nFlashback {6}{W}. This spell costs {4} less to cast this way if you're the monarch.",
+      "mana_cost": "{4}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "flashback": {
+        "mana": "{6}{W}",
+        "mana_reduction": {
+          "amount": 4,
+          "condition": {
+            "is_monarch": "you"
+          }
+        }
+      },
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_rebirth",
       "name": "Test Rebirth",
       "oracle_text": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",

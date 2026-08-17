@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **38** capabilities.
+**35 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [attacked-this-turn-objects](#attacked-this-turn-objects) | 2 | 657 | selector |
 | [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
-| [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
 | [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
 | [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
@@ -112,25 +111,6 @@ Blocks **2** cards.
 
 </details>
 
-## conditional-cost-reduction
-
-Blocks **2** cards.
-
-- **(cost)** A flat cost reduction on an activated ability, gated on a condition rather than scaled by a count: "this ability costs {3} less to activate if <condition>". Needs an amount plus a `condition` on the same cost node, applied by `costs.ability_mana` so that `can_pay` and `pay` agree, and clamped at zero over the generic part like every other reduction.
-  <br>Why the existing vocabulary won't do: `mana_reduction` is the closest and is the wrong arithmetic: it is documented in `schema.py` as the `{"count": {filter}}` shape -- "costs {1} less for each Vampire you control" -- so it multiplies a per-object count and has no slot for a boolean condition. Writing this card's equip with it would mean finding a filter whose match count is 3 when you are the monarch and 0 otherwise, which no filter over permanents can express. The card-level `cost_reduction` field is also unusable here: `carddef.py` notes both existing reductions discount *casting a spell* and never reach the activation path an equip cost is charged on. Splitting the line into two abilities (equip {4} and equip {1}) is not available either, since nothing could turn the cheap one off when you are not the monarch.
-- **(cost)** A cost reduction scoped to a single cast variant -- "this spell costs {X} less to cast THIS WAY" -- so a discount can be attached to the flashback/`graveyard_cost` line and not to the printed hand cast. Suggested shape: a `reduction` key inside the `CostModel` that `flashback`/`graveyard_cost` already is (beside its `mana`), taking the same value the card-level `cost_reduction` takes, and read by `legality._cast_variant` only on the branch that selected that cost, plus the matching branch in `game._cast` so the spell is paid at the price it was offered at. Every alternative cost in the engine (`evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate`, `alternative_cost`) would gain the same rider for free.
-  <br>Why the existing vocabulary won't do: The two reductions in `cost_keys`/the card schema are both variant-blind. `legality._cast_variant` picks the cost per variant at `legality.py:848-867` (`if flashback and card.flashback is not None: cost = card.flashback.mana`) but then applies `discount = cost_reduction(state, pid, card)` unconditionally at `legality.py:875`, and `game._cast` mirrors that at `game.py:268` -- so a card-level `cost_reduction` would take {X} off the printed {4}{W} hand cast as well, which the card does not say and which would silently make Visions of Glory a one-mana sorcery in a deck with a 6-drop commander. The `mana_reduction` cost key is not a way in either: `costs.ability_mana` (`costs.py:407-432`) is the only reader, and its docstring says it exists precisely because the two cast-path reductions never reach an *activated ability* -- a flashback cast is a cast, so it goes through `_cast_variant` and never through `ability_mana`. There is no third place to hang the discount: `spell_cost_reduction` is the Warden-of-Evos-Isle static, which discounts a *different* card from the battlefield and cannot be printed on the card being discounted.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crown of Gondor** (rank 5614) — `crown_of_gondor`
-  - When a legendary creature you control enters, if there is no monarch, you become the monarch
-  - Equip {4}. This ability costs {3} less to activate if you're the monarch
-- **Visions of Glory** (rank 6142) — `visions_of_glory`
-  - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
-
-</details>
-
 ## effect-result-binding
 
 Blocks **2** cards.
@@ -215,7 +195,7 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(value)** A cost-time value equal to the greatest mana value among the commanders one player owns, counting both the battlefield and the command zone -- e.g. a `commander_mana_value` value key (or a `{"greatest_mana_value": <filter>}` reduction shape) evaluated with `pick: "greatest"` over `state.players[pid].command` plus that player's commander permanents on the battlefield, read off the printed card (`state.card(oid).mana_value`) since a commander in the command zone has no board state.
-  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the only reduction shapes `costs.cost_reduction` accepts are `{"count": filter}` and `{"total_power": filter}` (`costs.py:987-993`), both of which SUM over matches -- a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` (`costs.py:997-1012`) iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
+  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the reduction shapes `costs.reduction_amount` accepts are `{"amount": N}`, `{"count": filter}` and `{"total_power": filter}` -- the flat `amount` is a number written into the card, and the other two SUM over matches, so a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
 
 <details><summary>Cards waiting on this</summary>
 
