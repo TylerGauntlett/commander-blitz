@@ -215,7 +215,12 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
             tap_permanent(state, oid)
 
     if combat.attackers:
-        state.emit(
+        # `fire`, not `emit`: "whenever you attack" listens for this, and the
+        # event had been recorded in the log with nothing subscribed to it. Once
+        # per declaration whatever the number of attackers, which is the whole
+        # difference from the per-creature ATTACKS fired just below.
+        fire(
+            state,
             EventType.ATTACKERS_DECLARED,
             player=state.active_player,
             attackers=sorted(combat.attackers),

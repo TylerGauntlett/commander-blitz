@@ -160,6 +160,13 @@ class GameObject:
     #: of the battlefield state, because a permanent that leaves and returns
     #: makes the choice again.
     granted_keywords: set[str] = field(default_factory=set)
+    #: The same thing for a whole ability: "It gains 'when this creature dies,
+    #: draw a card'", with no printed duration -- Clavileño. Stored as the same
+    #: `TempEffect` pointer `until_eot` holds, so `granted_abilities` reads both
+    #: alike, but kept out of the list `clear_until_eot` sweeps. A grant with no
+    #: "until end of turn" on it lasts as long as the permanent does, and one
+    #: that wore off at cleanup would be a strictly weaker card.
+    granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
     #: "That land doesn't untap during its controller's next untap step."  A
     #: *one-shot*, cleared by the untap step it skips -- unlike `frozen_by`,
     #: which holds for as long as its source is on the battlefield.  Two
@@ -372,6 +379,7 @@ class GameObject:
         self.must_block = None
         self.detained_by = None
         self.granted_keywords = set()
+        self.granted_abilities_permanent = []
         self.tapped = False
         self.damage = 0
         self.deathtouched = False

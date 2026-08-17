@@ -627,21 +627,36 @@ def grant_keyword(
     _stats_changed(state, obj, keyword=keyword)
 
 
-def grant_ability(state: GameState, oid: int, ability_index: int, source: int) -> None:
-    """Hand one of ``source``'s grantable abilities to ``oid`` until end of turn.
+def grant_ability(
+    state: GameState,
+    oid: int,
+    ability_index: int,
+    source: int,
+    *,
+    permanent: bool = False,
+) -> None:
+    """Hand one of ``source``'s grantable abilities to ``oid``.
 
     Stored as a pointer -- source oid plus index -- rather than a copy of the
     ability, so there is exactly one definition of what was granted and it stays
     the card file's.
+
+    ``permanent`` is the distinction `grant_keyword` already draws, and it
+    matters here for the same reason: Clavileño's "It gains 'when this creature
+    dies, …'" prints no duration, and a grant swept at cleanup would be a
+    strictly weaker card that looks identical on the turn it was made. The two
+    durations live in different lists because only one of them is swept.
     """
     from .structs import TempEffect
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return
-    obj.until_eot.append(
-        TempEffect(kind="ability", ability_index=ability_index, source=source)
-    )
+    effect = TempEffect(kind="ability", ability_index=ability_index, source=source)
+    if permanent:
+        obj.granted_abilities_permanent.append(effect)
+    else:
+        obj.until_eot.append(effect)
     state.bump_chars()
 
 
@@ -708,7 +723,7 @@ def granted_abilities(state: GameState, oid: int):
     # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
     # its own leave-the-battlefield triggers have not fired yet. Empty for
     # everything else, so this reads as plain `until_eot` in every other case.
-    for temp in (*obj.until_eot, *obj.left_with):
+    for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
         if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
             continue
         source = state.objects.get(temp.source)

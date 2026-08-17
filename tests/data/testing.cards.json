@@ -7724,6 +7724,118 @@
           "ability_index": 0
         }
       ]
+    },
+    {
+      "id": "t_you_attack",
+      "name": "Test You Attack",
+      "oracle_text": "Whenever you attack, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack, you gain 1 life.",
+          "trigger": {
+            "event": "you_attack",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_granter_permanent",
+      "name": "Test Permanent Granter",
+      "oracle_text": "When this creature enters, target creature gains \"When this creature dies, draw a card.\"",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "controller": "any"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, target creature gains \"When this creature dies, draw a card.\"",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "grant_ability",
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

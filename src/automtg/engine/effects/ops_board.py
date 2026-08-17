@@ -777,18 +777,25 @@ def op_freeze(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("grant_ability")
 def op_grant_ability(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Give a permanent one of this card's ``grantable_abilities`` until EOT.
+    """Give a permanent one of this card's ``grantable_abilities``.
 
     "…and 'Whenever this creature deals combat damage to a player, draw a
     card'." The quoted ability is written out on the granting card and referred
     to here by index, so there is one definition of it rather than a copy.
+
+    Until end of turn by default, or ``duration: "permanent"`` for as long as
+    the permanent lasts -- the same option `grant_keyword` already carries.
+    Clavileño's "It gains 'when this creature dies, …'" prints no duration, and
+    a grant swept at cleanup would be a strictly weaker card that looks
+    identical on the turn it was made.
     """
     index = int(spec.get("ability", 0))
+    permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant an ability to")
     if ctx.source_oid is None:
         return
     for oid in oids:
-        grant_ability(ctx.state, oid, index, ctx.source_oid)
+        grant_ability(ctx.state, oid, index, ctx.source_oid, permanent=permanent)
 
 
 @register("skip_untap")
