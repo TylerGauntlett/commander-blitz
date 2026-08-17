@@ -82,6 +82,21 @@ class GameState:
     passes_in_row: int = 0
 
     combat: CombatState | None = None
+    #: How many combat phases have *begun* in this game, ever.  The identity of
+    #: the current one: `combat` is the phase's contents and is thrown away at
+    #: its end, so it cannot say *which* combat something belonged to.
+    #:
+    #: Needed by "at end of combat" (`turn.DELAY_STEPS`), which has to mean the
+    #: end of the combat the delay was created in and not merely the next
+    #: `END_OF_COMBAT` step that happens -- a distinction with no content until
+    #: `extra_combat` made two combats in one turn ordinary.
+    #:
+    #: Monotonic for the whole game rather than reset per turn, so a number is
+    #: never reused: a delay scheduled in a postcombat main names the combat
+    #: after this one, which may be an extra combat this turn or the first one
+    #: next turn, and either way is the same integer.  Bumped by
+    #: `combat.start_combat`, the one place a combat begins.
+    combat_number: int = 0
     pending_decision: PendingDecision | None = None
     #: A suspended effect generator waiting on ``pending_decision``.  Never
     #: serialized -- replay reconstructs it by re-running the same actions.

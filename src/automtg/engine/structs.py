@@ -416,6 +416,12 @@ class DelayedTrigger:
 
     ``turn`` is the turn it was created on, so "the *next* upkeep" is not this
     one when the card is cast during an upkeep.
+
+    ``combat`` is set only by ``step == "end_of_combat"`` and is the
+    :attr:`GameState.combat_number` this must fire at.  Every other step happens
+    once a turn, so its name is enough to say *when*; a combat phase does not,
+    since `extra_combat` shipped, and "at end of combat" means the end of the
+    combat the delay was created in rather than the next one to come round.
     """
 
     step: str
@@ -425,6 +431,7 @@ class DelayedTrigger:
     source_oid: int | None = None
     description: str = ""
     turn: int = 0
+    combat: int | None = None
 
 
 @dataclass(frozen=True)

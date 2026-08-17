@@ -3420,9 +3420,9 @@ worse Counterspell, and nothing on screen would say so.
   "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
 ```
 
-`step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_step`, checked at
-load time like every other piece of vocabulary: a misspelled step would schedule
-something that never comes due.
+`step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_of_combat` ·
+`end_step`, checked at load time like every other piece of vocabulary: a
+misspelled step would schedule something that never comes due.
 
 Two things are worth knowing before writing one:
 
@@ -3438,6 +3438,34 @@ The scheduled effects resolve directly rather than going on the stack. That is a
 divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
+
+### `end_of_combat` — the one step that is not once a turn
+
+```jsonc
+// Flamerush Rider: "…create a token that's a copy of another target attacking
+// creature and that's tapped and attacking. Exile the token at end of combat."
+{ "op": "copy_permanent", "objects": { "target": "t1" },
+  "tapped": true, "attacking": true, "as": "the_token" },
+{ "op": "delay", "step": "end_of_combat",
+  "text": "Exile the token at end of combat.",
+  "effects": [ { "op": "exile", "objects": { "binding": "the_token" } } ] }
+```
+
+The other four steps happen once a turn, so naming the step is the whole of
+naming the moment. A combat phase does not: Relentless Assault, Combat
+Celebrant, Aggravated Assault and Seize the Day all give a turn two or three of
+them (see `extra_combat`). So `end_of_combat` means **the end of the combat the
+delay was created in**, and — for a delay scheduled in a main phase, an upkeep,
+or the end of combat step itself, where there is no combat to belong to — the end
+of the next combat to begin.
+
+That is `GameState.combat_number`, stamped onto the `DelayedTrigger` when it is
+scheduled and compared when the step is entered. Nothing a card writes says it;
+it is worth knowing only because it is what makes the difference between "exile
+it at end of combat" and "exile it at the end step" a real one. The end step
+version leaves the token alive through the whole postcombat main phase, where it
+can be sacrificed, tapped for an ability, or attack again in the extra combat —
+which is exactly what the printed line stops.
 
 ## "Choose a creature type"
 

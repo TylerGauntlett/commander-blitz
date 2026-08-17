@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
-| [end-of-combat](#end-of-combat) | 1 | 4737 | trigger_event |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [goad](#goad) | 1 | 2089 | engine, op |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
@@ -195,20 +194,6 @@ Blocks **1** card.
 
 - **Prince Imrahil the Fair** (rank 3627) — `prince_imrahil_the_fair`
   - Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.
-
-</details>
-
-## end-of-combat
-
-Blocks **1** card.
-
-- **(trigger_event)** A way to schedule an effect for the end of combat step -- either an `end_of_combat` entry in `turn.DELAY_STEPS` mapping to the already-existing `Step.END_OF_COMBAT`, so `{"op": "delay", "step": "end_of_combat", "effects": [...]}` fires there, or an `end_of_combat` member of `trigger_events` fired from the same site `postcombat_main` and `begin_combat` are. The delay form is the one this card wants, because "Exile the token at end of combat" is a delayed trigger created by the attack trigger's resolution and not a standing ability. It needs to fire once per combat rather than once per turn, since `Step.END_OF_COMBAT` is re-entered by every extra combat phase, and a delayed trigger scheduled during the combat damage step of one combat must fire at the end of *that* combat rather than waiting for the next turn's.
-  <br>Why the existing vocabulary won't do: `Step.END_OF_COMBAT` (= 9) already exists in `engine/enums.py` and the turn walk passes through it, but nothing can be attached to it: `turn.DELAY_STEPS` maps only `upkeep`, `draw_step`, `begin_combat` and `end_step`, and `delay`'s step is matched against that table alone, so `{"step": "end_of_combat"}` silently never becomes due and the token would live forever. The nearest reachable step from `trigger_events` is `end_step`, and substituting it is wrong in a way that matters on exactly this card: the copy would survive the entire postcombat main phase, so it could be sacrificed, tapped for an ability, or attack again in an extra combat -- the printed exile-at-end-of-combat is what stops all of that. `exile` itself carries only `until_leaves` (the O-Ring link) and `playable_this_turn`; neither is a timing.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Flamerush Rider** (rank 4737) — `flamerush_rider`
-  - Exile the token at end of combat.
 
 </details>
 
