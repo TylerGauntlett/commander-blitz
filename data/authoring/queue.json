@@ -47312,12 +47312,12 @@
     },
     "Clavileño, First of the Blessed": {
       "edhrec_rank": 3474,
-      "gate": "template",
+      "gate": null,
       "name": "Clavileño, First of the Blessed",
-      "reason": "no template for: Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in additi",
+      "reason": "",
       "scryfall_id": "4e87c55b-897f-4997-adbc-2620993669be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clawing Torment": {

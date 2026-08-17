@@ -1596,6 +1596,44 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "You may choose both instead"
+
+```jsonc
+{"op": "choose_mode", "count": 1,
+ "up_to_if": {"condition": {...}, "count": 2},
+ "modes": [...]}
+```
+
+A **ceiling** where entwine's `all_if` is a floor: `all_if` forces every mode and
+this only permits more. The difference is the printed word "may", and it is the
+whole card whenever taking one mode is the better line.
+
+`ask_mode` grew a separate `max_count`. It had built every decision with
+`min_count == max_count` and short-circuited when `len(labels) <= count`, so
+"choose up to two of two" silently became "take both" without asking.
+
+## Granting protection
+
+```jsonc
+{"op": "grant_protection", "from_colors": ["W", "U", "B", "R", "G"],
+ "objects": {"zone": "battlefield", "controller": "you",
+             "types": ["Creature"], "count": "all"}}
+```
+
+The effect half of the `protection` static, which existed only as a printed
+ability on a permanent — `protection_from` collected from `_battlefield_statics`
+and never saw anything granted.
+
+`grant_keyword` is not the near miss it looks like: protection is parameterised
+by definition ("from black", "from Wizards"), and a `Keyword` is a bare string
+with nowhere to put the parameter. That is the argument the printed static
+already made, applied again.
+
+Stored as one `TempEffect` per quality rather than one carrying a list, because
+`TempEffect.keyword` is already a single string and `protection_from` already
+returns a flat set — so five colours is five entries and the four rules that read
+protection see granted and printed alike.
+
 ## "Whenever you attack"
 
 ```jsonc

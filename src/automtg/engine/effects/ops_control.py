@@ -171,6 +171,13 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     count = evaluate_value(ctx, spec.get("count", 1))
     if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
         count = len(modes)
+    # "Choose one. If you control a commander as you cast this spell, you **may**
+    # choose both instead." A ceiling where `all_if` is a floor: entwine forces
+    # every mode and this only permits more. The difference is the word "may",
+    # and it is the whole card whenever taking one mode is the better line.
+    up_to = None
+    if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
+        up_to = evaluate_value(ctx, more.get("count", len(modes)))
 
     labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
 
@@ -199,11 +206,18 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.modes = ()
     elif once_each:
         picked = yield from ask_mode(
-            ctx, "Choose", [labels[i] for i in offered], ctx.controller, max(1, count)
+            ctx,
+            "Choose",
+            [labels[i] for i in offered],
+            ctx.controller,
+            max(1, count),
+            up_to,
         )
         chosen = [offered[i] for i in picked]
     else:
-        chosen = yield from ask_mode(ctx, "Choose", labels, ctx.controller, max(1, count))
+        chosen = yield from ask_mode(
+            ctx, "Choose", labels, ctx.controller, max(1, count), up_to
+        )
 
     for index in chosen:
         if once_each and source is not None:

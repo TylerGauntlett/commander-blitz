@@ -7836,6 +7836,41 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_protector",
+      "name": "Test Protector",
+      "oracle_text": "Creatures you control gain protection from each color until end of turn.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "grant_protection",
+          "from_colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+          ],
+          "objects": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
     }
   ]
 }
