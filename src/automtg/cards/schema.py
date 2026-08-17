@@ -137,6 +137,11 @@ class TriggerModel(BaseModel):
     #: indistinguishable to a listener; without this clause Harsh Mentor is a
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
+    #: For ``draw``: "whenever you draw your **second** card each turn".  The
+    #: ordinal that draw must have had for its player this turn.  Matched where
+    #: the ability queues and never re-asked, unlike a ``condition`` on the same
+    #: tally, which rule 603.4 re-evaluates after the tally has moved on.
+    nth: int | None = None
     #: "This ability triggers only once each turn." A per-permanent cap on how
     #: many times this ability may queue in one turn.
     max_per_turn: int | None = None

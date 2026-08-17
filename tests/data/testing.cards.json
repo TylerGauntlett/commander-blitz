@@ -2514,6 +2514,209 @@
       ]
     },
     {
+      "id": "t_nth_draw_you",
+      "name": "Test Second Card Watcher",
+      "oracle_text": "Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "draw",
+            "controller": "you",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_draw_opponent",
+      "name": "Test Opponent Second Card Watcher",
+      "oracle_text": "Whenever an opponent draws their second card each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "draw",
+            "controller": "opponent",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_draw_any",
+      "name": "Test Any Second Card Watcher",
+      "oracle_text": "Whenever a player draws their second card each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player draws their second card each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "draw",
+            "controller": "any",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_draw_first",
+      "name": "Test First Card Watcher",
+      "oracle_text": "Whenever you draw your first card each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you draw your first card each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "draw",
+            "controller": "you",
+            "nth": 1
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_draw_condition",
+      "name": "Test Second Card By Condition",
+      "oracle_text": "Whenever you draw a card, if it was the second card you drew this turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you draw a card, if it was the second card you drew this turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "draw",
+            "controller": "you",
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "cards_drawn_this_turn": "you"
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_draw_atleast",
+      "name": "Test Second Card By At Least",
+      "oracle_text": "Whenever you draw a card, if you've drawn two or more cards this turn, create a 1/1 white Human Soldier creature token. This ability triggers only once each turn.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Noble"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you draw a card, if you've drawn two or more cards this turn, create a 1/1 white Human Soldier creature token. This ability triggers only once each turn.",
+          "trigger": {
+            "event": "draw",
+            "controller": "you",
+            "max_per_turn": 1,
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "cards_drawn_this_turn": "you"
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_dual_land",
       "name": "Test Dual",
       "types": [

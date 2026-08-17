@@ -268,6 +268,21 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
+    #: ``draw`` only: "whenever you draw your **second** card each turn".  The
+    #: ordinal the drawn card must have had, compared against ``nth`` on the
+    #: event.
+    #:
+    #: A restriction on the trigger rather than a ``condition``, and that is the
+    #: whole of the feature.  The condition form -- ``cards_drawn_this_turn ==
+    #: 2`` -- reads correctly at queue time and is then **re-asked on
+    #: resolution** (603.4, `stack.resolve_top`), by which point the tally has
+    #: moved: a spell that draws two takes it to 2 (queuing the trigger) and
+    #: then to 3, and the re-check reads 3 and skips the ability.  Loosening to
+    #: ``>=`` with ``max_per_turn: 1`` survives that, and then fires for a
+    #: permanent that entered *after* two cards were already drawn, where the
+    #: printed card does nothing at all that turn.  Only a queue-time predicate
+    #: is both.
+    nth: int | None = None
     #: "This ability triggers only once each turn." A cap on how many times this
     #: ability may *queue* in one turn, counted per permanent.
     #:

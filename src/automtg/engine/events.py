@@ -38,6 +38,12 @@ class EventType:
     SACRIFICED = "sacrificed"
 
     # cards and the stack
+    #: One card drawn. ``data["nth"]`` is that draw's **ordinal** for its player
+    #: this turn -- 1 for the draw step's card, 2 for the next one -- which is
+    #: what "whenever you draw your second card each turn" is about. Written by
+    #: `draw_cards` from the tally it has just bumped, and read only by
+    #: `triggers._matches`: an ordinal is true of the *event*, and the tally it
+    #: came from has usually moved on by the time anything else looks.
     DRAW = "draw"
     DISCARD = "discard"
     #: "When you cycle this card…". Distinct from DISCARD, which every discard

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **17** capabilities.
+**13 cards** blocked by **16** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-prevention](#damage-prevention) | 1 | 2498 | op, trigger_event |
 | [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
-| [draw-second-card-each-turn](#draw-second-card-each-turn) | 1 | 3627 | trigger_event |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [goad](#goad) | 1 | 2089 | engine, op |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
@@ -148,20 +147,6 @@ Blocks **1** card.
 - **Forth Eorlingas!** (rank 3207) — `forth_eorlingas`
   - Create X 2/2 red Human Knight creature tokens with trample and haste.
   - Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.
-
-</details>
-
-## draw-second-card-each-turn
-
-Blocks **1** card.
-
-- **(trigger_event)** A trigger that fires on the *ordinal* of a draw and is decided only where the ability queues -- either a new event (`draw_nth`, with an `nth` field on TriggerSpec so "your second card" is `{"event": "draw_nth", "controller": "you", "nth": 2}`) fired from `draw_cards` in src/automtg/engine/primitives.py when the tally it just bumped equals `nth`, or an equivalent queue-time-only ordinal predicate on the trigger that `resolve_top` does not re-evaluate. Wanted for both polarities, `controller: you` and `controller: opponent`, since the printed template comes in both ("whenever an opponent draws their second card each turn"). Grouping matters here: 47 entries in data/authoring/queue.json print this exact clause -- Alandra Sky Dreamer, Atlantean Cavalry, Bard the Bowman, Bloodhaze Wolverine, Construct a Cosmic Cube, Black Widow Agile Avenger and 41 others -- so one event unblocks the whole family.
-  <br>Why the existing vocabulary won't do: The closest existing shape is a `draw` trigger (`controller: "you"`, as isperia.cards.json:937 uses) carrying a `condition` of `{"cmp": "==", "left": {"cards_drawn_this_turn": "you"}, "right": {"const": 2}}`. The value is exactly right at queue time -- primitives.py:44 bumps `state.cards_drawn_this_turn[pid]` immediately *before* the `fire(EventType.DRAW, ...)` on line 45, so the tally read in `triggers._matches` is precisely the ordinal of the draw that just happened. It fails at the other end: a trigger's `condition` is an intervening-if and stack.py:633-644 evaluates it a second time on resolution (rule 603.4), by which point the tally has moved. Concretely -- draw step puts the tally at 1, then any draw-two spell resolves: its first draw takes the tally to 2 and queues the trigger, its second takes the tally to 3 and matches nothing, and when the queued trigger finally resolves the re-check reads 3, returns `skipped="condition"`, and no token is created. Prince Imrahil plus Divination, Brainstorm, or any multi-card draw -- the card's ordinary line of play -- would silently produce nothing. Relaxing the comparison to `>=` and adding `max_per_turn: 1` survives the re-check (the tally is monotonic within a turn and both it and `triggers_this_turn` clear together at untap, turn.py:136-137) and is right in every play pattern I could construct except one: a permanent that enters *after* its controller has already drawn two cards would fire on the next draw, where the printed card does not fire at all that turn. That is a real divergence in a card whose whole text is the trigger, and no gate would catch it, so it is filed rather than shipped. Nothing in `condition_keys` or `value_keys` closes the hole -- the missing piece is not a value, it is a trigger predicate that is not re-asked on resolution.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Prince Imrahil the Fair** (rank 3627) — `prince_imrahil_the_fair`
-  - Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.
 
 </details>
 
