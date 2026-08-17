@@ -10,14 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**34 cards** blocked by **37** capabilities.
+**31 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cant-attack-player](#cant-attack-player) | 2 | 5253 | op |
 | [cant-block](#cant-block) | 2 | 2089 | op |
-| [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
-| [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
 | [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
@@ -52,26 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [ward](#ward) | 1 | 4062 | keyword, static_effect |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
 
-## cant-attack-player
-
-Blocks **2** cards.
-
-- **(op)** A spell/ability effect op that installs a turn-long restriction forbidding a named player (the spell's target player, captured as a binding) from being attacked by the effect's controller -- i.e. a per-defending-player attack legality check, distinct from forbidding a creature from attacking at all
-  <br>Why the existing vocabulary won't do: The closest thing in reference is the `cant_attack` static_effect, and it falls short three ways: (1) it is a static ability, so it must live in `abilities` on a battlefield permanent -- a Sorcery only has `spell_effects` from `ops`, and there is no op that installs a static or an until-end-of-turn restriction; (2) `attack_forbidden` in engine/characteristics.py matches its `affects` filter against the attacking *creature* object, so the restriction it expresses is "these creatures can't attack", never "these creatures can't attack this particular player" -- there is no defending-player parameter in the check at all; (3) a static filter may only read printed characteristics, so it could not name a player chosen on resolution. `must_attack`/`must_block` are obligations pointing the other way, and `set_flag` only writes an adjective onto a battlefield permanent for a later `has_flag` condition to read -- nothing in combat legality consults flags, and the restriction here is on a player, not on an object
-- **(op)** An effect op that installs an attack restriction naming both sides -- one specific player (here the triggering opponent, `{"binding": "event_player"}`) may not attack one specific other player (the ability's controller) -- and that expires at end of combat rather than end of turn, because the printed duration is "this combat" and a turn with extra combats must re-ask the tax each time. The legality check for declaring attackers needs a defending-player parameter it currently does not have, so the restriction can be consulted as "this attacker's controller may not choose this defender" while leaving that creature free to attack anyone else.
-  <br>Why the existing vocabulary won't do: The nearest thing in `reference` is the `cant_attack` static_effect, and it misses three ways: (1) it is a static ability, so it must sit in `abilities` on a battlefield permanent -- a triggered ability's `else` branch can only run ops, and no op installs a static or a combat-scoped restriction; (2) `attack_forbidden` in engine/characteristics.py matches the `affects` filter against the attacking *creature*, so what it can say is "these creatures can't attack", never "can't attack this player" -- there is no defender in the check, and blanking the opponent's whole attack step is a strictly stronger card than taxing attacks on me alone; (3) a static filter may read only printed characteristics, so it could not name a player identified when the trigger resolved. `must_attack`/`must_block`/`block_restriction` are obligations or point at blockers instead. `detain` is per-object, forbids blocking and activating too, and lasts until the detainer's next turn. `set_flag` writes an adjective on a permanent and nothing in combat legality reads flags. The same capability was recorded from the opposite direction by `call_for_aid` ("You can't attack that player this turn", turn-scoped, restricting the effect's own controller); this card needs the third-party, combat-scoped form, so one op should carry attacker-player, defender-player and duration rather than two near-duplicates being built.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Champions of Minas Tirith** (rank 5253) — `champions_of_minas_tirith`
-  - When this creature enters, you become the monarch.
-  - At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.
-- **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't attack that player this turn.
-  - You can't sacrifice those creatures this turn.
-
-</details>
-
 ## cant-block
 
 Blocks **2** cards.
@@ -89,43 +66,6 @@ Blocks **2** cards.
 - **Aragorn, King of Gondor** (rank 4083) — `aragorn_king_of_gondor`
   - When Aragorn enters, you become the monarch.
   - Whenever Aragorn attacks, up to one target creature can't block this turn. If you're the monarch, creatures can't block this turn.
-
-</details>
-
-## conditional-cost-reduction
-
-Blocks **2** cards.
-
-- **(cost)** A flat cost reduction on an activated ability, gated on a condition rather than scaled by a count: "this ability costs {3} less to activate if <condition>". Needs an amount plus a `condition` on the same cost node, applied by `costs.ability_mana` so that `can_pay` and `pay` agree, and clamped at zero over the generic part like every other reduction.
-  <br>Why the existing vocabulary won't do: `mana_reduction` is the closest and is the wrong arithmetic: it is documented in `schema.py` as the `{"count": {filter}}` shape -- "costs {1} less for each Vampire you control" -- so it multiplies a per-object count and has no slot for a boolean condition. Writing this card's equip with it would mean finding a filter whose match count is 3 when you are the monarch and 0 otherwise, which no filter over permanents can express. The card-level `cost_reduction` field is also unusable here: `carddef.py` notes both existing reductions discount *casting a spell* and never reach the activation path an equip cost is charged on. Splitting the line into two abilities (equip {4} and equip {1}) is not available either, since nothing could turn the cheap one off when you are not the monarch.
-- **(cost)** A cost reduction scoped to a single cast variant -- "this spell costs {X} less to cast THIS WAY" -- so a discount can be attached to the flashback/`graveyard_cost` line and not to the printed hand cast. Suggested shape: a `reduction` key inside the `CostModel` that `flashback`/`graveyard_cost` already is (beside its `mana`), taking the same value the card-level `cost_reduction` takes, and read by `legality._cast_variant` only on the branch that selected that cost, plus the matching branch in `game._cast` so the spell is paid at the price it was offered at. Every alternative cost in the engine (`evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate`, `alternative_cost`) would gain the same rider for free.
-  <br>Why the existing vocabulary won't do: The two reductions in `cost_keys`/the card schema are both variant-blind. `legality._cast_variant` picks the cost per variant at `legality.py:848-867` (`if flashback and card.flashback is not None: cost = card.flashback.mana`) but then applies `discount = cost_reduction(state, pid, card)` unconditionally at `legality.py:875`, and `game._cast` mirrors that at `game.py:268` -- so a card-level `cost_reduction` would take {X} off the printed {4}{W} hand cast as well, which the card does not say and which would silently make Visions of Glory a one-mana sorcery in a deck with a 6-drop commander. The `mana_reduction` cost key is not a way in either: `costs.ability_mana` (`costs.py:407-432`) is the only reader, and its docstring says it exists precisely because the two cast-path reductions never reach an *activated ability* -- a flashback cast is a cast, so it goes through `_cast_variant` and never through `ability_mana`. There is no third place to hang the discount: `spell_cost_reduction` is the Warden-of-Evos-Isle static, which discounts a *different* card from the battlefield and cannot be printed on the card being discounted.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crown of Gondor** (rank 5614) — `crown_of_gondor`
-  - When a legendary creature you control enters, if there is no monarch, you become the monarch
-  - Equip {4}. This ability costs {3} less to activate if you're the monarch
-- **Visions of Glory** (rank 6142) — `visions_of_glory`
-  - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
-
-</details>
-
-## effect-result-binding
-
-Blocks **2** cards.
-
-- **(selector)** A way for a later effect to name the token an earlier effect just created -- an `as` field on `create_token` and `copy_permanent` that records the new tokens' oids into `ctx.bindings`, exactly as `sacrifice`'s `as` records the objects it consumed, so a following `delay` can carry `{"objects": {"binding": "the_token"}}` into its scheduled `exile`. `delay` already captures `dict(ctx.bindings)` when it schedules, so the binding would survive to the later step with no further work; the missing half is only that the two token-creating ops write nothing down.
-  <br>Why the existing vocabulary won't do: `op_create_token` and `op_copy_permanent` in `effects/ops_board.py` both call `create_token(...)` and discard its result -- neither reads an `as` key -- so there is no binding for the `binding` / `exclude_binding` selector keys or the `binding` value key to read, even though those keys exist and `sacrifice` demonstrates the pattern. Reconstructing the token from a selector instead does not work: `is_token` matches every token you control, and `{"is_token": true, "attacking": true}` would also catch tokens made by anything else attacking that turn, so a second Flamerush Rider trigger, or any other token-making attack trigger, makes the card exile the wrong object. `exiled_with` and `haunted_by` link back to a *source*, not to objects an effect produced. `snapshot` copies characteristics off an object for later reading, not an identity a later effect can act on.
-- **(op)** An `as` key on the `exile` op that records the oids it consumed into `ctx.bindings`, so a later effect in the same resolution can count them: `{"op": "exile", "objects": {...}, "as": "exiled"}` then `{"count": {"binding": "exiled", "types": ["Creature"]}}`. Two halves: (1) `op_exile` in `src/automtg/engine/effects/ops_board.py` writes `ctx.bindings[str(name)] = list(oids)` after `choose_objects` and before the move loop, byte-for-byte the three lines `op_sacrifice` already has directly below it; (2) `resolve_pool`/`matches` must apply a selector's remaining filter clauses (here `types`) to an oid list arriving via `binding`, because the card needs the *creature* subset of the exiled set, not its cardinality. Today the binding branch of `resolve_pool` returns the bound oids unfiltered, so a `types` clause alongside `binding` is silently ignored -- which would turn "number of creature cards" into "number of cards" without any error.
-  <br>Why the existing vocabulary won't do: The engine already has this exact idiom under this exact name, on two other ops, for this exact printed shape -- `op_sacrifice`'s `as` is devour ("it enters with twice that many +1/+1 counters") and `op_reveal`'s `as` is documented as "this creature enters with X +1/+1 counters, where X is the number of cards revealed this way". `exile` is the one member of the family that never got it, so the read-back half (`{"count": {"binding": ...}}`) already works and only the write side is missing. Nothing else in `reference` reaches the set: `snapshot` captures one object's characteristics under a name (`capture_snapshot(state, oids[0])`), not a count, and there is no general last-known-information system. `exiled_with: "self"` reads `GameObject.exiled_by`, but `op_exile` only writes that field when `until_leaves` is true, and `until_leaves` is the Oblivion Ring link -- "exile it until this permanent leaves the battlefield" -- so borrowing it would declare a return this card does not have and would make the creature hand back the whole graveyard if the O-Ring return is ever driven off that link. Counting the graveyard *before* exiling it (`{"count": {"zone": "graveyard", "player": {"target": "t1"}, "types": ["Creature"]}}` placed ahead of the `exile`) is the near miss: it is numerically equal only because this particular card empties the whole zone, and it requires emitting the card's two printed sentences in the opposite order from the one printed, so it neither says nor generalises to "exiled this way".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Flamerush Rider** (rank 4737) — `flamerush_rider`
-  - Exile the token at end of combat.
-- **Grey Host Reinforcements** (rank 11982) — `grey_host_reinforcements`
-  - When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.
 
 </details>
 
@@ -185,7 +125,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't attack that player this turn.
   - You can't sacrifice those creatures this turn.
 
 </details>
@@ -195,7 +134,7 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(value)** A cost-time value equal to the greatest mana value among the commanders one player owns, counting both the battlefield and the command zone -- e.g. a `commander_mana_value` value key (or a `{"greatest_mana_value": <filter>}` reduction shape) evaluated with `pick: "greatest"` over `state.players[pid].command` plus that player's commander permanents on the battlefield, read off the printed card (`state.card(oid).mana_value`) since a commander in the command zone has no board state.
-  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the only reduction shapes `costs.cost_reduction` accepts are `{"count": filter}` and `{"total_power": filter}` (`costs.py:987-993`), both of which SUM over matches -- a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` (`costs.py:997-1012`) iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
+  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the reduction shapes `costs.reduction_amount` accepts are `{"amount": N}`, `{"count": filter}` and `{"total_power": filter}` -- the flat `amount` is a number written into the card, and the other two SUM over matches, so a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
 
 <details><summary>Cards waiting on this</summary>
 
