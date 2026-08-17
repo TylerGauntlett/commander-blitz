@@ -195,6 +195,17 @@ def _move_found(
             tapped=tapped,
             cause=cause,
         )
+        # "Exile one of those cards … You may play the exiled card this turn."
+        # Florian exiles from inside `look_at_top`, not from a separate `exile`
+        # op, so the permission has to be grantable here too -- otherwise the
+        # key only works on the cards that spell the exile out as its own step.
+        # Written after the move, like `exile` writes it, because
+        # `reset_permanent_state` runs on the way and would wipe the pair.
+        if destination is Zone.EXILE and spec.get("playable_this_turn"):
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.playable_by = pid
+                obj.playable_turn = ctx.state.turn
 
 
 @register("look_at_top")

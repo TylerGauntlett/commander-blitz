@@ -279,6 +279,16 @@ class GameObject:
     #: put itself there on resolution, and there is no permanent for the link to
     #: point at.
     on_adventure: bool = False
+    #: "You may play the exiled card this turn." Florian, and the impulse-draw
+    #: family generally. The player who may play it, and the turn on which they
+    #: may -- both, because the permission expires and a card left in exile with
+    #: a bare boolean would be castable for the rest of the game.
+    #:
+    #: Distinct from `on_adventure`, which is permanent and free of a turn, and
+    #: from `play_exiled`, which casts *without paying* and does it immediately.
+    #: This one is a permission with a duration, and the cost is still owed.
+    playable_by: int | None = None
+    playable_turn: int = -1
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -408,6 +418,8 @@ class GameObject:
         # The creature came back off its adventure and is on the battlefield;
         # there is nothing left in exile for anyone to cast.
         self.on_adventure = False
+        self.playable_by = None
+        self.playable_turn = -1
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
