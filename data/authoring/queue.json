@@ -224862,12 +224862,12 @@
     },
     "Rogue's Passage": {
       "edhrec_rank": 18,
-      "gate": "template",
+      "gate": null,
       "name": "Rogue's Passage",
-      "reason": "no template for: {4}, {T}: Target creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "4493b62b-f354-47ff-9dcf-cc6e29de77c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rogues' Gallery": {

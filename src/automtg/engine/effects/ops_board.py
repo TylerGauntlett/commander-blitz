@@ -19,6 +19,7 @@ from ..primitives import (
     grant_ability,
     grant_keyword,
     lock_abilities,
+    make_unblockable,
     pump,
     remove_counters,
     restrict_attack,
@@ -1366,6 +1367,54 @@ def op_cant_block(ctx: EffectContext, spec: Mapping[str, Any]):
             if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
         ]
     forbid_block(
+        ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid
+    )
+    yield from ()
+
+
+@register("unblockable")
+def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Target creature can't be blocked this turn." (Rogue's Passage.)
+
+    `cant_block` above with the creatures swapped round: that op names a would-be
+    blocker, this one names an attacker and stops every block against it.  They
+    meet in `combat.can_block`, where each is an independent early-out, and they
+    are two ops rather than one with a side flag because they are two sentences
+    that no card prints together.
+
+    The engine's existing "can't be blocked" is the `block_restriction` static
+    ("this creature can't be blocked by Humans"), and it cannot say this line for
+    the three reasons the gap record gives: it must live on a permanent that is
+    on the battlefield, it lasts exactly as long as that permanent does, and its
+    filters read only printed characteristics -- so it cannot be aimed at the
+    creature an activated ability targeted, and it cannot stop at end of turn.
+    `grant_ability` cannot smuggle one across either: granted abilities are read
+    by `triggers.py` alone and `characteristics._battlefield_statics` never
+    consults them, so a granted static would load clean and do nothing.
+
+    ``objects`` is a selector resolved **now** -- normally ``{"target": "t1"}``.
+    Unlike `cant_block` there is no ``all_creatures`` counterpart: no printed
+    one-shot makes everything unblockable, and the plural forms that come close
+    are controller-scoped, which a global flag would read wrongly and in the
+    card's favour.  Battlefield-filtered here for the reason `cant_block` filters
+    there: a creature already gone when this resolves gets nothing, and keeping
+    its oid would make the entry look like it bit somebody.
+
+    ``duration`` is required and the two words are not interchangeable:
+    ``this_turn`` ends at cleanup, ``until_your_next_turn`` in the granting
+    player's own untap step.
+    """
+    from ..structs import UNBLOCKABLE_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in UNBLOCKABLE_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown unblockable duration {duration!r}")
+    oids = [
+        oid
+        for oid in resolve_pool(ctx, spec.get("objects") or {})
+        if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
+    ]
+    make_unblockable(
         ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid
     )
     yield from ()
