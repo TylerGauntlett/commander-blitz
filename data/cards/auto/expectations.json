@@ -3579,6 +3579,24 @@
   "makindi_griffin": {
     "zone": "battlefield"
   },
+  "malakir_rebirth_malakir_mire": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 38,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "mammoth_spider": {
     "zone": "battlefield"
   },

@@ -40492,6 +40492,108 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "id": "malakir_mire",
+      "name": "Malakir Mire",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield tapped under its owner's control.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "malakir_rebirth_malakir_mire",
+      "mana_cost": "{B}",
+      "name": "Malakir Rebirth // Malakir Mire",
+      "oracle_text": "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",
+      "second_face": "malakir_mire",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "ability_index": 0,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

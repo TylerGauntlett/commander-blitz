@@ -463,11 +463,23 @@ def resolve(card: CardDef, index: CardIndex) -> IndexEntry | None:
 
 
 def dfc_key(card: CardDef, index: CardIndex) -> IndexEntry | None:
-    """The catalog row for a transforming card, from either of its faces.
+    """The catalog row for a two-faced card, from either of its faces.
+
+    Both links, because the catalog does not distinguish them: a modal DFC, a
+    split card and an Adventure are each one row under the joined name, exactly
+    as a transforming card is. ``back_face``/``front_face`` is the transform
+    link and ``second_face``/``parent_face`` is the second-castable-face one --
+    Malakir Mire resolves through the second, and resolved to nothing until it
+    was asked about.
 
     Returns ``None`` for a single-faced card, so the ordinary path is untouched.
     """
-    if card.back_face is None and card.front_face is None:
+    if (
+        card.back_face is None
+        and card.front_face is None
+        and card.second_face is None
+        and card.parent_face is None
+    ):
         return None
     return index.lookup(card.name, joined=True)
 
