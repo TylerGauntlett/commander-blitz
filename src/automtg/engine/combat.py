@@ -354,6 +354,34 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
 # ----------------------------------------------------------------------
 
 
+def block_prohibited(state: GameState, oid: int) -> bool:
+    """Is this creature under a one-shot "can't block", as opposed to a static?
+
+    The counterpart of `characteristics.block_forbidden`, and split from it
+    deliberately.  That one walks `_battlefield_statics` and answers "is there a
+    permanent on the battlefield whose static says so"; this one reads
+    `GameState.block_prohibitions`, which is where an effect with no permanent
+    behind it has to live -- a resolving sorcery, or a trigger that named a
+    creature as it resolved.  Folding the two together would mean either giving
+    the characteristics layer table state to read or giving a one-shot effect a
+    fake permanent to hang off, and both are worse than one extra call.
+
+    An entry whose ``objects`` is ``None`` means *every* creature and is checked
+    without looking at ``oid`` at all, which is the point: Aragorn's "creatures
+    can't block this turn" is a continuous effect for the rest of the turn, so a
+    creature that enters after it resolved is caught too.
+
+    Guarded on the list being non-empty, which it is in every game that plays
+    none of these cards, because this is on the hot path of the block mask.
+    """
+    if not state.block_prohibitions:
+        return False
+    return any(
+        entry.objects is None or oid in entry.objects
+        for entry in state.block_prohibitions
+    )
+
+
 def can_block(
     state: GameState,
     blocker_oid: int,
@@ -398,6 +426,13 @@ def can_block(
         return False
 
     if blocker.detained_by is not None:
+        return False
+
+    # "That creature can't block this turn." The same sentence as the static
+    # above, on a clock -- see `block_prohibited`. Asked here rather than folded
+    # into `block_forbidden` because it is table state and not a static: the
+    # characteristics layer reads permanents, and this belongs to none.
+    if block_prohibited(state, blocker_oid):
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked

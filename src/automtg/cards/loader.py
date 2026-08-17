@@ -42,7 +42,10 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
-from automtg.engine.structs import ATTACK_RESTRICTION_DURATIONS
+from automtg.engine.structs import (
+    ATTACK_RESTRICTION_DURATIONS,
+    BLOCK_PROHIBITION_DURATIONS,
+)
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 
@@ -2000,6 +2003,37 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
                 f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
+            )
+    if op == "cant_block":
+        # Two keys, and every way of getting them wrong loads cleanly and plays
+        # a different card.
+        #
+        # Exactly one of `objects` and `all_creatures`, because the two are not
+        # a general and a special case: a `cant_block` with neither would have
+        # to guess, and both guesses are bad -- "nobody" makes the ability do
+        # nothing, "everybody" turns Aragorn's *targeted* half into a one-sided
+        # Falter. Both together is a card that says two things at once.
+        #
+        # And the duration is required for the reason `cant_attack_player`'s is:
+        # `this_turn` read for `until_your_next_turn` gives the blockers back a
+        # turn early, and the reverse keeps them away for a whole turn cycle.
+        has_objects = "objects" in effect
+        has_all = bool(effect.get("all_creatures"))
+        if has_objects == has_all:
+            raise DslError(
+                f"{where}: cant_block needs exactly one of 'objects' "
+                f"(the creatures chosen when it resolves) and 'all_creatures': true "
+                f"(every creature, including ones that enter later)"
+            )
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_block needs a 'duration' "
+                f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in BLOCK_PROHIBITION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_block duration {effect['duration']!r} "
+                f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))

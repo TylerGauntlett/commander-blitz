@@ -2036,6 +2036,90 @@
       ]
     },
     {
+      "id": "t_taunter",
+      "name": "Test Taunter",
+      "oracle_text": "Until your next turn, creatures your opponents control can't block.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "cant_block",
+          "objects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_falterer",
+      "name": "Test Falterer",
+      "oracle_text": "Creatures can't block this turn.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "cant_block",
+          "all_creatures": true,
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_king",
+      "name": "Test King",
+      "oracle_text": "Whenever Test King attacks, up to one target creature an opponent controls can't block this turn.",
+      "mana_cost": "{1}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test King attacks, up to one target creature an opponent controls can't block this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "cant_block",
+              "objects": {
+                "target": "t1"
+              },
+              "duration": "this_turn"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_detainer",
       "name": "Test Detainer",
       "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",

@@ -257,6 +257,9 @@
   "arachnoid": {
     "zone": "battlefield"
   },
+  "aragorn_king_of_gondor": {
+    "zone": "battlefield"
+  },
   "arashin_cleric": {
     "life": {
       "0": 43
