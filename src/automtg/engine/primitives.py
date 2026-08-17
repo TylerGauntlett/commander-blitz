@@ -761,6 +761,11 @@ def clear_until_eot(state: GameState) -> None:
         # that survived the turn would make every regenerator indestructible
         # from the first time its ability was used.
         obj.regeneration_shields = 0
+        # "…would die **this turn**." The redirect expires with the turn, like
+        # a regeneration shield and for the same reason: one that survived would
+        # make every creature Gallifrey Falls ever touched permanently
+        # un-buriable.
+        obj.dies_to = None
         obj.until_eot.clear()
     state.bump_chars()
 

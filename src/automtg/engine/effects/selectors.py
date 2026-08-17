@@ -434,6 +434,16 @@ def matches(ctx: EffectContext, oid: int, selector: Mapping[str, Any]) -> bool:
         return False
     if "damaged" in selector and bool(obj.damage > 0) != bool(selector["damaged"]):
         return False
+    if "damaged_by" in selector:
+        # "…a creature dealt damage this way." Gallifrey Falls. Answered from
+        # the per-turn ledger, the same one `triggers.matches_card_filter`
+        # reads: `damaged` above is only "has damage marked on it", which is
+        # true of a creature something else burned a moment earlier and false
+        # of one this spell killed outright.
+        who = selector["damaged_by"]
+        want = ctx.source_oid if who == "self" else who
+        if want not in ctx.state.damage_ledger.get(oid, ()):
+            return False
     if "exiled_with" in selector:
         # "Return the exiled card" -- the cards *this* permanent exiled, and no
         # others. A plain `{"zone": "exile"}` filter matches every card in exile

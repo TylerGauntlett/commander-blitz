@@ -8260,6 +8260,46 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_exile_wrath",
+      "name": "Test Exile Wrath",
+      "oracle_text": "Test Exile Wrath deals 4 damage to each creature. If a creature dealt damage this way would die this turn, exile it instead.",
+      "mana_cost": "{2}{R}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "objects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          },
+          "amount": {
+            "const": 4
+          }
+        },
+        {
+          "op": "replace_deaths",
+          "destination": "exile",
+          "objects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any",
+            "damaged_by": "self"
+          }
+        }
+      ]
     }
   ]
 }
