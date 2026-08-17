@@ -11,7 +11,8 @@ forms::
     {"cards_drawn_this_turn": "you"}  a per-turn tally of an event
     {"creatures_died_this_turn": "all"}   the rest of that ledger: morbid,
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
-    {"spells_cast_this_turn": "all"}       storm and gravestorm
+    {"attackers_this_turn": "you"}         storm and gravestorm -- and how
+    {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
@@ -69,6 +70,15 @@ VALUE_KEYS = frozenset(
         # a different threshold, and storm needs the number anyway.
         "creatures_died_this_turn",
         "attacked_this_turn",
+        # "…if you attacked with **three or more creatures** this turn" --
+        # Windbrisk Heights. How many *creatures*, where `attacked_this_turn`
+        # above is how many *players*: on a board where you swung with three,
+        # that one is 1 and can never reach the printed threshold, and relaxing
+        # the comparison to `>= 1` turns a hideaway land into a raid land.
+        # Counted off the ledger's oids rather than with `{"count": {...}}` over
+        # the battlefield, because an attacker that died in combat still
+        # attacked and the board has forgotten it.
+        "attackers_this_turn",
         "damage_taken_this_turn",
         "life_lost_this_turn",
         "spells_cast_this_turn",
@@ -316,6 +326,16 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # `"you"` and a headcount for "if two opponents attacked this turn".
         pids = _players(ctx, expr["attacked_this_turn"])
         return sum(1 for p in pids if p in ledger.attacked)
+    if "attackers_this_turn" in expr:
+        # How many *creatures* the named players attacked with -- the clause
+        # above counts seats. A union rather than a sum of lengths: the same
+        # creature can be declared under two controllers across two combats of
+        # one turn (`gain_control` between them), and "you attacked with three
+        # or more creatures" counts creatures, not declarations.
+        oids: set[int] = set()
+        for p in _players(ctx, expr["attackers_this_turn"]):
+            oids |= ledger.creatures_attacked.get(p, set())
+        return len(oids)
     if "damage_taken_this_turn" in expr:
         pids = _players(ctx, expr["damage_taken_this_turn"])
         return sum(ledger.damage_taken.get(p, 0) for p in pids)

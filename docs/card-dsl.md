@@ -165,6 +165,7 @@ Every key is optional; all present keys must match.
   "supertypes": ["Basic"],
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
+  "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },
@@ -376,6 +377,7 @@ Anywhere a number is expected:
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
+{ "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "spells_cast_this_turn": "all" }              // storm
@@ -391,6 +393,47 @@ Anywhere a number is expected:
 { "colors_of_mana_spent": true }                // sunburst, converge
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+### Which creatures attacked this turn, and how many
+
+Two spellings of one record, and they are not interchangeable with anything that
+was already there.
+
+```jsonc
+// Relentless Assault: "Untap all creatures that attacked this turn."
+{ "op": "untap",
+  "objects": { "zone": "battlefield", "types": ["Creature"],
+               "attacked_this_turn": true, "count": "all" } }
+
+// Windbrisk Heights: "…if you attacked with three or more creatures this turn."
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "attackers_this_turn": "you" },
+                 "right": { "const": 3 } },
+  "then": [ { "op": "may", "effects": [ { "op": "play_exiled" } ] } ] }
+```
+
+Both cards are used in a **main phase, after the combat they are talking
+about**, and that is what rules out every near miss:
+
+| | |
+|---|---|
+| `attacking` | Strictly live combat state — `end_combat` sets `state.combat` to `None`, so in a postcombat main phase it is false for every creature and the untap hits nothing. It also misses an attacker that died in combat |
+| `tapped` | Wrong in **both** directions: it catches a creature tapped for mana or by a tapper, and misses a vigilant attacker — the one Relentless Assault most wants to untap |
+| `{"attacked_this_turn": "you"}` (the *value*) | Counts **seats**, not creatures. It is 1 whether you swung with one creature or ten, so a `cmp` against 3 can never be true, and relaxing it to 1 quietly turns a hideaway land into a raid land |
+| `damaged_by` | The only other per-object turn ledger in the filter language, and it records damage *dealt* — so it misses an attacker that was blocked without connecting, or removed before damage |
+
+`TurnLedger.creatures_attacked` maps player id to the oids they declared, folded
+from `ATTACKERS_DECLARED`'s own payload in `GameState.emit` like every other
+tally. The player-level `attacked` is now *derived* from its keys, so raid and
+this read one fact and cannot disagree.
+
+**`attackers_this_turn` is not `{"count": {"attacked_this_turn": true}}`.** The
+count is over the *board*, and an attacker that died in combat still attacked
+(506.4 — leaving combat does not undo a declaration): three attackers, one of
+which traded, leaves the board count at 2 and Windbrisk Heights locked in the
+very turn it was supposed to open. The value reads the ledger's oids instead, so
+it survives the death. Use the selector when the effect has to *reach* the
+creatures, and the value when the card is only counting them.
 
 ### Counting the mana that was actually spent
 
