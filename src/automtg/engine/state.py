@@ -435,7 +435,18 @@ class GameState:
                     ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
         elif event.type == EventType.ATTACKERS_DECLARED:
             if pid is not None:
-                ledger.attacked.add(pid)
+                # The oids come off the event payload, which `finish_attackers`
+                # fills from the *locked-in* declaration -- after requirements
+                # discharge and after banding -- rather than off `self.combat`,
+                # which is `None` by the time either card that reads this back
+                # resolves. Same argument every other branch here makes.
+                #
+                # `setdefault` first, so the player's entry exists even for a
+                # payload that names no attackers: `TurnLedger.attacked` is
+                # derived from the *keys*, and raid must not depend on a future
+                # emitter remembering to list them.
+                attacked = ledger.creatures_attacked.setdefault(pid, set())
+                attacked.update(int(oid) for oid in data.get("attackers") or ())
         elif event.type == EventType.DAMAGE_DEALT:
             # Two shapes share this event, and they say which they are: `to` is
             # "player" or "permanent".  Only the first is life loss, and on the

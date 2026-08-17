@@ -1,0 +1,88 @@
+{
+  "card": {
+    "id": "windbrisk_heights",
+    "name": "Windbrisk Heights",
+    "oracle_text": "Hideaway 4 (When this land enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nThis land enters tapped.\n{T}: Add {W}.\n{W}, {T}: You may play the exiled card without paying its mana cost if you attacked with three or more creatures this turn.",
+    "mana_cost": "",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Hideaway 4",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "hideaway",
+            "amount": {
+              "const": 4
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{W}, {T}: You may play the exiled card without paying its mana cost if you attacked with three or more creatures this turn.",
+        "cost": {
+          "mana": "{W}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attackers_this_turn": "you"
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "then": [
+              {
+                "op": "may",
+                "prompt": "Play the exiled card without paying its mana cost?",
+                "effects": [
+                  {
+                    "op": "play_exiled"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

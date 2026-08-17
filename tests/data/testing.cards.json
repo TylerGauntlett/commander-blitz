@@ -8683,6 +8683,75 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_relentless",
+      "name": "Test Relentless Assault",
+      "oracle_text": "Untap all creatures that attacked this turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "untap",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "attacked_this_turn": true,
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_raid_vault",
+      "name": "Test Raid Vault",
+      "oracle_text": "{T}: Draw a card if you attacked with three or more creatures this turn.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Draw a card if you attacked with three or more creatures this turn.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "attackers_this_turn": "you"
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "then": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
