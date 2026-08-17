@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
-| [saga](#saga) | 1 | 7121 | engine |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
 
@@ -157,23 +156,6 @@ Blocks **1** card.
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
   - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
-## saga
-
-Blocks **1** card.
-
-- **(engine)** The Saga card type as a whole (CR 714), which is four linked pieces: (1) a lore counter is put on the Saga as it enters, as part of it entering rather than as a triggered ability, so chapter I resolves off the enters-the-battlefield counter; (2) a turn-based action after the controller's draw step puts the next lore counter on every Saga that player controls; (3) a new ability kind -- a chapter ability -- that triggers when the Nth lore counter is put on the Saga *or* when it enters with that many already on it, declared as something like {"kind": "chapter", "chapter": 1, "text": "I -- ...", "effects": [...]}, so the printed "I --" / "II --" / "III --" lines each have a home the residual gate can match; (4) the state-based action that sacrifices the Saga once its lore counters are at or above its final chapter number and no chapter ability of it is on the stack. It also needs a `final_chapter` (or equivalent) field on the card so the engine knows where III ends, since that number is not derivable from the ability list if a chapter is ever unimplemented, and `Saga` accepted as a subtype that carries all of the above rather than as inert flavour text.
-  <br>Why the existing vocabulary won't do: `AbilityKind` (`src/automtg/engine/enums.py:277-280`) is exactly {activated, triggered, static} -- there is no chapter kind, and `docs/rules-coverage.md:206` lists sagas under "Not implemented" alongside planeswalkers and battles. Nothing in `src/` matches /saga/ or /lore/ (the hits are substrings of `explore` and `colors`). The nearest kludge available in `reference` is a stack of three `counter_placed` triggers -- the event does carry a `counter` kind filter (`carddef.py:243-246`, enforced at `loader.py:926-933`), so "when a lore counter is put on this" is sayable, and `cmp` against `counters_on` could gate each chapter on the resulting total -- fed by a `self_enters` trigger and a `draw_step` trigger that each `add_counters` a lore counter, plus a `sacrifice` of self on chapter III. That is an approximation in at least four visible ways, which is why it is filed rather than written: the enters-with-a-lore-counter step is a replacement-style part of entering, not a trigger, so a `self_enters` trigger would place the counter after the Saga has already entered and after other enters triggers have seen a counterless Saga; `draw_step` fires for every player's draw step unless hand-gated with `is_your_turn`, and it is "after your draw step" as a turn-based action with no priority in between, not a trigger that goes on the stack; the chapter would trigger on the *placement*, so proliferating or hand-adding a lore counter would fire chapters in the wrong pattern (and the real rule fires on the counter reaching that number, including on entry); and the sacrifice is a state-based action checked while nothing is on the stack, not an effect appended to chapter III -- appending it would sacrifice the Saga before its own chapter III finished resolving. Sagas are also the shared blocker for every Saga in the pool, so the kludge would have to be re-typed by hand on each one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oath of Eorl** (rank 7121) — `oath_of_eorl`
-  - (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)
-  - I — Create two 1/1 white Human Soldier creature tokens.
-  - II — Create two 2/2 red Human Knight creature tokens with trample and haste.
-  - III — Put an indestructible counter on up to one target Human. You become the monarch.
 
 </details>
 

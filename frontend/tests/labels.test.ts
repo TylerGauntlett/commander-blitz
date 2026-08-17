@@ -109,6 +109,20 @@ describe("describeEvent", () => {
     );
   });
 
+  it("numbers a Saga's chapter the way the card does", () => {
+    // Another event the `default` fallthrough would drop in silence, and the one
+    // line a player needs: the `counter_placed` beside it says "gets 1 lore",
+    // which is the bookkeeping, and the three chapters of a Saga do three
+    // different things. Roman, because the card prints "I / II / III" and a log
+    // saying "chapter 2" would not match what the player is looking at.
+    expect(
+      describeEvent(
+        event({ type: "chapter_reached", data: { card: "oath_of_eorl", chapter: 2 } }),
+        names,
+      ),
+    ).toBe("Oath Of Eorl — chapter II");
+  });
+
   it("prettifies a card id rather than printing the raw slug", () => {
     expect(
       describeEvent(event({ type: "land_played", data: { card: "sol_ring" } }), names),

@@ -188642,12 +188642,12 @@
     },
     "Oath of Eorl": {
       "edhrec_rank": 7121,
-      "gate": "template",
+      "gate": null,
       "name": "Oath of Eorl",
-      "reason": "no template for: I — Create two 1/1 white Human Soldier creature tokens",
+      "reason": "",
       "scryfall_id": "1ffc7f95-daed-452e-a114-859b8798055b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oath of Ghouls": {

@@ -122,6 +122,24 @@ describe("beatsFor", () => {
     expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
   });
 
+  it("floats a Saga's chapter numeral off the Saga", () => {
+    // `beatsFor` and `describeEvent` are parallel switches with parallel
+    // `default`s, so a new event has to be added to both or it is dropped by
+    // whichever was forgotten. A float rather than a banner because there *is* a
+    // permanent and it is the one the eye should go to -- and worth a beat at all
+    // because nothing on the board changes when a chapter triggers: the ability
+    // goes on the stack and its tokens arrive a moment later, unannounced.
+    const [beat] = beatsFor(
+      [event("chapter_reached", { chapter: 3 }, { source: 7 })],
+      NAMES,
+    );
+    expect(beat.float).toEqual({
+      anchor: { kind: "object", oid: 7 },
+      value: "III",
+      tone: "good",
+    });
+  });
+
   it("floats life gain up and life loss down", () => {
     const [gain] = beatsFor([event("life_gained", { amount: 5 })], NAMES);
     const [loss] = beatsFor([event("life_lost", { amount: 5 })], NAMES);
