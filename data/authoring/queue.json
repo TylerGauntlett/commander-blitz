@@ -92612,12 +92612,12 @@
     },
     "Fellwar Stone": {
       "edhrec_rank": 17,
-      "gate": "template",
+      "gate": null,
       "name": "Fellwar Stone",
-      "reason": "proxy simplified it: mana clause read loosely: 'one mana of any color that a land an opp'",
+      "reason": "",
       "scryfall_id": "3ef87948-0ad9-4757-a692-2262c8e24367",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Felonious Rage": {

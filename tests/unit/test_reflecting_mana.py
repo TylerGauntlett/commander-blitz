@@ -2,6 +2,8 @@
 
     Exotic Orchard — "{T}: Add one mana of any color that a land an opponent
     controls could produce."
+    Fellwar Stone — the same sentence off an artifact, and the card the
+    `opponent_land_mana_colors` gap record named.
 
 Every other mana ability's output is a constant on the card, and `mana_options`
 is computed once at load time precisely because of that: the payment solver
@@ -27,6 +29,21 @@ only *printed* options — which is also what the card means.
 An empty answer is a real answer: an opponent with no lands offers no colours
 and the Orchard taps for nothing. The solver simply never picks a source that
 produces nothing.
+
+**A land whose own colours are also a question about the game must be asked the
+same question.** `mana_options` carries a five-colour superset for exactly two
+abilities — `reflecting` and `in_commander_identity` — because an empty tuple
+at load time makes `solver_taps` decide it is not a mana source at all. Reading
+that superset off an opponent's Path of Ancestry told a Fellwar Stone it "could
+produce" all five colours, which is the unconditional any-colour approximation
+this whole capability exists to refuse, arriving through the back door. So the
+scan asks `mana_options_of` rather than reading the field. It still terminates,
+because the only self-referential branch — `reflecting` — is skipped before the
+recursion.
+
+It never asks a *player* anything. Narrowing the option list narrows the choice
+every modal mana ability already had; no `ask_*`, no generator, no stack, so the
+ability stays a mana ability for 605.1a.
 """
 
 from __future__ import annotations
@@ -36,6 +53,10 @@ from automtg.engine.mana import SYMBOL_INDEX
 from tests.conftest import oids_of
 
 ORCHARD = "t_orchard"
+TOWER = "t_command_tower"
+MONO_BLACK = "t_bats"          # color_identity ["B"]
+TWO_COLOUR = "t_bw_commander"  # ["B", "W"]
+COLOURLESS = "t_colorless_commander"
 
 
 def colors_offered(game, oid: int) -> set[str]:
@@ -136,3 +157,112 @@ class TestTwoOrchardsDoNotAskEachOther:
             o for o in game.state.battlefield if game.state.objects[o].controller == 0
         )
         assert colors_offered(game, mine) == {"W"}
+
+
+def facing(builder, *, opponent_lands, opponent_commander=None):
+    """The Orchard, against an opponent board and an opponent command zone."""
+    make = (
+        builder(players=2)
+        .battlefield(0, [ORCHARD])
+        .battlefield(1, list(opponent_lands))
+    )
+    if opponent_commander is not None:
+        make = make.commander(1, [opponent_commander])
+    game = make.build()
+    return game, oids_of(game, ORCHARD)[0]
+
+
+class TestALandThatIsItselfAQuestionIsAsked:
+    """An opponent's Path of Ancestry taps for its *controller's* commander's
+    identity, not for five colours — and that is what it "could produce"."""
+
+    def test_a_commander_identity_land_offers_only_that_identity(self, builder):
+        game, orchard = facing(
+            builder, opponent_lands=[TOWER], opponent_commander=MONO_BLACK
+        )
+        assert colors_offered(game, orchard) == {"B"}
+
+    def test_it_is_not_all_five(self, builder):
+        """The regression. Reading the load-time superset said {W,U,B,R,G}, which
+        is the unconditional any-colour card this capability exists to refuse."""
+        game, orchard = facing(
+            builder, opponent_lands=[TOWER], opponent_commander=MONO_BLACK
+        )
+        assert len(colors_offered(game, orchard)) < 5
+
+    def test_a_two_colour_identity_offers_both(self, builder):
+        game, orchard = facing(
+            builder, opponent_lands=[TOWER], opponent_commander=TWO_COLOUR
+        )
+        assert colors_offered(game, orchard) == {"B", "W"}
+
+    def test_it_is_read_off_the_other_players_command_zone(self, builder):
+        """*Whose* commander decides it. My own general must not leak in."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [ORCHARD])
+            .battlefield(1, [TOWER])
+            .commander(0, [TWO_COLOUR])
+            .commander(1, [MONO_BLACK])
+            .build()
+        )
+        assert colors_offered(game, oids_of(game, ORCHARD)[0]) == {"B"}
+
+    def test_a_colourless_commander_offers_nothing(self, builder):
+        """The Tower taps for nothing, so there is nothing to reflect."""
+        game, orchard = facing(
+            builder, opponent_lands=[TOWER], opponent_commander=COLOURLESS
+        )
+        assert colors_offered(game, orchard) == set()
+
+    def test_it_joins_what_the_plain_lands_offer(self, builder):
+        game, orchard = facing(
+            builder, opponent_lands=[TOWER, "forest"], opponent_commander=MONO_BLACK
+        )
+        assert colors_offered(game, orchard) == {"B", "G"}
+
+    def test_the_scan_still_terminates_against_both_kinds_at_once(self, builder):
+        """A reflecting land is skipped, an identity land recurses one level."""
+        game, orchard = facing(
+            builder, opponent_lands=[ORCHARD, TOWER], opponent_commander=MONO_BLACK
+        )
+        assert colors_offered(game, orchard) == {"B"}
+
+
+class TestFellwarStone:
+    """The same sentence off an artifact — the card the gap record named.
+
+    The board here is the one `authoring/verify.build_sandbox` puts every card
+    through: the opponent controls a Forest and an Island. The authoring
+    expectation language has no key for a mana pool (it can assert life, zones,
+    counters, tokens and board counts), so this is the strongest statement of
+    what the card does that anything in the repo can make, and it belongs here.
+    """
+
+    STONE = "fellwar_stone"
+
+    def board(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.STONE])
+            .battlefield(1, ["forest", "island"])
+            .build()
+        )
+        return game, oids_of(game, self.STONE)[0]
+
+    def test_it_offers_exactly_the_opponents_two_colours(self, builder):
+        game, stone = self.board(builder)
+        assert colors_offered(game, stone) == {"G", "U"}
+
+    def test_and_not_the_other_three(self, builder):
+        """The free tier's starting point was five fixed modes. That is a
+        strictly better card than the printed one."""
+        game, stone = self.board(builder)
+        assert colors_offered(game, stone) & {"W", "B", "R"} == set()
+
+    def test_the_solver_sees_it_as_a_non_land_source(self, builder):
+        """An artifact, not a land — it still has to reach the solver."""
+        game, stone = self.board(builder)
+        source = next(s for s in mana_sources(game.state, 0) if s.oid == stone)
+        assert not source.is_land
+        assert source.producible() == {SYMBOL_INDEX["G"], SYMBOL_INDEX["U"]}
