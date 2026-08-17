@@ -1030,6 +1030,34 @@ creature" would also draw off Arixmethes waking up. The kind is also copied into
 `bindings` beside `amount`, so effects can read what fired them. Rejected on any
 other event, for the same reason as `defending`.
 
+`nth` is "whenever you draw your **second** card each turn", and it is legal only
+on a `draw` trigger. `draw_cards` puts the ordinal of each draw on the event —
+1 for the draw step's card, 2 for the next one — and this compares against it.
+
+```jsonc
+// Prince Imrahil the Fair
+{ "event": "draw", "controller": "you", "nth": 2 }
+// Faerie Mastermind's half of the same clause
+{ "event": "draw", "controller": "opponent", "nth": 2 }
+// Ian Malcolm: "whenever a player draws their second card each turn"
+{ "event": "draw", "controller": "any", "nth": 2 }
+```
+
+Writing it as a `condition` instead is the trap, and it fails in the card's
+*ordinary* line of play rather than at an edge. `{"cmp": "==", "left":
+{"cards_drawn_this_turn": "you"}, "right": {"const": 2}}` reads correctly when
+the trigger queues — the tally is bumped immediately before the event fires, so
+it *is* the ordinal — but an intervening-if is checked a second time on
+resolution (rule 603.4, `stack.resolve_top`), and by then the tally has moved.
+Cast Divination with Prince Imrahil out: the first card takes the tally to 2 and
+queues the trigger, the second takes it to 3, and the re-check reads 3 and
+returns `skipped="condition"`. No token, no error, no log line saying why.
+Relaxing it to `>=` with `max_per_turn: 1` survives the re-check and breaks the
+other way: a permanent that enters *after* its controller has drawn two cards
+fires on the next draw, where the printed card does nothing for the rest of the
+turn. An ordinal is a fact about the draw, not about the board, so it is settled
+where the ability queues and never re-asked.
+
 One placement is one trigger, however many counters it puts: `add_counters`
 fires a single event with `amount` on it. That is correct for "a +1/+1 counter"
 and for Sharktocrab's "one or more +1/+1 counters" alike, so neither needs

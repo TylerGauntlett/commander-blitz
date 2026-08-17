@@ -1,3 +1,122 @@
+## `nth` — "your second card each turn", settled where the trigger queues
+
+### Overview
+
+Prince Imrahil the Fair: *"Whenever you draw your second card each turn, create a
+1/1 white Human Soldier creature token."* One printed line, and the whole card.
+Forty-seven queue entries print that clause, in all three polarities — "you draw
+your second card", "an opponent draws their second card" (Faerie Mastermind,
+Black Widow), "a player draws their second card" (Ian Malcolm).
+
+The vocabulary for it looked complete. A `draw` trigger has existed since
+Isperia, and `{"cards_drawn_this_turn": "you"}` has existed since Kydele, so the
+clause reads as an intervening-if:
+
+```jsonc
+{ "event": "draw", "controller": "you",
+  "condition": { "cmp": "==", "left": { "cards_drawn_this_turn": "you" },
+                 "right": { "const": 2 } } }
+```
+
+And the value is *exactly right where it queues*. `primitives.draw_cards` bumps
+the tally on the line immediately before it fires the event, so what
+`triggers._matches` reads is precisely the ordinal of the draw that just
+happened. The card fails at the other end.
+
+### 603.4 asks the question a second time
+
+`stack.resolve_top` re-evaluates a trigger's `condition` on resolution, which is
+rule 603.4 and is correct for every intervening-if there has ever been. It is
+fatal here, because the thing being asked about keeps moving:
+
+| | tally | |
+|---|---:|---|
+| draw step | 1 | |
+| Divination's first card | 2 | the trigger queues |
+| Divination's second card | 3 | matches nothing |
+| the trigger resolves | 3 | re-check reads 3 → `skipped="condition"` |
+
+So Prince Imrahil plus Divination, Brainstorm, or any multi-card draw — the
+card's *ordinary* line of play, not an edge — produces nothing at all. No error,
+no log line saying a token was owed.
+
+Written as `>=` with `max_per_turn: 1` the ability survives the re-check, and
+that encoding is right everywhere except one place: a permanent that enters
+**after** its controller has already drawn two cards fires on the next draw,
+where the printed card is silent for the rest of that turn. That is a real
+divergence on a card that is nothing but this trigger, and no gate would catch
+it, which is why the gap record filed the capability rather than shipping a
+near miss.
+
+Both failures are asserted in the test file rather than described:
+`test_the_condition_encoding_makes_nothing` and
+`test_the_at_least_form_fires_and_is_wrong`, against `t_nth_draw_condition` and
+`t_nth_draw_atleast`, which are the two rejected encodings kept as test cards.
+
+### An ordinal is a fact about the event
+
+The fix is not a value and not a condition. `draw_cards` writes the ordinal onto
+the DRAW event as `data["nth"]`, and `TriggerSpec.nth` compares against it in
+`_matches` — beside `not_cause`, `counter` and `mana_ability`, all of which have
+exactly this standing: asked once, where the ability queues, and never re-asked.
+Nothing that runs at resolution reads it, so 603.4 has nothing to re-evaluate.
+
+`nth` is not in `EVENT_BINDING_KEYS`, so the new payload key does not reach a
+card's trigger bindings — the collision `zones.move_object` is annotated about.
+`serialize._PRIVATE_EVENTS` already redacts a draw's `oid` for other seats and
+the ordinal is a count, so nothing new leaks.
+
+The loader refuses `nth` on any event but `draw`, and refuses an ordinal below 1.
+The first is the precedent `counter` and `mana_ability` set, and it matters more
+on a trigger than on a selector: a restriction that can never apply does not make
+an ability that never fires, it makes one that fires on **every** event of its
+kind, which is a strictly better card than the printed one. The second is the
+same argument from the other side — no draw is the zeroth card of a turn.
+
+### All three polarities came free
+
+`_actor` has always returned `event.player` for `draw`, so `controller` already
+named the drawing player. `you`, `opponent` and `any` therefore needed no work
+beyond a test each, and `any` counts per player: two seats drawing two cards
+apiece queue the watcher twice, because each has a second card of their own.
+
+### Tier A, and nothing below it
+
+No new op, no new `EventType` (the payload key rides on `draw`, which the
+frontend already narrates), no new `DecisionKind`, no continuous effect, no API
+field. `fire` calls `emit`, so the log gains no new type and nothing under
+`frontend/` changed. Five files: the event's documentation, the primitive that
+writes the ordinal, the field on `TriggerSpec` and its schema twin, the loader
+guard, and the comparison in `_matches`.
+
+### Guarded by
+
+`tests/unit/test_draw_nth.py` — twenty-four tests over seven claims: only the
+second card fires it, a draw-two spell fires it exactly once (the reader's
+failure), a permanent entering after two draws stays silent, both rejected
+encodings fail in the two opposite ways, all three polarities, the ordinal is an
+ordinal (`nth: 1` works), the turn boundary, and the load-time guards.
+
+The authoring verifier casts a card and stops — nothing draws a second card in
+the fixed position — so this trigger cannot fire there and Prince Imrahil
+legitimately asserts `{"zone": "battlefield"}`. No gate was weakened; the
+behaviour lives in the unit test, which is where the gap record predicted it
+would have to.
+
+**Unblocked one card: Prince Imrahil the Fair**, whose last need this was
+(`human_soldier_token` was closed by the `token_pool` run before it). Agent
+tier; `--tier templates --retry` harvested nothing (`no template 200`).
+
+**No template was added, and that was measured rather than assumed.** A prefix
+template wrapping the existing `SENTENCES` over "Whenever you draw your second
+card each turn, …" produces **zero** of the 46 remaining cards: every one of
+their remainders is a sentence the template tier cannot say — *create a 2/2 blue
+Drake creature token*, *put a +1/+1 counter on this creature*, *this creature
+gets +1/+1 and gains first strike*. The prefix would consume its half and then
+fail the card anyway, on the all-or-nothing rule, which is dead code wearing a
+template's clothes. The 46 stay in the agent tier, where the next
+`/author-cards` will now be able to write them.
+
 ## Ward — the keyword that had to carry a price, and then had to be given away
 
 ### Overview

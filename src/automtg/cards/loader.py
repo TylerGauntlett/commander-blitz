@@ -1041,6 +1041,24 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
+        if model.trigger.nth is not None and model.trigger.event != "draw":
+            # Same reasoning as `counter` and `mana_ability` above: only `draw`
+            # carries an ordinal, so accepting it elsewhere would look like
+            # "your second card each turn" and be a restriction that never
+            # applies -- which, on a trigger, means an ability that fires on
+            # every event of its kind rather than one that never fires.
+            raise DslError(
+                f"{where}: 'nth' only means anything on a draw trigger, "
+                f"not on {model.trigger.event!r}"
+            )
+        if model.trigger.nth is not None and model.trigger.nth < 1:
+            # Draws are ordinalled from 1. A zeroth or negative card is drawn by
+            # nothing, so this would silently be an ability that never triggers.
+            raise DslError(
+                f"{where}: 'nth' is an ordinal from 1; "
+                f"no draw is the {model.trigger.nth}th card of a turn"
+            )
+
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -1051,6 +1069,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             not_cause=model.trigger.not_cause,
             counter=model.trigger.counter,
             mana_ability=model.trigger.mana_ability,
+            nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
