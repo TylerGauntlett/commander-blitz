@@ -1,3 +1,107 @@
+## Commander mana value — the number that lives in the zone nothing looked at
+
+### Overview
+
+**Visions of Glory** — "Flashback {8}{W}{W}. This spell costs {X} less to cast
+this way, where X is the greatest mana value of a commander you own on the
+battlefield **or in the command zone**." `conditional_cost_reduction` had already
+built the rider's slot: a `mana_reduction` on the flashback cost node, read by
+`costs.variant_reduction` so the printed hand cast keeps its price. What was
+missing was the number, and it was missing three times over.
+
+**It was a maximum, and every shape was a sum.** `costs.reduction_amount` took
+`{"amount": N}`, `{"count": filter}` and `{"total_power": filter}`. The two that
+read a board add over their matches, so "the *greatest* mana value of a
+commander you own" written as either gives a player with two partner commanders
+their mana values **added together** — a different and larger discount, on a card
+that reads as though it were right. Max and sum are not the same operation and no
+filter turns one into the other, so `greatest_mana_value` is a fourth arithmetic
+key rather than a filter on an existing one.
+
+**It could not see the command zone.** `costs._reduction_matches` walked
+`state.battlefield` and nothing else, and read `controller`, `types` and
+`subtypes` — `is_commander` was not even one of the keys it honoured. So a
+reduction written about a commander read zero for most of a normal game, because
+the command zone is where a commander sits for most of a normal game. Silently:
+a nine-mana sorcery that should have cost four, offered at nine, with nothing on
+screen to say why.
+
+**And none of it could go through the effect language.** `value_keys`' `max`
+takes a fixed list of expressions written into the card, not a maximum over a
+selected pool; `mana_value_of` resolves a ref rather than a selector; and
+`selectors.resolve_pool` builds its pool from exactly one `zone`, so no selector
+spans the battlefield and the command zone even with `any_of`, which narrows
+candidates and never widens where they were drawn from. All moot anyway: a
+reduction is priced by `legality`/`game` before the spell is on the stack, where
+there is no `EffectContext` to evaluate a value expression in. This is a
+pricing-time value and it belongs in `costs.py` beside the other three.
+
+### The shape
+
+```jsonc
+"flashback": {
+  "mana": "{8}{W}{W}",
+  "mana_reduction": {
+    "greatest_mana_value": {
+      "is_commander": true, "owner": "you",
+      "zone": ["battlefield", "command"]
+    }
+  }
+}
+```
+
+Three things widened, all inside `costs._reduction_matches` and its validator:
+
+- **`zone` may name a list.** One pool with one maximum over it, rather than two
+  filters producing two maxima that something then has to combine. The zones it
+  may name are the battlefield and the command zone — the two
+  `_reduction_zone_oids` walks — because both are public and both are readable
+  before anything is on the stack. Anything else is a load error rather than a
+  filter that matches nothing for ever. The command zone is per-player, so every
+  seat's is concatenated and the ownership keys narrow it.
+- **`is_commander` is honoured.** It was already a legal key to *write* — it is in
+  `STATIC_FILTER_KEYS` — and it was silently ignored, which is the worst of the
+  three states. It is also the only thing separating a general from the identical
+  legend somebody else cast.
+- **`owner` joins `controller`.** The printed word is "own", and the two part
+  company on exactly the boards commanders are played on: in the command zone
+  they agree, and on the battlefield a commander an opponent has stolen is still
+  one you own and still counts. `controller` therefore defaults to `"you"` only
+  while the filter has said nothing about ownership — a defaulted control check
+  on top of an `owner` filter would drop precisely the case `owner` was written
+  for — so every reduction written before this change still means what it meant.
+  `owner` is deliberately **not** a static-filter key: a static applies to
+  permanents, where control is the question.
+
+The mana value is read off the **printed card** through `state.card(oid)`, because
+a commander in the command zone has no board state to read it from; `max(...,
+default=0)` makes "no commander" a real answer rather than a missing one, and the
+player who has none pays the price the card prints. Types and subtypes come from
+`chars` on the battlefield and from the printed face anywhere else, since no
+continuous effect applies to a card in the command zone.
+
+`total_power` stays battlefield-only however the zone list is written: power is a
+characteristic of a permanent, a card in the command zone has none, and summing
+its printed face would answer a question the characteristics pipeline was never
+asked.
+
+### What it unblocked
+
+**Visions of Glory**, both lines and the last card of its gap record. Sentence one
+is `create_token` with a `{"creatures_you_control": true}` amount; sentence two is
+the flashback node above.
+
+Its flashback cast cannot be observed in the authoring sandbox — that position
+designates no commander for player 0, so the reduction there is honestly 0 and the
+expectation is what the card does on a plain hand cast (two creatures, two Human
+tokens, `battlefield_count` 34, `zone` `"graveyard"`). Not a weakened gate: the
+sandbox has no commander to be greatest, and asserting one would be asserting a
+position that does not exist. The pricing coverage lives in
+`tests/unit/test_commander_mana_value.py` instead — the command zone, the
+battlefield, the maximum against the sum, ownership against control, the
+`is_commander` gate, and the offer-and-charge agreement across
+`legality._cast_variant` and `game._cast`.
+
 ## Dash — the alternative cost that is allowed to cost more
 
 ### Overview
@@ -1001,8 +1105,9 @@ makes them load errors:
   as though it has one. Checked recursively through `all`/`any`/`not`.
 - **A `mana_reduction` with no `mana` to reduce.** Clamped at zero, so it would do
   nothing at all.
-- **A filter naming a zone other than the battlefield.** `_reduction_matches`
-  walks `state.battlefield` and nothing else.
+- **A filter naming a zone `_reduction_matches` does not walk.** The battlefield
+  then, and the battlefield or the command zone since `commander_mana_value`;
+  anything else would load clean and match nothing.
 - **`mana_reduction` on `additional_cost`.** Its mana is folded into the spell's
   price with `additional_cost.mana.scaled(...)`, so nothing prices that node on
   its own and the player would be charged the full amount.
@@ -1024,12 +1129,10 @@ activates activated abilities — so `tests/unit/test_conditional_cost_reduction
 is where that coverage lives, including both halves of the offer-and-charge
 agreement.
 
-**Visions of Glory** remains blocked, on `commander_mana_value` alone: a maximum
-over the battlefield *and* the command zone, which no reduction shape and no value
-expression can produce, and which cannot be evaluated at pricing time where no
-`EffectContext` exists. Its gap record was trimmed rather than retired, so the
-report now says what it is actually waiting for. Its rider's *slot* now exists;
-only the number it takes does not.
+**Visions of Glory** was left blocked here on `commander_mana_value` alone — a
+maximum over the battlefield *and* the command zone — with its rider's *slot*
+built and only the number it takes missing. That number shipped next; see
+"Commander mana value" above, and the card is playable.
 
 ## The monarch — a designation whose word is worth nothing
 

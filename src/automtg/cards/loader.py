@@ -1304,8 +1304,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 #: Ways a card may say how much less it costs.  ``count`` is "{1} less for each
 #: X"; ``total_power`` is Ghalta's "the total power of creatures you control";
 #: ``amount`` is a flat "{3} less", which only means anything gated on a
-#: ``condition`` -- an ungated flat reduction is a smaller printed cost.
-COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount"})
+#: ``condition`` -- an ungated flat reduction is a smaller printed cost;
+#: ``greatest_mana_value`` is Visions of Glory's "the greatest mana value of a
+#: commander you own", a **maximum** rather than a sum and so its own key --
+#: written as a `count` or a `total_power` it would add two partners' mana
+#: values together and quietly hand out a bigger discount than the card says.
+COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_mana_value"})
+
+#: Zones a cost reduction's filter may count.  Mirrors `costs.REDUCTION_ZONES`,
+#: which is what actually walks them; anything else would load and match nothing.
+#: `total_power` is battlefield-only whatever this says -- see below.
+COST_REDUCTION_ZONES = frozenset({"battlefield", "command"})
+
+#: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
+#: ``owner`` is not a static filter key and should not become one -- a static
+#: applies to permanents, where control is the question. A reduction reading the
+#: command zone is the one place the printed word is "own": "a commander you own
+#: on the battlefield or in the command zone" still counts the commander an
+#: opponent stole from you.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "owner"})
 
 #: Condition heads a *cost* reduction may use.
 #:
@@ -1357,6 +1374,38 @@ def _validate_cost_condition(cond: Any, where: str) -> None:
         _validate_cost_condition(cond["not"], f"{where}.not")
 
 
+def _validate_reduction_zones(filt: Mapping[str, Any], key: str, where: str) -> None:
+    """Which zones one reduction filter is allowed to count.
+
+    A string or a list of strings, drawn from `COST_REDUCTION_ZONES`: the
+    battlefield and the command zone are the two `costs._reduction_matches`
+    walks, and a filter naming any other would load clean and match nothing --
+    the silent failure this validator exists for.
+
+    ``total_power`` is battlefield-only however the list is written. Power is a
+    characteristic of a permanent; a card in the command zone has none, and
+    summing the printed face there would be answering a question the pipeline
+    was never asked.
+    """
+    if "zone" not in filt:
+        return
+    raw = filt["zone"]
+    zones = [raw] if isinstance(raw, str) else list(raw)
+    if not zones:
+        raise DslError(f"{where}.zone: names no zone at all")
+    bad = [z for z in zones if z not in COST_REDUCTION_ZONES]
+    if bad:
+        raise DslError(
+            f"{where}.zone: a cost reduction counts "
+            f"{sorted(COST_REDUCTION_ZONES)} only, got {bad!r}"
+        )
+    if key == "total_power" and set(zones) != {"battlefield"}:
+        raise DslError(
+            f"{where}.zone: 'total_power' sums a characteristic only permanents "
+            f"have, so it counts the battlefield only, got {raw!r}"
+        )
+
+
 def _validate_cost_reduction(spec: Any, where: str) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
@@ -1400,16 +1449,14 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         # Same restriction as a static filter, for the same reason: this is
         # evaluated while deciding what is castable, before anything is on the
         # stack, so it may only read printed characteristics of the board.
-        unknown = set(filt) - STATIC_FILTER_KEYS - {"zone"}
+        unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
-        if "zone" in filt and filt["zone"] != "battlefield":
-            # `costs._reduction_matches` walks `state.battlefield` and nothing
-            # else, so any other zone would load and match nothing.
+        if (owner := filt.get("owner")) is not None and owner not in ("you", "opponent"):
             raise DslError(
-                f"{where}.{key}.zone: a cost reduction counts the battlefield only, "
-                f"got {filt['zone']!r}"
+                f"{where}.{key}.owner: must be 'you' or 'opponent', got {owner!r}"
             )
+        _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
         _validate_cost_condition(spec["condition"], f"{where}.condition")
 

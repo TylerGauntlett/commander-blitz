@@ -80813,6 +80813,44 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flashback": {
+        "mana": "{8}{W}{W}",
+        "mana_reduction": {
+          "greatest_mana_value": {
+            "is_commander": true,
+            "owner": "you",
+            "zone": [
+              "battlefield",
+              "command"
+            ]
+          }
+        }
+      },
+      "id": "visions_of_glory",
+      "mana_cost": "{4}{W}",
+      "name": "Visions of Glory",
+      "oracle_text": "Create a 1/1 white Human creature token for each creature you control.\nFlashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "create_token",
+          "token": "human_1_1_w"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

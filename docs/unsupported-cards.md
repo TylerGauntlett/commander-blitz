@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**20 cards** blocked by **23** capabilities.
+**19 cards** blocked by **22** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
-| [commander-mana-value](#commander-mana-value) | 1 | 6142 | value |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [damage-prevention](#damage-prevention) | 1 | 2498 | op, trigger_event |
@@ -95,20 +94,6 @@ Blocks **1** card.
 
 - **Call for Aid** (rank 7420) — `call_for_aid`
   - You can't sacrifice those creatures this turn.
-
-</details>
-
-## commander-mana-value
-
-Blocks **1** card.
-
-- **(value)** A cost-time value equal to the greatest mana value among the commanders one player owns, counting both the battlefield and the command zone -- e.g. a `commander_mana_value` value key (or a `{"greatest_mana_value": <filter>}` reduction shape) evaluated with `pick: "greatest"` over `state.players[pid].command` plus that player's commander permanents on the battlefield, read off the printed card (`state.card(oid).mana_value`) since a commander in the command zone has no board state.
-  <br>Why the existing vocabulary won't do: Three separate walls, and the value language clears none of them. (1) It is a maximum, not a sum: the reduction shapes `costs.reduction_amount` accepts are `{"amount": N}`, `{"count": filter}` and `{"total_power": filter}` -- the flat `amount` is a number written into the card, and the other two SUM over matches, so a player with two partner commanders would get their mana values added rather than the greater one, which is a different and larger number. (2) It cannot see the command zone: `costs._reduction_matches` iterates `state.battlefield` and nothing else, and it only reads `controller`/`types`/`subtypes`, so `is_commander` is not even one of the keys it honours -- yet the command zone is where a commander sits for most of a game, which is the case this card is written for. (3) Even inside `spell_effects`, where the richer language lives, it is not expressible as one number: `value_keys`' `max` takes a fixed list of value expressions written into the card (`values.py:300-301`), not a maximum over a selected pool; `mana_value_of` resolves a target, binding, snapshot or `self` (`values.py:314-336`) and cannot take a selector; and the `extreme` selector -- which does rank on `mana_value` (`selectors.py:195`, `selectors.py:226-234`) -- narrows an *object pool* and yields objects, not an integer, and `selectors.resolve_pool` builds that pool from exactly one `zone` (`selectors.py:175-188`), so it cannot span the battlefield and the command zone in a single selector even with `any_of` (which filters candidates, and never widens which zone they were drawn from). And all of this is moot for pricing anyway: a reduction is computed by `legality`/`game` before the spell is on the stack, where no `EffectContext` exists to evaluate a `value_keys` expression at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Visions of Glory** (rank 6142) — `visions_of_glory`
-  - Flashback {8}{W}{W}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone.
 
 </details>
 
