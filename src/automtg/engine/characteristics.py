@@ -43,7 +43,7 @@ from __future__ import annotations
 from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CardDef
+from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, Keyword, Zone
 from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
@@ -864,6 +864,79 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         if temp.kind == "protection" and temp.keyword
     )
     return frozenset(out)
+
+
+def granted_wards(state: GameState) -> dict[int, tuple[Ability, ...]]:
+    """Which permanents have ward right now, and the ward abilities they have.
+
+    "Each other Human you control gets +1/+0 and **has ward {1}**." A `ward`
+    static hands out a *triggered ability*, so unlike every other continuous
+    effect here its product is not a characteristic value -- and that is what
+    decides where it sits.
+
+    **It has no place in the fixed order of `_compute`, and giving it one would
+    be a claim about a dependency that does not exist.** The order exists because
+    those layers feed each other: `animate` replaces the base P/T an anthem then
+    adds to, `add_subtype` decides which creatures the next anthem's filter can
+    even see. Ward reads none of them (its `affects` is matched on printed
+    characteristics like every static) and none of them reads it, so it joins
+    `protection_from`, `prevent_damage`, `block_restrictions` and
+    `attack_forbidden` -- the statics whose output some *other* rule asks for,
+    read off the battlefield at the moment that rule runs. Real Magic agrees:
+    ward is an ability-adding effect (613.1f, where this module already puts
+    keyword counters), and layer position only matters between effects that can
+    collide. Nothing collides with a trigger.
+
+    Its one reader is `triggers._candidate_abilities`, which runs on **every**
+    event, so this answers for the whole battlefield in one pass rather than
+    per object: with no ward static anywhere -- the ordinary board -- it walks
+    the statics once and returns ``{}``.
+
+    *Divergence*: a face-down permanent is skipped. The rules would grant it ward
+    (707.2 removes the abilities of the *card*, not ones an effect hands over),
+    but a static's filter is matched against the printed face, so
+    "each other Human you control" would reach through the shell and a ward
+    trigger would announce that the hidden card is a Human. `_compute` already
+    makes exactly this trade, returning `FACE_DOWN_CHARS` before any static runs.
+    Cloak's own ward is unaffected -- it is supplied by the cloak rule rather
+    than by a static, and is the one ward a face-down permanent should have.
+    """
+    statics: list[tuple[GameObject, Mapping[str, Any], Mapping[str, Any]]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "ward":
+            continue
+        cost = static.get("cost")
+        if not cost:
+            # Defaulting to a free ward here is the failure `_static_value`
+            # refuses in the other direction: a keyword that prints on the card,
+            # taxes nothing and says nothing about it. The loader already makes
+            # this impossible, so reaching here means the two have drifted.
+            raise DslError("a ward static has no cost; ward {0} is not a card")
+        statics.append((source_obj, static.get("affects") or {}, cost))
+    if not statics:
+        return {}
+    out: dict[int, tuple[Ability, ...]] = {}
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.face_down:
+            continue
+        found = tuple(
+            ward_ability(cost)
+            for source_obj, affects, cost in statics
+            if _matches(state, obj, source_obj, affects)
+        )
+        if found:
+            out[oid] = found
+    return out
+
+
+def ward_abilities(state: GameState, oid: int) -> tuple[Ability, ...]:
+    """The ward abilities one permanent has -- the single-object read.
+
+    Every ward a permanent has, not one: two Coppercoat Vanguards really do tax
+    the same Human twice, as two instances of a keyword ability always do.
+    """
+    return granted_wards(state).get(oid, ())
 
 
 def matches_static(

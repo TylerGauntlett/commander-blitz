@@ -1,3 +1,128 @@
+## Ward — the keyword that had to carry a price, and then had to be given away
+
+### Overview
+
+Ward already worked, twice, and neither copy generalised. Vein Ripper's
+"Ward — Sacrifice a creature" and `carddef.CLOAK_WARD` (rule 701.61a's cloaked
+2/2) are both the same hand-written `becomes_target` trigger, sitting on the
+permanent that has it: a `may` routed to `{"binding": "event_player"}` — the
+*caster*, not the ability's controller — with a `pay` and a `counter` of
+`{"binding": "sid"}` in the `else`. Rhystic Study shipped that shape years ago
+and heroic shipped the event.
+
+What could not be written was **Coppercoat Vanguard**: "Each other Human you
+control gets +1/+0 and has ward {1}." Two things were missing, and the second is
+the interesting one.
+
+**A keyword that can hold a cost.** `KNOWN_KEYWORDS` is
+`frozenset(k.value for k in Keyword)`, validated by exact string match, so there
+is nowhere in a keyword to put the `{1}` — `proxy.py` says so outright, listing
+"Ward {2}", "Protection from red" and "Annihilator 2" as deliberately outside
+`Keyword`. Protection had already answered this: it is a **static**, because it is
+parameterised, and four unrelated rules ask it a question. Ward is the same
+shape, so `{"effect": "ward", "cost": {…}, "affects": {…}}` — one static covering
+the printed form (`affects: {"self_only": true}`) and the granted one, differing
+only in the filter, exactly as `cant_attack` and `attacks_if_able` already do.
+
+The `cost` is a full `pay` spec rather than a mana string, run through the same
+`CostModel` an activated ability's cost is. That is not generality for its own
+sake: it is what makes Vein Ripper's sacrifice ward and ward {1} one mechanism at
+two prices. A ward with **no** cost is a load error, on `prevent_damage`'s
+reasoning about absorb 0 — ward {0} taxes nothing, can never be declined, and
+would print on the card while doing nothing.
+
+The trigger is not written by any card, because the reminder text is the *rules*
+speaking. `carddef.ward_ability(cost)` builds it, interned one per distinct cost,
+so two Humans with ward {1} share one ability object the way two creatures with
+flying share one keyword. `CLOAK_WARD` is now `ward_ability({"mana": "{2}"})` —
+the twin existed only while the keyword had nowhere to put a price.
+
+### Where the layer sits, which is the design question and has a negative answer
+
+Ward is a continuous effect, so the obvious move is a layer in
+`characteristics._compute`, between the keyword grants and the keyword counters,
+where 613.1f puts ability-adding effects.
+
+That would be wrong, and not marginally. `_compute`'s fixed order exists to
+sequence effects that **feed each other** — `animate` replaces the base P/T an
+anthem then adds to, `add_subtype` decides which creatures the next anthem's
+filter can see — and it is safe only because every layer reads a pipeline
+*input*. Ward reads none of them (its `affects` is matched on printed
+characteristics like every static) and produces something no layer can consume: a
+**triggered ability**, not a characteristic value. Giving it a position would
+assert a dependency that does not exist and would put an `Ability` object inside
+`Characteristics`, which is a frozen record of what a permanent *is*.
+
+So it goes where the other statics of its kind already are — beside
+`protection_from`, `prevent_damage`, `block_restrictions` and `attack_forbidden`:
+read off the battlefield at the moment the rule that wants it runs.
+`characteristics.granted_wards` answers for the whole battlefield in one pass,
+because its single reader is `triggers._candidate_abilities`, which runs on every
+event; with no ward static anywhere — the ordinary board — it walks the statics
+once and returns `{}`.
+
+### The claim the whole design turns on
+
+The cheap version is one `becomes_target` trigger on the Vanguard, filtered to
+`{"controller": "you", "subtypes": ["Human"], "exclude_self": true}`. It loads
+today, with no engine work at all. In a duel it is nearly indistinguishable —
+same prompt, same payer, same counter.
+
+It is a different and weaker card. 603.2d fires ward as the removal spell goes on
+the stack, which is the entire point of the keyword: the opponent holds priority
+with the ward trigger sitting there. If the trigger's **source** is the Vanguard,
+killing the Vanguard in that window is an answer to the tax. The printed ability
+belongs to the creature being targeted, so it is not.
+
+`_candidate_abilities` therefore yields the ward with the **warded** permanent as
+its source, next to the line that does the same for `granted_abilities` and for
+the same stated reason. And resolution had to stop asking the board: an ability
+looked up through "who has ward right now" would fizzle at exactly the moment the
+opponent removed the granter. So rules-supplied abilities are interned under a
+**negative `ability_index`**, and `stack.ability_of` answers those first and
+without reading any object. That subsumed the cloak special case, which was the
+same problem solved once by hand.
+
+`grant_ability` is the other tempting escape and is not one, as `card-dsl.md`
+already says: it is an `ops` entry, a one-shot, so from an enters-the-battlefield
+trigger it would miss every Human that arrived later and would keep granting
+after the Vanguard died.
+
+### Divergence
+
+A face-down permanent is never granted ward. The rules would grant it — 707.2
+removes the abilities of the *card*, not ones an effect hands over — but a
+static's filter reads the printed face, so "each other Human you control" would
+reach through the shell and the ward trigger would announce that the hidden card
+is a Human. `_compute` already makes exactly this trade, returning
+`FACE_DOWN_CHARS` before any static runs. Cloak's own ward {2} is unaffected: it
+comes from the cloak rule rather than from a static.
+
+### What was left alone
+
+Vein Ripper keeps its hand-written trigger. Its ward is already hosted on the
+right object, which is the whole defect the new mechanism exists to remove, and
+`ward_ability` would build the byte-identical `may`/`pay`/`counter` body — so
+re-expressing it swaps one correct spelling for another on a shipped card, inside
+a commit about a different one. `t_warded` in the test pool keeps its by hand for
+a better reason: it is the control that says the two paths behave the same.
+
+### Test
+
+`tests/unit/test_ward.py` — 28 tests. The scope of the filter and its wearing-off
+read through `characteristics.ward_abilities`; the tax, the refusal and the
+payment are played on a real stack; `TestTheGranterIsNotTheSource` casts a second
+removal spell at the Vanguard while the ward trigger is on the stack and asserts
+the tax is still collected afterwards. `tests/unit/test_cloak.py` is unchanged and
+still passes, which is the check that re-expressing `CLOAK_WARD` changed nothing.
+
+### Cards unblocked
+
+Coppercoat Vanguard. The template tier harvests none of them —
+`templates._keywords_in` refuses any parameterised keyword by design, and teaching
+it "Ward {N}" would still only reach cards whose *every* other line a template
+already reads.
+
 ## Dash — the alternative cost that is allowed to cost more
 
 ### Overview

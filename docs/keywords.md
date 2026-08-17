@@ -144,15 +144,26 @@ Keywords that appear in almost every set and carry no reminder text.
 | Reach | shipped | `Keyword`, read by `combat.can_block` | `reach` |
 | Trample | shipped | `Keyword`, read by combat damage assignment | `trample` |
 | Vigilance | shipped | `Keyword`, suppresses the tap on attack | `vigilance` |
-| Ward | free | `becomes_target` trigger with `controller: "opponent"`, then `may` with `player` the caster, a `pay` cost and a `counter` `sid` in the `else` | — |
+| Ward | shipped | static — parameterised on a *cost*, and the one static whose product is a triggered ability | `ward` |
 
-Ward is the interesting absence. It is evergreen and it has largely replaced
-hexproof on new creatures, and the half of it that looked hardest turned out to
-be free: routing a cost to a player who does not control the ability and
-inverting the outcome is exactly what `may` does with `player`, `pay` and
-`else`, which Rhystic Study shipped. What ward still waits on is much smaller
-and shared with heroic — a trigger for *becoming the target of* a spell, which
-no event covers.
+Ward went the way protection did, and for the same reason. The trigger itself
+was always free — routing a cost to a player who does not control the ability and
+inverting the outcome is exactly what `may` does with `player`, `pay` and `else`,
+which Rhystic Study shipped, and `becomes_target` arrived with heroic. What ward
+could not be was a **`Keyword`**: `KNOWN_KEYWORDS` is a set of bare strings
+validated by exact match, and there is nowhere in one to put the `{1}`.
+
+So it is a static, `{"effect": "ward", "cost": {...}, "affects": {...}}`, and its
+`cost` is an ordinary `pay` spec rather than a mana string — which is what lets
+"Ward — Sacrifice a creature" be the same effect at a different price. A printed
+ward is `affects: {"self_only": true}`; Coppercoat Vanguard's "each other Human
+you control … has ward {1}" is the same static over a filter, and that is the
+half that could not be written at all before. `carddef.ward_ability` builds one
+interned trigger per distinct cost, `characteristics.granted_wards` says who has
+it, and `triggers._candidate_abilities` hands it to the **warded** permanent — so
+killing the granter in response to the trigger does not escape the tax. Cloak's
+ward {2} (701.61a) is now literally the same ability rather than a hand-written
+twin.
 
 ## Keyword actions
 

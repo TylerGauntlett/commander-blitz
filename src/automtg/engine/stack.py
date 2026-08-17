@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import BESTOW_TARGET, CLOAK_WARD, MUTATE_TARGET, Ability, CardDef
+from .carddef import BESTOW_TARGET, MUTATE_TARGET, Ability, CardDef, rules_ability
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
@@ -196,13 +196,16 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
     index = item_or_trig.ability_index
     if index is None:
         return None
-    # A cloaked permanent's ward is the *rules'* ability, not the hidden card's.
-    # Resolved by index off `card.abilities` it would run whatever the card
-    # underneath happens to have first -- which is a different ability on a
-    # different object, and silently so.
-    source_obj = state.objects.get(item_or_trig.source_oid)
-    if source_obj is not None and source_obj.cloaked and source_obj.face_down:
-        return CLOAK_WARD
+    # A **negative** index is an ability the rules supplied rather than one any
+    # card prints -- every ward, cloak's included. Answered first and without
+    # reading the board, which is the property that makes granted ward hold: by
+    # the time the trigger resolves the static that granted it may be gone, and
+    # a lookup that asked "who has ward right now" would fizzle exactly when the
+    # opponent killed the granter in response. Resolved by index off
+    # `card.abilities` it would instead run whatever that card prints first --
+    # a different ability on a different object, and silently so.
+    if index < 0:
+        return rules_ability(index)
     granted_by = getattr(item_or_trig, "granted_by", None)
     if granted_by is not None:
         granter = state.objects.get(granted_by)

@@ -20,7 +20,15 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
-from automtg.engine.carddef import Ability, CardDef, Cost, TargetSpec, TriggerSpec, build_type_line
+from automtg.engine.carddef import (
+    Ability,
+    CardDef,
+    Cost,
+    TargetSpec,
+    TriggerSpec,
+    build_type_line,
+    prune_cost,
+)
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
@@ -121,6 +129,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
+        # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
+        # and there is nowhere in one to put the `{1}`. Read by
+        # `triggers._candidate_abilities` rather than by the characteristics
+        # pipeline, because what it hands out is a triggered ability -- and it
+        # hands it to the *warded* permanent, so killing the granter in response
+        # does not escape the tax.
+        "ward",
         # Warden of Evos Isle.  Read by `costs.cost_reduction`, not by the
         # characteristics pipeline: it prices a card that is still in hand, so
         # its filter (`affects_spells`) matches a printed face rather than a
@@ -1240,6 +1256,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
 
+    if model.effect == "ward":
+        # Ward with no cost is ward {0}: a keyword that prints on the card, shows
+        # in the log, taxes nothing and can never be declined. The same refusal
+        # `prevent_damage` makes about absorb 0.
+        if model.cost is None:
+            raise DslError(
+                f"{where}: ward needs a 'cost' -- ward that taxes nothing is not a card"
+            )
+        # Through the same validator an activated ability's cost goes through, so
+        # ward inherits every selector check rather than growing its own. The
+        # `Cost` is discarded: what the static stores is the raw spec, because
+        # `op_may` charges it from a mapping and building it twice is two places
+        # for the price to drift.
+        _compile_cost(model.cost, where)
+    elif model.cost is not None:
+        raise DslError(
+            f"{where}: a static ability has no cost to pay; 'cost' means "
+            f"something only on 'ward' (and on activated abilities)"
+        )
+
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
         if value is not None:
@@ -1297,6 +1333,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
         static["require_all"] = True
+    if model.effect == "ward":
+        # Pruned of the fields the model dump carries unset, because this
+        # mapping is also what `carddef.ward_ability` keys its intern table on:
+        # two cards writing ward {1} must land on one ability, not two that only
+        # differ by a `tap: false` nobody wrote.
+        static["cost"] = prune_cost(model.cost.model_dump())
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
 
