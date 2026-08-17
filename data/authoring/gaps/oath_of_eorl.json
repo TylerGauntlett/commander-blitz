@@ -1,0 +1,64 @@
+{
+  "card_id": "oath_of_eorl",
+  "name": "Oath of Eorl",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create two 1/1 white Human Soldier creature tokens.\nII — Create two 2/2 red Human Knight creature tokens with trample and haste.\nIII — Put an indestructible counter on up to one target Human. You become the monarch.",
+  "blocked_sentences": [
+    "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)",
+    "I — Create two 1/1 white Human Soldier creature tokens.",
+    "II — Create two 2/2 red Human Knight creature tokens with trample and haste.",
+    "III — Put an indestructible counter on up to one target Human. You become the monarch."
+  ],
+  "needs": [
+    {
+      "capability": "saga",
+      "kind": "engine",
+      "what": "The Saga card type as a whole (CR 714), which is four linked pieces: (1) a lore counter is put on the Saga as it enters, as part of it entering rather than as a triggered ability, so chapter I resolves off the enters-the-battlefield counter; (2) a turn-based action after the controller's draw step puts the next lore counter on every Saga that player controls; (3) a new ability kind -- a chapter ability -- that triggers when the Nth lore counter is put on the Saga *or* when it enters with that many already on it, declared as something like {\"kind\": \"chapter\", \"chapter\": 1, \"text\": \"I -- ...\", \"effects\": [...]}, so the printed \"I --\" / \"II --\" / \"III --\" lines each have a home the residual gate can match; (4) the state-based action that sacrifices the Saga once its lore counters are at or above its final chapter number and no chapter ability of it is on the stack. It also needs a `final_chapter` (or equivalent) field on the card so the engine knows where III ends, since that number is not derivable from the ability list if a chapter is ever unimplemented, and `Saga` accepted as a subtype that carries all of the above rather than as inert flavour text.",
+      "why_existing_wont_do": "`AbilityKind` (`src/automtg/engine/enums.py:277-280`) is exactly {activated, triggered, static} -- there is no chapter kind, and `docs/rules-coverage.md:206` lists sagas under \"Not implemented\" alongside planeswalkers and battles. Nothing in `src/` matches /saga/ or /lore/ (the hits are substrings of `explore` and `colors`). The nearest kludge available in `reference` is a stack of three `counter_placed` triggers -- the event does carry a `counter` kind filter (`carddef.py:243-246`, enforced at `loader.py:926-933`), so \"when a lore counter is put on this\" is sayable, and `cmp` against `counters_on` could gate each chapter on the resulting total -- fed by a `self_enters` trigger and a `draw_step` trigger that each `add_counters` a lore counter, plus a `sacrifice` of self on chapter III. That is an approximation in at least four visible ways, which is why it is filed rather than written: the enters-with-a-lore-counter step is a replacement-style part of entering, not a trigger, so a `self_enters` trigger would place the counter after the Saga has already entered and after other enters triggers have seen a counterless Saga; `draw_step` fires for every player's draw step unless hand-gated with `is_your_turn`, and it is \"after your draw step\" as a turn-based action with no priority in between, not a trigger that goes on the stack; the chapter would trigger on the *placement*, so proliferating or hand-adding a lore counter would fire chapters in the wrong pattern (and the real rule fires on the counter reaching that number, including on entry); and the sacrifice is a state-based action checked while nothing is on the stack, not an effect appended to chapter III -- appending it would sacrifice the Saga before its own chapter III finished resolving. Sagas are also the shared blocker for every Saga in the pool, so the kludge would have to be re-typed by hand on each one."
+    },
+    {
+      "capability": "token_pool",
+      "kind": "engine",
+      "what": "Two token cards registered in the pool, following the existing naming convention (`knight_2_2_w_vigilance`, `vampire_rogue_1_1_b_lifelink`): (a) `human_soldier_1_1_w` -- 1/1 white Human Soldier, types [\"Creature\"], subtypes [\"Human\", \"Soldier\"], colors and color_identity [\"W\"], is_token true; and (b) `human_knight_2_2_r_trample_haste` -- 2/2 red Human Knight, subtypes [\"Human\", \"Knight\"], power 2, toughness 2, colors and color_identity [\"R\"], keywords [\"trample\", \"haste\"], is_token true. (b) is the same token `forth_eorlingas` already requested, so this card adds no new requirement for chapter II beyond that record. More generally, either the token pool grows ahead of the cards that reference it, or `create_token` gains an inline token definition so a card can print the token it makes.",
+      "why_existing_wont_do": "`create_token` names a token only by card id: `loader.py:1794-1795` rejects the op without a `token` key, and `validate_token_references` (`loader.py:2160-2171`) raises `create_token references unknown card` for any id that is not an already-loaded card marked `is_token`, so there is no inline `power`/`toughness`/`colors`/`subtypes`/`keywords` form to fall back on. The pool (`data/cards/tokens.cards.json` plus a handful in `zurgo`, `isperia` and `auto/templates`) has `human_1_1_w` (Human only, no Soldier -- `zurgo.cards.json:147-163`), `soldier_1_1_w` (Soldier only, no Human), and `knight_2_2_w_vigilance` (white, vigilance, neither Human nor red nor trample nor haste -- `tokens.cards.json:202-212`). Substituting any of them changes the token's creature types, and for chapter II its colour, size and both keywords as well -- exactly the class of error `fidelity.py:306` calls out (\"Soldiers where the card says Warriors\"), and it matters here mechanically, not cosmetically, because chapter III targets a *Human* and would find nothing to buff if chapters I and II made plain Soldiers and Knights. The packet's `tokens` expectation key also cannot be asserted for a token id that does not exist. Note `zurgo.cards.json:419-435` shows the precedent to avoid: Bastion of Remembrance is shipped with `human_1_1_w` and its ability text rewritten to \"create a 1/1 white Human\", dropping the printed Soldier."
+    },
+    {
+      "capability": "keyword_counters",
+      "kind": "engine",
+      "what": "Counters whose kind is a keyword name -- here an indestructible counter -- must actually grant that keyword to the permanent they sit on, read in the keyword-derivation layer the way `+1/+1` counters are read in the P/T layer, so `{\"op\": \"add_counters\", \"counter\": \"indestructible\"}` produces an indestructible creature. Same request as `gilraen_dunedain_protector` (vigilance and lifelink counters); this card adds `indestructible` to the set of keywords that must be reachable that way, and needs it placeable on a targeted permanent someone else may control.",
+      "why_existing_wont_do": "`op_add_counters` (`engine/effects/ops_board.py:284-290`) accepts any `counter` string and just tallies it via `add_counters`; nothing in `src/` matches /indestructible.*counter/ or any keyword-counter lookup, and the only kinds the characteristics pipeline consults are `+1/+1` and `-1/-1`. So the op loads and the card would print \"put an indestructible counter on it\" while leaving the target exactly as killable as before -- an inert clause, which is the specific failure the brief says is worse than nothing. `grant_keyword` is the closest op and is the wrong shape: its grant is a duration-bound temporary effect (`loader.py:1798` validates the duration precisely because a misspelled one silently falls back to until-end-of-turn), whereas an indestructible counter is permanent, rides on the creature after the Saga is sacrificed by its own final-chapter rule, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` on the Saga cannot substitute either -- `static_filter_keys` has no way to point a static at one specific creature chosen when the chapter resolved, and the Saga sacrifices itself immediately afterwards, taking any continuous effect with it."
+    },
+    {
+      "capability": "monarch",
+      "kind": "engine",
+      "what": "The monarch designation as game state: at most one player is the monarch at a time, that player draws a card at the beginning of their end step, and a player becomes the monarch whenever a creature they control deals combat damage to the monarch. Needs the designation stored on GameState (a player id or None) plus those two automatic behaviours wired into the end step and the combat damage step. Already requested by `aragorn_king_of_gondor`, `champions_of_minas_tirith`, `crown_of_gondor`, `faramir_steward_of_gondor`, `palace_jailer` and `forth_eorlingas`; this card adds nothing beyond them (it never asks \"if you're the monarch\", so it does not need an `is_monarch` condition).",
+      "why_existing_wont_do": "Nothing in `src/` matches /monarch/ at all, and `docs/rules-coverage.md:242-244` records the monarch and the initiative as not implemented while the city's blessing and day/night are. `set_flag`/`has_flag` is the nearest thing in `reference` and stores an opaque per-card boolean on a battlefield permanent: it is not exclusive across players, nothing moves it when a creature deals combat damage to its holder, and no end-step draw hangs off it. It is doubly wrong here because the Saga sacrifices itself as soon as chapter III finishes, so there would be no permanent left to carry the flag. `has_city_s_blessing` is the only player-level designation in `condition_keys` and is a different, non-exclusive, permanent one (ascend)."
+    },
+    {
+      "capability": "monarch",
+      "kind": "op",
+      "what": "An op that makes a player the monarch -- `become_monarch` with a player selector (\"you\" is all this card needs) -- setting the designation above and firing whatever watches it change. Same request as `aragorn_king_of_gondor`, `champions_of_minas_tirith` and `forth_eorlingas`; noted here because this card needs it callable from inside a chapter ability's `effects`, i.e. resolving as the second half of chapter III alongside the counter placement.",
+      "why_existing_wont_do": "No op in `ops` grants a player-level designation. `set_flag` is the closest and writes a card-scoped flag with no game-wide meaning; there is no monarch state for any op to set until the engine need above lands."
+    }
+  ],
+  "closest_existing": [
+    "counter_placed (carries a `counter` kind filter -- carddef.py:243, loader.py:926)",
+    "draw_step",
+    "self_enters",
+    "add_counters",
+    "counters_on",
+    "sacrifice",
+    "create_token",
+    "human_1_1_w",
+    "soldier_1_1_w",
+    "knight_2_2_w_vigilance",
+    "grant_keyword",
+    "set_flag",
+    "has_flag",
+    "has_city_s_blessing",
+    "keyword_counters (already requested by gilraen_dunedain_protector)",
+    "human_knight_2_2_r_trample_haste (already requested by forth_eorlingas)",
+    "monarch (already requested by aragorn_king_of_gondor, champions_of_minas_tirith, crown_of_gondor, faramir_steward_of_gondor, palace_jailer, forth_eorlingas)"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Every printed line is blocked, so no partial answer was written -- and unusually, the reminder line is the blocker for the other three rather than flavour text: with no chapter ability kind there is no trigger any of I, II or III can hang on, so even the parts that are otherwise easy have nowhere to live. What already exists: `{3}{R}{W}` with types [\"Enchantment\"] and subtypes [\"Saga\"] loads today (subtypes are not validated against a list the way types and supertypes are at `loader.py:244-249`), `create_token` with `amount: {\"const\": 2}` is a solved pattern once the two tokens are registered, and \"up to one target Human\" is a plain target spec -- `subtypes: [\"Human\"]` with `optional: true`, the shape used at `auto/templates.cards.json:19519` and `isperia.cards.json:1175`. That leaves the four capabilities above. Also worth recording for whoever closes this: even fully unblocked, the sandbox can only observe chapter I. The harness casts the card and stops, so exactly one lore counter is on it at measurement time -- the honest expectation would be `zone: \"battlefield\"`, `battlefield_count: 35` (32 + the Saga + two Soldiers), `tokens: {\"id\": \"human_soldier_1_1_w\", \"count\": 2}` and `counters: {\"kind\": \"lore\", \"amount\": 1}`. Chapters II and III need later turns, and the monarch's end-step draw needs an end step, neither of which the fixed position reaches."
+}

@@ -1,0 +1,225 @@
+{
+  "card": {
+    "id": "eowyn_fearless_knight",
+    "name": "Éowyn, Fearless Knight",
+    "oracle_text": "Haste\nWhen Éowyn enters, exile target creature an opponent controls with greater power. Legendary creatures you control gain protection from each of that creature's colors until end of turn.",
+    "mana_cost": "{2}{R}{W}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Human",
+      "Knight"
+    ],
+    "power": 3,
+    "toughness": 4,
+    "colors": [
+      "R",
+      "W"
+    ],
+    "color_identity": [
+      "R",
+      "W"
+    ],
+    "keywords": [
+      "haste"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Éowyn enters, exile target creature an opponent controls with greater power. Legendary creatures you control gain protection from each of that creature's colors until end of turn.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ],
+              "power": {
+                "op": ">",
+                "value": {
+                  "power_of": {
+                    "self": true
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "target": "t1",
+                "colors": [
+                  "W"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_protection",
+                "from_colors": [
+                  "W"
+                ],
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "target": "t1",
+                "colors": [
+                  "U"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_protection",
+                "from_colors": [
+                  "U"
+                ],
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "target": "t1",
+                "colors": [
+                  "B"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_protection",
+                "from_colors": [
+                  "B"
+                ],
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "target": "t1",
+                "colors": [
+                  "R"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_protection",
+                "from_colors": [
+                  "R"
+                ],
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "target": "t1",
+                "colors": [
+                  "G"
+                ]
+              }
+            },
+            "then": [
+              {
+                "op": "grant_protection",
+                "from_colors": [
+                  "G"
+                ],
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          },
+          {
+            "op": "exile",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

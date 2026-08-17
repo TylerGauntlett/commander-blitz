@@ -364,6 +364,12 @@
     "file": "angel_of_despair.jpg",
     "scryfall_id": "5366d209-e609-4f1e-a86b-9f585abe1fa9"
   },
+  "angel_of_glory_s_rise": {
+    "artist": "Andrew Mar",
+    "bytes": 79084,
+    "file": "angel_of_glory_s_rise.jpg",
+    "scryfall_id": "1865ab25-b01a-4e2c-bf19-ffcb0806358f"
+  },
   "angel_of_light": {
     "artist": "Todd Lockwood",
     "bytes": 53695,
@@ -968,6 +974,12 @@
     "file": "bastion_of_remembrance.jpg",
     "scryfall_id": "6fe6ccad-e303-48f9-9dfa-0db7c1878031"
   },
+  "bastion_protector": {
+    "artist": "Uzuri",
+    "bytes": 61634,
+    "file": "bastion_protector.jpg",
+    "scryfall_id": "07226d56-35ae-46af-bb6e-20b568f87652"
+  },
   "battle_hurda": {
     "artist": "Christopher Moeller",
     "bytes": 79463,
@@ -1087,6 +1099,12 @@
     "bytes": 79399,
     "file": "benthic_giant.jpg",
     "scryfall_id": "63e8b531-e794-4fd1-971f-19d12c2958a6"
+  },
+  "beregond_of_the_guard": {
+    "artist": "Campbell White",
+    "bytes": 44569,
+    "file": "beregond_of_the_guard.jpg",
+    "scryfall_id": "6aad41a6-e894-43f8-a4b5-abc206836306"
   },
   "bident_of_thassa": {
     "artist": "Kari Christensen",
@@ -2956,6 +2974,12 @@
     "file": "dissolve.jpg",
     "scryfall_id": "b4fb87ab-8595-459a-a5f2-087296d9b120"
   },
+  "distant_melody": {
+    "artist": "Warren Mahy",
+    "bytes": 43572,
+    "file": "distant_melody.jpg",
+    "scryfall_id": "f1d7e8c9-0936-47eb-8996-309e7a7edcad"
+  },
   "divination": {
     "artist": "Willian Murai",
     "bytes": 77044,
@@ -3429,6 +3453,12 @@
     "file": "entish_restoration.jpg",
     "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
   },
+  "eowyn_fearless_knight": {
+    "artist": "Magali Villeneuve",
+    "bytes": 34522,
+    "file": "eowyn_fearless_knight.jpg",
+    "scryfall_id": "e5490ecc-01d2-49cf-be7a-f0f1fbfb4ee8"
+  },
   "epic_proportions": {
     "artist": "Jesper Ejsing",
     "bytes": 78009,
@@ -3440,6 +3470,12 @@
     "bytes": 42123,
     "file": "epicure_of_blood.jpg",
     "scryfall_id": "b22b4703-7fb4-40f5-b554-edb7977ba3e2"
+  },
+  "erkenbrand_lord_of_westfold": {
+    "artist": "Alexander Mokhov",
+    "bytes": 49683,
+    "file": "erkenbrand_lord_of_westfold.jpg",
+    "scryfall_id": "38f81e68-cddd-47f4-b1d1-a297c3298c25"
   },
   "esper_cormorants": {
     "artist": "Warren Mahy",
@@ -3757,6 +3793,12 @@
     "bytes": 75920,
     "file": "field_creeper.jpg",
     "scryfall_id": "e148c1bf-84a2-48cd-882e-ad0fd74b8f0f"
+  },
+  "fiend_hunter": {
+    "artist": "Irina Nordsol",
+    "bytes": 36623,
+    "file": "fiend_hunter.jpg",
+    "scryfall_id": "2b497736-e502-4e0c-b5dc-6ce5e9e8d4ab"
   },
   "fighting_drake": {
     "artist": "Matt Cavotta",
@@ -4356,6 +4398,12 @@
     "bytes": 52944,
     "file": "gilt_leaf_palace.jpg",
     "scryfall_id": "262d0329-db88-4bcb-87d3-979edb5bac8b"
+  },
+  "gimli_of_the_glittering_caves": {
+    "artist": "Sidharth Chaturvedi",
+    "bytes": 48966,
+    "file": "gimli_of_the_glittering_caves.jpg",
+    "scryfall_id": "5afc0319-9e17-4e81-a0b6-e76645bacb04"
   },
   "glacial_floodplain": {
     "artist": "Sarah Finnigan",
@@ -7096,6 +7144,12 @@
     "bytes": 69691,
     "file": "mask_of_avacyn.jpg",
     "scryfall_id": "0aa1b193-c80e-4026-bd82-f16314e14431"
+  },
+  "mass_appeal": {
+    "artist": "Christopher Moeller",
+    "bytes": 83857,
+    "file": "mass_appeal.jpg",
+    "scryfall_id": "dfe9ae51-fd2b-45ca-a780-725f51f897b2"
   },
   "mass_of_ghouls": {
     "artist": "Lucio Parrillo",
@@ -11561,6 +11615,12 @@
     "file": "super_villain_lockup.jpg",
     "scryfall_id": "1af5a1ca-3d11-45e3-ba12-c455c5a7fea1"
   },
+  "supreme_verdict": {
+    "artist": "Sam Burley",
+    "bytes": 38993,
+    "file": "supreme_verdict.jpg",
+    "scryfall_id": "3892f1c5-937e-4ef4-b6f9-e0c0ded070d0"
+  },
   "surrakar_banisher": {
     "artist": "Matt Cavotta",
     "bytes": 89965,
@@ -12043,6 +12103,12 @@
     "bytes": 58829,
     "file": "the_whizzer_classic_speedster.jpg",
     "scryfall_id": "77134e93-4c03-476b-ab60-d8fb48f7a74f"
+  },
+  "theoden_king_of_rohan": {
+    "artist": "Kieran Yanner",
+    "bytes": 39297,
+    "file": "theoden_king_of_rohan.jpg",
+    "scryfall_id": "f6dcd1ca-4943-46e4-bb5d-c14949e21e23"
   },
   "thornglint_bridge": {
     "artist": "Randy Gallegos",

@@ -1,0 +1,83 @@
+{
+  "card": {
+    "id": "gimli_of_the_glittering_caves",
+    "name": "Gimli of the Glittering Caves",
+    "oracle_text": "Double strike\nWhenever another legendary creature you control enters, put a +1/+1 counter on Gimli.\nWhenever Gimli deals combat damage to a player, create a Treasure token.",
+    "mana_cost": "{2}{R}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Dwarf",
+      "Warrior"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [
+      "double_strike"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another legendary creature you control enters, put a +1/+1 counter on Gimli.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ],
+            "supertypes": [
+              "Legendary"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "objects": {
+              "zone": "battlefield",
+              "self_only": true
+            },
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever Gimli deals combat damage to a player, create a Treasure token.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "controller": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

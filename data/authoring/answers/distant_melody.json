@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "distant_melody",
+    "name": "Distant Melody",
+    "oracle_text": "Choose a creature type. Draw a card for each permanent you control of that type.",
+    "mana_cost": "{3}{U}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_type",
+        "prompt": "Choose a creature type"
+      },
+      {
+        "op": "draw",
+        "amount": {
+          "count": {
+            "zone": "battlefield",
+            "controller": "you",
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "count": "all"
+          }
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "card_id": "champions_of_minas_tirith",
+  "name": "Champions of Minas Tirith",
+  "oracle_text": "When this creature enters, you become the monarch.\nAt the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.",
+  "blocked_sentences": [
+    "When this creature enters, you become the monarch.",
+    "At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat."
+  ],
+  "needs": [
+    {
+      "capability": "monarch",
+      "kind": "engine",
+      "what": "The monarch designation as game state: at most one player is the monarch at a time, that player draws a card at the beginning of their end step, and a player becomes the monarch whenever a creature they control deals combat damage to the monarch. Needs the designation stored on GameState (a player id or None), those two automatic behaviours wired into the end step and the combat damage step, and a `condition_keys` entry (e.g. `is_monarch`, taking a player selector) so the intervening-if \"if you're the monarch\" can be asked -- on this card the whole second ability is gated on it, so without the condition the tax would apply unconditionally.",
+      "why_existing_wont_do": "`set_flag`/`has_flag` is the nearest thing in `reference` and only stores an opaque per-card boolean on a battlefield permanent: it is not exclusive across players, nothing moves it when a creature deals combat damage to its holder, and no end-step draw hangs off it -- so a card written on flags would print \"you become the monarch\" and deliver none of what monarch means, and the flag would also die with this creature, whereas the real designation survives its source leaving. `has_city_s_blessing` is the only player-level designation in `condition_keys` and is a different, permanent, non-exclusive one (ascend). `docs/rules-coverage.md:242-244` records the monarch and the initiative as not implemented; nothing in `src/` matches /monarch/."
+    },
+    {
+      "capability": "monarch",
+      "kind": "op",
+      "what": "An op that makes a player the monarch -- `become_monarch` with a player selector (\"you\" is all this card needs) -- setting the designation above and firing whatever triggers watch it change.",
+      "why_existing_wont_do": "No op in `ops` grants a player-level designation. `set_flag` is the closest and writes a card-scoped flag with no game-wide meaning; there is no monarch state for any op to set until the engine need above lands."
+    },
+    {
+      "capability": "cant_attack_player",
+      "kind": "op",
+      "what": "An effect op that installs an attack restriction naming both sides -- one specific player (here the triggering opponent, `{\"binding\": \"event_player\"}`) may not attack one specific other player (the ability's controller) -- and that expires at end of combat rather than end of turn, because the printed duration is \"this combat\" and a turn with extra combats must re-ask the tax each time. The legality check for declaring attackers needs a defending-player parameter it currently does not have, so the restriction can be consulted as \"this attacker's controller may not choose this defender\" while leaving that creature free to attack anyone else.",
+      "why_existing_wont_do": "The nearest thing in `reference` is the `cant_attack` static_effect, and it misses three ways: (1) it is a static ability, so it must sit in `abilities` on a battlefield permanent -- a triggered ability's `else` branch can only run ops, and no op installs a static or a combat-scoped restriction; (2) `attack_forbidden` in engine/characteristics.py matches the `affects` filter against the attacking *creature*, so what it can say is \"these creatures can't attack\", never \"can't attack this player\" -- there is no defender in the check, and blanking the opponent's whole attack step is a strictly stronger card than taxing attacks on me alone; (3) a static filter may read only printed characteristics, so it could not name a player identified when the trigger resolved. `must_attack`/`must_block`/`block_restriction` are obligations or point at blockers instead. `detain` is per-object, forbids blocking and activating too, and lasts until the detainer's next turn. `set_flag` writes an adjective on a permanent and nothing in combat legality reads flags. The same capability was recorded from the opposite direction by `call_for_aid` (\"You can't attack that player this turn\", turn-scoped, restricting the effect's own controller); this card needs the third-party, combat-scoped form, so one op should carry attacker-player, defender-player and duration rather than two near-duplicates being built."
+    }
+  ],
+  "closest_existing": [
+    "set_flag",
+    "has_flag",
+    "has_city_s_blessing",
+    "cant_attack",
+    "detain",
+    "block_restriction",
+    "must_attack",
+    "cant_attack_player (already requested by call_for_aid, turn-scoped and self-directed)"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Only the monarch state and the attack restriction are missing; the rest of the second ability already loads. \"At the beginning of combat on each opponent's turn\" is a `begin_combat` trigger with `controller: \"opponent\"` -- `_actor` in engine/triggers.py returns `event.player` for `begin_combat`, so the clause reads whose turn it is. \"That opponent may pay {X}, where X is the number of cards in their hand\" is a `may` with `player: {\"binding\": \"event_player\"}` (bound by `event_bindings`) and `pay: {\"mana\": \"{1}\", \"times\": {\"cards_in_hand\": {\"binding\": \"event_player\"}}}` -- `op_may` charges its `pay` cost to the chosen player and `ManaCost.scaled` turns {1} charged N times into N generic, which is the printed {X}. \"If they don't\" is exactly `may`'s `else` branch. No partial answer was written, because the only thing the `else` branch would contain is the missing restriction and the intervening-if would be missing too, which would leave a 4/6 that becomes nothing and taxes nobody."
+}

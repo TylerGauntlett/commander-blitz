@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "bastion_protector",
+    "name": "Bastion Protector",
+    "oracle_text": "Commander creatures you control get +2/+2 and have indestructible.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 3,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Commander creatures you control get +2/+2 and have indestructible.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "is_commander": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 2
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Commander creatures you control get +2/+2 and have indestructible.",
+        "effect": "grant_keyword",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "is_commander": true
+        },
+        "keywords": [
+          "indestructible"
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "card_id": "palace_jailer",
+  "name": "Palace Jailer",
+  "oracle_text": "When this creature enters, you become the monarch.\nWhen this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.",
+  "blocked_sentences": [
+    "When this creature enters, you become the monarch.",
+    "When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch."
+  ],
+  "needs": [
+    {
+      "capability": "monarch",
+      "kind": "engine",
+      "what": "The monarch designation as game state: at most one player is the monarch at a time, that player draws a card at the beginning of their end step, and a player becomes the monarch whenever a creature they control deals combat damage to the monarch. Needs the designation stored on GameState (a player id or None) and both automatic behaviours wired into the end step and the combat damage step. On this card the combat-damage transfer is not decoration -- it is the only thing that can ever end the exile, since \"until an opponent becomes the monarch\" is satisfied exactly when the designation moves off you. A `condition_keys` entry (`is_monarch`, taking a player selector) is not needed by Palace Jailer itself but is by the rest of the family, so it belongs in the same piece of work.",
+      "why_existing_wont_do": "`set_flag`/`has_flag` is the nearest thing in `reference` and only stores an opaque per-card boolean: `has_flag` is read off `ctx.source_oid` in `conditions.py` so it describes an object rather than a player, it is not exclusive across players, nothing moves it when a creature deals combat damage to its holder, and no end-step draw hangs off it -- so a card written on flags would print \"you become the monarch\" and deliver none of what monarch means. `has_city_s_blessing` is the right *shape* (a per-player boolean on `PlayerState`) but is one-way and non-exclusive by design, which is the opposite of a designation exactly one player holds and that moves between them. `docs/rules-coverage.md:242-244` records the monarch and the initiative as not implemented; nothing in `src/` matches /monarch/. Already requested by `aragorn_king_of_gondor`, `champions_of_minas_tirith` and `crown_of_gondor` -- same engine need, listed again so this card is linked to it.",
+      "already_requested_by": ["aragorn_king_of_gondor", "champions_of_minas_tirith", "crown_of_gondor"]
+    },
+    {
+      "capability": "monarch",
+      "kind": "op",
+      "what": "An op that makes a player the monarch -- `become_monarch` with a player selector (\"you\" is all this card needs) -- setting the designation above and firing the designation-changed event below.",
+      "why_existing_wont_do": "No op in `ops` grants a player-level designation. `set_flag` is the closest and writes a card-scoped flag with no game-wide meaning; there is no monarch state for any op to set until the engine need above lands.",
+      "already_requested_by": ["aragorn_king_of_gondor", "champions_of_minas_tirith", "crown_of_gondor"]
+    },
+    {
+      "capability": "monarch",
+      "kind": "trigger_event",
+      "what": "An event fired whenever the monarch designation changes hands -- `becomes_monarch` -- carrying the new monarch as `event_player` so a watcher can ask whether that player is an opponent of the watching controller. It must fire from every route into the designation: the `become_monarch` op above and the combat-damage transfer in the engine need, since Palace Jailer's exile is far more often ended by the second than the first. Distinct from the other three monarch cards' needs, which only ever *ask* the designation with a condition; this card is the first that must be woken up by it changing.",
+      "why_existing_wont_do": "No entry in `trigger_events` describes a designation moving between players. `deals_combat_damage_to_player` is the closest and is the wrong abstraction: it fires on the damage rather than on the designation, so it would have to re-derive \"and that player was the monarch, and so the monarchy just moved\" at every trigger site and would still miss the op-driven route, where an opponent's own card makes them the monarch with no damage involved. `becomes_untapped`/`becomes_target`/`becomes_monstrous` confirm the naming convention but none generalise to player state, and `counter_placed` is the only other state-change event and is per-object."
+    },
+    {
+      "capability": "exile_until_event",
+      "kind": "engine",
+      "what": "An exile whose return is keyed to a future *event* and whose lifetime is independent of the permanent that exiled it: `exile` needs an `until` duration alongside its existing `until_leaves`, taking an event (here `becomes_monarch` filtered to an opponent of the exiling controller) and returning the linked card to the battlefield under its owner's control when that event first occurs -- once, then the link is discharged. Crucially the return must survive the exiling permanent leaving the battlefield, and must never happen merely *because* it left.",
+      "why_existing_wont_do": "`exile` with `until_leaves` is the only duration it has, and `ops_board.py:101-104` documents it as the O-Ring family: it records `obj.exiled_by = ctx.source_oid` and nothing else, and the return is a separate ordinary `leaves_battlefield` triggered ability on the same card reading `{\"zone\": \"exile\", \"exiled_with\": \"self\"}`. That is wrong for Palace Jailer twice over, in opposite directions: it returns the creature on an event that must *not* return it (Palace Jailer dying leaves the creature exiled indefinitely -- the exile is a one-shot effect with a duration, not an effect the permanent maintains), and it cannot return it on the event that must (nothing links a `leaves_battlefield` trigger to a monarchy change). Writing it as `until_leaves` would hand the opponent their creature back for the price of killing a 2/2, which is a materially different and much weaker card. The `delay` op is the only mechanism in `ops` that outlives its source -- `ops_control.py:376-399` captures bindings now and fires later with no object to hang a trigger on, which is exactly the right *lifetime* -- but `DelayedTrigger` is keyed on `step` (a phase name, defaulting to `end_step`) and has no event slot, so it can schedule \"at the beginning of the next end step\" and cannot schedule \"the next time an opponent becomes the monarch\". Giving `DelayedTrigger` an optional event condition is the likely shape of this work, and would also serve the wider \"exile until <event>\" family.",
+      "closest_existing_detail": "src/automtg/engine/effects/ops_board.py:97-132 (exile/until_leaves), src/automtg/engine/effects/ops_control.py:375-400 (delay/DelayedTrigger)"
+    }
+  ],
+  "closest_existing": [
+    "exile with until_leaves plus a leaves_battlefield trigger reading exiled_with: self (O-Ring, Fiend Hunter)",
+    "delay",
+    "deals_combat_damage_to_player",
+    "set_flag",
+    "has_flag",
+    "has_city_s_blessing"
+  ],
+  "confidence": "high",
+  "rest_is_expressible": "Everything that is not the monarch loads already. The body is a plain 2/2 Human Soldier for {2}{W}{W} with no keywords, and both abilities are `self_enters` triggers. The second ability's target -- \"target creature an opponent controls\" -- is an ordinary target spec (`types: [\"Creature\"]`, `controller: \"opponent\"`), and the exile itself is the existing `exile` op with `objects: {\"target\": ...}`. Only the monarch designation and the exile's duration are missing. No partial answer was written: an answer could only have been either a 2/2 that exiles a creature permanently (dropping the printed duration outright) or one that returns it when the Jailer dies (`until_leaves`), and both are the substituted-nearby-op failure the brief forbids -- the duration is the whole reason this card is a four-mana 2/2 rather than a strictly better Journey to Nowhere. Dropping only the first line is not available either, since \"you become the monarch\" is what makes the second line's duration reachable at all."
+}

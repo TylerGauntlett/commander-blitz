@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "supreme_verdict",
+    "name": "Supreme Verdict",
+    "oracle_text": "This spell can't be countered.\nDestroy all creatures.",
+    "mana_cost": "{1}{W}{W}{U}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "U",
+      "W"
+    ],
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "uncounterable": true,
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {
+      "0": 5
+    }
+  }
+}
