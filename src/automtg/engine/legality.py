@@ -1126,7 +1126,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             # each naming what it produces so the panel reads as five colour
             # chips rather than five copies of one line.
             label_base = f"{card.name}: {ability.text or 'activate'}"
-            for mana_option in _mana_option_indices(ability):
+            for mana_option in _mana_option_indices(state, oid, ability):
                 option_label = _mana_option_label(state, oid, ability, mana_option)
                 for targets in tuples:
                     label = label_base
@@ -1276,11 +1276,20 @@ def _offers_something_else(
     )
 
 
-def _mana_option_indices(ability) -> list[int | None]:
-    """Which yields of this ability to offer, or ``[None]`` for a non-mana one."""
+def _mana_option_indices(state: GameState, oid: int, ability) -> list[int | None]:
+    """Which yields of this ability to offer, or ``[None]`` for a non-mana one.
+
+    The **current** options, not the printed superset. Exotic Orchard and
+    Command Tower both carry all five colours at load time and narrow at
+    activation, and `activate_mana_ability` indexes the narrowed list -- so
+    offering an index into the raw one would either name a colour the board
+    cannot make or, past the end, refuse the activation the panel just offered.
+    """
     if not ability.is_mana_ability:
         return [None]
-    return list(range(len(ability.mana_options)))
+    from .costs import mana_options_of
+
+    return list(range(len(mana_options_of(state, oid, ability))))
 
 
 def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | None) -> str:
@@ -1294,19 +1303,20 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     Doubling is applied, because a Vivid land under Vorinclex really does add
     two and the chip would otherwise promise one.
     """
-    if mana_option is None or len(ability.mana_options) <= 1:
-        return ""
-
     from .characteristics import player_doubles_land_mana
-    from .costs import mana_amount, mana_produced
+    from .costs import mana_amount, mana_options_of, mana_produced
     from .mana import format_symbols
+
+    options = mana_options_of(state, oid, ability)
+    if mana_option is None or len(options) <= 1:
+        return ""
 
     doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
         state, state.objects[oid].controller
     )
     return format_symbols(
         mana_produced(
-            ability.mana_options[mana_option],
+            options[mana_option],
             doubled=doubled,
             times=mana_amount(state, oid, ability),
         )

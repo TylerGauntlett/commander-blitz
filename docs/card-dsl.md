@@ -1805,6 +1805,34 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## Commander-identity mana — "any color in your commander's color identity"
+
+```jsonc
+{"op": "add_mana", "in_commander_identity": true}
+```
+
+Command Tower, Arcane Signet, Commander's Sphere, Path of Ancestry. The sibling
+of `reflecting` above, sharing all of its machinery: the five-colour superset at
+load time, `costs.mana_options_of` narrowing it at activation, and the same two
+callers. The difference is only which zone gets asked — the **command zone**
+rather than the battlefield.
+
+Read off the printed `color_identity` and not off `chars()`. Colour identity is a
+deck-construction fact fixed by the card: it counts mana symbols in rules text,
+and it is the same set whether the commander sits in the command zone, on the
+battlefield, or in a graveyard. Current colours are a smaller set on most
+commanders and a wrong one on any of them the turn somebody animates the general.
+
+**The wrong spelling loads and looks right.** Five fixed `add_mana` modes is
+Command Tower in a five-colour deck and a strictly better card in every deck
+narrower than that, because it pays for spells the printed card cannot. There is
+no way to prune the modes from inside a mana ability either: `if` and every
+`condition_keys` entry is rejected there, since a mana ability is activated
+mid-payment and can neither ask nor branch.
+
+A colourless commander narrows this to nothing and the land taps for nothing,
+which is the printed card.
+
 ## "…then shuffle and put that card on top"
 
 ```jsonc

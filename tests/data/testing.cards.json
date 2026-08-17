@@ -8033,6 +8033,74 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_command_tower",
+      "name": "Test Command Tower",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color in your commander's color identity.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "in_commander_identity": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bw_commander",
+      "name": "Test Orzhov General",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ]
+    },
+    {
+      "id": "t_colorless_commander",
+      "name": "Test Eldrazi General",
+      "oracle_text": "",
+      "mana_cost": "{5}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [],
+      "color_identity": []
     }
   ]
 }

@@ -226,6 +226,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     colours, and the Orchard taps for nothing. The solver simply never picks a
     source that produces nothing.
     """
+    if ability.mana_identity:
+        return _identity_options(state, oid, ability)
     if ability.mana_reflects is None:
         return ability.mana_options
 
@@ -249,6 +251,41 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         if any(amount and i in colors for i, amount in enumerate(option)):
             out.append(option)
     return tuple(out)
+
+
+def _identity_options(
+    state: GameState, oid: int, ability: Ability
+) -> tuple[tuple[int, ...], ...]:
+    """The five-colour superset narrowed to the controller's commanders' identity.
+
+    Read off the **printed** `color_identity` rather than the object's current
+    colours, and wherever the commander happens to be. Colour identity is a
+    deck-construction fact fixed by the card: it counts mana symbols in rules
+    text, it is the same set in the command zone as on the battlefield, and a
+    Command Tower does not stop working because the general is in a graveyard.
+    Asking `chars()` instead would be a different and smaller set on most
+    commanders, and a wrong one on all of them the turn somebody makes the
+    commander an artifact.
+
+    A colourless commander narrows this to nothing, and the land taps for
+    nothing -- which is the printed card, not a bug: the solver simply never
+    picks a source that produces nothing.
+    """
+    controller = state.objects[oid].controller
+    colors: set[int] = set()
+    for commander in state.commanders_of(controller):
+        obj = state.objects.get(commander)
+        if obj is None:
+            continue
+        for symbol in state.card_of(obj).color_identity:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    return tuple(
+        option
+        for option in ability.mana_options
+        if any(amount and i in colors for i, amount in enumerate(option))
+    )
 
 
 def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tuple[int, ...]:

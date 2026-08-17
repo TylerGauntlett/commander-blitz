@@ -299,6 +299,10 @@ class Ability:
     #: what the board actually offers happens in `costs.mana_options_of`, which
     #: both the payment solver and the activation read.
     mana_reflects: Mapping[str, Any] | None = None
+    #: "…any color in your commander's color identity." The colours are a
+    #: question about the command zone, asked when the ability is activated;
+    #: `mana_options` holds the five-colour superset until then.
+    mana_identity: bool = False
     #: "Spend this mana only to cast a creature spell" -- the card type the mana
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None
