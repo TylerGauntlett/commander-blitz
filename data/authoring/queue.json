@@ -90842,12 +90842,12 @@
     },
     "Faramir, Steward of Gondor": {
       "edhrec_rank": 5434,
-      "gate": "template",
+      "gate": null,
       "name": "Faramir, Steward of Gondor",
-      "reason": "no template for: Whenever a legendary creature you control with mana value 4 or greater enters, you become ",
+      "reason": "",
       "scryfall_id": "5c3e8a30-de2a-4d8f-a929-5abeaea2e65a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Farbog Boneflinger": {

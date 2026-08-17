@@ -8418,6 +8418,82 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_crown_bearer",
+      "name": "Test Crown Bearer",
+      "oracle_text": "When Test Crown Bearer enters, you become the monarch.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When Test Crown Bearer enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters"
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_crown_watcher",
+      "name": "Test Crown Watcher",
+      "oracle_text": "Whenever an opponent becomes the monarch, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent becomes the monarch, draw a card.",
+          "trigger": {
+            "event": "becomes_monarch",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

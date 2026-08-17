@@ -142,7 +142,41 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
             if defender == pid:
                 state.combat.remove(attacker)
     player.mana_pool.clear()
+    _monarch_left(state, pid)
     state.bump_chars()
+
+
+def _monarch_left(state: GameState, pid: int) -> None:
+    """"If the monarch leaves the game, the active player becomes the monarch" (721.5).
+
+    Here rather than nowhere, because a designation is a *player id* and an
+    eliminated player is still a valid one: without this the crown sits on a seat
+    that has left, the end-step draw finds nobody to draw for, and every "if
+    there is no monarch" reads False for the rest of the game. All three are
+    silent -- the field looks perfectly ordinary.
+
+    Written after `has_lost` is set, so `become_monarch`'s own liveness guard and
+    `next_alive_index` both see the table as it now stands. A monarch eliminated
+    on their own turn hands it to the next seat in turn order, which is 721.5's
+    second sentence and is what `next_alive_index` returns.
+
+    Unreachable in a two-player game -- the monarch losing ends it -- so this is
+    for the pod.
+    """
+    # Local, for `_become`'s reason in `turn.py`: `primitives` reaches the effect
+    # ops through `zones`, and those ops import `primitives` back.
+    from .primitives import become_monarch
+
+    if state.monarch != pid:
+        return
+    state.monarch = None
+    successor = (
+        state.active_player
+        if state.is_alive(state.active_player)
+        else state.players[state.next_alive_index(state.active_idx)].pid
+    )
+    if state.is_alive(successor):
+        become_monarch(state, successor)
 
 
 def check_game_over(state: GameState) -> None:

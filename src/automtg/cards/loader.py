@@ -24,7 +24,7 @@ from automtg.engine.carddef import Ability, CardDef, Cost, TargetSpec, TriggerSp
 from automtg.engine.effects import known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
-from automtg.engine.effects.selectors import validate_selector
+from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import validate_mana_symbols, validate_value
 from automtg.engine.enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
 from automtg.engine.errors import DslError
@@ -1676,6 +1676,25 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 raise DslError(
                     f"{where}.pay: 'times' multiplies the mana cost, and there is none"
                 )
+    if op == "become_monarch" and "player" in effect:
+        # Who gets the crown is the whole op, and it is the one op whose `player`
+        # can be a *target* -- Éomer's "target player becomes the monarch". Both
+        # halves of that are silent when wrong: a misspelled name raises only
+        # once the ability resolves, and a target id the card never declared
+        # resolves to nobody, so the printed line does nothing at all. The
+        # generic target check above covers `objects`/`per`/`selector` and not
+        # this.
+        who = effect["player"]
+        if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.player: unknown player spec {who!r} "
+                f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
+            )
+        if isinstance(who, Mapping) and "target" in who and str(who["target"]) not in target_ids:
+            raise DslError(
+                f"{where}.player: references target {who['target']!r} "
+                f"which the card does not declare"
+            )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.

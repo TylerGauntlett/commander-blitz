@@ -77,6 +77,45 @@ def shuffle_library(state: GameState, pid: int) -> None:
 
 
 # ----------------------------------------------------------------------
+# designations
+# ----------------------------------------------------------------------
+
+
+def become_monarch(state: GameState, pid: int, source: int | None = None) -> bool:
+    """Make a player the monarch (721.2), taking it off whoever held it (721.4).
+
+    One assignment, because the designation is one field: giving it away removes
+    it from the previous holder with nothing written to do so, which is what
+    makes exclusivity a property of the representation rather than a rule every
+    caller has to remember. That matters most for the card that hands it to an
+    *opponent* on purpose -- Éomer's "target player becomes the monarch" -- where
+    the giving-away is the whole of the drawback.
+
+    Returns whether the designation actually moved, and **fires nothing when it
+    did not**. Becoming the monarch while already the monarch is not an event:
+    "until an opponent becomes the monarch" (Palace Jailer) is a question about
+    the designation changing hands, and a re-designation that changed nothing
+    would end that exile while the Jailer's controller still held the crown.
+
+    Both routes in go through here -- this and the combat-damage transfer in
+    :func:`damage_player` -- so the event and the state cannot disagree about who
+    the monarch is.
+    """
+    if not state.is_alive(pid) or state.monarch == pid:
+        return False
+    previous = state.monarch
+    state.monarch = pid
+    fire(
+        state,
+        EventType.BECAME_MONARCH,
+        player=pid,
+        source=source,
+        previous=previous,
+    )
+    return True
+
+
+# ----------------------------------------------------------------------
 # life and damage
 # ----------------------------------------------------------------------
 

@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-80 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+84 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -140,12 +140,13 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` |
-| Modify | `pump` `grant_keyword` `set_pt` `animate` `add_subtype` `transform` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
+| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
+| Players | `become_monarch` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
-| Control flow | `if` `for_each` `may` `choose_mode` `repeat` `snapshot` `noop` `delay` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -637,7 +638,23 @@ its mana, and a cost of five that settled for four would be a different card.
 { "zone_is": "battlefield" }
 { "is_your_turn": true }
 { "combat_damage_by": ["Faerie", "Rogue"] }   // prowl
+{ "has_city_s_blessing": "you" }              // ascend
+{ "is_monarch": "you" }                       // the monarch (721)
+{ "no_monarch": true }                        // …and the vacancy, which is not its negation
 ```
+
+`is_monarch` takes a player spec, so "if an opponent is the monarch" is
+`{"is_monarch": "each_opponent"}` and needs nothing new — and it can never be
+true of two of them at once, because the designation is one field.
+
+`no_monarch` is a second key rather than `{"not": {"is_monarch": "you"}}`, and
+the difference is a whole card. Crown of Gondor reads "when a legendary creature
+you control enters, **if there is no monarch**, you become the monarch". The
+negation is true in two situations — nobody holds it, and an *opponent* holds it
+— and the second is precisely the one the card must not fire in. Written as the
+negation it becomes a repeatable steal instead of a way to claim a vacant crown.
+It must be a literal `true` or `false`: `"false"` is a non-empty string and would
+read as `true`, firing the card in exactly that case.
 
 `combat_damage_by` is prowl: "…if a player was dealt combat damage this turn by
 a Faerie or a Rogue". A seventh entry in the per-turn ledger, and the only one
@@ -712,8 +729,22 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
-`draw_step` · `begin_combat` · `end_step` · `you_gain_life` · `counter_placed` ·
-`draw` · `discard` · `cycle`
+`draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
+`life_lost` · `you_attack` · `becomes_monstrous` · `becomes_monarch` ·
+`counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle`
+
+**`becomes_monarch`** fires when the crown changes hands, whichever way it got
+there — the `become_monarch` op and the game's own combat-damage rule alike, since
+both go through one primitive. Its subject is a **player**, not an object, so
+`event_player` and the `controller` clause both name the *new* monarch: "until an
+opponent becomes the monarch" is `controller: "opponent"` and nothing else.
+
+`deals_combat_damage_to_player` is the near miss and is the wrong abstraction. It
+fires on the damage rather than on the designation, so every watcher would have
+to re-derive "and that player was the monarch, so the crown just moved" — and it
+would still miss the other route in, where an opponent's own card crowns them with
+no damage anywhere. Nothing fires when a player who is *already* the monarch
+becomes it again, because the event is the crown moving.
 
 **`becomes_untapped`** is inspired, and it is nearly all untap step. The event
 had always existed — `untap_permanent` fires it — but `untap_all` emitted one
@@ -4415,6 +4446,80 @@ evasive.
 and the `if`-effect one. It is safe in a static for the same reason a zone count
 is: player state is a pipeline **input**, and nothing in the fixed-order
 characteristics pipeline can change it.
+
+### The monarch
+
+```jsonc
+// "When this creature enters, you become the monarch." (Palace Jailer)
+{ "kind": "triggered", "text": "…", "trigger": { "event": "self_enters" },
+  "effects": [ { "op": "become_monarch", "player": "you" } ] }
+
+// "When Éomer enters, target player becomes the monarch."
+{ "op": "become_monarch", "player": { "target": "t1" } }
+
+// "At the beginning of your end step, if you're the monarch, …" (Faramir)
+{ "kind": "triggered", "text": "…",
+  "trigger": { "event": "end_step", "controller": "you",
+               "condition": { "is_monarch": "you" } },
+  "effects": [ … ] }
+
+// "…until an opponent becomes the monarch." (Palace Jailer's duration)
+{ "trigger": { "event": "becomes_monarch", "controller": "opponent" } }
+```
+
+The mechanic is `state.monarch`, one optional player id — beside `day_night` and
+for its reason: it belongs to the **table**, not to a player or a permanent, and
+`rules-coverage.md` called it "a designated-player mechanic the engine has no
+place to keep". Day/night found the place, so this is the same field with rules
+hung off it.
+
+**One field is the whole of 721.4.** "Only one player can be the monarch at a
+time; if a player becomes the monarch, the current monarch ceases to be." Giving
+the crown away takes it off the previous holder with nothing written to do so.
+`has_city_s_blessing` is the right *shape* for a player-level designation and the
+wrong semantics — one-way and non-exclusive by design, so a monarch built that
+way would let two players hold it and would need every write site to remember to
+clear the others.
+
+**The word is worth nothing; the two rules are the mechanic.** A card that only
+printed "you become the monarch" would resolve, change one integer, and never do
+anything again. 721.3's pair of inherent triggered abilities is what makes the
+crown a card-a-turn engine and a five-mana 2/2 body a fair rate. Neither has a
+source and neither belongs to a card, so neither is written on one:
+
+- **The end-step draw** lives in the turn machine (`turn._monarch_draw`), beside
+  the day/night switch. It is the monarch's *own* end step — one comparison,
+  because `END_STEP` only fires on the active player's turn — and a version that
+  drew on every end step would hand out one card per opponent per round. It goes
+  through `replacements.draw`, so it can be dredged, madnessed or miracled like
+  any other draw.
+- **The combat-damage transfer** lives in combat (`combat._monarch_transfer`):
+  "whenever a creature deals combat damage to the monarch, that creature's
+  controller becomes the monarch". It is what the printed cards are *balanced
+  against* — on most boards the only ordinary way the crown moves — and the only
+  thing that can ever end Palace Jailer's exile. It reads who was the monarch
+  **before the batch**, because combat damage is dealt simultaneously (510.2):
+  one hit at a time, a second creature connecting in the same step would find the
+  crown already moved by the first and transfer nothing.
+
+Both routes into the designation go through one primitive, so the state and the
+`becomes_monarch` event cannot disagree. Becoming the monarch while already the
+monarch is a **no-op that fires nothing** — the event is the crown *moving*, which
+is the question "until an opponent becomes the monarch" asks.
+
+721.5 is in `sba._eliminate`: a monarch who leaves the game hands the crown to the
+active player rather than leaving it on a seat that has gone. Unreachable in a
+duel, where the monarch losing ends the game, and silent when wrong — the draw
+finds nobody and every "there is no monarch" reads False for the rest of the game.
+
+*Divergences*: both inherent abilities resolve **inline** rather than going on the
+stack, so nothing can respond between the damage and the crown moving, or between
+the end step and the draw. The same trade `delay` and the day/night switch record.
+
+`is_monarch` is deliberately **not** in the static condition language, unlike
+`has_city_s_blessing`. It would be safe there — the designation is a pipeline
+input — but no card in the pool asks it from a static, and the blessing is in both
+only because a card needed both.
 
 ### Flashback
 

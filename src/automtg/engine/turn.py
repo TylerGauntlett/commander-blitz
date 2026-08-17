@@ -67,6 +67,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         fire(state, EventType.POSTCOMBAT_MAIN, player=state.active_player)
     elif step is Step.END_STEP:
         fire(state, EventType.END_STEP, player=state.active_player)
+        yield from _monarch_draw(state)
     elif step is Step.CLEANUP:
         yield from _cleanup_step(state)
 
@@ -116,6 +117,35 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
             source_name=delayed.description,
         )
         yield from execute(ctx, list(delayed.effects))
+
+
+def _monarch_draw(state: GameState) -> Generator[Any, list[int], None]:
+    """"At the beginning of the monarch's end step, that player draws a card" (721.3).
+
+    The other of the monarch's two inherent triggered abilities, and the one that
+    makes it a card-a-turn engine rather than a word. It has no source and is
+    controlled by the game, so it lives in the turn machine beside the day/night
+    switch rather than on any card -- there is no permanent to hang it on, and the
+    designation deliberately outlives whatever granted it.
+
+    **The monarch's** end step, not everybody's: fired here rather than as a
+    per-player check because `END_STEP` only happens on the active player's turn,
+    so the whole of "theirs" is one comparison. A version that drew on every end
+    step would hand the monarch a card per opponent per round.
+
+    Through `replacements.draw` rather than `primitives.draw_cards`, so this draw
+    can be dredged, madnessed or miracled like any other. That is also why it is a
+    generator, which `begin_step` already was.
+
+    **Divergence, shared with `_run_delayed`:** resolved inline instead of going on
+    the stack, so it happens before the end-step triggers this step queued rather
+    than in the order the players would have chosen. Observable only to somebody
+    who would respond differently to the draw than to what triggered beside it.
+    """
+    pid = state.monarch
+    if pid is None or pid != state.active_player or not state.is_alive(pid):
+        return
+    yield from replacements.draw(state, pid, 1)
 
 
 def _untap_step(state: GameState) -> None:

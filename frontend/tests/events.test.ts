@@ -109,6 +109,19 @@ describe("beatsFor", () => {
     expect(beat.shake).toBeGreaterThan(0);
   });
 
+  it("banners the monarch, from the viewer's side", () => {
+    // `beatsFor` runs a switch parallel to `describeEvent` and both have a
+    // `default` that drops what they do not know, which is how triggers once
+    // went missing from both at once. A banner because nothing on the board
+    // changed -- there is no permanent to flash and no number to float -- and
+    // toned per seat, because gaining and losing the crown are one event told
+    // two ways.
+    const [mine] = beatsFor([event("became_monarch", {}, { player: 0 })], NAMES, undefined, 0);
+    const [theirs] = beatsFor([event("became_monarch", {}, { player: 1 })], NAMES, undefined, 0);
+    expect(mine.banner).toEqual({ text: "You are the monarch", tone: "good" });
+    expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
+  });
+
   it("floats life gain up and life loss down", () => {
     const [gain] = beatsFor([event("life_gained", { amount: 5 })], NAMES);
     const [loss] = beatsFor([event("life_lost", { amount: 5 })], NAMES);

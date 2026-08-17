@@ -601,6 +601,24 @@ def pick_from_pool(
     return picked
 
 
+#: The **string** forms :func:`select_players` accepts, named so a load-time
+#: validator can refuse a typo instead of leaving it to raise mid-resolution.
+#: The mapping forms (``target``, ``binding``, ``controller_of``, ``owner_of``)
+#: and a bare seat number are not here: they name something the card declares
+#: elsewhere and are checked where that is checked.
+PLAYER_SPEC_NAMES = frozenset(
+    {
+        "you",
+        "controller",
+        "each_opponent",
+        "opponent",
+        "each_player",
+        "all",
+        "active_player",
+    }
+)
+
+
 def select_players(ctx: EffectContext, spec: Any) -> list[int]:
     """Resolve a player specification to a list of player ids."""
     state: GameState = ctx.state

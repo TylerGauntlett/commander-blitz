@@ -39,6 +39,14 @@ CONDITION_KEYS = frozenset(
         # the two halves really are two effects, so the card branches on this.
         "overloaded",
         "has_city_s_blessing",
+        # "If you're the monarch…" (721). Takes a player spec, so a card can also
+        # ask it of somebody else.
+        "is_monarch",
+        # "…if there is **no** monarch" -- Crown of Gondor. Deliberately its own
+        # key and not `{"not": {"is_monarch": "you"}}`, which is a different
+        # question: that negation is also true while an *opponent* holds the
+        # crown, which is precisely the case the card must not fire in.
+        "no_monarch",
         # "…if it isn't renowned". A one-way word written by `set_flag`.
         "has_flag",
         # Prowl: "…if a player was dealt combat damage this turn by a Faerie or
@@ -127,6 +135,16 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
 
         pids = select_players(ctx, cond["has_city_s_blessing"])
         return any(ctx.state.players[p].has_city_s_blessing for p in pids)
+    if "is_monarch" in cond:
+        from .selectors import select_players
+
+        # `any`, matching `has_city_s_blessing` above -- and unlike the blessing
+        # it can never be true of two of them, so "if an opponent is the monarch"
+        # over `each_opponent` is exact rather than approximate.
+        pids = select_players(ctx, cond["is_monarch"])
+        return any(ctx.state.monarch == p for p in pids)
+    if "no_monarch" in cond:
+        return (ctx.state.monarch is None) == bool(cond["no_monarch"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:
@@ -205,6 +223,20 @@ def validate_condition(cond: Any, where: str) -> None:
     if "cmp" in cond:
         validate_value(cond.get("left"), f"{where}.left")
         validate_value(cond.get("right"), f"{where}.right")
+    # Not defaulted and not truthiness-tested: `{"no_monarch": "false"}` is a
+    # non-empty string and would read as `true`, which would make Crown of
+    # Gondor's trigger fire in exactly the case it must not.
+    if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):
+        raise DslError(f"{where}.no_monarch: must be true or false")
+    if "is_monarch" in cond:
+        from .selectors import PLAYER_SPEC_NAMES
+
+        who = cond["is_monarch"]
+        if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.is_monarch: must name one of {sorted(PLAYER_SPEC_NAMES)} "
+                f"or a target/binding, got {who!r}"
+            )
     if "combat_damage_by" in cond:
         wanted = cond["combat_damage_by"]
         names = [wanted] if isinstance(wanted, str) else wanted
