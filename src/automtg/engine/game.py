@@ -645,8 +645,21 @@ class Game:
 
         if (gate := spec.get("all_if")) is not None and evaluate_condition(ctx, gate):
             count = len(modes)
+        # "If you control a commander as you cast this spell, you may choose
+        # both instead." Applied here as well as in `op_choose_mode`, and this
+        # is the copy that matters: a spell whose whole effect tree is one
+        # top-level `choose_mode` is answered *here* (601.2b) and never reaches
+        # the op at all. Akroma's Will is exactly that shape, so the option
+        # living only in the op was dead code for the card it was built for --
+        # the spell compiled, played, cleared every gate, and silently chose
+        # one mode.
+        up_to = None
+        if (more := spec.get("up_to_if")) is not None and evaluate_condition(
+            ctx, more.get("condition")
+        ):
+            up_to = evaluate_value(ctx, more.get("count", len(modes)))
         labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count))
+        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count), up_to)
         return tuple(chosen)
 
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:

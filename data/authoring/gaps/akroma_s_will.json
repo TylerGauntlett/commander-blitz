@@ -3,39 +3,35 @@
   "name": "Akroma's Will",
   "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Creatures you control gain flying, vigilance, and double strike until end of turn.\n• Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.",
   "blocked_sentences": [
-    "Choose one. If you control a commander as you cast this spell, you may choose both instead.",
-    "• Creatures you control gain lifelink, indestructible, and protection from each color until end of turn."
+    "Choose one. If you control a commander as you cast this spell, you may choose both instead."
   ],
   "needs": [
     {
-      "capability": "choose-both",
+      "capability": "cast-time-up-to-if",
       "kind": "decision",
-      "what": "A modal spell whose mode count is a floor rather than an exact number: choose one, and if a cast-time condition holds the controller *may* choose additional modes. Needs `choose_mode` to take an optional upper bound (e.g. `up_to`, gated by a `condition` evaluated as the spell is cast) so the decision is offered as min 1 / max 2 rather than forced.",
-      "why_existing_wont_do": "`choose_mode` has a `count`, but `ask_mode` builds the decision with `min_count = max_count = count`, and short-circuits with `if len(labels) <= count: return list(range(len(labels)))`. So a count of 2 over 2 modes does not ask at all -- it silently executes both. Making count conditional (`sum` of `{\"const\": 1}` and a `count` over an `is_commander` selector) computes the right *number*, but produces a card that must choose both whenever a commander is out, deleting the printed choice. There is no way to express an optional extra mode.",
-      "closest_existing": [
-        "choose_mode",
-        "count",
-        "is_commander",
-        "exists"
-      ]
+      "what": "`Game._ask_modes` must read `up_to_if` the way it already reads `all_if`. Rule 601.2b picks modes as the spell goes on the stack, so a spell whose whole effect tree holds one top-level `choose_mode` never reaches `op_choose_mode`'s mode question at all -- `CardDef.cast_time_modes` hands the spec to `Game._ask_modes`, which answers it during the cast and records the answer on the stack item. That method computes `count`, applies `all_if`, and calls `ask_mode(ctx, \"Choose\", labels, pid, max(1, count))` with no `up_to` argument. The `up_to_if` branch shipped in `op_choose_mode` is unreachable for exactly this shape of card. Four lines mirroring the `all_if` block would close it, and the timing lands right for free: `_ask_modes` runs *as the spell is cast*, which is where the printed condition \"as you cast this spell\" is measured -- whereas `op_choose_mode` evaluates it at resolution, one priority window too late.",
+      "why_existing_wont_do": "Measured, not guessed. With the card written as `{\"op\": \"choose_mode\", \"count\": 1, \"up_to_if\": {\"condition\": {\"exists\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"is_commander\": true}}, \"count\": 2}, \"modes\": [...]}` it passes all six gates, and it is still the wrong card: with a commander on the battlefield the `CHOOSE_MODE` decision is built `min=1 max=1`, so both modes are never offered. Burying the `choose_mode` inside an `if` so `top_level_mode_spec` cannot see it does produce `min=1 max=2` and both modes resolve -- which proves `up_to_if`, `grant_protection` and the condition are all correct and isolates the fault to the cast-time path -- but it is a deformation of the card to dodge the engine: it moves a 601.2b choice to resolution, hides it from opponents holding responses, and wraps the spell in an `if` whose condition means nothing. Shipping either is a modal that always chooses one mode, which is a different card."
     },
     {
-      "capability": "grant-protection",
-      "kind": "op",
-      "what": "An effect op that grants protection from a set of qualities (colors, types, subtypes) to a pool of permanents until end of turn -- the effect half of the existing `protection` static, usable from `spell_effects`, with `from_colors` naming all five colors for \"protection from each color\".",
-      "why_existing_wont_do": "`protection` exists only as a *printed static ability* on a permanent: `characteristics.protection_from` collects candidates from `_battlefield_statics`, which walks `card.abilities` of battlefield objects only and never consults granted or temporary effects. `grant_keyword` cannot carry it -- `loader.py` deliberately excludes `protection` from the keyword list because it is parameterised (\"protection from Wizards\" names a quality, and four rules read it). `grant_ability` hands over an entry from the granter's `grantable_abilities` as an until-EOT `TempEffect(kind='ability')`, which `granted_abilities` surfaces to triggers and legality, but the statics pipeline never reads it -- so a granted protection static would be inert.",
-      "closest_existing": [
-        "grant_keyword",
-        "grant_ability",
-        "protection"
-      ]
+      "capability": "up-to-if-validation",
+      "kind": "engine",
+      "what": "The loader should guard `up_to_if` the way it guards `all_if`: refuse it on any op that is not `choose_mode`, and run `validate_condition` over `up_to_if.condition` and `validate_value` over `up_to_if.count`. Secondary to the need above, and the same class of bug -- `loader.py` was not touched when `up_to_if` shipped.",
+      "why_existing_wont_do": "There is no validation of `up_to_if` anywhere, so a misspelling, a malformed condition, or the key placed on the wrong op all load perfectly cleanly and are silently ignored. That is precisely the failure the `all_if` guard exists to prevent -- 'a card that reads \"choose both\" and chooses one' -- and it is what made the blocker above invisible: the card compiles, plays, and clears gate 5 while its first printed sentence does nothing."
     }
   ],
   "closest_existing": [
     "choose_mode",
+    "up_to_if",
+    "all_if",
+    "grant_protection",
     "grant_keyword",
-    "grant_ability",
-    "protection"
+    "exists",
+    "is_commander"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "notes": [
+    "Both needs the previous record named are shipped and were checked here. The second bullet is fully expressible: `grant_keyword` for lifelink and indestructible plus `{\"op\": \"grant_protection\", \"from_colors\": [\"W\",\"U\",\"B\",\"R\",\"G\"], ...}` gives every creature you control `protection_from` == {W,U,B,R,G}, verified on the board. Only the choose-one line is still blocked.",
+    "\"If you control a commander as you cast this spell\" needs nothing new -- `{\"exists\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"is_commander\": true}}` says it exactly, and it discriminates correctly: false with no commander, false with a commander in the command zone, true with one on the battlefield.",
+    "`{\"cmp\": \">=\", \"left\": {\"commander_color_identity\": \"you\"}, \"right\": {\"const\": 1}}` is NOT that sentence and should not be used. `commander_color_identity` unions the *printed* colour identity of every commander a player has, deliberately regardless of zone -- its docstring says so, because War Room wants a deck-construction fact. Measured in the sandbox: with a commander sitting in the command zone and nothing on the battlefield it returns 2, so the condition fires when the player controls no commander at all. It also returns 0 for a colourless commander on the battlefield, so it fails to fire when they do. Wrong in both directions; no narrower value is needed, because `exists` + `is_commander` already says it."
+  ]
 }

@@ -1756,6 +1756,21 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         if op != "choose_mode":
             raise DslError(f"{where}: 'all_if' only means anything on choose_mode, not {op!r}")
         validate_condition(effect["all_if"], f"{where}.all_if")
+    if "up_to_if" in effect:
+        # The same guard for entwine's mirror image, and it was missing -- which
+        # is how a card carrying `up_to_if` compiled, played and cleared every
+        # gate while its first printed sentence did nothing at all.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'up_to_if' only means anything on choose_mode, not {op!r}")
+        more = effect["up_to_if"]
+        if not isinstance(more, Mapping) or "condition" not in more:
+            raise DslError(
+                f"{where}: 'up_to_if' takes a 'condition' saying when the extra "
+                f"modes are offered, and optionally a 'count'"
+            )
+        validate_condition(more["condition"], f"{where}.up_to_if.condition")
+        if "count" in more:
+            validate_value(more["count"], f"{where}.up_to_if.count")
     if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
         # `as` names a binding -- `snapshot`'s, and the record `reveal` and
         # `sacrifice` write of what they consumed. A non-string would be

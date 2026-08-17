@@ -39,7 +39,7 @@ import pytest
 
 from automtg.cards.loader import DslError, compile_card
 from automtg.cards.schema import CardModel
-from automtg.engine.enums import ActionKind, Zone
+from automtg.engine.enums import ActionKind, DecisionKind, Zone
 from tests.conftest import pass_until
 
 SWAMP = "swamp"
@@ -280,3 +280,122 @@ class TestAMandatoryCost:
                     }
                 )
             )
+
+PLUMB = "t_plumb"  # {1}{B} instant, repeatable *sacrifice*, copies per payment
+
+
+def settle(game):
+    """Pay the sacrifice, then wait for the copy trigger.
+
+    Two things a plain `pass_until` gets wrong here. Paying a *sacrifice* cost
+    suspends the cast on a CHOOSE_OBJECTS, and the passive answer is not to
+    choose -- so the cast never completes and the card stays in hand. And the
+    "when you do" trigger queues as the spell is cast but reaches the stack only
+    at the next priority, so waiting on an empty stack alone returns before
+    anything has copied.
+    """
+    for _ in range(60):
+        if not game.state.pending_triggers and not game.state.stack and game.pending() is None:
+            return
+        decision = game.pending()
+        if decision is None:
+            return
+        actions = game.legal_actions()
+        if decision.kind is DecisionKind.CHOOSE_OBJECTS:
+            choose = [a for a in actions if a.kind is ActionKind.CHOOSE]
+            if choose:
+                game.apply(choose[0])
+                continue
+            finish = [a for a in actions if a.kind is ActionKind.FINISH_DECLARATION]
+            if finish:
+                game.apply(finish[0])
+                continue
+        if not game.state.pending_triggers and not game.state.stack:
+            return
+        passes = [a for a in actions if a.kind is ActionKind.PASS]
+        if not passes:
+            return
+        game.apply(passes[0])
+
+
+def plumb_board(builder, creatures: int):
+    return (
+        builder(players=2)
+        .battlefield(0, [SWAMP] * 6)
+        .battlefield(0, [BEAR] * creatures)
+        .hand(0, [PLUMB])
+        .library(0, [SWAMP] * 20)
+        .library(1, [SWAMP] * 20)
+        .build()
+    )
+
+
+class TestARepeatableCostThatIsNotMana:
+    """Plumb the Forbidden -- the case replicate's ceiling never covered.
+
+    `_additional_ceiling` returned `MAX_ADDITIONAL_TIMES` for anything
+    repeatable and left per-line affordability to the *price*. That works only
+    because replicate's cost is mana: each line is priced `mana.scaled(times)`
+    and the solver drops the ones that cannot be paid.
+
+    A repeatable **sacrifice** has an empty `mana`, so every line was priced at
+    the printed cost and all six were offered whatever the board held. And `pay`
+    does not fail closed -- `ask_objects` returns `[]` for an empty pool, the
+    sacrifice branch consumes it happily, and `cast_additional` records the
+    count *requested*. One creature bought seven copies for {1}{B}.
+
+    Gate 5 could not see it: the harness takes the first cast line, which is the
+    one that pays nothing.
+    """
+
+    def test_the_lines_stop_at_the_creatures_available(self, builder):
+        game = plumb_board(builder, creatures=2)
+        counts = sorted({a.additional_times for a in lines(game, PLUMB)})
+        assert counts == [0, 1, 2], "nothing beyond what the board can pay"
+
+    def test_one_creature_offers_one_payment(self, builder):
+        game = plumb_board(builder, creatures=1)
+        counts = sorted({a.additional_times for a in lines(game, PLUMB)})
+        assert counts == [0, 1]
+
+    def test_no_creatures_offers_only_the_free_line(self, builder):
+        """Optional, so the spell is still castable -- for nothing."""
+        game = plumb_board(builder, creatures=0)
+        counts = sorted({a.additional_times for a in lines(game, PLUMB)})
+        assert counts == [0]
+
+    def test_paying_twice_really_eats_two(self, builder):
+        game = plumb_board(builder, creatures=2)
+        bears = [
+            o.oid for o in game.state.battlefield_objects(0) if o.def_id == BEAR
+        ]
+        game.apply(next(a for a in lines(game, PLUMB) if a.additional_times == 2))
+        settle(game)
+
+        assert all(
+            game.state.objects[b].zone is Zone.GRAVEYARD for b in bears
+        )
+
+    def test_the_copies_match_what_was_paid(self, builder):
+        """Two payments, two copies, so three draws and three life."""
+        game = plumb_board(builder, creatures=2)
+        hand = len(game.state.players[0].hand)
+        life = game.state.players[0].life
+
+        game.apply(next(a for a in lines(game, PLUMB) if a.additional_times == 2))
+        settle(game)
+
+        assert len(game.state.players[0].hand) == hand - 1 + 3
+        assert game.state.players[0].life == life - 3
+
+    def test_the_free_line_copies_nothing(self, builder):
+        game = plumb_board(builder, creatures=2)
+        hand = len(game.state.players[0].hand)
+        life = game.state.players[0].life
+
+        game.apply(next(a for a in lines(game, PLUMB) if a.additional_times == 0))
+        settle(game)
+
+        assert len(game.state.players[0].hand) == hand - 1 + 1
+        assert game.state.players[0].life == life - 1
+
