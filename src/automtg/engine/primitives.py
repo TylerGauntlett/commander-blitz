@@ -797,6 +797,64 @@ def lock_abilities(state: GameState, oid: int, source: int | None = None) -> Non
     obj.until_eot.append(TempEffect(kind="lock_abilities", source=source))
 
 
+def restrict_attack(
+    state: GameState,
+    attacker: int,
+    defender: int,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """"``attacker`` can't attack ``defender``" for ``duration``.
+
+    Returns whether anything was recorded, so the op above can log the ones that
+    mattered rather than claiming a restriction it silently dropped.
+
+    Two pairs are refused, and both are the same argument -- a restriction that
+    can never bite would read in the log as one that did:
+
+    * A player cannot attack themselves, so ``attacker == defender`` is not a
+      prohibition, it is a no-op wearing one's clothes.
+    * A player already out of the game is not going to declare attackers.
+
+    Deduplicated on the whole tuple. Two Champions of Minas Tirith taxing the
+    same opponent in the same combat impose one restriction, not two, and
+    "can't attack" does not stack -- so a second copy would only make the
+    eventual clear-up quadratic.
+    """
+    from .structs import ATTACK_RESTRICTION_DURATIONS, AttackRestriction
+
+    if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown attack restriction duration {duration!r}")
+    if attacker == defender:
+        return False
+    if not state.is_alive(attacker) or not state.is_alive(defender):
+        return False
+    entry = AttackRestriction(
+        attacker=attacker, defender=defender, duration=duration, source=source
+    )
+    if entry in state.attack_restrictions:
+        return False
+    state.attack_restrictions.append(entry)
+    return True
+
+
+def clear_attack_restrictions(state: GameState, duration: str) -> None:
+    """Drop every attack restriction of one duration -- its wearing-off.
+
+    Called from two places, one per duration: `turn._cleanup_step` for
+    ``this_turn`` and `combat.end_combat` for ``this_combat``.  Split by duration
+    rather than cleared wholesale at either point, because a turn-scoped
+    restriction has to survive the combat it was cast before -- Call for Aid is
+    cast in a precombat main phase and means the *whole* turn, extra combats
+    included.
+    """
+    if not state.attack_restrictions:
+        return
+    state.attack_restrictions = [
+        r for r in state.attack_restrictions if r.duration != duration
+    ]
+
+
 def clear_until_eot(state: GameState) -> None:
     """Cleanup step: remove damage and every until-end-of-turn effect."""
     for oid in state.battlefield:

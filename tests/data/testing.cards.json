@@ -1979,6 +1979,63 @@
       ]
     },
     {
+      "id": "t_truce_caller",
+      "name": "Test Truce Caller",
+      "oracle_text": "You can't attack target player this turn.",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "cant_attack_player",
+          "attacker": "you",
+          "defender": {
+            "target": "t1"
+          },
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_toll_gate",
+      "name": "Test Toll Gate",
+      "oracle_text": "At the beginning of combat on each opponent's turn, that player can't attack you this combat.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on each opponent's turn, that player can't attack you this combat.",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "cant_attack_player",
+              "attacker": {
+                "binding": "event_player"
+              },
+              "defender": "you",
+              "duration": "this_combat"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_detainer",
       "name": "Test Detainer",
       "oracle_text": "Detain target creature an opponent controls. (Until your next turn, that creature can't attack or block and its activated abilities can't be activated.)",

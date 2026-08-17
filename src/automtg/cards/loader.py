@@ -42,6 +42,7 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
+from automtg.engine.structs import ATTACK_RESTRICTION_DURATIONS
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 
@@ -1832,6 +1833,45 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     # ever complain.
     if op == "hideaway" and "amount" not in effect:
         raise DslError(f"{where}: hideaway needs an 'amount' -- hideaway N")
+    if op == "cant_attack_player":
+        # All three keys are required, and each omission is silent in its own
+        # way. Without `attacker`/`defender` the spec defaults to the controller
+        # on both sides, which `restrict_attack` refuses as a self-restriction --
+        # the card would load, resolve, log nothing and prohibit nothing. And the
+        # two durations are not a long and a short version of one restriction:
+        # `this_turn` read for `this_combat` blanks the extra combat a Relentless
+        # Assault bought, `this_combat` read for `this_turn` gives it away free.
+        for side in ("attacker", "defender"):
+            if side not in effect:
+                raise DslError(
+                    f"{where}: cant_attack_player needs '{side}' -- "
+                    f"the restriction names both players"
+                )
+            who = effect[side]
+            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+                raise DslError(
+                    f"{where}.{side}: unknown player spec {who!r} "
+                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
+                )
+            if (
+                isinstance(who, Mapping)
+                and "target" in who
+                and str(who["target"]) not in target_ids
+            ):
+                raise DslError(
+                    f"{where}.{side}: references target {who['target']!r} "
+                    f"which the card does not declare"
+                )
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_attack_player needs a 'duration' "
+                f"(implemented: 'this_turn', 'this_combat')"
+            )
+        if str(effect["duration"]) not in ATTACK_RESTRICTION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
+                f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
+            )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
         if duration not in ("this_turn", "next_combat"):

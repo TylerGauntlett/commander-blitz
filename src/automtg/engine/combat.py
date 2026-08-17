@@ -25,7 +25,13 @@ from .characteristics import (
 )
 from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
-from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
+from .primitives import (
+    become_monarch,
+    clear_attack_restrictions,
+    damage_permanent,
+    damage_player,
+    tap_permanent,
+)
 from .structs import CombatState
 from .triggers import fire
 
@@ -71,6 +77,20 @@ def can_attack(state: GameState, oid: int) -> bool:
     # than through a static, because it is written onto the one permanent and
     # outlives the turn that wrote it.
     if obj.detained_by is not None:
+        return False
+    # "They can't attack you this combat." A creature with nobody left to attack
+    # cannot attack, and this is the place that has to say so rather than
+    # `legality`: `attack_required` is a requirement AND `can_attack`, so a
+    # compelled creature whose every defender had become forbidden would have
+    # "Done attacking" withheld with no ADD_ATTACKER left to offer -- a
+    # declaration with no legal action in it at all.
+    #
+    # Guarded on the list being non-empty, which it is in every game that does
+    # not play one of these cards, because this is the hot path of the attack
+    # mask.
+    if state.attack_restrictions and not (
+        legal_defenders(state, oid) or legal_planeswalker_defenders(state, oid)
+    ):
         return False
     combat = state.combat
     return combat is None or oid not in combat.attackers
@@ -177,27 +197,77 @@ def legal_attackers(state: GameState) -> list[int]:
     return [oid for oid in state.battlefield if can_attack(state, oid)]
 
 
-def legal_defenders(state: GameState) -> list[int]:
-    return [pid for pid in state.alive() if pid != state.active_player]
+def attack_target_forbidden(
+    state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
+) -> bool:
+    """May this creature **not** attack this defender?
+
+    The per-attacker, per-defender half of attack legality, which the engine did
+    not have: `attack_forbidden` asks whether a creature may attack *at all*, and
+    every other prohibition (tapped, `defender`, detained) is the same
+    all-or-nothing shape.  "That player can't attack you" narrows the choice
+    instead, and leaves the creature free to swing at anybody else.
+
+    One predicate rather than a filter inside each of the three callers, because
+    `legal_defenders`, `legal_planeswalker_defenders` and `add_attacker` have to
+    agree exactly -- an action legality offers and `add_attacker` then refuses is
+    a game that cannot continue.
+
+    ``planeswalker`` is the attack's *third* target kind (506.2) and it is
+    deliberately exempt from `attack_restrictions`. "Creatures can't attack you"
+    restricts attacking the **player**; attacking a planeswalker they control is
+    not that, which is why a Ghostly Prison taxes nothing when the attack goes at
+    a planeswalker instead. The argument is taken rather than assumed so a future
+    restriction that *does* reach planeswalkers -- goad's "attacks a player other
+    than you if able", where attacking your planeswalker does not discharge the
+    requirement -- can say so here without touching the three callers again.
+    """
+    if planeswalker is None and state.attack_restrictions:
+        obj = state.objects.get(oid)
+        if obj is not None:
+            for restriction in state.attack_restrictions:
+                if restriction.attacker == obj.controller and restriction.defender == defender:
+                    return True
+    return False
 
 
-def legal_planeswalker_defenders(state: GameState) -> list[int]:
+def legal_defenders(state: GameState, oid: int | None = None) -> list[int]:
+    """Players this creature may be declared as attacking.
+
+    ``oid`` is the attacking creature, and ``None`` means "the players who could
+    be attacked by *somebody*" -- the unfiltered set, which is what the
+    declare-attackers step wants when it is only asking whether combat has
+    anywhere to go.
+    """
+    defenders = [pid for pid in state.alive() if pid != state.active_player]
+    if oid is None:
+        return defenders
+    return [pid for pid in defenders if not attack_target_forbidden(state, oid, pid)]
+
+
+def legal_planeswalker_defenders(state: GameState, oid: int | None = None) -> list[int]:
     """Planeswalkers that may be attacked, in deterministic order (506.2).
 
     Every planeswalker controlled by a player who could be attacked. Its
     controller is the defending player, which is why attacking one does not
     need its own notion of "who is being attacked" -- `attackers[oid]` still
     answers that, and still truthfully.
+
+    Read off the **unfiltered** player set: a player under an attack restriction
+    is still a legal defender when the attack goes at their planeswalker, so the
+    filtering is left entirely to `attack_target_forbidden`, which is told which
+    kind of attack it is being asked about.
     """
     from .characteristics import chars
 
     defenders = set(legal_defenders(state))
     return [
-        oid
-        for oid in state.battlefield
-        if (obj := state.objects.get(oid)) is not None
+        pw
+        for pw in state.battlefield
+        if (obj := state.objects.get(pw)) is not None
         and obj.controller in defenders
-        and "Planeswalker" in chars(state, oid).types
+        and "Planeswalker" in chars(state, pw).types
+        and (oid is None or not attack_target_forbidden(state, oid, obj.controller, planeswalker=pw))
     ]
 
 
@@ -205,10 +275,16 @@ def add_attacker(
     state: GameState, oid: int, defender: int, *, planeswalker: int | None = None
 ) -> bool:
     combat = state.combat
-    if combat is None or not can_attack(state, oid) or defender not in legal_defenders(state):
+    if combat is None or not can_attack(state, oid):
         return False
-    if planeswalker is not None:
-        if planeswalker not in legal_planeswalker_defenders(state):
+    # Each of the two attack kinds is validated against exactly the list
+    # legality offered for it, and `oid` is passed to both -- an attack legality
+    # offers and this then refuses would strand the declaration with no way out.
+    if planeswalker is None:
+        if defender not in legal_defenders(state, oid):
+            return False
+    else:
+        if planeswalker not in legal_planeswalker_defenders(state, oid):
             return False
         obj = state.objects.get(planeswalker)
         if obj is None or obj.controller != defender:
@@ -1032,3 +1108,9 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
 
 def end_combat(state: GameState) -> None:
     state.combat = None
+    # "…can't attack you **this combat**." Cleared here rather than at cleanup,
+    # which is the whole difference between the two durations: a turn with an
+    # extra combat phase re-asks Champions of Minas Tirith's tax, because its
+    # trigger fires at the beginning of each combat and the previous combat's
+    # restriction has gone with the combat that bought it.
+    clear_attack_restrictions(state, "this_combat")

@@ -141,6 +141,13 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for attacker, defender in list(state.combat.attackers.items()):
             if defender == pid:
                 state.combat.remove(attacker)
+    # Beside the stack and trigger prunes above, and for the same reason: a
+    # designation is a player id, and an eliminated seat is still a valid one.
+    # Inert either way -- a dead attacker controls nothing and a dead defender is
+    # not in `alive()` -- so this is hygiene, not a fix.
+    state.attack_restrictions = [
+        r for r in state.attack_restrictions if pid not in (r.attacker, r.defender)
+    ]
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()
