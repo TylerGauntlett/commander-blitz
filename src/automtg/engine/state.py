@@ -163,8 +163,20 @@ class GameState:
         return self.objects.get(oid)
 
     def card(self, oid: int) -> CardDef:
-        """The :class:`CardDef` behind an object id."""
-        return self.registry.get(self.objects[oid].def_id)
+        """The :class:`CardDef` behind an object id -- the face it is showing.
+
+        Delegates to :meth:`card_of` rather than reading `def_id` straight out
+        of the registry, because the two must not be able to disagree about
+        which card an object *is*. They did: `costs._sources_of` planned a mana
+        payment through `card_of` and `costs.activate_mana_ability` executed it
+        through here, so a modal DFC played as its land half was planned as a
+        land and paid as an instant -- and `abilities[0]` on a card with no
+        abilities is an IndexError, not a wrong answer.
+
+        The same seam every other "one helper, two callers" note in this repo is
+        about, and the same fix: one helper.
+        """
+        return self.card_of(self.objects[oid])
 
     def card_of(self, obj: GameObject) -> CardDef:
         """The face this object is currently showing.
