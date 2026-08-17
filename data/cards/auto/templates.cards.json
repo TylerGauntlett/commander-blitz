@@ -29859,6 +29859,178 @@
         {
           "effects": [
             {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "owner",
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "count": 1,
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "op": "for_each_player",
+                      "players": "each_player"
+                    }
+                  ],
+                  "label": "Each player sacrifices a creature of their choice."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "You draw a card and you lose 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "transform",
+                      "to_back": true
+                    }
+                  ],
+                  "label": "Transform Henrika."
+                }
+              ],
+              "once_each": true,
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "back_face": "henrika_infernal_seer",
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "henrika_domnathi_henrika_infernal_seer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Henrika Domnathi // Henrika, Infernal Seer",
+      "oracle_text": "Flying\nAt the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{B}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "any_of": [
+                  {
+                    "keywords": [
+                      "flying"
+                    ]
+                  },
+                  {
+                    "keywords": [
+                      "deathtouch"
+                    ]
+                  },
+                  {
+                    "keywords": [
+                      "lifelink"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{B}: Each creature you control with flying, deathtouch, and/or lifelink gets +1/+0 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "henrika_infernal_seer",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "name": "Henrika, Infernal Seer",
+      "oracle_text": "Flying, deathtouch, lifelink\n{1}{B}{B}: Each creature you control with flying, deathtouch, and/or lifelink gets +1/+0 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }

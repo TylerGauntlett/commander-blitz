@@ -3416,6 +3416,15 @@
     "artist": "Edward P. Beard, Jr.",
     "scryfall_id": "0582b42f-5ae5-4be2-ba2d-ed62b3cb20c5"
   },
+  "henrika_domnathi_henrika_infernal_seer": {
+    "artist": "Billy Christian",
+    "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e"
+  },
+  "henrika_infernal_seer": {
+    "artist": "Billy Christian",
+    "back": true,
+    "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e"
+  },
   "herald_s_horn": {
     "artist": "Pablo Mendoza",
     "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41"
