@@ -56342,12 +56342,12 @@
     },
     "Crown of Gondor": {
       "edhrec_rank": 5614,
-      "gate": "template",
+      "gate": null,
       "name": "Crown of Gondor",
-      "reason": "no template for: Equipped creature gets +1/+1 for each creature you control",
+      "reason": "",
       "scryfall_id": "00127acd-a284-4bc8-bdfa-895914e3cd49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crown of Skemfar": {

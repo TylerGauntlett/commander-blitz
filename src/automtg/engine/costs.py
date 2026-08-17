@@ -8,7 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
@@ -404,27 +404,37 @@ def can_pay_mana(
     )
 
 
-def ability_mana(state: GameState, pid: int, cost: Cost, x: int = 0) -> Requirement:
+def ability_mana(
+    state: GameState,
+    pid: int,
+    cost: Cost,
+    x: int = 0,
+    source_oid: int | None = None,
+) -> Requirement:
     """What this ability's mana half actually costs right now.
 
     "This ability costs {1} less to activate for each Vampire you control."
-    Both existing reductions discount *casting a spell* -- a card's own
+    Both card-level reductions discount *casting a spell* -- a card's own
     `cost_reduction` and the `spell_cost_reduction` static -- and both are read
     only from the cast path, so an activated ability's price was the literal
     string written on the card.
+
+    The arithmetic lives in `reduction_amount`, shared with the cast path, so
+    "costs {N} less" means one thing everywhere it is written.
 
     Generic only and clamped at zero, like every other reduction: "costs {1}
     less" never reaches through the generic part into the coloured pips.
 
     One helper, called by `can_pay` and by `pay`, because an ability offered at
     the reduced price and then charged the printed one would strand the payment
-    -- the same care `life_cost` and `mana_produced` already take.
+    -- the same care `life_cost` and `mana_produced` already take.  ``source_oid``
+    is threaded through for the same reason: a reduction gated on a condition
+    about its own permanent must answer that question identically in both.
     """
     req = cost.mana.with_x(x)
-    spec = cost.mana_reduction
-    if not spec:
+    less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
+    if not less:
         return req
-    less = sum(1 for _ in _reduction_matches(state, pid, spec.get("count") or {}))
     return Requirement(
         colored=req.colored,
         generic=max(0, req.generic - less),
@@ -526,7 +536,7 @@ def can_pay(
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
         if solve_payment(
-            ability_mana(state, pid, cost, x), player.mana_pool, sources
+            ability_mana(state, pid, cost, x, source_oid), player.mana_pool, sources
         ) is None:
             return False
     return True
@@ -680,7 +690,7 @@ def pay(
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
     # cannot strand the payment.
-    req = ability_mana(state, pid, cost, x)
+    req = ability_mana(state, pid, cost, x, source_oid)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
@@ -980,18 +990,98 @@ def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
     total = spell_cost_reduction(state, pid, card)
+    return total + reduction_amount(state, pid, card.cost_reduction)
 
-    spec = card.cost_reduction
+
+def reduction_amount(
+    state: GameState,
+    pid: int,
+    spec: Mapping[str, Any] | None,
+    *,
+    source_oid: int | None = None,
+) -> int:
+    """How much less one *cost node* costs right now, as a plain integer.
+
+    The whole reduction language, in one place, because a cost node is priced
+    from three different callers and "costs {N} less" has to mean the same thing
+    in all three:
+
+    - a card's own `cost_reduction` -- Ghalta, "**this spell** costs {X} less";
+    - an activated ability's `Cost.mana_reduction`, via `ability_mana` --
+      Voldaren Estate and Crown of Gondor's equip;
+    - a graveyard cast's `Cost.mana_reduction`, via the flashback branch of
+      `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
+      **this way**".
+
+    Three shapes of arithmetic, exactly one per spec:
+
+    - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
+      reduction needs.  Not expressible as `count`: "costs {3} less if you're
+      the monarch" would need a filter matching exactly three permanents while
+      the crown is yours and none otherwise, and no filter over a board can say
+      that.
+    - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
+    - ``{"total_power": {filter}}`` -- Ghalta.
+
+    ``condition`` gates the whole thing: false, the reduction is zero, and the
+    printed price stands.  It is an ordinary condition from the condition DSL,
+    so `is_monarch`, `is_your_turn`, `exists` and `cmp` all come for free -- but
+    the loader restricts it to the heads that can be *answered at pricing time*,
+    because nothing is on the stack yet.
+
+    A condition rather than a second cost line, for the reason the Crown of
+    Gondor gap record gives: splitting "Equip {4}, {3} less if you're the
+    monarch" into two equip abilities leaves nothing able to switch the cheap
+    one off.
+    """
     if not spec:
-        return total
+        return 0
+    # The gate first, so a false condition costs one condition evaluation rather
+    # than a walk of the battlefield.
+    cond = spec.get("condition")
+    if cond is not None:
+        from .effects.conditions import evaluate_condition
+
+        if not evaluate_condition(state, cond, controller=pid, source=source_oid):
+            return 0
+    if "amount" in spec:
+        return max(0, int(spec["amount"]))
     if "count" in spec:
-        return total + sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
+        return sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
     if "total_power" in spec:
-        return total + sum(
+        return sum(
             max(0, chars(state, oid).power)
             for oid in _reduction_matches(state, pid, spec["total_power"])
         )
-    return total
+    return 0
+
+
+def variant_reduction(
+    state: GameState, pid: int, cost: Cost | None, source_oid: int | None
+) -> int:
+    """"This spell costs {X} less to cast **this way**."
+
+    The discount that belongs to one cast *variant* rather than to the card.
+    Visions of Glory's flashback line carries one and its printed hand cast must
+    not: a card-level `cost_reduction` is variant-blind, applied by
+    `_cast_variant` to whichever price it just picked, so putting the rider
+    there would quietly discount the cast the card never mentions.
+
+    It is `Cost.mana_reduction` on the variant's own cost node -- the same key
+    an activated ability's cost uses -- and not a new field, because it is the
+    same question asked of a different cost: "how much less does *this* cost
+    node cost".  A second key meaning the same thing is a key that gets written
+    in the wrong slot and silently ignored.
+
+    Only `flashback`/`graveyard_cost` can carry one today, and that is a fact
+    about the schema rather than about this function: it is the only alternative
+    cost modelled as a full `Cost`.  `evoke`, `emerge`, `overload`, `bestow`,
+    `foretell`, `mutate` and `alternative_cost` are bare mana strings with no
+    node to hang a rider on, and the loader says so rather than accepting one.
+    """
+    if cost is None:
+        return 0
+    return reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
 
 
 def _reduction_matches(state: GameState, pid: int, filt: Any):
