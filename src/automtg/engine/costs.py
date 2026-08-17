@@ -225,6 +225,12 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     An empty result is a real answer -- an opponent with no lands offers no
     colours, and the Orchard taps for nothing. The solver simply never picks a
     source that produces nothing.
+
+    It **only looks**. No `ask_*`, no generator, no stack: narrowing the option
+    list narrows the choice a modal mana ability already had (the solver picks an
+    option index while planning; manual mana offers one chip per option), and
+    introduces no new question. That is what keeps a reflecting ability a mana
+    ability for 605.1a.
     """
     if ability.mana_identity:
         return _identity_options(state, oid, ability)
@@ -236,12 +242,22 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     for other in resolve_pool(ctx, ability.mana_reflects):
         other_card = state.card_of(state.objects[other])
         for other_ability in other_card.abilities:
-            # The *printed* options of the other permanent, not its reflected
-            # ones: two Exotic Orchards facing each other would otherwise ask
-            # each other what they produce, for ever.
+            # A *reflecting* ability is skipped outright: two Exotic Orchards
+            # facing each other would otherwise ask each other what they produce,
+            # for ever. That skip is what makes the recursion below terminate.
             if not other_ability.is_mana_ability or other_ability.mana_reflects is not None:
                 continue
-            for option in other_ability.mana_options:
+            # Everything else is asked the same question this function answers,
+            # rather than being read off its load-time `mana_options`. A land
+            # whose own colours are a question about the game carries the
+            # five-colour superset there -- so an opponent's Path of Ancestry,
+            # which taps only for its controller's commander's identity, used to
+            # tell a Fellwar Stone it "could produce" all five. That is the
+            # unconditional any-colour approximation this whole capability exists
+            # to refuse, arriving through the back door. The recursion is one
+            # level deep and cannot cycle: the only self-referential branch is
+            # `mana_reflects`, and it never gets here.
+            for option in mana_options_of(state, other, other_ability):
                 for index, amount in enumerate(option):
                     if amount and index != SYMBOL_INDEX[COLORLESS]:
                         colors.add(index)
