@@ -1915,6 +1915,26 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"{where}.player: references target {who['target']!r} "
                 f"which the card does not declare"
             )
+    if "from_top" in effect:
+        # "…into its owner's library second from the top." The depth is the whole
+        # of the difference between Hinder and a plain tuck, and both ways of
+        # getting it wrong are silent: written on an op that does not read it the
+        # card is a strictly better one than printed (the permanent comes back
+        # next turn), and a zero or a negative ordinal is not a position on a
+        # library at all -- `put_on_top` clamps it, but a card that says it meant
+        # something the engine had to correct is a card that was authored wrong.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'from_top' is a library depth and only put_on_top reads it, not {op!r}"
+            )
+        validate_value(effect["from_top"], f"{where}.from_top")
+        depth = effect["from_top"]
+        if isinstance(depth, Mapping) and "const" in depth:
+            depth = depth["const"]
+        if isinstance(depth, int) and not isinstance(depth, bool) and depth < 1:
+            raise DslError(
+                f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
+            )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.
