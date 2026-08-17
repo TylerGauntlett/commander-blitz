@@ -2207,6 +2207,161 @@ stay blocked on capabilities that are not the monarch — `cant_block`,
 `variable_enters_with_counters`, `delayed_triggered_ability`, `saga` plus
 `keyword_counters`, and `exile_until_event` — and their gap records were trimmed
 rather than retired, so the report now says what each is actually waiting for.
+## Sagas — the card whose whole mechanic is printed in brackets
+
+### Overview
+
+`docs/rules-coverage.md` listed sagas under **Not implemented**, on the line
+grouping them with planeswalkers and battles as rules subsystems rather than
+cards. That was a decision, and the thing it was waiting for had just arrived:
+the monarch had shown where a behaviour with no card to live on goes — a
+turn-based action in `turn`, a state-based action in `sba`, and nothing written
+on any card at all.
+
+Read a Saga's reminder line back and notice that it is entirely in brackets:
+
+> (As this Saga enters and after your draw step, add a lore counter.
+> Sacrifice after III.)
+
+Parenthetical reminder text tells you a rule you would otherwise have to look
+up. It is not an ability, it is not something the card *does*, and it is the same
+sentence on every Saga ever printed — which is why `engine/sagas.py` exists and
+why nothing in a Saga's card file mentions lore counters. What a Saga's card file
+says is three numbered lines and nothing else.
+
+### The three rules, and where each had to go
+
+The gap record for Oath of Eorl enumerated the kludge available before this — a
+`self_enters` trigger, a `draw_step` trigger, three `counter_placed` triggers
+gated on `counters_on`, and a self-`sacrifice` on III — and then refused it,
+naming four ways it diverges. Each of the four is a different rule and each lands
+somewhere different.
+
+- **The counter it enters with** (714.2b) is a `self_enters_with_counters`
+  **replacement**, compiled by the loader exactly as a planeswalker's starting
+  loyalty is: both are a number printed on the card that the rules turn into
+  counters as the permanent enters. Written as a `self_enters` trigger the counter
+  lands *after* the Saga is already on the battlefield and after every other
+  enters trigger has looked at a Saga with none — so chapter I would be a round of
+  priority late, an opponent could answer the Saga before it had started, and
+  anything counting lore counters on arrival would read zero.
+- **The tick** (714.2d) is a **turn-based action** at the precombat main phase,
+  the first branch that step in `turn.begin_step` has ever had. Three things
+  separate it from a `draw_step` trigger and all three are visible: nobody holds
+  priority between the counter and the chapter, so there is nothing to respond to;
+  it is the *active player's* Sagas, where DRAW_STEP fires on everybody's draw
+  step unless each card in the pool remembers `is_your_turn`; and it is the phase
+  the current rule puts it in rather than the step the 2018 wording named, so a
+  chapter resolves where its controller can act.
+- **The chapter itself** (714.2c) fires when the count **becomes** the chapter
+  number, which is a before/after comparison and not a reaction to a placement.
+  This is the one that looks like a distinction without a difference and is not.
+  Proliferate is a *single* placement that can cross two chapters; a placement of
+  two counters at once crosses two and must fire both, in ascending order, because
+  a Saga jumped from I to III still resolves II first; and a lore counter removed
+  and put back crosses the same number twice and re-triggers, which no high-water
+  mark can express. So `primitives.add_counters` reads the count before it writes
+  and hands both numbers to `sagas.chapters_reached`, which fires one
+  CHAPTER_REACHED per number crossed.
+- **The sacrifice** (704.5s) is a **state-based action** that waits until no
+  chapter ability of that Saga has triggered-but-not-yet-left-the-stack. Appended
+  to the last chapter's effects instead — which is the obvious shape — the Saga
+  would be sacrificed part-way through its own chapter III resolving, and on Oath
+  of Eorl, whose III puts a counter on a creature and *then* grants the crown, the
+  monarchy would be handed out by a permanent already in a graveyard.
+
+### "Not yet left the stack" starts before it gets there
+
+The clause 704.5s spends its length on is the one an implementation is most
+likely to read as `state.stack`, and that is wrong in the direction that eats the
+card: state-based actions run **before** a player would receive priority, which
+is the same moment `drain_to_stack` is about to use, so a freshly triggered
+chapter spends that entire window in `pending_triggers` and not on the stack at
+all. Checking the stack alone sacrifices every Saga at the instant its final
+chapter triggers and throws that chapter away with it — a three-chapter Saga that
+silently only has two.
+
+### A fourth `AbilityKind` that is still a triggered ability
+
+714.1b says "chapter abilities are triggered abilities", and taking it literally
+is what keeps this small: `Ability.is_triggered` is True for a chapter, every
+call site already pairs that property with `ability.trigger is not None`, and the
+loader gives a chapter a real `TriggerSpec`. So collection, the APNAP queue, the
+stack, target choice on the way on and `ability_of` on the way off are the code
+that already existed, unchanged.
+
+What the new kind buys is the three things `triggered` could not say. The chapter
+**number**, which becomes the trigger's filter — one CHAPTER_REACHED event
+carries the number reached and every chapter ability on that Saga is a candidate
+for it, so without the comparison a three-chapter Saga would put all three on the
+stack off its first lore counter. The card-level `final_chapter` derived from
+those numbers. And a load-time refusal of a chapter on a card that is not a Saga,
+where no lore counter would ever arrive and every chapter would be dead text.
+
+**No card writes the trigger, and none may.** There is no word in "II — Create
+two 2/2 red Human Knight creature tokens" that says when it happens; the whole of
+the timing is 714.2c. The loader supplies it for the reason it supplies
+`source: "self"` on `self_enters`, and with a stronger argument — here there is
+nothing an author could even leave out, only something they could get wrong.
+
+### `final_chapter`, and the failure that is an *upgrade*
+
+704.5s compares the lore counters against the Saga's final chapter number, and
+that number is the one fact about a Saga not derivable from what it implements. A
+Saga whose last chapter the DSL cannot yet express would, derived, be sacrificed
+a chapter early — which is not a card that does less, it is a card that ends
+sooner and is therefore quietly *better* than the one printed. That direction is
+the one nothing complains about, so `final_chapter` may be declared and outranks
+the derivation; the Saga then sits out its last chapter doing nothing, which is
+the printed card minus a line and is visible to anyone who plays it.
+
+The mirror case is a `Saga` subtype with **no** chapter abilities, which is
+accepted and inert. That is what an unimplemented Saga in `data/generated/` is —
+seven of them are in the catalog — and refusing the shape would make those cards
+unrepresentable rather than unimplemented. Such a card gets `final_chapter is
+None`, which is what every rule in `engine/sagas.py` actually tests: no lore
+counter, nothing to advance, nothing to be sacrificed for reaching. 704.5s agrees,
+asking for "a Saga permanent **with one or more chapter abilities**". An
+*authored* Saga cannot use the same hole, because its printed chapter lines would
+go unclaimed and the residual gate would reject the card.
+
+### Nothing on `GameState`, and that is the difference from the monarch
+
+The monarch is a field on `GameState` because the crown belongs to the **table**.
+A Saga's progress belongs to the permanent, so it is lore counters on an ordinary
+`GameObject` and there is no new state anywhere. That is not tidiness: it is why
+`counters_on`, `proliferate`, `move_counters`, `remove_counters` and the client's
+counter badge all read a Saga for free — and it is also why the chapter trigger
+had to be a comparison rather than a hook on one caller, since every one of those
+can move a Saga's story along.
+
+### The frontend work a new event forces
+
+`describeEvent` and `beatsFor` both have a `default` fallthrough, so an
+unnarrated event is dropped in silence and no test says so. Both were given a
+case. The `counter_placed` beside it already floats "+1 lore", which is the
+bookkeeping; what a player needs is *which chapter*, since the three do different
+things and only one of them is about to end the card — and when a Saga enters,
+the chapter line is the only line there is, because the counter it enters with is
+placed by a replacement and emits nothing at all. Numbered in Roman, as the card
+is. A float off the Saga rather than a banner, because unlike the crown there
+*is* a permanent and it is the one the eye should go to.
+
+### What it unblocked
+
+**Oath of Eorl**, the only Saga in the pool and the last card of the Riders of
+Rohan deck: `{3}{R}{W}`, two Human Soldiers, two Human Knights with trample and
+haste, then an indestructible counter on up to one target Human and the monarchy.
+Its three other capabilities — `monarch`, `keyword_counters` and both token
+definitions — had all shipped ahead of it, so sagas were its last blocker.
+
+The authoring sandbox measures immediately after the cast, so it can only ever
+observe **chapter I**: one lore counter, two Soldiers, 35 permanents. Chapters II
+and III need later turns the fixed position never reaches, and they are covered in
+`tests/unit/test_saga.py` instead — including the turn-based tick, the
+proliferate boundary, the re-trigger, and the sacrifice that waits for its own
+last chapter.
+
 ## Keyword counters — the counter that was already sayable and meant nothing
 
 ### Overview

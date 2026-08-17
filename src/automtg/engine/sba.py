@@ -9,13 +9,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from . import sagas
 from .characteristics import chars
 from .enums import Keyword, LossReason, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .primitives import clear_goad
-from .zones import destroy, move_object
+from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -40,6 +41,7 @@ def check(state: GameState) -> bool:
     changed |= _counter_annihilation(state)
     changed |= _creature_deaths(state)
     changed |= _planeswalker_deaths(state)
+    changed |= _finished_sagas(state)
     changed |= _legend_rule(state)
     changed |= _ascend(state)
     return changed
@@ -328,6 +330,37 @@ def _planeswalker_deaths(state: GameState) -> bool:
             continue
         if obj.counter("loyalty") <= 0:
             move_object(state, oid, Zone.GRAVEYARD, cause="zero_loyalty")
+            changed = True
+    return changed
+
+
+def _finished_sagas(state: GameState) -> bool:
+    """704.5s: a Saga that has run out of chapters is sacrificed.
+
+    "If the number of lore counters on a Saga permanent with one or more chapter
+    abilities is greater than or equal to its final chapter number and it isn't
+    the source of a chapter ability that has triggered but hasn't left the stack,
+    that Saga's controller sacrifices it."
+
+    **A state-based action and not the last line of chapter III**, which is the
+    tempting shape and is wrong in a way the card would never report: appended to
+    the final chapter's effects, the Saga would be sacrificed part-way through its
+    own chapter resolving, so anything later in that chapter would run with its
+    source already in a graveyard -- and on Oath of Eorl the crown is granted
+    *after* the counter, so a Saga written that way would be reading a dead
+    permanent's controller. The rule waits until the chapter has left the stack
+    for exactly this reason, and the wait is what makes the "and it isn't the
+    source of a chapter ability…" clause necessary.
+
+    A **sacrifice**, so it goes through `zones.sacrifice` rather than `destroy`
+    and indestructible does not save it -- which matters, since a Saga is a
+    permanent an opponent may well have made indestructible, and the alternative
+    is a Saga that sits on the battlefield finished for ever.
+    """
+    changed = False
+    for oid in list(state.battlefield):
+        if sagas.finished(state, oid):
+            sacrifice(state, oid)
             changed = True
     return changed
 

@@ -18,6 +18,7 @@ from automtg.engine.enums import Step, Zone
 from automtg.engine.game import Game
 from automtg.engine.player import PlayerState
 from automtg.engine.rng import Rng
+from automtg.engine.sagas import LORE
 from automtg.engine.state import GameState, new_object
 
 #: Library filler so a position never loses to decking by accident.
@@ -83,9 +84,19 @@ class GameBuilder:
             # it, the zero-loyalty state-based action bins it the moment the
             # game starts -- which is correct behaviour reading a board that was
             # never legal.
-            loyalty = self.state.registry.get(card_id).loyalty
+            card = self.state.registry.get(card_id)
+            loyalty = card.loyalty
             if loyalty is not None and "loyalty" not in obj.counters:
                 obj.counters["loyalty"] = loyalty
+            # And for a Saga, the lore counter it entered with (714.2b) -- the
+            # same argument: a Saga standing on the battlefield with none is a
+            # position no legal game reaches. `counters=` still overrides, which
+            # is how a test puts one part-way through its story.
+            #
+            # No chapter fires from here, exactly as no enters trigger does:
+            # this places permanents rather than playing them.
+            if card.final_chapter is not None and LORE not in obj.counters:
+                obj.counters[LORE] = 1
             self.state.battlefield.append(obj.oid)
         self.state.bump_chars()
         return self

@@ -92,6 +92,26 @@ class EventType:
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
     BECAME_MONSTROUS = "became_monstrous"
+    #: A Saga's lore counters **reached** a chapter number (714.2c). ``source``
+    #: and ``data["oid"]`` are the Saga, ``data["chapter"]`` the number reached.
+    #:
+    #: Deliberately not `COUNTER_PLACED`, which is fired beside it by the same
+    #: `add_counters` call and is the near miss the gap record for Oath of Eorl
+    #: named: that event says a counter was *put on*, and a chapter ability
+    #: triggers when the count **becomes** N. The two come apart in both
+    #: directions. Proliferate on a Saga at two lore counters is one placement
+    #: that reaches chapter III; a lore counter removed and put back is two
+    #: placements that reach nothing new the second time but re-trigger under
+    #: 714.2c, which only a before/after comparison can tell. And a Saga
+    #: **enters** with its first lore counter as part of entering (714.2b), where
+    #: `add_counters` is never called at all and no COUNTER_PLACED exists to
+    #: hang chapter I on.
+    #:
+    #: One event per chapter number crossed, not per counter and not per
+    #: ability: two abilities printed on the same chapter line both fire off the
+    #: one event, and a Saga jumped from I to III fires II and then III in that
+    #: order.
+    CHAPTER_REACHED = "chapter_reached"
     #: The monarch designation moved to a player (721.2, 721.4). ``player`` is
     #: the **new** monarch and ``data["previous"]`` whoever held it before, or
     #: ``None`` if nobody did.

@@ -555,6 +555,36 @@ export function beatsFor(
       }
 
       /*
+       * A Saga reaching a chapter.
+       *
+       * A board moment rather than a table one -- there is a permanent, and it is
+       * the permanent the player wants their eye drawn to -- so it floats off the
+       * Saga rather than taking a banner. The `counter_placed` beat fires beside
+       * it and floats "+1 lore", which is the bookkeeping; this is the chapter,
+       * and the two read as one gesture on the same card.
+       *
+       * Worth a beat because a Saga's whole clock is invisible otherwise. Nothing
+       * on the board changes when a chapter *triggers*: the ability goes on the
+       * stack and its consequences arrive later, so without this the tokens simply
+       * appear a moment afterwards with nothing having announced them. And the
+       * chapter that ends the story is followed by the Saga going to the graveyard
+       * for no reason a viewer can see.
+       */
+      case "chapter_reached": {
+        if (event.source === null) return;
+        const n = num(event.data.chapter) ?? 0;
+        const roman = ["I", "II", "III", "IV"][n - 1] ?? String(n);
+        const anchor = { kind: "object", oid: event.source } as const;
+        push({
+          hold: 320,
+          sound: "chime",
+          float: { anchor, value: roman, tone: "good" },
+          fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+        });
+        return;
+      }
+
+      /*
        * The crown changing hands, which is a table-level moment and not a board
        * one: no permanent to flash, no number to float, nothing on screen that
        * changed. A banner is the only shape that fits, and it is the same shape

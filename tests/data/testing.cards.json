@@ -10306,6 +10306,179 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_saga",
+      "name": "Test Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Draw a card.\nII — You gain 2 life.\nIII — Create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Saga"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "chapter",
+          "chapter": 1,
+          "text": "I — Draw a card.",
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 2,
+          "text": "II — You gain 2 life.",
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 3,
+          "text": "III — Create a 1/1 white Human Soldier creature token.",
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w",
+              "controller": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_saga_one_chapter",
+      "name": "Test One-Chapter Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after I.)\nI — Draw a card.",
+      "mana_cost": "{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Saga"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "chapter",
+          "chapter": 1,
+          "text": "I — Draw a card.",
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_saga_unfinished",
+      "name": "Test Unfinished Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Draw a card.",
+      "mana_cost": "{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Saga"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "final_chapter": 3,
+      "abilities": [
+        {
+          "kind": "chapter",
+          "chapter": 1,
+          "text": "I — Draw a card.",
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_saga_watcher",
+      "name": "Test Saga Watcher",
+      "oracle_text": "Whenever a lore counter is put on a permanent you control, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a lore counter is put on a permanent you control, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "controller": "you",
+            "counter": "lore"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

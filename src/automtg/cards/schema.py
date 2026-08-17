@@ -157,8 +157,17 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static"]
+    kind: Literal["activated", "triggered", "static", "chapter"]
     text: str = ""
+    #: **A Saga's chapter number** -- the "II" in "II — Create two 2/2 red Human
+    #: Knight creature tokens with trample and haste". Required on
+    #: ``kind: "chapter"`` and refused on every other kind.
+    #:
+    #: The ability writes no ``trigger`` of its own: the loader builds one, for
+    #: the reason it supplies ``source: "self"`` on ``self_enters``. The printed
+    #: line contains no word saying *when*, so there is nothing for a card author
+    #: to write and every Saga in print would have to write the same thing.
+    chapter: int | None = None
 
     # activated
     cost: CostModel | None = None
@@ -312,6 +321,17 @@ class CardModel(BaseModel):
     #: a planeswalker arrives -- loyalty *is* counters, and every reader the
     #: engine already has for counters is a reader for loyalty.
     loyalty: int | None = None
+    #: A Saga's **final chapter number** (714.4). Omit it and the loader takes the
+    #: highest chapter the card prints, which is right for every Saga whose text
+    #: the DSL can say in full.
+    #:
+    #: Worth writing by hand in exactly one case, and it is the case that makes
+    #: the field exist: a Saga whose last chapter is *unimplemented*. Derived, its
+    #: final chapter would be the last one written, and 704.5s would sacrifice it
+    #: a chapter early -- a strictly better card than the printed one, arriving
+    #: silently. Written down, the Saga sits out its last chapter doing nothing,
+    #: which is visibly the printed card minus a line.
+    final_chapter: int | None = None
     keywords: list[str] = Field(default_factory=list)
     colors: list[str] | None = None
     color_identity: list[str] | None = None
