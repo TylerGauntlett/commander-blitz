@@ -565,7 +565,15 @@ def op_manifest(ctx: EffectContext, spec: Mapping[str, Any]):
     Any card may be manifested, including a land: it is a 2/2 creature while it
     is face down whatever it really is, and only a *creature* card may be turned
     up (701.34c), which is checked where the action is offered.
+
+    ``cloak`` (701.61a) is the third view of the same mechanism, and the whole
+    difference is **ward {2}** on the shell. Everything else is identical --
+    same 2/2, same "turn it face up any time for its mana cost if it's a
+    creature card" -- so cloak is a flag on manifest rather than an op of its
+    own. Written as a plain manifest, Unexplained Absence's cloaked permanents
+    would be free to remove, which is most of what the keyword is worth.
     """
+    cloak = bool(spec.get("cloak"))
     amount = max(1, evaluate_value(ctx, spec.get("amount", 1)))
     for pid in _players(ctx, spec.get("player", "you")):
         library = ctx.state.players[pid].library
@@ -579,9 +587,10 @@ def op_manifest(ctx: EffectContext, spec: Mapping[str, Any]):
             # After the move: `reset_permanent_state` clears it on the way in,
             # which is right for every other permanent and wrong for this one.
             obj.face_down = True
+            obj.cloaked = cloak
             obj.revealed_to.add(pid)
             ctx.state.bump_chars()
-            ctx.state.emit("manifested", player=pid, source=oid)
+            ctx.state.emit("cloaked" if cloak else "manifested", player=pid, source=oid)
 
 
 @register("encode")

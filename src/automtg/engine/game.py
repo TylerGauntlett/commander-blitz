@@ -555,6 +555,9 @@ class Game:
         if not ok:  # pragma: no cover - legality already proved payability
             return
         obj.face_down = False
+        # The shell is gone, and the ward went with it: the card underneath is
+        # face up now and has whatever abilities it prints.
+        obj.cloaked = False
         obj.revealed_to.clear()
         state.bump_chars()
         if card.morph_counter:
