@@ -215,6 +215,7 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
     that matters -- so which one is being asked for has to be said out loud
     rather than settled by whichever legality happens to list first.
     """
+    matches = []
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
             continue
@@ -222,8 +223,20 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
-            return action
-    return None
+            matches.append(action)
+    if not matches:
+        return None
+    # The **front** face, whenever one is offered. A modal DFC is offered twice
+    # -- Malakir Rebirth as a cast and Malakir Mire as a land drop -- and the
+    # payload under test describes the front: its `oracle_text`, its `mana_cost`
+    # and its `spell_effects` are the front's. Exercising the back would judge
+    # an Instant by where a Land ended up, which is a gate failure no expectation
+    # could ever answer.
+    #
+    # `_land_actions` runs before `_cast_actions`, so without this the land line
+    # simply wins on ordering -- the same kind of accident `kicked` already
+    # disambiguates for a spell offered twice.
+    return next((a for a in matches if not a.second_face), matches[0])
 
 
 # ----------------------------------------------------------------------
@@ -493,10 +506,17 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     # what it enchanted, and state-based actions correctly bin it a moment later
     # -- the card working exactly as printed. Rejecting that would throw away
     # every Aura whose own effect can finish its host.
-    allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
-    if card.is_permanent and obj.zone not in allowed:
+    # The face that was actually played, which is not always the one under test:
+    # a modal DFC played as its land half is a permanent even though the card
+    # this gate was handed is an Instant. `find_play` prefers the front, so this
+    # is the belt to that braces -- and it is the honest question either way,
+    # since "did it end up where this kind of card ends up" is about the face
+    # that resolved.
+    played = game.state.card_of(obj)
+    allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
+    if played.is_permanent and obj.zone not in allowed:
         return [f"{card.id} is a permanent but ended in {obj.zone.value}"]
-    if not card.is_permanent and obj.zone is not Zone.GRAVEYARD:
+    if not played.is_permanent and obj.zone is not Zone.GRAVEYARD:
         return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
 

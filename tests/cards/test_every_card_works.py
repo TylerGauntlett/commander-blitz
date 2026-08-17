@@ -130,13 +130,21 @@ def _answer(game: Game, decision: PendingDecision):
 
 
 def find_play(game: Game, card_id: str):
+    matches = []
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
-            return action
-    return None
+            matches.append(action)
+    if not matches:
+        return None
+    # The front face, whenever one is offered. A modal DFC is offered twice --
+    # once as a cast and once as a land drop -- and `_land_actions` runs first,
+    # so without this the land line wins on ordering alone.
+    # `authoring/verify.py` prefers the same line, and the two harnesses have to
+    # agree or a card passes one gate and fails the other for one behaviour.
+    return next((a for a in matches if not a.second_face), matches[0])
 
 
 class TestEveryCardIsPlayable:
@@ -163,14 +171,18 @@ class TestEveryCardIsPlayable:
         assert obj is not None, f"{card_id} vanished entirely"
         assert obj.zone is not Zone.STACK, f"{card_id} never left the stack"
 
-        if card.is_permanent:
+        # The face that actually resolved, which is not always the one under
+        # test: a modal DFC played as its land half is a permanent even though
+        # the card is an Instant.
+        played = game.state.card_of(obj)
+        if played.is_permanent:
             # An Aura in the graveyard is the card working, not failing: Dead
             # Weight's -2/-2 can kill what it enchanted, and state-based actions
             # then correctly bin the Aura. `authoring/verify.py` makes the same
             # allowance, and the two harnesses have to agree or a card passes one
             # gate and fails the other for the same behaviour.
             allowed = (
-                {Zone.BATTLEFIELD, Zone.GRAVEYARD} if card.is_aura else {Zone.BATTLEFIELD}
+                {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
             )
             assert obj.zone in allowed, (
                 f"{card_id} is a permanent but ended in {obj.zone.value}"
