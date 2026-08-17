@@ -283,12 +283,38 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     for zone in zones:
         for oid in zone:
             card = state.card(oid)
-            if not card.is_land:
-                continue
-            out.append(
-                Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}")
-            )
+            if card.is_land:
+                out.append(
+                    Action(kind=ActionKind.PLAY_LAND, source=oid, label=f"Play {card.name}")
+                )
+            # A **modal** double-faced card whose other half is a land -- Malakir
+            # Rebirth // Malakir Mire. The front is cast and the back is
+            # *played*, which is the whole difference from every other second
+            # face the engine has: it uses no stack, consumes the land drop, and
+            # is offered here rather than beside the cast lines.
+            #
+            # Offered only from hand: `second_face_zone` is about where a half
+            # may be *cast* from, and no printed MDFC plays its land half out of
+            # a graveyard.
+            face = _second_face_land(state, card)
+            if face is not None and zone is state.players[pid].hand:
+                out.append(
+                    Action(
+                        kind=ActionKind.PLAY_LAND,
+                        source=oid,
+                        second_face=True,
+                        label=f"Play {face.name}",
+                    )
+                )
     return out
+
+
+def _second_face_land(state: GameState, card: CardDef) -> CardDef | None:
+    """The card's other half, when that half is a land."""
+    if card.second_face is None:
+        return None
+    face = state.registry.get(card.second_face)
+    return face if face.is_land else None
 
 
 def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:

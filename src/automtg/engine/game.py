@@ -201,6 +201,15 @@ class Game:
         # a landfall trigger with an intervening-if that counts land drops this
         # turn has to see the post-increment value.
         state.players[pid].lands_played += 1
+        # A modal DFC played as its land half shows that face from the moment it
+        # arrives, and the flag is set *before* the move so the enters-the-
+        # battlefield replacements are read off the land rather than off the
+        # spell -- Malakir Mire enters tapped, and Malakir Rebirth does not enter
+        # at all. `reset_permanent_state` deliberately leaves this flag alone, so
+        # unlike `transformed` it survives the arrival with no second write.
+        if action.second_face:
+            state.objects[oid].showing_second_face = True
+            card = state.card_of(state.objects[oid])
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,

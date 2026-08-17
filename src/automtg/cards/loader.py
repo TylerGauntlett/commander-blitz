@@ -1951,11 +1951,16 @@ def link_second_faces(cards: dict[str, CardDef]) -> None:
             raise DslError(
                 f"{face.id}: is the second face of both {face.parent_face!r} and {card.id!r}"
             )
-        if face.mana_cost.mana_value() == 0:
+        if face.mana_cost.mana_value() == 0 and not face.is_land:
             # An unwritten `mana_cost` parses to the same empty cost a back face
             # has, so this is the guard against pointing `second_face` at one:
             # it would be a free spell stapled to a creature. No printed second
             # face costs {0}, and one that did would be indistinguishable here.
+            #
+            # A **land** half is the exception, and not a loophole: a land is
+            # played rather than cast, so it has no mana cost to write and
+            # costing nothing is not a discount -- it still spends the land drop.
+            # Malakir Rebirth // Malakir Mire is the shape.
             raise DslError(f"{face.id}: a second castable face needs a mana cost of its own")
         # 715.1. Both halves, because each is silent alone: an Adventure that is
         # a permanent never reaches the exile that makes it an Adventure, and a

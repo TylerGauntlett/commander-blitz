@@ -1596,6 +1596,41 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## A modal DFC whose other half is a land
+
+Malakir Rebirth // Malakir Mire — an Instant on the front, a Land on the back,
+and you choose which as you play it.
+
+`second_face` already gave one card two independently playable halves; adventure,
+aftermath and split cards all use it. Every one of those is **cast**, and that is
+the whole of what a land half needs differently: it is *played*. No stack, it
+spends the land drop, and it is offered beside the other land drops rather than
+beside the cast lines.
+
+```jsonc
+// the front, an ordinary instant
+{"id": "malakir_rebirth", "types": ["Instant"], "mana_cost": "{B}",
+ "second_face": "malakir_mire", "second_face_zone": "hand", ...}
+
+// the back: a land, with no mana cost of its own
+{"id": "malakir_mire", "types": ["Land"],
+ "replacements": [{"event": "self_enters_tapped"}], ...}
+```
+
+`_play_land` sets `showing_second_face` **before** the move, and that ordering is
+the one thing that matters: `move_object` fires the enters-the-battlefield
+replacements, and they must be read off the *land*. Malakir Mire enters tapped;
+Malakir Rebirth does not enter at all. Set afterwards, the land arrives untapped
+and the printed line is silently missing.
+
+Unlike `transformed`, the flag needs no second write — `reset_permanent_state`
+leaves `showing_second_face` alone, which is why disturb had to re-apply its face
+and this does not.
+
+The "a second castable face needs a mana cost of its own" guard is relaxed for a
+land, and not as a loophole: a land has no mana cost to write, and costing
+nothing is not a discount when it still spends the drop.
+
 ## "Choose one that hasn't been chosen"
 
 ```jsonc
