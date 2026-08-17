@@ -2653,6 +2653,12 @@
     "file": "deadeye_harpooner.jpg",
     "scryfall_id": "a018decf-25e1-45fc-be7d-2523dcfb7a4c"
   },
+  "deadly_dispute": {
+    "artist": "Mark Brooks",
+    "bytes": 84221,
+    "file": "deadly_dispute.jpg",
+    "scryfall_id": "e0f658ff-323e-4e32-beaa-1d5753b4f081"
+  },
   "deadly_insect": {
     "artist": "Scott Kirschner",
     "bytes": 79883,
@@ -8166,6 +8172,11 @@
     "bytes": 64063,
     "file": "overprotect.jpg",
     "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a"
+  },
+  "painful_truths": {
+    "artist": "Winona Nelson",
+    "file": "painful_truths.jpg",
+    "scryfall_id": "faa82f09-0693-4cc6-8770-8c6a35aa627b"
   },
   "painted_bluffs": {
     "artist": "Mark Poole",

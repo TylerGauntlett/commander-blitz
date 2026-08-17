@@ -7,17 +7,17 @@
   ],
   "needs": [
     {
-      "capability": "target-player-zone",
-      "kind": "selector",
-      "what": "let a selector scope a non-battlefield zone to a player chosen as a target, so `exile` with `{\"zone\": \"graveyard\", \"count\": \"all\", \"player\": {\"target\": \"t1\"}}` (a target spec of kind `player`) empties exactly that one player's graveyard. Concretely: `_zone_owners` in effects/selectors.py should accept a player spec resolved through `select_players` -- which already understands `{\"target\": ...}` -- instead of only the three literal controller words, and `validate_selector` must let that key through.",
-      "why_existing_wont_do": "`_zone_owners` reads `controller`, and `validate_selector` restricts it to \"you\", \"opponent\" or \"any\" -- none of which is \"the one player this trigger targeted\", and `\"any\"` with `count: \"all\"` exiles every graveyard, which is Relic of Progenitus rather than Bojuka Bog. The `{\"target\": \"t1\"}` selector shorthand cannot stand in either: `EffectContext.target_oids` keeps only refs with `kind == \"object\"`, so a player target seeds an empty pool. `select_players` does resolve `{\"target\": ...}` to a targeted player, but only ops carrying a `player` spec (`draw`, `mill`, `discard`, `look_at_hand`) call it, and `exile` takes only an `objects` selector."
+      "capability": "triggered-ability-target-choice",
+      "kind": "decision",
+      "what": "a triggered ability with targets must let its controller choose them as it goes on the stack (603.3d), rather than taking the first enumerated option. `stack.push_triggered_ability` calls `enumerate_target_tuples(..., limit=1)` and assigns `options[0]`; for a `kind: \"player\"` target the order is `state.alive()`, i.e. seat order, so the chosen player is always seat 0 -- the ability's own controller in every game this card is played in. The choice needs to become a real decision, which means a suspended push (the trigger already goes on the stack from `promote_pending`, so this is a generator boundary that does not exist yet) or a pre-resolution target-choice step, plus an auto-answer entry in `verify.py`'s table so the authoring gates do not hang.",
+      "why_existing_wont_do": "Not a selector or vocabulary gap -- the selector half shipped. A selector may now carry `player`, the full player spec, and `{\"zone\": \"graveyard\", \"player\": {\"target\": \"t1\"}, \"count\": \"all\"}` empties exactly the named player's graveyard; `tests/unit/test_target_player_zone.py` is the witness and the card compiles and passes all six gates. What is wrong is *who gets named*. Written as a triggered ability the card always exiles its controller's own graveyard, which is not a weaker Bojuka Bog but a card nobody would play. Writing it as a spell instead is not available: it is a Land, and legality enumerates one cast line per legal target only for things that are cast. Hard-coding `controller: \"opponent\"` is the approximation to refuse -- it is right in a duel and wrong at a pod, where it would exile all three opponents' graveyards at once, which is Relic of Progenitus."
     }
   ],
   "closest_existing": [
-    "exile",
-    "look_at_hand",
-    "mill",
-    "return_from_graveyard"
+    "target-player-zone",
+    "player",
+    "enumerate_target_tuples",
+    "push_triggered_ability"
   ],
   "confidence": "high"
 }

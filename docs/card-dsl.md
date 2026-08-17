@@ -1596,6 +1596,30 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "Target player's graveyard" — scoping a zone to a chosen player
+
+A selector reaching a zone somebody *owns* — hand, graveyard, library, exile —
+has to decide whose. `controller` offers three words; `player` offers the full
+player spec, and takes precedence:
+
+```jsonc
+{"op": "exile", "objects": {
+  "zone": "graveyard", "player": {"target": "t1"}, "count": "all"}}
+```
+
+`select_players` already understood `{"target": ...}`, `{"controller_of": ...}`,
+`"each_opponent"` and the rest; `_zone_owners` simply never asked it.
+
+The nearest thing before was `controller: "any"` with `count: "all"`, and it is
+not a near miss — it empties *every* graveyard at the table, which is Relic of
+Progenitus rather than Bojuka Bog. At a four-player pod that is three extra
+graveyards.
+
+**The battlefield and the stack refuse it at load time.** Those are one shared
+list, so a `player` clause there would be silently ignored, and a card that says
+"target player's" while quietly meaning "everyone's" is the exact failure this
+key exists to close. Use `controller` to filter them instead.
+
 ## Conditional taplands — "enters tapped unless…"
 
 "This land enters tapped unless you control a Mountain or a Plains."

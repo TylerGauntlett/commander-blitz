@@ -7011,6 +7011,41 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_graveyard_exiler",
+      "name": "Test Graveyard Exiler",
+      "oracle_text": "Exile target player's graveyard.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "graveyard",
+            "player": {
+              "target": "t1"
+            },
+            "count": "all"
+          }
+        }
+      ]
     }
   ]
 }
