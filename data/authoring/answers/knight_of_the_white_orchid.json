@@ -1,0 +1,83 @@
+{
+  "card": {
+    "id": "knight_of_the_white_orchid",
+    "name": "Knight of the White Orchid",
+    "oracle_text": "First strike\nWhen this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
+    "mana_cost": "{W}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Knight"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "keywords": [
+      "first_strike"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card, put it onto the battlefield, then shuffle.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "player": "each_opponent",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "lands_you_control": true
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Search your library for a Plains card?",
+            "effects": [
+              {
+                "op": "search_library",
+                "count": {
+                  "const": 1
+                },
+                "destination": "battlefield",
+                "selector": {
+                  "subtypes": [
+                    "Plains"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

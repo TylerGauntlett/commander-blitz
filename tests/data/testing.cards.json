@@ -8418,6 +8418,62 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_land_watcher",
+      "name": "Test Land Watcher",
+      "oracle_text": "As long as an opponent controls more lands than you, this creature has flying.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Scout"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent controls more lands than you, this creature has flying.",
+          "effect": "grant_keyword",
+          "affects": {
+            "self_only": true
+          },
+          "keywords": [
+            "flying"
+          ],
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "player": "each_opponent",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }

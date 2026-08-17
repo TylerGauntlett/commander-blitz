@@ -1,3 +1,110 @@
+## Per-opponent counts — "an opponent controls more lands than you"
+
+### Overview
+
+One printed clause, three cards, and three different places it has to be
+askable: Knight of the White Orchid asks it as a trigger's intervening-`if`,
+Weathered Wayfarer as an activation restriction, Verge Rangers as a static's "as
+long as". Eight more queued cards say the same sentence about lands (Loyal
+Warhound, Claim Jumper, Scouting Hawk, Space Marine Scout, Beza the Bounding
+Spring, Aerial Surveyor, Boreas Charger, Cartographer's Hawk), and two say it
+about creatures (Avatar of Might, Advice from the Fae).
+
+The engine could already count objects, and that was the trap rather than the
+solution. `count` resolves **one** pool, and `controller: "opponent"` means every
+opponent at once -- `selectors._zone_owners` says so in a comment -- so
+`{"count": {"types": ["Land"], "controller": "opponent"}}` is the *sum* across the
+table. In a duel that is the printed card exactly. At a four-player pod it is a
+different card and inverted: three opponents holding two lands each total six and
+beat your five, so a Knight built on `count` is an unconditional two-mana 2/2
+that ramps and a Wayfarer built on it is an unconditional repeatable land tutor,
+while both printed cards are blank precisely when you are ahead. This repo is
+Commander-first, so that is a divergence rather than a rounding error.
+
+### What shipped
+
+`max_count_of` and `min_count_of` -- the existential and the universal -- in
+`VALUE_KEYS`, in `characteristics._static_value`, and validated by one shared
+`validate_per_player_count` that both languages call, the way
+`validate_mana_symbols` is already shared. Tier A, and no op: `cmp`/`left`/`right`
+already reach every one of the four call sites, so the trigger condition, the
+activation condition, an `if` in a body and a static's `condition` all came free
+with the leaf.
+
+It is the same split as `min_life_of` / `max_life_of` and for the same recorded
+reason, which is why it is a *pair*: "an opponent controls more X than you" is the
+maximum over the per-player counts, and "each opponent controls more" is the
+minimum. `min`/`max` already existed as value expressions and cannot stand in --
+they take a literal list written into the card, and no player spec enumerates
+opponents one at a time to feed them. `extreme` ranks only power, toughness and
+mana value, and `distinct` counts values over a single pool.
+
+`for_each_player` is the only other per-player mechanism in the engine and is the
+near miss worth recording. It is an **op**, so it cannot appear in a condition at
+all; moving the test into the effects body would run the search once per
+qualifying opponent -- up to three Plains onto the battlefield off a card that
+fetches one -- and would drop the on-trigger half of the intervening-`if`
+entirely.
+
+### The scope is injected, not asked for
+
+`for_each_player` scopes its body by binding `each_player` and having nested
+selectors name it. A condition is not inside a loop, so there is no binding for
+the card to name: the evaluator sets one per player itself and merges the clause
+into a copy of the filter.
+
+Which clause depends on the zone, and it is the split `validate_selector` already
+spells out. The battlefield and the stack are **shared**, so a player is a
+`controller` filter over the one pool; a hand, library, graveyard or exile
+**belongs** to somebody, so a player chooses whose list to walk. Writing either
+word inside `objects` is a load error rather than a clause silently overwritten,
+and that guard earns its keep in one direction in particular: `controller:
+"opponent"` written there is exactly the summing filter this leaf exists to
+replace, so a card carrying it would look like it had asked for the pooled total
+and quietly get something else.
+
+`player` is not defaulted either. `each_opponent` and `each_player` are different
+cards, and a default reads identically in the card file.
+
+### The empty set has a right answer and a wrong one
+
+`NO_PLAYERS_COUNT`, beside `NO_PLAYERS_LIFE` and biased the same way.
+`max_count_of` over nobody is a plain 0, because "an opponent controls more lands
+than you" has to be **false** at a table with no opponents and no land count of
+yours is below zero. `min_count_of` returns something unreachably large, because
+"each opponent controls more lands than you" over nobody *is* vacuously true and a
+minimum of 0 would claim the opposite -- that every opponent is behind you -- at
+the instant the last one died.
+
+### What it unblocked, and what it did not
+
+Knight of the White Orchid and Weathered Wayfarer both ship, verified through all
+six gates. The Knight's expectation asserts the card landing and the library
+**unchanged**: the verifier's fixed position gives you 30 lands to the opponent's
+2, so the intervening-`if` is correctly false and nothing is fetched. Asserting a
+fetched Plains there would have been asserting the bug.
+
+Verge Rangers stays blocked, on two capabilities that are not this one:
+`conditional_player_static` (player-wide statics are read by
+`characteristics._player_static`, which never calls `_static_active`, so a
+`condition` beside one loads clean and is then silently ignored) and
+`look_at_library_top` (the only top-card static, `reveal_library_top`, is
+deliberately public -- `serialize` writes `library_top` into every seat's view).
+Its `per_opponent_count` need is closed; the record now carries only the other
+two.
+
+### Guarded by
+
+`tests/unit/test_per_opponent_count.py`. The load-time guards, the two
+aggregations and both empty-set biases, plus one position per call site: the
+Knight's trigger fetching when an opponent is ahead and doing nothing when it is
+level or when only the *pooled* total is ahead; the Wayfarer's ability offered and
+withheld on the same three boards; and a test-only static (`t_land_watcher`) whose
+"as long as" clause switches a keyword on and off, since no shipped card can carry
+that half until Verge Rangers is unblocked. The pod case -- your five lands against
+three opponents on two each -- is asserted at all four sites, because it is the one
+board where the summing implementation and the printed card disagree.
+
 ## A mandatory additional cost — the half that "mandatory" did not deliver
 
 ### Overview

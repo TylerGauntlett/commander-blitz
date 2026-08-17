@@ -4125,6 +4125,10 @@
     "artist": "Jesper Ejsing",
     "scryfall_id": "2f81d2a0-5301-4cae-ac83-ad51647146e3"
   },
+  "knight_of_the_white_orchid": {
+    "artist": "Mark Zug",
+    "scryfall_id": "ec4b5e6c-87a4-4e1b-b54a-b36bc6031af1"
+  },
   "knight_s_pledge": {
     "artist": "Magali Villeneuve",
     "scryfall_id": "734ff6ac-000d-4fc6-b97b-07b9b21f745c"
@@ -8949,6 +8953,10 @@
   "weakness": {
     "artist": "Kev Walker",
     "scryfall_id": "ceb8322c-63e1-4618-8ee3-7e635cc8bf5e"
+  },
+  "weathered_wayfarer": {
+    "artist": "Greg Hildebrandt & Tim Hildebrandt",
+    "scryfall_id": "09656d96-c366-49ec-b687-cad903de1385"
   },
   "weave_fate": {
     "artist": "Zack Stella",

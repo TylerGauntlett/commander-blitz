@@ -1,0 +1,31 @@
+{
+  "card_id": "marshal_s_anthem",
+  "name": "Marshal's Anthem",
+  "oracle_text": "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)\nCreatures you control get +1/+1.\nWhen this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.",
+  "blocked_sentences": [
+    "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)",
+    "When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked."
+  ],
+  "needs": [
+    {
+      "capability": "variable_target_count",
+      "kind": "selector",
+      "what": "A target spec whose number of targets is a value expression rather than a literal -- `count: {\"additional_paid\": true}` (or any `value_keys` entry) plus an \"up to\" reading, so the caster picks between zero and X targets at announcement and X is computed when the ability goes on the stack. Concretely: TargetModel.count in src/automtg/cards/schema.py is `int | Literal[\"any\"]`, and engine/targeting.py branches on `spec.count == \"any\"` / `spec.count > 1` with the literal integer; both need to accept an evaluated amount, and the combination enumeration needs to offer every size from 0..X rather than exactly X",
+      "why_existing_wont_do": "The two spellings `reference` offers are both a different card. `count: \"any\"` is \"any number of target creature cards\", which unbinds the count from the kicker entirely -- Marshal's Anthem cast with no kicks would reanimate the whole graveyard for {2}{W}{W}. `count: N` is a number written into the card, and `optional: true` on top of it means \"exactly N or none\", forbidding every size between 1 and N-1, so neither can say \"up to X\". Moving the choice to resolution does not rescue it either: a selector's `count` *does* accept a value expression (selectors.pick_from_pool calls evaluate_value on it), so `return_from_graveyard` with `objects: {count: {\"additional_paid\": true}}` computes the right number -- but that is untargeted (no legality check at announcement, no fizzle when the cards leave, and `becomes_target` never fires) and it sets min_count == max_count, forcing *exactly* X rather than up to X. `value_keys.additional_paid` already supplies X correctly here -- `cast_additional` is set in game.py at cast time and lives on the object, which survives the zone change onto the battlefield, so a `self_enters` trigger reads it -- so the missing piece is only the target *count*, not the value"
+    },
+    {
+      "capability": "multikicker",
+      "kind": "cost",
+      "what": "Multikicker as a named cost: a mana-only additional cost payable any number of times whose printed \"Multikicker {1}{W}\" line has a claimant. The payment machinery already exists as `additional_cost` + `additional_optional` + `additional_repeatable` (replicate's slot, with Action.additional_times carrying the count), so this is a `multikicker: \"{1}{W}\"` field that desugars to it, plus the residual-gate exemption in verify.py::_line_is_claimed for a line starting with \"multikicker\"",
+      "why_existing_wont_do": "`kicker` is the named mechanic in reference but it is one-shot: loader.py compiles it to a ManaCost and Action.kicked is a bool, so \"any number of times\" cannot be paid twice and `condition_keys.kicked` can only answer yes/no, never how many. The repeatable slot that can (`additional_cost`/`additional_repeatable`) is unnamed, and verify.py::_line_is_claimed only forgives a printed cost line when `card.kicker` is set and the line starts with \"kicker \" (which \"Multikicker\" does not), or when `card.additional_cost` is set and the line starts with \"as an additional cost\" (which this wording does not) -- so a card spelling multikicker through the replicate slot loads but leaves its first printed line unclaimed and fails the residual gate. Faking the claim with a `noop` ability whose text is the Multikicker line would hide that, which is the failure the gate exists to catch"
+    }
+  ],
+  "closest_existing": [
+    "kicker",
+    "replicate",
+    "casualty",
+    "additional_paid",
+    "any_number_of_targets"
+  ],
+  "confidence": "high"
+}

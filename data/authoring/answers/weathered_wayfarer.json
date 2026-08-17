@@ -1,0 +1,69 @@
+{
+  "card": {
+    "id": "weathered_wayfarer",
+    "name": "Weathered Wayfarer",
+    "oracle_text": "{W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you.",
+    "mana_cost": "{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Nomad",
+      "Cleric"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{W}, {T}: Search your library for a land card, reveal it, put it into your hand, then shuffle. Activate only if an opponent controls more lands than you.",
+        "cost": {
+          "mana": "{W}",
+          "tap": true
+        },
+        "condition": {
+          "cmp": ">",
+          "left": {
+            "max_count_of": {
+              "player": "each_opponent",
+              "objects": {
+                "zone": "battlefield",
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          },
+          "right": {
+            "lands_you_control": true
+          }
+        },
+        "effects": [
+          {
+            "op": "search_library",
+            "count": {
+              "const": 1
+            },
+            "reveal": true,
+            "selector": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
