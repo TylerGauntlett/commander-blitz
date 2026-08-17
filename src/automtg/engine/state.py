@@ -377,7 +377,11 @@ class GameState:
             if data.get("to") == "player" and pid is not None:
                 amount = int(data.get("amount") or 0)
                 ledger.damage_taken[pid] = ledger.damage_taken.get(pid, 0) + amount
-                ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+                # `life_lost` is *not* added here any more. `damage_player` now
+                # fires LIFE_LOST itself, so folding it from both events would
+                # count every burn spell twice -- and doing it only here was
+                # already wrong for infect, which deals damage to a player and
+                # costs them no life at all.
         elif event.type == EventType.COMBAT_DAMAGE_TO_PLAYER:
             # Prowl. Recorded here rather than at the primitive for the reason
             # every other tally is, and read off *derived* subtypes while the

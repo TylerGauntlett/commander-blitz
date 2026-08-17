@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**15 cards** blocked by **24** capabilities.
+**14 cards** blocked by **23** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cloak](#cloak) | 1 | 6625 | engine |
 | [commander-type-filter](#commander-type-filter) | 1 | 14 | selector |
 | [grant-protection](#grant-protection) | 1 | 191 | op |
-| [life-loss-trigger](#life-loss-trigger) | 1 | 883 | trigger_event, value |
 | [mana-spent-trigger](#mana-spent-trigger) | 1 | 14 | trigger_event |
 | [missing-token-definitions](#missing-token-definitions) | 1 | 3474 | engine |
 | [modal-dfc](#modal-dfc) | 1 | 243 | replacement |
@@ -157,22 +156,6 @@ Blocks **1** card.
 - **Akroma's Will** (rank 191) — `akroma_s_will`
   - Choose one. If you control a commander as you cast this spell, you may choose both instead.
   - • Creatures you control gain lifelink, indestructible, and protection from each color until end of turn.
-
-</details>
-
-## life-loss-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a `life_lost` trigger event that fires once per instance of a player losing life, filterable by whose life it was (you / an opponent / each opponent), and which fires for every source of loss -- combat and noncombat damage, payment of life as a cost, and direct lose_life effects -- rather than only for damage
-  <br>Why the existing vocabulary won't do: `trigger_events` has `you_gain_life` (the exact mirror of this, so the plumbing exists in one direction only) and `dealt_damage`, but `dealt_damage` fires on a permanent being damaged, not on a player's life total dropping, so it would miss life paid as a cost and every `lose_life` effect while also firing on creature damage that costs no life at all
-- **(value)** a value key that reads the amount of life lost by the single triggering event, so "you gain that much life" can feed `gain_life` with the exact quantity from the trigger that just fired
-  <br>Why the existing vocabulary won't do: `life_lost_this_turn` is a cumulative per-turn total, so with two separate losses in a turn the second trigger would gain the sum instead of the increment; `binding` and `damage_taken_this_turn` likewise do not expose a per-trigger life-loss amount
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bloodthirsty Conqueror** (rank 883) — `bloodthirsty_conqueror`
-  - Whenever an opponent loses life, you gain that much life. (Damage causes loss of life.)
 
 </details>
 

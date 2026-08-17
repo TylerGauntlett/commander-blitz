@@ -40,6 +40,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     "begin_combat": EventType.BEGIN_COMBAT,
     "end_step": EventType.END_STEP,
     "you_gain_life": EventType.LIFE_GAINED,
+    #: "Whenever an opponent loses life, you gain that much life." The amount is
+    #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
+    #: because the reminder text on every card of this shape says so out loud:
+    #: "(Damage causes loss of life.)" Infect damage is the exception and fires
+    #: nothing, since it costs no life.
+    "life_lost": EventType.LIFE_LOST,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,

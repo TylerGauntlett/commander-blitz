@@ -1596,6 +1596,27 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## "Whenever an opponent loses life"
+
+```jsonc
+"trigger": {"event": "life_lost", "controller": "opponent"},
+"effects": [{"op": "gain_life", "player": "you", "amount": {"binding": "amount"}}]
+```
+
+`LIFE_LOST` had existed since `lose_life` did and nothing subscribed to it. The
+`controller` clause names the player who *lost* the life, and the quantity is the
+`amount` binding — not `life_lost_this_turn`, which is cumulative and would gain
+the running total on a second loss in the same turn.
+
+**Damage fires it too**, because the reminder text on every card of this shape
+says "(Damage causes loss of life.)" — a trigger that heard only `lose_life`
+would miss combat damage and burn. Infect is the exception: damage to a player
+becomes poison counters and costs no life, so it fires nothing.
+
+The turn ledger's `life_lost` fold moved to this event alone. It had been folded
+from `DAMAGE_DEALT` as well, which would now count a burn spell twice — and was
+already wrong for infect in the other direction.
+
 ## "This ability triggers only once each turn"
 
 `max_per_turn` on a **trigger** (not the ability -- `once_each_turn` is an

@@ -29002,12 +29002,12 @@
     },
     "Bloodthirsty Conqueror": {
       "edhrec_rank": 883,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodthirsty Conqueror",
-      "reason": "no template for: Whenever an opponent loses life, you gain that much life",
+      "reason": "",
       "scryfall_id": "3c340ba8-9287-4072-937a-438251b5ff1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodthirsty Ogre": {

@@ -125,6 +125,14 @@ def damage_player(
         )
     else:
         state.players[pid].life -= amount
+        # "Whenever an opponent loses life… (Damage causes loss of life.)"
+        # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires
+        # the same event a `lose_life` does rather than a second one a card
+        # would have to listen for separately.
+        #
+        # Inside the else on purpose: infect damage becomes poison counters and
+        # no life is lost at all, so an infect hit must not fire this.
+        fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=amount)
     fire(
         state,
         EventType.DAMAGE_DEALT,

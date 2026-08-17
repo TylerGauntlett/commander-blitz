@@ -7344,6 +7344,45 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_conqueror",
+      "name": "Test Conqueror",
+      "oracle_text": "Whenever an opponent loses life, you gain that much life.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life, you gain that much life.",
+          "trigger": {
+            "event": "life_lost",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "binding": "amount"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
