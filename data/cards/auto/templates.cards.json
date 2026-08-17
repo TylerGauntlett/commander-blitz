@@ -11271,6 +11271,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "attacker": {
+                    "binding": "event_player"
+                  },
+                  "defender": "you",
+                  "duration": "this_combat",
+                  "op": "cant_attack_player"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}",
+                "times": {
+                  "cards_in_hand": {
+                    "binding": "event_player"
+                  }
+                }
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay {X}, where X is the number of cards in your hand, or you can't attack Champions of Minas Tirith's controller this combat?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.",
+          "trigger": {
+            "condition": {
+              "is_monarch": "you"
+            },
+            "controller": "opponent",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "champions_of_minas_tirith",
+      "mana_cost": "{5}{W}",
+      "name": "Champions of Minas Tirith",
+      "oracle_text": "When this creature enters, you become the monarch.\nAt the beginning of combat on each opponent's turn, if you're the monarch, that opponent may pay {X}, where X is the number of cards in their hand. If they don't, they can't attack you this combat.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

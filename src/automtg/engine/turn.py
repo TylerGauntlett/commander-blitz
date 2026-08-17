@@ -18,6 +18,7 @@ from .enums import DecisionKind, Keyword, Step
 from .events import EventType
 from .player import MAX_HAND_SIZE
 from .primitives import (
+    clear_attack_restrictions,
     clear_until_eot,
     untap_all,
     untap_permanent,
@@ -486,6 +487,11 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
         )
         yield from replacements.discard(state, pid, picked)
     clear_until_eot(state)
+    # "You can't attack that player **this turn**." Beside `clear_until_eot` and
+    # on its clock, but not *in* it: `until_eot` is a list on each permanent and
+    # this restriction belongs to no permanent at all -- Call for Aid is a
+    # sorcery, and the seat it restricts is its own caster's.
+    clear_attack_restrictions(state, "this_turn")
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

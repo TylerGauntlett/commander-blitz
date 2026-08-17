@@ -3,16 +3,9 @@
   "name": "Call for Aid",
   "oracle_text": "Gain control of all creatures target opponent controls until end of turn. Untap those creatures. They gain haste until end of turn. You can't attack that player this turn. You can't sacrifice those creatures this turn.",
   "blocked_sentences": [
-    "You can't attack that player this turn.",
     "You can't sacrifice those creatures this turn."
   ],
   "needs": [
-    {
-      "capability": "cant_attack_player",
-      "kind": "op",
-      "what": "A spell/ability effect op that installs a turn-long restriction forbidding a named player (the spell's target player, captured as a binding) from being attacked by the effect's controller -- i.e. a per-defending-player attack legality check, distinct from forbidding a creature from attacking at all",
-      "why_existing_wont_do": "The closest thing in reference is the `cant_attack` static_effect, and it falls short three ways: (1) it is a static ability, so it must live in `abilities` on a battlefield permanent -- a Sorcery only has `spell_effects` from `ops`, and there is no op that installs a static or an until-end-of-turn restriction; (2) `attack_forbidden` in engine/characteristics.py matches its `affects` filter against the attacking *creature* object, so the restriction it expresses is \"these creatures can't attack\", never \"these creatures can't attack this particular player\" -- there is no defending-player parameter in the check at all; (3) a static filter may only read printed characteristics, so it could not name a player chosen on resolution. `must_attack`/`must_block` are obligations pointing the other way, and `set_flag` only writes an adjective onto a battlefield permanent for a later `has_flag` condition to read -- nothing in combat legality consults flags, and the restriction here is on a player, not on an object"
-    },
     {
       "capability": "cant_sacrifice",
       "kind": "op",
@@ -21,11 +14,13 @@
     }
   ],
   "closest_existing": [
-    "cant_attack",
-    "cant_block",
-    "must_attack",
     "lock_abilities",
-    "replace_deaths"
+    "replace_deaths",
+    "sacrifice"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "resolved": [
+    "cant_attack_player"
+  ],
+  "resolved_note": "`cant_attack_player` shipped: the op takes an `attacker` player spec, a `defender` player spec and a `duration` of `this_turn` or `this_combat`, recorded as a `structs.AttackRestriction` on `GameState.attack_restrictions` and read by the new `combat.attack_target_forbidden` seam. \"You can't attack that player this turn\" is `{\"op\": \"cant_attack_player\", \"attacker\": \"you\", \"defender\": {\"target\": \"<the targeted opponent>\"}, \"duration\": \"this_turn\"}`. Only `cant_sacrifice` is still missing; with it, and the existing `gain_control`, `untap` and `grant_keyword` (haste), the whole card loads. No partial answer was written because a Call for Aid that could not stop the borrowed creatures being sacrificed is a strictly better card than the printed one."
 }
