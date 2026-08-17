@@ -203,6 +203,94 @@ class TestCardsThatSurviveIntact:
         assert result.coverage == "partial"
 
 
+class TestTheReflectedColourClause:
+    """"…any color that a land an opponent controls could produce."
+
+    Read exactly or not at all. The any-colour fallback below this in
+    `_mana_effects` would turn the sentence into five fixed modes, and a Fellwar
+    Stone that taps for colours no opponent has a land for is a strictly better
+    card than the printed one.
+    """
+
+    def stone(self, oracle_text: str, **kwargs):
+        return built(
+            name="Fellwar Stone",
+            type_line="Artifact",
+            mana_cost="{2}",
+            oracle_text=oracle_text,
+            produced_mana=("W", "U", "B", "R", "G"),
+            color_identity="",
+            **kwargs,
+        )
+
+    def reflecting_of(self, card):
+        ability = next(a for a in card.abilities if a.is_mana_ability)
+        return ability.mana_reflects
+
+    def test_an_opponents_lands_become_a_selector(self):
+        result, card = self.stone(
+            "{T}: Add one mana of any color that a land an opponent controls could produce."
+        )
+        assert result.coverage == "full"
+        assert result.notes == ()
+        assert self.reflecting_of(card) == {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": ["Land"],
+        }
+
+    def test_it_is_not_five_fixed_modes(self):
+        """The trap. Five modes is a different, better card."""
+        _, card = self.stone(
+            "{T}: Add one mana of any color that a land an opponent controls could produce."
+        )
+        ability = next(a for a in card.abilities if a.is_mana_ability)
+        assert ability.mana_reflects is not None
+
+    def test_the_you_control_half_of_the_family(self):
+        """Harvester Druid — the same sentence pointed the other way."""
+        result, card = built(
+            name="Harvester Druid",
+            type_line="Creature — Human Druid",
+            mana_cost="{1}{G}",
+            oracle_text="{T}: Add one mana of any color that a land you control could produce.",
+            produced_mana=("W", "U", "B", "R", "G"),
+            power="1",
+            toughness="1",
+            colors="G",
+            color_identity="G",
+        )
+        assert result.coverage == "full"
+        assert self.reflecting_of(card)["controller"] == "you"
+
+    def test_any_type_is_refused(self):
+        """Reflecting Pool prints "any **type**", which includes {C} -- and
+        `reflecting` narrows a five-*colour* superset. Claiming this would ship
+        a Reflecting Pool that cannot tap off a Wastes."""
+        result, _ = built(
+            name="Reflecting Pool",
+            type_line="Land",
+            oracle_text="{T}: Add one mana of any type that a land you control could produce.",
+            produced_mana=("W", "U", "B", "R", "G"),
+            color_identity="",
+        )
+        assert result.coverage == "partial"
+
+    def test_a_qualified_noun_is_refused(self):
+        """Star Compass reads "a **basic** land you control", and reading past
+        the qualifier would let it tap off lands the printed card ignores."""
+        result, _ = built(
+            name="Star Compass",
+            type_line="Artifact",
+            mana_cost="{2}",
+            oracle_text="This artifact enters tapped.\n{T}: Add one mana of any color "
+            "that a basic land you control could produce.",
+            produced_mana=("W", "U", "B", "R", "G"),
+            color_identity="",
+        )
+        assert result.coverage == "partial"
+
+
 # ----------------------------------------------------------------------
 # colour identity
 # ----------------------------------------------------------------------

@@ -569,6 +569,28 @@ _ADD_CLAUSE = re.compile(r":\s*Add\s+(?P<what>[^.]+)", re.I)
 _FIXED_MANA = re.compile(r"^(?:\{[WUBRGC]\})+$")
 _ANY_COLOR = re.compile(r"^one mana of any (?:one )?color$", re.I)
 
+#: ``Add one mana of any color that a land an opponent controls could produce``
+#: -- Fellwar Stone, Exotic Orchard, Quirion Explorer, Sylvok Explorer; and the
+#: other half of the family, ``a land you control`` -- Harvester Druid.
+#:
+#: Deliberately narrow on three counts, because each of the wider readings would
+#: make a *different* card:
+#:
+#: * **"color", not "type".** Reflecting Pool, Naga Vitalist and Incubation Druid
+#:   print "any **type**", which includes ``{C}`` -- and `reflecting` narrows a
+#:   five-*colour* superset and drops colorless on purpose. Matching them here
+#:   would print a Reflecting Pool that cannot tap off a Wastes.
+#: * **"a land", not "a basic land" or "a Gate".** Star Compass and Plaza of
+#:   Harmony qualify the noun, and reading past the qualifier would let them tap
+#:   off lands the printed card ignores.
+#: * **the whole clause anchored.** Benthic Explorers reads "that land could
+#:   produce" about a land it just untapped, which is a different question.
+_REFLECTED_COLOR = re.compile(
+    r"^one mana of any (?:one )?color that a land "
+    r"(?P<who>an opponent controls|you control) could produce$",
+    re.I,
+)
+
 #: ``Add {G} for each creature you control`` -- a payout that scales with the
 #: board.  Read rather than approximated: a Gaea's Cradle that taps for one is a
 #: Forest, and the difference does not show anywhere on screen.
@@ -640,6 +662,28 @@ def _mana_effects(line: str, symbols: list[str]) -> tuple[list[dict], str | None
     # "Add {C}{C}" / "Add {G}{U}" -- a fixed payout, taken verbatim.
     if _FIXED_MANA.match(clause.replace(" ", "")):
         return [{"op": "add_mana", "mana": clause.replace(" ", "")}], None
+
+    # "Add one mana of any color that a land an opponent controls could produce"
+    # -- the colours are a question about the board, so the card names the
+    # permanents to ask rather than the colours to make. Read *before* the
+    # any-colour fallback below, which would otherwise turn this into five fixed
+    # modes: a Fellwar Stone that taps for colours no opponent has a land for is
+    # a strictly better card than the printed one, which is the direction this
+    # generator must never fail in.
+    reflected = _REFLECTED_COLOR.match(clause)
+    if reflected:
+        return [
+            {
+                "op": "add_mana",
+                "reflecting": {
+                    "zone": "battlefield",
+                    "controller": (
+                        "opponent" if reflected.group("who").lower().startswith("an") else "you"
+                    ),
+                    "types": ["Land"],
+                },
+            }
+        ], None
 
     # "Add {G} for each creature you control" -- a payout that scales.
     for_each = _FOR_EACH.match(clause)

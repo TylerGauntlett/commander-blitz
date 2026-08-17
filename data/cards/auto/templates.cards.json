@@ -22497,6 +22497,40 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color that a land an opponent controls could produce."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "fellwar_stone",
+      "mana_cost": "{2}",
+      "name": "Fellwar Stone",
+      "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
