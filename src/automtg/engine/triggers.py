@@ -38,6 +38,11 @@ TRIGGER_EVENTS: dict[str, str] = {
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
+    #: "At the beginning of each of your postcombat main phases…" Florian.
+    #: `begin_combat` is the nearest existing phase event and is on the wrong
+    #: side of combat -- a card hung on it would read a life-loss tally from
+    #: before the damage it is counting.
+    "postcombat_main": EventType.POSTCOMBAT_MAIN,
     "end_step": EventType.END_STEP,
     "you_gain_life": EventType.LIFE_GAINED,
     #: "Whenever **you** attack" -- Clavileño. Once per combat in which its
