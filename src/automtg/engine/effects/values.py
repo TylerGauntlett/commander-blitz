@@ -13,6 +13,9 @@ forms::
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
     {"attackers_this_turn": "you"}         storm and gravestorm -- and how
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
+    {"permanents_entered_this_turn":  WHICH permanents entered the battlefield
+        {"controller": "you",           this turn, by subtype and by
+         "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
@@ -79,6 +82,12 @@ VALUE_KEYS = frozenset(
         # the battlefield, because an attacker that died in combat still
         # attacked and the board has forgotten it.
         "attackers_this_turn",
+        # "…if another **Human** entered the battlefield under **your control**
+        # this turn" -- Éowyn, Shieldmaiden. The one ledger read that takes a
+        # filter rather than a player spec, because the printed sentence asks
+        # *which* permanents entered and not how many did: a bare per-player
+        # tally would fire the trigger off a land drop.
+        "permanents_entered_this_turn",
         "damage_taken_this_turn",
         "life_lost_this_turn",
         "spells_cast_this_turn",
@@ -336,6 +345,30 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for p in _players(ctx, expr["attackers_this_turn"]):
             oids |= ledger.creatures_attacked.get(p, set())
         return len(oids)
+    if "permanents_entered_this_turn" in expr:
+        # How many permanents matching the filter have entered the battlefield
+        # this turn. Read off the ledger's snapshots rather than the board,
+        # which is the whole point: `{"count": {"zone": "battlefield", …}}` is
+        # true of a Human that has been there since turn three and false of one
+        # that entered this turn and died, so it is wrong in both directions.
+        spec = expr["permanents_entered_this_turn"]
+        controllers = _players(ctx, spec.get("controller"))
+        # "*Another* Human." Éowyn is herself a Human and may well have entered
+        # this turn, which is the case the word exists to exclude -- and the
+        # entry is matched by oid, so it also excludes her own arrival rather
+        # than merely a permanent that looks like her.
+        excluded = ctx.source_oid if spec.get("exclude_self") else None
+        return sum(
+            1
+            for entry in ledger.permanents_entered
+            if entry.oid != excluded
+            and entry.matches(
+                controllers=controllers,
+                types=spec.get("types") or (),
+                subtypes=spec.get("subtypes") or (),
+                colors=spec.get("colors") or (),
+            )
+        )
     if "damage_taken_this_turn" in expr:
         pids = _players(ctx, expr["damage_taken_this_turn"])
         return sum(ledger.damage_taken.get(p, 0) for p in pids)
@@ -536,6 +569,54 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
     validate_objects(objects, f"{where}.objects")
 
 
+#: What ``{"permanents_entered_this_turn": {...}}`` may filter on. Every clause
+#: is one the snapshot can honestly answer -- `EnteredPermanent` carries exactly
+#: these characteristics, taken as the permanent arrived.
+ENTERED_FILTER_KEYS = frozenset({"controller", "types", "subtypes", "colors", "exclude_self"})
+
+
+def validate_entered_filter(spec: Any, where: str) -> None:
+    """Load-time check of the enters-this-turn filter.
+
+    Stricter than the selector language it is spelled after, in one place:
+    ``controller`` is **required**. An omitted clause in a selector narrows
+    nothing and the pool is usually still the printed one, but here the omission
+    silently counts *the opponents' arrivals too* -- and every printed sentence
+    of this shape says whose battlefield it means ("under your control"). A card
+    that dropped the word would fire off the opponent's Human, which is a
+    strictly better card and a plausible-looking one. ``"all"`` is how a future
+    card says it really does mean anybody's.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object -- the filter on what entered")
+    unknown = set(spec) - ENTERED_FILTER_KEYS
+    if unknown:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    from .selectors import PLAYER_SPEC_NAMES
+
+    who = spec.get("controller")
+    if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}.controller: must name one of {sorted(PLAYER_SPEC_NAMES)} "
+            f"-- 'under whose control' is part of the printed sentence, got {who!r}"
+        )
+    for key in ("types", "subtypes", "colors"):
+        if key not in spec:
+            continue
+        names = spec[key]
+        if not isinstance(names, (list, tuple)) or not names:
+            # An empty list is not "no filter" written out: it reads as a clause
+            # the author meant to fill in, and filtering on nothing counts every
+            # land drop.
+            raise DslError(f"{where}.{key}: takes a non-empty list of names, got {names!r}")
+        if not all(isinstance(n, str) and n for n in names):
+            raise DslError(f"{where}.{key}: every entry must be a name, got {names!r}")
+    if "exclude_self" in spec and not isinstance(spec["exclude_self"], bool):
+        # Truthiness would make `"false"` -- a non-empty string -- exclude the
+        # source, quietly turning "a Human entered" into "another Human did".
+        raise DslError(f"{where}.exclude_self: must be true or false")
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -561,6 +642,10 @@ def validate_value(expr: Any, where: str) -> None:
         validate_selector(expr["count"], f"{where}.count")
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
+    if "permanents_entered_this_turn" in expr:
+        validate_entered_filter(
+            expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
+        )
     for key in PER_PLAYER_COUNT_KEYS & set(expr):
         validate_per_player_count(expr[key], f"{where}.{key}")
     if "distinct" in expr:

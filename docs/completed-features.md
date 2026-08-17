@@ -2354,6 +2354,110 @@ again, and asserts the second attack is offered nothing — then plays the greed
 line to the end of the turn and asserts the turn contains exactly two combat
 phases rather than the twenty the cap would allow.
 
+## Which permanents entered this turn — a ledger entry that outlives its object
+
+### Overview
+
+> **At the beginning of combat on your turn, if another Human entered the
+> battlefield under your control this turn**, create two 2/2 red Human Knight
+> creature tokens with trample and haste. Then if you control six or more
+> Humans, draw a card.
+
+Éowyn, Shieldmaiden — the **commander** of the Riders of Rohan deck, and the last
+card in it still waiting on the engine. Everything on that line already loaded:
+the Lieutenant-shaped `begin_combat` trigger, the token (`token_pool` added it
+the run before), and the "six or more Humans" `if`. The intervening-if had
+nothing to read. `TurnLedger` counted seven things and *entering the
+battlefield* was not one of them, so `VALUE_KEYS` had no tally to `cmp` against.
+
+### Every near miss, and why each is a different card
+
+| | |
+|---|---|
+| `{"exists": {"subtypes": ["Human"], …}}` | The obvious one, and wrong in **both** directions. It is a query about the *board*: true when a Human has stood there since turn three and nothing entered — the trigger fires every combat, forever — and false when a Human entered this turn and died before combat, which is the ordinary line the card is printed for. Both halves are asserted, on one position each |
+| `set_flag` / `has_flag` | Wrong lifetime *and* wrong shape. Flags are cleared only by `reset_permanent_state` on a zone change and never at cleanup, so the first Human to enter would leave the gate open for the rest of the game. And writing the flag needs a second `permanent_enters` ability that no printed line asks for, which the residual gate rejects — every ability's `text` must be a printed sentence |
+| A per-player count of arrivals | The tally the other six ledger entries are shaped like, and it cannot say **Human**: a land drop, a Treasure token or an opponent's creature would all satisfy "something entered under your control this turn". The filter is not decoration on this card — it is most of the sentence |
+| `permanent_enters` as a trigger | The right event, the wrong *tense*. A trigger fires when the arrival happens; the printed clause is checked at the beginning of combat and asks about the whole turn behind it, including arrivals that have since died |
+
+### The design: snapshots, not oids
+
+`TurnLedger.permanents_entered` is a list of `EnteredPermanent` records — oid,
+controller, types, subtypes and colors, taken **as the permanent entered** —
+folded in `GameState.emit` from `ENTERS_BATTLEFIELD` like every other tally, and
+cleared in `TurnLedger.clear` with morbid, storm and raid.
+
+A snapshot rather than the oid `creatures_attacked` stores, and the difference is
+what can still be *asked* of a departed object. Its readers only count attackers
+and reach for the ones still on the battlefield; this one is asked **which**
+permanents entered, filtered by subtype — and once a permanent has left there is
+nothing to filter: a token is popped out of `state.objects` entirely by the token
+state-based action, a card in a graveyard reports printed characteristics rather
+than derived ones, and `reset_permanent_state` has emptied whatever a static had
+granted it. Characteristics are read **derived**, at the moment of entry, so a
+changeling and a creature a static had made a Human both entered as Humans — the
+call `combat_damage_types` makes for prowl, for the same reason.
+
+`controller` is likewise controller-at-entry. "Under your control" is a fact
+about the arrival: a creature that entered under an opponent and was stolen
+afterwards did not enter under yours, and one that entered under yours and was
+stolen away still did.
+
+A **list** rather than a map, because both keys lose something printed. Keyed by
+player it could not answer "another *Human*". Keyed by oid it would collapse a
+flicker into one arrival, and rule 400.7 says that is two objects — a card
+counting arrivals has to see both.
+
+### One reader, and it takes a filter
+
+```jsonc
+// Éowyn's intervening-if, as the card writes it.
+"condition": {
+  "cmp": ">=",
+  "left": {"permanents_entered_this_turn": {
+             "controller": "you", "subtypes": ["Human"], "exclude_self": true}},
+  "right": {"const": 1}}
+```
+
+The only ledger value that takes a filter rather than a player spec, and the
+clauses are spelled exactly as `selectors.matches` spells them — `types` all-of,
+`subtypes` and `colors` any-of — so an author who knows one knows the other.
+
+`exclude_self` is the word **another**. Éowyn is herself a Human and may well
+have entered this turn, which is exactly the case the word exists to exclude; it
+matches on the *oid* of the recorded arrival, so it drops her own entry rather
+than anything that merely looks like her.
+
+No selector key and no `STATIC_FILTER_KEYS` entry: nothing printed asks to
+*reach* the permanents that entered, only to count them — the call the
+`attacked_this_turn` and exert runs both made, and for the reason they gave.
+
+### The loader's share
+
+`controller` is **required**, which is stricter than the selector language it is
+spelled after. An omitted clause in a selector usually still resolves the printed
+pool; omitted here it silently counts the opponents' arrivals too, and a card
+that fired off an opponent's Human is a strictly better card that looks right.
+`"all"` is how a future card says it really does mean anybody's. An empty
+`subtypes` list is refused rather than read as "no filter", and `exclude_self`
+must be a real boolean — `"false"` is a non-empty string, and truthiness would
+turn "a Human entered" into "another Human did".
+
+### What it unblocked
+
+**Éowyn, Shieldmaiden**, the Riders of Rohan commander, whose last blocked need
+this was. Authored at the agent tier through all six gates; no template, because
+the sentence is one of a kind in the pool and `--tier templates --retry`
+harvested nothing, as expected.
+
+The authoring verifier declines combat, so a `begin_combat` trigger cannot fire
+in its sandbox and the card legitimately asserts the weak
+`{"zone": "battlefield"}` expectation. The behaviour lives in
+`tests/unit/test_permanents_entered_this_turn.py`, which plays the two positions
+`exists` gets wrong — a Human that has stood there since before the turn, and a
+Human that entered and died — and asserts the trigger stays silent for the first
+and fires for the second. It also pins the "Then" clause counting the tokens the
+same resolution just created: six Humans draws, five does not.
+
 ## Transforming double-faced cards
 
 ### Overview

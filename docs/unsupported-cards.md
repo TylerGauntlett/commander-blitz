@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **29** capabilities.
+**25 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multikicker](#multikicker) | 1 | 4605 | cost |
 | [opponent-land-mana-colors](#opponent-land-mana-colors) | 1 | 17 | op |
 | [optional-pool-choice](#optional-pool-choice) | 1 | 6835 | selector |
-| [permanents-entered-this-turn](#permanents-entered-this-turn) | 1 | 4513 | value |
 | [reveal-until](#reveal-until) | 1 | 3831 | op |
 | [saga](#saga) | 1 | 7121 | engine |
 | [unblockable](#unblockable) | 1 | 18 | op |
@@ -351,20 +350,6 @@ Blocks **1** card.
 
 - **Boromir, Gondor's Hope** (rank 6835) — `boromir_gondor_s_hope`
   - You may reveal a Human or artifact card from among them and put it into your hand.
-
-</details>
-
-## permanents-entered-this-turn
-
-Blocks **1** card.
-
-- **(value)** A per-turn ledger tally of permanents that have *entered the battlefield* this turn, filterable by a selector rather than only by player -- suggested `{"permanents_entered_this_turn": {"controller": "you", "subtypes": ["Human"], "exclude_self": true}}`, read with an ordinary `cmp` against `{"const": 1}` the way morbid reads `creatures_died_this_turn`. It must record enough about each entering object to answer the selector *after that object has left* (a Human that entered and then died this turn still satisfies the printed condition), so the natural implementation is to append a snapshot of derived characteristics plus controller-at-entry to `TurnLedger` inside `GameState.emit` for `EventType.PERMANENT_ENTERS`, and clear it at cleanup with the rest of the ledger. `exclude_self` on the selector is what makes "*another* Human" sayable -- Éowyn is herself a Human, and she may well have entered this turn, which is exactly the case the word "another" exists to exclude.
-  <br>Why the existing vocabulary won't do: `TurnLedger` (`src/automtg/engine/structs.py:206-286`) has seven tallies -- `creatures_died`, `attacked`, `damage_taken`, `life_lost`, `spells_cast`, `cards_to_graveyard`, `combat_damage_types` -- and entering the battlefield is not among them; `VALUE_KEYS` (`engine/effects/values.py:30-109`) exposes exactly those, so there is no `permanents_entered_this_turn` to ask for. Nothing in `src/` matches /entered.*this_turn/ outside a test name. The closest condition leaf is `exists`, which is a *board* query: `{"exists": {"controller": "you", "subtypes": ["Human"], "zone": "battlefield", "exclude_self": true}}` asks "do you control another Human", which is a strictly different and much weaker question -- it is true when a Human has sat there since turn three and nothing entered, and false when a Human entered this turn and died, so it gets the card wrong in both directions. The other candidate is `set_flag`/`has_flag`, and it fails on two counts. It has the wrong lifetime: `op_set_flag` (`engine/effects/ops_board.py:1049-1053`) does `obj.flags.add(flag)` and flags are cleared only by `reset_permanent_state` on a zone change (`engine/objects.py:426`), never at cleanup, so a flag set the first time a Human entered would leave the intervening-if permanently satisfied for the rest of the game -- the ability would fire every combat forever. And it has the wrong shape: writing the flag needs a second `permanent_enters` triggered ability that no printed line asks for, which the residual gate would reject, since every ability's `text` must be a printed sentence. `combat_damage_by` shows the intended precedent for a characteristic-keyed ledger read (prowl matches on creature subtype), but it only watches combat damage to a player and cannot be pointed at enters-the-battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Éowyn, Shieldmaiden** (rank 4513) — `eowyn_shieldmaiden`
-  - At the beginning of combat on your turn, if another Human entered the battlefield under your control this turn, create two 2/2 red Human Knight creature tokens with trample and haste. Then if you control six or more Humans, draw a card.
 
 </details>
 
