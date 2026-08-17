@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "keyword_counters",
-      "kind": "engine",
-      "what": "Counters whose kind is a keyword name -- a vigilance counter, a lifelink counter, a flying counter -- must actually grant that keyword to the permanent they sit on, read in the derived-characteristics keyword-grant layer the same way +1/+1 counters are read in the P/T layer, so that `add_counters` with `counter: \"vigilance\"` produces a vigilant creature rather than a tally nobody consults.",
-      "why_existing_wont_do": "`add_counters` accepts any `counter` string, but the only counter kinds the characteristics pipeline reads are `+1/+1` and `-1/-1` for power and toughness; nothing consults counters when computing keywords, so a `vigilance`/`lifelink` counter placed today is inert bookkeeping and the creature comes back with neither keyword. `grant_keyword` is the closest op and is the wrong shape twice over: it hands out a keyword directly with no counter to carry it, and its grants are either until-end-of-turn or tied to a continuous effect on a live source -- whereas a keyword counter is permanent, travels with the creature, survives Gilraen leaving, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` with a `counters` condition cannot stand in either: `static_filter_keys` has no way to point a static on Gilraen at one specific other creature, and the counters would still not exist as the thing being read."
-    },
-    {
       "capability": "delayed_object_reference",
       "kind": "op",
       "what": "A way for `exile` to record which objects it moved under a name -- the `as` binding `sacrifice` and `reveal` already have -- so a later `delay` can return exactly those cards with `{\"binding\": \"exiled\"}`. \"Return *that card*\" from inside a delayed trigger has no expressible subject today.",
@@ -26,5 +20,8 @@
     "sacrifice_as_binding",
     "snapshot"
   ],
-  "confidence": "high"
+  "confidence": "high",
+  "resolved": [
+    "keyword_counters"
+  ]
 }

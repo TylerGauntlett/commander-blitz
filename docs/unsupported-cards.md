@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **41** capabilities.
+**39 cards** blocked by **40** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-block](#cant-block) | 2 | 2089 | op |
 | [conditional-cost-reduction](#conditional-cost-reduction) | 2 | 5614 | cost |
 | [effect-result-binding](#effect-result-binding) | 2 | 4737 | op, selector |
-| [keyword-counters](#keyword-counters) | 2 | 4643 | engine |
 | [ability-activated-trigger](#ability-activated-trigger) | 1 | 2388 | trigger_event |
 | [addendum](#addendum) | 1 | 550 | engine |
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
@@ -202,27 +201,6 @@ Blocks **2** cards.
   - Exile the token at end of combat.
 - **Grey Host Reinforcements** (rank 11982) — `grey_host_reinforcements`
   - When this creature enters, exile target player's graveyard. Put a number of +1/+1 counters on this creature equal to the number of creature cards exiled this way.
-
-</details>
-
-## keyword-counters
-
-Blocks **2** cards.
-
-- **(engine)** Counters whose kind is a keyword name -- a vigilance counter, a lifelink counter, a flying counter -- must actually grant that keyword to the permanent they sit on, read in the derived-characteristics keyword-grant layer the same way +1/+1 counters are read in the P/T layer, so that `add_counters` with `counter: "vigilance"` produces a vigilant creature rather than a tally nobody consults.
-  <br>Why the existing vocabulary won't do: `add_counters` accepts any `counter` string, but the only counter kinds the characteristics pipeline reads are `+1/+1` and `-1/-1` for power and toughness; nothing consults counters when computing keywords, so a `vigilance`/`lifelink` counter placed today is inert bookkeeping and the creature comes back with neither keyword. `grant_keyword` is the closest op and is the wrong shape twice over: it hands out a keyword directly with no counter to carry it, and its grants are either until-end-of-turn or tied to a continuous effect on a live source -- whereas a keyword counter is permanent, travels with the creature, survives Gilraen leaving, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` with a `counters` condition cannot stand in either: `static_filter_keys` has no way to point a static on Gilraen at one specific other creature, and the counters would still not exist as the thing being read.
-- **(engine)** Counters whose kind is a keyword name -- here an indestructible counter -- must actually grant that keyword to the permanent they sit on, read in the keyword-derivation layer the way `+1/+1` counters are read in the P/T layer, so `{"op": "add_counters", "counter": "indestructible"}` produces an indestructible creature. Same request as `gilraen_dunedain_protector` (vigilance and lifelink counters); this card adds `indestructible` to the set of keywords that must be reachable that way, and needs it placeable on a targeted permanent someone else may control.
-  <br>Why the existing vocabulary won't do: `op_add_counters` (`engine/effects/ops_board.py:284-290`) accepts any `counter` string and just tallies it via `add_counters`; nothing in `src/` matches /indestructible.*counter/ or any keyword-counter lookup, and the only kinds the characteristics pipeline consults are `+1/+1` and `-1/-1`. So the op loads and the card would print "put an indestructible counter on it" while leaving the target exactly as killable as before -- an inert clause, which is the specific failure the brief says is worse than nothing. `grant_keyword` is the closest op and is the wrong shape: its grant is a duration-bound temporary effect (`loader.py:1798` validates the duration precisely because a misspelled one silently falls back to until-end-of-turn), whereas an indestructible counter is permanent, rides on the creature after the Saga is sacrificed by its own final-chapter rule, and is separately visible to `counters_on`, `remove_counters`, `move_counters` and `proliferate`. A static `grant_keyword` on the Saga cannot substitute either -- `static_filter_keys` has no way to point a static at one specific creature chosen when the chapter resolved, and the Saga sacrifices itself immediately afterwards, taking any continuous effect with it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gilraen, Dúnedain Protector** (rank 4643) — `gilraen_dunedain_protector`
-  - If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.
-- **Oath of Eorl** (rank 7121) — `oath_of_eorl`
-  - (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)
-  - I — Create two 1/1 white Human Soldier creature tokens.
-  - II — Create two 2/2 red Human Knight creature tokens with trample and haste.
-  - III — Put an indestructible counter on up to one target Human. You become the monarch.
 
 </details>
 

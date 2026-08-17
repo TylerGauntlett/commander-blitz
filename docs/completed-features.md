@@ -119,6 +119,113 @@ stay blocked on capabilities that are not the monarch — `cant_block`,
 `variable_enters_with_counters`, `delayed_triggered_ability`, `saga` plus
 `keyword_counters`, and `exile_until_event` — and their gap records were trimmed
 rather than retired, so the report now says what each is actually waiting for.
+## Keyword counters — the counter that was already sayable and meant nothing
+
+### Overview
+
+"Return that card to the battlefield under its owner's control **with a vigilance
+counter and a lifelink counter on it**" (Gilraen, Dúnedain Protector). "**Put an
+indestructible counter** on up to one target Human" (Oath of Eorl). Two gap
+records named the same capability, and one of their readers counted roughly ten
+more queued cards waiting on it.
+
+The gap was the quietest kind. `add_counters` has always accepted any `counter`
+string, so the clause **loaded, cast and resolved**; `characteristics._compute`
+read exactly two kinds, `+1/+1` and `-1/-1`, for power and toughness, and nothing
+anywhere consulted counters when computing keywords. So the card printed as
+written and handed back a creature that tapped when it attacked and gained nobody
+any life — an inert tally behind a sentence that every gate passed. Rule 122.1c
+says a permanent with a keyword counter on it *has* that keyword ability; the
+engine agreed on paper and nowhere else.
+
+### Tier B, and the whole of Tier B was where the layer sits
+
+No new op — `add_counters`, `remove_counters`, `move_counters` and `proliferate`
+were already generic over the kind. No new `TempEffect` and no new primitive
+either, which is the part of Tier B that did not apply: a counter is already
+first-class state on `GameObject`, already bumps `char_version`, already
+serializes, already survives the turn. What was missing was a **reader**, so the
+one Tier B question that mattered was the one Tier B says is the whole design
+question — where in the fixed order it goes.
+
+It goes in the **keyword-grant layer** (2b), beside the `grant_keyword` statics,
+not beside the `+1/+1` counters at layer 5. Three reasons, in order of how much
+they decide:
+
+1. It is what the real layer system does. 613.1f applies keyword counters
+   together with the ability-adding effects; 613.1d applies `+1/+1` counters four
+   layers later. The engine's fixed order now splits the two halves of "read the
+   counters" the same way, and the split is the point rather than an accident.
+2. What separates them is what they *are*: one counter is an ability, the other
+   is a size. Grouping by which dict they came out of would put an ability in the
+   P/T layer.
+3. No outcome can tell. Keywords only ever accumulate into a set and no layer
+   removes one — there is no "loses all abilities" static — so unlike `animate`,
+   which had to run first because it **replaces** base P/T, this collides with
+   nothing. That makes the position a statement about what the thing is, and the
+   argument above is all there is to go on.
+
+The set of kinds is derived from `Keyword` (`enums.KEYWORD_COUNTERS`) rather than
+listed, because 122.1c names no subset: the next card to print a menace counter
+should need no engine change. `INERT_KEYWORDS` is subtracted, since partner is a
+deck-construction word and a counter granting it could not mean anything.
+
+### The load-time guard, which is most of the value
+
+The lookup is exact, so `"Vigilance"`, `"vigilance counter"` and `"first strike"`
+would each write a tally nobody consults on a card that reads as printed — the
+same silent failure, now reachable by a typo instead of by a missing layer. A
+counter kind is an open vocabulary (charge, quest, slumber, lore, age) with
+nothing to validate against, but this particular mistake is *detectable*: it
+normalises onto a keyword the engine implements. So `_check_counter_kind` refuses
+it, at every point a card names a counter kind — an effect's `counter` or
+`counters`, an enters-with-counters replacement, a static's `counters` condition,
+and a `counter_placed` trigger filter. A kind that normalises onto nothing is
+left alone; guessing at typos in an open vocabulary would refuse correct cards.
+
+### Refused: making a static's filter see it
+
+`added_subtypes` is let into `_matches_printed` because Captivating Vampire's own
+anthem would otherwise ignore the creature it had just converted. Keyword
+counters are a pipeline input in exactly the same sense and could have been let
+in on exactly the same argument — and were not.
+
+A static's `affects` filter reads the printed face, so `keywords: ["flying"]`
+does not match a creature wearing a flying counter. It also does not match one
+granted flying by Levitation, which is the documented no-layers simplification
+working as designed. Admitting counters alone would make a keyword counter the
+one *visible* kind of keyword grant, which is a new inconsistency rather than a
+closed hole — and no card in the pool needs it, where Captivating Vampire needed
+its half. Effect selectors (`selectors.matches`) read derived characteristics on
+the battlefield and see keyword counters for free, which is a split that already
+existed for every other grant.
+
+### What it unblocked: nothing, and that is the honest answer
+
+Neither witness can be authored, and neither is blocked on this any more:
+
+- **Gilraen, Dúnedain Protector** also needs `delayed_object_reference` — "return
+  *that card*" from inside a `delay` has no expressible subject, because
+  `turn.py` builds the delayed-trigger context with `targets={}` and `exile`
+  writes no binding.
+- **Oath of Eorl** also needs `saga`, which `rules-coverage.md` lists under **Not
+  implemented**: `AbilityKind` is exactly {activated, triggered, static} and there
+  is no chapter ability for its printed lines to hang on.
+
+Both gap records were trimmed to their remaining needs rather than retired. So
+`tests/unit/test_keyword_counters.py` is the only thing holding this mechanic —
+no authored card is re-verified through the six gates on its behalf — and it is
+weighted accordingly: placement, parity with the printed keyword, three separate
+rules (combat declaration, `destroy`, `can_block`) reading it, outlasting both the
+cleanup step and the permanent that placed it, the boundary where the last
+counter comes off, every other counter op reaching it, and the zone change that
+takes it away.
+
+That last one is worth stating, because it looks like a limitation and is the
+rule: counters cease to exist when a permanent changes zones (121.2), so a
+creature that dies and returns is the printed one again. It is precisely why
+Gilraen's card says to return the card *with* the counters on it rather than
+trusting them to travel.
 
 ## A mandatory additional cost — the half that "mandatory" did not deliver
 

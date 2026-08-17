@@ -273,6 +273,26 @@ EVASION_KEYWORDS = frozenset(
 #: nothing during a game, or it belongs in the engine instead.
 INERT_KEYWORDS = frozenset({Keyword.PARTNER})
 
+#: Counter kinds that are **keyword counters** (122.1c): "a keyword counter is a
+#: counter with a keyword ability's name, and a permanent with one has that
+#: keyword ability".
+#:
+#: Derived from `Keyword` rather than listed, because the rule is the derivation
+#: -- 122.1c names no subset, so any keyword the engine implements is a keyword
+#: counter the moment a card asks for one. A hand-written list would be a second
+#: place to forget: the next card printing a *menace* counter would place an
+#: inert tally and load clean, which is the failure the authoring gates exist to
+#: refuse.
+#:
+#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner is a
+#: deck-construction word and the engine is handed a finished deck, so a partner
+#: counter could not mean anything mid-game; a counter kind that grants nothing
+#: is the inert tally in a costume.
+#:
+#: Read by `characteristics._compute` (the keyword-grant layer) and by
+#: `cards.loader` (which refuses a near-miss spelling of one).
+KEYWORD_COUNTERS = frozenset(k.value for k in Keyword) - {k.value for k in INERT_KEYWORDS}
+
 
 class AbilityKind(str, Enum):
     ACTIVATED = "activated"
