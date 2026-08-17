@@ -273,6 +273,17 @@ class Ability:
     #: ability actually resolves.  Mixing them would either make the solver
     #: think a painland produces damage or make the damage never happen.
     mana_rider: tuple[Mapping[str, Any], ...] = ()
+    #: "Add one mana of any color that a land an opponent controls could
+    #: produce." Exotic Orchard. A selector over permanents whose own mana
+    #: abilities decide which colours this one offers -- so the options are a
+    #: question about the board rather than a constant on the card, which is
+    #: what every other mana ability's `mana_options` is.
+    #:
+    #: `mana_options` still holds the five colours as a static superset, so the
+    #: ability is recognisable as a mana source at load time; the narrowing to
+    #: what the board actually offers happens in `costs.mana_options_of`, which
+    #: both the payment solver and the activation read.
+    mana_reflects: Mapping[str, Any] | None = None
     #: "Spend this mana only to cast a creature spell" -- the card type the mana
     #: may pay for, lowercased.  ``None`` is ordinary mana.
     mana_restriction: str | None = None

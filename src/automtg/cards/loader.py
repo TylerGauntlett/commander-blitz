@@ -891,14 +891,42 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_options: tuple[tuple[int, ...], ...] = ()
     mana_amount: Mapping[str, Any] | None = None
     mana_rider: tuple[Mapping[str, Any], ...] = ()
+    mana_reflects: Mapping[str, Any] | None = None
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
         mana_effects, mana_rider = _split_mana_rider(model.effects, where)
-        mana_options = _mana_options(mana_effects, where)
-        mana_amount = _mana_amount(mana_effects, where)
+        # "Add one mana of any color that a land an opponent controls could
+        # produce." The colours are a question about the board, so the card
+        # names the permanents to ask rather than the colours to make.
+        reflect = next(
+            (
+                e.get("reflecting")
+                for e in mana_effects
+                if isinstance(e, Mapping) and e.get("reflecting")
+            ),
+            None,
+        )
+        if reflect is not None:
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a reflecting mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the board's colours to join"
+                )
+            validate_selector(reflect, f"{where}.reflecting")
+            mana_reflects = dict(reflect)
+            # The static superset. Load time cannot know which colours the board
+            # will offer, and an empty tuple here would make `solver_taps` and
+            # `offerable_mana_ability` both decide this is not a mana source at
+            # all -- so the ability would never be offered or tapped, whatever
+            # the opponent's lands did.
+            mana_options = _ANY_COLOR_OPTIONS
+            mana_amount = None
+        else:
+            mana_options = _mana_options(mana_effects, where)
+            mana_amount = _mana_amount(mana_effects, where)
     mana_restriction: frozenset[str] | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
@@ -933,6 +961,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_options=mana_options,
         mana_amount=mana_amount,
         mana_rider=mana_rider,
+        mana_reflects=mana_reflects,
         mana_restriction=mana_restriction,
         sorcery_speed_only=model.sorcery_speed_only,
         activation_condition=(
@@ -1391,6 +1420,13 @@ MANA_RIDER_OPS = frozenset(
 )
 
 
+#: The five colours, as single-symbol production tuples. The static superset a
+#: reflecting mana ability advertises before the board narrows it.
+_ANY_COLOR_OPTIONS: tuple[tuple[int, ...], ...] = tuple(
+    parse_mana_production(f"{{{sym}}}") for sym in ("W", "U", "B", "R", "G")
+)
+
+
 def _split_mana_rider(
     effects: list[dict[str, Any]], where: str
 ) -> tuple[list[dict[str, Any]], tuple[Mapping[str, Any], ...]]:
@@ -1777,8 +1813,11 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             f"{where}: connive needs 'objects' naming what connives "
             f"(use {{\"self_only\": true}} for \"it connives\")"
         )
-    if op == "add_mana" and "mana" not in effect:
-        raise DslError(f"{where}: add_mana needs 'mana'")
+    # `reflecting` is the one add_mana that names no symbols: "one mana of any
+    # color that a land an opponent controls could produce" reads them off the
+    # board, so the card names the permanents to ask instead.
+    if op == "add_mana" and "mana" not in effect and "reflecting" not in effect:
+        raise DslError(f"{where}: add_mana needs 'mana' (or 'reflecting')")
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the

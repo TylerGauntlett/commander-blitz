@@ -14,7 +14,8 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, Cost
 from .characteristics import chars, player_doubles_land_mana, spell_cost_reduction
 from .effects.context import EffectContext, ask_objects
-from .enums import Keyword, Zone
+from .effects.selectors import resolve_pool
+from .enums import COLORLESS, Keyword, Zone
 from .errors import DslError
 from .events import EventType
 from .mana import (
@@ -163,7 +164,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                             doubled=doubled,
                             times=mana_amount(state, oid, ability),
                         )
-                        for option in ability.mana_options
+                        for option in mana_options_of(state, oid, ability)
                     )
                 ),
                 is_land=is_land,
@@ -204,6 +205,50 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
         source_name=state.card_of(obj).name,
     )
     return max(0, int(evaluate_value(ctx, ability.mana_amount)))
+
+
+def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """Which symbol tuples this ability could produce **right now**.
+
+    For almost every mana ability this is the load-time constant: the card says
+    what it makes. Exotic Orchard says what to *ask* instead -- "one mana of any
+    color that a land an opponent controls could produce" -- so its options are
+    a question about the board.
+
+    Called from ``_sources_of`` (so the solver plans against the real colours)
+    and from ``activate_mana_ability`` (so the payment adds one of them), for
+    exactly the reason ``mana_produced`` is: a spell offered on a colour and
+    then paid in another would strand the payment mid-cast. Both read the same
+    board within one payment, so the option index they agree on means the same
+    thing to each.
+
+    An empty result is a real answer -- an opponent with no lands offers no
+    colours, and the Orchard taps for nothing. The solver simply never picks a
+    source that produces nothing.
+    """
+    if ability.mana_reflects is None:
+        return ability.mana_options
+
+    ctx = EffectContext(state=state, controller=state.objects[oid].controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_reflects):
+        other_card = state.card_of(state.objects[other])
+        for other_ability in other_card.abilities:
+            # The *printed* options of the other permanent, not its reflected
+            # ones: two Exotic Orchards facing each other would otherwise ask
+            # each other what they produce, for ever.
+            if not other_ability.is_mana_ability or other_ability.mana_reflects is not None:
+                continue
+            for option in other_ability.mana_options:
+                for index, amount in enumerate(option):
+                    if amount and index != SYMBOL_INDEX[COLORLESS]:
+                        colors.add(index)
+
+    out: list[tuple[int, ...]] = []
+    for option in ability.mana_options:
+        if any(amount and i in colors for i, amount in enumerate(option)):
+            out.append(option)
+    return tuple(out)
 
 
 def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tuple[int, ...]:
@@ -711,8 +756,17 @@ def activate_mana_ability(
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types
     doubled = is_land and obj is not None and player_doubles_land_mana(state, obj.controller)
+    options = mana_options_of(state, oid, ability)
+    if option_index >= len(options):
+        # The board changed what this ability offers between the plan and the
+        # payment. A reflecting ability is the first whose options are not
+        # constant, so this refuses rather than indexing into another colour.
+        raise DslError(
+            f"mana ability {ability.index} of {state.card(oid).name} no longer "
+            f"offers option {option_index}"
+        )
     produced = mana_produced(
-        ability.mana_options[option_index],
+        options[option_index],
         doubled=doubled,
         times=mana_amount(state, oid, ability),
     )

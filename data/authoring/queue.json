@@ -87602,12 +87602,12 @@
     },
     "Exotic Orchard": {
       "edhrec_rank": 9,
-      "gate": "template",
+      "gate": null,
       "name": "Exotic Orchard",
-      "reason": "proxy simplified it: mana clause read loosely: 'one mana of any color that a land an opp'",
+      "reason": "",
       "scryfall_id": "d11c5fe0-1528-4c94-a8cc-42bcab9d7487",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exotic Pets": {
@@ -99602,12 +99602,12 @@
     },
     "Forerunner of the Legion": {
       "edhrec_rank": 5982,
-      "gate": "template",
+      "gate": null,
       "name": "Forerunner of the Legion",
-      "reason": "no template for: When this creature enters, you may search your library for a Vampire card, reveal it, then",
+      "reason": "",
       "scryfall_id": "10718d37-63d4-44b7-9450-5d49cffce944",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Foresee": {

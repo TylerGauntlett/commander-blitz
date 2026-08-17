@@ -1596,6 +1596,51 @@ activated inside cost payment, where there is no stack to put a decision on and
 no priority window to answer it in, so an op that yields would hang the solver
 mid-tap. The whitelist makes that a card that will not load instead.
 
+## Reflecting mana — "any color that a land an opponent controls could produce"
+
+```jsonc
+{"op": "add_mana",
+ "reflecting": {"zone": "battlefield", "controller": "opponent", "types": ["Land"]}}
+```
+
+The one `add_mana` that names no symbols. Every other mana ability's output is a
+constant on the card, which is why `mana_options` is computed once at load time:
+the payment solver reads those tuples while *planning*, before anything is
+tapped. Exotic Orchard's are a question about the board, so
+`costs.mana_options_of` narrows the static superset to what the named permanents
+actually produce, and both `_sources_of` and `activate_mana_ability` call it —
+the same two callers and the same reason as `mana_produced`.
+
+`mana_options` still holds all five colours at load time. An empty tuple there
+would make `solver_taps` and `offerable_mana_ability` both decide this is not a
+mana source, so the ability would never be tapped whatever the board offered.
+
+A reflecting ability never asks another one: the scan reads only *printed*
+options, so two Exotic Orchards facing each other terminate. An empty answer is a
+real answer — an opponent with no lands offers no colours, and the solver simply
+never picks a source that produces nothing.
+
+## "…then shuffle and put that card on top"
+
+```jsonc
+{"op": "search_library", "count": 1, "destination": "library_top",
+ "reveal": true, "selector": {"subtypes": ["Vampire"]}}
+```
+
+`destination: "library_top"` existed and did not work: `_search` moved the found
+card and *then* shuffled (701.19c), so it was placed on top and immediately
+shuffled back into a random position — a tutor that finds nothing, silently. The
+shuffle now happens first when the destination is the top of the same library,
+which is both the printed order and the rules order. No other destination cares.
+
+`reveal` is a flag on the search rather than a second op, because nothing could
+name the cards a search had found — `resolve_pool` reaches a pool by `target` or
+`binding`, and a search recorded neither.
+
+The search is already optional: it asks with a minimum of zero, so "you **may**
+search" needs no `may` wrapper, and adding one would put two prompts in front of
+one printed choice.
+
 ## "Whenever an opponent loses life"
 
 ```jsonc

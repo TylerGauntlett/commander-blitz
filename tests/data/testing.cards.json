@@ -7383,6 +7383,80 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_orchard",
+      "name": "Test Orchard",
+      "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_forerunner",
+      "name": "Test Forerunner",
+      "oracle_text": "When this creature enters, you may search your library for a Bear card, reveal it, then shuffle and put that card on top.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Scout"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may search your library for a Bear card, reveal it, then shuffle and put that card on top.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 1,
+              "destination": "library_top",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Bear"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

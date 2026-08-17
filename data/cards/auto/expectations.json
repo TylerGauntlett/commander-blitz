@@ -1757,6 +1757,24 @@
   "exocomp": {
     "zone": "battlefield"
   },
+  "exotic_orchard": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "expedition_envoy": {
     "zone": "battlefield"
   },
@@ -2008,6 +2026,24 @@
     "zone": "battlefield"
   },
   "foreboding_ruins": {
+    "zone": "battlefield"
+  },
+  "forerunner_of_the_legion": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "forest_bear": {
