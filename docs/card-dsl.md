@@ -1805,6 +1805,33 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## "When that mana is spent to cast…"
+
+```jsonc
+{"trigger": {"event": "spell_cast", "controller": "you",
+             "filter": {"types": ["Creature"], "paid_by": "self"}}}
+```
+
+Path of Ancestry, Opal Palace. **Not a new event.** `paid_by` is a trigger
+filter matched against the *spell*, because `pay_mana` writes onto it which
+permanents' mana abilities made the mana that paid for it — the same seam
+`colors_spent` already used, at the same instant, for the same reason.
+
+A `mana_spent` event of its own would fire during **cost payment**, before the
+spell is on the stack and before the filter has anything to match against.
+
+The pool carries this pip by pip: `ManaPool.tags[i]` holds one entry for each of
+`amounts[i]`, naming the permanent that made it. Provenance has to be a list and
+not a set, because "that mana" is a unit of mana and not a colour — a pool with
+one black from Path of Ancestry and one black from a Swamp must be able to spend
+either.
+
+**`mana_restriction` is the near-miss to refuse.** "Spend this only to cast a
+creature spell" gates what *may* be paid and never reports what *was*: it is
+implemented by filtering sources before the solver sees them, so it cannot carry
+a rider. And a bare `spell_cast` with no `paid_by` is a strictly better card —
+it triggers on creature spells cast entirely off other lands.
+
 ## "…that shares a creature type with your commander"
 
 ```jsonc

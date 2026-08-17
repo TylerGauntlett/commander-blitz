@@ -8135,6 +8135,59 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_ancestry",
+      "name": "Test Path of Ancestry",
+      "oracle_text": "This land enters tapped.\n{T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1.",
+      "types": [
+        "Land"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color in your commander's color identity.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "in_commander_identity": true
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "paid_by": "self",
+              "shares_a_type_with_commander": "you"
+            }
+          },
+          "effects": [
+            {
+              "op": "scry",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

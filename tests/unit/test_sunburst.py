@@ -48,7 +48,9 @@ def pool_with(**amounts) -> ManaPool:
 
 
 def spend(cost: str, **amounts) -> frozenset[str]:
-    return pool_with(**amounts).spend(ManaCost.parse(cost).with_x(0))
+    """Just the colours. `spend` also reports which permanents made the mana --
+    see `tests/unit/test_mana_provenance.py` -- and this file is about colour."""
+    return pool_with(**amounts).spend(ManaCost.parse(cost).with_x(0)).colors
 
 
 class TestWhatSpendReports:

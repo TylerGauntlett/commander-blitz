@@ -248,20 +248,60 @@ class Requirement:
         return sum(self.colored) + self.generic + sum(pip.value for pip in self.hybrid)
 
 
+@dataclass(frozen=True)
+class SpentMana:
+    """What one payment actually consumed.
+
+    Both halves exist only at the instant `spend` runs: once the pool is
+    decremented one blue mana is indistinguishable from another, and the
+    permanent that made it is indistinguishable from every other permanent.
+    """
+
+    #: Sunburst and converge -- which colours were spent, generic included.
+    colors: frozenset[str] = frozenset()
+    #: "When **that mana** is spent..." -- which permanents' mana abilities made
+    #: the mana this payment consumed. Path of Ancestry, Opal Palace.
+    sources: frozenset[int] = frozenset()
+
+
 class ManaPool:
-    """Floating mana.  Emptied at the end of every step and phase."""
+    """Floating mana.  Emptied at the end of every step and phase.
 
-    __slots__ = ("amounts",)
+    ``amounts`` is the count per symbol and ``tags`` is the same thing pip by
+    pip: ``tags[i]`` holds one entry for each of ``amounts[i]``, naming the
+    permanent whose mana ability made it, or ``None`` for mana that came from an
+    effect rather than from a permanent. The two are kept the same length by
+    every method here, which is why nothing outside this class may touch
+    ``amounts`` directly.
 
-    def __init__(self, amounts: Sequence[int] | None = None) -> None:
+    Provenance is a list rather than a set because "that mana" is a *unit* of
+    mana and not a colour: a pool holding one black from Path of Ancestry and
+    one black from a Swamp has to be able to spend either.
+    """
+
+    __slots__ = ("amounts", "tags")
+
+    def __init__(
+        self,
+        amounts: Sequence[int] | None = None,
+        tags: Sequence[Sequence[int | None]] | None = None,
+    ) -> None:
         self.amounts: list[int] = list(amounts) if amounts else _zeros()
+        self.tags: list[list[int | None]] = (
+            [list(t) for t in tags]
+            if tags is not None
+            else [[None] * n for n in self.amounts]
+        )
 
-    def add(self, symbol: str, count: int = 1) -> None:
-        self.amounts[SYMBOL_INDEX[symbol]] += count
+    def add(self, symbol: str, count: int = 1, source: int | None = None) -> None:
+        index = SYMBOL_INDEX[symbol]
+        self.amounts[index] += count
+        self.tags[index].extend([source] * count)
 
-    def add_tuple(self, produced: Sequence[int]) -> None:
+    def add_tuple(self, produced: Sequence[int], source: int | None = None) -> None:
         for i, v in enumerate(produced):
             self.amounts[i] += v
+            self.tags[i].extend([source] * v)
 
     def total(self) -> int:
         return sum(self.amounts)
@@ -270,36 +310,56 @@ class ManaPool:
         """Empty the pool, returning how much mana was lost."""
         lost = sum(self.amounts)
         self.amounts = _zeros()
+        self.tags = [[] for _ in range(N_SYMBOLS)]
         return lost
 
     def copy(self) -> ManaPool:
-        return ManaPool(self.amounts)
+        return ManaPool(self.amounts, self.tags)
+
+    def _take(self, index: int, count: int) -> list[int | None]:
+        """Deduct ``count`` pips of one symbol and report who made them.
+
+        **Newest first.** Which same-coloured pip a payment consumes is the
+        player's choice in the printed rules, and this is the one bias that
+        matches how the payment actually runs: `pay_mana` taps whatever it needs
+        immediately before spending, so the mana it just made is at the end of
+        the list. A Path of Ancestry tapped *for* a spell therefore pays for that
+        spell, which is the only case the card is ever played for. Recorded as a
+        simplification in ``docs/rules-coverage.md``.
+        """
+        self.amounts[index] -= count
+        cut = len(self.tags[index]) - count
+        taken = self.tags[index][cut:]
+        del self.tags[index][cut:]
+        return taken
 
     def to_dict(self) -> dict[str, int]:
         return {s: self.amounts[i] for i, s in enumerate(SYMBOLS) if self.amounts[i]}
 
-    def spend(self, req: Requirement) -> frozenset[str]:
+    def spend(self, req: Requirement) -> SpentMana:
         """Deduct ``req`` from the pool.  Assumes the pool can cover it.
 
-        Returns **which colours were actually spent** -- sunburst and converge,
-        and the one fact about a payment that no card could previously read.
-        The information exists only here: by the time the spell is on the stack
-        the pool has been decremented and one blue mana is indistinguishable from
-        another.
+        Returns what the payment consumed: **which colours** -- sunburst and
+        converge -- and **which permanents made it** -- Path of Ancestry's "when
+        that mana is spent". Both facts exist only here: by the time the spell is
+        on the stack the pool has been decremented and one blue mana is
+        indistinguishable from another.
 
-        It counts mana spent on the **generic** part too, which is what both
-        keywords say: a Sunburst artifact cast for `{4}` off five different
-        lands enters with five counters, and its printed cost has no coloured
-        pips at all. Colorless is not a colour, so `{C}` contributes nothing.
+        Colours count mana spent on the **generic** part too, which is what both
+        keywords say: a Sunburst artifact cast for `{4}` off five different lands
+        enters with five counters, and its printed cost has no coloured pips at
+        all. Colorless is not a colour, so `{C}` contributes nothing there -- but
+        it is a source like any other, so it still names its permanent.
         """
         spent: set[str] = set()
+        made_by: set[int] = set()
         remaining_generic = req.generic
         for i in range(N_SYMBOLS):
             need = req.colored[i]
             if need:
                 if self.amounts[i] < need:
                     raise ValueError("pool cannot cover colored requirement")
-                self.amounts[i] -= need
+                made_by.update(t for t in self._take(i, need) if t is not None)
                 if i < len(COLOR_ORDER):
                     spent.add(COLOR_ORDER[i].value)
         # Hybrid pips choose their half here, and must choose it the *same* way
@@ -314,7 +374,7 @@ class ManaPool:
                 if symbol < 0:
                     remaining_generic += pip.generic or 0
                 else:
-                    self.amounts[symbol] -= 1
+                    made_by.update(t for t in self._take(symbol, 1) if t is not None)
                     if symbol < len(COLOR_ORDER):
                         spent.add(COLOR_ORDER[symbol].value)
         # Pay generic from the most plentiful symbols first so scarce colours are
@@ -324,11 +384,11 @@ class ManaPool:
             if self.amounts[best] <= 0:
                 raise ValueError("pool cannot cover generic requirement")
             take = min(self.amounts[best], remaining_generic)
-            self.amounts[best] -= take
+            made_by.update(t for t in self._take(best, take) if t is not None)
             remaining_generic -= take
             if best < len(COLOR_ORDER):
                 spent.add(COLOR_ORDER[best].value)
-        return frozenset(spent)
+        return SpentMana(colors=frozenset(spent), sources=frozenset(made_by))
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"ManaPool({self.to_dict()})"

@@ -803,10 +803,12 @@ def pay_mana(
 ) -> bool:
     """Tap sources and deduct ``req`` from the pool.
 
-    ``record_colors_on`` is sunburst and converge: the object to write the
-    colours actually spent onto. This is the only moment they are knowable --
-    once the pool is decremented, one blue mana is indistinguishable from
-    another -- so a card that reads them later has to be handed them here.
+    ``record_colors_on`` is the object to write the payment's provenance onto:
+    the colours actually spent (sunburst and converge) and the permanents whose
+    mana abilities made them (Path of Ancestry's "when that mana is spent").
+    This is the only moment either is knowable -- once the pool is decremented,
+    one blue mana is indistinguishable from another and so is the land that made
+    it -- so a card that reads them later has to be handed them here.
     """
     player = state.players[pid]
     sources = mana_sources(state, pid, purpose=purpose)
@@ -819,8 +821,15 @@ def pay_mana(
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req)
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
-        obj.colors_spent = spent
-    state.emit(EventType.MANA_SPENT, player=pid, amount=req.total, colors=sorted(spent))
+        obj.colors_spent = spent.colors
+        obj.mana_sources_spent = spent.sources
+    state.emit(
+        EventType.MANA_SPENT,
+        player=pid,
+        amount=req.total,
+        colors=sorted(spent.colors),
+        sources=sorted(spent.sources),
+    )
     return True
 
 
@@ -864,7 +873,11 @@ def activate_mana_ability(
     if ability.cost is not None and ability.cost.tap:
         tap_permanent(state, oid)
 
-    state.players[pid].mana_pool.add_tuple(produced)
+    # Tagged with the permanent that made it. The tag is the whole of what
+    # Path of Ancestry's "when that mana is spent" reads back, and it is
+    # knowable only here -- a pool of six integers cannot say where a pip
+    # came from once it has landed in it.
+    state.players[pid].mana_pool.add_tuple(produced, source=oid)
     state.emit(
         EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced)
     )

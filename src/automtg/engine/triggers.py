@@ -557,6 +557,18 @@ def matches_card_filter(
     # Path of Ancestry. Answered here as well as in `selectors.matches` because
     # this is the half a *trigger* filter reaches, and the printed subtypes are
     # the right side of the comparison for a spell on the stack.
+    # "When **that mana** is spent to cast a spell…" -- Path of Ancestry, Opal
+    # Palace. Answered off the *subject*, which is the spell: `pay_mana` wrote
+    # onto it which permanents' mana abilities made the mana that paid for it,
+    # at the one instant that was knowable. A `mana_spent` event of its own
+    # would fire during cost payment, before the spell is on the stack and
+    # before its filter has anything to match against.
+    paid_by = filt.get("paid_by")
+    if paid_by is not None:
+        wanted = ability_source.oid if paid_by == "self" else paid_by
+        if wanted not in obj.mana_sources_spent:
+            return False
+
     who = filt.get("shares_a_type_with_commander")
     if who is not None:
         from .characteristics import commander_subtypes
