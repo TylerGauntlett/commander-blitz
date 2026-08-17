@@ -36,7 +36,18 @@ def _expectations() -> dict:
 
 
 PAYLOADS = _auto_payloads()
-CARD_IDS = sorted(c["id"] for c in PAYLOADS if "id" in c)
+
+#: The back faces of transforming cards, by id. A back face is not a card in its
+#: own right: it is never cast, drawn or shuffled into a deck, so it has no
+#: expectation and no position to be verified in. It is checked *through* its
+#: front, which names it as a companion below.
+BACK_FACE_IDS = frozenset(
+    str(c["back_face"]) for c in PAYLOADS if c.get("back_face")
+)
+
+CARD_IDS = sorted(
+    c["id"] for c in PAYLOADS if "id" in c and c["id"] not in BACK_FACE_IDS
+)
 
 
 @pytest.fixture(scope="module")
@@ -54,15 +65,29 @@ def by_id() -> dict:
 class TestEveryAutoCardStillPasses:
     @pytest.mark.parametrize("card_id", CARD_IDS)
     def test_it_clears_every_gate(self, card_id, by_id, hand_written):
+        payload = by_id[card_id]
         expectation = _expectations().get(card_id, {})
-        verdict = V.verify(by_id[card_id], expectation, hand_written)
+        # A transforming card is two entries and one object, so its back face
+        # travels with it -- exactly as the answer file that produced it did.
+        # Verified apart, the front fails the registry gate on a `back_face`
+        # pointing at a card that is not in the pool.
+        companions = [
+            by_id[str(payload["back_face"])]
+            for _ in (0,)
+            if payload.get("back_face") and str(payload["back_face"]) in by_id
+        ]
+        verdict = V.verify(payload, expectation, hand_written, companions=companions)
         assert verdict.ok, str(verdict)
 
     def test_every_card_has_an_expectation(self, by_id):
         # Gate 5 enforces this at authoring time; this catches an expectation
         # deleted afterwards, which would leave a card nobody is checking.
+        #
+        # Back faces are exempt and have to be: there is no position in which to
+        # cast one, so there is nothing an expectation could asserted about it.
+        # What it does is proven through its front.
         expectations = _expectations()
-        missing = sorted(set(by_id) - set(expectations))
+        missing = sorted(set(by_id) - set(expectations) - BACK_FACE_IDS)
         assert missing == [], f"authored with no expectation: {missing[:10]}"
 
     def test_no_orphan_expectations(self, by_id):
