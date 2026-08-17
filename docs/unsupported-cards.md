@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **33** capabilities.
+**26 cards** blocked by **29** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|

@@ -42,14 +42,11 @@ from automtg.engine.enums import (
 )
 from automtg.engine.errors import DslError
 from automtg.engine.mana import ManaCost, parse_mana_production
-<<<<<<< HEAD
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
+    CONTROL_DURATIONS,
 )
-=======
-from automtg.engine.structs import ATTACK_RESTRICTION_DURATIONS, CONTROL_DURATIONS
->>>>>>> worktree-agent-a6034f2a429c052f0
 from automtg.engine.triggers import TRIGGER_EVENTS
 from automtg.engine.turn import DELAY_STEPS
 

@@ -3824,6 +3824,12 @@
     "file": "field_creeper.jpg",
     "scryfall_id": "e148c1bf-84a2-48cd-882e-ad0fd74b8f0f"
   },
+  "field_of_ruin": {
+    "artist": "Chris Ostrowski",
+    "bytes": 82695,
+    "file": "field_of_ruin.jpg",
+    "scryfall_id": "143147d2-2eec-41e7-b78a-592288b38630"
+  },
   "fiend_hunter": {
     "artist": "Irina Nordsol",
     "bytes": 36623,
@@ -14247,6 +14253,12 @@
     "bytes": 81725,
     "file": "zagoth_triome.jpg",
     "scryfall_id": "cc520518-2063-4b57-a0d4-10cf62a7175e"
+  },
+  "zealous_conscripts": {
+    "artist": "Valera Lutfullina",
+    "bytes": 61201,
+    "file": "zealous_conscripts.jpg",
+    "scryfall_id": "78d6c026-c7ea-48e9-8125-19d55d407642"
   },
   "zealous_guardian": {
     "artist": "Steven Belledin",
