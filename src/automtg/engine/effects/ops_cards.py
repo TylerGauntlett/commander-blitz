@@ -903,6 +903,21 @@ def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("put_on_top")
 def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Tuck an object into a library, optionally at a stated depth.
+
+    ``from_top`` is the printed ordinal and counts from 1: absent or ``1`` is
+    "on top", ``2`` is Hinder's "second from the top", ``4`` is Lost to
+    Legend's "fourth from the top".  An ordinal rather than an insert index
+    because that is the sentence on the card, and off-by-one is exactly the
+    error nobody would see -- a card tucked third when it says fourth is drawn a
+    turn early, which is the whole of what the depth buys.
+
+    The library is always the object's **owner's**, never its controller's:
+    "into its owner's library" is printed on every card in this family, and the
+    difference is only visible on a stolen permanent -- where sending it to the
+    thief's library would hand the victim's card to the thief for ever.
+    """
+    depth = max(1, evaluate_value(ctx, spec.get("from_top", 1)))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -913,8 +928,16 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             oid,
             Zone.LIBRARY,
             to_player=obj.owner,
-            to_top=True,
+            to_index=depth - 1,
             cause="tuck",
             by=ctx.source_oid,
         )
-        ctx.state.emit(EventType.ZONE_CHANGE, source=oid, to="library_top")
+        # Only the top is announced as the top. The client renders both the same
+        # way (`FxLayer` has no exit animation for either), but a card buried
+        # four deep has not gone anywhere the opponent can see next turn, and the
+        # log should not say it has.
+        ctx.state.emit(
+            EventType.ZONE_CHANGE,
+            source=oid,
+            to="library_top" if depth == 1 else "library",
+        )

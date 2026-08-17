@@ -140,6 +140,41 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
+`put_on_top` sends a permanent to a library, and `from_top` says **how deep**:
+
+```jsonc
+{ "op": "put_on_top", "objects": { "target": "t1" }, "from_top": { "const": 4 } }
+```
+
+That is Lost to Legend's "put target nonland historic permanent into its owner's
+library **fourth from the top**". `from_top` is the printed ordinal and counts
+from 1 — absent or `1` is the top card, `2` is Hinder and Condemn, `4` is this —
+and it is a value expression like every other numeric field, so a card may
+compute it. It reaches the zone layer as `move_object`'s `to_index`, a library
+position; nothing else in the engine had one, since `to_top: bool` made top and
+bottom the only reachable places.
+
+Both roundings the boolean forced are a different card, in opposite directions:
+on **top**, the owner draws the permanent back on their next draw step, which is
+the reverse of what the depth buys; on the **bottom** of a 99-card deck it is
+exile with extra steps. Three details are only ever visible when they are wrong:
+
+- the **clamp** — a library shorter than the depth takes the card as deep as it
+  goes, and the floor matters as much as the ceiling, because a raw
+  `list.insert` of a negative index counts back from the *bottom* and would bury
+  a card that asked for the top;
+- the **owner** — always `obj.owner`, never the controller. Only a stolen
+  permanent can tell the difference, and there sending it to the thief's library
+  hands them the victim's card for good;
+- the **ordinal** — off by one is a card drawn a turn early, and no expectation
+  key can read a library's order, so it is pinned in
+  `tests/unit/test_library_depth.py` rather than by the authoring gate.
+
+The loader refuses `from_top` on any other op: `draw` and friends read `amount`
+and ignore the rest, so a depth written there loads clean and plays as a
+strictly better card. A zero or negative ordinal is refused too — the op floors
+it, but a card that needed correcting was authored wrong.
+
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` |
@@ -2839,7 +2874,7 @@ three rules that hang off it:
 |---|---|
 | **302.6** | it has not been under the new controller since their turn began, so it is summoning sick for them — `entered_turn` is reset, which is both the record and the sickness |
 | **506.4** | changing control removes a permanent from combat, or a creature stolen mid-combat goes on dealing damage for the player who no longer controls it |
-| **400.3** | zone destinations still follow the **owner**, so a stolen creature that dies goes to its owner's graveyard. This needed no code — `move_object` was always owner-based |
+| **400.3** | zone destinations still follow the **owner**, so a stolen creature that dies goes to its owner's graveyard. This needed no code — `move_object` was always owner-based. `put_on_top` says `to_player=obj.owner` out loud for the same rule read forwards: "into **its owner's** library" is printed on every tuck spell, and a stolen permanent is the only board where it can be seen |
 
 Every static filtered on `controller` reads differently afterwards, so the
 characteristics cache is dropped with it.
