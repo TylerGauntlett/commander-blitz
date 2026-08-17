@@ -55,6 +55,7 @@ from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CONTROL_DURATIONS,
+    DAMAGE_SHIELD_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
 from automtg.engine.triggers import TRIGGER_EVENTS
@@ -2397,6 +2398,50 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: unknown unblockable duration {effect['duration']!r} "
                 f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
+            )
+    if op == "prevent_damage":
+        # The op, not the `static_effects` entry of the same name. That one is
+        # absorb N and is guarded further up (line ~1183, "'prevent_damage' needs
+        # an 'amount'"); this one is the player shield and refuses the very key
+        # that one requires, which is the whole distinction between them.
+        #
+        # `amount` is refused rather than read, and this is the guard that
+        # matters. The shield prevents *all* damage for the turn; a card written
+        # `{"op": "prevent_damage", "amount": 3}` for Healing Salve would load
+        # clean and prevent everything -- a strictly better card, silently, and
+        # the exact failure this whole validation pass exists to catch. Absorb-N
+        # over a player has a pool that drains and a target that may be a
+        # creature instead, so it is a different effect and not a parameter of
+        # this one; see `docs/rules-coverage.md`.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: the 'prevent_damage' op prevents ALL damage to a player "
+                f"for the turn and takes no 'amount' -- absorb N is the "
+                f"'prevent_damage' *static effect* on a permanent, and "
+                f"\"prevent the next N damage\" over a player is not implemented"
+            )
+        # Required for the reason `cant_block`'s is: a prevention read as lasting
+        # longer than it does is a fog that never ends, and there is no safe
+        # guess for an omitted one.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: prevent_damage needs a 'duration' "
+                f"(implemented: {sorted(DAMAGE_SHIELD_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in DAMAGE_SHIELD_DURATIONS:
+            raise DslError(
+                f"{where}: unknown prevent_damage duration {effect['duration']!r} "
+                f"(implemented: {sorted(DAMAGE_SHIELD_DURATIONS)})"
+            )
+        # `objects` would look like "prevent all damage that would be dealt to
+        # the creatures you control", which this op does not do -- the shield is
+        # keyed to a seat. Accepted and ignored it would be a card that shields
+        # nothing it claims to.
+        if "objects" in effect:
+            raise DslError(
+                f"{where}: prevent_damage shields a *player* and takes no 'objects' "
+                f"-- prevention over permanents is the 'prevent_damage' static "
+                f"effect (absorb N) or 'protection'"
             )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))

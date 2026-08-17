@@ -237932,12 +237932,12 @@
     },
     "Selfless Squire": {
       "edhrec_rank": 2498,
-      "gate": "template",
+      "gate": null,
       "name": "Selfless Squire",
-      "reason": "no template for: When this creature enters, prevent all damage that would be dealt to you this turn",
+      "reason": "",
       "scryfall_id": "8b8f4489-3d07-4e57-9b94-afa52fa984f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selhoff Entomber": {

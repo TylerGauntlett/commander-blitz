@@ -17,6 +17,7 @@ from .structs import (
     AttackRestriction,
     BlockProhibition,
     CombatState,
+    DamageShield,
     DelayedTrigger,
     EnteredPermanent,
     StackItem,
@@ -241,6 +242,22 @@ class GameState:
     #: ability targeted, until the end of this turn". Normally empty, which is
     #: why `combat.unblockable` short-circuits on it.
     unblockables: list[Unblockable] = field(default_factory=list)
+    #: "Prevent all damage that would be dealt to you this turn" -- see
+    #: :class:`structs.DamageShield`.
+    #:
+    #: The third timed table, here for the reason the two above it are: the
+    #: effect belongs to no permanent (Fog is an instant, and Selfless Squire's
+    #: shield outlives the Squire) and it ends at a fixed moment rather than when
+    #: a source leaves the battlefield. The engine's other two preventions --
+    #: the `prevent_damage` static (absorb N) and `protection` -- are both keyed
+    #: to an *object id* and read off `_battlefield_statics`, so neither can be
+    #: aimed at a seat at all.
+    #:
+    #: A list rather than a per-player flag because two shields over the same
+    #: player are two effects and deduplicating them into one would be wrong the
+    #: moment a second duration exists. Normally empty, which is why
+    #: `primitives.damage_player` short-circuits on it before doing any work.
+    damage_shields: list[DamageShield] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
     #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).
