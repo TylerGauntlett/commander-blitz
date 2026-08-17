@@ -1612,6 +1612,13 @@
   "djinn_of_the_lamp": {
     "zone": "battlefield"
   },
+  "door_of_destinies": {
+    "counters": {
+      "amount": 0,
+      "kind": "charge"
+    },
+    "zone": "battlefield"
+  },
   "dosan_s_oldest_chant": {
     "hand_size": {
       "0": 1
