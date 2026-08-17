@@ -6154,6 +6154,10 @@
     "artist": "Greg Simanson",
     "scryfall_id": "fe3709a3-7a1b-4644-b1d5-e1ffef549f94"
   },
+  "relentless_assault": {
+    "artist": "Federico Vicentini & Alejandro S\u00e1nchez",
+    "scryfall_id": "e473a591-9aae-4af2-9b25-96820b317df8"
+  },
   "relic_sloth": {
     "artist": "Ilse Gort",
     "scryfall_id": "c1cb483f-c567-4cfd-9fe8-1503e7b40542"
@@ -9177,6 +9181,10 @@
   "wind_strider": {
     "artist": "Magali Villeneuve",
     "scryfall_id": "df99ff00-b573-40ef-a885-028ee56e19d6"
+  },
+  "windbrisk_heights": {
+    "artist": "Anthony Devine",
+    "scryfall_id": "0a70d498-1fe2-4136-94bc-18fc163cbc7b"
   },
   "windreader_sphinx": {
     "artist": "Min Yum",

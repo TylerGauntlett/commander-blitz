@@ -231,10 +231,29 @@ class TurnLedger:
     #: controlled them.  "A creature died this turn" is the sum over every
     #: player; "a creature you controlled died" is one entry.
     creatures_died: dict[int, int] = field(default_factory=dict)
-    #: Players who have declared at least one attacker this turn.  A set rather
-    #: than a count because raid asks only whether it happened, and no printed
-    #: card cares how many times you were the attacking player in one turn.
-    attacked: set[int] = field(default_factory=set)
+    #: Which creatures each player has **declared as attackers** this turn:
+    #: player id -> the oids they attacked with.  Two questions, one record.
+    #:
+    #: Raid asks only *whether* you attacked, and for six mechanics a
+    #: `set[int]` of player ids was the whole answer -- which is what this field
+    #: used to be.  Relentless Assault ("untap all creatures that attacked this
+    #: turn") and Windbrisk Heights ("if you attacked with three or more
+    #: creatures this turn") ask **which** creatures, and neither can be
+    #: answered from the board or from live combat state: `end_combat` sets
+    #: `state.combat = None`, and both cards are used in the main phase *after*
+    #: the combat they are talking about.  `tapped` is the tempting stand-in and
+    #: is wrong in both directions -- it catches creatures tapped for mana and
+    #: misses vigilant attackers.
+    #:
+    #: Oids rather than a recount of live permanents, because an attacker that
+    #: died in combat still attacked: Windbrisk Heights unlocked by three
+    #: attackers, one of which traded, has to stay unlocked in the postcombat
+    #: main phase.  A `{"count": {"zone": "battlefield", ...}}` over the board
+    #: has forgotten the dead one, which is why the count is read off here.
+    #:
+    #: The two spellings of the question cannot disagree, because `attacked`
+    #: below is derived rather than stored.
+    creatures_attacked: dict[int, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -281,6 +300,28 @@ class TurnLedger:
     #: back.
     ability_activations: dict[tuple[int, int], int] = field(default_factory=dict)
 
+    @property
+    def attacked(self) -> set[int]:
+        """The players who declared an attacker this turn -- raid's question.
+
+        Derived from `creatures_attacked` rather than stored beside it.  A player
+        is in this set exactly when they have an entry there, so "did you attack"
+        and "which creatures did you attack with" are one fact read two ways and
+        no write can leave them disagreeing.
+        """
+        return set(self.creatures_attacked)
+
+    def has_attacked(self, oid: int) -> bool:
+        """Was this object declared as an attacker this turn, by anybody?
+
+        Asked of an object rather than of a seat, and deliberately not scoped by
+        controller: "creatures that attacked this turn" is every attacker in the
+        turn, and a creature stolen after combat still attacked.  Callers that
+        care whose creature it is now say so with `controller`, which is an
+        ordinary clause of the same selector.
+        """
+        return any(oid in oids for oids in self.creatures_attacked.values())
+
     def activations(self, oid: int, ability_index: int) -> int:
         return self.ability_activations.get((oid, ability_index), 0)
 
@@ -297,7 +338,7 @@ class TurnLedger:
 
     def clear(self) -> None:
         self.creatures_died.clear()
-        self.attacked.clear()
+        self.creatures_attacked.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.spells_cast.clear()
