@@ -1805,6 +1805,32 @@ options, so two Exotic Orchards facing each other terminate. An empty answer is 
 real answer — an opponent with no lands offers no colours, and the solver simply
 never picks a source that produces nothing.
 
+## "Any number of target creatures"
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": "any",
+              "selector": {"types": ["Creature"]}}]}
+```
+
+A size the *caster* picks. `count` was an `int` baked into the card, and
+`enumerate_target_tuples` built subsets of exactly that size.
+
+**`count: N, optional: true` is the near-miss and a different card.** `optional`
+adds precisely one extra option — the empty tuple — so it means "exactly N, or
+none", forbidding every size between 1 and N-1. Picking a large N and calling it
+"any number" is an approximation twice over: it caps a printed unbounded choice
+*and* forbids the sizes in between.
+
+The subsets come **largest first**, for the reason the decline option comes
+last: whatever takes a tuple without asking takes `options[0]`, and "any number"
+defaulting to none is a spell that resolves having done nothing. The empty
+subset is always there and always last — "any number" includes zero whether or
+not the spec is `optional`.
+
+**At most one `"any"` spec per card, and it must come last.** `filter_legal`
+slices the stored refs spec by spec, so one of unknown size in the middle leaves
+no way to say where its refs end. Refused at load time.
+
 ## "Target creature phases out"
 
 ```jsonc

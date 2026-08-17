@@ -74,7 +74,11 @@ class TargetModel(BaseModel):
     id: str
     kind: Literal["permanent", "player", "spell", "card_in_graveyard", "any"]
     selector: dict[str, Any] = Field(default_factory=dict)
-    count: int = 1
+    #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
+    #: chooses, including zero, rather than a number written into the card.
+    #: `count: N, optional: true` is not the same thing and cannot stand in: it
+    #: means "exactly N, or none", forbidding every size between 1 and N-1.
+    count: int | Literal["any"] = 1
     optional: bool = False
 
 

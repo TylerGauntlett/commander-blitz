@@ -29,7 +29,11 @@ class TargetSpec:
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard" | "any"
     selector: Mapping[str, Any] = field(default_factory=dict)
-    count: int = 1
+    #: A number, or ``"any"`` for "any number of target …" -- a size the caster
+    #: chooses. At most one spec per card may be ``"any"``, and it must be the
+    #: last, because `filter_legal` slices the stored refs spec by spec and a
+    #: variable-size spec in the middle would make the split ambiguous.
+    count: int | str = 1
     optional: bool = False
 
 
