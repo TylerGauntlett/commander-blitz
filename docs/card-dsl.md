@@ -3894,7 +3894,10 @@ worse Counterspell, and nothing on screen would say so.
 
 `step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_of_combat` ·
 `end_step`, checked at load time like every other piece of vocabulary: a
-misspelled step would schedule something that never comes due.
+misspelled step would schedule something that never comes due. A delay keyed on
+an **event** instead writes `event` and no `step` — see
+["…until an opponent becomes the monarch"](#until-an-opponent-becomes-the-monarch--a-delay-keyed-on-an-event)
+below.
 
 Two things are worth knowing before writing one:
 
@@ -3994,6 +3997,78 @@ it at end of combat" and "exile it at the end step" a real one. The end step
 version leaves the token alive through the whole postcombat main phase, where it
 can be sacrificed, tapped for an ability, or attack again in the extra combat —
 which is exactly what the printed line stops.
+
+### "…until an opponent becomes the monarch" — a delay keyed on an event
+
+```jsonc
+// Palace Jailer: "When this creature enters, you become the monarch. When this
+// creature enters, exile target creature an opponent controls until an opponent
+// becomes the monarch."
+{ "op": "exile", "as": "jailed", "objects": { "target": "t1" } },
+{ "op": "delay",
+  "event": { "event": "becomes_monarch", "controller": "opponent" },
+  "text": "Return the exiled card to the battlefield under its owner's control.",
+  "effects": [ { "op": "put_onto_battlefield",
+                 "objects": { "binding": "jailed", "zone": "exile" } } ] }
+```
+
+Some durations do not end at a step. "Until an opponent becomes the monarch" ends
+at a thing that may happen this upkeep, six turns later, or never — so `event`
+is the other way of saying *when*, and the two spellings are **exclusive**: an
+event-keyed delay is due at no step at all, and writing both is a load error,
+because two ways to come due is two moments the duration could end.
+
+The clause is exactly two keys, and the loader demands both:
+
+| | |
+|---|---|
+| `event` | any trigger event name, the same vocabulary a card's `trigger` uses |
+| `controller` | `you` · `opponent` · `any`, read against **the delay's own controller** |
+
+`controller` has **no default**, which is the one place this differs from a
+printed trigger. There, `controller` defaults to `you` because that is the
+implicit subject of an ability's sentence. A duration clause always states whose
+it is — "until **an opponent** becomes the monarch" — and there is no permanent to
+read an implicit one off, so guessing would ship a different card in either
+direction: `any` would end Palace Jailer's exile the moment its own controller
+reclaimed the crown, and it is one resolution away from doing so, since the
+card's *other* enters trigger makes you the monarch.
+
+**Nothing else is accepted.** `source`, `filter` and `condition` all read the
+ability's source permanent, and a delayed trigger's source is routinely gone by
+the time its event happens — that lifetime is the entire reason this form exists.
+Accepting them would give an exile whose ending depended on whether the permanent
+that made it was still alive, which is precisely the `until_leaves` behaviour this
+replaces.
+
+#### Why this is a `delay` and not a duration on `exile`
+
+`exile` has one duration, `until_leaves`, and it is the Oblivion Ring link: the op
+records `exiled_by` and the return is a separate `leaves_battlefield` trigger on
+the same card reading `{"zone": "exile", "exiled_with": "self"}`. For Palace
+Jailer that is wrong twice over, in opposite directions at once. It returns the
+creature on an event that must *not* return it — killing the Jailer leaves the
+creature exiled, because the exile is a one-shot effect with a duration and not an
+effect the permanent maintains — and it cannot return it on the event that must.
+Written with `until_leaves` the card hands the creature back for the price of
+killing a 2/2, which is a materially weaker card that reads identically on the
+board.
+
+`delay` already had the right lifetime and only needed the right clock. A delayed
+ability is created by the resolving one (603.7) and outlives everything: the
+bindings are captured then and there, the record sits on `state.delayed_triggers`,
+and no object is involved. So "exile until \<event\>" is two ops, exactly the way
+"exile until this leaves" is two halves — and it generalises to the rest of that
+family for free.
+
+The plumbing is worth one sentence, because the seam is not obvious: the event bus
+is a plain function called from the middle of a primitive, and a delay's effects
+are a generator that may stop to ask. So `triggers.arm_delayed` sets a flag where
+the event is, and `turn.run_armed_delayed` empties it from `Game._advance` one
+pass later — which is the moment a real delayed triggered ability would have gone
+on the stack. It fires **once** and the delay is then struck off, whether or not
+the return found anything: a card that left exile in between is a new object
+(400.7) and the duration is over either way.
 
 ## "Choose a creature type"
 

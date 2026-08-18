@@ -1,3 +1,111 @@
+## `exile_until_event` — a duration keyed on a thing that happens
+
+### Overview
+
+Palace Jailer: *"When this creature enters, you become the monarch. When this
+creature enters, exile target creature an opponent controls **until an opponent
+becomes the monarch**."*
+
+`exile` had exactly one duration, `until_leaves`, and it is the Oblivion Ring
+link — the op records `exiled_by` and the *return* is a separate
+`leaves_battlefield` trigger on the same card reading `exiled_with: self`. That is
+wrong for this card twice over, and the two are in **opposite directions**:
+
+- it returns the creature on an event that must not return it. Rule 610.3: the
+  exile is a one-shot effect with a duration, not an effect the permanent
+  maintains, so killing the Jailer leaves the creature exiled;
+- and it cannot return it on the event that must, because nothing links a
+  `leaves_battlefield` trigger to a monarchy change.
+
+Written with `until_leaves`, Palace Jailer hands the creature back for the price
+of killing a 2/2. That is a materially weaker card, and on the board it reads
+exactly like the printed one — the failure this whole pipeline exists to prevent.
+
+### `delay` already had the lifetime; it needed the clock
+
+`op_delay` is the only mechanism in `ops` that outlives its source. A delayed
+ability is created *by* the resolving one (603.7): the bindings are captured then
+and there, the record sits on `state.delayed_triggers`, and there is no object
+involved at all — which is exactly the lifetime the printed sentence needs, and
+is why Gilraen can blink a creature that comes back after she has died.
+
+What it could not say is *when*, other than a step name: `DelayedTrigger.step`
+maps into `turn.DELAY_STEPS`, so "at the beginning of the next end step" was
+sayable and "the next time an opponent becomes the monarch" was not.
+`DelayedTrigger.event` is that slot, carrying a two-field `DelayedEventSpec`. The
+two spellings are exclusive — an event-keyed delay carries `step=""` and
+`_delay_due` refuses it outright rather than relying on the empty string missing
+every entry in the table — because two ways to come due is two moments the exile
+could end, and the second one would be silent.
+
+So "exile until \<event\>" is `exile` plus a `delay`, two ops, exactly the way
+"exile until this leaves the battlefield" is two halves. Nothing was added to
+`exile`.
+
+### The two questions a duration clause asks, and no more
+
+`DelayedEventSpec` is deliberately **not** a `TriggerSpec`. A printed trigger is
+an ability *of a permanent*, and most of that spec asks about that permanent:
+`source: "self"`, `filter`'s `exclude_self` and `attached`, a `condition`
+evaluated with the source's oid. A delayed trigger's source is routinely gone by
+the time its event happens — that is the whole point of the lifetime — so those
+keys would answer one way while Palace Jailer is alive and another after it dies.
+Silently, and only in the line of play the card exists for. They are a load error.
+
+What is left is the event's name and its `controller`, matched by
+`triggers._delayed_matches` out of the same `TRIGGER_EVENTS`, `_subject_oid` and
+`_actor` a printed trigger uses, so the two cannot disagree about who "an
+opponent" is. `becomes_monarch` is in `_actor`'s explicit list precisely for this:
+the actor is the player who *became* the monarch.
+
+`controller` has **no default**, which is the one deliberate divergence from a
+printed trigger. There it defaults to `you`, because that is the implicit subject
+of an ability's sentence. A duration clause states whose it is, and there is no
+permanent to read an implicit one off — so the loader demands the key. `any` would
+end Palace Jailer's exile when its own controller reclaimed the crown, which is
+one resolution away: the card's *other* enters trigger makes you the monarch.
+
+### The seam: armed where the event is, run where a decision can happen
+
+`triggers.collect` is a plain function called from the middle of
+`primitives.become_monarch`, and a delay's effects are a generator that may stop
+to ask. So `arm_delayed` sets a flag where the event is, and
+`turn.run_armed_delayed` empties it from `Game._advance`, which is the loop that
+can carry a decision.
+
+The gap between them is one pass of that loop — which is the moment a real delayed
+triggered ability would have gone on the stack. The branch sits **after** the
+trigger drain, so an ordinary trigger off the same event reaches the stack first
+and the delayed half resolves ahead of it (the direct-resolution divergence
+`_run_delayed` already records); and **after** `step_started`, so it can never be
+the thing that hands out priority in a step that grants none.
+
+It fires once and the delay is then struck off, whether or not the return found
+anything: a card that left exile in between is a new object (400.7) and the
+duration is over either way. `{"binding": "jailed", "zone": "exile"}` is what says
+so — the record semantics `effect_result_binding` split out, plus the explicit
+zone that stops a delayed return yanking a card back out of a graveyard.
+
+### The same mechanism, for the wider family
+
+`delayed_triggered_ability` is being built in parallel for a spell that watches
+combat damage for the rest of the turn, and it wants an event-keyed
+`DelayedTrigger` too. This is designed to be that mechanism rather than a rival:
+the event name and `controller` clause are shared, and what a repeating form needs
+on top is a `repeats` flag and an expiry — both fields on `DelayedTrigger` beside
+`event`, both read at the two places this touches (`arm_delayed` and
+`run_armed_delayed`). Nothing here assumes one-shot except the discharge in
+`run_armed_delayed`, which is one list comprehension.
+
+**Unblocked one card: Palace Jailer**, at the agent tier — the template tier
+harvests nothing here (`--tier templates --retry`: `wrote 0 | no template 200`).
+It needed two capabilities: `monarch` shipped the designation, the two inherent
+abilities of 721.3 and the `becomes_monarch` event, and this is the duration that
+was the last blocker. Its expectation is a real observation —
+`opponent_battlefield_count: 5`, the opponent's board one creature lighter — and
+the rest of the coverage is `tests/unit/test_exile_until_event.py`, where the
+Jailer dies and the creature stays exiled, and then comes back anyway.
+
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
 ### Overview
