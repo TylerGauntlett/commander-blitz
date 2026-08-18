@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **5** capabilities.
+**4 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
-| [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 
 ## counter-unless-pays
 
@@ -75,19 +74,5 @@ Blocks **1** card.
 
 - **Verge Rangers** (rank 5364) — `verge_rangers`
   - You may look at the top card of your library any time.
-
-</details>
-
-## variable-target-count
-
-Blocks **1** card.
-
-- **(selector)** A target spec whose number of targets is a value expression rather than a literal -- `count: {"additional_paid": true}` (or any `value_keys` entry) plus an "up to" reading, so the caster picks between zero and X targets at announcement and X is computed when the ability goes on the stack. Concretely: TargetModel.count in src/automtg/cards/schema.py is `int | Literal["any"]`, and engine/targeting.py branches on `spec.count == "any"` / `spec.count > 1` with the literal integer; both need to accept an evaluated amount, and the combination enumeration needs to offer every size from 0..X rather than exactly X
-  <br>Why the existing vocabulary won't do: The two spellings `reference` offers are both a different card. `count: "any"` is "any number of target creature cards", which unbinds the count from the kicker entirely -- Marshal's Anthem cast with no kicks would reanimate the whole graveyard for {2}{W}{W}. `count: N` is a number written into the card, and `optional: true` on top of it means "exactly N or none", forbidding every size between 1 and N-1, so neither can say "up to X". Moving the choice to resolution does not rescue it either: a selector's `count` *does* accept a value expression (selectors.pick_from_pool calls evaluate_value on it), so `return_from_graveyard` with `objects: {count: {"additional_paid": true}}` computes the right number -- but that is untargeted (no legality check at announcement, no fizzle when the cards leave, and `becomes_target` never fires) and it sets min_count == max_count, forcing *exactly* X rather than up to X. `value_keys.additional_paid` already supplies X correctly here -- `cast_additional` is set in game.py at cast time and lives on the object, which survives the zone change onto the battlefield, so a `self_enters` trigger reads it -- so the missing piece is only the target *count*, not the value
-
-<details><summary>Cards waiting on this</summary>
-
-- **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
-  - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
 
 </details>

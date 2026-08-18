@@ -17,6 +17,7 @@ from .carddef import TargetSpec
 from .characteristics import chars, protected_from
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool
+from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .structs import StackItem, TargetRef
 
@@ -168,6 +169,39 @@ def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
     return max(1, limit - len(empty))
 
 
+def target_count(
+    state: GameState, controller: int, spec: TargetSpec, source_oid: int | None
+) -> int | str:
+    """How many targets this spec asks for **right now** -- 601.2c's number.
+
+    A literal or ``"any"`` answers itself.  Anything else is a value expression:
+    "return up to **X** target creature cards…, where X is the number of times
+    this enchantment was kicked" is ``{"additional_paid": true}``, and the only
+    honest moment to read it is the one this function is called from -- when the
+    targets are declared.
+
+    Where the number comes from is the whole design question, and the answer is
+    ``source_oid``.  For Marshal's Anthem the targets belong to a *triggered*
+    ability, so they are declared when the trigger is put on the stack (603.3d)
+    -- by which time the enchantment is already on the battlefield and
+    ``obj.cast_additional``, written by `game._cast` and carried across the zone
+    change on the same oid, says how many times it was kicked.  That is the same
+    read `values.additional_paid` does for casualty and replicate, from the same
+    place, and it is why this capability needed no new bookkeeping.
+
+    A **spell's own** targets are a different moment and a different answer:
+    601.2c fixes them while the spell is being cast, before it has been paid
+    for, and legality enumerates them before the player has chosen X or how many
+    times to kick.  There is nothing to read there, so `loader._compile_targets`
+    refuses a value-expression count on a card's own `targets` outright rather
+    than letting it quietly evaluate to zero.
+    """
+    if isinstance(spec.count, int) or spec.count == "any":
+        return spec.count
+    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+    return max(0, evaluate_value(ctx, spec.count))
+
+
 def enumerate_target_tuples(
     state: GameState,
     controller: int,
@@ -200,24 +234,36 @@ def enumerate_target_tuples(
         # Kraken whose "tap up to four target creatures" defaulted to tapping
         # none would be a different card.
         empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-        if spec.count == "any":
-            # "Any number of target creatures." A size the caster picks, so
-            # every subset is a legal choice -- ordered **largest first**, for
-            # the reason above: whatever takes a tuple without asking takes the
+        count = target_count(state, controller, spec, source_oid)
+        if count == "any" or spec.up_to:
+            # "Any number of target creatures", and "up to X target creature
+            # cards". A size the caster picks, so every subset up to the
+            # ceiling is a legal choice -- ordered **largest first**, for the
+            # reason above: whatever takes a tuple without asking takes the
             # first, and "any number" defaulting to none is a spell that does
             # nothing. The empty subset comes last and always exists, because
-            # "any number" includes zero whether or not the spec is `optional`.
+            # both readings include zero whether or not the spec is `optional`.
+            #
+            # The two differ only in where the ceiling comes from: "any number"
+            # has none beyond the board, and "up to X" is capped by the value --
+            # which is the whole of the difference between Marshal's Anthem cast
+            # with no kicks and a {2}{W}{W} full-graveyard reanimation.
+            ceiling = len(options) if count == "any" else min(int(count), len(options))
             subsets = [
                 tuple(c)
-                for size in range(len(options), 0, -1)
+                for size in range(ceiling, 0, -1)
                 for c in itertools.combinations(options, size)
                 if not spec.one_per_player or _one_each(state, c)
             ]
             per_spec.append(list(dict.fromkeys([*subsets[: _room(limit, [()])], ()])))
-        elif spec.count > 1:
-            combos = [
-                tuple(c) for c in itertools.combinations(options, min(spec.count, len(options)))
-            ]
+        elif count <= 0:
+            # A computed count of zero -- "one target for each time this was
+            # kicked", kicked no times. Not the same as no legal choice: the
+            # ability asks for nothing and resolves, where `[]` would say it
+            # cannot be put on the stack at all.
+            per_spec.append([()])
+        elif count > 1:
+            combos = [tuple(c) for c in itertools.combinations(options, min(count, len(options)))]
             if not combos and not spec.optional:
                 return []
             # `combinations(x, 0)` is `[()]`, so an optional spec with nothing to
@@ -295,11 +341,16 @@ def filter_legal(
     index = 0
     had_targets = False
     for spec in specs:
-        # An `"any"` spec swallows whatever is left. The loader guarantees there
-        # is at most one and that it comes last, which is what makes this
+        # A variable-size spec swallows whatever is left. The loader guarantees
+        # there is at most one and that it comes last, which is what makes this
         # unambiguous -- a variable-size spec in the middle would leave no way
         # to say where its refs end and the next spec's begin.
-        take = len(refs) - index if spec.count == "any" else max(1, spec.count)
+        #
+        # Re-evaluating a computed count here would be worse than using the
+        # stored length, not better: the number is fixed when the targets are
+        # declared (601.2c), and anything that moved in between would re-slice
+        # refs that were chosen under the old one.
+        take = len(refs) - index if spec.variable_size else max(1, spec.count)
         chunk = list(refs[index : index + take])
         index += take
         kept = [r for r in chunk if still_legal(state, controller, spec, r, source_oid)]

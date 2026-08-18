@@ -34,12 +34,31 @@ class TargetSpec:
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
     #: last, because `filter_legal` slices the stored refs spec by spec and a
     #: variable-size spec in the middle would make the split ambiguous.
-    count: int | str = 1
+    count: int | str | Mapping[str, Any] = 1
+    #: "Return **up to X** target creature cards from your graveyard." The
+    #: ``count`` is a *ceiling* rather than an exact number, so every size from
+    #: zero through it is a legal choice. `optional` cannot say it -- that is
+    #: "exactly N, or none", which forbids every size between 1 and N-1 -- and
+    #: ``"any"`` cannot either, because it has no ceiling at all.
+    up_to: bool = False
     #: At most one chosen object per controller -- "for each player, up to one
     #: target permanent that player controls". Only meaningful with
     #: ``count == "any"``.
     one_per_player: bool = False
     optional: bool = False
+
+    @property
+    def variable_size(self) -> bool:
+        """Is the number of refs this spec stores unknowable from the card?
+
+        ``"any"``, "up to X", and a count that is a value expression all are:
+        the first two because the *caster* picks the size, the third because the
+        number is computed from the game rather than printed. `filter_legal`
+        slices the stored refs spec by spec, so every one of them has to be the
+        last spec in its list and there may be only one -- see
+        `loader._compile_targets`.
+        """
+        return self.up_to or not isinstance(self.count, int)
 
 
 #: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the
