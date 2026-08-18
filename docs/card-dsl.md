@@ -1131,7 +1131,8 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
-`life_lost` · `you_attack` · `becomes_monstrous` · `becomes_monarch` ·
+`life_lost` · `you_attack` · `creatures_attack_player` · `becomes_monstrous` ·
+`becomes_monarch` ·
 `counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
 
@@ -2353,6 +2354,68 @@ Clavileño would make three Demons on a three-creature swing.
 No new event: `ATTACKERS_DECLARED` was already produced once by `combat.py` after
 the declaration closes, and was `emit`ted (logged) rather than `fire`d (put
 through the trigger bus) — the same shape `token_created` had.
+
+## "Whenever one or more creatures attack one of your opponents"
+
+```jsonc
+"trigger": {
+  "event": "creatures_attack_player",
+  "controller": "any",
+  "defending": "opponent"
+},
+"effects": [
+  {"op": "grant_keyword", "objects": {"binding": "attackers"}, "keywords": ["menace"]}
+]
+```
+
+That is the whole of Frontier Warmonger — "Whenever one or more creatures attack
+one of your opponents or a planeswalker they control, those creatures gain menace
+until end of turn."
+
+`you_attack` with a **defending player attached**, and one ability per
+(declaration, defending player) pair: however many creatures were declared
+against that seat, it fires once, and `{"binding": "attackers"}` names exactly
+them. A pod attack split between two seats is one declaration and two of these,
+each naming its own half.
+
+Both existing attack triggers fail on a different half, which is why this is its
+own name rather than a clause on one of them:
+
+- **`you_attack`** is the right shape and carries no `defender` at all, so a
+  `defending` clause on it never matches — `_defender_matches` returns False the
+  moment the key is absent — and the ability is inert forever, silently. The
+  loader refuses the combination for that reason. Dropping the clause is not a
+  rougher card but a different one: plain `you_attack` with `controller: "any"`
+  also fires when an opponent swings at *you*, handing menace to the creatures
+  you are about to block.
+- **`attacks`** carries the defender and is per *creature* — the substitution the
+  note on `you_attack` above already refused, since a three-creature swing fires
+  it three times and each copy can speak about one attacker only.
+
+`controller` is the **attacking** side and `defending` is the seat being
+attacked; they are different questions and this card asks both. `"any"` is not
+laziness here: the creatures attacking an opponent need not be the Warmonger
+controller's, and in a pod they routinely are not.
+
+"…or a planeswalker they control" needs no second clause.
+`combat.attackers[oid]` is the defending *player* even when the attack is aimed
+at a walker, so `defending: "opponent"` already covers both halves.
+
+`EventType.CREATURES_ATTACKED_PLAYER` is a **new** event fired beside
+`ATTACKERS_DECLARED` rather than a second copy of it. That one means "the
+declaration closed" and there is exactly one per combat: fired per defender it
+would pay Clavileño twice on a split attack and tell the client the attack was
+declared twice. The pair is the same shape as `became_blocked` /
+`attacked_unblocked` — one instant, two facts, told separately because cards ask
+for them separately.
+
+**"Those creatures"** is `{"binding": "attackers"}`, carried by
+`EVENT_BINDING_KEYS` like every other "that much" — the per-defender subset here,
+and the whole declaration on `you_attack`, which is what "whenever you attack"
+means. `{"zone": "battlefield", "attacking": true}` is the near miss and says
+something strictly larger: `attacking` is a bare boolean with no notion of
+*whom*, so on a split attack it also names the creatures attacking the trigger's
+own controller.
 
 ## An additional combat phase
 

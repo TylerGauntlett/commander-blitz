@@ -2269,6 +2269,9 @@
   "frontier_guide": {
     "zone": "battlefield"
   },
+  "frontier_warmonger": {
+    "zone": "battlefield"
+  },
   "frost_marsh": {
     "zone": "battlefield"
   },
