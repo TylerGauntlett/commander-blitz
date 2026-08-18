@@ -16,7 +16,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 |---|---:|---:|---|
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
-| [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
@@ -51,21 +50,6 @@ Blocks **1** card.
 
 - **Call for Aid** (rank 7420) — `call_for_aid`
   - You can't sacrifice those creatures this turn.
-
-</details>
-
-## conditional-player-static
-
-Blocks **1** card.
-
-- **(engine)** make the player-wide statics honour their `condition`, i.e. route `_player_static` / `player_extra_land_drops` through `_static_active` the way `_battlefield_statics` already does, so an 'as long as ...' clause can switch `play_lands_from_library_top`, `play_lands_from_graveyard`, `no_hand_limit`, `extra_land_drops`, `double_land_mana`, `double_land_triggers` and `freeze_opponent_lands` on and off
-  <br>Why the existing vocabulary won't do: `play_lands_from_library_top` is exactly the permission this line grants, and the loader will happily validate a `condition` beside it, but the effect is read by `characteristics._player_static`, which matches on `effect` and `affects_player` and never calls `_static_active`. `_static_active` has exactly one call site, `_battlefield_statics`, which only feeds the object-characteristics pipeline. So a conditional `play_lands_from_library_top` would load and then grant the permission unconditionally -- the 'as long as an opponent controls more lands than you' clause would be silently dropped, which is worse than not implementing the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verge Rangers** (rank 5364) — `verge_rangers`
-  - You may look at the top card of your library any time.
-  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
 
 </details>
 
@@ -138,7 +122,6 @@ Blocks **1** card.
 
 - **Verge Rangers** (rank 5364) — `verge_rangers`
   - You may look at the top card of your library any time.
-  - As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)
 
 </details>
 

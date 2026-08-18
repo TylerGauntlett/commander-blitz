@@ -302,15 +302,14 @@ def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]
     if entered is None or "Land" not in state.card_of(entered).types:
         return frozenset()
 
-    out: set[int] = set()
-    for oid in state.battlefield:
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        for ability in state.card_of(obj).abilities:
-            if ability.is_static and (ability.static or {}).get("effect") == "double_land_triggers":
-                out.add(obj.controller)
-    return frozenset(out)
+    # Imported here rather than at module scope for the reason `costs` does the
+    # same: `characteristics` is the wide end of the engine and this is the one
+    # line of it triggers needs. `players_doubling_land_triggers` -- not a local
+    # walk -- because it applies the static's "as long as…" gate, which every
+    # player-wide static now goes through in exactly one place.
+    from .characteristics import players_doubling_land_triggers
+
+    return players_doubling_land_triggers(state)
 
 
 def _candidate_abilities(state: GameState, event: GameEvent):

@@ -1514,6 +1514,10 @@ Each node names **exactly one** form:
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 
+A condition works on a [player-wide static](#player-wide-statics) too — the
+`affects_player` effects go through the same `_static_active`, from
+`_active_player_statics`.
+
 This is a **mirror** of the `if`-effect condition language in
 `engine/effects/conditions.py`, not that language. The keys it does not have —
 `zone_is`, `kicked`, `evoked`, `cast_during` — are not oversights: they read a
@@ -1522,9 +1526,9 @@ cache miss. Borrowing one is a `DslError` at load.
 
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
-A condition is evaluated in `_battlefield_statics`, *before* the first layer
-applies, so counters, printed characteristics, zone contents and whose turn it
-is are all safe — no layer can change whether another static is switched on, and
+A condition on an object static is evaluated in `_battlefield_statics`, *before*
+the first layer applies, so counters, printed characteristics, zone contents and
+whose turn it is are all safe — no layer can change whether another static is switched on, and
 the fixed order stays acyclic. A **life total** is safe for exactly that reason
 too, and `min_life_of` / `max_life_of` are in the table: nothing in the pipeline
 can change what a player's life is.
@@ -2024,6 +2028,46 @@ blanks on the single card the whole mechanic exists to show.
 
 `play_lands_from_library_top` offers the top card only. That is what the cards
 say, and it is also the only part of a hidden zone anybody is entitled to see.
+
+### "As long as…" on a player-wide static
+
+All eight take a [`condition`](#as-long-as), and it is the same condition
+language, evaluated by the same `_static_active`:
+
+```jsonc
+// Verge Rangers — "As long as an opponent controls more lands than you, you may
+// play lands from the top of your library."
+{ "kind": "static", "effect": "play_lands_from_library_top",
+  "affects_player": "you",
+  "condition": { "cmp": ">",
+                 "left":  { "max_count_of": { "player": "each_opponent",
+                                              "objects": { "zone": "battlefield",
+                                                           "types": ["Land"] } } },
+                 "right": { "count": { "zone": "battlefield", "controller": "you",
+                                       "types": ["Land"] } } } }
+```
+
+This was once a **silent over-grant**, which is worth knowing about because it is
+the failure shape the whole validation pass exists to refuse. The loader has
+always validated and stored a `condition` on any static, but `_static_active` had
+one call site — `_battlefield_statics`, which feeds only the characteristics
+pipeline — and the walks that read the player-wide effects never asked. A card
+like Verge Rangers therefore loaded clean, printed its clause, passed every gate,
+and granted the permission unconditionally: Oracle of Mul Daya on a 3/2 first
+striker. The gate now lives in `_active_player_statics`, which every reader of
+every player-wide effect goes through, including the two that answer with a *set
+of players* (`freeze_opponent_lands`, `double_land_triggers`) rather than
+per-player.
+
+Running the gate here is safer than running it in the pipeline, not riskier: these
+readers sit at legality, payment, trigger collection, serialization and the
+cleanup step, outside the fixed order entirely, so there is no layer output a
+condition could come to depend on.
+
+`extra_land_drops` is the one that switches an **amount** rather than a
+permission, and a switched-off one contributes 0 rather than its `amount`.
+`reveal_library_top` is the one that changes no rule: gated off, `library_top`
+stops being sent to every seat and the card goes back to being hidden.
 
 ## "Sacrifice it unless you…"
 

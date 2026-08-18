@@ -34,6 +34,15 @@ stays acyclic.  That is the whole reason the condition language is a mirror of
 :mod:`automtg.engine.effects.conditions` rather than that module itself: `if`'s
 conditions go through the selector engine, which calls :func:`chars`.
 
+The **player-wide** statics -- the ones that take `affects_player` and describe a
+player rather than a characteristic -- are not read by this pipeline at all, and
+they are gated by the same function anyway, through
+:func:`_active_player_statics`.  They have to be: a `condition` the loader
+validates and no reader ever asks is a card that loads clean, prints its "as long
+as" clause and grants the permission unconditionally.  Running the gate outside
+the pipeline is strictly safer than running it inside -- legality, payment,
+serialization and the cleanup step have no layers for a condition to depend on.
+
 Results are cached against ``state.char_version``, which every mutating primitive
 bumps.
 """
@@ -998,6 +1007,65 @@ def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
     return bool(have & qualities)
 
 
+def _active_player_statics(
+    state: GameState, effect: str
+) -> Iterator[tuple[GameObject, Mapping[str, Any]]]:
+    """Every *active* player-wide ``effect`` static on the battlefield, with its source.
+
+    The player-wide twin of :func:`_battlefield_statics`, and the reason it
+    exists is the one thing the two used to disagree about. That function gates
+    each static on :func:`_static_active`; the four hand-rolled walks that read
+    the `affects_player` effects did not, so a `condition` written beside
+    `play_lands_from_library_top` was validated by the loader, stored on the
+    ability, and then never asked. The card loaded clean, printed its "as long
+    as" clause and granted the permission unconditionally -- a silent
+    over-grant, which is worse than refusing the card.
+
+    Verge Rangers is the witness: "**as long as an opponent controls more lands
+    than you**, you may play lands from the top of your library" would otherwise
+    have been Oracle of Mul Daya's unconditional permission on a 3/2 first
+    striker.
+
+    The condition reads pipeline *inputs* here exactly as it does in
+    `_battlefield_statics`, and the acyclicity argument is easier rather than
+    harder: these readers run at legality, payment, trigger collection,
+    serialization and the cleanup step -- outside the characteristics pipeline
+    entirely -- so there is no layer whose output one could come to depend on.
+
+    The source is yielded beside the static because two of the callers need it:
+    `affects_player` is resolved against its controller, and a `condition`'s
+    "you" and its `counters` head are both relative to the permanent carrying it.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None:
+            continue
+        for ability in state.card_of(obj).abilities:
+            static = ability.static
+            if not ability.is_static or not static:
+                continue
+            if static.get("effect") != effect:
+                continue
+            if not _static_active(state, obj, static):
+                continue
+            yield obj, static
+
+
+def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> bool:
+    """Does a player-wide static's ``affects_player`` name ``pid``?
+
+    Defaulting to ``"you"`` matches the loader, which requires the key on every
+    effect that reaches here -- so the default is unreachable from an authored
+    card and is only a floor under hand-built states.
+    """
+    who = static.get("affects_player", "you")
+    if who == "you":
+        return source.controller == pid
+    if who == "opponent":
+        return source.controller != pid
+    return True
+
+
 def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     """Vorinclex: "whenever you tap a land for mana, add one mana of any type
     that land produced"."""
@@ -1012,16 +1080,22 @@ def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:
     controller* have it", and asking once is cheaper than asking per opponent
     inside a payment.
     """
-    out: set[int] = set()
-    for oid in state.battlefield:
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        for ability in state.card_of(obj).abilities:
-            static = ability.static
-            if ability.is_static and static and static.get("effect") == "freeze_opponent_lands":
-                out.add(obj.controller)
-    return frozenset(out)
+    return frozenset(
+        obj.controller for obj, _ in _active_player_statics(state, "freeze_opponent_lands")
+    )
+
+
+def players_doubling_land_triggers(state: GameState) -> frozenset[int]:
+    """Everyone whose ``double_land_triggers`` static is on the battlefield.
+
+    Ancient Greenwarden. Shaped like `players_freezing_opponent_lands` and read
+    by `triggers._land_trigger_doublers`, which owns the much narrower question
+    of *which* event doubles; this owns only who is switched on, so the
+    "as long as…" gate lives in one place with the other six.
+    """
+    return frozenset(
+        obj.controller for obj, _ in _active_player_statics(state, "double_land_triggers")
+    )
 
 
 def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
@@ -1178,24 +1252,15 @@ def untap_also(state: GameState, active_pid: int) -> list[int]:
 
 
 def _player_static(state: GameState, pid: int, effect: str) -> bool:
-    """Whether any permanent grants ``effect`` to this player."""
-    for oid in state.battlefield:
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        for ability in state.card_of(obj).abilities:
-            static = ability.static
-            if not ability.is_static or not static:
-                continue
-            if static.get("effect") != effect:
-                continue
-            who = static.get("affects_player", "you")
-            if who == "you" and obj.controller != pid:
-                continue
-            if who == "opponent" and obj.controller == pid:
-                continue
-            return True
-    return False
+    """Whether any *active* permanent grants ``effect`` to this player.
+
+    "Active" is the whole of what `_active_player_statics` adds: an "as long
+    as…" clause on a player-wide static is honoured here rather than dropped.
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, effect)
+    )
 
 
 def player_reveals_library_top(state: GameState, pid: int) -> bool:
@@ -1235,25 +1300,17 @@ def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
 
 
 def player_extra_land_drops(state: GameState, pid: int) -> int:
-    """Sum of every ``extra_land_drops`` static affecting this player."""
-    total = 0
-    for oid in state.battlefield:
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        for ability in state.card_of(obj).abilities:
-            static = ability.static
-            if not ability.is_static or not static:
-                continue
-            if static.get("effect") != "extra_land_drops":
-                continue
-            who = static.get("affects_player", "you")
-            if who == "you" and obj.controller != pid:
-                continue
-            if who == "opponent" and obj.controller == pid:
-                continue
-            total += _static_value(state, static.get("amount"), obj)
-    return total
+    """Sum of every *active* ``extra_land_drops`` static affecting this player.
+
+    A switched-off one contributes nothing rather than its amount -- the one
+    place among the player-wide statics where the gate changes a number instead
+    of a permission.
+    """
+    return sum(
+        _static_value(state, static.get("amount"), obj)
+        for obj, static in _active_player_statics(state, "extra_land_drops")
+        if _reaches_player(obj, static, pid)
+    )
 
 
 def commander_subtypes(state: GameState, pid: int) -> frozenset[str]:
