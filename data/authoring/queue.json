@@ -100152,12 +100152,12 @@
     },
     "Forth Eorlingas!": {
       "edhrec_rank": 3207,
-      "gate": "template",
+      "gate": null,
       "name": "Forth Eorlingas!",
-      "reason": "no template for: Create X 2/2 red Human Knight creature tokens with trample and haste",
+      "reason": "",
       "scryfall_id": "06c053d3-028e-4961-93a5-5b7bb5a8601c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fortified Area": {

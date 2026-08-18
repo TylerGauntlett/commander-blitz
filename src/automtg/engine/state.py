@@ -104,8 +104,17 @@ class GameState:
     #: serialized -- replay reconstructs it by re-running the same actions.
     pending_generator: Any = field(default=None, repr=False)
     pending_triggers: list[TriggerInstance] = field(default_factory=list)
-    #: Effects arranged for a later step -- see `structs.DelayedTrigger`.
+    #: Effects arranged for a later step, or for an event -- see
+    #: `structs.DelayedTrigger`.
     delayed_triggers: list[DelayedTrigger] = field(default_factory=list)
+    #: Event-watching delayed triggers whose event has just happened, waiting to
+    #: resolve.  `pending_triggers` for the other half of 603.7, and it exists
+    #: for the same reason: `triggers.collect` runs deep inside a primitive that
+    #: cannot ask a question, so what it *can* do is say the ability has fired
+    #: and let the advance loop resolve it at the next safe moment.  Copies, not
+    #: the subscriptions themselves -- the subscription stays armed for the rest
+    #: of the turn and a second combat fires it again.
+    armed_delays: list[DelayedTrigger] = field(default_factory=list)
 
     events: list[GameEvent] = field(default_factory=list)
     game_over: bool = False

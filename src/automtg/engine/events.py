@@ -150,6 +150,26 @@ class EventType:
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"
+    #: "Whenever one or more creatures **you control** deal combat damage to one
+    #: or more players…" One of these per combat-damage step per *damaging
+    #: player*, fired beside the per-creature COMBAT_DAMAGE_TO_PLAYER above
+    #: rather than instead of it, carrying ``damagers`` (the creatures) and
+    #: ``damaged`` (the players they connected with).
+    #:
+    #: Its own type rather than a filtered COMBAT_DAMAGE_TO_PLAYER, because that
+    #: one is a fact about *one creature hitting one player* and there are as
+    #: many of them as there were connections: a card built on it pays once per
+    #: Knight that got through, where the printed line pays once. The batch is
+    #: the same shape CREATURES_ATTACKED_PLAYER is one phase earlier -- coarser
+    #: than a creature, finer than the game -- and it is drawn from the very
+    #: assignment list rule 510.2 makes simultaneous, which is why it can be
+    #: counted at all.
+    #:
+    #: Per damaging **player** and not per (player, defender) pair, because the
+    #: printed clause says "to one or more players": one seat's creatures
+    #: connecting with two opponents in one step is one event. The seats hit are
+    #: on ``damaged`` for anything that needs to ask.
+    CREATURES_DEALT_COMBAT_DAMAGE = "creatures_dealt_combat_damage"
 
     # combat
     ATTACKERS_DECLARED = "attackers_declared"

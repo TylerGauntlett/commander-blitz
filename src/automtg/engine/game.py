@@ -843,6 +843,20 @@ class Game:
             if state.game_over or state.pending_decision is not None:
                 return
 
+            if state.armed_delays:
+                # An event-watching delayed ability whose event just happened
+                # (603.7). Here rather than in `triggers.collect`, which is
+                # reached from inside a primitive that cannot suspend, and
+                # *before* the drain below for the reason `turn._run_delayed`
+                # resolves inline as a step begins: both halves of 603.7 happen
+                # off the stack, so the delayed half of an event runs before the
+                # ordinary triggers of that same event are put on it.
+                state.passes_in_row = 0
+                state.priority_idx = state.active_idx
+                if not self._run(triggers.run_armed_delays(state)):
+                    return
+                continue
+
             if state.pending_triggers:
                 # Set before the drain, not after: a trigger that stops to ask
                 # for its targets suspends the loop here, and the resumption
