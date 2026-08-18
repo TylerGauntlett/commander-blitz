@@ -207,10 +207,24 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     was never *declared* as an attacker, so it triggers nothing that fires on
     attacking. That is the real rule (508.4) and it is also what keeps "when
     this attacks, put a creature onto the battlefield attacking" finite.
+
+    ``counters`` is "return that card to the battlefield **with a vigilance
+    counter and a lifelink counter on it**" -- Gilraen, Dúnedain Protector. The
+    identical clause `op_return_from_graveyard` has carried since persist,
+    spelled the same way and placed at the same moment, and it has to live on
+    this op too: that one forces its selector's zone to the graveyard, so a card
+    coming back out of *exile* cannot use it.
+
+    Two `add_counters` ops after the move would put the same counters on, but
+    they would not be the same card. The printed clause is about the *arrival* --
+    if the object is no longer where the return could reach it, no counters go
+    anywhere -- and a separate op naming the same binding would happily counter
+    a permanent that got back to the battlefield some other way.
     """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
     attacking = _attack_defender(ctx) if spec.get("attacking") else None
+    counters = spec.get("counters") or {}
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -227,6 +241,11 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=tapped,
             cause=str(spec.get("cause") or "put_onto_battlefield"),
         )
+        # Placed immediately after the move rather than as an enters-with
+        # replacement -- the same trade `op_return_from_graveyard` documents,
+        # observable only by another trigger ordered between the two.
+        for kind, amount in counters.items():
+            add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
 

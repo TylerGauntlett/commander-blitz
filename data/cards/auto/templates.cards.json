@@ -27198,6 +27198,98 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "exiled",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "counters": {
+                        "lifelink": 1,
+                        "vigilance": 1
+                      },
+                      "objects": {
+                        "binding": "exiled",
+                        "zone": "exile"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Return that card to the battlefield with a vigilance counter and a lifelink counter on it."
+                }
+              ],
+              "op": "may",
+              "prompt": "Return the exiled card to the battlefield now?"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Exile another target creature you control. You may return that card to the battlefield under its owner's control. If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gilraen_dunedain_protector",
+      "mana_cost": "{2}{W}",
+      "name": "Gilraen, Dúnedain Protector",
+      "oracle_text": "{2}, {T}: Exile another target creature you control. You may return that card to the battlefield under its owner's control. If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
