@@ -166922,12 +166922,12 @@
     },
     "Marshal's Anthem": {
       "edhrec_rank": 4605,
-      "gate": "template",
+      "gate": null,
       "name": "Marshal's Anthem",
-      "reason": "no template for: Multikicker {1}{W}",
+      "reason": "",
       "scryfall_id": "7c84cbf6-cab0-4b53-ab60-470ade5c3654",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marshaling Cry": {
