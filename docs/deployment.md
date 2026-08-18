@@ -11,7 +11,7 @@ push to main ──▶ verify ──▶ build image ──▶ push to GHCR ─�
 
 - **Pipeline** — [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)
 - **Image** — [`Dockerfile`](../Dockerfile), published to `ghcr.io/tylergauntlett/auto-mtg`
-- **Runtime** — [`docker-compose.yml`](../docker-compose.yml), which lives at `/opt/automtg/` on the droplet
+- **Runtime** — [`docker-compose.yml`](../docker-compose.yml) and [`Caddyfile`](../Caddyfile), which live at `/opt/automtg/` on the droplet
 - **Infrastructure** — [`terraform/`](../terraform/)
 
 ## How it fits together
@@ -31,9 +31,21 @@ install that walk lands nowhere, so the container sets both explicitly.
 
 ### 1. Credentials
 
-Copy `.env.example` to `.env` at the repo root and fill in both values. `.env`
-is gitignored; confirm with `git check-ignore -v .env` before you paste a real
-token into it.
+Copy `.env.example` to `.claude/.env` and fill in both values. Nothing reads
+that path automatically -- the provisioning steps below load it into the shell
+by hand, and the `digitalocean` provider then picks `DIGITALOCEAN_TOKEN` up from
+the environment -- so the location only has to match the loader. `git check-ignore -v .claude/.env`
+before you paste a real token in; the bare-name `.env` rule covers it.
+
+Terraform failing every API call with `401 Unable to authenticate you` means
+this file was never loaded into the session, or the token expired. DO tokens
+carry an expiry now, so a setup that worked months ago can stop working with
+nothing having changed locally. Check with:
+
+```powershell
+(Invoke-RestMethod -Uri https://api.digitalocean.com/v2/account `
+  -Headers @{Authorization = "Bearer $env:DIGITALOCEAN_TOKEN"}).account.email
+```
 
 | Variable | Where to get it | Scopes |
 | --- | --- | --- |
@@ -63,8 +75,9 @@ ssh-keygen -t ed25519 -C automtg-ci -N '""' -f $env:USERPROFILE\.ssh\automtg_ci
 ### 4. Provision
 
 ```powershell
-# Load .env into the session.
-Get-Content .env | Where-Object { $_ -match '^\s*[^#].*=' } | ForEach-Object {
+# Load the credentials into the session. Needed for every terraform run, not
+# just the first: the session, not the file, is what the provider reads.
+Get-Content .claude\.env | Where-Object { $_ -match '^\s*[^#].*=' } | ForEach-Object {
   $k, $v = $_ -split '=', 2; Set-Item "env:$($k.Trim())" $v.Trim()
 }
 
@@ -75,7 +88,7 @@ terraform init
 terraform apply
 ```
 
-This creates the droplet, a reserved IP, a firewall (22 and 80 inbound only),
+This creates the droplet, a reserved IP, a firewall (22, 80 and 443 inbound),
 and runs a cloud-init bootstrap that installs Docker and creates the `deploy`
 user. Bootstrap takes a couple of minutes after `apply` returns; the deploy job
 waits for it.
@@ -121,7 +134,8 @@ git push origin main
 gh run watch
 ```
 
-Then open `http://<reserved_ip>`.
+Then open <https://commanderblitz.com>. The bare IP is not a way in — Caddy
+serves that one name and answers anything else with a 404. See [HTTPS](#https).
 
 ## Operating it
 
@@ -146,7 +160,7 @@ echo "IMAGE_TAG=sha-abc1234" > .env                                 # pick one o
 docker compose up -d
 ```
 
-Confirm with `curl http://<ip>/health`.
+Confirm with `curl https://commanderblitz.com/health`.
 
 **This only works for a tag still in the droplet's local image cache** — which
 is every recent deploy, since the nightly prune keeps 168h. The deploy job logs
@@ -194,9 +208,58 @@ Chromium build is present. The workflow runs `npm ci` and
 `npx playwright install --with-deps chromium` so that neither gate passes
 vacuously.
 
-## Adding HTTPS later
+## HTTPS
 
-The app is served over plain HTTP on the droplet's IP. Adding TLS means owning
-a domain, pointing an A record at the reserved IP, and adding a Caddy service to
-`docker-compose.yml` that terminates TLS and proxies to `web:8000` — plus
-opening 443 in `terraform/main.tf`. The image itself would not change.
+The site is <https://commanderblitz.com>. A [`caddy`](../Caddyfile) sidecar is
+the only container bound to a host port; it terminates TLS and reverse-proxies
+to `web:8000` on the compose network. The app image knows nothing about any of
+this — the client is origin-relative throughout, so nothing in it has to learn
+the scheme.
+
+**The apex A record is a prerequisite and is not managed here.** The zone is not
+hosted at DigitalOcean, so the record pointing `commanderblitz.com` at the
+reserved IP is edited at the registrar. Terraform prints the IP:
+
+```powershell
+terraform -chdir=terraform output -raw reserved_ip
+```
+
+**Renewal is automatic and there is no cron job.** Caddy is a long-running
+process that manages its own certificate lifecycle: it checks the store every
+few minutes, renews at roughly 30 days remaining, and reloads without dropping
+connections. Nothing has to be run by hand, ever.
+
+Three things make that work, and each is a way to break it:
+
+- **`caddy_data` must persist.** It holds the certificate and the ACME account
+  key. An ephemeral volume re-issues on every restart, and Let's Encrypt
+  rate-limits duplicate certificates to five a week.
+- **Port 80 must stay open.** It carries the HTTP-01 challenge as well as the
+  redirect to 443. Closing it breaks renewal roughly 60 days later, not
+  immediately.
+- **The A record must keep pointing here.**
+
+[`tls-check.yml`](../.github/workflows/tls-check.yml) runs weekly and fails —
+mailing you — if the certificate is under 21 days from expiry, `/health` stops
+answering over TLS, or port 80 stops redirecting. It exists because no contact
+address is registered with Let's Encrypt, so nothing else would warn us.
+
+### When issuance fails
+
+```bash
+ssh admin@<ip>
+cd /opt/automtg
+docker compose logs caddy | grep -i -e certificate -e acme
+```
+
+The reason is named there, and it is almost always the challenge not reaching
+port 80 — the firewall, or DNS pointing elsewhere. While iterating on a fix, add
+`acme_ca https://acme-staging-v02.api.letsencrypt.org/directory` to a global
+options block at the top of the `Caddyfile` so retries do not burn the
+production rate limit; staging certificates are untrusted by browsers, so remove
+it once the challenge succeeds.
+
+A `Caddyfile` edit alone will not take effect on redeploy — a bind-mounted file
+changing does not make compose recreate the container. The deploy job runs
+`docker compose exec -T caddy caddy reload` for exactly this reason; by hand it
+is the same command.

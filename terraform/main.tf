@@ -63,9 +63,25 @@ resource "digitalocean_firewall" "web" {
     source_addresses = var.ssh_allowed_cidrs
   }
 
+  # 80 stays open after the move to HTTPS: it carries Let's Encrypt's HTTP-01
+  # challenge, without which Caddy cannot renew, and Caddy redirects it to 443.
   inbound_rule {
     protocol         = "tcp"
     port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # HTTP/3. Caddy publishes 443/udp and advertises it via Alt-Svc; blocking it
+  # here would leave browsers trying a path that silently never connects.
+  inbound_rule {
+    protocol         = "udp"
+    port_range       = "443"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 

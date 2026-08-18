@@ -1,18 +1,40 @@
-# Runs on the droplet, not here. The deploy job copies this file to
-# /opt/automtg/ and writes a sibling .env holding IMAGE_TAG, so the compose file
-# stays in version control and the tag stays a per-deploy value.
+# Runs on the droplet, not here. The deploy job copies this file and the
+# Caddyfile to /opt/automtg/ and writes a sibling .env holding IMAGE_TAG, so
+# both stay in version control and the tag stays a per-deploy value.
 #
 # Rollback is therefore: edit IMAGE_TAG in /opt/automtg/.env to an older
 # sha-<commit> and re-run `docker compose up -d`. See docs/deployment.md.
 
 services:
+  # The only service bound to a host port. Terminates TLS for
+  # commanderblitz.com and proxies to web:8000; see ../Caddyfile.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80" # ACME HTTP-01 challenge, and the redirect to 443.
+      - "443:443"
+      - "443:443/udp" # HTTP/3.
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # The certificate and ACME account key. Not optional: an ephemeral volume
+      # re-issues on every restart and runs into Let's Encrypt's rate limit.
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   web:
     image: ghcr.io/tylergauntlett/auto-mtg:${IMAGE_TAG:?set IMAGE_TAG in /opt/automtg/.env}
     restart: unless-stopped
-    ports:
-      # Host 80 -> container 8000. Plain HTTP for now; a TLS terminator would
-      # slot in here as a second service without the image changing.
-      - "80:8000"
+    expose:
+      # Reachable only on the compose network, as web:8000. Caddy is the edge.
+      - "8000"
     volumes:
       # Both are written at runtime and must outlive the container.
       #
@@ -33,3 +55,5 @@ services:
 volumes:
   art:
   generated:
+  caddy_data:
+  caddy_config:

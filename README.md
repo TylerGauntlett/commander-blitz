@@ -85,7 +85,7 @@ then:
 - [docs/api.md](docs/api.md) — the HTTP surface
 - [docs/frontend.md](docs/frontend.md) — the client
 - [docs/testing.md](docs/testing.md) — how the whole thing is verified
-- [docs/deployment.md](docs/deployment.md) — CI/CD: every commit to `main` ships to a droplet
+- [docs/deployment.md](docs/deployment.md) — CI/CD: every commit to `main` ships to <https://commanderblitz.com>
 
 `docs/rules-coverage.md` is the one to read if you want to know what this engine can
 and cannot do. It is deliberately honest: this is an MVP with real simplifications,

@@ -1,0 +1,24 @@
+# Runs on the droplet, not here. The deploy job copies this file to
+# /opt/automtg/ alongside docker-compose.yml, which bind-mounts it into the
+# caddy container.
+#
+# Caddy terminates TLS for commanderblitz.com and proxies to the app container.
+# It obtains the Let's Encrypt certificate itself and renews it on its own
+# schedule -- there is no cron job or renewal hook. It also adds the :80 -> :443
+# redirect automatically, which is why port 80 must stay open: the ACME HTTP-01
+# challenge arrives there.
+#
+# The certificate and the ACME account key live in the caddy_data volume.
+# Losing that volume means re-issuing, and Let's Encrypt rate-limits that.
+#
+# There is deliberately no catch-all site block, so a request to the bare IP
+# gets a "no matching site" 404. That is why CI health-checks the domain.
+
+commanderblitz.com {
+	# The SPA bundle is served uncompressed by FastAPI's StaticFiles; this is
+	# the cheapest place to fix that.
+	encode zstd gzip
+
+	# web:8000 on the compose network. The app publishes no host port of its own.
+	reverse_proxy web:8000
+}
