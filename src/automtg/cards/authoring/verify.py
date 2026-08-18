@@ -37,8 +37,9 @@ from typing import Any
 from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from automtg.engine.errors import AutoMtgError
+from automtg.engine.errors import AutoMtgError, DslError
 from automtg.engine.game import Game
+from automtg.engine.mana import ManaCost
 from automtg.engine.sandbox import GameBuilder
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
@@ -640,6 +641,30 @@ def fold_self_reference(text: str, name: str) -> str:
     return _SELF_REFERENCE.sub("~", text)
 
 
+def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
+    """Whether the mana symbols printed after a keyword are the ones charged.
+
+    ``printed`` is the remainder of the line -- "{1}{W} (You may pay an
+    additional {1}{W} any number of times…)" -- so the reminder text is cut at
+    the parenthesis before parsing.  Compared on the parsed cost rather than the
+    string, since ``ManaCost.text`` keeps the spelling and "{W}{1}" and "{1}{W}"
+    are the same price.  Anything that will not parse is not a match.
+    """
+    symbols = printed.split("(")[0].strip().rstrip(".").strip()
+    if not symbols:
+        return False
+    try:
+        parsed = ManaCost.parse(symbols)
+    except DslError:
+        return False
+    return (parsed.generic, parsed.colored, parsed.x_count, parsed.hybrid) == (
+        declared.generic,
+        declared.colored,
+        declared.x_count,
+        declared.hybrid,
+    )
+
+
 def _covered(card: CardDef, line: str) -> bool:
     """Whether an ability on the card claims this printed line.
 
@@ -670,6 +695,27 @@ def _covered(card: CardDef, line: str) -> bool:
     # ordinary `if`, so no ability carries this line either.
     if card.kicker is not None and stripped.lower().startswith("kicker "):
         return True
+
+    # "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times
+    # as you cast this spell.)" is the same shape as `kicker` above: a
+    # card-level cost, paid inside `game._cast`, with no ability that could
+    # honestly carry the line -- an AbilityModel is activated, triggered or
+    # static, and a cost is none of those.
+    #
+    # Deliberately *stricter* than the kicker line above, because this exemption
+    # is being added after the fact and has to be unable to launder anything:
+    #   * `card.multikicker` is only set by the loader once it has desugared the
+    #     cost into working `additional_cost`/`additional_optional`/
+    #     `additional_repeatable` machinery, so the word cannot be declared
+    #     without the mechanic;
+    #   * the loader also refuses a multikicker no effect reads via
+    #     `additional_paid`, so the card must count the kicks;
+    #   * and the symbols printed on the line have to be the symbols charged, so
+    #     a card declaring `multikicker: "{1}"` cannot claim a printed
+    #     "Multikicker {2}{R}".
+    # An unparsable or mismatched cost fails closed -- the line stays residual.
+    if card.multikicker is not None and stripped.lower().startswith("multikicker "):
+        return _declares_printed_cost(stripped[len("multikicker ") :], card.multikicker)
 
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack

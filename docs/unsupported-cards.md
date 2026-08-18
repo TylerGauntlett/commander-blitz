@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **11** capabilities.
+**8 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
-| [multikicker](#multikicker) | 1 | 4605 | cost |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
 
@@ -144,21 +143,6 @@ Blocks **1** card.
 
 </details>
 
-## multikicker
-
-Blocks **1** card.
-
-- **(cost)** Multikicker as a named cost: a mana-only additional cost payable any number of times whose printed "Multikicker {1}{W}" line has a claimant. The payment machinery already exists as `additional_cost` + `additional_optional` + `additional_repeatable` (replicate's slot, with Action.additional_times carrying the count), so this is a `multikicker: "{1}{W}"` field that desugars to it, plus the residual-gate exemption in verify.py::_line_is_claimed for a line starting with "multikicker"
-  <br>Why the existing vocabulary won't do: `kicker` is the named mechanic in reference but it is one-shot: loader.py compiles it to a ManaCost and Action.kicked is a bool, so "any number of times" cannot be paid twice and `condition_keys.kicked` can only answer yes/no, never how many. The repeatable slot that can (`additional_cost`/`additional_repeatable`) is unnamed, and verify.py::_line_is_claimed only forgives a printed cost line when `card.kicker` is set and the line starts with "kicker " (which "Multikicker" does not), or when `card.additional_cost` is set and the line starts with "as an additional cost" (which this wording does not) -- so a card spelling multikicker through the replicate slot loads but leaves its first printed line unclaimed and fails the residual gate. Faking the claim with a `noop` ability whose text is the Multikicker line would hide that, which is the failure the gate exists to catch
-
-<details><summary>Cards waiting on this</summary>
-
-- **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
-  - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
-  - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
 ## variable-target-count
 
 Blocks **1** card.
@@ -169,7 +153,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
-  - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
 
 </details>

@@ -311,6 +311,11 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
     declared = set()
     if card.kicker is not None:
         declared.add("kicker")
+    if card.multikicker is not None:
+        # Comet Storm's first line. `_MECHANIC_LINE` matches "Multikicker {1}"
+        # like any other declaration, so without this an instant that really has
+        # the cost would be reported as missing it.
+        declared.add("multikicker")
     if card.retrace:
         declared.add("retrace")
     if card.suspend is not None:

@@ -1,3 +1,101 @@
+## `multikicker` — the payment already worked; the word was missing
+
+### Overview
+
+Marshal's Anthem: *"Multikicker {1}{W} (You may pay an additional {1}{W} any
+number of times as you cast this spell.)"* One gap record asked for it, and the
+queue prints the line in eight different costs — {1}, {2}, {B}, {R}, {1}{U},
+{1}{G}, {1}{W}.
+
+The interesting part is how little of it was missing. Every moving piece already
+shipped, under replicate's name:
+
+| the mechanic | the field that already did it |
+|---|---|
+| "an additional {1}{W}" | `additional_cost: { "mana": "{1}{W}" }` |
+| "you **may**" | `additional_optional` |
+| "any number of times" | `additional_repeatable` |
+| how many times you did | `Action.additional_times` → `obj.cast_additional` |
+| the card reading it back | `{"additional_paid": true}` |
+
+Legality offers one cast line per number of kicks (convoke's shape — the count
+changes the price and is the player's), the count is stamped onto the object in
+`game._cast`, and an oid survives the zone change onto the battlefield, so a
+`self_enters` trigger on a *permanent* reads how many times the **spell** was
+kicked. Marshal's Anthem needs exactly that and it worked before this change.
+
+`kicker` is the field with the right name and it cannot do it. Its cast variant
+is `mana_cost.plus(kicker)` selected by a **bool** on the action, so it is paid
+once, and `{"kicked": true}` answers yes or no and never *how many*.
+
+### So the change is a desugaring, and the point of it is the gate
+
+```jsonc
+"multikicker": "{1}{W}"
+```
+
+compiles to the three fields above and to nothing else. `CardDef.multikicker`
+is read by no engine code at all — it records the *name the cost was declared
+under*.
+
+That name is what was actually blocking. `verify.py`'s residual gate asks
+whether every printed line is accounted for by something the card really has,
+and its list of card-level costs that no ability can claim covered `kicker`,
+`ascend`, `emerge`, `evoke`, `cost_reduction`, `devoid` and "as an additional
+cost" — none of which match "Multikicker {1}{W}". So a card spelling the
+mechanic through the replicate slot **loaded, and played correctly, and was then
+rejected on its own first line**. The available workaround was a `noop` ability
+whose `text` was the Multikicker line, which is precisely the laundering the
+gate exists to catch.
+
+### Extending the gate's claimants is not weakening it
+
+The distinction the rule cares about is between *forgiving a line because a
+declared cost claims it* and *forgiving a line because it is inconvenient*. This
+is the first, and it is held to a higher bar than the exemptions already there:
+
+- it fires only when `card.multikicker` is set, which the loader does **only
+  after** desugaring the cost into working machinery — the word cannot be
+  declared without the mechanic;
+- the loader refuses a `multikicker` no effect reads via `additional_paid`. That
+  is `kicker`'s half-a-cost guard, which `additional_cost` deliberately does not
+  have ("sacrifice an artifact" is the whole of Deadly Dispute's cost) — but
+  "any number of times" only means something to a card that counts the times;
+- the printed symbols must be the symbols charged, compared on the *parsed*
+  cost. `multikicker: "{1}"` cannot claim a printed "Multikicker {2}{R}", and a
+  cost that will not parse fails closed and stays residual. No existing cost
+  exemption checks this;
+- and it claims one line. The following sentence is tested on its own and stays
+  residual if nothing implements it.
+
+`multikicker` is also added to `fidelity.unimplemented_mechanics`' declared set,
+for the symmetric reason: `_MECHANIC_LINE` matches "Multikicker {1}" like any
+other declaration, so without it an instant that really has the cost — Comet
+Storm — would be reported as missing it.
+
+Two further refusals, both the loader's: a card carrying `multikicker` *and*
+`additional_cost` (or either modifier) is refused, because whichever won would be
+the card and the other would silently never be charged; and a `{0}` or `{X}`
+multikicker is refused, because free-and-repeatable is six kicks for nothing and
+X would have to be asked per payment.
+
+### No card was authored
+
+Marshal's Anthem is still blocked, on a capability that is not this one:
+`variable_target_count`. Its enters trigger returns "up to **X** target creature
+cards", and `TargetModel.count` is `int | Literal["any"]` — `"any"` unbinds the
+count from the kicker entirely (an unkicked Anthem would reanimate the whole
+graveyard for {2}{W}{W}), and a literal `N` with `optional` means "exactly N or
+none", forbidding every size in between. That gap record's other `need` is left
+standing.
+
+So `tests/unit/test_multikicker.py` is the only coverage this change has, and it
+is written to be: zero, one and several payments; the count read back off a
+permanent that has entered; and the residual gate held to both halves of its job
+— accepting the multikicker line, and still rejecting a line nothing implements.
+
+---
+
 ## `nth` — "your second card each turn", settled where the trigger queues
 
 ### Overview
