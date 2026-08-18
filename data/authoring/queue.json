@@ -300812,12 +300812,12 @@
     },
     "Verge Rangers": {
       "edhrec_rank": 5364,
-      "gate": "template",
+      "gate": null,
       "name": "Verge Rangers",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "c63a5253-b3b7-48d0-8c2c-700fbd0e4c3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verity Circle": {

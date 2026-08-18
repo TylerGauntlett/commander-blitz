@@ -235,6 +235,149 @@ Daze, Condescend, Rethink, and the dozens of printings the authoring queue holds
 on this one clause — plus every non-counter line that bills a targeted object's
 controller: "unless that spell's controller pays", "that spell's controller
 discards a card".
+## `look_at_library_top` — the same card, sent to one seat instead of every seat
+
+### Overview
+
+Verge Rangers: *"First strike. **You may look at the top card of your library any
+time.** As long as an opponent controls more lands than you, you may play lands
+from the top of your library."*
+
+The middle line was the card's last blocker. Its other two needs —
+`per_opponent_count` and `conditional_player_static` — shipped in earlier runs,
+and both of those runs ended with "**no card**", because this line was still
+standing. It ships now, so does the card, and Verge Rangers becomes the first
+card in the pool to carry a `condition` on a player-wide static.
+
+### The rules argument: 701.16a, looking is not revealing
+
+Rule 400.2 makes a library a hidden zone. Rule 701.16a then splits the two verbs
+that open it: a card **looked at** is seen by the player looking and by nobody
+else, while a card **revealed** is shown to every player. The engine had the
+second verb only.
+
+`reveal_library_top` is Vampire Nocturnus' "play with the top card of your library
+revealed", and `serialize` writes its `library_top` into **every** seat's view
+deliberately — that decision is written down in the code, in the docs and in
+`test_top_of_library.py::TestTheReveal::test_the_opponent_sees_it_too`, on the
+argument that an opponent who cannot see a revealed card is playing against
+information they are entitled to.
+
+Verge Rangers reveals nothing. Authoring it on the public static would hand every
+opponent the top of a deck whose *other* ability plays lands off that same card —
+a strictly different card, and a worse leak than it first looks, since the top
+card is the thing the third line is about.
+
+### What could not stand in
+
+| candidate | why not |
+|---|---|
+| `reveal_library_top` | public by construction; the whole gap is who receives it |
+| the `look_at_top` **op** | looks once, at resolution, and is spent. "Any time" is a standing permission, and there is no moment for a trigger to fire at |
+| a trigger on some event | same problem from the other end: no event means "any time" |
+| a `top_of_library` condition | reads the card's printed face for the rules. It answers questions; it shows nobody anything |
+
+### Tier: E, and only for one boolean
+
+Routed as **E** — a new API field — and it is worth saying exactly which half of
+the change earned that, because most of it did not.
+
+The card itself needs **no** new field. `serialize._player` has had both `pid`
+and `seat` all along (`own = pid == seat` is what hides a hand), so the private
+half is *scoping* an existing field rather than adding one: `library_top` is
+already the right payload in the right shape, and both the frontend's `PlayerOrb`
+pile and `findCard`'s zone-of-one lookup already consume it. Adding
+`library_top_private` beside it would have been two fields that can disagree
+about one card.
+
+What does not survive scoping is the **distinction**. The two statics produce a
+byte-identical payload, so a seat holding one cannot tell which it is — and the
+pile said `Top of library, revealed: X`. Under a private look that sentence is
+false in the direction that matters: it tells the one player who can see the card
+that the whole table can. So one boolean, `library_top_public`, and the Tier E
+file list for it. `schemas.py` needed nothing, because `StateResponse.state` is a
+bare `dict[str, Any]` and the view is serialized generically.
+
+That makes the skill's Tier A note — "the server needs no change for a new op,
+keyword, counter type, decision kind or action kind" — inapplicable rather than
+wrong: this capability *is* a serialization question, and nothing else.
+
+### How it is kept private
+
+```python
+def _library_top(state, pid, seat) -> tuple[dict | None, bool]:
+    public = player_reveals_library_top(state, pid)
+    if not public and not (pid == seat and player_looks_at_library_top(state, pid)):
+        return None, False
+    top = top_of_library(state, pid)
+    if top is None:
+        return None, False
+    return card_view(state, top.oid), public
+```
+
+One function, and the seat test is in it rather than at the call site, so there is
+no second path to `library_top` that could forget it. Three consequences worth
+pinning:
+
+- **A reveal beside a look is still a reveal.** `public` is computed first and
+  wins; the weaker permission cannot make a shown card private again.
+- **`library_top_public` is false whenever no card is sent**, including when the
+  library is empty under an active reveal. A stale `true` next to a `null` face
+  is a claim about a card that does not exist.
+- **The permission is continuous.** It ends when its source leaves, and it is
+  gated by `_active_player_statics` like the other eight, so an "as long as…"
+  clause on it is asked rather than ignored.
+
+### The static itself
+
+The ninth player-wide effect, `affects_player` like the rest, read by
+`characteristics.player_looks_at_library_top` and — like its public twin — by
+`serialize` and by nothing else. It changes no rule: it grants no permission to
+play or move the card, and no rules code asks about it.
+
+`t_all_player_statics` carries it, so `TestEveryPlayerWideStatic` walks nine
+readers rather than eight; `test_the_table_covers_every_gated_effect_on_the_card`
+is what would have caught it being added to the loader and forgotten there.
+
+### What it unblocked
+
+**Verge Rangers**, through all six gates, and it was its own last blocker. The
+card is the whole harvest — `--tier templates --retry` produced nothing, since no
+template reads the printed sentence, so it was authored at the agent tier.
+
+Its expectation is `zone: battlefield` plus `granted: first_strike`, which is
+deliberately weak about the line this run built: the verifier's expectation
+language has no key for *what a given player can see*, so the visibility is not
+assertable as a card expectation and the gate was not weakened to pretend
+otherwise. That coverage lives where it can be written honestly —
+`tests/unit/test_look_at_library_top.py` for the engine and
+`tests/server/test_multiplayer_game.py::TestTopCardVisibility` for the wire.
+
+The two-humans server test is the one that matters, because it is the only place
+the claim is made against a real second token: seat 0 fetches `/state` and is
+sent the card, seat 1 fetches `/state` and is not.
+
+### Retired with it
+
+`TestTheUngatedStaticsAreUntouched::test_no_shipped_card_gates_a_player_wide_static`
+asserted `gated == []` over the real pool, and its docstring said to retire it
+naming the card that eventually gated one. That card is Verge Rangers. The
+successor asserts the opposite — the pair is *in* the pool — because the useful
+half of the guard survives: a gated player-wide static is only correct if
+something reads the gate.
+
+### Guarded by
+
+`tests/unit/test_look_at_library_top.py` (21 cases), and its shape is the point:
+every claim is asserted **from both seats**, because a version that sent the card
+to everybody passes every controller-side assertion there is. The opponent class
+includes a four-player pod, since "not the opponent" and "not any of the three
+other seats" are different claims.
+
+Then `tests/server/test_multiplayer_game.py::TestTopCardVisibility` over HTTP,
+`tests/unit/test_conditional_player_static.py` for the ninth reader through the
+gate, and `frontend/tests/playerOrb.test.tsx` for the wording — the pile must not
+call a private look "revealed".
 
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
@@ -782,7 +925,7 @@ hand-rolled walks of the battlefield instead, none of which asked:
 
 | reader | effects |
 |---|---|
-| `characteristics._player_static` | `no_hand_limit`, `play_lands_from_graveyard`, `play_lands_from_library_top`, `reveal_library_top`, `double_land_mana` |
+| `characteristics._player_static` | `no_hand_limit`, `play_lands_from_graveyard`, `play_lands_from_library_top`, `reveal_library_top`, `double_land_mana` (and, since `look_at_library_top` shipped, that one too) |
 | `characteristics.player_extra_land_drops` | `extra_land_drops` |
 | `characteristics.players_freezing_opponent_lands` | `freeze_opponent_lands` |
 | `triggers._land_trigger_doublers` | `double_land_triggers` |
@@ -846,6 +989,11 @@ be the fetchland-template refusal: a cheaper card than the printed one.
 So the `conditional_player_static` need is struck from
 `data/authoring/gaps/verge_rangers.json` and `look_at_library_top` is left
 standing. The engine change ships on its unit test alone.
+
+> `look_at_library_top` has since shipped — see the top of this file. Verge
+> Rangers is authored, and it is the first card to carry a `condition` on a
+> player-wide static, so `TestTheUngatedStaticsAreUntouched::test_no_shipped_card_gates_a_player_wide_static`
+> was retired with it.
 
 ### Guarded by
 

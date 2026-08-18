@@ -10861,6 +10861,35 @@
       ]
     },
     {
+      "id": "t_top_peeker",
+      "name": "Test Top Peeker",
+      "oracle_text": "You may look at the top card of your library any time.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may look at the top card of your library any time.",
+          "effect": "look_at_library_top",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
       "id": "t_verge_scout",
       "name": "Test Verge Scout",
       "oracle_text": "As long as an opponent controls more lands than you, you may play lands from the top of your library.",
@@ -10970,7 +10999,7 @@
     {
       "id": "t_all_player_statics",
       "name": "Test Turn-Gated Player Statics",
-      "oracle_text": "As long as it's your turn, you have no maximum hand size, you may play an additional land, you may play lands from your graveyard and from the top of your library, you play with the top card of your library revealed, land triggers you control trigger an additional time, and your lands produce twice as much mana.",
+      "oracle_text": "As long as it's your turn, you have no maximum hand size, you may play an additional land, you may play lands from your graveyard and from the top of your library, you play with the top card of your library revealed, you may look at the top card of your library any time, land triggers you control trigger an additional time, and your lands produce twice as much mana.",
       "mana_cost": "{4}",
       "types": [
         "Artifact"
@@ -11021,6 +11050,15 @@
           "kind": "static",
           "text": "As long as it's your turn, you play with the top card of your library revealed.",
           "effect": "reveal_library_top",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you may look at the top card of your library any time.",
+          "effect": "look_at_library_top",
           "affects_player": "you",
           "condition": {
             "is_your_turn": true

@@ -2008,7 +2008,7 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Eight static effects describe the *player* rather than a characteristic, so they
+Nine static effects describe the *player* rather than a characteristic, so they
 take `affects_player` instead of `affects`:
 
 ```jsonc
@@ -2018,6 +2018,7 @@ take `affects_player` instead of `affects`:
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
@@ -2055,16 +2056,40 @@ without it — whether your team has flying is a fact you are meant to know befo
 declaring attackers, and the condition that decides it is otherwise invisible. So
 `library_top` goes to **every** seat rather than its controller's: the card is
 public, and an opponent who cannot see it is playing against information they are
-entitled to. It is `null` whenever nothing reveals it, so the client needs no
+entitled to. It is `null` whenever nothing shows it, so the client needs no
 separate flag, and `findCard` searches it — a zone of one — or the preview rail
 blanks on the single card the whole mechanic exists to show.
+
+`look_at_library_top` is the **private** counterpart, and the pair is the reason
+both exist. Verge Rangers says "you may look at the top card of your library any
+time", which shows the card to nobody — rule 701.16a separates looking from
+revealing precisely here. So the same `library_top` field carries it, and
+`serialize._library_top` sends it to that player's own seat and no other:
+
+```jsonc
+// Verge Rangers
+{ "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
+```
+
+Substituting the public static would be a different card, not a rounder one — it
+would hand every opponent the top of a deck that also plays lands off it. The
+`look_at_top` **op** is not a substitute either: it looks once, at resolution,
+and is spent, where this is a standing permission with no moment for a trigger to
+fire at.
+
+The two arrive as an identical payload, so the seat that gets one cannot tell
+which it is. That is what `library_top_public` is for — the one API field this
+capability added. Without it the client words a private look as "revealed", which
+tells the only player who can see the card that the whole table can. False
+whenever `library_top` is `null`, so it never makes a claim about a card that was
+not sent.
 
 `play_lands_from_library_top` offers the top card only. That is what the cards
 say, and it is also the only part of a hidden zone anybody is entitled to see.
 
 ### "As long as…" on a player-wide static
 
-All eight take a [`condition`](#as-long-as), and it is the same condition
+All nine take a [`condition`](#as-long-as), and it is the same condition
 language, evaluated by the same `_static_active`:
 
 ```jsonc
@@ -2100,7 +2125,10 @@ condition could come to depend on.
 `extra_land_drops` is the one that switches an **amount** rather than a
 permission, and a switched-off one contributes 0 rather than its `amount`.
 `reveal_library_top` is the one that changes no rule: gated off, `library_top`
-stops being sent to every seat and the card goes back to being hidden.
+stops being sent to every seat and the card goes back to being hidden. The same
+holds for `look_at_library_top`, one seat narrower — and Verge Rangers is the
+card that carries a condition on one of these *and* an unconditional one beside
+it, so the two are gated independently on the same permanent.
 
 ## "Sacrifice it unless you…"
 
