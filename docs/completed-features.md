@@ -1,3 +1,113 @@
+## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
+
+### Overview
+
+Frontline Medic: *"Sacrifice this creature: Counter target spell **with {X} in
+its mana cost** unless its controller pays {3}."* Two capabilities in one
+sentence. This run built the first; `counter_unless_pays` — billing the
+*targeted spell's controller* — is a separate gap record and a separate run, and
+it is still open.
+
+So **no card was authored**, and that is the honest outcome rather than a
+shortfall. The Medic is one clause away and the clause is not this one.
+`tests/unit/test_x_in_mana_cost.py` is therefore the whole of this change's
+coverage: there is no authored card being re-verified through six gates on every
+run, which is exactly the case §3 of the skill is written about.
+
+### Tier: A, and barely
+
+No new op, no continuous effect, no decision kind, no event, no API field. The
+underlying datum already existed and was already parsed — `ManaCost.x_count`,
+incremented once per `{X}` token by `ManaCost.parse` — and had never been read
+back by anything. What shipped is a selector key over it, plus the plumbing that
+turned out to be missing underneath (below), plus a load-time guard.
+
+### The rules argument: 107.3 against 202.3b
+
+Rule 107.3 makes the {X} in a mana cost a **mana symbol**. 601.2b has the caster
+announce a value for it as the spell is cast. 202.3b says X counts as 0 for mana
+value anywhere the object is not on the stack. None of that removes the symbol
+from the card, and "with {X} in its mana cost" asks about the symbol.
+
+So the filter reads `card_of(obj).mana_cost.x_count` — the printed cost of the
+**face being cast**, so a split half or an adventure answers for the half on the
+stack — and never `StackItem.x`. A Fireball announced for X = 0 is still a legal
+target for the Medic.
+
+### Why `mana_value` could not stand in, in either direction
+
+| | |
+|---|---|
+| `mana_value` as it is | Scores X as 0, so Fireball `{X}{R}` and Shock `{R}` are **both mana value 1**. One comparison catches both or neither. `test_fireball_and_shock_have_the_same_mana_value` states it as data and `test_a_mana_value_clause_catches_both` plays it out on a stack |
+| `mana_value` made 202.3b-correct on the stack | Would not rescue it, which is the argument that decides the design. 601.2b lets the caster announce **X = 0**, and there a Fireball's mana value is Shock's exactly while it remains a legal target. The two readings disagree precisely at the boundary, which is why `TestTheAnnouncedXIsNotTheQuestion` parametrizes over X = 0, 1 and 3 |
+| `mana_symbols` | The only other symbol-level cost reader, and it cannot filter a pool at all: it is a value expression, not a selector key. `validate_mana_symbols` also restricts `of` to W/U/B/R/G, by design — it was built for chroma, and there is no spelling for X |
+| A condition on the ability | `TargetModel` carries `selector`, `count`, `one_per_player` and `optional` and no condition slot; an activated ability's own `condition` is checked by legality *before* targets are chosen, so it cannot see the spell |
+
+### The plumbing that was missing, and three shipped cards it was wrong for
+
+A `kind: "spell"` target spec **ignored its `selector` outright**.
+`targeting.candidates` returned every spell on the stack; `still_legal` answered
+`item.is_spell` and stopped. The clause loaded, validated against
+`SELECTOR_KEYS`, and was never consulted — the silently-inert filter that
+`validate_selector` exists one layer up to prevent.
+
+That meant Negate, Essence Scatter and Exclude were all Counterspell, and
+nothing said so. The probe that found it is one line: with `negate` in hand and
+a creature spell on the stack, the engine offered the cast.
+
+Both call sites now run the selector through `matches` with the default zone set
+to the **stack** rather than `matches`'s battlefield — a battlefield default
+would reject every candidate and turn every counterspell in the pool into a dead
+card, which is why `test_an_empty_selector_still_takes_everything` is a
+regression guard rather than a tautology. The re-check half is 608.2b: a
+selector that held when the counter was cast has to still hold when it resolves.
+
+Characteristics come off the printed face, because `matches` reads the derived
+layer only for permanents — and that is what a spell on the stack should get
+anyway, since no static is applying to it.
+
+### The gate caught it, which is the system working
+
+Making the selector real failed **Negate** at gate 4 (playable) in
+`tests/cards`, and failed the baseline-honesty test alongside it. Both
+`add_dummy_spell` helpers — `verify.py`'s and
+`tests/cards/test_every_card_works.py`'s — pushed a single *creature* spell onto
+the stack, so "counter target noncreature spell" had nothing to point at and the
+card was correctly reported as uncastable.
+
+The fix is in the harness, not the gate: each now pushes **one spell of each
+broad shape**, the same argument the opponent's board already makes by carrying
+one of each type. Both dummies target nothing of their own, since the sandbox
+may let whichever survives resolve. The next card whose spell-selector no dummy
+satisfies — "target spell with {X} in its mana cost", once one is authored —
+will fail here the same way, and the answer is another role rather than a
+relaxed check.
+
+### The guard
+
+`{"x_in_mana_cost": {"op": ">=", "value": 1}}` is the natural thing to write,
+because the key sits beside `mana_value`, which *is* a comparison. It is also a
+truthy dict, so it would have meant `true` by accident, and `0` would have
+quietly meant `false`. Non-booleans are a load error. There is nothing to widen
+this into later: "two or more X symbols" is not a printing.
+
+### What was deliberately left out
+
+Not in `STATIC_FILTER_KEYS`, and not in `SPELL_FILTER_KEYS` either. A static
+filter matches **permanents**, where 202.3b makes X 0 and the question is not
+asked; every printed line that reads {X} out of a cost points at the stack.
+`mana_value` is not in that set either, so no static in the engine reads a cost
+at all. The same call `attacked_this_turn` and `is_monarch` got: vocabulary with
+no card asking for it is vocabulary that invites a card to be written wrongly.
+
+### What it unblocks
+
+Nothing on its own — see the overview. `data/authoring/gaps/frontline_medic.json`
+keeps its `counter_unless_pays` need and loses this one, so the report now ranks
+the Medic by the one clause that is genuinely still missing. The two shipped
+counterspells the plumbing repaired are the change's only immediate effect on a
+real game.
+
 ## `nth` — "your second card each turn", settled where the trigger queues
 
 ### Overview

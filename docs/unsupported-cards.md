@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **11** capabilities.
+**8 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [multikicker](#multikicker) | 1 | 4605 | cost |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
-| [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
 
 ## batch-attack-trigger
 
@@ -171,19 +170,5 @@ Blocks **1** card.
 - **Marshal's Anthem** (rank 4605) — `marshal_s_anthem`
   - Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)
   - When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.
-
-</details>
-
-## x-in-mana-cost
-
-Blocks **1** card.
-
-- **(selector)** A selector key that asks whether an object's **printed mana cost contains an {X} symbol** -- e.g. `{"has_x": true}` (and its negation) added to `SELECTOR_KEYS` and matched in `selectors.matches` as `ctx.state.card_of(obj).mana_cost.x_count > 0`. The data already exists and is parsed: `ManaCost.x_count` (mana.py:68, incremented at mana.py:90 for each `{X}` token), so this is a filter clause over an existing field, not a new characteristic. It must be legal inside a `TargetModel.selector` on a `kind: "spell"` target, which is where every card of this shape reads it ("target spell with {X} in its mana cost", "target creature spell with {X} in its mana cost").
-  <br>Why the existing vocabulary won't do: `mana_value` is the only cost reader in `SELECTOR_KEYS` and it is a numeric comparison through `_compare` against `card.mana_value` (selectors.py:495-498). `ManaCost.mana_value` counts X as 0 by default (mana.py:110-116), so an X spell is indistinguishable from the same cost without the X: Fireball `{X}{R}` and Shock `{R}` are both mana value 1, and a `mana_value` clause therefore either catches both or neither. `mana_symbols` is the DSL's only symbol-level cost reader and cannot stand in twice over: it is a `value_keys` entry rather than a selector key, so it cannot filter a pool at all, and `validate_mana_symbols` (values.py:370-374) requires `of` to be one of W/U/B/R/G -- there is no spelling for X, by design, since it was built for chroma. Nor can the restriction be moved off the selector and into a condition: `TargetModel` (schema.py:74-93) carries only `selector`, `count`, `one_per_player` and `optional`, with no condition slot, and an activated ability's own `condition` is checked by legality before targets are chosen so it cannot see the spell either. Every remaining route is an approximation that changes which spells the ability may point at.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frontline Medic** (rank 3489) — `frontline_medic`
-  - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
 
 </details>
