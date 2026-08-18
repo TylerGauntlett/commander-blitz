@@ -184,6 +184,13 @@ const SILENT = new Set([
   "leaves_battlefield",
   "untapped",
   "ability_resolved",
+  // Fired beside `attackers_declared` for the very same declaration -- one per
+  // defending seat, so a batch attack trigger can be told which seat. The
+  // declaration already owns the "Attack!" banner and the surge, so a beat here
+  // would sound it again once per opponent swung at; and being *silent* is also
+  // what keeps it from closing the declaration run in `planCombat`, which would
+  // split one swing into two animations.
+  "creatures_attacked_player",
 ]);
 
 /**

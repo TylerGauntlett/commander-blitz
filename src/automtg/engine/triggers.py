@@ -50,6 +50,28 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `attacks`, which is per creature and would fire three times on a
     #: three-creature swing. The event already existed and nothing listened.
     "you_attack": EventType.ATTACKERS_DECLARED,
+    #: "Whenever one or more creatures attack **one of your opponents** or a
+    #: planeswalker they control, those creatures gain menace" -- Frontier
+    #: Warmonger. `you_attack` with a defending player attached, and one trigger
+    #: per (declaration, defending player) pair: however many creatures were
+    #: declared against that seat, the ability fires once and `{"binding":
+    #: "attackers"}` names exactly them.
+    #:
+    #: Both existing attack triggers fail on a different half. `you_attack` is
+    #: the right *shape* and carries no `defender` at all, so a `defending`
+    #: clause on it never matches (`_defender_matches` returns False on an
+    #: absent defender) and the ability is inert -- while dropping the clause is
+    #: not a weaker card but a different one, since plain `you_attack` with
+    #: `controller: "any"` also fires when an opponent swings at *you* and hands
+    #: menace to the creatures you are about to block. `attacks` carries the
+    #: defender and is per creature, which is the substitution the note on
+    #: `you_attack` above already refused in writing: three attackers, three
+    #: copies, and each copy can speak about one of them.
+    #:
+    #: The attacking side is `controller: "any"` on this card and that is not
+    #: laziness: the creatures attacking an opponent need not be the Warmonger
+    #: controller's, and in a pod they routinely are not.
+    "creatures_attack_player": EventType.CREATURES_ATTACKED_PLAYER,
     #: "Whenever an opponent loses life, you gain that much life." The amount is
     #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
     #: because the reminder text on every card of this shape says so out loud:
@@ -563,6 +585,21 @@ EVENT_BINDING_KEYS = (
     "was_attacking",
     "counter",
     "blockers",
+    # "…**those creatures** gain menace until end of turn." The set that caused
+    # the trigger, and the one binding here that is a *list* of oids rather than
+    # one: `resolve_pool` sends `{"binding": "attackers"}` through `_bound_oids`,
+    # which has accepted a list since devour, so nothing downstream had to learn
+    # a new shape -- the set was simply being dropped on the floor here.
+    #
+    # On `creatures_attack_player` it is the subset declared against *that*
+    # defender; on `you_attack` it is the whole declaration, which is what
+    # "whenever you attack" means. Both are written by `finish_attackers`.
+    #
+    # `{"zone": "battlefield", "attacking": true}` is the near miss and says
+    # something strictly larger: `attacking` is a bare boolean with no notion of
+    # whom, so on a split attack it also names the creatures attacking the
+    # trigger's own controller.
+    "attackers",
     # Persist and undying: what was on the creature before it died, which
     # nothing can read off the object afterwards.
     "had_counters",
@@ -577,6 +614,11 @@ def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
     new bookkeeping.  It exists because ``controller`` cannot answer the
     question: "whenever a creature attacks you" is about the *defending* player,
     and a two-player game hides the difference that a pod makes obvious.
+
+    ``creatures_attack_player`` carries the same key for the same reason, one
+    declaration coarser.  The absent-defender guard below is why that event had
+    to exist at all: on a bare ``ATTACKERS_DECLARED`` there is nothing to
+    compare, so a ``defending`` clause matches nothing, forever and silently.
     """
     defender = event.data.get("defender")
     if defender is None:
@@ -631,7 +673,14 @@ def _actor(
     # reads "damage that would be dealt to **you**" -- and the fallthrough would
     # reach the same answer today only because the player half of the event
     # carries no `oid`. Saying it here means the answer does not depend on that.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented"):
+    # `creatures_attack_player` is listed for the reason `damage_prevented` is:
+    # the fallthrough would reach the same answer today only because the event
+    # carries no `oid`, and the clause is load-bearing. The actor is the
+    # **attacking** player -- so `controller: "you"` is "whenever you attack
+    # somebody", and `controller: "any"` is Frontier Warmonger's "whenever one
+    # or more creatures attack", whoever is swinging them. Who is being attacked
+    # is the separate `defending` clause, and never this one.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")

@@ -101852,12 +101852,12 @@
     },
     "Frontier Warmonger": {
       "edhrec_rank": 3131,
-      "gate": "template",
+      "gate": null,
       "name": "Frontier Warmonger",
-      "reason": "no template for: Whenever one or more creatures attack one of your opponents or a planeswalker they control",
+      "reason": "",
       "scryfall_id": "824aa845-0523-4434-8992-bce42f5b2bcb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontline Devastator": {
