@@ -138,7 +138,7 @@ class TestEachHalfIsJudgedInItsOwnZone:
             _validate_effect(
                 finale(selector={"types": ["Creature"], "zone": "graveyard"}),
                 "test",
-                set(),
+                {},
             )
 
 
@@ -193,24 +193,24 @@ class TestSearchLibraryStillWorks:
 
 class TestTheLoaderGuards:
     def test_a_well_formed_effect_loads(self):
-        _validate_effect(finale(), "test", set())
+        _validate_effect(finale(), "test", {})
 
     def test_one_zone_is_refused(self):
         """That is `search_library`, and saying it this way hides the union."""
         with pytest.raises(DslError, match="at least two"):
-            _validate_effect(finale(zones=["library"]), "test", set())
+            _validate_effect(finale(zones=["library"]), "test", {})
 
     def test_a_missing_zones_list_is_refused(self):
         spec = finale()
         del spec["zones"]
         with pytest.raises(DslError, match="at least two"):
-            _validate_effect(spec, "test", set())
+            _validate_effect(spec, "test", {})
 
     def test_an_unsearchable_zone_is_refused(self):
         with pytest.raises(DslError, match="cannot search"):
-            _validate_effect(finale(zones=["library", "battlefield"]), "test", set())
+            _validate_effect(finale(zones=["library", "battlefield"]), "test", {})
 
     def test_a_repeated_zone_is_refused(self):
         """It would put every card in that zone into the pool twice."""
         with pytest.raises(DslError, match="twice"):
-            _validate_effect(finale(zones=["library", "library"]), "test", set())
+            _validate_effect(finale(zones=["library", "library"]), "test", {})

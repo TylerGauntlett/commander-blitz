@@ -270,7 +270,7 @@ class TestTheDelayedContextHasNoTargets:
 
     def test_a_target_outside_a_delay_is_untouched(self):
         """Every ability that targets and then acts, unchanged."""
-        _validate_effect({"op": "destroy", "objects": {"target": "t1"}}, "test", {"t1"})
+        _validate_effect({"op": "destroy", "objects": {"target": "t1"}}, "test", {"t1": "permanent"})
 
 
 class TestTheZoneDefaultAgreesWithTheRecordSemantics:
@@ -469,7 +469,7 @@ class TestTheLoaderGuardOnCounters:
                 "counters": RETURNED_WITH,
             },
             "test",
-            set(),
+            {},
         )
 
     def test_counters_on_return_from_graveyard_still_loads(self):
@@ -478,7 +478,7 @@ class TestTheLoaderGuardOnCounters:
             {"op": "return_from_graveyard", "destination": "battlefield",
              "counters": {"-1/-1": 1}},
             "test",
-            set(),
+            {},
         )
 
     def test_counters_on_an_op_that_ignores_them_is_refused(self):
@@ -488,7 +488,7 @@ class TestTheLoaderGuardOnCounters:
                 {"op": "return_to_hand", "objects": {"binding": "exiled"},
                  "counters": RETURNED_WITH},
                 "test",
-                set(),
+                {},
             )
 
     def test_a_near_miss_keyword_counter_is_still_refused(self):
@@ -506,7 +506,7 @@ class TestTheLoaderGuardOnCounters:
                     "counters": {"vigilance counter": 1},
                 },
                 "test",
-                set(),
+                {},
             )
 
 

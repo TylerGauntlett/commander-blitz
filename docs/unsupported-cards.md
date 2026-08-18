@@ -10,29 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **5** capabilities.
+**4 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
-
-## counter-unless-pays
-
-Blocks **1** card.
-
-- **(selector)** A player spec that names **the controller of a targeted spell**, so "unless its controller pays {N}" can charge the right seat -- e.g. `{"controller_of_target": "t1"}` in `selectors.select_players`, resolved as `[state.stack_item(sid).controller for sid in ctx.target_sids("t1")]`. With it, the whole family writes itself with existing vocabulary: `{"op": "may", "player": {"controller_of_target": "t1"}, "pay": {"mana": "{3}"}, "else": [{"op": "counter", "target": "t1"}]}`. The same key also unblocks "target spell's controller" on non-counter cards ("unless that spell's controller pays", "that spell's controller discards a card"), and the authoring queue holds dozens of `Counter target spell unless its controller pays {N}` printings waiting on exactly this one clause.
-  <br>Why the existing vocabulary won't do: The unless-pays *shape* already ships -- `may` with `pay` plus `else` is precisely it, and the loader documents that reading at loader.py:1659-1668 (Rhystic Study) -- but it can only bill a player some **trigger binding** already names. `select_players` (selectors.py:604-641) offers `{"controller_of": <binding>}`, which reads `ctx.bindings` and nothing else; bindings are written by `triggers.event_bindings` (triggers.py:394-397) and by `snapshot`, and an activated ability's StackItem carries no binding for the targets it was activated with (stack.py:622-631 passes `targets` and `bindings` as separate things). This is why ward could be written and a targeted counterspell cannot: ward's payer arrives as `controller_of: subject` off a `becomes_target` event. `{"target": "t1"}` is the obvious substitute and silently does the wrong thing: it routes to `ctx.target_players`, which keeps only refs of kind `"player"` (context.py:55-56), and a spell target is kind `"stack"` (context.py:58-59) -- so it returns `[]` and `op_may` falls back to `chooser = ctx.controller` (ops_control.py:57-58), asking Frontline Medic's own controller to pay {3} to counter the spell they just targeted. `{"controller_of": ...}` cannot be fed from the target either: `resolve_pool`'s `{"target": ...}` form seeds from `target_oids`, also object-kind only (selectors.py:165-172), so neither a selector nor a `snapshot` can reach the targeted spell to bind it. `player: "opponent"` is the tempting approximation and is refused: the targeted spell's controller is not necessarily an opponent, and with two of them `select_players` hands `op_may` a list whose first entry is an arbitrary seat.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frontline Medic** (rank 3489) — `frontline_medic`
-  - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
-
-</details>
 
 ## delayed-triggered-ability
 

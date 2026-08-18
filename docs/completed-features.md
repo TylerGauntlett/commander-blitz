@@ -1,3 +1,116 @@
+## `counter_unless_pays` — billing a seat that only a target names
+
+### Overview
+
+Frontline Medic: *"Sacrifice this creature: Counter target spell with {X} in its
+mana cost **unless its controller pays {3}**."* The other half of the sentence
+the previous run left open, and the last thing between the Medic and the pool.
+**It is now authored** — `data/cards/auto/`, all six gates.
+
+The unless-pays *shape* already shipped. `may` + `pay` + `else` is exactly
+"unless", and Rhystic Study is the working card: pay and the `else` branch does
+not run, which is what buying the absence of a thing looks like. What could not
+be said is **who is being billed**. Every payer in the pool arrives as a trigger
+binding — Rhystic Study's off `spell_cast`, ward's off `becomes_target` — and
+`select_players`' `controller_of` reads `ctx.bindings` and nothing else. An
+activated ability's `StackItem` carries its targets and its bindings as separate
+things and binds nothing for what it was activated at, which is precisely why
+ward could be written and a targeted counterspell could not.
+
+### Tier: A, and not even an op
+
+No new op, no continuous effect, no decision kind, no event, no API field. One
+**player spec** — `{"controller_of_target": "t1"}` — and one load-time refusal.
+The whole clause then writes itself out of vocabulary that already existed:
+
+```jsonc
+{ "op": "may", "player": { "controller_of_target": "t1" },
+  "pay": { "mana": "{3}" },
+  "else": [ { "op": "counter", "target": "t1" } ] }
+```
+
+### The rules argument: 109.5, and the seat that pays
+
+"Its controller" on a spell means the controller of *that spell*. The key is
+resolved when the effect runs rather than when the ability was activated, which
+is 608.2 rather than a shortcut: control of a spell can change while the ability
+sits on the stack, and the seat that gets the bill is the one holding it when
+the bill arrives. It answers for **stack refs and object refs alike** — a spell
+has a controller and so does a permanent — so "unless that permanent's
+controller pays" is the same key, and the result is de-duplicated in target
+order, because "counter each of them unless their controllers pay" is one bill
+per seat.
+
+### The silent misfire, and why it is now a load error
+
+`{"player": {"target": "t1"}}` is the obvious thing to write and it played the
+card's own opposite. `ctx.target_players` keeps only refs of kind `"player"`; a
+spell's ref is kind `"stack"`, so it returned `[]` — and `op_may` reads an empty
+player list as `chooser = ctx.controller`. "Counter target spell unless its
+controller pays {3}" resolved as "unless **you** pay {3}": the Medic asking its
+own controller to pay for countering the spell they had just chosen to counter.
+Nothing raised and nothing logged.
+
+**A load error rather than a correct answer**, and deliberately. Making
+`{"target": ...}` quietly fall through to the controller would leave one key
+meaning two different things depending on the target's kind, which is the same
+invisibility one layer down — the author would still not know which card they
+had written. So the loader refuses the combination and names the key that works:
+a `player` spec may say `target` only of a target that can *be* a player
+(`kind: "player"`, or the player half of `kind: "any"`), and
+`controller_of_target` only of one that has a controller. Exactly one of the two
+is right for any given spec, which is what makes the pair checkable instead of
+being two ways to be wrong.
+
+The check is written once, in `_validate_effect`, for **every** op that takes a
+`player` — the way `counter` is checked once for every op that names a counter
+kind. `become_monarch`, `goad` and `cant_attack_player` had each grown a private
+copy of half of it; they now call the shared validator, and the next op to take
+a player is covered before it is written.
+
+### It caught a shipped card on the way in
+
+Hellrider — *"Whenever a creature you control attacks, this creature deals 1
+damage to the player or planeswalker it's attacking"* — was written
+`{"player": {"target": "defender"}}`. `defender` is a **trigger binding**, not a
+declared target, so `ctx.targets` had no such key, `select_players` returned
+`[]`, and the card dealt no damage at all. It had shipped that way, with a
+`{"zone": "battlefield"}` expectation that could never have noticed, since the
+verifier declines combat. `{"binding": "defender"}` is the correct spelling and
+was one word away the whole time.
+
+That is the argument for the load error stated as evidence rather than as
+principle: the first thing a general check found was a card nobody knew was
+broken.
+
+### Verification
+
+The behaviour gate legitimately asserts only `{"zone": "battlefield"}` for the
+Medic. The verifier **declines combat**, so battalion cannot fire, and it never
+activates activated abilities, so the counter line cannot fire either — the
+weak expectation is the honest one and no gate was weakened to get it.
+`tests/unit/test_counter_unless_pays.py` is where the real coverage lives, on
+the shipped card rather than a fixture: which seat is asked, paying countering
+nothing, declining countering the spell, a controller who cannot pay never being
+asked, and **the pod** — three seats, where "the spell's controller" and "an
+opponent" finally differ and `player: "opponent"` would bill an arbitrary one.
+
+`verify.py` gained one dummy role, `x_spell`, exactly as `add_dummy_spell`'s
+docstring asked the next run to do rather than relaxing the gate. It is not
+reached by the Medic — a permanent's ability targets are not in the sandbox's
+stack, and could not be: dummy spells on the stack make a *creature* uncastable
+by 117.1a, which is what its own gate 4 measures — but the "Counter target spell
+with {X} in its mana cost" instants behind it in the queue reach it directly.
+
+### What it unblocks
+
+Frontline Medic today. Behind it, the plain
+*"Counter target spell unless its controller pays {N}"* family — Mana Leak,
+Daze, Condescend, Rethink, and the dozens of printings the authoring queue holds
+on this one clause — plus every non-counter line that bills a targeted object's
+controller: "unless that spell's controller pays", "that spell's controller
+discards a card".
+
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
 ### Overview

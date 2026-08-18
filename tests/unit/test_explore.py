@@ -227,9 +227,9 @@ class TestThroughARealCard:
 
 class TestTheLoaderGuard:
     def test_a_well_formed_effect_loads(self):
-        _validate_effect(SELF, "test", set())
+        _validate_effect(SELF, "test", {})
 
     def test_omitting_objects_is_refused(self):
         """Defaulted, it would read fine on a creature and do nothing on a sorcery."""
         with pytest.raises(DslError, match="explore needs 'objects'"):
-            _validate_effect({"op": "explore"}, "test", set())
+            _validate_effect({"op": "explore"}, "test", {})

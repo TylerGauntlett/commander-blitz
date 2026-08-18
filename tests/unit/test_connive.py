@@ -182,8 +182,8 @@ class TestTheEmptyHandBoundary:
 
 class TestTheLoaderGuard:
     def test_a_well_formed_effect_loads(self):
-        _validate_effect(SELF, "test", set())
+        _validate_effect(SELF, "test", {})
 
     def test_omitting_objects_is_refused(self):
         with pytest.raises(DslError, match="connive needs 'objects'"):
-            _validate_effect({"op": "connive"}, "test", set())
+            _validate_effect({"op": "connive"}, "test", {})
