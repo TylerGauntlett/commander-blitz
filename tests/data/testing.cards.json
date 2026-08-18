@@ -10479,6 +10479,201 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_verge_scout",
+      "name": "Test Verge Scout",
+      "oracle_text": "As long as an opponent controls more lands than you, you may play lands from the top of your library.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent controls more lands than you, you may play lands from the top of your library.",
+          "effect": "play_lands_from_library_top",
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "player": "each_opponent",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_conditional_ramp",
+      "name": "Test Conditional Ramp",
+      "oracle_text": "As long as an opponent controls more lands than you, you may play an additional land on each of your turns.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent controls more lands than you, you may play an additional land on each of your turns.",
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "player": "each_opponent",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_all_player_statics",
+      "name": "Test Turn-Gated Player Statics",
+      "oracle_text": "As long as it's your turn, you have no maximum hand size, you may play an additional land, you may play lands from your graveyard and from the top of your library, you play with the top card of your library revealed, land triggers you control trigger an additional time, and your lands produce twice as much mana.",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you have no maximum hand size.",
+          "effect": "no_hand_limit",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you may play an additional land.",
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you may play lands from your graveyard.",
+          "effect": "play_lands_from_graveyard",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you may play lands from the top of your library.",
+          "effect": "play_lands_from_library_top",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, you play with the top card of your library revealed.",
+          "effect": "reveal_library_top",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, land triggers you control trigger an additional time.",
+          "effect": "double_land_triggers",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, whenever you tap a land for mana, add one additional mana of that type.",
+          "effect": "double_land_mana",
+          "affects_player": "you",
+          "condition": {
+            "is_your_turn": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, lands your opponents control don't untap during their next untap steps.",
+          "effect": "freeze_opponent_lands",
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          }
+        }
+      ]
     }
   ]
 }
