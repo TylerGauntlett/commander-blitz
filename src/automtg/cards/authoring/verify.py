@@ -67,6 +67,13 @@ _ROLES: dict[str, Any] = {
     #: wants a target it was never given is an error inside the harness rather
     #: than a verdict about the card.
     "noncreature_spell": lambda c: (c.is_instant or c.is_sorcery) and not c.targets,
+    #: Something for "counter target spell **with {X} in its mana cost**" to
+    #: point at -- Frontline Medic. The role the `noncreature_spell` docstring
+    #: below said the next unrepresented selector would need, added rather than
+    #: the gate relaxed. Targetless for the same reason that one is.
+    "x_spell": lambda c: (c.is_instant or c.is_sorcery)
+    and not c.targets
+    and c.mana_cost.x_count > 0,
 }
 
 #: Which roles each zone gets.  The opponent's board carries one of each broad
@@ -148,9 +155,12 @@ def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
     A card whose selector no dummy here satisfies -- "target spell with {X} in
     its mana cost", once something is authored with it -- will fail the same way,
     which is the harness reporting an unrepresented shape rather than the card
-    being wrong. Add the role; do not relax the gate.
+    being wrong. Add the role; do not relax the gate. `x_spell` is that role,
+    added exactly as this paragraph asked: Frontline Medic put the selector into
+    the pool, and the "Counter target spell with {X} in its mana cost" *instant*
+    behind it in the queue is the first card that will reach this list with it.
     """
-    for pick in _props(registry, ("creature", "noncreature_spell")):
+    for pick in _props(registry, ("creature", "noncreature_spell", "x_spell")):
         obj = new_object(game.state, pick, owner=1, zone=Zone.HAND)
         game.state.players[1].hand.append(obj.oid)
         push_spell(game.state, obj.oid, 1)
@@ -583,6 +593,13 @@ def _cast(
     half of a pump can be read.
     """
     game = build_sandbox(registry, card.id)
+    # The **card's** targets, deliberately, and not its abilities'. Frontline
+    # Medic is the first card whose spell target sits on an activated ability,
+    # and widening this to reach it makes the sandbox strictly worse: the dummy
+    # spells go on the stack, and a stack with anything on it is not a moment a
+    # *creature* can be cast at all (117.1a), so the Medic stops being playable
+    # in its own gate. A permanent's ability wants the dummies present later --
+    # when it is activated -- which is not a thing this harness does.
     if any(spec.kind == "spell" for spec in card.targets):
         add_dummy_spell(game, registry)
     game._advance()

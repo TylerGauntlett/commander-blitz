@@ -126,16 +126,16 @@ class TestTheGuards:
 
     def test_a_well_formed_times_loads(self):
         _validate_effect(
-            self._may({"mana": "{1}", "times": {"const": 2}}), "test", set()
+            self._may({"mana": "{1}", "times": {"const": 2}}), "test", {}
         )
 
     def test_times_with_no_mana_is_refused(self):
         """It multiplies the mana half, so with none it multiplies nothing."""
         with pytest.raises(DslError, match="multiplies the mana cost"):
-            _validate_effect(self._may({"pay_life": 1, "times": {"const": 2}}), "test", set())
+            _validate_effect(self._may({"pay_life": 1, "times": {"const": 2}}), "test", {})
 
     def test_a_malformed_times_is_refused(self):
         with pytest.raises(DslError, match="unknown value keys"):
             _validate_effect(
-                self._may({"mana": "{1}", "times": {"nonsense": True}}), "test", set()
+                self._may({"mana": "{1}", "times": {"nonsense": True}}), "test", {}
             )

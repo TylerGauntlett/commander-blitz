@@ -389,10 +389,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
+<<<<<<< HEAD
     targets = _compile_targets(model.targets, where, on_spell=True)
     target_ids = {t.id for t in targets}
+=======
+    targets = _compile_targets(model.targets, where)
+    target_kinds = {t.id: t.kind for t in targets}
+>>>>>>> worktree-agent-a0419399c3ffa31db
     for i, effect in enumerate(model.spell_effects):
-        _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
+        _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.counter is not None:
@@ -1138,9 +1143,9 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         return _compile_static(model, index, where)
 
     targets = _compile_targets(model.targets, where)
-    target_ids = {t.id for t in targets}
+    target_kinds = {t.id: t.kind for t in targets}
     for i, effect in enumerate(model.effects):
-        _validate_effect(effect, f"{where}.effects[{i}]", target_ids)
+        _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
 
     cost = _compile_cost(model.cost, where) if model.cost else None
     trigger = None
@@ -2375,7 +2380,70 @@ def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
     walk(list(effects), where)
 
 
-def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
+#: Target kinds whose chosen ref can be a **player**, so ``{"target": "t1"}``
+#: means something as a player spec. ``"any"`` is here because "any target" is
+#: creatures, planeswalkers *and* players (115.4) -- a damage op reads the ref
+#: kind and does the right thing with either.
+PLAYER_TARGET_KINDS = frozenset({"player", "any"})
+
+#: Target kinds whose chosen ref always has a **controller**, so
+#: ``{"controller_of_target": "t1"}`` means something. The complement of
+#: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
+#: so: exactly one of the two keys is right for any given target spec, which is
+#: what makes the pair a checkable choice instead of two ways to be wrong.
+CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard"})
+
+
+def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check one *player* spec -- an effect's ``player``, or a side of one.
+
+    Every way of writing this wrong is silent, and one of them was a shipped
+    card doing the opposite of what it printed.
+
+    A misspelled **name** (``"each_oponent"``) raises only once the ability
+    resolves. A **target id the card never declared** resolves to nobody:
+    Hellrider's ``{"target": "defender"}`` named a trigger *binding*, which
+    `select_players` never reads, so the card dealt no damage at all and every
+    board it was on looked like a board where nothing had happened.
+
+    And the case this validator was written for: ``{"target": "t1"}`` pointed at
+    a **spell** target. `ctx.target_players` keeps only refs of kind
+    ``"player"`` and a spell's ref is kind ``"stack"``, so it returns ``[]`` --
+    and `op_may` reads "nobody" as "me" (``chooser = ctx.controller``) and bills
+    the *counterspell's* controller. "Counter target spell unless its controller
+    pays {3}" became "unless **you** pay {3}", which is a legal-looking card
+    that plays as its own opposite. `controller_of_target` is the key that says
+    it, and this refuses the near miss by name rather than letting it load.
+    """
+    if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}: unknown player spec {who!r} "
+            f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
+        )
+    if not isinstance(who, Mapping):
+        return
+    for key in ("target", "controller_of_target"):
+        if key not in who:
+            continue
+        tid = str(who[key])
+        if tid not in target_kinds:
+            raise DslError(
+                f"{where}: references target {tid!r} which the card does not declare"
+            )
+        kind = target_kinds[tid]
+        if key == "target" and kind not in PLAYER_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which is never a player -- "
+                f"use {{'controller_of_target': {tid!r}}} to bill the one who controls it"
+            )
+        if key == "controller_of_target" and kind not in CONTROLLED_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which has no controller -- "
+                f"use {{'target': {tid!r}}} to name the player it chose"
+            )
+
+
+def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
         raise DslError(f"{where}: effect must be an object")
@@ -2417,16 +2485,24 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"(use a separate add_counters)"
             )
 
-    if "target" in effect and str(effect["target"]) not in target_ids:
+    if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
         )
     for key in ("objects", "per", "selector"):
         sub = effect.get(key)
-        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_ids:
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
+    # Every op that names a player spells it `player` and every one of them
+    # feeds `select_players`, so this is checked once here rather than per op --
+    # the way `counter` is. `become_monarch`, `goad` and `cant_attack_player`
+    # each grew their own copy of this check because there was no general one;
+    # they now call the same validator, and the next op to take a player is
+    # covered before it is written.
+    if "player" in effect:
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
 
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same
@@ -2467,25 +2543,6 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 raise DslError(
                     f"{where}.pay: 'times' multiplies the mana cost, and there is none"
                 )
-    if op == "become_monarch" and "player" in effect:
-        # Who gets the crown is the whole op, and it is the one op whose `player`
-        # can be a *target* -- Éomer's "target player becomes the monarch". Both
-        # halves of that are silent when wrong: a misspelled name raises only
-        # once the ability resolves, and a target id the card never declared
-        # resolves to nobody, so the printed line does nothing at all. The
-        # generic target check above covers `objects`/`per`/`selector` and not
-        # this.
-        who = effect["player"]
-        if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-            raise DslError(
-                f"{where}.player: unknown player spec {who!r} "
-                f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-            )
-        if isinstance(who, Mapping) and "target" in who and str(who["target"]) not in target_ids:
-            raise DslError(
-                f"{where}.player: references target {who['target']!r} "
-                f"which the card does not declare"
-            )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole
         # of the difference between Hinder and a plain tuck, and both ways of
@@ -2591,21 +2648,7 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                     f"{where}: cant_attack_player needs '{side}' -- "
                     f"the restriction names both players"
                 )
-            who = effect[side]
-            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-                raise DslError(
-                    f"{where}.{side}: unknown player spec {who!r} "
-                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-                )
-            if (
-                isinstance(who, Mapping)
-                and "target" in who
-                and str(who["target"]) not in target_ids
-            ):
-                raise DslError(
-                    f"{where}.{side}: references target {who['target']!r} "
-                    f"which the card does not declare"
-                )
+            _validate_player_spec(effect[side], f"{where}.{side}", target_kinds)
         if "duration" not in effect:
             raise DslError(
                 f"{where}: cant_attack_player needs a 'duration' "
@@ -2637,23 +2680,8 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
         # The goader defaults to the effect's controller, which is every printed
         # goad; when a card does spell it out it must be a player the engine can
-        # resolve, checked the way `cant_attack_player`'s two sides are.
-        if "player" in effect:
-            who = effect["player"]
-            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-                raise DslError(
-                    f"{where}.player: unknown player spec {who!r} "
-                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-                )
-            if (
-                isinstance(who, Mapping)
-                and "target" in who
-                and str(who["target"]) not in target_ids
-            ):
-                raise DslError(
-                    f"{where}.player: references target {who['target']!r} "
-                    f"which the card does not declare"
-                )
+        # resolve -- which the general `player` check above now does for every
+        # op, goad included.
     if op == "cant_block":
         # Two keys, and every way of getting them wrong loads cleanly and plays
         # a different card.
@@ -3120,12 +3148,12 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     for key in ("then", "else", "effects"):
         if key in effect:
             for i, sub in enumerate(effect[key] or []):
-                _validate_effect(sub, f"{where}.{key}[{i}]", target_ids)
+                _validate_effect(sub, f"{where}.{key}[{i}]", target_kinds)
     for i, mode in enumerate(effect.get("modes", []) or []):
         if not isinstance(mode, Mapping):
             raise DslError(f"{where}.modes[{i}]: must be an object")
         for j, sub in enumerate(mode.get("effects", []) or []):
-            _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_ids)
+            _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_kinds)
 
 
 def _derive_color_identity(

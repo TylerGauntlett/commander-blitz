@@ -753,9 +753,10 @@ def pick_from_pool(
 
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
-#: The mapping forms (``target``, ``binding``, ``controller_of``, ``owner_of``)
-#: and a bare seat number are not here: they name something the card declares
-#: elsewhere and are checked where that is checked.
+#: The mapping forms (``target``, ``controller_of_target``, ``binding``,
+#: ``controller_of``, ``owner_of``) and a bare seat number are not here: they
+#: name something the card declares elsewhere and are checked where that is
+#: checked -- `loader._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
     {
         "you",
@@ -788,7 +789,44 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
         if "target" in spec:
+            # Only refs that *are* players. A `kind: "spell"` or `kind:
+            # "permanent"` target never produces one, and this quietly returning
+            # `[]` for them is why `controller_of_target` below exists rather
+            # than this key being widened -- see `loader._validate_player_spec`,
+            # which refuses the combination at load time.
             return ctx.target_players(str(spec["target"]))
+        if "controller_of_target" in spec:
+            # "Counter target spell **unless its controller** pays {3}."
+            #
+            # The one player spec that reads the *target list* rather than
+            # `ctx.bindings`, and the reason it had to exist: bindings are
+            # written by `triggers.event_bindings` and by `snapshot`, so
+            # `controller_of` can only name a player some **trigger** already
+            # found. An activated ability's `StackItem` carries its targets and
+            # its bindings as separate things and binds nothing for what it was
+            # activated at -- which is why ward's payer (a `becomes_target`
+            # event binding) could be written and Frontline Medic's could not.
+            #
+            # Read at resolution and not at activation, which is 608.2 and not a
+            # shortcut: control of a spell can change while the ability is on
+            # the stack, and the seat that gets the bill is the one that
+            # controls it when the payment is demanded.
+            tid = str(spec["controller_of_target"])
+            billed: list[int] = []
+            for ref in ctx.target_refs(tid):
+                if ref.kind == "stack":
+                    item = state.stack_item(ref.id)
+                    pid = item.controller if item is not None else None
+                elif ref.kind == "object":
+                    pid = obj.controller if (obj := state.objects.get(ref.id)) else None
+                else:  # a player ref has no controller; the loader refuses it
+                    pid = None
+                # De-duplicated and in target order: "counter each of them
+                # unless their controllers pay" is one bill per seat, and a
+                # player who has already lost is not asked for anything.
+                if pid is not None and pid not in billed and state.is_alive(pid):
+                    billed.append(pid)
+            return billed
         if "controller_of" in spec:
             binding = ctx.bindings.get(str(spec["controller_of"]))
             if isinstance(binding, Mapping):

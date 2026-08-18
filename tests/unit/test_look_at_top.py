@@ -148,15 +148,15 @@ class TestWhatIsLeftBehind:
 
 class TestTheLoaderGuards:
     def test_a_well_formed_effect_loads(self):
-        _validate_effect(gate(shuffle=True), "test", set())
+        _validate_effect(gate(shuffle=True), "test", {})
 
     def test_a_missing_amount_is_refused(self):
         """Defaulted to 1 it would silently become a much worse card."""
         spec = gate()
         del spec["amount"]
         with pytest.raises(DslError, match="amount"):
-            _validate_effect(spec, "test", set())
+            _validate_effect(spec, "test", {})
 
     def test_an_unknown_destination_is_refused(self):
         with pytest.raises(DslError, match="destination"):
-            _validate_effect(gate(destination="the_moon"), "test", set())
+            _validate_effect(gate(destination="the_moon"), "test", {})
