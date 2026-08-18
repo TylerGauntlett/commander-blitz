@@ -377,7 +377,7 @@ def op_noop(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("delay")
 def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Arrange for effects to happen at a later step.
+    """Arrange for effects to happen at a later step, or on a later event.
 
     "At the beginning of the next end step, return it to the battlefield." The
     ordinary triggers all fire *from* an event that just happened; this is the
@@ -389,11 +389,26 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``end_of_combat`` captures one more thing, for the same reason and at the
     same moment: *which* combat. See :func:`_scheduled_combat`.
+
+    ``event`` is the other spelling of *when*, and the two are exclusive -- see
+    :class:`~automtg.engine.structs.DelayedEventSpec`. "Exile target creature an
+    opponent controls **until an opponent becomes the monarch**" (Palace Jailer):
+    the moment the duration ends is a thing that happens rather than a step the
+    turn walks through, and it may be this upkeep, six turns away, or never. An
+    event-keyed delay carries ``step=""``, which names nothing in
+    ``turn.DELAY_STEPS`` and so can never come due by step instead.
+
+    This is where the *lifetime* comes from, and it is why "exile until an event"
+    is written as `exile` plus a `delay` rather than as a duration on `exile`.
+    A delay is a one-shot effect's arrangement (603.7) and outlives its source
+    completely: Palace Jailer dying neither ends the exile nor stops it ending,
+    which is the whole difference between this card and an Oblivion Ring.
     """
-    from ..structs import DelayedTrigger
+    from ..structs import DelayedEventSpec, DelayedTrigger
 
     state = ctx.state
-    step = str(spec.get("step", "end_step"))
+    event = spec.get("event")
+    step = "" if event else str(spec.get("step", "end_step"))
     state.delayed_triggers.append(
         DelayedTrigger(
             step=step,
@@ -404,6 +419,14 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             description=str(spec.get("text") or ctx.source_name),
             turn=state.turn,
             combat=_scheduled_combat(state) if step == "end_of_combat" else None,
+            event=(
+                DelayedEventSpec(
+                    event=str(event["event"]),
+                    controller=str(event["controller"]),
+                )
+                if event
+                else None
+            ),
         )
     )
 

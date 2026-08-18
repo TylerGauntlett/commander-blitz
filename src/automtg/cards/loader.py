@@ -2313,6 +2313,77 @@ def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
     walk(list(effects), where)
 
 
+#: The whole of a delayed trigger's event clause -- see
+#: :class:`~automtg.engine.structs.DelayedEventSpec` for why it is these two keys
+#: and not a ``TriggerSpec``.
+DELAY_EVENT_KEYS = frozenset({"event", "controller"})
+
+#: Whose event it has to be.  The same three words a printed trigger's
+#: ``controller`` clause takes, compared against the delay's own controller.
+DELAY_EVENT_CONTROLLERS = ("you", "opponent", "any")
+
+
+def _validate_delay_event(effect: Mapping[str, Any], where: str) -> None:
+    """Check the ``event`` clause of an event-keyed ``delay``.
+
+    "Exile target creature an opponent controls **until an opponent becomes the
+    monarch**" -- Palace Jailer.  Four refusals, and each one is a card that
+    would otherwise load, resolve, and quietly be a different card:
+
+    - **Both spellings at once.**  A delay is keyed on a step or on an event, and
+      an effect carrying both would come due twice: once at the step and once at
+      the event, whichever arrived first, with the other left armed on a list
+      nothing ever clears.
+    - **An unknown event name**, for the reason the step check one branch over
+      gives: it would wait for something that never comes.
+    - **A missing or unknown ``controller``.**  The one place this differs from a
+      printed trigger, whose ``controller`` defaults to ``you`` because that is
+      the implicit subject of an ability's sentence.  A duration clause states
+      whose it is -- "until **an opponent** becomes the monarch" -- and there is
+      no permanent to read an implicit one off, so guessing is not available:
+      ``any`` would end Palace Jailer's exile when its own controller reclaimed
+      the crown, and ``you`` would end it on the wrong player entirely.
+    - **Any other key.**  ``source``, ``filter`` and ``condition`` all read the
+      ability's *source permanent*, and a delayed trigger's source is routinely
+      gone by the time its event happens -- that lifetime is the whole reason
+      this form exists.  Accepting them would give an exile whose end depends on
+      whether the permanent that made it is still alive, which is the exact
+      distinction between this and ``until_leaves``.
+    """
+    spec = effect.get("event")
+    if not isinstance(spec, Mapping):
+        raise DslError(
+            f"{where}.event: a delay's event is an object, "
+            f'e.g. {{"event": "becomes_monarch", "controller": "opponent"}}'
+        )
+    if "step" in effect:
+        raise DslError(
+            f"{where}: a delay is keyed on a 'step' or on an 'event', not both"
+        )
+    unknown = sorted(set(spec) - DELAY_EVENT_KEYS)
+    if unknown:
+        raise DslError(
+            f"{where}.event: unknown key(s) {unknown} -- a delayed trigger takes "
+            f"only {sorted(DELAY_EVENT_KEYS)}. 'source', 'filter' and 'condition' "
+            f"ask about a source permanent, and a delay's source is routinely "
+            f"gone by the time its event happens."
+        )
+    name = spec.get("event")
+    if name not in TRIGGER_EVENTS:
+        raise DslError(
+            f"{where}.event.event: unknown trigger event {name!r} "
+            f"(implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    controller = spec.get("controller")
+    if controller not in DELAY_EVENT_CONTROLLERS:
+        raise DslError(
+            f"{where}.event.controller: a delayed trigger must say whose event it "
+            f"waits for -- one of {list(DELAY_EVENT_CONTROLLERS)}, got "
+            f"{controller!r}. Unlike a printed trigger there is no source "
+            f"permanent to read an implicit 'you' off."
+        )
+
+
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -3016,14 +3087,17 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")
     if op == "delay":
-        # A misspelled step would schedule something that never comes due -- a
-        # card that reads "at the beginning of the next upkeep, draw a card" and
-        # silently draws nothing, which is exactly what this pass exists to stop.
-        step = str(effect.get("step", "end_step"))
-        if step not in DELAY_STEPS:
-            raise DslError(
-                f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
-            )
+        if "event" in effect:
+            _validate_delay_event(effect, where)
+        else:
+            # A misspelled step would schedule something that never comes due -- a
+            # card that reads "at the beginning of the next upkeep, draw a card"
+            # and silently draws nothing, which is what this pass exists to stop.
+            step = str(effect.get("step", "end_step"))
+            if step not in DELAY_STEPS:
+                raise DslError(
+                    f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
+                )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")

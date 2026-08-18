@@ -858,6 +858,31 @@ class Game:
                     return
                 continue
 
+            if turn.has_armed_delayed(state):
+                # "…until an opponent becomes the monarch." A delayed trigger
+                # keyed on an event rather than a step, armed by the event bus
+                # (`triggers.arm_delayed`) and run here, because the bus is a
+                # plain function called from the middle of a primitive and these
+                # effects may stop to ask.
+                #
+                # After the trigger drain, so an ordinary trigger off the same
+                # event reaches the stack first and the ordering is the one
+                # `_run_delayed` already documents: the delayed half resolves
+                # directly, and therefore ahead of what the same event stacked.
+                #
+                # After `step_started`, so `priority_idx` is never handed out
+                # ahead of `step_grants_priority` -- the untap and cleanup steps
+                # grant none, and this branch must not be the thing that does.
+                #
+                # `passes_in_row` is reset for the reason the drain resets it and
+                # `priority_idx` deliberately is not: something happened, so a
+                # pass made before it no longer counts towards ending the step,
+                # but nobody loses the priority they were holding.
+                state.passes_in_row = 0
+                if not self._run(turn.run_armed_delayed(state)):
+                    return
+                continue
+
             if state.priority_idx is None:
                 if not turn.step_grants_priority(state):
                     turn.advance(state)

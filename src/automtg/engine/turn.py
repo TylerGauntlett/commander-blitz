@@ -156,9 +156,6 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
     With one qualifier, because one of the steps is not once a turn -- see
     :func:`_delay_due`.
     """
-    from .effects import execute
-    from .effects.context import EffectContext
-
     if not state.delayed_triggers:
         return
     due = [d for d in state.delayed_triggers if _delay_due(state, d)]
@@ -166,15 +163,75 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
         return
     state.delayed_triggers = [d for d in state.delayed_triggers if d not in due]
     for delayed in due:
-        ctx = EffectContext(
-            state=state,
-            controller=delayed.controller,
-            source_oid=delayed.source_oid,
-            targets={},
-            bindings=dict(delayed.bindings),
-            source_name=delayed.description,
-        )
-        yield from execute(ctx, list(delayed.effects))
+        yield from _resolve_delayed(state, delayed)
+
+
+def has_armed_delayed(state: GameState) -> bool:
+    """Whether any delayed trigger's event has happened and not yet been run.
+
+    The cheap half of the `_advance` branch, so the loop asks a boolean rather
+    than building a generator on every pass through a game that has no delays.
+    """
+    return any(d.armed for d in state.delayed_triggers)
+
+
+def run_armed_delayed(state: GameState) -> Generator[Any, list[int], None]:
+    """Resolve every delayed trigger whose event has happened.
+
+    The event-keyed half of :func:`_run_delayed`, and the same three properties:
+    the effects resolve directly rather than going on the stack (the divergence
+    recorded there), the bindings are the ones captured when the delay was
+    scheduled, and the delay is **discharged** -- struck off the list before its
+    effects run, so a delay whose own effects fire the same event again does not
+    find itself waiting for it.
+
+    Once, and that is the shape of the printed sentence. "Exile it until an
+    opponent becomes the monarch" ends the first time the crown moves to an
+    opponent; the link is spent whether or not the return found anything, because
+    a card that has left exile in the meantime is a new object (400.7) and the
+    duration is over either way.
+
+    Driven from `Game._advance`, which is the loop that can carry a decision --
+    `triggers.arm_delayed` sets the flag from the middle of the event bus, where
+    nothing can yield. The gap between the two is one pass of that loop, which is
+    the moment a real delayed triggered ability would have gone on the stack.
+    """
+    armed = [d for d in state.delayed_triggers if d.armed]
+    if not armed:
+        return
+    # Identity rather than equality: `DelayedTrigger` is an ordinary dataclass,
+    # so two copies of the same scheduled effect -- two Palace Jailers, each
+    # holding a creature -- compare equal on every field, and `!= d` would
+    # discharge both when one fired.
+    state.delayed_triggers = [
+        d for d in state.delayed_triggers if not any(d is a for a in armed)
+    ]
+    for delayed in armed:
+        yield from _resolve_delayed(state, delayed)
+
+
+def _resolve_delayed(
+    state: GameState, delayed: DelayedTrigger
+) -> Generator[Any, list[int], None]:
+    """Run one scheduled effect, whichever way it was scheduled.
+
+    ``targets={}`` is the whole of rule 603.7 as the engine reads it: the
+    resolving ability *created* this one, and what it created chose no targets of
+    its own. `loader._refuse_targets_inside_a_delay` is the other end of that
+    sentence, refusing the spelling that would resolve to nothing here.
+    """
+    from .effects import execute
+    from .effects.context import EffectContext
+
+    ctx = EffectContext(
+        state=state,
+        controller=delayed.controller,
+        source_oid=delayed.source_oid,
+        targets={},
+        bindings=dict(delayed.bindings),
+        source_name=delayed.description,
+    )
+    yield from execute(ctx, list(delayed.effects))
 
 
 def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
@@ -199,7 +256,14 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
     through it (see :func:`next_step`) -- so the strict form is what the card
     says, and the loose one would quietly re-time the exile onto the extra
     combat the card exists to keep the token out of.
+
+    An **event**-keyed delay is never due here, and says so rather than relying
+    on ``step=""`` missing every entry in `DELAY_STEPS`. "Until an opponent
+    becomes the monarch" has no step at all, and a step it happened to spell
+    would be a second, quieter way for the exile to end.
     """
+    if delayed.event is not None:
+        return False
     if DELAY_STEPS.get(delayed.step) is not state.step:
         return False
     if delayed.combat is not None:

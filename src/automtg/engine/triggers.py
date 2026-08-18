@@ -18,7 +18,7 @@ from .errors import RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .state import MAX_TRIGGERS_PER_STEP
-from .structs import TriggerInstance
+from .structs import DelayedEventSpec, DelayedTrigger, TriggerInstance
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -288,6 +288,74 @@ def collect(state: GameState, event: GameEvent) -> None:
             # separate abilities on the stack and anything in between -- another
             # landfall trigger, a response -- goes between them.
             _queue(state, obj, ability, event)
+    arm_delayed(state, event)
+
+
+def arm_delayed(state: GameState, event: GameEvent) -> None:
+    """Mark every event-keyed delayed trigger this event has woken.
+
+    "…until an opponent becomes the monarch" (Palace Jailer). The one waiting
+    effect in the engine with no ability and no object behind it, so it cannot be
+    found by `_candidate_abilities` -- it lives on `state.delayed_triggers`, and
+    this is the second thing the bus does with every event.
+
+    **Armed rather than run.** `collect` is a plain function called from the
+    middle of `primitives.become_monarch`, from inside combat damage, from
+    anywhere at all; the effects a delay carries are a generator that may stop to
+    ask a question. So the flag is the seam: it is set here, where the event is,
+    and `turn.run_armed_delayed` empties it from `Game._advance`, which is the
+    loop that can carry a decision. That is the same moment a real delayed
+    triggered ability would have been put on the stack -- the next time a player
+    would receive priority -- and the difference from a real one is the
+    divergence `_run_delayed` already records: it resolves directly.
+
+    Idempotent by construction: a delay already armed stays armed, and one that
+    has run is off the list entirely, so a monarch changing hands twice before
+    priority comes back returns the creature once.
+    """
+    if not state.delayed_triggers:
+        return
+    for delayed in state.delayed_triggers:
+        if delayed.event is None or delayed.armed:
+            continue
+        if _delayed_matches(state, delayed, delayed.event, event):
+            delayed.armed = True
+
+
+def _delayed_matches(
+    state: GameState,
+    delayed: DelayedTrigger,
+    spec: DelayedEventSpec,
+    event: GameEvent,
+) -> bool:
+    """Whether ``event`` is the one this delayed trigger is waiting for.
+
+    Two questions, and the same two `_matches` asks first -- the event's *name*
+    and its ``controller`` clause -- reusing `TRIGGER_EVENTS`, `_subject_oid` and
+    `_actor` so a delay and a printed trigger cannot disagree about who "an
+    opponent" is. `becomes_monarch` is in `_actor`'s explicit list precisely for
+    this: the actor is the player who *became* the monarch, so
+    ``controller: "opponent"`` is Palace Jailer's duration read literally.
+
+    Where it stops is deliberate, and is the argument in
+    :class:`~automtg.engine.structs.DelayedEventSpec`: everything else `_matches`
+    goes on to check is a question about the ability's *source permanent*, and a
+    delayed trigger's source is routinely gone. A `filter`, a `condition` or a
+    ``source: "self"`` would answer one way while Palace Jailer is alive and
+    another after it dies, which is the one distinction this whole capability
+    exists to keep out of the exile's lifetime. The loader refuses those keys
+    rather than accepting a spelling that only sometimes means what it says.
+    """
+    expected = TRIGGER_EVENTS.get(spec.event)
+    if expected is None or expected != event.type:
+        return False
+    actor = _actor(state, spec.event, event, _subject_oid(spec.event, event))
+    if actor is not None:
+        if spec.controller == "you" and actor != delayed.controller:
+            return False
+        if spec.controller == "opponent" and actor == delayed.controller:
+            return False
+    return True
 
 
 def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]:

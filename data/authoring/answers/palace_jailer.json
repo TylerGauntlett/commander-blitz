@@ -1,0 +1,88 @@
+{
+  "card": {
+    "id": "palace_jailer",
+    "name": "Palace Jailer",
+    "oracle_text": "When this creature enters, you become the monarch.\nWhen this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.",
+    "mana_cost": "{2}{W}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you become the monarch.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "become_monarch",
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ],
+              "controller": "opponent"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "exile",
+            "as": "jailed",
+            "objects": {
+              "target": "t1"
+            }
+          },
+          {
+            "op": "delay",
+            "event": {
+              "event": "becomes_monarch",
+              "controller": "opponent"
+            },
+            "text": "Return the exiled card to the battlefield under its owner's control.",
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "binding": "jailed",
+                  "zone": "exile"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "opponent_battlefield_count": 5
+  }
+}

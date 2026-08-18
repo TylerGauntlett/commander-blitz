@@ -542,9 +542,41 @@ class TriggerInstance:
     granted_by: int | None = None
 
 
+@dataclass(frozen=True)
+class DelayedEventSpec:
+    """The *event* a delayed trigger waits for, when a step cannot name it.
+
+    "Exile target creature an opponent controls **until an opponent becomes the
+    monarch**" -- Palace Jailer.  A duration, and the moment it ends is not a
+    step: it is a thing that may happen this upkeep, six turns later, or never.
+
+    Deliberately two fields and not a :class:`~automtg.engine.carddef.TriggerSpec`.
+    A printed trigger is an ability *of a permanent*, and most of that spec asks
+    questions about that permanent -- ``source: "self"``, ``filter``'s
+    ``exclude_self`` and ``attached``, a ``condition`` evaluated with the source's
+    oid.  A delayed trigger's source is routinely **gone** by the time its event
+    happens (the whole point of the lifetime: Palace Jailer dying must not end
+    the exile, and must not stop it ending either), so those keys would answer
+    differently depending on whether the permanent survived -- silently, and only
+    in the line of play the card exists for.  What is left is the two questions a
+    duration clause actually asks, and they are answered off the delay itself.
+
+    ``controller`` is ``you`` | ``opponent`` | ``any``, and the "you" is the
+    :attr:`DelayedTrigger.controller` -- the player who was in charge of the
+    effect that scheduled this.  It has no default here and the loader demands
+    the key: on a printed trigger "you" is the implicit subject of the sentence,
+    but a duration clause always states whose it is ("until **an opponent**
+    becomes the monarch"), and guessing "any" would end Palace Jailer's exile the
+    moment its own controller reclaimed the crown.
+    """
+
+    event: str
+    controller: str
+
+
 @dataclass
 class DelayedTrigger:
-    """An effect scheduled to happen at a later step.
+    """An effect scheduled to happen at a later step, or on a later event.
 
     "At the beginning of the next end step, return it to the battlefield." The
     engine's ordinary triggers all fire *from* an event that has just happened;
@@ -559,6 +591,13 @@ class DelayedTrigger:
     once a turn, so its name is enough to say *when*; a combat phase does not,
     since `extra_combat` shipped, and "at end of combat" means the end of the
     combat the delay was created in rather than the next one to come round.
+
+    ``event`` is the other way of saying *when*, and exactly one of the two is
+    set: an event-keyed delay carries ``step == ""``, which names no entry in
+    ``turn.DELAY_STEPS`` and so can never come due by step.  It is armed by
+    `triggers.arm_delayed` as the event goes past on the bus and resolved by
+    `turn.run_armed_delayed`; ``armed`` is the gap between those two, because the
+    bus is a plain function and resolving effects is a generator.
     """
 
     step: str
@@ -569,6 +608,9 @@ class DelayedTrigger:
     description: str = ""
     turn: int = 0
     combat: int | None = None
+    event: DelayedEventSpec | None = None
+    #: Set when this delay's event has happened and its effects have not run yet.
+    armed: bool = False
 
 
 @dataclass(frozen=True)
