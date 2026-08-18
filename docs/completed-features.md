@@ -1,3 +1,128 @@
+## `variable_target_count` — a number of targets the game works out, and "up to"
+
+### Overview
+
+Marshal's Anthem: *"When this enchantment enters, return **up to X** target
+creature cards from your graveyard to the battlefield, where X is the number of
+times this enchantment was kicked."* One gap record, one card, and it was the
+card's **last** blocker — `multikicker` shipped the other half a batch ago and
+explicitly left this one standing.
+
+`TargetModel.count` was `int | Literal["any"]`. Both spellings are a different
+card, and the gap record had already checked each:
+
+| spelling | what the Anthem becomes |
+|---|---|
+| `count: "any"` | "any number of target creature cards" — the count comes off the kicker entirely, so the {2}{W}{W} cast reanimates the whole graveyard |
+| `count: N` | a card with a number printed on it |
+| `count: N, optional: true` | "exactly N, or none" — every size between 1 and N-1 forbidden |
+| untargeted `return_from_graveyard` with `count: {"additional_paid": true}` | the right *number*, but no targeting: no legality check at announcement, no fizzle, no `becomes_target`, and `min_count == max_count` forces exactly X |
+
+### Tier: A, and not even an op
+
+No new op, no continuous effect, no decision kind, no event, no API field — and
+no new *state* either. The number was already recorded and already readable:
+`game._cast` writes `Action.additional_times` to `obj.cast_additional`, and
+`{"additional_paid": true}` has read it back since casualty and replicate. What
+was missing was only that a **target count** could not be a value at all.
+
+Two changes, deliberately independent:
+
+```jsonc
+"count": {"additional_paid": true},   // the count is a value expression
+"up_to": true                          // and the value is a ceiling, not an exact number
+```
+
+### Where the number is read, which is the whole design question
+
+601.2c fixes a target count when the targets are *declared*, and for this card
+that moment is **603.3d, not 601.2c**: the targets belong to a triggered
+ability, so they are chosen as the trigger goes on the stack — after the
+enchantment has entered. `stack._choose_trigger_targets` calls
+`enumerate_target_tuples` with `trig.source_oid`, which is the enchantment on the
+battlefield, wearing the `cast_additional` written at cast time and carried
+across the zone change on the same oid. That is the same read `colors_of_mana_spent`
+makes for a Sunburst artifact's enters trigger, from the same place.
+
+A **spell's own** targets are the other moment and there is nothing to read
+there: 601.2c happens while `legality` is enumerating cast lines, before X has
+been announced and before any additional cost has been paid. The expression would
+evaluate to 0 — or, on a card cast twice in one game, to the *previous* cast's
+number, which is worse. So `_compile_targets` refuses a computed count on a
+card's own `targets` outright, and says why. Comet Storm ("for each time this
+spell was kicked, it deals X damage to another target") is the card that wants
+it; giving it one means teaching legality to enumerate its target tuples once per
+payment count, which is a separate change and is not smuggled in here.
+
+### Keeping four spellings of "or fewer" from becoming three of the same thing
+
+`optional` already existed twice — `TargetModel.optional` for declared targets
+and the `optional` selector key `pick_from_pool` honours as `min_count = 0` — and
+both mean **"exactly N, or none"**. "Up to X" is min 0 / max X, which neither can
+say, so the word had to be a third one rather than a redefinition of either:
+redefining `count: {value}, optional: true` to mean 0..X would have made the
+same flag mean different things depending on whether the count was literal.
+
+| spelling | means |
+|---|---|
+| `count: N` | exactly N |
+| `count: N, optional: true` | exactly N, or none |
+| `count: "any"` | zero to the whole board |
+| `count: N or a value, up_to: true` | zero to N |
+
+Each overlapping pair is refused at load time, because each is a card that would
+otherwise read as a printing that does not exist: `up_to` with `count: 1` (that
+is `optional`, and is how Oath of Eorl and every other "up to one" already ships),
+`up_to` with `"any"` (no ceiling to cap), and `up_to` beside `optional` (two
+answers to one question).
+
+`"any"` and "up to X" then share one code path, differing only in where the
+ceiling comes from — `len(options)` against the evaluated value — which is what
+keeps the ordering rules the same for both: subsets largest first, because
+whatever takes a tuple without asking takes `options[0]`, and the empty tuple
+always present and always last, because both readings include zero without
+needing `optional`.
+
+### Three places had to learn that a spec's size is not a constant
+
+- `enumerate_target_tuples` evaluates the count, and offers `0..X` under `up_to`.
+  A computed count of **zero** contributes `[()]` rather than `[]` — "no targets
+  asked for" is not "no legal target", and the difference is a trigger that
+  resolves against one that cannot go on the stack.
+- `filter_legal` slices stored refs by position, so a variable-size spec takes
+  "whatever is left". It does **not** re-evaluate: the number is fixed when the
+  targets were declared, and re-reading it at resolution would re-slice refs that
+  were chosen under the old one. `TargetSpec.variable_size` now names all three
+  variable shapes, so the existing "at most one, and it comes last" rule covers
+  the new ones for free.
+- `loader._mentions` walks **target specs** as well as effects. Multikicker's own
+  guard refuses "a cost no effect reads via `additional_paid`", and on this card
+  the only reader is the target count — so the one card the mechanic exists for
+  was about to be refused by the mechanic's own guard.
+
+### The behaviour gate had to cast it kicked
+
+`_play_and_check` already measured a kicker card **kicked**, on the argument that
+kicked is the strictly larger claim. Multikicker gets the same treatment, because
+without it the gate is worthless here: legality offers cast lines ascending from
+the free one, `find_play` took the first, and X = 0 returns nothing at all — a
+card that did nothing would have passed exactly as one that worked. Gate 4 still
+casts it unkicked, so the zero path is exercised too.
+
+That is what makes Marshal's Anthem's expectation a real observation rather than
+the weak `{"zone": "battlefield"}` fallback: in the sandbox it is cast with the
+most kicks the board can pay, and the assertion is that **both** creature cards
+have left the graveyard (`graveyard_size: {"0": 0}`) and the battlefield is three
+permanents larger than the lands and props it started with.
+
+### Cards this unblocked
+
+`marshal_s_anthem`, and no others — no other gap record names this capability.
+`--tier templates --retry` harvested nothing, which is correct: no template reads
+"Multikicker {1}{W}" or "up to X target …", so the card came through the agent
+tier. Coverage beyond the card is `tests/unit/test_variable_target_count.py`.
+
+---
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
 ### Overview

@@ -99,7 +99,20 @@ class TargetModel(BaseModel):
     #: chooses, including zero, rather than a number written into the card.
     #: `count: N, optional: true` is not the same thing and cannot stand in: it
     #: means "exactly N, or none", forbidding every size between 1 and N-1.
-    count: int | Literal["any"] = 1
+    #:
+    #: A **value expression** is the third form: "return up to X target creature
+    #: cards…, where X is the number of times this enchantment was kicked" is
+    #: ``{"additional_paid": true}``, evaluated when the targets are declared.
+    #: Only on an *ability's* targets -- see `loader._compile_targets`, which
+    #: refuses one on a card's own `targets` because a spell's are chosen before
+    #: it has been paid for and the expression would read zero.
+    count: int | Literal["any"] | dict[str, Any] = 1
+    #: "Return **up to** X target creature cards." The `count` is a ceiling and
+    #: every size from zero through it is legal, which is the one reading none
+    #: of the three above can give: a number forces exactly that many,
+    #: `optional` makes it "exactly N or none", and ``"any"`` has no ceiling.
+    #: Pairs with either a literal or a value expression.
+    up_to: bool = False
     #: "**For each player**, exile up to one target nonland permanent that
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
