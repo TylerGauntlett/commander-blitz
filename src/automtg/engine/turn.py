@@ -596,7 +596,19 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # The step-scoped delays on the same list are deliberately left alone: "at
     # the beginning of the next upkeep" is scheduled *across* this boundary and
     # would be thrown away by a blanket clear.
-    state.delayed_triggers = [d for d in state.delayed_triggers if d.trigger is None]
+    #
+    # And so is the other event-watching duration. "Exile it **until** an
+    # opponent becomes the monarch" (Palace Jailer) names no turn at all -- the
+    # crown may not move for six of them -- so a clear keyed only on *being*
+    # event-watching would silently retime the exile to "until end of turn",
+    # which is a materially weaker card that reads identically on the board.
+    # Keyed on the subscription's own `duration` instead, which is the field that
+    # actually carries the printed sentence.
+    state.delayed_triggers = [
+        d
+        for d in state.delayed_triggers
+        if d.trigger is None or d.duration == "until_it_fires"
+    ]
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

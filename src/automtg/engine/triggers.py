@@ -328,16 +328,29 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
     bindings, and `game._advance` resolves it at the next moment the engine can
     suspend. `pending_triggers` earns its keep the same way.
 
-    A **copy**, and the subscription stays on `state.delayed_triggers`: the
-    printed duration is the rest of the turn, so a second combat fires it again.
-    That is also why a "fired" flag would be the wrong shape -- the one-per-batch
-    guarantee belongs to the *event*, which is fired once per damage batch, and
-    not to a counter here.
+    A **copy**, and for a ``this_turn`` subscription the original stays on
+    `state.delayed_triggers`: the printed duration is the rest of the turn, so a
+    second combat fires it again. That is also why a "fired" flag would be the
+    wrong shape *there* -- the one-per-batch guarantee belongs to the **event**,
+    which is fired once per damage batch, and not to a counter here.
+
+    An ``until_it_fires`` subscription is struck off instead, and that is not the
+    flag this docstring refuses. "Exile it **until** an opponent becomes the
+    monarch" (Palace Jailer) is not a trigger with a duration; it is the *end* of
+    a duration written on another effect, so the first crossing is the whole of
+    it and there is nothing left to fire twice. It is discharged **here rather
+    than after resolving**, so the exile ends exactly once even if the same
+    crossing arms it again before the advance loop gets round to the copy --
+    which `_delayed_bindings` has already snapshotted everything it needs from.
+
+    See :data:`~automtg.engine.structs.DELAYED_DURATIONS` for why that is one
+    field with two values rather than two booleans.
     """
     if not state.delayed_triggers:
         return
     from dataclasses import replace
 
+    spent: list[DelayedTrigger] = []
     for delayed in list(state.delayed_triggers):
         spec = delayed.trigger
         if spec is None:
@@ -347,6 +360,15 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
         state.armed_delays.append(
             replace(delayed, bindings=_delayed_bindings(delayed, spec, event))
         )
+        if delayed.duration == "until_it_fires":
+            spent.append(delayed)
+    if spent:
+        # Identity, not equality: two Palace Jailers each holding a creature
+        # differ only in their captured `bindings`, and a third that exiled
+        # nothing would compare equal to another that did.
+        state.delayed_triggers = [
+            d for d in state.delayed_triggers if not any(d is s for s in spent)
+        ]
 
 
 def _delayed_matches(

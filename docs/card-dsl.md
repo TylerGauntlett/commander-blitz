@@ -4024,7 +4024,10 @@ worse Counterspell, and nothing on screen would say so.
 
 `step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_of_combat` ·
 `end_step`, checked at load time like every other piece of vocabulary: a
-misspelled step would schedule something that never comes due.
+misspelled step would schedule something that never comes due. An ability that
+waits for a **thing that happens** rather than a moment that arrives is the other
+half of 603.7 and a different op — see [`delayed_trigger`](#delayed_trigger--an-ability-that-watches-an-event)
+below.
 
 Two things are worth knowing before writing one:
 
@@ -4125,7 +4128,7 @@ version leaves the token alive through the whole postcombat main phase, where it
 can be sacrificed, tapped for an ability, or attack again in the extra combat —
 which is exactly what the printed line stops.
 
-### `delayed_trigger` — "whenever <event> **this turn**"
+### `delayed_trigger` — an ability that watches an event
 
 ```jsonc
 // Forth Eorlingas! — "Create X 2/2 red Human Knight creature tokens with trample
@@ -4161,9 +4164,10 @@ Three pieces, and each is somewhere a card can already look:
   through. It *arms* rather than resolves: `collect` runs inside `damage_player`
   where nothing can ask a question, so a copy waits on `state.armed_delays` and
   `game._advance` resolves it — the arrangement `pending_triggers` already has.
-- **It expires** at `turn._cleanup_step`, beside `clear_attack_restrictions` and
-  the other "this turn" clauses owned by no permanent. Not after one firing: an
-  extra combat this turn is a second batch and a second trigger.
+- **It expires** according to `duration`, below. Forth Eorlingas' default is
+  `turn._cleanup_step`, beside `clear_attack_restrictions` and the other "this
+  turn" clauses owned by no permanent — and not after one firing, since an extra
+  combat this turn is a second batch and a second trigger.
 
 Like `delay`, it resolves **off the stack**, and `{"target": …}` inside it is a
 load error for the same reason — the delayed ability never chose a target, so
@@ -4174,6 +4178,69 @@ of the trigger vocabulary is answered off the permanent hosting the ability
 (`source: "self"` and `filter` are read off it; `max_per_turn` is counted per
 permanent), and a delayed ability has no permanent — so the loader refuses them
 rather than accepting a printed restriction that silently does nothing.
+
+### `duration` — "this turn", or "until it fires"
+
+```jsonc
+// Palace Jailer — "When this creature enters, you become the monarch. When this
+// creature enters, exile target creature an opponent controls until an opponent
+// becomes the monarch."
+{ "op": "exile", "as": "jailed", "objects": { "target": "t1" } },
+{ "op": "delayed_trigger",
+  "trigger": { "event": "becomes_monarch", "controller": "opponent" },
+  "duration": "until_it_fires",
+  "text": "Return the exiled card to the battlefield under its owner's control.",
+  "effects": [ { "op": "put_onto_battlefield",
+                 "objects": { "binding": "jailed", "zone": "exile" } } ] }
+```
+
+The op has two printed shapes and they disagree about **how long the subscription
+is good for** — on both counts at once, in opposite directions:
+
+| | fires | lives until |
+|---|---|---|
+| `this_turn` *(default)* | every time | `turn._cleanup_step` |
+| `until_it_fires` | once | it fires, however many turns that takes |
+
+"**Whenever** one or more creatures you control deal combat damage … **this
+turn**" is a subscription with a stated lifetime, firing as often as the event
+happens. "Exile it **until** an opponent becomes the monarch" is not a trigger
+with a duration at all — it is the *end* of a duration written on a different
+effect, so the first crossing is the whole of it, and it names no turn, because
+the crown may not move for six of them.
+
+**Keying the cleanup clear on *being* event-watching rather than on this field is
+the silent failure it exists to stop.** It turns Palace Jailer into an "until end
+of turn" exile — a materially weaker card, with nothing on the board to say which
+one shipped. `test_the_exile_outlives_the_turn_it_was_made_in` is the witness.
+
+The two values are read at exactly two places: `triggers._arm_delayed` strikes a
+`until_it_fires` subscription off as it arms (before resolving the copy, so the
+same crossing cannot end the exile twice), and `turn._cleanup_step` leaves it
+alone. Everything else about the two is identical.
+
+One field rather than two booleans, and that is a deliberate bet: the two axes —
+repeating-or-once, and turn-scoped-or-not — are correlated in *both* printed
+cards, and they are **not** the same question. A card that separated them ("the
+first time a creature dies this turn") needs a third entry in
+`structs.DELAYED_DURATIONS`, not a different reading of these two. No such card is
+in the pool; when one arrives, that is where it goes.
+
+#### Why this is a `delayed_trigger` and not a duration on `exile`
+
+`exile` has one duration, `until_leaves`, and it is the Oblivion Ring link: the op
+records `exiled_by` and the return is a separate `leaves_battlefield` trigger on
+the same card reading `{"zone": "exile", "exiled_with": "self"}`. For Palace
+Jailer that is wrong twice over, in opposite directions at once. It returns the
+creature on an event that must *not* return it — killing the Jailer leaves the
+creature exiled, because rule 610.3 makes this a one-shot effect with a duration
+and not an effect the permanent maintains — and it cannot return it on the event
+that must. Written with `until_leaves` the card hands the creature back for the
+price of killing a 2/2.
+
+So the return is an ordinary delayed ability, which already outlives its source by
+construction, and "exile until \<event\>" is two ops — exactly the way "exile
+until this leaves" is two halves. Nothing was added to `exile`.
 
 ### "One or more creatures … one or more players"
 

@@ -4638,6 +4638,9 @@
   "painted_bluffs": {
     "zone": "battlefield"
   },
+  "palace_jailer": {
+    "opponent_battlefield_count": 5
+  },
   "pale_bears": {
     "zone": "battlefield"
   },
