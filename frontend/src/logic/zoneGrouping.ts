@@ -234,10 +234,12 @@ export function findCard(state: GameView, oid: number): CardView | null {
     if (card.oid === oid) return card;
   }
   for (const player of state.players) {
-    // `library_top` is a zone of one: "play with the top card of your library
-    // revealed" is the only way a library card is visible, and it has to be
-    // searched here or the preview rail blanks on the one card the whole
-    // mechanic exists to show.
+    // `library_top` is a zone of one: revealed ("play with the top card of your
+    // library revealed") or looked at ("you may look at the top card of your
+    // library any time") is the only way a library card is visible, and it has
+    // to be searched here or the preview rail blanks on the one card the whole
+    // mechanic exists to show. Whichever put it there, this seat was sent it,
+    // so hovering it is allowed.
     if (player.library_top?.oid === oid) return player.library_top;
     for (const zone of [player.hand ?? [], player.graveyard, player.exile, player.command]) {
       for (const card of zone) {

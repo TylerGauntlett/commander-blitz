@@ -99,6 +99,11 @@ STATIC_EFFECTS = frozenset(
         # no permission and moves no card, it makes one card public. Read by
         # `serialize`, and by nothing else.
         "reveal_library_top",
+        # "You may look at the top card of your library any time." The private
+        # counterpart of the line above, and the difference is the whole of it:
+        # revealed is public and goes to every seat, looked-at goes to the one
+        # seat entitled to it. Read by `serialize`, and by nothing else.
+        "look_at_library_top",
         # Parameterised, so it cannot be a keyword: "protection from Wizards"
         # names a quality, and four separate rules (damage, enchant/equip,
         # block, target) ask about it.
@@ -1445,6 +1450,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
         "reveal_library_top",
+        "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
         "freeze_opponent_lands",

@@ -113,15 +113,31 @@ export interface PlayerView {
   commander_damage_taken: Record<string, number>;
   library_count: number;
   /**
-   * "Play with the top card of your library revealed." Vampire Nocturnus.
+   * The top card of this player's library, if this seat may see it at all.
    *
-   * Null unless something on the battlefield reveals it, so there is no
-   * separate flag to check. Sent to **every** seat rather than the viewer's,
-   * because that is what the printed line does -- the card is public, and an
-   * opponent who cannot see it is playing against information they are
-   * entitled to.
+   * Null unless something on the battlefield shows it, so there is no separate
+   * flag to check before drawing one. Two statics put a card here and they
+   * differ in *who* gets it:
+   *
+   * - "Play with the top card of your library revealed" (Vampire Nocturnus) is
+   *   public, so the server sends it to **every** seat -- an opponent who
+   *   cannot see a revealed card is playing against information they are
+   *   entitled to.
+   * - "You may look at the top card of your library any time" (Verge Rangers)
+   *   shows the card to nobody else, so the server sends it to that player's
+   *   own seat and no other.
    */
   library_top: CardView | null;
+  /**
+   * Whether the card in `library_top` is public -- revealed to the whole table
+   * rather than looked at privately.
+   *
+   * The two cases arrive as an identical payload, so without this the UI cannot
+   * word them apart, and calling a private look "revealed" tells its own player
+   * that the opponent shares the knowledge. False whenever `library_top` is
+   * null, so it never carries a stale claim about a card that was not sent.
+   */
+  library_top_public: boolean;
   hand_count: number;
   /** Null for everyone but the viewing seat. */
   hand: CardView[] | null;

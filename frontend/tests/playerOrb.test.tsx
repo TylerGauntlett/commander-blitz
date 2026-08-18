@@ -391,6 +391,40 @@ describe("the zone piles", () => {
     const { getByTestId } = renderOrb({ graveyard: [] });
     expect(getByTestId("pile-0-graveyard").className).toContain("pile--empty");
   });
+
+  it("names a revealed top card as revealed", () => {
+    // "Play with the top card of your library revealed" -- Vampire Nocturnus.
+    // The server sends this one to every seat, so the whole table knows it.
+    const { getByTestId } = renderOrb({
+      library_top: card({ name: "Sol Ring" }),
+      library_top_public: true,
+    });
+    const pile = getByTestId("pile-0-library");
+    expect(pile.getAttribute("data-revealed")).toBe("Sol Ring");
+    expect(pile.getAttribute("title")).toBe("Top of library, revealed: Sol Ring");
+    expect(pile.hasAttribute("data-top-private")).toBe(false);
+  });
+
+  it("does not call a private look revealed", () => {
+    // "You may look at the top card of your library any time" -- Verge Rangers.
+    // The server sent this card to one seat and no other; the two payloads are
+    // otherwise identical, so a pile that read only `library_top` would tell the
+    // one player who can see it that their opponents can see it too.
+    const { getByTestId } = renderOrb({
+      library_top: card({ name: "Sol Ring" }),
+      library_top_public: false,
+    });
+    const pile = getByTestId("pile-0-library");
+    expect(pile.getAttribute("title")).toBe("Top of library, only you can see it: Sol Ring");
+    expect(pile.hasAttribute("data-top-private")).toBe(true);
+  });
+
+  it("claims nothing about a top card it was not sent", () => {
+    const pile = renderOrb().getByTestId("pile-0-library");
+    expect(pile.getAttribute("data-revealed")).toBeNull();
+    expect(pile.hasAttribute("data-top-private")).toBe(false);
+    expect(pile.className).not.toContain("pile--revealed");
+  });
 });
 
 describe("what the piles did not replace", () => {

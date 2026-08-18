@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **5** capabilities.
+**4 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
-| [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 
 ## counter-unless-pays
@@ -61,20 +60,6 @@ Blocks **1** card.
 - **Palace Jailer** (rank 4016) — `palace_jailer`
   - When this creature enters, you become the monarch.
   - When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.
-
-</details>
-
-## look-at-library-top
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that lets its controller alone see the top card of their library continuously -- the private half of 'play with the top card revealed', serialized to that player's seat only
-  <br>Why the existing vocabulary won't do: `reveal_library_top` is the only static for top-card visibility and it is deliberately public: `serialize` writes `library_top` into every seat's view ("an opponent who cannot see it is playing against information they are entitled to"), so using it on Verge Rangers would hand the opponent a card Verge Rangers never shows them. The `look_at_top` op is one-shot at resolution, not a continuous permission, and there is no trigger event for 'any time'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verge Rangers** (rank 5364) — `verge_rangers`
-  - You may look at the top card of your library any time.
 
 </details>
 
