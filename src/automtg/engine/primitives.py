@@ -1144,6 +1144,106 @@ def clear_unblockables(
     state.unblockables = _expired(state.unblockables, duration, player)
 
 
+def forbid_sacrifice(
+    state: GameState,
+    objects: Iterable[int],
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """""Can't be sacrificed" for ``duration``, on the permanents named.
+
+    One rules-relevant thing and no questions asked: it records the prohibition.
+    *Reading* it back is two other modules' job, because a sacrifice happens on
+    two different roads and the prohibition has to close both -- see
+    :func:`sacrifice_forbidden`.
+
+    ``objects`` is fixed when the effect resolves and is never a wildcard, for
+    the reason :func:`make_unblockable`'s is (see
+    :class:`structs.SacrificeRestriction`).  An empty ``objects`` records
+    nothing and returns ``False``: "you can't sacrifice those creatures" after
+    gaining control of none of them protects nobody, and there is no reading of
+    the empty set that could mean anything else here.
+
+    Battlefield membership is deliberately **not** checked, unlike
+    :func:`goad_creature`'s.  A goad is a mark written onto a permanent and a
+    permanent in a graveyard cannot carry one; this is a row in a table, and the
+    oid it names is compared against sacrifice pools that only ever contain
+    permanents on the battlefield.  A stale oid is inert, and refusing one here
+    would mean a creature that flickered out and back is protected or not
+    depending on which side of the resolution it blinked -- a distinction the
+    printed card does not draw.
+
+    Returns whether anything was recorded.  Deduplicated on the whole entry --
+    two copies of "can't be sacrificed" say nothing one does not, and a second
+    row would only make the clear-up do the work twice.
+    """
+    from .structs import SACRIFICE_RESTRICTION_DURATIONS, SacrificeRestriction
+
+    if duration not in SACRIFICE_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown sacrifice restriction duration {duration!r}")
+    oids = tuple(dict.fromkeys(objects))
+    if not oids:
+        return False
+    entry = SacrificeRestriction(objects=oids, duration=duration, source=source)
+    if entry in state.sacrifice_restrictions:
+        return False
+    state.sacrifice_restrictions.append(entry)
+    return True
+
+
+def sacrifice_forbidden(state: GameState, oid: int) -> bool:
+    """Whether ``oid`` may not be sacrificed right now (701.17b).
+
+    The seam the whole capability is read through, and it is asked at the two
+    places a player *chooses* what to sacrifice rather than at
+    `zones.sacrifice`, which is where a single funnel would have been:
+
+    * `costs._sacrifice_pool` -- the **cost** road.  A sacrifice cost that
+      cannot find enough legal fodder is unpayable, so `can_pay` refuses it and
+      `legality` never offers the activation or the cast at all.  That is what
+      701.17b actually says: the cost becomes unpayable, rather than being paid
+      with nothing happening.  `legality._emerge_fodder` is the same road for
+      emerge and offering, whose sacrifice is chosen as part of the cast action
+      instead of out of a `Cost`.
+    * `effects.ops_board.op_sacrifice` -- the **effect** road.  "Each player
+      sacrifices a creature" narrows the pool and the player picks something
+      else; with nothing else to pick, the effect does nothing to that player.
+
+    Not in `zones.sacrifice` itself, tempting though the funnel is: that
+    function is also how the *game* sacrifices a permanent with no player
+    choosing -- 704.5s finishes a Saga -- and `sba._finished_sagas` sets its
+    "something changed" flag on the call, so a `sacrifice` that quietly returned
+    ``False`` would spin the state-based-action loop for ever.  Making the
+    choice illegal is both the rule and the safe reading; making the *action*
+    silently fail is neither.
+
+    Short-circuits on the empty table, which is every game that plays none of
+    these cards -- and this is asked once per candidate in every sacrifice pool
+    that is built, so the empty case is the one that has to cost nothing.
+    """
+    if not state.sacrifice_restrictions:
+        return False
+    return any(oid in entry.objects for entry in state.sacrifice_restrictions)
+
+
+def clear_sacrifice_restrictions(state: GameState, duration: str) -> None:
+    """Drop the sacrifice prohibitions of one duration -- their wearing-off.
+
+    Called once, from `turn._cleanup_step`, beside `clear_block_prohibitions`,
+    `clear_unblockables` and `clear_damage_shields` and on the same clock.  Like
+    `clear_damage_shields` and unlike the two block tables it does **not** go
+    through :func:`_expired`, and for a simpler reason than that one's: there is
+    no ``player`` on the record to filter by, because ``this_turn`` is the only
+    duration printed and only the controller of a permanent can sacrifice it
+    anyway (see :class:`structs.SacrificeRestriction`).
+    """
+    if not state.sacrifice_restrictions:
+        return
+    state.sacrifice_restrictions = [
+        r for r in state.sacrifice_restrictions if r.duration != duration
+    ]
+
+
 def shield_player(
     state: GameState,
     pid: int,

@@ -22,6 +22,7 @@ from .primitives import (
     clear_block_prohibitions,
     clear_damage_shields,
     clear_goad,
+    clear_sacrifice_restrictions,
     clear_unblockables,
     clear_until_eot,
     untap_all,
@@ -569,6 +570,13 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # continuous while its source stands on the battlefield and would therefore
     # fog every future turn as well.
     clear_damage_shields(state, "this_turn")
+    # "You can't sacrifice those creatures **this turn**." (Call for Aid.) The
+    # fourth of these and owned by no permanent for the same reason: the sorcery
+    # that said it is in a graveyard long before the opponent reaches for their
+    # sacrifice outlet. It has to be cleared *here* and not at end of combat,
+    # because the sentence is what stops the borrowed creatures being eaten in
+    # the second main phase, after the attack it lent them is over.
+    clear_sacrifice_restrictions(state, "this_turn")
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

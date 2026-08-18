@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>87 ops"]
+    ctx --> ops["op registry<br/>93 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-91 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+93 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -175,7 +175,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` |
@@ -470,11 +470,20 @@ exactly one, so nothing else changed.
 hand without asking. `count` still defaults to `"all"`, so every reveal already
 in the pool is unchanged.
 
-Seven ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
-`copy_permanent`, `snapshot` and `join_forces`. **No other op does**, and an `as`
-on one that does not is a load error — it would name a binding nothing writes,
-every read of it would be 0, and the card's second sentence would silently do
-nothing.
+Eight ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
+`copy_permanent`, `gain_control`, `snapshot` and `join_forces`. **No other op
+does**, and an `as` on one that does not is a load error — it would name a
+binding nothing writes, every read of it would be 0, and the card's second
+sentence would silently do nothing.
+
+`gain_control`'s is the one whose *absence* is unsayable rather than merely
+awkward. Call for Aid takes "all creatures target opponent controls" and then
+says three more things about **those creatures**; by the second sentence the
+opponent controls none of them, and "creatures you control" catches everything
+that was already yours. Written after the loop, like `create_token`'s and unlike
+`sacrifice`'s: it records what control actually moved, so a permanent that left
+in response — or one that was already yours, which `change_control` refuses as a
+no-op — is not one of "those creatures".
 
 ```jsonc
 // Grey Host Reinforcements — "…equal to the number of creature cards exiled this way."
@@ -3586,6 +3595,11 @@ The other two clauses of the printed sentence need nothing new: "untap that
 permanent" is `untap` on the same `{"target": "t1"}`, and "it gains haste until
 end of turn" is `grant_keyword`.
 
+Call for Aid says the same three sentences about a *set* rather than one
+targeted permanent, and there the follow-on clauses have nowhere to point once
+control has moved — which is what `as` is for; see *Bindings* above and the
+`cant_sacrifice` op below.
+
 ## "Its activated abilities can't be activated this turn"
 
 ```jsonc
@@ -4758,6 +4772,65 @@ attacker is refused by whichever runs first, which is the same answer. Because
 `can_block` is also what block *requirements* ask, a creature provoked into
 blocking an unblockable attacker is excused rather than compelled into an
 illegal block.
+
+### The `cant_sacrifice` op — a prohibition on a *game action*, not a zone change
+
+    Call for Aid — "Gain control of all creatures target opponent controls until
+                    end of turn. Untap those creatures. They gain haste until end
+                    of turn. You can't attack that player this turn. You can't
+                    sacrifice those creatures this turn."
+
+```jsonc
+// "those creatures" is the set `gain_control` recorded with its `as`; no
+// selector can name them once control has moved
+{ "op": "gain_control", "objects": { "types": ["Creature"],
+                                     "controller": { "target": "t1" },
+                                     "count": "all" },
+  "duration": "until_end_of_turn", "as": "borrowed" },
+{ "op": "cant_sacrifice", "objects": { "binding": "borrowed" },
+  "duration": "this_turn" }
+```
+
+Rule 701.17b, and the engine had nothing that could say it. The three near
+relatives are each a different game action:
+
+| | |
+|---|---|
+| `lock_abilities` | stops a permanent's **own** activated abilities. A sacrifice outlet is somebody else's ability — an Altar, a Bloodthrone Vampire — and it says nothing about the `sacrifice` op either |
+| `replace_deaths` | redirects a death that has **already happened**. The creature still left the battlefield and the outlet still got paid, which is not "can't" |
+| `indestructible` | explicitly does not stop a sacrifice (701.17a), and neither does protection or any prevention: a sacrifice is not damage and not destruction |
+
+**Two roads reach a sacrifice, and the op closes both**, because the printed rule
+does not distinguish between them:
+
+- as a **cost** — an outlet's activation cost, an additional cost to cast,
+  emerge's fodder. The cost becomes *unpayable*: `costs._sacrifice_pool` (and
+  `legality._emerge_fodder`, whose fodder is chosen as part of the cast action
+  rather than out of a `Cost`) drop the protected permanents, so `can_pay`
+  refuses and the action is never offered. A cost that could be paid and then
+  sacrificed nobody would be a free outlet.
+- as an **effect** — the `sacrifice` op, "each opponent sacrifices a creature".
+  The pool narrows before the question is asked, so an edict takes something
+  *else* when there is anything else, and does nothing only when there is not.
+  Filtering after the choice would let a protected creature answer the edict and
+  fizzle it, which is a better answer than 701.17b allows.
+
+It is deliberately **not** a guard inside `zones.sacrifice`, tempting though the
+single funnel is: that function is also how 704.5s sacrifices a finished Saga
+with no player choosing, and `sba._finished_sagas` sets its "something changed"
+flag on the call — a `sacrifice` that quietly returned false would spin the
+state-based-action loop for ever. Making the *choice* illegal is both the rule
+and the safe reading.
+
+**`objects` is required and there is no wildcard**, for `unblockable`'s reason
+and harder: read as "everything" an absent `objects` is a one-sided Sigarda for
+the turn, and read as "nothing" it is a card that silently protects nobody.
+**`duration` is required** and `this_turn` is the only word implemented — the
+only one printed — so there is no `until_your_next_turn`, no `player` field to
+carry its clock, and nothing for `sba` to prune when a seat leaves. The record is
+`structs.SacrificeRestriction` on `GameState.sacrifice_restrictions`, cleared by
+`turn._cleanup_step` beside the three restrictions above it, and read through the
+one predicate `primitives.sacrifice_forbidden`.
 
 ## Attack requirements
 

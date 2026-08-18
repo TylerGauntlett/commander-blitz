@@ -37832,12 +37832,12 @@
     },
     "Call for Aid": {
       "edhrec_rank": 7420,
-      "gate": "template",
+      "gate": null,
       "name": "Call for Aid",
-      "reason": "no template for: Gain control of all creatures target opponent controls until end of turn. Untap those crea",
+      "reason": "",
       "scryfall_id": "7072b75a-64ab-4894-943e-fc0b779ca60e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Call for Blood": {
