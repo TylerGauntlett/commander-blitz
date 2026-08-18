@@ -186,14 +186,31 @@ jobs:
             # A bind-mounted file changing does not make compose recreate the
             # container, so without this an edited Caddyfile would be copied up
             # and then quietly ignored. `reload` is graceful -- no dropped
-            # connections -- and is a no-op on a container that just started.
-            docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile \
-              || echo "caddy reload failed; the health check below is the real gate"
+            # connections -- and is redundant on a container that just started
+            # with the new file, which is exactly when it fails: the admin API
+            # it posts to is not listening for the first second or two.
+            reloaded=""
+            for _ in $(seq 1 10); do
+              if docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile; then
+                reloaded=yes
+                break
+              fi
+              sleep 2
+            done
+            [ -n "$reloaded" ] \
+              || echo "caddy reload never succeeded; the health check below is the real gate"
 
             docker logout ghcr.io
 
             # Same reasoning one level up: prove a container is actually running
-            # before handing off to the health check.
+            # before handing off to the health check. Polled rather than sampled
+            # once -- taken a couple of seconds after `up -d` this came back
+            # empty for containers that were up and serving, and failed a deploy
+            # that had in fact succeeded.
+            for _ in $(seq 1 15); do
+              [ -n "$(docker compose ps --status running --quiet)" ] && break
+              sleep 2
+            done
             docker compose ps --status running --quiet | grep -q . \
               || { echo "no running container after up -d"; docker compose logs --tail=50; exit 1; }
 
