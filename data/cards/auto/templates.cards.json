@@ -52229,6 +52229,91 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "jailed",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "duration": "until_it_fires",
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "jailed",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Return the exiled card to the battlefield under its owner's control.",
+              "trigger": {
+                "controller": "opponent",
+                "event": "becomes_monarch"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "palace_jailer",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Palace Jailer",
+      "oracle_text": "When this creature enters, you become the monarch.\nWhen this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

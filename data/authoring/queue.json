@@ -195492,12 +195492,12 @@
     },
     "Palace Jailer": {
       "edhrec_rank": 4016,
-      "gate": "template",
+      "gate": null,
       "name": "Palace Jailer",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "3a8c2a84-e0f2-4611-af3d-42f4578ad4e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Palace Sentinels": {

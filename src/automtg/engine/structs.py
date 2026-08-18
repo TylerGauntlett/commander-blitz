@@ -577,8 +577,9 @@ class DelayedTrigger:
     captured when it is created, the controller is captured with them, and it
     resolves with no permanent to hang itself on.
 
-    The event-watching form is turn-scoped by construction -- every printed one
-    says "this turn" -- and `turn._cleanup_step` drops it there.
+    ``duration`` is how long an event-watching subscription is good for, and it
+    is the one thing the two printed shapes of it disagree about.  See
+    :data:`DELAYED_DURATIONS`.
     """
 
     step: str
@@ -590,6 +591,35 @@ class DelayedTrigger:
     turn: int = 0
     combat: int | None = None
     trigger: TriggerSpec | None = None
+    #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
+    duration: str = "this_turn"
+
+
+#: How long an event-watching delayed ability stays subscribed, and what firing
+#: does to it.  Two printed shapes, and they differ on both counts at once:
+#:
+#: ``this_turn``
+#:     "**Whenever** one or more creatures you control deal combat damage to one
+#:     or more players **this turn**, you become the monarch" (Forth Eorlingas!).
+#:     A subscription with a stated lifetime, firing **every** time: an extra
+#:     combat this turn is a second batch and a second trigger, so a "fired" flag
+#:     would be the wrong shape.  `turn._cleanup_step` is what ends it.
+#:
+#: ``until_it_fires``
+#:     "Exile target creature an opponent controls **until** an opponent becomes
+#:     the monarch" (Palace Jailer).  The delayed ability *is* the end of a
+#:     duration somewhere else, so it fires **once** and the subscription is then
+#:     spent -- and it must outlive the turn, because the crown may not move for
+#:     six of them.  `triggers._arm_delayed` strikes it off as it arms, and
+#:     `turn._cleanup_step` leaves it alone.
+#:
+#: The two axes -- repeating-or-once, and turn-scoped-or-not -- happen to be
+#: correlated in both printed cards, which is why this is one field rather than
+#: two booleans.  They are **not** the same question, and a card that separated
+#: them ("the first time a creature dies this turn") would need a third entry
+#: here rather than a different reading of these two.  That card does not exist
+#: in the pool; when it does, this is where it goes.
+DELAYED_DURATIONS = ("this_turn", "until_it_fires")
 
 
 @dataclass(frozen=True)

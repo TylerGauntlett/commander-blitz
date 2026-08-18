@@ -57,6 +57,7 @@ from automtg.engine.structs import (
     BLOCK_PROHIBITION_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
+    DELAYED_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
@@ -2492,6 +2493,16 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     if controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}.trigger: unknown controller {controller!r}")
     validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
+    # How long the subscription lasts, and what firing does to it. A misspelled
+    # value would fall through to the `this_turn` default and quietly retime the
+    # card: Palace Jailer's exile would end at cleanup instead of when the crown
+    # moves, which is a materially weaker card that reads identically.
+    duration = str(effect.get("duration", "this_turn"))
+    if duration not in DELAYED_DURATIONS:
+        raise DslError(
+            f"{where}: unknown delayed_trigger duration {duration!r} "
+            f"(implemented: {sorted(DELAYED_DURATIONS)})"
+        )
     if not effect.get("effects"):
         raise DslError(f"{where}: delayed_trigger needs 'effects' to schedule")
     # The same refusal `delay` carries, and for the same reason: 603.7 says the

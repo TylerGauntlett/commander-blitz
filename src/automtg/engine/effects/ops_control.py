@@ -430,10 +430,14 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     from the graveyard, where it would either never fire (no `active_zones`) or
     fire for the rest of the game (with one), and neither is "this turn".
 
-    Expiry is not written here and not written on the card: every printed
-    version of this says "this turn", so `turn._cleanup_step` drops it at the
-    turn boundary beside every other clause that outlives the permanent that
-    said it.
+    ``duration`` is how long the subscription is good for, and it defaults to
+    ``this_turn`` because that is what Forth Eorlingas! and every card of its
+    shape print. The other value is Palace Jailer's, whose delayed ability is the
+    end of a duration written on a *different* effect -- "exile it **until** an
+    opponent becomes the monarch" -- so it fires once and has to outlive the
+    turn, since the crown may not move for six of them. See
+    :data:`~automtg.engine.structs.DELAYED_DURATIONS`; the two values are read at
+    exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
     """
     from ..carddef import TriggerSpec
     from ..structs import DelayedTrigger
@@ -454,6 +458,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 controller=str(trigger.get("controller", "you")),
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
+            duration=str(spec.get("duration", "this_turn")),
         )
     )
 

@@ -1,3 +1,103 @@
+## `exile_until_event` — the other duration a delayed ability can have
+
+### Overview
+
+Palace Jailer: *"When this creature enters, you become the monarch. When this
+creature enters, exile target creature an opponent controls **until an opponent
+becomes the monarch**."*
+
+`exile` had one duration, `until_leaves`, and it is the Oblivion Ring link — the
+op records `exiled_by` and the *return* is a separate `leaves_battlefield`
+trigger on the same card reading `exiled_with: self`. That is wrong for this card
+twice over, and the two are in **opposite directions**:
+
+- it returns the creature on an event that must not return it. Rule 610.3: the
+  exile is a one-shot effect with a duration, not an effect the permanent
+  maintains, so killing the Jailer leaves the creature exiled;
+- and it cannot return it on the event that must, because nothing links a
+  `leaves_battlefield` trigger to a monarchy change.
+
+Written with `until_leaves`, Palace Jailer hands the creature back for the price
+of killing a 2/2 — a materially weaker card that on the board reads exactly like
+the printed one.
+
+### Almost all of it had already shipped, in the other direction
+
+This capability was originally built as a second, competing mechanism — an
+`event` key on the `delay` op — and that work was **dropped**. The
+`delayed_triggered_ability` run landed first with `delayed_trigger`, which is the
+same mechanism arrived at from Forth Eorlingas' end: a subscription with no
+permanent, installed by a resolving effect, bindings and controller captured at
+that instant, woken by `triggers.collect`, armed onto `state.armed_delays` and
+resolved by `game._advance`. Every one of those is what Palace Jailer needs, and
+having two of them would have been the worst outcome available.
+
+What was genuinely missing is one field, because the two cards' printed sentences
+disagree about **how long the subscription lasts** — and disagree on both counts
+at once:
+
+| | fires | lives until |
+|---|---|---|
+| `this_turn` *(default)* | every time | `turn._cleanup_step` |
+| `until_it_fires` | once | it fires, however many turns that takes |
+
+"**Whenever** … **this turn**" is a subscription with a stated lifetime. "Exile
+it **until** an opponent becomes the monarch" is not a trigger with a duration at
+all: it is the *end* of a duration written on a different effect, so the first
+crossing is the whole of it, and it names no turn because the crown may not move
+for six of them.
+
+### The silent failure, and the witness for it
+
+`turn._cleanup_step` dropped every event-watching subscription, keyed on the delay
+*being* event-watching. That is exactly right for the shape it was written
+for — every printed one of those says "this turn" — and it silently retimes
+Palace Jailer to an **"until end of turn" exile**. Nothing on the board says
+which card shipped: the creature is in exile either way, and the difference only
+shows up a turn later.
+
+So the clear is keyed on the subscription's own `duration` instead, which is the
+field that actually carries the printed sentence.
+`test_the_exile_outlives_the_turn_it_was_made_in` walks three turn boundaries and
+fails against the blanket clear; `test_and_still_ends_when_the_crown_moves_turns_later`
+is the other half, because surviving cleanup is worth nothing if the subscription
+has stopped working.
+
+### How one-shot and repeating coexist
+
+`triggers._arm_delayed`'s docstring already argued against a "fired" flag, and it
+was right on its own terms: an extra combat this turn is a second damage batch
+and a second trigger, so the one-per-batch guarantee belongs to the **event**.
+The one-shot discharge is not that flag. It is a different claim — that this
+subscription is spent because the duration it was ending is over — and the two
+now sit side by side in the same loop, chosen by `duration`.
+
+It discharges **as it arms**, before the copy on `state.armed_delays` resolves,
+so the exile ends exactly once even if the same crossing were to arm it again
+before the advance loop got round to the copy. `_delayed_bindings` has already
+snapshotted everything the copy needs, so striking the original off costs it
+nothing. The strike is by **identity**: two Palace Jailers each holding a creature
+differ only in their captured bindings, and one that exiled nothing would compare
+equal to another that did.
+
+### One field, not two booleans
+
+The bet is stated where the constant lives. Repeating-or-once and
+turn-scoped-or-not are two axes, they are correlated in *both* printed cards, and
+they are **not** the same question. A card that separated them — "the first time
+a creature dies this turn" — needs a third entry in `structs.DELAYED_DURATIONS`
+rather than a different reading of these two. No such card is in the pool, and
+naming the gap is cheaper than shipping a second boolean nothing sets.
+
+**Unblocked one card: Palace Jailer**, at the agent tier — the template tier
+harvests nothing here (`--tier templates --retry`: `wrote 0 | no template 200`).
+It needed two capabilities: `monarch` shipped the designation, 721.3's two
+inherent abilities and the `becomes_monarch` event, and this is the duration that
+was the last blocker. Its expectation is a real observation —
+`opponent_battlefield_count: 5`, the opponent's board one creature lighter — and
+the rest of the coverage is `tests/unit/test_exile_until_event.py`, where the
+Jailer dies and the creature stays exiled, and then comes back anyway.
+
 ## `variable_target_count` — a number of targets the game works out, and "up to"
 
 ### Overview
