@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **11** capabilities.
+**7 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
@@ -25,22 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multikicker](#multikicker) | 1 | 4605 | cost |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
 | [x-in-mana-cost](#x-in-mana-cost) | 1 | 3489 | selector |
-
-## batch-attack-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A once-per-declaration attack trigger that knows who was attacked: "Whenever one or more creatures attack <player>". It must fire once for each (attack declaration, defending player) pair -- one trigger however many creatures were declared against that player -- accept the existing `defending` clause (`you` | `opponent` | `any`) so "one of your opponents" can be asked, and accept `controller: "any"` for the attacking side, because this card's attackers may be controlled by any player and not only by its controller. Concretely: `combat.declare_attackers` (engine/combat.py:250-260) fires one bare ATTACKERS_DECLARED carrying only `player` and `attackers`; it needs to fire one per distinct value of `combat.attackers` (the oid -> defending-player map already recorded at combat.py:220), each carrying `defender` plus the subset of attackers declared against that defender, and a DSL name for it in TRIGGER_EVENTS (e.g. `creatures_attack_player`). The planeswalker half of the printed line needs no extra work -- `combat.attackers[oid]` is always the defending *player* even when `attacking_planeswalker[oid]` is set -- so `defending: "opponent"` already covers "or a planeswalker they control".
-  <br>Why the existing vocabulary won't do: `you_attack` and `attacks` are the two candidates and each fails on a different half. `you_attack` is the right *shape* (ATTACKERS_DECLARED, once per declaration -- triggers.py:48-52) but carries no `defender`, so a `defending` clause on it never matches at all: `_defender_matches` (triggers.py:417-433) returns False the moment `event.data["defender"]` is absent, and the ability would be inert forever. Dropping the clause is not a fallback, it is a different and actively harmful card: plain `you_attack` with `controller: "any"` also fires when an opponent's creatures attack *me*, handing menace to the creatures I am about to block, which the printed line never does. `attacks` is the other direction -- it carries `defender` and supports `defending: "opponent"` -- but it is the per-creature ATTACKS event, so a three-creature swing fires it three times and each copy can speak about one attacker only. That substitution is the exact one the codebase already rejected in writing: the comment at triggers.py:48-52 records that `you_attack` was added *because* `attacks` "is per creature and would fire three times on a three-creature swing", so implementing a printed "one or more" trigger on `attacks` contradicts the engine's own settled reading. The same missing event is behind a large family of queued cards that cannot even be faked per-creature, because they count or sweep the batch -- "Whenever one or more creatures attack you, you gain 1 life for each attacking creature", "Whenever one or more creatures attack, this enchantment deals damage to each of those creatures", "Whenever one or more creatures you control attack, each defending player divides..." (data/authoring/queue.json:193177, 156947, 211767).
-- **(selector)** A binding naming the creatures that caused the trigger, so "those creatures" is `{"binding": "attackers"}` in the effect's `objects`. The selector machinery for this already exists and is unused here: `resolve_pool` treats `binding` as a pool (effects/selectors.py:161-170) and `_bound_oids` (selectors.py:271-287) already accepts a *list* of oids under one name, the way `blockers` is carried for `becomes_blocked`. What is missing is one line of plumbing -- `attackers` is not in `EVENT_BINDING_KEYS` (triggers.py:402-414), so even though ATTACKERS_DECLARED puts `attackers=sorted(combat.attackers)` on the event, `event_bindings` drops it and no effect can see the set. It must be the per-defender subset described in the need above, not the whole declaration, or a pod attack split across two players would grant menace to creatures attacking me as well.
-  <br>Why the existing vocabulary won't do: `{"zone": "battlefield", "attacking": true}` is the near miss and says something strictly larger than "those creatures". `attacking` is a bare boolean checked as `combat.attacking(oid)` (selectors.py:459-462) with no notion of *whom* the creature is attacking, and `selector_keys` has no defending-player key at all -- so in any game where one declaration is split between me and an opponent it grants menace to the creatures attacking me, and it would also pick up creatures declared in an earlier combat this turn. `{"binding": "subject"}` is the other near miss and is a single oid: `_subject_oid` returns None for `you_attack` (it is absent from OBJECT_SUBJECT_TRIGGERS, triggers.py:99-139) and for `attacks` it is the one attacker, which is the per-creature reading this card does not have. `snapshot` does not help either -- the attackers have not left, they simply cannot be named.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frontier Warmonger** (rank 3131) — `frontier_warmonger`
-  - Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.
-
-</details>
 
 ## cant-sacrifice
 

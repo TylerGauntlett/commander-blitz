@@ -153,6 +153,19 @@ class EventType:
 
     # combat
     ATTACKERS_DECLARED = "attackers_declared"
+    #: "Whenever one or more creatures attack **one of your opponents**…" One of
+    #: these per (declaration, defending player) pair, fired beside the single
+    #: ATTACKERS_DECLARED above rather than instead of it, carrying ``defender``
+    #: and the ``attackers`` declared against *that* player.
+    #:
+    #: Its own type rather than a second ATTACKERS_DECLARED, because that event
+    #: means "the declaration closed" and there is exactly one of those per
+    #: combat: firing it per defender would make Clavileño's "whenever you
+    #: attack" pay twice on a split attack, and would tell the client the attack
+    #: was declared N times. The pair is the same shape as BECAME_BLOCKED and
+    #: ATTACKED_UNBLOCKED -- one instant, two facts, told separately because
+    #: cards ask for them separately.
+    CREATURES_ATTACKED_PLAYER = "creatures_attacked_player"
     BLOCKERS_DECLARED = "blockers_declared"
     ATTACKS = "attacks"
     BLOCKS = "blocks"

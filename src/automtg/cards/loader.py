@@ -64,6 +64,13 @@ from automtg.engine.turn import DELAY_STEPS
 
 from .schema import AbilityModel, CardModel, CostModel, DeckModel, TargetModel
 
+#: Trigger events whose payload carries a defending player, and therefore the
+#: only ones a ``defending`` clause can be asked of. The per-creature `attacks`
+#: and the per-declaration-per-seat `creatures_attack_player`; `you_attack` is
+#: deliberately absent, because it is fired once for the whole declaration and
+#: has no one player to compare against.
+DEFENDING_TRIGGERS = frozenset({"attacks", "creatures_attack_player"})
+
 KNOWN_TYPES = frozenset(t.value for t in CardType)
 KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 KNOWN_KEYWORDS = frozenset(k.value for k in Keyword)
@@ -1119,11 +1126,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_condition(model.trigger.condition, f"{where}.trigger.condition")
-        if model.trigger.defending is not None and model.trigger.event != "attacks":
+        if model.trigger.defending is not None and model.trigger.event not in DEFENDING_TRIGGERS:
             # Silently ignoring it would produce a card that looks like it reads
-            # "attacks you" and fires on everything.
+            # "attacks you" and fires on everything. The other direction is just
+            # as bad and is why the list is a list: `you_attack` carries no
+            # defender, so accepting the clause there would load a card that
+            # reads "attacks one of your opponents" and fires never.
             raise DslError(
-                f"{where}: 'defending' only means anything on an 'attacks' trigger, "
+                f"{where}: 'defending' only means anything on "
+                f"{' or '.join(repr(e) for e in sorted(DEFENDING_TRIGGERS))}, "
                 f"not on {model.trigger.event!r}"
             )
         # `self_enters` and `permanent_enters` are the same engine event, and

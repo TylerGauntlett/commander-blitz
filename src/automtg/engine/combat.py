@@ -412,6 +412,35 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
             player=state.active_player,
             attackers=sorted(combat.attackers),
         )
+        # "Whenever one or more creatures attack one of your opponents or a
+        # planeswalker they control" -- one per *defending player*, between the
+        # declaration above and the per-creature ATTACKS below, because that is
+        # exactly where it sits: coarser than one creature, finer than one
+        # declaration.
+        #
+        # The subset, not `combat.attackers` entire. A pod attack split between
+        # two seats is one declaration and two of these, and each may only speak
+        # about the creatures aimed at its own defender -- otherwise Frontier
+        # Warmonger hands menace to the creatures swinging at its controller.
+        #
+        # `combat.attackers[oid]` is the defending **player** even when the
+        # attack is aimed at a planeswalker (`add_attacker` refuses a
+        # planeswalker whose controller disagrees), so "or a planeswalker they
+        # control" needs nothing here: attacking the walker is attacking its
+        # controller, and one event covers both halves of the printed line.
+        by_defender: dict[int, list[int]] = {}
+        for oid in sorted(combat.attackers):
+            by_defender.setdefault(combat.attackers[oid], []).append(oid)
+        for defender in state.turn_order():
+            if defender not in by_defender:
+                continue
+            fire(
+                state,
+                EventType.CREATURES_ATTACKED_PLAYER,
+                player=state.active_player,
+                defender=defender,
+                attackers=by_defender[defender],
+            )
         for oid in sorted(combat.attackers):
             obj = state.objects.get(oid)
             fire(

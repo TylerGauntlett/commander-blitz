@@ -1,3 +1,103 @@
+## The batch attack trigger — the declaration, told once per seat it was aimed at
+
+### Overview
+
+Frontier Warmonger: *"Whenever one or more creatures attack one of your opponents
+or a planeswalker they control, those creatures gain menace until end of turn."*
+Four mana, a 4/4, and that line is the whole card.
+
+Everything after the comma was already sayable — `grant_keyword` with
+`keywords: ["menace"]` and its default until-end-of-turn duration. Everything
+before it was blocked twice, and the two halves failed for unrelated reasons.
+
+### The trigger: the right shape, with nothing to compare
+
+Two attack triggers existed. `attacks` is per creature and carries `defender`;
+`you_attack` is per declaration and carries nothing but the attacker list.
+
+`you_attack` is the right shape. `ATTACKERS_DECLARED` is fired once after the
+declaration closes, however many creatures were declared, which is exactly what
+"one or more creatures attack" means — and the comment above it in `triggers.py`
+says so, having been written to refuse the `attacks` reading: it "is per creature
+and would fire three times on a three-creature swing".
+
+But `defending` compares against a key the event has never carried, and
+`_defender_matches` returns False the moment it is absent. So the printed card,
+written the obvious way, is not approximated — it is **inert**, silently and
+forever. And the obvious repair is worse than inert: drop the clause, and plain
+`you_attack` with `controller: "any"` fires when an opponent swings at *you*,
+handing menace to the creatures you were about to block. That is not a rougher
+Frontier Warmonger, it is a card that helps the wrong player in ordinary
+two-player play.
+
+### A new event, not a second copy of an old one
+
+`EventType.CREATURES_ATTACKED_PLAYER` is fired by `finish_attackers` once per
+distinct value of `combat.attackers`, between the single `ATTACKERS_DECLARED` and
+the per-creature `ATTACKS` — coarser than a creature, finer than a declaration.
+It carries `defender` and the **subset** of attackers declared against that seat.
+
+The tempting cheaper move is to fire `ATTACKERS_DECLARED` itself per defender and
+give it a `defender` key. It is wrong in two places at once: that event means "the
+declaration closed" and there is exactly one of those per combat, so Clavileño's
+"whenever you attack" would pay twice on an attack split between two opponents,
+and the client would be told the attack was declared twice — `attackers_declared`
+carries the "Attack!" banner and the surge animation. The pair is instead the
+same shape as `BECAME_BLOCKED` and `ATTACKED_UNBLOCKED`: one instant, two facts,
+told separately because cards ask for them separately.
+
+`controller` stays the **attacking** side and `defending` is the seat attacked;
+Frontier Warmonger asks both, and `controller: "any"` is load-bearing rather than
+lazy — the creatures attacking an opponent need not be its controller's.
+
+"…or a planeswalker they control" needed nothing. `add_attacker` refuses a
+planeswalker whose controller disagrees with the declared defender, so
+`combat.attackers[oid]` is the defending *player* in both cases and one
+`defending: "opponent"` covers both halves of the printed line.
+
+### "Those creatures": one line of plumbing, and one that mattered
+
+The set was already on the event and already had somewhere to go.
+`resolve_pool` sends `{"binding": "attackers"}` through `_bound_oids`, which has
+accepted a **list** of oids since devour. What was missing was `attackers` in
+`EVENT_BINDING_KEYS`, so `event_bindings` dropped it on the floor and no effect
+could see it.
+
+The half that is not plumbing is *which* set. It is the per-defender subset, not
+the whole declaration: a pod attack split between two seats is one declaration and
+two abilities, and the whole list would grant menace to the creatures attacking
+the Warmonger's own controller.
+
+`{"zone": "battlefield", "attacking": true}` is the near miss and says something
+strictly larger — `attacking` is a bare boolean with no notion of whom, and
+`selector_keys` has no defending-player key at all. `{"binding": "subject"}` is
+the other and is a single oid, which is the per-creature reading this card does
+not have.
+
+### Where it is refused
+
+`loader.py` accepts `defending` on `attacks` and on `creatures_attack_player` and
+nowhere else. The guard already existed in one direction (silently ignoring the
+clause would ship a card that reads "attacks you" and fires on everything); the
+list makes it work in the other, which is the failure this capability is named
+after — a card that reads "attacks one of your opponents" and fires never.
+
+### The frontend
+
+Deliberately silent in both `labels.ts` and `events.ts`, and listed in both rather
+than left to their `default` fallthroughs so the decision is visible. The
+declaration it accompanies already narrates "You attack" and already plays the
+banner; a line and a beat per defending seat would say the same thing again, once
+per opponent swung at. Listing it in `SILENT` is also what stops it closing the
+declaration run in `planCombat`, which would split one swing into two animations.
+
+### What it unblocks
+
+Frontier Warmonger is one card. The family behind it cannot be faked per-creature
+at all, because each member counts or sweeps the batch: "you gain 1 life for each
+attacking creature", "deals damage to each of those creatures", "each defending
+player divides".
+
 ## `nth` — "your second card each turn", settled where the trigger queues
 
 ### Overview
