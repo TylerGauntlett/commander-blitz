@@ -408,6 +408,56 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("delayed_trigger")
+def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Install a delayed triggered ability that watches an **event** (603.7).
+
+    "Whenever one or more creatures you control deal combat damage to one or
+    more players this turn, you become the monarch." -- Forth Eorlingas!, and
+    the other shape of the same rule `delay` implements. `delay` names a
+    *moment* and this names a *thing that happens*; both are created by a
+    resolving effect, both have no permanent to hang themselves on, and both
+    capture their bindings and their controller at the instant they are made.
+
+    So it writes the same :class:`DelayedTrigger` onto the same list, with a
+    ``trigger`` spec instead of a ``step``.
+
+    The controller matters more here than anywhere else this op is used. The
+    source is a **sorcery**, which is in a graveyard before the first creature
+    swings -- so "you" cannot be read off the card when the ability fires, and
+    `ctx.controller` captured now is the only answer that survives. A triggered
+    ability written on the card instead of installed by it would be watching
+    from the graveyard, where it would either never fire (no `active_zones`) or
+    fire for the rest of the game (with one), and neither is "this turn".
+
+    Expiry is not written here and not written on the card: every printed
+    version of this says "this turn", so `turn._cleanup_step` drops it at the
+    turn boundary beside every other clause that outlives the permanent that
+    said it.
+    """
+    from ..carddef import TriggerSpec
+    from ..structs import DelayedTrigger
+
+    trigger = spec.get("trigger") or {}
+    state = ctx.state
+    state.delayed_triggers.append(
+        DelayedTrigger(
+            step="",
+            controller=ctx.controller,
+            effects=tuple(spec.get("effects") or []),
+            bindings=dict(ctx.bindings),
+            source_oid=ctx.source_oid,
+            description=str(spec.get("text") or ctx.source_name),
+            turn=state.turn,
+            trigger=TriggerSpec(
+                event=str(trigger.get("event")),
+                controller=str(trigger.get("controller", "you")),
+                condition=dict(trigger["condition"]) if trigger.get("condition") else None,
+            ),
+        )
+    )
+
+
 def _scheduled_combat(state: GameState) -> int:
     """Which combat an "at end of combat" delay belongs to (rule 603.7).
 

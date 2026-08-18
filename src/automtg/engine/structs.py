@@ -10,7 +10,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
+
+if TYPE_CHECKING:  # pragma: no cover
+    # Type-only, so this module keeps the no-runtime-imports property its
+    # docstring is about: `carddef` is a leaf, but the point of `structs` is
+    # that it needs nothing.
+    from .carddef import TriggerSpec
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -544,7 +550,7 @@ class TriggerInstance:
 
 @dataclass
 class DelayedTrigger:
-    """An effect scheduled to happen at a later step.
+    """An effect scheduled to happen later -- at a named step, or on an event.
 
     "At the beginning of the next end step, return it to the battlefield." The
     engine's ordinary triggers all fire *from* an event that has just happened;
@@ -559,6 +565,20 @@ class DelayedTrigger:
     once a turn, so its name is enough to say *when*; a combat phase does not,
     since `extra_combat` shipped, and "at end of combat" means the end of the
     combat the delay was created in rather than the next one to come round.
+
+    ``trigger`` is the **other half of 603.7**, and the two are exclusive: a
+    delayed ability waits either for a moment ("at the beginning of the next end
+    step") or for an event ("whenever one or more creatures you control deal
+    combat damage to one or more players **this turn**").  When it is set,
+    ``step`` is ``""`` -- there is no step to be due at, `turn._delay_due` says
+    so out loud, and `triggers.collect` is what wakes this one instead.  It
+    lives on the same list and in the same struct as the step-scoped form
+    because everything else about the two is identical: the bindings are
+    captured when it is created, the controller is captured with them, and it
+    resolves with no permanent to hang itself on.
+
+    The event-watching form is turn-scoped by construction -- every printed one
+    says "this turn" -- and `turn._cleanup_step` drops it there.
     """
 
     step: str
@@ -569,6 +589,7 @@ class DelayedTrigger:
     description: str = ""
     turn: int = 0
     combat: int | None = None
+    trigger: TriggerSpec | None = None
 
 
 @dataclass(frozen=True)

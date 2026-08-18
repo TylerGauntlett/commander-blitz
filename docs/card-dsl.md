@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-93 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+94 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -182,7 +182,7 @@ it, but a card that needed correcting was authored wrong.
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
 | Turn structure | `extra_combat` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -1133,7 +1133,8 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
-`life_lost` · `you_attack` · `creatures_attack_player` · `becomes_monstrous` ·
+`life_lost` · `you_attack` · `creatures_attack_player` ·
+`creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
@@ -3994,6 +3995,83 @@ it at end of combat" and "exile it at the end step" a real one. The end step
 version leaves the token alive through the whole postcombat main phase, where it
 can be sacrificed, tapped for an ability, or attack again in the extra combat —
 which is exactly what the printed line stops.
+
+### `delayed_trigger` — "whenever <event> **this turn**"
+
+```jsonc
+// Forth Eorlingas! — "Create X 2/2 red Human Knight creature tokens with trample
+// and haste. Whenever one or more creatures you control deal combat damage to
+// one or more players this turn, you become the monarch."
+{ "op": "create_token", "token": "human_knight_2_2_r_trample_haste",
+  "amount": { "x": true } },
+{ "op": "delayed_trigger",
+  "text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "you" },
+  "effects": [ { "op": "become_monarch", "player": "you" } ] }
+```
+
+Rule 603.7 has two shapes and `delay` is one of them. `delay` names a **moment**
+— "at the beginning of the next end step" — and its whole vocabulary is
+`turn.DELAY_STEPS`, five step names. This is the other: a subscription to a
+**thing that happens**, created by a resolving effect, lasting the rest of the
+turn.
+
+Writing the sentence as a triggered ability on the card is not open, and the
+reason is the card type. Forth Eorlingas! is a **Sorcery**: it is in a graveyard
+before the first creature swings, so an ability printed on it would be watching
+from there — never firing at all with the default `active_zones`, or firing for
+the rest of the game with `["graveyard"]`. Neither of those is "this turn".
+
+Three pieces, and each is somewhere a card can already look:
+
+- **It is kept** on `state.delayed_triggers`, the list `delay` writes to, as a
+  `DelayedTrigger` with a `trigger` instead of a `step`. Bindings and controller
+  are captured when it is installed, exactly as `delay` captures them — which
+  matters more here, because "you" cannot be read back off a card in a graveyard.
+- **It is woken** by `triggers.collect`, the funnel every fired event goes
+  through. It *arms* rather than resolves: `collect` runs inside `damage_player`
+  where nothing can ask a question, so a copy waits on `state.armed_delays` and
+  `game._advance` resolves it — the arrangement `pending_triggers` already has.
+- **It expires** at `turn._cleanup_step`, beside `clear_attack_restrictions` and
+  the other "this turn" clauses owned by no permanent. Not after one firing: an
+  extra combat this turn is a second batch and a second trigger.
+
+Like `delay`, it resolves **off the stack**, and `{"target": …}` inside it is a
+load error for the same reason — the delayed ability never chose a target, so
+its context is built with `targets={}`.
+
+`trigger` takes `event`, `controller` and `condition` and nothing else. The rest
+of the trigger vocabulary is answered off the permanent hosting the ability
+(`source: "self"` and `filter` are read off it; `max_per_turn` is counted per
+permanent), and a delayed ability has no permanent — so the loader refuses them
+rather than accepting a printed restriction that silently does nothing.
+
+### "One or more creatures … one or more players"
+
+`creatures_deal_combat_damage` is a new trigger event and the batched half of
+this card. It fires **once per combat-damage step per damaging player**, carrying
+`damagers` and `damaged`.
+
+`deals_combat_damage_to_player` is the near miss and is per *connection*: X
+Knights getting through fires it X times, so the card would hand out the
+monarchy once per creature instead of once. `max_per_turn: 1` on top of it is the
+tempting repair and is wrong one step out — `extra_combat` gives a turn a second
+combat, and the printed line triggers again there.
+
+Per damaging **player** rather than per (player, defender) pair, which is where
+it stops being the shape `creatures_attack_player` has one phase earlier: that
+one is per defending seat because its printed clause is "one of your opponents",
+and this one says "to one or more **players**". A seat whose creatures connect
+with two opponents in one step gets one event with both on `damaged`.
+
+It is fired from `combat.deal_combat_damage`, off the same assignment list
+`_monarch_transfer` reads and for the same reason: 510.2 makes combat damage
+simultaneous, so the batch is knowable there and nowhere else. `damage_player`
+sees the hits one at a time and cannot tell the first from the third.
+
+The event is an ordinary one, so a **permanent** may print the same clause —
+`{"event": "creatures_deal_combat_damage", "controller": "you"}` in an
+`abilities` entry — and gets the same once-per-batch firing, on the stack.
 
 ## "Choose a creature type"
 

@@ -1026,9 +1026,62 @@ def deal_combat_damage(
             )
 
     _monarch_transfer(state, monarch_before, assignments)
+    _fire_damage_batch(state, assignments)
 
     if first_strike_step:
         combat.first_strike_done = True
+
+
+def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) -> None:
+    """"Whenever one or more creatures you control deal combat damage to one or
+    more players" -- once for the batch, not once per creature.
+
+    Read off the same `assignments` list `_monarch_transfer` above reads, and
+    for the same reason: 510.2 makes combat damage one simultaneous event, so
+    the whole of "one or more creatures … one or more players" is knowable here
+    and nowhere else. `damage_player` sees the hits one at a time and cannot
+    tell the first of a batch from the third.
+
+    One event per **damaging player**, which is where the batching has to stop.
+    Firing it once for the whole step would leave `controller: "you"` with no
+    actor to compare against; firing it per (damager, defender) pair would pay
+    twice for a seat whose creatures connected with two opponents, and the
+    printed clause is "to one or more **players**". So the seats hit ride along
+    on `damaged` for anything that wants to ask, and the event itself counts
+    seats that *swung*.
+
+    **Creatures**, by derived type, which is the same reading `_monarch_transfer`
+    takes one line up: an animated Equipment that got through is a creature and
+    its printed face says otherwise. Damage to a planeswalker or a blocker is
+    not damage to a player and is filtered out with it.
+
+    Fired once per **step**, so first strike and regular damage are two batches
+    (510.4). A card that connects in both windows triggers twice, which is what
+    the rules say and what the per-creature event has always done.
+    """
+    by_player: dict[int, dict[str, list[int]]] = {}
+    for assignment in assignments:
+        if assignment.to_player is None or assignment.amount <= 0:
+            continue
+        source = state.objects.get(assignment.source)
+        if source is None or "Creature" not in chars(state, source.oid).types:
+            continue
+        batch = by_player.setdefault(source.controller, {"damagers": [], "damaged": []})
+        if source.oid not in batch["damagers"]:
+            batch["damagers"].append(source.oid)
+        if assignment.to_player not in batch["damaged"]:
+            batch["damaged"].append(assignment.to_player)
+    for pid in state.turn_order():
+        batch = by_player.get(pid)
+        if batch is None:
+            continue
+        fire(
+            state,
+            EventType.CREATURES_DEALT_COMBAT_DAMAGE,
+            player=pid,
+            damagers=sorted(batch["damagers"]),
+            damaged=sorted(batch["damaged"]),
+        )
 
 
 def _monarch_transfer(

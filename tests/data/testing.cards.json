@@ -10951,6 +10951,144 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_delayed_monarch",
+      "name": "Test Delayed Monarch",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_delayed_gain",
+      "name": "Test Delayed Gain",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_delayed_gain_any",
+      "name": "Test Delayed Gain Any",
+      "oracle_text": "Whenever one or more creatures deal combat damage to one or more players this turn, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever one or more creatures deal combat damage to one or more players this turn, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "any"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_batch_damage_watcher",
+      "name": "Test Batch Damage Watcher",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to one or more players, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

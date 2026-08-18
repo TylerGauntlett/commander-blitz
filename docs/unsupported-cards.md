@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **5** capabilities.
+**4 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
-| [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
@@ -31,21 +30,6 @@ Blocks **1** card.
 
 - **Frontline Medic** (rank 3489) — `frontline_medic`
   - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
-
-</details>
-
-## delayed-triggered-ability
-
-Blocks **1** card.
-
-- **(op)** An op a spell can resolve that installs an *event-watching* delayed triggered ability for the rest of the turn (603.7): "Whenever <event> this turn, <effects>", built from a `trigger` spec out of `trigger_events` plus `effects`, expiring at cleanup, with no permanent to hang it on. This card needs the batched form of `deals_combat_damage_to_player` -- "one or more creatures you control deal combat damage to one or more players" fires once for the whole combat damage batch, not once per creature and not once per player, so the installer needs a once-per-event-batch flag (the same shape as the existing `This ability triggers only once each turn` handling) rather than firing X times when X Knights connect.
-  <br>Why the existing vocabulary won't do: `delay` is the only op that schedules anything for later and it is step-scoped, not event-scoped: `op_delay` (`engine/effects/ops_control.py:375-400`) appends a `DelayedTrigger` whose only timing knob is `step`, validated against `DELAY_STEPS = {upkeep, draw_step, begin_combat, end_step}` (`engine/turn.py:79-84`), so it can say "at the beginning of the next end step" and cannot say "whenever a creature deals combat damage". Putting the sentence in `abilities` is not open either: this is a Sorcery, and a spell's effects must live in `spell_effects` -- a triggered ability on a sorcery would be watching from the graveyard, where the card sits after it resolves, so it would either never fire or fire for the rest of the game rather than for this turn. `combat_damage_by` in `condition_keys` reads the turn ledger *backwards* (prowl: "was a player dealt combat damage this turn by a Faerie") and only by creature subtype -- it can be asked at cast time but cannot make anything happen later, and this card's whole point is that the damage comes after the sorcery resolves. `set_flag` marks a permanent and no combat damage handler reads flags.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forth Eorlingas!** (rank 3207) — `forth_eorlingas`
-  - Create X 2/2 red Human Knight creature tokens with trample and haste.
-  - Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.
 
 </details>
 
