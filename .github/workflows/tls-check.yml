@@ -1,0 +1,63 @@
+name: tls check
+
+# Caddy renews the certificate itself, at roughly 30 days remaining, with no
+# cron job or renewal hook anywhere. This workflow does not renew anything --
+# it is the alarm for renewal having silently stopped working: the container
+# down for a month, port 80 closed so the ACME challenge cannot land, the A
+# record moved, or the caddy_data volume lost. We register no contact address
+# with Let's Encrypt, so without this nothing would warn us.
+#
+# A failed run mails you through GitHub's normal notifications.
+#
+# Note: GitHub disables `schedule` triggers after 60 days without repo
+# activity. Not a concern while this repo is active, but it is why this is a
+# check rather than the only safety net.
+
+on:
+  schedule:
+    - cron: "0 14 * * 1" # Mondays, 14:00 UTC.
+  workflow_dispatch:
+
+jobs:
+  tls:
+    name: certificate and redirect
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check certificate expiry, health and redirect
+        env:
+          DOMAIN: commanderblitz.com
+          # Renewal should have happened at ~30 days out. Anything under this
+          # means it did not, and there is still time to fix it by hand.
+          MIN_DAYS: 21
+        run: |
+          set -euo pipefail
+
+          # `|| true` so an unreachable host reaches the diagnostic below
+          # instead of dying anonymously on `set -e`.
+          cert=$(openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" </dev/null 2>/dev/null \
+            | openssl x509 -noout -enddate -issuer || true)
+
+          # An unreachable host must fail loudly rather than parse to zero days
+          # and quietly pass, so require the field to be there at all.
+          end=$(printf '%s\n' "$cert" | sed -n 's/^notAfter=//p')
+          [ -n "$end" ] || { echo "could not read a certificate from $DOMAIN"; exit 1; }
+
+          days=$(( ( $(date -d "$end" +%s) - $(date +%s) ) / 86400 ))
+          printf '%s\n' "$cert"
+          echo "days remaining: $days"
+
+          # /health over TLS: the certificate being valid says nothing about
+          # the app behind it still answering.
+          curl -fsS --max-time 10 "https://$DOMAIN/health" | grep -q '"status":"ok"'
+
+          # Port 80 still redirecting is the thing most likely to break
+          # quietly, and it is what the HTTP-01 challenge rides on.
+          code=$(curl -sS --max-time 10 -o /dev/null -w '%{http_code}' "http://$DOMAIN/")
+          case "$code" in
+            3??) echo "http -> https redirect: $code" ;;
+            *) echo "expected a redirect from http://$DOMAIN/, got $code"; exit 1 ;;
+          esac
+
+          [ "$days" -ge "$MIN_DAYS" ] \
+            || { echo "certificate expires in $days days (< $MIN_DAYS); renewal is not happening"; exit 1; }

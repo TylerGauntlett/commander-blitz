@@ -126,15 +126,17 @@ jobs:
         with:
           fetch-depth: 1
 
-      # The compose file ships with the repo rather than living only on the
-      # droplet, so a change to it is reviewed and versioned like anything else.
-      - name: Copy compose file
+      # Both ship with the repo rather than living only on the droplet, so a
+      # change to either is reviewed and versioned like anything else.
+      - name: Copy compose file and Caddyfile
         uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          source: docker-compose.yml
+          source: |
+            docker-compose.yml
+            Caddyfile
           target: /opt/automtg
 
       - name: Pull and restart
@@ -178,6 +180,14 @@ jobs:
               || { echo "pull reported success but $IMAGE_NAME:$IMAGE_TAG is not present"; exit 1; }
 
             docker compose up -d --remove-orphans
+
+            # A bind-mounted file changing does not make compose recreate the
+            # container, so without this an edited Caddyfile would be copied up
+            # and then quietly ignored. `reload` is graceful -- no dropped
+            # connections -- and is a no-op on a container that just started.
+            docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile \
+              || echo "caddy reload failed; the health check below is the real gate"
+
             docker logout ghcr.io
 
             # Same reasoning one level up: prove a container is actually running
@@ -188,8 +198,14 @@ jobs:
       - name: Wait for health
         # The deploy is not "done" because the SSH step exited zero -- it is done
         # when the new container answers. --retry-connrefused covers the gap
-        # while uvicorn boots and loads the card pool.
+        # while uvicorn boots and loads the card pool, and --retry-all-errors
+        # additionally covers the TLS handshake failing while Caddy is still
+        # obtaining its certificate on the first HTTPS deploy.
+        #
+        # Deliberately the domain rather than DROPLET_HOST: Caddy serves that
+        # name only, so this proves DNS and TLS as well as uvicorn having
+        # booted. The domain is public, so it is hardcoded, not a secret.
         run: |
           curl -fsS --max-time 10 \
-            --retry 30 --retry-delay 5 --retry-connrefused \
-            "http://${{ secrets.DROPLET_HOST }}/health" | tee /dev/stderr | grep -q '"status":"ok"'
+            --retry 30 --retry-delay 5 --retry-connrefused --retry-all-errors \
+            "https://commanderblitz.com/health" | tee /dev/stderr | grep -q '"status":"ok"'
