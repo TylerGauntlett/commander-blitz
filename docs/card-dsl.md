@@ -495,7 +495,9 @@ you control, and `{"is_token": true, "attacking": true}` also catches tokens
 another attack trigger made this turn, so a second copy of the same card exiles
 the wrong permanent. The oids `create_token` returns are the only thing that
 identifies them. `delay` snapshots `ctx.bindings` when it schedules, so a
-recorded set survives into a later step.
+recorded set survives into a later step — which is the only way a delayed
+trigger can say "that card"; see
+[return that card to the battlefield](#return-that-card-to-the-battlefield).
 
 Not `until_leaves` for the exile half of Grey Host Reinforcements: that is the
 O-Ring *link* and declares a return the card does not have. And not "count the
@@ -3741,6 +3743,62 @@ The scheduled effects resolve directly rather than going on the stack. That is a
 divergence — a delayed trigger is a real triggered ability and should be
 respondable — recorded with the other simplifications in
 [rules-coverage.md](rules-coverage.md).
+
+### "…return **that card** to the battlefield"
+
+A delayed trigger that is *about an object* has one way to name it, and it is not
+the obvious one.
+
+```jsonc
+// Gilraen, Dúnedain Protector — "{2}, {T}: Exile another target creature you
+// control. You may return that card to the battlefield under its owner's
+// control. If you don't, at the beginning of the next end step, return that card
+// to the battlefield under its owner's control with a vigilance counter and a
+// lifelink counter on it."
+{ "op": "exile", "as": "exiled", "objects": { "target": "t1" } },
+{ "op": "may",
+  "prompt": "Return the exiled card to the battlefield now?",
+  "effects": [ { "op": "put_onto_battlefield",
+                 "objects": { "binding": "exiled", "zone": "exile" } } ],
+  "else": [
+    { "op": "delay", "step": "end_step",
+      "text": "Return that card to the battlefield with a vigilance counter and a lifelink counter on it.",
+      "effects": [ { "op": "put_onto_battlefield",
+                     "objects": { "binding": "exiled", "zone": "exile" },
+                     "counters": { "vigilance": 1, "lifelink": 1 } } ] } ] }
+```
+
+**`{"target": "t1"}` inside a `delay` is a load error.** Rule 603.7: the resolving
+ability *creates* the delayed ability, and what it creates has no targets of its
+own — so `turn._run_delayed` builds its context with `targets={}` and the selector
+resolves to nothing. The card would read as printed and hand back no creature at
+all, which is why the loader refuses the spelling rather than letting it through.
+
+`{"binding": …}` is the reference that survives, because it is a **record** of
+what an earlier op moved rather than a lookup. It carries no default zone (see
+[Recording what an op consumed or produced](#recording-what-an-op-consumed-or-produced--this-way-the-token)
+above), so it still reaches a card
+sitting in exile — where a `target` selector, whose battlefield default is a real
+608.2b re-check, would find nothing even if it had a target to check.
+
+Write `zone` yourself when the return must be conditional on the card still being
+there. Rule 400.7: a card that has left exile in the meantime is a new object, and
+without the clause the delayed return would drag it back out of a graveyard.
+
+Not `{"zone": "exile", "exiled_with": "self"}`. That is **source**-scoped rather
+than resolution-scoped — it names every card this permanent ever exiled, so a
+second activation returns a card the first one already dealt with — and it needs
+`until_leaves`, which declares an O-Ring return this card does not have.
+
+**`counters` on `put_onto_battlefield`** is the "…with a vigilance counter and a
+lifelink counter on it" half, the same kind-keyed map `return_from_graveyard` has
+carried since persist. It has to live on this op as well, because that one forces
+its selector's zone to the graveyard and cannot reach exile. Two `add_counters`
+ops after the move are a different card: the printed clause is about the
+*arrival*, so if the return reached nothing the counters go nowhere, and a
+separate op would happily counter a permanent that got back some other way. Only
+these two ops read `counters`; anywhere else it is a load error, because it would
+be accepted, ignored, and — for a keyword counter — invisible on the board.
 
 ### `end_of_combat` — the one step that is not once a turn
 

@@ -1,3 +1,102 @@
+## "That card" — what a delayed trigger is allowed to be about
+
+### Overview
+
+Gilraen, Dúnedain Protector: *"{2}, {T}: Exile another target creature you
+control. You may return that card to the battlefield under its owner's control.
+If you don't, at the beginning of the next end step, return **that card** to the
+battlefield under its owner's control with a vigilance counter and a lifelink
+counter on it."*
+
+Rule 603.7: a resolving ability creates a delayed triggered ability, and what it
+creates is a *new* ability with no targets of its own. "That card" is therefore
+not a target — it is a reference fixed at the moment the delay was created, and
+by the time the delay fires the object has changed zones (400.7). The reference
+has to be written down, not looked up.
+
+Most of the writing-down had already shipped by the time this run started, which
+is worth saying plainly rather than re-deriving:
+
+- `op_delay` has always snapshotted `ctx.bindings` into the `DelayedTrigger`, and
+  `turn._run_delayed` has always handed them back to the delayed context. That
+  half was never the hole;
+- `effect_result_binding` gave `exile` an `as`, so there is now something to
+  snapshot — and split `resolve_pool`'s zone default so that a `{"binding": …}`
+  keeps *record* semantics with no default zone, which is exactly what a
+  reference to an object that has just changed zones needs. The delayed path gets
+  that for free: it goes through the same `resolve_pool`.
+
+So the reference itself works, and the run's job was the two things around it.
+
+### What a permanent arrives with
+
+`put_onto_battlefield` had no `counters`. "…with a vigilance counter and a
+lifelink counter on it" is one clause about one arrival, and the only op carrying
+that clause was `return_from_graveyard` (persist, undying, since forever) — which
+does `selector.setdefault("zone", "graveyard")` and therefore cannot reach a card
+sitting in exile at all. So the printed sentence had no op that could say it.
+
+Two `add_counters` ops after the move is the near miss, and it is a different
+card. The clause is about the *arrival*: if the return reached nothing — the card
+left exile in between, so 400.7 makes it a new object the delay is not about —
+then no counters go anywhere. A separate op naming the same binding has no such
+tie, and would counter a permanent that got back to the battlefield some other
+way. `put_onto_battlefield` therefore gained the identical kind-keyed map,
+immediately after the move, which is the same enters-with trade
+`op_return_from_graveyard` already documents.
+
+The loader half of that was the worse bug. `counters` was validated for *kind*
+anywhere it appeared and read by exactly one op, so writing it on any other op
+loaded clean, resolved clean, and dropped it. On a keyword counter that is
+invisible: nothing is missing on the board, the creature simply does not have
+vigilance. `COUNTERS_ON_ARRIVAL_OPS` now names the two ops that read it and the
+rest are a load error.
+
+### The trap that is now a load error
+
+The obvious way to write the second half of Gilraen is to point it at the same
+target the first half used:
+
+```jsonc
+{ "op": "delay", "step": "end_step",
+  "effects": [ { "op": "put_onto_battlefield", "objects": { "target": "t1" } } ] }
+```
+
+It reads correctly and it does nothing at all, because `_run_delayed` builds its
+context with `targets={}`. Nothing is malformed, so nothing said so — the card
+returned no creature.
+
+Filling the targets in would be the wrong repair twice over. It invents a
+legality re-check no rule asks for on an ability that never targeted; and it
+would not even reach this card, since a `target` selector keeps the battlefield
+zone default *because* a target really is re-checked (608.2b), and the object a
+delay is about has by construction just left the battlefield. So
+`_refuse_targets_inside_a_delay` walks a delay's scheduled effects at load time —
+however deeply the `target` is buried, since a `may` inside a delay is an ordinary
+shape — and refuses it with the working idiom in the message.
+
+### The substitutes, and why each is wrong
+
+`{"zone": "exile", "exiled_with": "self"}` is the one thing that was reachable
+before this, and it is **source**-scoped rather than resolution-scoped: it names
+every card the permanent ever exiled, so a second activation drags back a card
+the first activation already declined. It also needs `until_leaves`, which
+declares an O-Ring return this card does not have. `snapshot` binds a dict of
+characteristics, not an object anything can move.
+
+A card that means "only if it is still in exile" writes `zone` itself, which is
+what stops the delayed return yanking the card back out of a graveyard it reached
+in between. The A/B is in the test file: without the clause, it comes back.
+
+**Unblocked one card: Gilraen, Dúnedain Protector**, at the agent tier — the
+template tier harvests nothing here (`no template for: {2}, {T}: Exile another
+target creature you control…`). She needed two capabilities and this was the
+second; `keyword_counters` shipped the half that makes a vigilance counter mean
+vigilance, and neither half is worth anything without the other. The verifier
+never activates an activated ability, so her expectation is the weak
+`{"zone": "battlefield"}` and the real coverage is
+`tests/unit/test_delayed_object_reference.py`.
+
 ## `nth` — "your second card each turn", settled where the trigger queues
 
 ### Overview

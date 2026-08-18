@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **11** capabilities.
+**7 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
-| [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
@@ -82,20 +81,6 @@ Blocks **1** card.
 
 - **Frontline Medic** (rank 3489) — `frontline_medic`
   - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
-
-</details>
-
-## delayed-object-reference
-
-Blocks **1** card.
-
-- **(op)** A way for `exile` to record which objects it moved under a name -- the `as` binding `sacrifice` and `reveal` already have -- so a later `delay` can return exactly those cards with `{"binding": "exiled"}`. "Return *that card*" from inside a delayed trigger has no expressible subject today.
-  <br>Why the existing vocabulary won't do: `{"target": "t1"}` names the exiled card correctly during the ability's own resolution, but `turn.py`'s delayed-trigger runner builds its EffectContext with `targets={}`, so a `target` selector inside a `delay`'s effects resolves to nothing; `delay` carries only `bindings` and `source_oid`. `exile` writes no binding -- it takes `objects`, `until_leaves` and `playable_this_turn` and nothing else -- so there is no name for the delay to carry. The one reachable substitute, `{"zone": "exile", "exiled_with": "self"}`, requires setting `until_leaves` on an ability that is not an O-Ring effect and is source-scoped rather than resolution-scoped: it accumulates every card Gilraen ever exiled, so a second activation's "you may return that card" would drag back a card declined on an earlier activation. `snapshot` binds a dict of characteristics, not an object a `put_onto_battlefield` can move.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gilraen, Dúnedain Protector** (rank 4643) — `gilraen_dunedain_protector`
-  - If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.
 
 </details>
 
