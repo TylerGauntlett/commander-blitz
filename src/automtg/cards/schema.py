@@ -431,6 +431,19 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: **Multikicker {1}{W}** (702.32b): "You may pay an additional {1}{W} any
+    #: number of times as you cast this spell."
+    #:
+    #: The name for a shape that already existed unnamed: it *desugars* to
+    #: ``additional_cost: {mana: ...}`` with both ``additional_optional`` and
+    #: ``additional_repeatable`` -- replicate's slot -- so legality offers one
+    #: cast line per number of kicks and the count is read back with
+    #: ``{"additional_paid": true}``.
+    #:
+    #: Not ``kicker``, which is one-shot: its cast variant is a bool on the
+    #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
+    #: Give one or the other, not both spellings of the same slot.
+    multikicker: str | None = None
     #: **Bestow {5}{W}** (702.103a): "If you cast this card for its bestow cost,
     #: it's an Aura spell with enchant creature. It becomes a creature again if
     #: it's not attached to a creature."

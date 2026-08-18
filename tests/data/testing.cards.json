@@ -6142,6 +6142,41 @@
       ]
     },
     {
+      "id": "t_multikicker",
+      "name": "Test Multikicked Anthem",
+      "oracle_text": "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)\nWhen this enchantment enters, draw a card for each time it was kicked.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "multikicker": "{1}{W}",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, draw a card for each time it was kicked.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "additional_paid": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_replicate",
       "name": "Test Replicated Bolt",
       "oracle_text": "Replicate {1} (When you cast this spell, copy it for each time you paid its replicate cost.)\nTest Replicated Bolt deals 1 damage to any target.",
