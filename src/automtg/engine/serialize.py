@@ -16,7 +16,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import chars, player_reveals_library_top, top_of_library
+from .characteristics import (
+    chars,
+    player_looks_at_library_top,
+    player_reveals_library_top,
+    top_of_library,
+)
 from .costs import (
     commander_cost,
     land_drops_available,
@@ -149,11 +154,43 @@ def _pending(state: GameState, seat: int) -> dict[str, Any] | None:
     return data
 
 
+def _library_top(state: GameState, pid: int, seat: int) -> tuple[dict[str, Any] | None, bool]:
+    """The top card of ``pid``'s library as ``seat`` is allowed to see it.
+
+    Two statics can show it, and they differ only in *who*:
+
+    ``reveal_library_top``
+        "Play with the top card of your library revealed." Vampire Nocturnus.
+        The card is public, so it goes to every seat -- an opponent who cannot
+        see a revealed card is playing against information they are entitled to.
+
+    ``look_at_library_top``
+        "You may look at the top card of your library any time." Verge Rangers.
+        Nobody is shown anything, so it goes to ``pid``'s own seat and stops
+        there. Sending it to an opponent would be showing them a card the
+        printed card never shows.
+
+    Returns the face and whether it is *public*, because the client cannot work
+    the second out from the first: the payload is identical either way, and a UI
+    that calls a private look "revealed" tells its own player their opponent
+    shares the knowledge. That is the same mistake as leaking it, made in the
+    reader's head instead of on the wire.
+    """
+    public = player_reveals_library_top(state, pid)
+    if not public and not (pid == seat and player_looks_at_library_top(state, pid)):
+        return None, False
+    top = top_of_library(state, pid)
+    if top is None:
+        return None, False
+    return card_view(state, top.oid), public
+
+
 def _player(
     state: GameState, pid: int, seat: int, sources: list[ManaSource]
 ) -> dict[str, Any]:
     player = state.players[pid]
     own = pid == seat
+    library_top, library_top_public = _library_top(state, pid, seat)
     return {
         "pid": pid,
         "name": player.name,
@@ -179,17 +216,11 @@ def _player(
         },
         # Hidden zones are counts for everyone; only the viewer sees their own hand.
         "library_count": len(player.library),
-        # "Play with the top card of your library revealed." Sent to *every*
-        # seat, not just this player's, which is the whole of what the line
-        # does: the card is public, and an opponent who cannot see it is
-        # playing against information they are entitled to. `None` whenever
-        # nothing reveals it, so the client needs no separate flag.
-        "library_top": (
-            card_view(state, top.oid)
-            if player_reveals_library_top(state, pid)
-            and (top := top_of_library(state, pid)) is not None
-            else None
-        ),
+        # The top card, if this seat may see it at all -- `None` otherwise, so
+        # the client needs no separate flag to know whether to draw one. Which
+        # seats get it, and what `library_top_public` means, is `_library_top`.
+        "library_top": library_top,
+        "library_top_public": library_top_public,
         "hand_count": len(player.hand),
         "hand": [card_view(state, oid) for oid in player.hand] if own else None,
         # "Look at target player's hand." Private information, so it is sent to
