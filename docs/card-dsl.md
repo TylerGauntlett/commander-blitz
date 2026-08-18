@@ -207,6 +207,7 @@ Every key is optional; all present keys must match.
   "power":      { "op": ">=", "value": { "const": 3 } },
   "toughness":  { "op": "<=", "value": { "const": 2 } },
   "mana_value": { "op": "<=", "value": { "const": 3 } },
+  "x_in_mana_cost": true,         // "target spell WITH {X} IN ITS MANA COST" -- see below
   "exclude_self": true,           // "other ... you control"
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
@@ -296,6 +297,27 @@ with lesser power" without any extremum at all:
 ```jsonc
 "power": { "op": "<", "value": { "power_of": { "self": true } } }
 ```
+
+`x_in_mana_cost` is **not** one of them, and that is the point of it. It is a
+bare `true`/`false` — "counter target spell **with {X} in its mana cost**"
+(Frontline Medic, Ertai's Meddling) — and it asks about a printed mana *symbol*
+(rule 107.3), not about a number. It reads `ManaCost.x_count` off the face
+being cast, so a split half or an adventure answers for the half on the stack.
+
+`mana_value` is the only other cost reader and cannot say it in either
+direction. 202.3b scores X as 0, so Fireball `{X}{R}` and Shock `{R}` are both
+mana value 1 and one comparison catches both or neither. Nor would a
+202.3b-correct mana value on the stack help: 601.2b lets the caster announce
+X = 0, and a Fireball for 0 is *still* a legal target for the Medic while having
+Shock's mana value exactly. That boundary is why the filter reads the printed
+cost and never `StackItem.x`.
+
+A non-boolean is refused at load time. The key sits beside `mana_value`, which
+*is* a comparison, so `{"op": ">=", "value": 1}` is the natural thing to reach
+for — and it is a truthy dict, so it would have meant `true` by accident while
+`0` would have quietly meant `false`. It is deliberately not in
+`STATIC_FILTER_KEYS`: a static filter matches permanents, where X is 0 and the
+question is not asked, and no static in the engine reads a cost at all.
 
 `types` and `any_types` are the two halves of the same question and the
 difference is load-bearing. `types` is *and* — `["Artifact", "Enchantment"]`
@@ -506,6 +528,30 @@ it does not generalise to "this way".
 *Divergence*: both keywords print "**as** this creature enters", a replacement.
 They are `self_enters` triggers here, for the reason
 ["as this enters, choose a creature type"](rules-coverage.md) is one.
+
+### Selectors on a `kind: "spell"` target
+
+A target spec with `kind: "spell"` filters with the same selector language as
+every other spec, and the zone it defaults to is the **stack** rather than the
+battlefield:
+
+```jsonc
+// Negate
+{ "id": "t1", "kind": "spell", "selector": { "not_types": ["Creature"] } }
+// Frontline Medic
+{ "id": "t1", "kind": "spell", "selector": { "x_in_mana_cost": true } }
+```
+
+Characteristics come off the printed face, because nothing on the stack is a
+permanent and no static is applying to it. Both `targeting.candidates` and the
+608.2b `still_legal` re-check consult it, so a spell that stops matching between
+being targeted and resolving is dropped like any other target.
+
+This did not always work. The spell branch used to return every spell on the
+stack and never look at `spec.selector` at all, so Negate, Essence Scatter and
+Exclude were all Counterspell — the clause loaded, validated, and was simply
+never asked. `tests/unit/test_x_in_mana_cost.py` pins the repair on those two
+shipped cards as well as on the key it was built for.
 
 ## Value expressions
 

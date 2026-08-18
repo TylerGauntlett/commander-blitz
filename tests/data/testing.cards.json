@@ -1851,6 +1851,111 @@
       ]
     },
     {
+      "id": "t_x_counter",
+      "name": "Test Medic's Counter",
+      "oracle_text": "Counter target spell with {X} in its mana cost.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "x_in_mana_cost": true
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ]
+    },
+    {
+      "id": "t_no_x_counter",
+      "name": "Test Fixed-Cost Counter",
+      "oracle_text": "Counter target spell without {X} in its mana cost.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "x_in_mana_cost": false
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ]
+    },
+    {
+      "id": "t_mv_counter",
+      "name": "Test Mana Value Counter",
+      "oracle_text": "Counter target spell with mana value 1.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "mana_value": 1
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ]
+    },
+    {
+      "id": "t_fireball",
+      "name": "Test Fireball",
+      "oracle_text": "Test Fireball deals X damage to any target.",
+      "mana_cost": "{X}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "x": true
+          }
+        }
+      ]
+    },
+    {
       "id": "t_creature_discard_watcher",
       "name": "Test Creature Discard Watcher",
       "oracle_text": "Whenever an opponent discards a creature card, you gain 3 life.",
