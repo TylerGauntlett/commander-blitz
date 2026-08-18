@@ -203,15 +203,24 @@ jobs:
             docker logout ghcr.io
 
             # Same reasoning one level up: prove a container is actually running
-            # before handing off to the health check. Polled rather than sampled
-            # once -- taken a couple of seconds after `up -d` this came back
-            # empty for containers that were up and serving, and failed a deploy
-            # that had in fact succeeded.
+            # before handing off to the health check.
+            #
+            # Captured into a variable rather than piped into `grep -q`, which
+            # is what the previous form did and why a successful deploy failed
+            # on its own proof: grep exits at the first match, `docker compose
+            # ps` takes SIGPIPE and exits 141, and `pipefail` reports the
+            # pipeline as failed. One container wrote too little to lose that
+            # race; two containers write enough to lose it most times.
+            #
+            # Polled because compose can also answer empty for a second or two
+            # after `up -d` while the containers settle.
+            running=""
             for _ in $(seq 1 15); do
-              [ -n "$(docker compose ps --status running --quiet)" ] && break
+              running=$(docker compose ps --status running --quiet)
+              [ -n "$running" ] && break
               sleep 2
             done
-            docker compose ps --status running --quiet | grep -q . \
+            [ -n "$running" ] \
               || { echo "no running container after up -d"; docker compose logs --tail=50; exit 1; }
 
       - name: Wait for health
