@@ -5532,6 +5532,7 @@ them where it is sitting:
 "additional_cost": { "sacrifice": {...} }   // casualty, replicate, Deadly Dispute
 "additional_optional": true                 // …"you may"
 "additional_repeatable": true               // …"any number of times"
+"multikicker": "{1}{W}"                     // …the printed name for exactly those three
 ```
 
 #### Casting from the graveyard
@@ -5613,6 +5614,54 @@ already use. Legality checks it is payable before offering the line.
 trigger with `active_zones: ["stack"]`, so it goes on the stack *above* the
 spell and its copy resolves first — which is what 706.10 wants, and what a
 `copy_spell` written into `spell_effects` would get backwards.
+
+#### Multikicker
+
+```jsonc
+// Multikicker {1}{W} (You may pay an additional {1}{W} any number of times
+// as you cast this spell.)
+"multikicker": "{1}{W}",
+
+// "When this enchantment enters, draw a card for each time it was kicked."
+{ "kind": "triggered", "text": "…",
+  "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "draw", "player": "you",
+                 "amount": { "additional_paid": true } } ] }
+```
+
+702.32b, and **no new machinery at all** — it *desugars* to the three fields
+above:
+
+| `multikicker: "{1}{W}"` | ⇒ | `additional_cost: {mana: "{1}{W}"}`, `additional_optional`, `additional_repeatable` |
+|---|---|---|
+
+So legality already offers one cast line per number of kicks,
+`Action.additional_times` already carries the count, and `additional_paid`
+already reads it back. What the field buys is the **word**, and the word is not
+cosmetic: `verify.py`'s residual gate had no claimant for a printed line reading
+"Multikicker {1}{W}", so a card spelling the mechanic through the replicate slot
+loaded, played correctly, and was then rejected on its own first line.
+
+It is deliberately not `kicker`, which is one-shot: the kicked cast variant is a
+**bool** on the action, so it is paid once, and `{"kicked": true}` can answer yes
+or no but never *how many*. Give one or the other; a card carrying `multikicker`
+plus `additional_cost`, `additional_optional` or `additional_repeatable` is
+refused, because whichever won would be the card and the other would silently
+never be charged.
+
+Unlike `additional_cost` there **is** a half-a-cost guard, and it is `kicker`'s:
+a `multikicker` no effect reads via `additional_paid` is refused. "Sacrifice an
+artifact" can be the whole of a cost, but "any number of times" only means
+something to a card that counts the times — without a reader the card charges
+more and does the same thing. A free (`{0}`) or X multikicker is refused too:
+free-and-repeatable is six kicks for nothing, and X would have to be asked per
+payment.
+
+The residual-gate claimant is narrower than `kicker`'s. It fires only when the
+loader has actually desugared the cost, and it checks that the **symbols printed
+on the line are the symbols charged** — a card declaring `multikicker: "{1}"`
+cannot claim a printed "Multikicker {2}{R}", and a line whose cost will not parse
+stays residual.
 
 #### Overload
 

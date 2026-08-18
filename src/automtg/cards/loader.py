@@ -582,6 +582,54 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"reduction on the card's 'cost_reduction' instead"
         )
     additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    additional_optional = model.additional_optional
+    additional_repeatable = model.additional_repeatable
+
+    # Multikicker (702.32b) is the *name* for the shape above, not a new one:
+    # "you may pay an additional {1}{W} any number of times" is exactly
+    # `additional_cost` + `additional_optional` + `additional_repeatable`, which
+    # is replicate's slot, and `Action.additional_times` already carries how
+    # many. So this desugars rather than adding machinery -- what it buys is the
+    # word, which is what the residual gate and the fidelity audit need in order
+    # to say the printed line has a claimant.
+    multikicker = ManaCost.parse(model.multikicker) if model.multikicker else None
+    if multikicker is not None:
+        if multikicker.x_count:
+            # Same refusal as kicker's: a repeatable cost with X would have to
+            # ask for a number per payment, and no printing does that.
+            raise DslError(f"{where}: a multikicker cost with X is not implemented")
+        if multikicker.mana_value() == 0:
+            # Free and repeatable is an infinite loop of cast lines, capped only
+            # by MAX_ADDITIONAL_TIMES -- six free kicks, which is no card.
+            raise DslError(f"{where}: multikicker {model.multikicker!r} costs nothing")
+        if additional_cost is not None:
+            # Two spellings of one slot. Whichever won would be the card, and
+            # the other would load clean and never be charged.
+            raise DslError(
+                f"{where}: give 'multikicker' or 'additional_cost', not both -- "
+                f"multikicker *is* a repeatable optional additional cost"
+            )
+        if model.additional_optional or model.additional_repeatable:
+            raise DslError(
+                f"{where}: 'multikicker' already implies 'additional_optional' and "
+                f"'additional_repeatable' -- do not set them alongside it"
+            )
+        if not _mentions_condition(model, "additional_paid"):
+            # Half a kicker, in the exact sense the guard above catches for
+            # `kicker`: a spell that charges more and does the same thing.
+            # `additional_cost` has no such guard because "sacrifice an artifact"
+            # can be the whole of a cost, but multikicker never is -- "any number
+            # of times" only means something to a card that counts the times.
+            raise DslError(
+                f"{where}: has a 'multikicker' cost that no effect reads via "
+                f"'additional_paid' -- counting the kicks is what the mana buys"
+            )
+        additional_cost = _compile_cost(
+            CostModel(mana=model.multikicker), f"{where}.multikicker"
+        )
+        additional_optional = True
+        additional_repeatable = True
+
     if additional_cost is None and (model.additional_optional or model.additional_repeatable):
         raise DslError(
             f"{where}: 'additional_optional' and 'additional_repeatable' need an "
@@ -856,10 +904,11 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         splice=ManaCost.parse(model.splice) if model.splice else None,
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,
-        additional_optional=model.additional_optional,
-        additional_repeatable=model.additional_repeatable,
+        additional_optional=additional_optional,
+        additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
+        multikicker=multikicker,
         evoke=evoke,
         bestow=bestow,
         mutate=mutate,
