@@ -108652,12 +108652,12 @@
     },
     "Gilraen, Dúnedain Protector": {
       "edhrec_rank": 4643,
-      "gate": "template",
+      "gate": null,
       "name": "Gilraen, Dúnedain Protector",
-      "reason": "no template for: {2}, {T}: Exile another target creature you control. You may return that card to the battl",
+      "reason": "",
       "scryfall_id": "07efe592-5851-4577-b73f-0bb232feb68b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gilt-Blade Prowler": {
