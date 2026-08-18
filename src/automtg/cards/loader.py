@@ -2206,6 +2206,52 @@ def _restriction_name(entry: Any, where: str) -> str:
 _check_counter_kind = validate_counter_kind
 
 
+#: The ops that read a ``counters`` map -- "return it to the battlefield **with a
+#: -1/-1 counter on it**" (persist), "…**with a vigilance counter and a lifelink
+#: counter on it**" (Gilraen).  Both are clauses about a permanent *arriving*,
+#: which is why they belong to the two ops that put one there and to nothing else.
+COUNTERS_ON_ARRIVAL_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
+
+
+def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
+    """A ``target`` selector inside a ``delay`` names nothing when it fires.
+
+    "Exile another target creature you control… at the beginning of the next end
+    step, return **that card** to the battlefield" -- Gilraen, Dúnedain Protector,
+    and the whole Flickerwisp family behind her.  The obvious way to write the
+    second half is to point it at the same ``t1`` the first half targeted, and it
+    reads correctly, loads correctly, and does nothing at all: ``turn._run_delayed``
+    builds the delayed context with ``targets={}``, because the delayed half is a
+    separate ability that never chose a target of its own (603.7 -- the delayed
+    trigger is created by the resolving ability, it does not inherit its targets),
+    and rule 608.2b's re-check has nothing to re-check against.
+
+    Filling the targets in instead would be the wrong repair twice over.  It would
+    invent a legality check no rule asks for, and it would not even reach this
+    card: a ``target`` selector defaults its zone to the battlefield precisely
+    because a target *is* re-checked, and the object a delay is about has by
+    construction just changed zones.  The idiom that works is the one
+    ``effect_result_binding`` shipped -- ``as`` on the op that moved the card, and
+    ``binding`` on the op that brings it back, which is a record rather than a
+    reference and so survives the zone change.  So this is a refusal that names it.
+    """
+    def walk(node: Any, path: str) -> None:
+        if isinstance(node, Mapping):
+            if "target" in node:
+                raise DslError(
+                    f"{path}: a 'target' inside a delay resolves to nothing -- the "
+                    f"delayed trigger has no targets of its own. Record the object "
+                    f"with 'as' on the op that moved it and name it with 'binding'."
+                )
+            for key, value in node.items():
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node):
+                walk(value, f"{path}[{i}]")
+
+    walk(list(effects), where)
+
+
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -2234,6 +2280,19 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     if isinstance(effect.get("counters"), Mapping):
         for kind in effect["counters"]:
             _check_counter_kind(kind, f"{where}.counters")
+        # And the map has to be written on an op that reads it. Only the two
+        # ops that *move a card onto the battlefield* do -- "with a vigilance
+        # counter and a lifelink counter on it" is a clause about arriving --
+        # and anywhere else it is accepted, ignored, and the card silently
+        # comes back bare. That is the failure this whole pass exists to stop,
+        # and it is the one shape of it a keyword counter makes invisible: the
+        # creature simply does not have vigilance, and nothing says why.
+        if op not in COUNTERS_ON_ARRIVAL_OPS:
+            raise DslError(
+                f"{where}: 'counters' is what a permanent arrives with and only "
+                f"{sorted(COUNTERS_ON_ARRIVAL_OPS)} read it, not {op!r} "
+                f"(use a separate add_counters)"
+            )
 
     if "target" in effect and str(effect["target"]) not in target_ids:
         raise DslError(
@@ -2879,6 +2938,7 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
+        _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
 
     # A grant naming an ability the card does not have is a silent no-op: the
     # index defaults to 0 and every miss lands on the first grantable, or on
