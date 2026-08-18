@@ -134,9 +134,11 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          source: |
-            docker-compose.yml
-            Caddyfile
+          # Comma-separated, not a YAML list: drone-scp splits this string on
+          # commas, and a newline-separated block reaches it as one impossible
+          # filename, which surfaces as "tar: Cowardly refusing to create an
+          # empty archive" rather than as a missing-file error.
+          source: "docker-compose.yml,Caddyfile"
           target: /opt/automtg
 
       - name: Pull and restart
