@@ -10,23 +10,5 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **1** capability.
-
-| capability | cards | best EDHREC rank | kind |
-|---|---:|---:|---|
-| [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
-
-## exile-until-event
-
-Blocks **1** card.
-
-- **(engine)** An exile whose return is keyed to a future *event* and whose lifetime is independent of the permanent that exiled it: `exile` needs an `until` duration alongside its existing `until_leaves`, taking an event (here `becomes_monarch` filtered to an opponent of the exiling controller) and returning the linked card to the battlefield under its owner's control when that event first occurs -- once, then the link is discharged. Crucially the return must survive the exiling permanent leaving the battlefield, and must never happen merely *because* it left.
-  <br>Why the existing vocabulary won't do: `exile` with `until_leaves` is the only duration it has, and `ops_board.py:101-104` documents it as the O-Ring family: it records `obj.exiled_by = ctx.source_oid` and nothing else, and the return is a separate ordinary `leaves_battlefield` triggered ability on the same card reading `{"zone": "exile", "exiled_with": "self"}`. That is wrong for Palace Jailer twice over, in opposite directions: it returns the creature on an event that must *not* return it (Palace Jailer dying leaves the creature exiled indefinitely -- the exile is a one-shot effect with a duration, not an effect the permanent maintains), and it cannot return it on the event that must (nothing links a `leaves_battlefield` trigger to a monarchy change). Writing it as `until_leaves` would hand the opponent their creature back for the price of killing a 2/2, which is a materially different and much weaker card. The `delay` op is the only mechanism in `ops` that outlives its source -- `ops_control.py:376-399` captures bindings now and fires later with no object to hang a trigger on, which is exactly the right *lifetime* -- but `DelayedTrigger` is keyed on `step` (a phase name, defaulting to `end_step`) and has no event slot, so it can schedule "at the beginning of the next end step" and cannot schedule "the next time an opponent becomes the monarch". Giving `DelayedTrigger` an optional event condition is the likely shape of this work, and would also serve the wider "exile until <event>" family.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Palace Jailer** (rank 4016) — `palace_jailer`
-  - When this creature enters, you become the monarch.
-  - When this creature enters, exile target creature an opponent controls until an opponent becomes the monarch.
-
-</details>
+No gap records. Either nothing has been triaged yet, or the DSL
+covers everything attempted so far.
