@@ -107,6 +107,123 @@ keeps its `counter_unless_pays` need and loses this one, so the report now ranks
 the Medic by the one clause that is genuinely still missing. The two shipped
 counterspells the plumbing repaired are the change's only immediate effect on a
 real game.
+## "You can't sacrifice those creatures" — a prohibition on a game action
+
+### Overview
+
+Call for Aid: *"Gain control of all creatures target opponent controls until end
+of turn. Untap those creatures. They gain haste until end of turn. You can't
+attack that player this turn. You can't sacrifice those creatures this turn."*
+Four of those five clauses were already expressible — `gain_control` with a
+duration, `untap`, `grant_keyword`, and `cant_attack_player`, which shipped one
+run ago and was this card's other blocker. The fifth had nothing at all behind
+it: **the engine could not refuse a sacrifice**, in any shape, from any source.
+
+The last sentence is not decoration. Without it the spell borrows an opponent's
+whole board and the caster is free to feed it to a sacrifice outlet before
+control reverts — a strictly better card than the printed one, and one that
+would look completely normal on screen. That is why the gap record refused to
+write a partial answer.
+
+`cant_sacrifice` is the fourth op in a family that now has a settled shape:
+`cant_attack_player`, `cant_block`, `unblockable` and this one are each a frozen
+record on `GameState` with a required `duration`, one predicate reading it, and
+a clearing hook in `turn._cleanup_step`. It is there for their reason — a
+resolving sorcery leaves no permanent for a static to live on, and the set it
+names is chosen when it resolves rather than matched by a filter over printed
+characteristics.
+
+### The three near relatives, and why each is a different game action
+
+| | |
+|---|---|
+| `lock_abilities` | stops a permanent's **own** activated abilities being activated. A sacrifice outlet is somebody else's ability — an Altar, a Bloodthrone Vampire, a Viscera Seer — and the fodder's own abilities have nothing to do with the cost that eats it. It also says nothing about the `sacrifice` op or an edict |
+| `replace_deaths` | redirects a permanent's death **after** the sacrifice. The creature still left the battlefield and the outlet still got paid, which is not what "can't" means — and on Call for Aid it would leave the borrowed creatures gone from the board when control was due to revert |
+| `indestructible` | explicitly does not prevent a sacrifice (701.17a). Neither does protection nor any prevention effect: a sacrifice is neither damage nor destruction, so none of them reaches the question |
+
+### Two roads to a sacrifice, and the rule does not distinguish them
+
+A sacrifice is demanded either as a **cost** or as an **effect**, and 701.17b
+closes both without saying so — you simply cannot sacrifice the permanent, so a
+cost that requires it becomes unpayable and an effect that would take it must
+take something else.
+
+**Cost.** `costs._sacrifice_pool` drops the protected permanents. `can_pay` and
+`pay` both build the pool through that one helper, so they cannot disagree: an
+outlet with nothing else to eat is an *unpayable* cost and `legality` never
+offers the activation at all. It covers the activated-ability cost and the
+additional cost to cast in the same line, because `carddef.additional_cost` is
+an ordinary `Cost`. Emerge and offering are the one sacrifice cost that is not:
+the fodder is chosen as part of the cast action, since how much the spell costs
+depends on which creature it is, so `legality._emerge_fodder` asks the same
+question a second time and a protected creature is simply not a line on offer.
+
+**Effect.** `op_sacrifice` narrows its **pool** before asking, rather than
+skipping in the loop afterwards. That ordering is the whole of the rule: an
+edict against a board of one protected creature and one ordinary one must take
+the ordinary one. Filtering after the choice would let a protected creature
+answer the edict and then fizzle it, which is a better answer than the printed
+card allows. Only when nothing legal remains does the effect do nothing to that
+player, which is the same rule read from the other end. The op is assembled out
+of `resolve_pool` + `pick_from_pool` — the two halves `choose_objects` calls in
+sequence — because "not under a sacrifice restriction" is a fact about the table
+and not a selector key any card writes.
+
+### Why not one guard in `zones.sacrifice`
+
+The single funnel is the tempting shape and it is wrong twice. It is wrong by
+the rules, because 701.17b makes the *choice* illegal rather than making the
+action silently fail — a cost that is paid and sacrifices nobody is a free
+outlet. And it is wrong mechanically: `zones.sacrifice` is also how the *game*
+sacrifices a permanent with no player choosing, when 704.5s finishes a Saga, and
+`sba._finished_sagas` sets its "something changed" flag on the call. A
+`sacrifice` that quietly returned `False` under a restriction would make
+`sba.check` report a change for ever and the state-based-action loop would never
+settle. `TestTheGameStillSacrificesForItself` pins it.
+
+### What is deliberately not shared with the three before it
+
+`this_turn` is the only duration, because it is the only one printed on a
+one-shot sacrifice prohibition. `BlockProhibition` and `Unblockable` also carry
+`until_your_next_turn`, and everything downstream of that word follows from it:
+a `player` field to hold the clock, a hook in `turn._untap_step`, and a prune in
+`sba._eliminate` for a seat whose next turn is never coming. With one turn-long
+duration none of those exists — the cleanup step clears the entry whoever has
+left the game — so the record is `objects`, `duration`, `source`, and nothing
+else. The precedent is `DamageShield`'s one-word `DAMAGE_SHIELD_DURATIONS`: a
+second word is added there when a card prints one, rather than smuggled in as a
+default nobody clears.
+
+It is keyed on the **objects** and not on a player, even though the printed
+sentence says "*you* can't sacrifice those creatures". Only a permanent's
+controller ever sacrifices it (701.17a), and the same spell has just handed that
+controller-ship to its own caster, so "you" and "whoever could sacrifice these"
+name the same seat. A prohibition a later control change could slip out of would
+be a strictly better card.
+
+### The clause that had nowhere to point: `gain_control`'s `as`
+
+"Those creatures" is the set the same spell has just taken, and no selector can
+name it once the op has run — by the next sentence the opponent controls none of
+them, and "creatures you control" catches everything that was already yours. So
+`gain_control` grew the `as` binding four ops already had, written after the
+loop like `create_token`'s: it records what control actually *moved*, so a
+permanent that left in response, or one that was already yours (which
+`change_control` refuses as a no-op), is not one of "those creatures".
+
+### What the sandbox can and cannot see
+
+The authoring verifier never activates an activated ability and declines combat,
+so the prohibition itself cannot be demonstrated there — it is pinned in
+`tests/unit/test_cant_sacrifice.py` instead, on all three hooks. Call for Aid's
+own until-end-of-turn half is unobservable in that sandbox too, and for a reason
+worth writing down: the card's `cant_attack_player` clause empties
+`combat.legal_attackers`, so `turn._declare_attackers_step` finishes without a
+decision, and the declare-attackers stop is exactly what holds `verify.drive`
+inside the turn for every other card that grants something until end of turn.
+The sandbox therefore rolls through cleanup, and the expectation is measured
+after the handback. What it pins is that handback: 32 permanents and 6, not 34
+and 4 — a `gain_control` written with the `permanent` duration fails it.
 
 ## `nth` — "your second card each turn", settled where the trigger queues
 

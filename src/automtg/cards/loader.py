@@ -57,6 +57,7 @@ from automtg.engine.structs import (
     BLOCK_PROHIBITION_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
+    SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
 from automtg.engine.triggers import TRIGGER_EVENTS
@@ -2526,6 +2527,33 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             raise DslError(
                 f"{where}: unknown unblockable duration {effect['duration']!r} "
                 f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
+            )
+    if op == "cant_sacrifice":
+        # `objects` is required and there is no wildcard shorthand, for the
+        # reason `unblockable`'s is and harder: an absent `objects` read as
+        # "every permanent" would be a one-sided Sigarda for the turn, and read
+        # as "nothing" would be a card that silently does not protect what it
+        # says it protects. Both readings are wrong, so the omission is a
+        # mistake and is refused as one.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: cant_sacrifice needs 'objects' (the permanents that "
+                f"can't be sacrificed, chosen when it resolves)"
+            )
+        # And the duration is required for the reason the three above it are.
+        # `this_turn` is the only word implemented; a card that wanted a longer
+        # one would be a strictly better card than any printed sacrifice
+        # prohibition, so a second word is added to
+        # `SACRIFICE_RESTRICTION_DURATIONS` rather than defaulted to here.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_sacrifice needs a 'duration' "
+                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in SACRIFICE_RESTRICTION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_sacrifice duration {effect['duration']!r} "
+                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
             )
     if op == "prevent_damage":
         # The op, not the `static_effects` entry of the same name. That one is

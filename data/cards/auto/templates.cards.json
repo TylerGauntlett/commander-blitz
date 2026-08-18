@@ -9765,6 +9765,78 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "call_for_aid",
+      "mana_cost": "{4}{R}",
+      "name": "Call for Aid",
+      "oracle_text": "Gain control of all creatures target opponent controls until end of turn. Untap those creatures. They gain haste until end of turn. You can't attack that player this turn. You can't sacrifice those creatures this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "borrowed",
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "gain_control"
+        },
+        {
+          "objects": {
+            "binding": "borrowed"
+          },
+          "op": "untap"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keyword": "haste",
+          "objects": {
+            "binding": "borrowed"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "attacker": "you",
+          "defender": {
+            "target": "t1"
+          },
+          "duration": "this_turn",
+          "op": "cant_attack_player"
+        },
+        {
+          "duration": "this_turn",
+          "objects": {
+            "binding": "borrowed"
+          },
+          "op": "cant_sacrifice"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "U"
       ],
