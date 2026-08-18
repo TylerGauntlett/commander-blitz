@@ -394,13 +394,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
-<<<<<<< HEAD
     targets = _compile_targets(model.targets, where, on_spell=True)
-    target_ids = {t.id for t in targets}
-=======
-    targets = _compile_targets(model.targets, where)
     target_kinds = {t.id: t.kind for t in targets}
->>>>>>> worktree-agent-a0419399c3ffa31db
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
