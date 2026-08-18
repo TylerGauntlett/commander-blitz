@@ -86,9 +86,15 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
 
 #: One spell of each broad shape, because a `kind: "spell"` target spec filters
 #: with the full selector language: a lone creature spell makes "counter target
-#: **noncreature** spell" unplayable here and fails Negate at gate 4. Both target
-#: nothing of their own, since the sandbox may let whichever survives resolve.
-DUMMY_SPELLS = ("t_bear", "t_plain_instant")
+#: **noncreature** spell" unplayable here and fails Negate at gate 4. All three
+#: target nothing of their own, since the sandbox may let whichever survives
+#: resolve.
+#:
+#: `t_x_spell` is the third for the same reason the second exists: Frontline
+#: Medic counters "target spell **with {X} in its mana cost**", and neither a
+#: Bear nor a plain instant has one. It is a creature spell whose cost is
+#: `{X}{G}`, so the shape it adds is the cost rather than the card type.
+DUMMY_SPELLS = ("t_bear", "t_plain_instant", "t_x_spell")
 
 
 def add_dummy_spell(game: Game) -> None:
@@ -523,6 +529,17 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
     if not ability.targets:
         return
     if enumerate_target_tuples(game.state, 0, ability.targets, oid):
+        return
+    if any(spec.kind == "spell" for spec in ability.targets):
+        # An **ability** that counters a spell -- Frontline Medic's "Sacrifice
+        # this creature: Counter target spell…". The fodder helpers below stock
+        # the *battlefield*, and a spell is not on it; there is nothing to point
+        # at until something is on the stack. Safe here in a way it is not in
+        # `verify.py`'s cast sandbox, where a non-empty stack would make a
+        # creature uncastable (117.1a): this test puts the card onto the
+        # battlefield directly and only ever activates it, which is
+        # instant-speed.
+        add_dummy_spell(game)
         return
     for spec in ability.targets:
         match = _target_fodder(registry, spec)

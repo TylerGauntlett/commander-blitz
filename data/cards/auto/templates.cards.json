@@ -25097,6 +25097,47 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "forth_eorlingas",
+      "mana_cost": "{X}{R}{W}",
+      "name": "Forth Eorlingas!",
+      "oracle_text": "Create X 2/2 red Human Knight creature tokens with trample and haste.\nWhenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "human_knight_2_2_r_trample_haste"
+        },
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -25580,6 +25621,109 @@
         "Warrior"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battalion — Whenever this creature and at least two other creatures attack, creatures you control gain indestructible until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "else": [
+                {
+                  "op": "counter",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}"
+              },
+              "player": {
+                "controller_of_target": "t1"
+              },
+              "prompt": "Pay {3} to stop Frontline Medic countering your spell?"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {
+                "x_in_mana_cost": true
+              }
+            }
+          ],
+          "text": "Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "frontline_medic",
+      "mana_cost": "{2}{W}",
+      "name": "Frontline Medic",
+      "oracle_text": "Battalion — Whenever this creature and at least two other creatures attack, creatures you control gain indestructible until end of turn.\nSacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -44517,6 +44661,76 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": {
+                "additional_paid": true
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "marshal_s_anthem",
+      "mana_cost": "{2}{W}{W}",
+      "multikicker": "{1}{W}",
+      "name": "Marshal's Anthem",
+      "oracle_text": "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)\nCreatures you control get +1/+1.\nWhen this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "buff",
@@ -52039,6 +52253,7 @@
               "op": "exile"
             },
             {
+              "duration": "until_it_fires",
               "effects": [
                 {
                   "objects": {
@@ -52048,12 +52263,12 @@
                   "op": "put_onto_battlefield"
                 }
               ],
-              "event": {
+              "op": "delayed_trigger",
+              "text": "Return the exiled card to the battlefield under its owner's control.",
+              "trigger": {
                 "controller": "opponent",
                 "event": "becomes_monarch"
-              },
-              "op": "delay",
-              "text": "Return the exiled card to the battlefield under its owner's control."
+              }
             }
           ],
           "kind": "triggered",
@@ -80897,6 +81112,69 @@
         "Avatar"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "text": "You may look at the top card of your library any time."
+        },
+        {
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                },
+                "player": "each_opponent"
+              }
+            },
+            "right": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "effect": "play_lands_from_library_top",
+          "kind": "static",
+          "text": "As long as an opponent controls more lands than you, you may play lands from the top of your library."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "verge_rangers",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Verge Rangers",
+      "oracle_text": "First strike\nYou may look at the top card of your library any time.\nAs long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout",
+        "Ranger"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

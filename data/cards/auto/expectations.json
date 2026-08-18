@@ -2230,6 +2230,14 @@
   "forsaken_sanctuary": {
     "zone": "battlefield"
   },
+  "forth_eorlingas": {
+    "battlefield_count": 52,
+    "tokens": {
+      "count": 20,
+      "id": "human_knight_2_2_r_trample_haste"
+    },
+    "zone": "graveyard"
+  },
   "fortified_rampart": {
     "zone": "battlefield"
   },
@@ -2270,6 +2278,9 @@
     "zone": "battlefield"
   },
   "frontier_warmonger": {
+    "zone": "battlefield"
+  },
+  "frontline_medic": {
     "zone": "battlefield"
   },
   "frost_marsh": {
@@ -3917,6 +3928,13 @@
     "zone": "battlefield"
   },
   "marsh_threader": {
+    "zone": "battlefield"
+  },
+  "marshal_s_anthem": {
+    "battlefield_count": 35,
+    "graveyard_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "mask_of_avacyn": {
@@ -7150,6 +7168,15 @@
     "battlefield_count": 33,
     "life": {
       "0": 45
+    },
+    "zone": "battlefield"
+  },
+  "verge_rangers": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
     },
     "zone": "battlefield"
   },

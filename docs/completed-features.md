@@ -1,4 +1,4 @@
-## `exile_until_event` — a duration keyed on a thing that happens
+## `exile_until_event` — the other duration a delayed ability can have
 
 ### Overview
 
@@ -6,10 +6,10 @@ Palace Jailer: *"When this creature enters, you become the monarch. When this
 creature enters, exile target creature an opponent controls **until an opponent
 becomes the monarch**."*
 
-`exile` had exactly one duration, `until_leaves`, and it is the Oblivion Ring
-link — the op records `exiled_by` and the *return* is a separate
-`leaves_battlefield` trigger on the same card reading `exiled_with: self`. That is
-wrong for this card twice over, and the two are in **opposite directions**:
+`exile` had one duration, `until_leaves`, and it is the Oblivion Ring link — the
+op records `exiled_by` and the *return* is a separate `leaves_battlefield`
+trigger on the same card reading `exiled_with: self`. That is wrong for this card
+twice over, and the two are in **opposite directions**:
 
 - it returns the creature on an event that must not return it. Rule 610.3: the
   exile is a one-shot effect with a duration, not an effect the permanent
@@ -18,93 +18,637 @@ wrong for this card twice over, and the two are in **opposite directions**:
   `leaves_battlefield` trigger to a monarchy change.
 
 Written with `until_leaves`, Palace Jailer hands the creature back for the price
-of killing a 2/2. That is a materially weaker card, and on the board it reads
-exactly like the printed one — the failure this whole pipeline exists to prevent.
+of killing a 2/2 — a materially weaker card that on the board reads exactly like
+the printed one.
 
-### `delay` already had the lifetime; it needed the clock
+### Almost all of it had already shipped, in the other direction
 
-`op_delay` is the only mechanism in `ops` that outlives its source. A delayed
-ability is created *by* the resolving one (603.7): the bindings are captured then
-and there, the record sits on `state.delayed_triggers`, and there is no object
-involved at all — which is exactly the lifetime the printed sentence needs, and
-is why Gilraen can blink a creature that comes back after she has died.
+This capability was originally built as a second, competing mechanism — an
+`event` key on the `delay` op — and that work was **dropped**. The
+`delayed_triggered_ability` run landed first with `delayed_trigger`, which is the
+same mechanism arrived at from Forth Eorlingas' end: a subscription with no
+permanent, installed by a resolving effect, bindings and controller captured at
+that instant, woken by `triggers.collect`, armed onto `state.armed_delays` and
+resolved by `game._advance`. Every one of those is what Palace Jailer needs, and
+having two of them would have been the worst outcome available.
 
-What it could not say is *when*, other than a step name: `DelayedTrigger.step`
-maps into `turn.DELAY_STEPS`, so "at the beginning of the next end step" was
-sayable and "the next time an opponent becomes the monarch" was not.
-`DelayedTrigger.event` is that slot, carrying a two-field `DelayedEventSpec`. The
-two spellings are exclusive — an event-keyed delay carries `step=""` and
-`_delay_due` refuses it outright rather than relying on the empty string missing
-every entry in the table — because two ways to come due is two moments the exile
-could end, and the second one would be silent.
+What was genuinely missing is one field, because the two cards' printed sentences
+disagree about **how long the subscription lasts** — and disagree on both counts
+at once:
 
-So "exile until \<event\>" is `exile` plus a `delay`, two ops, exactly the way
-"exile until this leaves the battlefield" is two halves. Nothing was added to
-`exile`.
+| | fires | lives until |
+|---|---|---|
+| `this_turn` *(default)* | every time | `turn._cleanup_step` |
+| `until_it_fires` | once | it fires, however many turns that takes |
 
-### The two questions a duration clause asks, and no more
+"**Whenever** … **this turn**" is a subscription with a stated lifetime. "Exile
+it **until** an opponent becomes the monarch" is not a trigger with a duration at
+all: it is the *end* of a duration written on a different effect, so the first
+crossing is the whole of it, and it names no turn because the crown may not move
+for six of them.
 
-`DelayedEventSpec` is deliberately **not** a `TriggerSpec`. A printed trigger is
-an ability *of a permanent*, and most of that spec asks about that permanent:
-`source: "self"`, `filter`'s `exclude_self` and `attached`, a `condition`
-evaluated with the source's oid. A delayed trigger's source is routinely gone by
-the time its event happens — that is the whole point of the lifetime — so those
-keys would answer one way while Palace Jailer is alive and another after it dies.
-Silently, and only in the line of play the card exists for. They are a load error.
+### The silent failure, and the witness for it
 
-What is left is the event's name and its `controller`, matched by
-`triggers._delayed_matches` out of the same `TRIGGER_EVENTS`, `_subject_oid` and
-`_actor` a printed trigger uses, so the two cannot disagree about who "an
-opponent" is. `becomes_monarch` is in `_actor`'s explicit list precisely for this:
-the actor is the player who *became* the monarch.
+`turn._cleanup_step` dropped every event-watching subscription, keyed on the delay
+*being* event-watching. That is exactly right for the shape it was written
+for — every printed one of those says "this turn" — and it silently retimes
+Palace Jailer to an **"until end of turn" exile**. Nothing on the board says
+which card shipped: the creature is in exile either way, and the difference only
+shows up a turn later.
 
-`controller` has **no default**, which is the one deliberate divergence from a
-printed trigger. There it defaults to `you`, because that is the implicit subject
-of an ability's sentence. A duration clause states whose it is, and there is no
-permanent to read an implicit one off — so the loader demands the key. `any` would
-end Palace Jailer's exile when its own controller reclaimed the crown, which is
-one resolution away: the card's *other* enters trigger makes you the monarch.
+So the clear is keyed on the subscription's own `duration` instead, which is the
+field that actually carries the printed sentence.
+`test_the_exile_outlives_the_turn_it_was_made_in` walks three turn boundaries and
+fails against the blanket clear; `test_and_still_ends_when_the_crown_moves_turns_later`
+is the other half, because surviving cleanup is worth nothing if the subscription
+has stopped working.
 
-### The seam: armed where the event is, run where a decision can happen
+### How one-shot and repeating coexist
 
-`triggers.collect` is a plain function called from the middle of
-`primitives.become_monarch`, and a delay's effects are a generator that may stop
-to ask. So `arm_delayed` sets a flag where the event is, and
-`turn.run_armed_delayed` empties it from `Game._advance`, which is the loop that
-can carry a decision.
+`triggers._arm_delayed`'s docstring already argued against a "fired" flag, and it
+was right on its own terms: an extra combat this turn is a second damage batch
+and a second trigger, so the one-per-batch guarantee belongs to the **event**.
+The one-shot discharge is not that flag. It is a different claim — that this
+subscription is spent because the duration it was ending is over — and the two
+now sit side by side in the same loop, chosen by `duration`.
 
-The gap between them is one pass of that loop — which is the moment a real delayed
-triggered ability would have gone on the stack. The branch sits **after** the
-trigger drain, so an ordinary trigger off the same event reaches the stack first
-and the delayed half resolves ahead of it (the direct-resolution divergence
-`_run_delayed` already records); and **after** `step_started`, so it can never be
-the thing that hands out priority in a step that grants none.
+It discharges **as it arms**, before the copy on `state.armed_delays` resolves,
+so the exile ends exactly once even if the same crossing were to arm it again
+before the advance loop got round to the copy. `_delayed_bindings` has already
+snapshotted everything the copy needs, so striking the original off costs it
+nothing. The strike is by **identity**: two Palace Jailers each holding a creature
+differ only in their captured bindings, and one that exiled nothing would compare
+equal to another that did.
 
-It fires once and the delay is then struck off, whether or not the return found
-anything: a card that left exile in between is a new object (400.7) and the
-duration is over either way. `{"binding": "jailed", "zone": "exile"}` is what says
-so — the record semantics `effect_result_binding` split out, plus the explicit
-zone that stops a delayed return yanking a card back out of a graveyard.
+### One field, not two booleans
 
-### The same mechanism, for the wider family
-
-`delayed_triggered_ability` is being built in parallel for a spell that watches
-combat damage for the rest of the turn, and it wants an event-keyed
-`DelayedTrigger` too. This is designed to be that mechanism rather than a rival:
-the event name and `controller` clause are shared, and what a repeating form needs
-on top is a `repeats` flag and an expiry — both fields on `DelayedTrigger` beside
-`event`, both read at the two places this touches (`arm_delayed` and
-`run_armed_delayed`). Nothing here assumes one-shot except the discharge in
-`run_armed_delayed`, which is one list comprehension.
+The bet is stated where the constant lives. Repeating-or-once and
+turn-scoped-or-not are two axes, they are correlated in *both* printed cards, and
+they are **not** the same question. A card that separated them — "the first time
+a creature dies this turn" — needs a third entry in `structs.DELAYED_DURATIONS`
+rather than a different reading of these two. No such card is in the pool, and
+naming the gap is cheaper than shipping a second boolean nothing sets.
 
 **Unblocked one card: Palace Jailer**, at the agent tier — the template tier
 harvests nothing here (`--tier templates --retry`: `wrote 0 | no template 200`).
-It needed two capabilities: `monarch` shipped the designation, the two inherent
-abilities of 721.3 and the `becomes_monarch` event, and this is the duration that
+It needed two capabilities: `monarch` shipped the designation, 721.3's two
+inherent abilities and the `becomes_monarch` event, and this is the duration that
 was the last blocker. Its expectation is a real observation —
 `opponent_battlefield_count: 5`, the opponent's board one creature lighter — and
 the rest of the coverage is `tests/unit/test_exile_until_event.py`, where the
 Jailer dies and the creature stays exiled, and then comes back anyway.
+
+## `variable_target_count` — a number of targets the game works out, and "up to"
+
+### Overview
+
+Marshal's Anthem: *"When this enchantment enters, return **up to X** target
+creature cards from your graveyard to the battlefield, where X is the number of
+times this enchantment was kicked."* One gap record, one card, and it was the
+card's **last** blocker — `multikicker` shipped the other half a batch ago and
+explicitly left this one standing.
+
+`TargetModel.count` was `int | Literal["any"]`. Both spellings are a different
+card, and the gap record had already checked each:
+
+| spelling | what the Anthem becomes |
+|---|---|
+| `count: "any"` | "any number of target creature cards" — the count comes off the kicker entirely, so the {2}{W}{W} cast reanimates the whole graveyard |
+| `count: N` | a card with a number printed on it |
+| `count: N, optional: true` | "exactly N, or none" — every size between 1 and N-1 forbidden |
+| untargeted `return_from_graveyard` with `count: {"additional_paid": true}` | the right *number*, but no targeting: no legality check at announcement, no fizzle, no `becomes_target`, and `min_count == max_count` forces exactly X |
+
+### Tier: A, and not even an op
+
+No new op, no continuous effect, no decision kind, no event, no API field — and
+no new *state* either. The number was already recorded and already readable:
+`game._cast` writes `Action.additional_times` to `obj.cast_additional`, and
+`{"additional_paid": true}` has read it back since casualty and replicate. What
+was missing was only that a **target count** could not be a value at all.
+
+Two changes, deliberately independent:
+
+```jsonc
+"count": {"additional_paid": true},   // the count is a value expression
+"up_to": true                          // and the value is a ceiling, not an exact number
+```
+
+### Where the number is read, which is the whole design question
+
+601.2c fixes a target count when the targets are *declared*, and for this card
+that moment is **603.3d, not 601.2c**: the targets belong to a triggered
+ability, so they are chosen as the trigger goes on the stack — after the
+enchantment has entered. `stack._choose_trigger_targets` calls
+`enumerate_target_tuples` with `trig.source_oid`, which is the enchantment on the
+battlefield, wearing the `cast_additional` written at cast time and carried
+across the zone change on the same oid. That is the same read `colors_of_mana_spent`
+makes for a Sunburst artifact's enters trigger, from the same place.
+
+A **spell's own** targets are the other moment and there is nothing to read
+there: 601.2c happens while `legality` is enumerating cast lines, before X has
+been announced and before any additional cost has been paid. The expression would
+evaluate to 0 — or, on a card cast twice in one game, to the *previous* cast's
+number, which is worse. So `_compile_targets` refuses a computed count on a
+card's own `targets` outright, and says why. Comet Storm ("for each time this
+spell was kicked, it deals X damage to another target") is the card that wants
+it; giving it one means teaching legality to enumerate its target tuples once per
+payment count, which is a separate change and is not smuggled in here.
+
+### Keeping four spellings of "or fewer" from becoming three of the same thing
+
+`optional` already existed twice — `TargetModel.optional` for declared targets
+and the `optional` selector key `pick_from_pool` honours as `min_count = 0` — and
+both mean **"exactly N, or none"**. "Up to X" is min 0 / max X, which neither can
+say, so the word had to be a third one rather than a redefinition of either:
+redefining `count: {value}, optional: true` to mean 0..X would have made the
+same flag mean different things depending on whether the count was literal.
+
+| spelling | means |
+|---|---|
+| `count: N` | exactly N |
+| `count: N, optional: true` | exactly N, or none |
+| `count: "any"` | zero to the whole board |
+| `count: N or a value, up_to: true` | zero to N |
+
+Each overlapping pair is refused at load time, because each is a card that would
+otherwise read as a printing that does not exist: `up_to` with `count: 1` (that
+is `optional`, and is how Oath of Eorl and every other "up to one" already ships),
+`up_to` with `"any"` (no ceiling to cap), and `up_to` beside `optional` (two
+answers to one question).
+
+`"any"` and "up to X" then share one code path, differing only in where the
+ceiling comes from — `len(options)` against the evaluated value — which is what
+keeps the ordering rules the same for both: subsets largest first, because
+whatever takes a tuple without asking takes `options[0]`, and the empty tuple
+always present and always last, because both readings include zero without
+needing `optional`.
+
+### Three places had to learn that a spec's size is not a constant
+
+- `enumerate_target_tuples` evaluates the count, and offers `0..X` under `up_to`.
+  A computed count of **zero** contributes `[()]` rather than `[]` — "no targets
+  asked for" is not "no legal target", and the difference is a trigger that
+  resolves against one that cannot go on the stack.
+- `filter_legal` slices stored refs by position, so a variable-size spec takes
+  "whatever is left". It does **not** re-evaluate: the number is fixed when the
+  targets were declared, and re-reading it at resolution would re-slice refs that
+  were chosen under the old one. `TargetSpec.variable_size` now names all three
+  variable shapes, so the existing "at most one, and it comes last" rule covers
+  the new ones for free.
+- `loader._mentions` walks **target specs** as well as effects. Multikicker's own
+  guard refuses "a cost no effect reads via `additional_paid`", and on this card
+  the only reader is the target count — so the one card the mechanic exists for
+  was about to be refused by the mechanic's own guard.
+
+### The behaviour gate had to cast it kicked
+
+`_play_and_check` already measured a kicker card **kicked**, on the argument that
+kicked is the strictly larger claim. Multikicker gets the same treatment, because
+without it the gate is worthless here: legality offers cast lines ascending from
+the free one, `find_play` took the first, and X = 0 returns nothing at all — a
+card that did nothing would have passed exactly as one that worked. Gate 4 still
+casts it unkicked, so the zero path is exercised too.
+
+That is what makes Marshal's Anthem's expectation a real observation rather than
+the weak `{"zone": "battlefield"}` fallback: in the sandbox it is cast with the
+most kicks the board can pay, and the assertion is that **both** creature cards
+have left the graveyard (`graveyard_size: {"0": 0}`) and the battlefield is three
+permanents larger than the lands and props it started with.
+
+### Cards this unblocked
+
+`marshal_s_anthem`, and no others — no other gap record names this capability.
+`--tier templates --retry` harvested nothing, which is correct: no template reads
+"Multikicker {1}{W}" or "up to X target …", so the card came through the agent
+tier. Coverage beyond the card is `tests/unit/test_variable_target_count.py`.
+
+---
+## `counter_unless_pays` — billing a seat that only a target names
+
+### Overview
+
+Frontline Medic: *"Sacrifice this creature: Counter target spell with {X} in its
+mana cost **unless its controller pays {3}**."* The other half of the sentence
+the previous run left open, and the last thing between the Medic and the pool.
+**It is now authored** — `data/cards/auto/`, all six gates.
+
+The unless-pays *shape* already shipped. `may` + `pay` + `else` is exactly
+"unless", and Rhystic Study is the working card: pay and the `else` branch does
+not run, which is what buying the absence of a thing looks like. What could not
+be said is **who is being billed**. Every payer in the pool arrives as a trigger
+binding — Rhystic Study's off `spell_cast`, ward's off `becomes_target` — and
+`select_players`' `controller_of` reads `ctx.bindings` and nothing else. An
+activated ability's `StackItem` carries its targets and its bindings as separate
+things and binds nothing for what it was activated at, which is precisely why
+ward could be written and a targeted counterspell could not.
+
+### Tier: A, and not even an op
+
+No new op, no continuous effect, no decision kind, no event, no API field. One
+**player spec** — `{"controller_of_target": "t1"}` — and one load-time refusal.
+The whole clause then writes itself out of vocabulary that already existed:
+
+```jsonc
+{ "op": "may", "player": { "controller_of_target": "t1" },
+  "pay": { "mana": "{3}" },
+  "else": [ { "op": "counter", "target": "t1" } ] }
+```
+
+### The rules argument: 109.5, and the seat that pays
+
+"Its controller" on a spell means the controller of *that spell*. The key is
+resolved when the effect runs rather than when the ability was activated, which
+is 608.2 rather than a shortcut: control of a spell can change while the ability
+sits on the stack, and the seat that gets the bill is the one holding it when
+the bill arrives. It answers for **stack refs and object refs alike** — a spell
+has a controller and so does a permanent — so "unless that permanent's
+controller pays" is the same key, and the result is de-duplicated in target
+order, because "counter each of them unless their controllers pay" is one bill
+per seat.
+
+### The silent misfire, and why it is now a load error
+
+`{"player": {"target": "t1"}}` is the obvious thing to write and it played the
+card's own opposite. `ctx.target_players` keeps only refs of kind `"player"`; a
+spell's ref is kind `"stack"`, so it returned `[]` — and `op_may` reads an empty
+player list as `chooser = ctx.controller`. "Counter target spell unless its
+controller pays {3}" resolved as "unless **you** pay {3}": the Medic asking its
+own controller to pay for countering the spell they had just chosen to counter.
+Nothing raised and nothing logged.
+
+**A load error rather than a correct answer**, and deliberately. Making
+`{"target": ...}` quietly fall through to the controller would leave one key
+meaning two different things depending on the target's kind, which is the same
+invisibility one layer down — the author would still not know which card they
+had written. So the loader refuses the combination and names the key that works:
+a `player` spec may say `target` only of a target that can *be* a player
+(`kind: "player"`, or the player half of `kind: "any"`), and
+`controller_of_target` only of one that has a controller. Exactly one of the two
+is right for any given spec, which is what makes the pair checkable instead of
+being two ways to be wrong.
+
+The check is written once, in `_validate_effect`, for **every** op that takes a
+`player` — the way `counter` is checked once for every op that names a counter
+kind. `become_monarch`, `goad` and `cant_attack_player` had each grown a private
+copy of half of it; they now call the shared validator, and the next op to take
+a player is covered before it is written.
+
+### It caught a shipped card on the way in
+
+Hellrider — *"Whenever a creature you control attacks, this creature deals 1
+damage to the player or planeswalker it's attacking"* — was written
+`{"player": {"target": "defender"}}`. `defender` is a **trigger binding**, not a
+declared target, so `ctx.targets` had no such key, `select_players` returned
+`[]`, and the card dealt no damage at all. It had shipped that way, with a
+`{"zone": "battlefield"}` expectation that could never have noticed, since the
+verifier declines combat. `{"binding": "defender"}` is the correct spelling and
+was one word away the whole time.
+
+That is the argument for the load error stated as evidence rather than as
+principle: the first thing a general check found was a card nobody knew was
+broken.
+
+### Verification
+
+The behaviour gate legitimately asserts only `{"zone": "battlefield"}` for the
+Medic. The verifier **declines combat**, so battalion cannot fire, and it never
+activates activated abilities, so the counter line cannot fire either — the
+weak expectation is the honest one and no gate was weakened to get it.
+`tests/unit/test_counter_unless_pays.py` is where the real coverage lives, on
+the shipped card rather than a fixture: which seat is asked, paying countering
+nothing, declining countering the spell, a controller who cannot pay never being
+asked, and **the pod** — three seats, where "the spell's controller" and "an
+opponent" finally differ and `player: "opponent"` would bill an arbitrary one.
+
+`verify.py` gained one dummy role, `x_spell`, exactly as `add_dummy_spell`'s
+docstring asked the next run to do rather than relaxing the gate. It is not
+reached by the Medic — a permanent's ability targets are not in the sandbox's
+stack, and could not be: dummy spells on the stack make a *creature* uncastable
+by 117.1a, which is what its own gate 4 measures — but the "Counter target spell
+with {X} in its mana cost" instants behind it in the queue reach it directly.
+
+### What it unblocks
+
+Frontline Medic today. Behind it, the plain
+*"Counter target spell unless its controller pays {N}"* family — Mana Leak,
+Daze, Condescend, Rethink, and the dozens of printings the authoring queue holds
+on this one clause — plus every non-counter line that bills a targeted object's
+controller: "unless that spell's controller pays", "that spell's controller
+discards a card".
+## `look_at_library_top` — the same card, sent to one seat instead of every seat
+
+### Overview
+
+Verge Rangers: *"First strike. **You may look at the top card of your library any
+time.** As long as an opponent controls more lands than you, you may play lands
+from the top of your library."*
+
+The middle line was the card's last blocker. Its other two needs —
+`per_opponent_count` and `conditional_player_static` — shipped in earlier runs,
+and both of those runs ended with "**no card**", because this line was still
+standing. It ships now, so does the card, and Verge Rangers becomes the first
+card in the pool to carry a `condition` on a player-wide static.
+
+### The rules argument: 701.16a, looking is not revealing
+
+Rule 400.2 makes a library a hidden zone. Rule 701.16a then splits the two verbs
+that open it: a card **looked at** is seen by the player looking and by nobody
+else, while a card **revealed** is shown to every player. The engine had the
+second verb only.
+
+`reveal_library_top` is Vampire Nocturnus' "play with the top card of your library
+revealed", and `serialize` writes its `library_top` into **every** seat's view
+deliberately — that decision is written down in the code, in the docs and in
+`test_top_of_library.py::TestTheReveal::test_the_opponent_sees_it_too`, on the
+argument that an opponent who cannot see a revealed card is playing against
+information they are entitled to.
+
+Verge Rangers reveals nothing. Authoring it on the public static would hand every
+opponent the top of a deck whose *other* ability plays lands off that same card —
+a strictly different card, and a worse leak than it first looks, since the top
+card is the thing the third line is about.
+
+### What could not stand in
+
+| candidate | why not |
+|---|---|
+| `reveal_library_top` | public by construction; the whole gap is who receives it |
+| the `look_at_top` **op** | looks once, at resolution, and is spent. "Any time" is a standing permission, and there is no moment for a trigger to fire at |
+| a trigger on some event | same problem from the other end: no event means "any time" |
+| a `top_of_library` condition | reads the card's printed face for the rules. It answers questions; it shows nobody anything |
+
+### Tier: E, and only for one boolean
+
+Routed as **E** — a new API field — and it is worth saying exactly which half of
+the change earned that, because most of it did not.
+
+The card itself needs **no** new field. `serialize._player` has had both `pid`
+and `seat` all along (`own = pid == seat` is what hides a hand), so the private
+half is *scoping* an existing field rather than adding one: `library_top` is
+already the right payload in the right shape, and both the frontend's `PlayerOrb`
+pile and `findCard`'s zone-of-one lookup already consume it. Adding
+`library_top_private` beside it would have been two fields that can disagree
+about one card.
+
+What does not survive scoping is the **distinction**. The two statics produce a
+byte-identical payload, so a seat holding one cannot tell which it is — and the
+pile said `Top of library, revealed: X`. Under a private look that sentence is
+false in the direction that matters: it tells the one player who can see the card
+that the whole table can. So one boolean, `library_top_public`, and the Tier E
+file list for it. `schemas.py` needed nothing, because `StateResponse.state` is a
+bare `dict[str, Any]` and the view is serialized generically.
+
+That makes the skill's Tier A note — "the server needs no change for a new op,
+keyword, counter type, decision kind or action kind" — inapplicable rather than
+wrong: this capability *is* a serialization question, and nothing else.
+
+### How it is kept private
+
+```python
+def _library_top(state, pid, seat) -> tuple[dict | None, bool]:
+    public = player_reveals_library_top(state, pid)
+    if not public and not (pid == seat and player_looks_at_library_top(state, pid)):
+        return None, False
+    top = top_of_library(state, pid)
+    if top is None:
+        return None, False
+    return card_view(state, top.oid), public
+```
+
+One function, and the seat test is in it rather than at the call site, so there is
+no second path to `library_top` that could forget it. Three consequences worth
+pinning:
+
+- **A reveal beside a look is still a reveal.** `public` is computed first and
+  wins; the weaker permission cannot make a shown card private again.
+- **`library_top_public` is false whenever no card is sent**, including when the
+  library is empty under an active reveal. A stale `true` next to a `null` face
+  is a claim about a card that does not exist.
+- **The permission is continuous.** It ends when its source leaves, and it is
+  gated by `_active_player_statics` like the other eight, so an "as long as…"
+  clause on it is asked rather than ignored.
+
+### The static itself
+
+The ninth player-wide effect, `affects_player` like the rest, read by
+`characteristics.player_looks_at_library_top` and — like its public twin — by
+`serialize` and by nothing else. It changes no rule: it grants no permission to
+play or move the card, and no rules code asks about it.
+
+`t_all_player_statics` carries it, so `TestEveryPlayerWideStatic` walks nine
+readers rather than eight; `test_the_table_covers_every_gated_effect_on_the_card`
+is what would have caught it being added to the loader and forgotten there.
+
+### What it unblocked
+
+**Verge Rangers**, through all six gates, and it was its own last blocker. The
+card is the whole harvest — `--tier templates --retry` produced nothing, since no
+template reads the printed sentence, so it was authored at the agent tier.
+
+Its expectation is `zone: battlefield` plus `granted: first_strike`, which is
+deliberately weak about the line this run built: the verifier's expectation
+language has no key for *what a given player can see*, so the visibility is not
+assertable as a card expectation and the gate was not weakened to pretend
+otherwise. That coverage lives where it can be written honestly —
+`tests/unit/test_look_at_library_top.py` for the engine and
+`tests/server/test_multiplayer_game.py::TestTopCardVisibility` for the wire.
+
+The two-humans server test is the one that matters, because it is the only place
+the claim is made against a real second token: seat 0 fetches `/state` and is
+sent the card, seat 1 fetches `/state` and is not.
+
+### Retired with it
+
+`TestTheUngatedStaticsAreUntouched::test_no_shipped_card_gates_a_player_wide_static`
+asserted `gated == []` over the real pool, and its docstring said to retire it
+naming the card that eventually gated one. That card is Verge Rangers. The
+successor asserts the opposite — the pair is *in* the pool — because the useful
+half of the guard survives: a gated player-wide static is only correct if
+something reads the gate.
+
+### Guarded by
+
+`tests/unit/test_look_at_library_top.py` (21 cases), and its shape is the point:
+every claim is asserted **from both seats**, because a version that sent the card
+to everybody passes every controller-side assertion there is. The opponent class
+includes a four-player pod, since "not the opponent" and "not any of the three
+other seats" are different claims.
+
+Then `tests/server/test_multiplayer_game.py::TestTopCardVisibility` over HTTP,
+`tests/unit/test_conditional_player_static.py` for the ninth reader through the
+gate, and `frontend/tests/playerOrb.test.tsx` for the wording — the pile must not
+call a private look "revealed".
+## `delayed_triggered_ability` — 603.7's other half, and the batch it has to watch
+
+### Overview
+
+Forth Eorlingas!: *"Create X 2/2 red Human Knight creature tokens with trample and
+haste. Whenever one or more creatures you control deal combat damage to one or
+more players this turn, you become the monarch."*
+
+The first line was already a single `create_token` with `amount: {"x": true}`,
+once `token_pool` registered `human_knight_2_2_r_trample_haste`, and `monarch`
+had already shipped `become_monarch`. The second line was two capabilities
+neither of them touched: a delayed ability keyed on an **event** rather than a
+step, and a combat-damage event that fires **once for the batch**.
+
+The card is now playable and was the last blocker on it. Writing only the token
+half would have been a card that makes twenty Knights and never gives the
+monarchy to anybody, which the residual gate rejects and a player could not tell
+from the real thing until the crown failed to move.
+
+### Tier: A and D
+
+A new op (`delayed_trigger`) and a new `EventType`. No continuous effect, no
+decision kind, no API field — the delayed ability's payload is ordinary DSL and
+the state it lives in is serialized generically.
+
+Tier D is the half that forces frontend work, and both files got a deliberate
+entry rather than the `default` fallthrough. See "The frontend" below.
+
+### Why the sentence cannot be a triggered ability on the card
+
+Because the card is a **Sorcery**. It is in a graveyard before the first creature
+swings, so an ability printed on it would be watching from there: with the
+default `active_zones` it never fires at all, and with `["graveyard"]` it fires
+for the rest of the game. Neither is "this turn", and the difference between them
+is the whole card.
+
+`delay` is the op that exists for effects with no permanent to hang on, and it
+could not say this either. Its only timing knob is a step name checked against
+`turn.DELAY_STEPS` — five names, five moments — so it can say "at the beginning
+of the next end step" and cannot say "whenever a creature connects".
+
+`combat_damage_by` in `condition_keys` reads the turn ledger *backwards* (prowl:
+"was a player dealt combat damage this turn by a Faerie"). It can be asked at
+cast time and cannot make anything happen later, and this card's whole point is
+that the damage comes after the sorcery has resolved.
+
+### Where the three pieces went
+
+**Storage: `state.delayed_triggers`**, the list `delay` already writes to, as a
+`DelayedTrigger` carrying a `trigger` spec instead of a `step`. The same struct
+because everything else about the two halves of 603.7 is identical — bindings
+captured when it is created, controller captured with them, no source object when
+it fires. The controller matters more here than it ever did for `delay`: "you"
+cannot be read back off a card sitting in a graveyard, where
+`reset_permanent_state` has been through it. `turn._delay_due` refuses an
+event-watching entry explicitly rather than relying on `DELAY_STEPS.get("")`
+returning `None`.
+
+**Dispatch: `triggers.collect`**, the one funnel every fired event goes through,
+in a second walk beside the one over permanents. It **arms** rather than
+resolves, and that is the design decision worth the words: `collect` is reached
+from inside `damage_player`, several frames below anything that can suspend, so
+resolving there would forbid a delayed payload from ever asking a question —
+which the step-scoped half has always been allowed to do. So a copy of the
+subscription, with the event's payload folded into the captured bindings, goes on
+`state.armed_delays`, and `game._advance` resolves it at the next safe moment.
+That is exactly the arrangement `pending_triggers` has had since triggers
+existed, and it is why the new branch in `_advance` sits immediately above the
+drain: both halves of 603.7 resolve off the stack, so the delayed half of an
+event runs before the ordinary triggers of that same event are put on it.
+
+A **copy**, not the subscription itself. The subscription stays armed for the
+rest of the turn, because the printed line is "one or more creatures" and a
+second combat fires it again.
+
+**Clear-down: `turn._cleanup_step`**, beside `clear_attack_restrictions`,
+`clear_block_prohibitions`, `clear_unblockables`, `clear_damage_shields` and
+`clear_sacrifice_restrictions` — the five other "this turn" clauses owned by no
+permanent, for exactly the same reason this one is: the sorcery that said it has
+been in a graveyard since it resolved and `clear_until_eot`'s walk of the
+battlefield has nothing to find. Keyed on the *kind* of delay rather than
+emptying the list, because "at the beginning of the next upkeep" is scheduled
+**across** this boundary and a blanket clear would throw Arcane Denial's draw
+away.
+
+Not "after it fires once". A per-firing expiry and a `max_per_turn` cap are the
+same mistake: `extra_combat` gives a turn a second combat, and the printed
+ability triggers in it.
+
+### Once per damage batch, not once per creature
+
+`EventType.CREATURES_DEALT_COMBAT_DAMAGE`, fired by `combat.deal_combat_damage`
+once per damage step per **damaging player**, carrying `damagers` and `damaged`.
+
+`deals_combat_damage_to_player` is the near miss and is per *connection*. Twenty
+Knights getting through fire it twenty times, so a card built on it hands out the
+monarchy twenty times over — which is not merely noisy, since each firing is a
+fresh `become_monarch` and every one of them is an event other cards listen to.
+`max_per_turn: 1` on top of it survives that and fails one step out, in the extra
+combat.
+
+Read off the same `assignments` list `_monarch_transfer` reads, immediately after
+it, and for the same reason: rule 510.2 makes combat damage simultaneous and
+`deal_combat_damage` collects every assignment before applying any, so the batch
+is knowable there and nowhere else. `damage_player` sees the hits one at a time
+and cannot tell the first of a batch from the third.
+
+Per damaging **player** rather than per (player, defender) pair, which is where
+this stops being the shape `creatures_attack_player` has one phase earlier. That
+event is per defending seat because its printed clause is "one of your
+opponents"; this one says "to one or more **players**", so a seat whose creatures
+connect with two opponents in one step gets one event with both seats on
+`damaged`. Grouping by the damaging player is also what gives `controller: "you"`
+an actor to compare against — fired once for the whole step there would be none.
+
+Creatures by **derived** type, and damage to players only: an animated Equipment
+that got through is a creature, and damage to a blocker or a planeswalker is
+combat damage that is not this.
+
+Two batches per turn's combat, not one: first strike and regular damage are
+separate steps (510.4) and a double-striker that connects in both triggers twice,
+which is what the per-creature event has always done.
+
+### Where it is refused
+
+`trigger` takes `event`, `controller` and `condition` and nothing else.
+
+The omissions are not laziness in two different ways. `source: "self"`, `filter`
+and `max_per_turn` are all answered off the `GameObject` hosting the ability —
+`matches_card_filter` takes it as `ability_source`, and `_queue` counts the cap
+per `(permanent, ability index)` — and a delayed ability has no such object.
+Accepting any of them would load a card whose printed restriction silently does
+nothing, which is the precise failure `_validate_effect` exists to stop. The pure
+event filters (`counter`, `nth`, `not_cause`, `mana_ability`, `defending`) are
+left out because no card asks for them here; `_delayed_matches` gains a line each
+when one does.
+
+An unknown `trigger.event` is a load error, for the reason a misspelled `delay`
+step is: the subscription installs, nothing ever satisfies it, and the card reads
+as printed while doing nothing at all.
+
+`{"target": …}` inside the payload is a load error, sharing
+`_refuse_targets_inside_a_delay` with `delay` — 603.7 says the *resolving ability*
+creates the delayed one, so what it creates never chose a target, and
+`run_armed_delays` builds its context with `targets={}` exactly as
+`turn._run_delayed` does.
+
+### The frontend
+
+Deliberately silent in both `labels.ts` and `events.ts`, listed in both rather
+than left to their `default` fallthroughs so the decision is visible where the
+next person looks for it. The batch accompanies hits that are already narrated
+one by one as life losses and already animated by `damage_dealt`; a line and a
+beat for the summary would sound the combat a second time. It is the same
+arrangement `creatures_attacked_player` got one phase earlier, and
+`combat_damage_to_player` — the event this one batches — has been in `SILENT`
+since that set existed.
+
+### What it unblocks
+
+Forth Eorlingas!, which was waiting on this and on `monarch`, and is now
+authored: `{X}{R}{W}`, twenty Knights in the verifier's sandbox (X is capped at
+`mana.max_affordable_x`'s 20, not by the thirty lands), and the crown installed
+for the rest of the turn.
+
+The verifier **declines combat**, so the delayed half cannot be demonstrated
+there — the expectation is honest about that and asserts the token half plus the
+graveyard. What proves the second line is `tests/unit/test_delayed_triggered_ability.py`,
+which swings in a three-player position and checks the crown moves, that it moves
+once for three attackers, once for two defending seats, again in an extra combat,
+and not at all the next turn.
 
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
@@ -652,7 +1196,7 @@ hand-rolled walks of the battlefield instead, none of which asked:
 
 | reader | effects |
 |---|---|
-| `characteristics._player_static` | `no_hand_limit`, `play_lands_from_graveyard`, `play_lands_from_library_top`, `reveal_library_top`, `double_land_mana` |
+| `characteristics._player_static` | `no_hand_limit`, `play_lands_from_graveyard`, `play_lands_from_library_top`, `reveal_library_top`, `double_land_mana` (and, since `look_at_library_top` shipped, that one too) |
 | `characteristics.player_extra_land_drops` | `extra_land_drops` |
 | `characteristics.players_freezing_opponent_lands` | `freeze_opponent_lands` |
 | `triggers._land_trigger_doublers` | `double_land_triggers` |
@@ -716,6 +1260,11 @@ be the fetchland-template refusal: a cheaper card than the printed one.
 So the `conditional_player_static` need is struck from
 `data/authoring/gaps/verge_rangers.json` and `look_at_library_top` is left
 standing. The engine change ships on its unit test alone.
+
+> `look_at_library_top` has since shipped — see the top of this file. Verge
+> Rangers is authored, and it is the first card to carry a `condition` on a
+> player-wide static, so `TestTheUngatedStaticsAreUntouched::test_no_shipped_card_gates_a_player_wide_static`
+> was retired with it.
 
 ### Guarded by
 

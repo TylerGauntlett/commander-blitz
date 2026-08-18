@@ -62,11 +62,12 @@
             }
           },
           {
-            "op": "delay",
-            "event": {
+            "op": "delayed_trigger",
+            "trigger": {
               "event": "becomes_monarch",
               "controller": "opponent"
             },
+            "duration": "until_it_fires",
             "text": "Return the exiled card to the battlefield under its owner's control.",
             "effects": [
               {

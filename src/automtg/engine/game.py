@@ -843,6 +843,20 @@ class Game:
             if state.game_over or state.pending_decision is not None:
                 return
 
+            if state.armed_delays:
+                # An event-watching delayed ability whose event just happened
+                # (603.7). Here rather than in `triggers.collect`, which is
+                # reached from inside a primitive that cannot suspend, and
+                # *before* the drain below for the reason `turn._run_delayed`
+                # resolves inline as a step begins: both halves of 603.7 happen
+                # off the stack, so the delayed half of an event runs before the
+                # ordinary triggers of that same event are put on it.
+                state.passes_in_row = 0
+                state.priority_idx = state.active_idx
+                if not self._run(triggers.run_armed_delays(state)):
+                    return
+                continue
+
             if state.pending_triggers:
                 # Set before the drain, not after: a trigger that stops to ask
                 # for its targets suspends the loop here, and the resumption
@@ -855,31 +869,6 @@ class Game:
 
             if not state.step_started:
                 if not self._run(turn.begin_step(state)):
-                    return
-                continue
-
-            if turn.has_armed_delayed(state):
-                # "…until an opponent becomes the monarch." A delayed trigger
-                # keyed on an event rather than a step, armed by the event bus
-                # (`triggers.arm_delayed`) and run here, because the bus is a
-                # plain function called from the middle of a primitive and these
-                # effects may stop to ask.
-                #
-                # After the trigger drain, so an ordinary trigger off the same
-                # event reaches the stack first and the ordering is the one
-                # `_run_delayed` already documents: the delayed half resolves
-                # directly, and therefore ahead of what the same event stacked.
-                #
-                # After `step_started`, so `priority_idx` is never handed out
-                # ahead of `step_grants_priority` -- the untap and cleanup steps
-                # grant none, and this branch must not be the thing that does.
-                #
-                # `passes_in_row` is reset for the reason the drain resets it and
-                # `priority_idx` deliberately is not: something happened, so a
-                # pass made before it no longer counts towards ending the step,
-                # but nobody loses the priority they were holding.
-                state.passes_in_row = 0
-                if not self._run(turn.run_armed_delayed(state)):
                     return
                 continue
 

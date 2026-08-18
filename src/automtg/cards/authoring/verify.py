@@ -67,6 +67,13 @@ _ROLES: dict[str, Any] = {
     #: wants a target it was never given is an error inside the harness rather
     #: than a verdict about the card.
     "noncreature_spell": lambda c: (c.is_instant or c.is_sorcery) and not c.targets,
+    #: Something for "counter target spell **with {X} in its mana cost**" to
+    #: point at -- Frontline Medic. The role the `noncreature_spell` docstring
+    #: below said the next unrepresented selector would need, added rather than
+    #: the gate relaxed. Targetless for the same reason that one is.
+    "x_spell": lambda c: (c.is_instant or c.is_sorcery)
+    and not c.targets
+    and c.mana_cost.x_count > 0,
 }
 
 #: Which roles each zone gets.  The opponent's board carries one of each broad
@@ -148,9 +155,12 @@ def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
     A card whose selector no dummy here satisfies -- "target spell with {X} in
     its mana cost", once something is authored with it -- will fail the same way,
     which is the harness reporting an unrepresented shape rather than the card
-    being wrong. Add the role; do not relax the gate.
+    being wrong. Add the role; do not relax the gate. `x_spell` is that role,
+    added exactly as this paragraph asked: Frontline Medic put the selector into
+    the pool, and the "Counter target spell with {X} in its mana cost" *instant*
+    behind it in the queue is the first card that will reach this list with it.
     """
-    for pick in _props(registry, ("creature", "noncreature_spell")):
+    for pick in _props(registry, ("creature", "noncreature_spell", "x_spell")):
         obj = new_object(game.state, pick, owner=1, zone=Zone.HAND)
         game.state.players[1].hand.append(obj.oid)
         push_spell(game.state, obj.oid, 1)
@@ -221,12 +231,19 @@ def _answer(game: Game, decision: PendingDecision):
     return actions[0]
 
 
-def find_play(game: Game, card_id: str, *, kicked: bool = False):
+def find_play(game: Game, card_id: str, *, kicked: bool = False, multikicked: bool = False):
     """The action that plays this card, optionally the kicked way.
 
     A kicker card is offered twice, and the two are different cards in every way
     that matters -- so which one is being asked for has to be said out loud
     rather than settled by whichever legality happens to list first.
+
+    ``multikicked`` is the same request for the cost that is paid *any number of
+    times*: legality offers one cast line per number, ascending from the free
+    one, so taking the first match would always be the unkicked spell. It asks
+    for the most the sandbox can pay -- the same "maximum, because zero measures
+    nothing" that `_answer` applies to `CHOOSE_X`, and the same reason
+    `_play_and_check` measures a kicker card kicked.
     """
     matches = []
     for action in game.legal_actions():
@@ -239,6 +256,9 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
             matches.append(action)
     if not matches:
         return None
+    if multikicked:
+        # `max` over a stable list, so ties keep legality's order.
+        return max(matches, key=lambda a: a.additional_times)
     # The **front** face, whenever one is offered. A modal DFC is offered twice
     # -- Malakir Rebirth as a cast and Malakir Mire as a land drop -- and the
     # payload under test describes the front: its `oracle_text`, its `mana_cost`
@@ -540,7 +560,19 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
     # covers both halves of the printed text, whereas asserting the cheap mode
     # would let "if this spell was kicked, draw a card" ship doing nothing.
     # Gate 4 still casts it unkicked, so neither line goes unexercised.
-    game, oid, target_oid, before = _cast(registry, card, kicked=card.kicker is not None)
+    #
+    # Multikicker is the same argument for the cost paid any number of times:
+    # "return up to X target creature cards, where X is the number of times this
+    # was kicked" does nothing at all for X = 0, so a gate that measured the free
+    # line would let a card whose entire text is the kicks ship having returned
+    # nothing -- and it would have no way to tell that from the card working.
+    # Gate 4 casts it unkicked, which is where X = 0 gets exercised.
+    game, oid, target_oid, before = _cast(
+        registry,
+        card,
+        kicked=card.kicker is not None,
+        multikicked=card.multikicker is not None,
+    )
     return check_expectation(
         game,
         card.id,
@@ -552,7 +584,7 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
 
 
 def _cast(
-    registry: CardRegistry, card: CardDef, *, kicked: bool = False
+    registry: CardRegistry, card: CardDef, *, kicked: bool = False, multikicked: bool = False
 ) -> tuple[Game, int, int | None, tuple[int, int] | None]:
     """Cast the card in the sandbox and let it finish.
 
@@ -561,11 +593,18 @@ def _cast(
     half of a pump can be read.
     """
     game = build_sandbox(registry, card.id)
+    # The **card's** targets, deliberately, and not its abilities'. Frontline
+    # Medic is the first card whose spell target sits on an activated ability,
+    # and widening this to reach it makes the sandbox strictly worse: the dummy
+    # spells go on the stack, and a stack with anything on it is not a moment a
+    # *creature* can be cast at all (117.1a), so the Medic stops being playable
+    # in its own gate. A permanent's ability wants the dummies present later --
+    # when it is activated -- which is not a thing this harness does.
     if any(spec.kind == "spell" for spec in card.targets):
         add_dummy_spell(game, registry)
     game._advance()
 
-    action = find_play(game, card.id, kicked=kicked)
+    action = find_play(game, card.id, kicked=kicked, multikicked=multikicked)
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
         raise AutoMtgError(f"{card.id} is not playable in the sandbox; offered: {offered}")

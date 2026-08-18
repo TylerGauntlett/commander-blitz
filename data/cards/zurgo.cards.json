@@ -534,7 +534,7 @@
             {
               "op": "damage",
               "player": {
-                "target": "defender"
+                "binding": "defender"
               },
               "amount": {
                 "const": 1

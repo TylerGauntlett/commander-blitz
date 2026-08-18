@@ -254,14 +254,14 @@ class TestDevourOnACard:
 class TestTheLoaderGuard:
     def test_a_well_formed_as_loads(self):
         _validate_effect(
-            {"op": "reveal", "as": "shown", "objects": {"zone": "hand"}}, "test", set()
+            {"op": "reveal", "as": "shown", "objects": {"zone": "hand"}}, "test", {}
         )
 
     def test_a_non_string_as_is_refused(self):
         """Stringified it would name a binding nothing reads, and count 0."""
         with pytest.raises(DslError, match="'as' must be a non-empty binding name"):
-            _validate_effect({"op": "reveal", "as": 3, "objects": {}}, "test", set())
+            _validate_effect({"op": "reveal", "as": 3, "objects": {}}, "test", {})
 
     def test_an_empty_as_is_refused(self):
         with pytest.raises(DslError, match="'as' must be a non-empty binding name"):
-            _validate_effect({"op": "reveal", "as": "", "objects": {}}, "test", set())
+            _validate_effect({"op": "reveal", "as": "", "objects": {}}, "test", {})

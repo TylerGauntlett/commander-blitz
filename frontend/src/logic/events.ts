@@ -191,6 +191,13 @@ const SILENT = new Set([
   // what keeps it from closing the declaration run in `planCombat`, which would
   // split one swing into two animations.
   "creatures_attacked_player",
+  // The same arrangement one phase later: fired beside the per-creature
+  // `combat_damage_to_player` above -- itself already silent here -- for the
+  // very same hits, so a delayed "whenever one or more creatures you control
+  // deal combat damage to one or more players this turn" can be told the whole
+  // batch at once. `damage_dealt` owns the numeral for each hit; a beat for the
+  // summary would sound the combat a second time.
+  "creatures_dealt_combat_damage",
 ]);
 
 /**

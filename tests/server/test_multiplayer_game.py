@@ -153,6 +153,68 @@ class TestTwoHumans:
             assert players[1 - seat]["hand_count"] >= 1
 
 
+def put_on_battlefield(client: TestClient, game_id: str, seat: int, card_id: str) -> int:
+    """Drop a permanent straight onto ``seat``'s battlefield, mid-session.
+
+    The two top-card statics only ever arrive by playing a creature, and no
+    policy this file can write will reliably draw and cast a particular one. The
+    boundary under test is HTTP, not the cast, so the board is arranged directly
+    and then read back through the endpoint like any other state.
+    """
+    from automtg.engine.enums import Zone
+    from automtg.engine.state import new_object
+
+    session = client.app.state.sessions.get(game_id)
+    with session._lock:
+        obj = new_object(session.game.state, card_id, owner=seat, zone=Zone.BATTLEFIELD)
+        session.game.state.battlefield.append(obj.oid)
+        session.game.state.bump_chars()
+    return obj.oid
+
+
+class TestTopCardVisibility:
+    """The top of a library reaches a seat two ways, and they differ in *who*.
+
+    `reveal_library_top` is Vampire Nocturnus -- the card is public, so it is
+    sent to every seat. `look_at_library_top` is Verge Rangers -- "you may look
+    at the top card of your library any time", which shows the card to nobody
+    else. Serving the private one to an opponent would be the same class of leak
+    as serving them a hand, so it is asserted here, at the HTTP boundary, from
+    the seat that must not see it.
+    """
+
+    def test_the_controller_is_sent_their_own_top_card(self, client):
+        game_id, host, _guest = dealt(client)
+        put_on_battlefield(client, game_id, 0, "verge_rangers")
+        players = state(client, game_id, host)["state"]["players"]
+        assert players[0]["library_top"] is not None
+        assert players[0]["library_top_public"] is False
+
+    def test_the_opponent_is_not(self, client):
+        """The whole reason `look_at_library_top` is not `reveal_library_top`."""
+        game_id, _host, guest = dealt(client)
+        put_on_battlefield(client, game_id, 0, "verge_rangers")
+        players = state(client, game_id, guest)["state"]["players"]
+        assert players[0]["library_top"] is None
+        assert players[0]["library_top_public"] is False
+        assert players[0]["library_count"] >= 1, "…while the count is public as ever"
+
+    def test_a_revealed_top_card_still_reaches_both_seats(self, client):
+        game_id, host, guest = dealt(client)
+        put_on_battlefield(client, game_id, 0, "vampire_nocturnus")
+        for token in (host, guest):
+            players = state(client, game_id, token)["state"]["players"]
+            assert players[0]["library_top"] is not None
+            assert players[0]["library_top_public"] is True
+
+    def test_neither_seat_sees_a_top_card_with_nothing_showing_it(self, client):
+        game_id, host, guest = dealt(client)
+        for token in (host, guest):
+            for player in state(client, game_id, token)["state"]["players"]:
+                assert player["library_top"] is None
+                assert player["library_top_public"] is False
+
+
 class TestEventRedaction:
     """``player_view`` hid the hands; the event log ran alongside it unfiltered.
 

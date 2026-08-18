@@ -100152,12 +100152,12 @@
     },
     "Forth Eorlingas!": {
       "edhrec_rank": 3207,
-      "gate": "template",
+      "gate": null,
       "name": "Forth Eorlingas!",
-      "reason": "no template for: Create X 2/2 red Human Knight creature tokens with trample and haste",
+      "reason": "",
       "scryfall_id": "06c053d3-028e-4961-93a5-5b7bb5a8601c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fortified Area": {
@@ -101882,12 +101882,12 @@
     },
     "Frontline Medic": {
       "edhrec_rank": 3489,
-      "gate": "template",
+      "gate": null,
       "name": "Frontline Medic",
-      "reason": "no template for: Battalion — Whenever this creature and at least two other creatures attack, creatures you ",
+      "reason": "",
       "scryfall_id": "3e9ad9ce-f862-4663-9a36-caf0844eb416",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontline Rebel": {
@@ -166922,12 +166922,12 @@
     },
     "Marshal's Anthem": {
       "edhrec_rank": 4605,
-      "gate": "template",
+      "gate": null,
       "name": "Marshal's Anthem",
-      "reason": "no template for: Multikicker {1}{W}",
+      "reason": "",
       "scryfall_id": "7c84cbf6-cab0-4b53-ab60-470ade5c3654",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marshaling Cry": {
@@ -300812,12 +300812,12 @@
     },
     "Verge Rangers": {
       "edhrec_rank": 5364,
-      "gate": "template",
+      "gate": null,
       "name": "Verge Rangers",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "c63a5253-b3b7-48d0-8c2c-700fbd0e4c3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verity Circle": {

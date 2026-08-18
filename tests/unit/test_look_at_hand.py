@@ -125,10 +125,10 @@ class TestTheEntitlementEndsWithTheObject:
 class TestTheLoaderGuard:
     def test_a_well_formed_effect_loads(self):
         _validate_effect(
-            {"op": "look_at_hand", "player": {"target": "t1"}}, "test", {"t1"}
+            {"op": "look_at_hand", "player": {"target": "t1"}}, "test", {"t1": "player"}
         )
 
     def test_a_missing_player_is_refused(self):
         """Whose hand is the whole ability; defaulting it picks a victim."""
         with pytest.raises(DslError, match="player"):
-            _validate_effect({"op": "look_at_hand"}, "test", set())
+            _validate_effect({"op": "look_at_hand"}, "test", {})

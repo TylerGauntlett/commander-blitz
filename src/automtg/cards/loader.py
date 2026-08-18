@@ -57,6 +57,7 @@ from automtg.engine.structs import (
     BLOCK_PROHIBITION_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
+    DELAYED_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
@@ -99,6 +100,11 @@ STATIC_EFFECTS = frozenset(
         # no permission and moves no card, it makes one card public. Read by
         # `serialize`, and by nothing else.
         "reveal_library_top",
+        # "You may look at the top card of your library any time." The private
+        # counterpart of the line above, and the difference is the whole of it:
+        # revealed is public and goes to every seat, looked-at goes to the one
+        # seat entitled to it. Read by `serialize`, and by nothing else.
+        "look_at_library_top",
         # Parameterised, so it cannot be a keyword: "protection from Wizards"
         # names a quality, and four separate rules (damage, enchant/equip,
         # block, target) ask about it.
@@ -389,10 +395,10 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
-    targets = _compile_targets(model.targets, where)
-    target_ids = {t.id for t in targets}
+    targets = _compile_targets(model.targets, where, on_spell=True)
+    target_kinds = {t.id: t.kind for t in targets}
     for i, effect in enumerate(model.spell_effects):
-        _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
+        _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.counter is not None:
@@ -998,22 +1004,43 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
             return any(walk(v) for v in node)
         return False
 
-    if walk(model.spell_effects):
+    # Targets are searched as well as effects, because a *count* is one of the
+    # places a card reads the game: "return up to X target creature cards, where
+    # X is the number of times this was kicked" spends `additional_paid` in its
+    # target spec and nowhere else, and the multikicker guard below -- "a cost no
+    # effect reads" -- would otherwise refuse the one card the mechanic is for.
+    def targets_of(models: Any) -> list[Any]:
+        return [t.model_dump() for t in models]
+
+    if walk(model.spell_effects) or walk(targets_of(model.targets)):
         return True
     return any(
-        walk(a.effects) or walk(a.trigger.condition if a.trigger else None)
+        walk(a.effects)
+        or walk(targets_of(a.targets))
+        or walk(a.trigger.condition if a.trigger else None)
         for a in model.abilities
     )
 
 
-def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
+def _compile_targets(models, where: str, *, on_spell: bool = False) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
-    At most one spec may be ``count: "any"``, and it must come last.
-    `targeting.filter_legal` splits the stored refs spec by spec, and a
-    variable-size spec in the middle leaves no way to say where its refs end and
-    the next spec's begin -- so the spell would fizzle or keep the wrong targets
-    depending on how many the caster chose, which is a bug no board would show.
+    At most one spec may be variable-size -- ``count: "any"``, "up to X", or a
+    computed count -- and it must come last.  `targeting.filter_legal` splits
+    the stored refs spec by spec, and a variable-size spec in the middle leaves
+    no way to say where its refs end and the next spec's begin -- so the spell
+    would fizzle or keep the wrong targets depending on how many the caster
+    chose, which is a bug no board would show.
+
+    ``on_spell`` marks the card's own `targets`, where a **value expression** is
+    refused: a spell's targets are chosen as it is cast (601.2c), which legality
+    does while enumerating actions -- before the player has chosen X and before
+    any additional cost has been paid.  The evaluator would read a zero (or, on
+    a card cast twice in a game, the *previous* cast's number), and both are a
+    plausible-looking wrong card rather than a crash.  An ability's targets are
+    declared when it goes on the stack, by which time its source permanent is
+    there to be read, which is why this is a restriction on one of the two
+    callers rather than on the form.
     """
     specs = tuple(_compile_target(t, where) for t in models)
     for spec in specs:
@@ -1025,27 +1052,68 @@ def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
                 f"{where}: 'one_per_player' needs 'count': 'any' -- "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
-    variable = [i for i, spec in enumerate(specs) if spec.count == "any"]
+        if on_spell and not isinstance(spec.count, (int, str)):
+            raise DslError(
+                f"{where}.target[{spec.id}]: a computed 'count' only works on an "
+                f"ability's targets -- a spell's are declared while it is being "
+                f"cast (601.2c), before X is chosen and before any additional "
+                f"cost is paid, so the expression would read 0"
+            )
+    variable = [i for i, spec in enumerate(specs) if spec.variable_size]
     if len(variable) > 1:
         raise DslError(
-            f"{where}: only one target may be 'any number of' -- "
+            f"{where}: only one target may be variable-size ('any number of', "
+            f"'up to', or a computed count) -- "
             f"two variable-size specs cannot be told apart once chosen"
         )
     if variable and variable[0] != len(specs) - 1:
         raise DslError(
-            f"{where}: an 'any number of' target must come last, "
+            f"{where}: a variable-size target must come last, "
             f"or the targets after it cannot be identified"
         )
     return specs
 
 
 def _compile_target(model: TargetModel, where: str) -> TargetSpec:
+    """One target spec, and the three ways of saying "or fewer" kept apart.
+
+    ``optional`` is "exactly N, or none"; ``count: "any"`` is "any number of",
+    zero to the whole board; ``up_to`` is "up to N", zero to N.  Each of the
+    refusals below is a card that would otherwise load with two of them
+    overlapping, and read as a printing that does not exist.
+    """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
+    label = f"{where}.target[{model.id}]"
+    if isinstance(model.count, dict):
+        validate_value(model.count, f"{label}.count")
+    if model.up_to:
+        if model.count == "any":
+            raise DslError(
+                f"{label}: 'any number of' has no ceiling to be 'up to' -- drop one"
+            )
+        if model.optional:
+            raise DslError(
+                f"{label}: 'up_to' already includes choosing none, and 'optional' "
+                f"means 'exactly N, or none' -- together they are two answers to "
+                f"the same question"
+            )
+        if isinstance(model.count, int):
+            if model.count < 1:
+                raise DslError(f"{label}: 'up to {model.count}' is no target at all")
+            if model.count == 1:
+                # "Up to one target" is min 0 / max 1, which is precisely what
+                # `optional` already means -- and it is how every shipped card
+                # spells it. Two spellings of one reading is how they drift.
+                raise DslError(
+                    f"{label}: 'up to one target' is 'optional': true -- "
+                    f"'up_to' is for a ceiling above one"
+                )
     return TargetSpec(
         id=model.id,
         kind=model.kind,
         selector=dict(model.selector),
-        count=model.count,
+        count=dict(model.count) if isinstance(model.count, dict) else model.count,
+        up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,
     )
@@ -1076,9 +1144,9 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         return _compile_static(model, index, where)
 
     targets = _compile_targets(model.targets, where)
-    target_ids = {t.id for t in targets}
+    target_kinds = {t.id: t.kind for t in targets}
     for i, effect in enumerate(model.effects):
-        _validate_effect(effect, f"{where}.effects[{i}]", target_ids)
+        _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
 
     cost = _compile_cost(model.cost, where) if model.cost else None
     trigger = None
@@ -1445,6 +1513,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         "play_lands_from_graveyard",
         "play_lands_from_library_top",
         "reveal_library_top",
+        "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
         "freeze_opponent_lands",
@@ -2313,78 +2382,137 @@ def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
     walk(list(effects), where)
 
 
-#: The whole of a delayed trigger's event clause -- see
-#: :class:`~automtg.engine.structs.DelayedEventSpec` for why it is these two keys
-#: and not a ``TriggerSpec``.
-DELAY_EVENT_KEYS = frozenset({"event", "controller"})
+#: Target kinds whose chosen ref can be a **player**, so ``{"target": "t1"}``
+#: means something as a player spec. ``"any"`` is here because "any target" is
+#: creatures, planeswalkers *and* players (115.4) -- a damage op reads the ref
+#: kind and does the right thing with either.
+PLAYER_TARGET_KINDS = frozenset({"player", "any"})
 
-#: Whose event it has to be.  The same three words a printed trigger's
-#: ``controller`` clause takes, compared against the delay's own controller.
-DELAY_EVENT_CONTROLLERS = ("you", "opponent", "any")
+#: Target kinds whose chosen ref always has a **controller**, so
+#: ``{"controller_of_target": "t1"}`` means something. The complement of
+#: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
+#: so: exactly one of the two keys is right for any given target spec, which is
+#: what makes the pair a checkable choice instead of two ways to be wrong.
+CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard"})
 
 
-def _validate_delay_event(effect: Mapping[str, Any], where: str) -> None:
-    """Check the ``event`` clause of an event-keyed ``delay``.
+def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check one *player* spec -- an effect's ``player``, or a side of one.
 
-    "Exile target creature an opponent controls **until an opponent becomes the
-    monarch**" -- Palace Jailer.  Four refusals, and each one is a card that
-    would otherwise load, resolve, and quietly be a different card:
+    Every way of writing this wrong is silent, and one of them was a shipped
+    card doing the opposite of what it printed.
 
-    - **Both spellings at once.**  A delay is keyed on a step or on an event, and
-      an effect carrying both would come due twice: once at the step and once at
-      the event, whichever arrived first, with the other left armed on a list
-      nothing ever clears.
-    - **An unknown event name**, for the reason the step check one branch over
-      gives: it would wait for something that never comes.
-    - **A missing or unknown ``controller``.**  The one place this differs from a
-      printed trigger, whose ``controller`` defaults to ``you`` because that is
-      the implicit subject of an ability's sentence.  A duration clause states
-      whose it is -- "until **an opponent** becomes the monarch" -- and there is
-      no permanent to read an implicit one off, so guessing is not available:
-      ``any`` would end Palace Jailer's exile when its own controller reclaimed
-      the crown, and ``you`` would end it on the wrong player entirely.
-    - **Any other key.**  ``source``, ``filter`` and ``condition`` all read the
-      ability's *source permanent*, and a delayed trigger's source is routinely
-      gone by the time its event happens -- that lifetime is the whole reason
-      this form exists.  Accepting them would give an exile whose end depends on
-      whether the permanent that made it is still alive, which is the exact
-      distinction between this and ``until_leaves``.
+    A misspelled **name** (``"each_oponent"``) raises only once the ability
+    resolves. A **target id the card never declared** resolves to nobody:
+    Hellrider's ``{"target": "defender"}`` named a trigger *binding*, which
+    `select_players` never reads, so the card dealt no damage at all and every
+    board it was on looked like a board where nothing had happened.
+
+    And the case this validator was written for: ``{"target": "t1"}`` pointed at
+    a **spell** target. `ctx.target_players` keeps only refs of kind
+    ``"player"`` and a spell's ref is kind ``"stack"``, so it returns ``[]`` --
+    and `op_may` reads "nobody" as "me" (``chooser = ctx.controller``) and bills
+    the *counterspell's* controller. "Counter target spell unless its controller
+    pays {3}" became "unless **you** pay {3}", which is a legal-looking card
+    that plays as its own opposite. `controller_of_target` is the key that says
+    it, and this refuses the near miss by name rather than letting it load.
     """
-    spec = effect.get("event")
-    if not isinstance(spec, Mapping):
+    if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
         raise DslError(
-            f"{where}.event: a delay's event is an object, "
-            f'e.g. {{"event": "becomes_monarch", "controller": "opponent"}}'
+            f"{where}: unknown player spec {who!r} "
+            f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
         )
-    if "step" in effect:
+    if not isinstance(who, Mapping):
+        return
+    for key in ("target", "controller_of_target"):
+        if key not in who:
+            continue
+        tid = str(who[key])
+        if tid not in target_kinds:
+            raise DslError(
+                f"{where}: references target {tid!r} which the card does not declare"
+            )
+        kind = target_kinds[tid]
+        if key == "target" and kind not in PLAYER_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which is never a player -- "
+                f"use {{'controller_of_target': {tid!r}}} to bill the one who controls it"
+            )
+        if key == "controller_of_target" and kind not in CONTROLLED_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which has no controller -- "
+                f"use {{'target': {tid!r}}} to name the player it chose"
+            )
+
+
+
+#: The clauses an *event-watching* delayed ability may carry (603.7).
+#:
+#: A subset of `TriggerSpec`, and the omissions are the point. Everything left
+#: out is answered off the :class:`GameObject` hosting the ability, and a
+#: delayed ability has none: `source: "self"` and `filter` are read off the
+#: permanent that prints the trigger (`triggers.matches_card_filter` takes it as
+#: `ability_source`), and `max_per_turn` is counted per `(permanent, ability
+#: index)` by `triggers._queue`, which a delayed ability never reaches. Accepting
+#: any of them would load a card whose printed restriction silently does nothing
+#: -- the exact failure `_validate_effect` exists to stop.
+#:
+#: The pure event filters -- `counter`, `nth`, `not_cause`, `mana_ability`,
+#: `defending` -- are left out because no card asks for them here, not because
+#: they could not work. `_delayed_matches` gains a line each when one does.
+DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition"})
+
+
+def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
+    """Check the ``trigger`` half of a ``delayed_trigger`` op.
+
+    A misnamed event here fails in exactly the way `delay`'s misspelled step
+    does -- the subscription is installed, nothing ever satisfies it, and the
+    card reads as printed while doing nothing at all.
+    """
+    trigger = effect.get("trigger")
+    if not isinstance(trigger, Mapping) or not trigger.get("event"):
         raise DslError(
-            f"{where}: a delay is keyed on a 'step' or on an 'event', not both"
+            f"{where}: delayed_trigger needs a 'trigger' naming the event it "
+            f"watches (implemented: {sorted(TRIGGER_EVENTS)})"
         )
-    unknown = sorted(set(spec) - DELAY_EVENT_KEYS)
-    if unknown:
+    event = str(trigger["event"])
+    if event not in TRIGGER_EVENTS:
         raise DslError(
-            f"{where}.event: unknown key(s) {unknown} -- a delayed trigger takes "
-            f"only {sorted(DELAY_EVENT_KEYS)}. 'source', 'filter' and 'condition' "
-            f"ask about a source permanent, and a delay's source is routinely "
-            f"gone by the time its event happens."
-        )
-    name = spec.get("event")
-    if name not in TRIGGER_EVENTS:
-        raise DslError(
-            f"{where}.event.event: unknown trigger event {name!r} "
+            f"{where}: unknown trigger event {event!r} "
             f"(implemented: {sorted(TRIGGER_EVENTS)})"
         )
-    controller = spec.get("controller")
-    if controller not in DELAY_EVENT_CONTROLLERS:
+    unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
+    if unsupported:
         raise DslError(
-            f"{where}.event.controller: a delayed trigger must say whose event it "
-            f"waits for -- one of {list(DELAY_EVENT_CONTROLLERS)}, got "
-            f"{controller!r}. Unlike a printed trigger there is no source "
-            f"permanent to read an implicit 'you' off."
+            f"{where}.trigger: {unsupported[0]!r} is not supported on a delayed "
+            f"trigger -- it is read off the permanent hosting the ability, and a "
+            f"delayed one has none. Supported: {sorted(DELAYED_TRIGGER_KEYS)}"
         )
+    controller = str(trigger.get("controller", "you"))
+    if controller not in ("you", "opponent", "any"):
+        raise DslError(f"{where}.trigger: unknown controller {controller!r}")
+    validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
+    # How long the subscription lasts, and what firing does to it. A misspelled
+    # value would fall through to the `this_turn` default and quietly retime the
+    # card: Palace Jailer's exile would end at cleanup instead of when the crown
+    # moves, which is a materially weaker card that reads identically.
+    duration = str(effect.get("duration", "this_turn"))
+    if duration not in DELAYED_DURATIONS:
+        raise DslError(
+            f"{where}: unknown delayed_trigger duration {duration!r} "
+            f"(implemented: {sorted(DELAYED_DURATIONS)})"
+        )
+    if not effect.get("effects"):
+        raise DslError(f"{where}: delayed_trigger needs 'effects' to schedule")
+    # The same refusal `delay` carries, and for the same reason: 603.7 says the
+    # resolving ability *creates* the delayed one, so what it creates never
+    # chose a target -- `triggers.run_armed_delays` builds its context with
+    # `targets={}` exactly as `turn._run_delayed` does.
+    _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
 
 
-def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
+def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
         raise DslError(f"{where}: effect must be an object")
@@ -2426,16 +2554,24 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 f"(use a separate add_counters)"
             )
 
-    if "target" in effect and str(effect["target"]) not in target_ids:
+    if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
         )
     for key in ("objects", "per", "selector"):
         sub = effect.get(key)
-        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_ids:
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
+    # Every op that names a player spells it `player` and every one of them
+    # feeds `select_players`, so this is checked once here rather than per op --
+    # the way `counter` is. `become_monarch`, `goad` and `cant_attack_player`
+    # each grew their own copy of this check because there was no general one;
+    # they now call the same validator, and the next op to take a player is
+    # covered before it is written.
+    if "player" in effect:
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
 
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same
@@ -2476,25 +2612,6 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                 raise DslError(
                     f"{where}.pay: 'times' multiplies the mana cost, and there is none"
                 )
-    if op == "become_monarch" and "player" in effect:
-        # Who gets the crown is the whole op, and it is the one op whose `player`
-        # can be a *target* -- Éomer's "target player becomes the monarch". Both
-        # halves of that are silent when wrong: a misspelled name raises only
-        # once the ability resolves, and a target id the card never declared
-        # resolves to nobody, so the printed line does nothing at all. The
-        # generic target check above covers `objects`/`per`/`selector` and not
-        # this.
-        who = effect["player"]
-        if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-            raise DslError(
-                f"{where}.player: unknown player spec {who!r} "
-                f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-            )
-        if isinstance(who, Mapping) and "target" in who and str(who["target"]) not in target_ids:
-            raise DslError(
-                f"{where}.player: references target {who['target']!r} "
-                f"which the card does not declare"
-            )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole
         # of the difference between Hinder and a plain tuck, and both ways of
@@ -2600,21 +2717,7 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
                     f"{where}: cant_attack_player needs '{side}' -- "
                     f"the restriction names both players"
                 )
-            who = effect[side]
-            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-                raise DslError(
-                    f"{where}.{side}: unknown player spec {who!r} "
-                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-                )
-            if (
-                isinstance(who, Mapping)
-                and "target" in who
-                and str(who["target"]) not in target_ids
-            ):
-                raise DslError(
-                    f"{where}.{side}: references target {who['target']!r} "
-                    f"which the card does not declare"
-                )
+            _validate_player_spec(effect[side], f"{where}.{side}", target_kinds)
         if "duration" not in effect:
             raise DslError(
                 f"{where}: cant_attack_player needs a 'duration' "
@@ -2646,23 +2749,8 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             )
         # The goader defaults to the effect's controller, which is every printed
         # goad; when a card does spell it out it must be a player the engine can
-        # resolve, checked the way `cant_attack_player`'s two sides are.
-        if "player" in effect:
-            who = effect["player"]
-            if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
-                raise DslError(
-                    f"{where}.player: unknown player spec {who!r} "
-                    f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
-                )
-            if (
-                isinstance(who, Mapping)
-                and "target" in who
-                and str(who["target"]) not in target_ids
-            ):
-                raise DslError(
-                    f"{where}.player: references target {who['target']!r} "
-                    f"which the card does not declare"
-                )
+        # resolve -- which the general `player` check above now does for every
+        # op, goad included.
     if op == "cant_block":
         # Two keys, and every way of getting them wrong loads cleanly and plays
         # a different card.
@@ -3087,20 +3175,19 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")
     if op == "delay":
-        if "event" in effect:
-            _validate_delay_event(effect, where)
-        else:
-            # A misspelled step would schedule something that never comes due -- a
-            # card that reads "at the beginning of the next upkeep, draw a card"
-            # and silently draws nothing, which is what this pass exists to stop.
-            step = str(effect.get("step", "end_step"))
-            if step not in DELAY_STEPS:
-                raise DslError(
-                    f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
-                )
+        # A misspelled step would schedule something that never comes due -- a
+        # card that reads "at the beginning of the next upkeep, draw a card" and
+        # silently draws nothing, which is exactly what this pass exists to stop.
+        step = str(effect.get("step", "end_step"))
+        if step not in DELAY_STEPS:
+            raise DslError(
+                f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
+            )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+    if op == "delayed_trigger":
+        _validate_delayed_trigger(effect, where)
 
     # A grant naming an ability the card does not have is a silent no-op: the
     # index defaults to 0 and every miss lands on the first grantable, or on
@@ -3132,12 +3219,12 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     for key in ("then", "else", "effects"):
         if key in effect:
             for i, sub in enumerate(effect[key] or []):
-                _validate_effect(sub, f"{where}.{key}[{i}]", target_ids)
+                _validate_effect(sub, f"{where}.{key}[{i}]", target_kinds)
     for i, mode in enumerate(effect.get("modes", []) or []):
         if not isinstance(mode, Mapping):
             raise DslError(f"{where}.modes[{i}]: must be an object")
         for j, sub in enumerate(mode.get("effects", []) or []):
-            _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_ids)
+            _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_kinds)
 
 
 def _derive_color_identity(
