@@ -200,6 +200,13 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
     says, and the loose one would quietly re-time the exile onto the extra
     combat the card exists to keep the token out of.
     """
+    if delayed.trigger is not None:
+        # The event-watching half of 603.7 waits for a thing that happens, not
+        # for a moment that arrives, so no step is ever its step. Said out loud
+        # rather than left to `DELAY_STEPS.get("")` returning None, because that
+        # is the sort of correctness that survives until somebody gives the
+        # struct a different default.
+        return False
     if DELAY_STEPS.get(delayed.step) is not state.step:
         return False
     if delayed.combat is not None:
@@ -577,6 +584,19 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # because the sentence is what stops the borrowed creatures being eaten in
     # the second main phase, after the attack it lent them is over.
     clear_sacrifice_restrictions(state, "this_turn")
+    # "Whenever one or more creatures you control deal combat damage to one or
+    # more players **this turn**…" (Forth Eorlingas!, rule 603.7b.) The fifth of
+    # these and owned by no permanent for the same reason: the sorcery that
+    # installed the subscription has been in a graveyard since it resolved, and
+    # there is nothing on the battlefield to walk. It has to be cleared *here*
+    # rather than the first time it fires, because the printed line is "one or
+    # more creatures", not "the first creature" -- a second combat this turn
+    # triggers it again, and only the turn ending stops it.
+    #
+    # The step-scoped delays on the same list are deliberately left alone: "at
+    # the beginning of the next upkeep" is scheduled *across* this boundary and
+    # would be thrown away by a blanket clear.
+    state.delayed_triggers = [d for d in state.delayed_triggers if d.trigger is None]
     # "…dealt damage by this creature THIS TURN". Rule 514.2 wipes damage from
     # permanents here; the ledger that remembers who dealt it goes with it, or
     # a Sengir Vampire would keep growing off a creature it hurt last turn.

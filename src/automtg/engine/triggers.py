@@ -9,7 +9,7 @@ simplification -- real Magic lets the controller choose the order).
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, TriggerSpec
@@ -18,7 +18,7 @@ from .errors import RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .state import MAX_TRIGGERS_PER_STEP
-from .structs import TriggerInstance
+from .structs import DelayedTrigger, TriggerInstance
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -72,6 +72,25 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: laziness: the creatures attacking an opponent need not be the Warmonger
     #: controller's, and in a pod they routinely are not.
     "creatures_attack_player": EventType.CREATURES_ATTACKED_PLAYER,
+    #: "Whenever one or more creatures you control deal combat damage to one or
+    #: more players…" -- Forth Eorlingas!, as a delayed ability installed for the
+    #: rest of the turn. `creatures_attack_player` one phase later: coarser than
+    #: a creature, finer than the game.
+    #:
+    #: `deals_combat_damage_to_player` is the near miss and is per *connection*.
+    #: A card built on it pays once for every creature that got through, so X
+    #: Knights connecting would hand out the monarchy X times over; and the
+    #: printed line says "one or more creatures … one or more players", which is
+    #: one ability whatever the numbers turn out to be. `max_per_turn: 1` on the
+    #: per-creature form is the tempting repair and is wrong one step out:
+    #: `extra_combat` gives a turn two combats, and the printed ability triggers
+    #: in the second one as well.
+    #:
+    #: The subject is a **player** -- the one whose creatures connected -- so it
+    #: is absent from `OBJECT_SUBJECT_TRIGGERS` and `event_player` is the
+    #: damaging seat. That is what makes `controller: "you"` read "creatures
+    #: **you control** deal combat damage".
+    "creatures_deal_combat_damage": EventType.CREATURES_DEALT_COMBAT_DAMAGE,
     #: "Whenever an opponent loses life, you gain that much life." The amount is
     #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
     #: because the reminder text on every card of this shape says so out loud:
@@ -288,6 +307,147 @@ def collect(state: GameState, event: GameEvent) -> None:
             # separate abilities on the stack and anything in between -- another
             # landfall trigger, a response -- goes between them.
             _queue(state, obj, ability, event)
+    _arm_delayed(state, event)
+
+
+def _arm_delayed(state: GameState, event: GameEvent) -> None:
+    """Wake any event-watching delayed ability this event just satisfied (603.7).
+
+    The second half of the walk above, and it is a separate one because the
+    thing being scanned is a different kind of thing: not a permanent with an
+    ability printed on it, but a **subscription with no permanent at all** --
+    "Whenever one or more creatures you control deal combat damage to one or
+    more players this turn, you become the monarch", installed by a sorcery that
+    is in a graveyard by the time it can fire.
+
+    It **arms** rather than resolves. `collect` is reached from inside
+    `damage_player`, four frames below anything that can ask a question, so
+    resolving here would forbid the delayed half from containing a decision --
+    which the step-scoped half has always been allowed. So a copy goes on
+    `state.armed_delays` with the event's payload folded into the captured
+    bindings, and `game._advance` resolves it at the next moment the engine can
+    suspend. `pending_triggers` earns its keep the same way.
+
+    A **copy**, and the subscription stays on `state.delayed_triggers`: the
+    printed duration is the rest of the turn, so a second combat fires it again.
+    That is also why a "fired" flag would be the wrong shape -- the one-per-batch
+    guarantee belongs to the *event*, which is fired once per damage batch, and
+    not to a counter here.
+    """
+    if not state.delayed_triggers:
+        return
+    from dataclasses import replace
+
+    for delayed in list(state.delayed_triggers):
+        spec = delayed.trigger
+        if spec is None:
+            continue
+        if not _delayed_matches(state, delayed, spec, event):
+            continue
+        state.armed_delays.append(
+            replace(delayed, bindings=_delayed_bindings(delayed, spec, event))
+        )
+
+
+def _delayed_matches(
+    state: GameState, delayed: DelayedTrigger, spec: TriggerSpec, event: GameEvent
+) -> bool:
+    """Whether this event is the one a delayed ability is waiting for.
+
+    `_matches` reads every answer off the :class:`GameObject` hosting the
+    ability -- ``obj.controller`` for the ``controller`` clause, ``obj.oid`` for
+    ``source`` and ``filter`` -- and a delayed ability has no such object. Its
+    controller was captured when it was created (603.7: the *resolving ability*
+    creates it, so "you" is the player who resolved the spell, fixed then and
+    not re-read later), and the card the spell came from is sitting in a
+    graveyard where its controller has been reset to its owner.
+
+    So this is the narrow form of the same comparison: the event type, the
+    ``controller`` clause against the captured player, and an intervening-if.
+    The loader refuses every other clause rather than accepting one and reading
+    it off a permanent that is not there -- see `_validate_delayed_trigger`.
+    """
+    expected = TRIGGER_EVENTS.get(spec.event)
+    if expected is None or expected != event.type:
+        return False
+
+    actor = _actor(state, spec.event, event, _subject_oid(spec.event, event))
+    if actor is not None:
+        if spec.controller == "you" and actor != delayed.controller:
+            return False
+        if spec.controller == "opponent" and actor == delayed.controller:
+            return False
+
+    if spec.condition is not None:
+        from .effects.conditions import evaluate_condition
+
+        return evaluate_condition(
+            state,
+            spec.condition,
+            controller=delayed.controller,
+            source=delayed.source_oid,
+            bindings=_delayed_bindings(delayed, spec, event),
+        )
+    return True
+
+
+def _delayed_bindings(
+    delayed: DelayedTrigger, spec: TriggerSpec, event: GameEvent
+) -> dict[str, Any]:
+    """What a fired delayed ability resolves with.
+
+    Two layers, and the order between them is the whole of it. Underneath are
+    the bindings **captured when the delay was created** -- `op_delay`'s
+    long-standing promise, and the reason `x` survives from a spell that has
+    since left the stack. On top is what the *event* carried, because the
+    delayed half is a triggered ability like any other and "those creatures" has
+    to mean the ones that just did the thing.
+
+    `event_bindings` is the sibling for a hosted ability and cannot be shared:
+    it writes ``self`` and ``x`` off the permanent, and here there is no
+    permanent -- reading `x` off one would overwrite the X that was actually
+    paid with a zero.
+    """
+    bindings = dict(delayed.bindings)
+    bindings["event_player"] = event.player
+    bindings["event_type"] = event.type
+    subject = _subject_oid(spec.event, event)
+    if subject is not None:
+        bindings["subject"] = subject
+    for key in EVENT_BINDING_KEYS:
+        if key in event.data:
+            bindings[key] = event.data[key]
+    return bindings
+
+
+def run_armed_delays(state: GameState) -> Generator[Any, list[int], None]:
+    """Resolve every delayed ability whose event has fired.
+
+    Directly rather than on the stack, which is the divergence
+    `turn._run_delayed` records for the step-scoped half and `docs/rules-coverage.md`
+    records for both: a delayed trigger is a real triggered ability and should be
+    respondable. The two halves of 603.7 diverge the same way on purpose --
+    having only one of them go on the stack would be a stranger rule than having
+    neither.
+
+    Drained one at a time, and struck off **before** it runs rather than after,
+    so an ability that arms another one during its own resolution is picked up
+    on the next pass instead of being lost or run twice.
+    """
+    from .effects import execute
+    from .effects.context import EffectContext
+
+    while state.armed_delays:
+        delayed = state.armed_delays.pop(0)
+        ctx = EffectContext(
+            state=state,
+            controller=delayed.controller,
+            source_oid=delayed.source_oid,
+            targets={},
+            bindings=dict(delayed.bindings),
+            source_name=delayed.description,
+        )
+        yield from execute(ctx, list(delayed.effects))
 
 
 def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]:
@@ -679,7 +839,12 @@ def _actor(
     # somebody", and `controller: "any"` is Frontier Warmonger's "whenever one
     # or more creatures attack", whoever is swinging them. Who is being attacked
     # is the separate `defending` clause, and never this one.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player"):
+    # `creatures_deal_combat_damage` is listed for the reason
+    # `creatures_attack_player` is, and it is the whole of "creatures **you
+    # control**": the actor is the player whose creatures connected, which
+    # `_fire_damage_batch` puts on the event because it is the key the batch was
+    # grouped by. Whom they hit is `damaged`, and never this.
+    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
         return event.player
     if dsl_event == "deals_combat_damage_to_player":
         controller = event.data.get("controller")
