@@ -117,7 +117,12 @@ describe("beatsFor", () => {
     // toned per seat, because gaining and losing the crown are one event told
     // two ways.
     const [mine] = beatsFor([event("became_monarch", {}, { player: 0 })], NAMES, undefined, 0);
-    const [theirs] = beatsFor([event("became_monarch", {}, { player: 1 })], NAMES, undefined, 0);
+    const [theirs] = beatsFor(
+      [event("became_monarch", {}, { player: 1 })],
+      NAMES,
+      undefined,
+      0,
+    );
     expect(mine.banner).toEqual({ text: "You are the monarch", tone: "good" });
     expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
   });
@@ -129,10 +134,7 @@ describe("beatsFor", () => {
     // permanent and it is the one the eye should go to -- and worth a beat at all
     // because nothing on the board changes when a chapter triggers: the ability
     // goes on the stack and its tokens arrive a moment later, unannounced.
-    const [beat] = beatsFor(
-      [event("chapter_reached", { chapter: 3 }, { source: 7 })],
-      NAMES,
-    );
+    const [beat] = beatsFor([event("chapter_reached", { chapter: 3 }, { source: 7 })], NAMES);
     expect(beat.float).toEqual({
       anchor: { kind: "object", oid: 7 },
       value: "III",
