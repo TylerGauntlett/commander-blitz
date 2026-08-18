@@ -10,48 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **10** capabilities.
+**5 cards** blocked by **5** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
-| [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
-| [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
 | [delayed-triggered-ability](#delayed-triggered-ability) | 1 | 3207 | op |
 | [exile-until-event](#exile-until-event) | 1 | 4016 | engine |
 | [look-at-library-top](#look-at-library-top) | 1 | 5364 | static_effect |
 | [variable-target-count](#variable-target-count) | 1 | 4605 | selector |
-
-## batch-attack-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A once-per-declaration attack trigger that knows who was attacked: "Whenever one or more creatures attack <player>". It must fire once for each (attack declaration, defending player) pair -- one trigger however many creatures were declared against that player -- accept the existing `defending` clause (`you` | `opponent` | `any`) so "one of your opponents" can be asked, and accept `controller: "any"` for the attacking side, because this card's attackers may be controlled by any player and not only by its controller. Concretely: `combat.declare_attackers` (engine/combat.py:250-260) fires one bare ATTACKERS_DECLARED carrying only `player` and `attackers`; it needs to fire one per distinct value of `combat.attackers` (the oid -> defending-player map already recorded at combat.py:220), each carrying `defender` plus the subset of attackers declared against that defender, and a DSL name for it in TRIGGER_EVENTS (e.g. `creatures_attack_player`). The planeswalker half of the printed line needs no extra work -- `combat.attackers[oid]` is always the defending *player* even when `attacking_planeswalker[oid]` is set -- so `defending: "opponent"` already covers "or a planeswalker they control".
-  <br>Why the existing vocabulary won't do: `you_attack` and `attacks` are the two candidates and each fails on a different half. `you_attack` is the right *shape* (ATTACKERS_DECLARED, once per declaration -- triggers.py:48-52) but carries no `defender`, so a `defending` clause on it never matches at all: `_defender_matches` (triggers.py:417-433) returns False the moment `event.data["defender"]` is absent, and the ability would be inert forever. Dropping the clause is not a fallback, it is a different and actively harmful card: plain `you_attack` with `controller: "any"` also fires when an opponent's creatures attack *me*, handing menace to the creatures I am about to block, which the printed line never does. `attacks` is the other direction -- it carries `defender` and supports `defending: "opponent"` -- but it is the per-creature ATTACKS event, so a three-creature swing fires it three times and each copy can speak about one attacker only. That substitution is the exact one the codebase already rejected in writing: the comment at triggers.py:48-52 records that `you_attack` was added *because* `attacks` "is per creature and would fire three times on a three-creature swing", so implementing a printed "one or more" trigger on `attacks` contradicts the engine's own settled reading. The same missing event is behind a large family of queued cards that cannot even be faked per-creature, because they count or sweep the batch -- "Whenever one or more creatures attack you, you gain 1 life for each attacking creature", "Whenever one or more creatures attack, this enchantment deals damage to each of those creatures", "Whenever one or more creatures you control attack, each defending player divides..." (data/authoring/queue.json:193177, 156947, 211767).
-- **(selector)** A binding naming the creatures that caused the trigger, so "those creatures" is `{"binding": "attackers"}` in the effect's `objects`. The selector machinery for this already exists and is unused here: `resolve_pool` treats `binding` as a pool (effects/selectors.py:161-170) and `_bound_oids` (selectors.py:271-287) already accepts a *list* of oids under one name, the way `blockers` is carried for `becomes_blocked`. What is missing is one line of plumbing -- `attackers` is not in `EVENT_BINDING_KEYS` (triggers.py:402-414), so even though ATTACKERS_DECLARED puts `attackers=sorted(combat.attackers)` on the event, `event_bindings` drops it and no effect can see the set. It must be the per-defender subset described in the need above, not the whole declaration, or a pod attack split across two players would grant menace to creatures attacking me as well.
-  <br>Why the existing vocabulary won't do: `{"zone": "battlefield", "attacking": true}` is the near miss and says something strictly larger than "those creatures". `attacking` is a bare boolean checked as `combat.attacking(oid)` (selectors.py:459-462) with no notion of *whom* the creature is attacking, and `selector_keys` has no defending-player key at all -- so in any game where one declaration is split between me and an opponent it grants menace to the creatures attacking me, and it would also pick up creatures declared in an earlier combat this turn. `{"binding": "subject"}` is the other near miss and is a single oid: `_subject_oid` returns None for `you_attack` (it is absent from OBJECT_SUBJECT_TRIGGERS, triggers.py:99-139) and for `attacks` it is the one attacker, which is the per-creature reading this card does not have. `snapshot` does not help either -- the attackers have not left, they simply cannot be named.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frontier Warmonger** (rank 3131) — `frontier_warmonger`
-  - Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.
-
-</details>
-
-## cant-sacrifice
-
-Blocks **1** card.
-
-- **(op)** A spell/ability effect op that marks a set of permanents as unsacrificeable for the turn, so that any cost or effect that would sacrifice them (a `sacrifice` cost, the `sacrifice` op) cannot choose them -- the restriction that stops a borrowed creature being eaten before control reverts
-  <br>Why the existing vocabulary won't do: Nothing in `ops` or `static_effects` expresses a sacrifice prohibition; there is no `cant_be_sacrificed` anywhere in the engine. `lock_abilities` is the nearest relative -- it is an until-end-of-turn TempEffect that stops a permanent's activated abilities being activated -- but it gates the wrong thing: it cannot stop the `sacrifice` cost of an ability whose source is a *different* permanent (an Altar-style outlet), and it cannot stop the `sacrifice` op or any edict-style effect. `replace_deaths` redirects a permanent's death after the fact rather than making the sacrifice illegal, which is a different game action and lets the creature leave the battlefield anyway. `indestructible` via `grant_keyword` explicitly does not prevent sacrifice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't sacrifice those creatures this turn.
-
-</details>
 
 ## counter-unless-pays
 
@@ -64,20 +31,6 @@ Blocks **1** card.
 
 - **Frontline Medic** (rank 3489) — `frontline_medic`
   - Sacrifice this creature: Counter target spell with {X} in its mana cost unless its controller pays {3}.
-
-</details>
-
-## delayed-object-reference
-
-Blocks **1** card.
-
-- **(op)** A way for `exile` to record which objects it moved under a name -- the `as` binding `sacrifice` and `reveal` already have -- so a later `delay` can return exactly those cards with `{"binding": "exiled"}`. "Return *that card*" from inside a delayed trigger has no expressible subject today.
-  <br>Why the existing vocabulary won't do: `{"target": "t1"}` names the exiled card correctly during the ability's own resolution, but `turn.py`'s delayed-trigger runner builds its EffectContext with `targets={}`, so a `target` selector inside a `delay`'s effects resolves to nothing; `delay` carries only `bindings` and `source_oid`. `exile` writes no binding -- it takes `objects`, `until_leaves` and `playable_this_turn` and nothing else -- so there is no name for the delay to carry. The one reachable substitute, `{"zone": "exile", "exiled_with": "self"}`, requires setting `until_leaves` on an ability that is not an O-Ring effect and is source-scoped rather than resolution-scoped: it accumulates every card Gilraen ever exiled, so a second activation's "you may return that card" would drag back a card declined on an earlier activation. `snapshot` binds a dict of characteristics, not an object a `put_onto_battlefield` can move.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gilraen, Dúnedain Protector** (rank 4643) — `gilraen_dunedain_protector`
-  - If you don't, at the beginning of the next end step, return that card to the battlefield under its owner's control with a vigilance counter and a lifelink counter on it.
 
 </details>
 
