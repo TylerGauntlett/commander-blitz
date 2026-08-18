@@ -101882,12 +101882,12 @@
     },
     "Frontline Medic": {
       "edhrec_rank": 3489,
-      "gate": "template",
+      "gate": null,
       "name": "Frontline Medic",
-      "reason": "no template for: Battalion — Whenever this creature and at least two other creatures attack, creatures you ",
+      "reason": "",
       "scryfall_id": "3e9ad9ce-f862-4663-9a36-caf0844eb416",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontline Rebel": {

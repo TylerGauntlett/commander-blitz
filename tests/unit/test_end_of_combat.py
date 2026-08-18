@@ -199,7 +199,7 @@ class TestTheStepIsReachableAtAll:
         _validate_effect(
             {"op": "delay", "step": "end_of_combat", "effects": [{"op": "noop"}]},
             "test",
-            set(),
+            {},
         )
 
     def test_a_misspelling_is_still_refused(self):
@@ -208,7 +208,7 @@ class TestTheStepIsReachableAtAll:
             _validate_effect(
                 {"op": "delay", "step": "end_combat", "effects": [{"op": "noop"}]},
                 "test",
-                set(),
+                {},
             )
 
     def test_the_four_older_steps_are_untouched(self):

@@ -984,8 +984,41 @@ its mana, and a cost of five that settled for four would be a different card.
 ## Player specs
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
-`{ "target": "t1" }` · `{ "controller_of": "snapshot_name" }` ·
-`{ "owner_of": "snapshot_name" }`
+`{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
+`{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }`
+
+### `target` versus `controller_of_target`
+
+```jsonc
+// Frontline Medic: "Counter target spell with {X} in its mana cost
+//                   unless its controller pays {3}."
+"targets": [ { "id": "t1", "kind": "spell",
+               "selector": { "x_in_mana_cost": true } } ],
+"effects": [ { "op": "may", "player": { "controller_of_target": "t1" },
+               "pay": { "mana": "{3}" },
+               "else": [ { "op": "counter", "target": "t1" } ] } ]
+```
+
+Both read the **target list**; they differ on what the chosen ref *is*.
+`{"target": ...}` keeps only refs that are players, so it is the spelling for
+`kind: "player"` and for the player half of `kind: "any"`. `controller_of_target`
+asks a ref that is an object or a spell who controls it, at the moment the
+effect resolves (608.2 — control of a spell can change while the ability is on
+the stack, and the seat that pays is the one holding it when the bill arrives).
+
+Exactly one of the two is right for any given target spec, and **the loader
+refuses the other** — `loader._validate_player_spec`, checked for every effect
+that takes a `player`. That is not tidiness. Written the wrong way round the
+clause resolves to *nobody*, and `op_may` reads an empty player list as
+`ctx.controller`: "unless its controller pays {3}" silently became "unless
+**you** pay {3}", which is the card's own opposite and raises nothing. The same
+check caught Hellrider naming the trigger binding `defender` as if it were a
+declared target, which made a shipped card deal no damage at all.
+
+| | |
+|---|---|
+| `{"controller_of": "…"}` | Reads `ctx.bindings`, which only a **trigger** or a `snapshot` writes. Rhystic Study's payer arrives that way off `spell_cast` and ward's off `becomes_target`; an activated ability binds nothing for what it was activated at, so this cannot reach a target |
+| `"opponent"` | The tempting approximation and wrong twice over: a targeted spell's controller need not be an opponent, and with two of them `select_players` hands `op_may` a list whose first entry is an arbitrary seat |
 
 ## Conditions
 

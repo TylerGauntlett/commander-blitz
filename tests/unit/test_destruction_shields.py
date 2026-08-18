@@ -246,9 +246,9 @@ class TestIndestructibleStillWins:
 class TestTheLoaderGuard:
     def test_a_well_formed_regenerate_loads(self):
         _validate_effect(
-            {"op": "regenerate", "objects": {"self_only": True}}, "test", set()
+            {"op": "regenerate", "objects": {"self_only": True}}, "test", {}
         )
 
     def test_omitting_objects_is_refused(self):
         with pytest.raises(DslError, match="regenerate needs 'objects'"):
-            _validate_effect({"op": "regenerate"}, "test", set())
+            _validate_effect({"op": "regenerate"}, "test", {})
