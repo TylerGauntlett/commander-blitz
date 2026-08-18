@@ -180,11 +180,11 @@ class TestItCannotEquipItself:
 
 class TestTheGuards:
     def test_a_well_formed_unattach_loads(self):
-        _validate_effect({"op": "unattach", "objects": {"self_only": True}}, "test", set())
+        _validate_effect({"op": "unattach", "objects": {"self_only": True}}, "test", {})
 
     def test_omitting_objects_is_refused(self):
         with pytest.raises(DslError, match="unattach needs 'objects'"):
-            _validate_effect({"op": "unattach"}, "test", set())
+            _validate_effect({"op": "unattach"}, "test", {})
 
     def test_is_attached_takes_a_boolean(self):
         _validate_static_condition({"is_attached": True}, "test")

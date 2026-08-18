@@ -2272,6 +2272,9 @@
   "frontier_warmonger": {
     "zone": "battlefield"
   },
+  "frontline_medic": {
+    "zone": "battlefield"
+  },
   "frost_marsh": {
     "zone": "battlefield"
   },
