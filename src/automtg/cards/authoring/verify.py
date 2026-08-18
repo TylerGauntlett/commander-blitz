@@ -221,12 +221,19 @@ def _answer(game: Game, decision: PendingDecision):
     return actions[0]
 
 
-def find_play(game: Game, card_id: str, *, kicked: bool = False):
+def find_play(game: Game, card_id: str, *, kicked: bool = False, multikicked: bool = False):
     """The action that plays this card, optionally the kicked way.
 
     A kicker card is offered twice, and the two are different cards in every way
     that matters -- so which one is being asked for has to be said out loud
     rather than settled by whichever legality happens to list first.
+
+    ``multikicked`` is the same request for the cost that is paid *any number of
+    times*: legality offers one cast line per number, ascending from the free
+    one, so taking the first match would always be the unkicked spell. It asks
+    for the most the sandbox can pay -- the same "maximum, because zero measures
+    nothing" that `_answer` applies to `CHOOSE_X`, and the same reason
+    `_play_and_check` measures a kicker card kicked.
     """
     matches = []
     for action in game.legal_actions():
@@ -239,6 +246,9 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False):
             matches.append(action)
     if not matches:
         return None
+    if multikicked:
+        # `max` over a stable list, so ties keep legality's order.
+        return max(matches, key=lambda a: a.additional_times)
     # The **front** face, whenever one is offered. A modal DFC is offered twice
     # -- Malakir Rebirth as a cast and Malakir Mire as a land drop -- and the
     # payload under test describes the front: its `oracle_text`, its `mana_cost`
@@ -540,7 +550,19 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
     # covers both halves of the printed text, whereas asserting the cheap mode
     # would let "if this spell was kicked, draw a card" ship doing nothing.
     # Gate 4 still casts it unkicked, so neither line goes unexercised.
-    game, oid, target_oid, before = _cast(registry, card, kicked=card.kicker is not None)
+    #
+    # Multikicker is the same argument for the cost paid any number of times:
+    # "return up to X target creature cards, where X is the number of times this
+    # was kicked" does nothing at all for X = 0, so a gate that measured the free
+    # line would let a card whose entire text is the kicks ship having returned
+    # nothing -- and it would have no way to tell that from the card working.
+    # Gate 4 casts it unkicked, which is where X = 0 gets exercised.
+    game, oid, target_oid, before = _cast(
+        registry,
+        card,
+        kicked=card.kicker is not None,
+        multikicked=card.multikicker is not None,
+    )
     return check_expectation(
         game,
         card.id,
@@ -552,7 +574,7 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
 
 
 def _cast(
-    registry: CardRegistry, card: CardDef, *, kicked: bool = False
+    registry: CardRegistry, card: CardDef, *, kicked: bool = False, multikicked: bool = False
 ) -> tuple[Game, int, int | None, tuple[int, int] | None]:
     """Cast the card in the sandbox and let it finish.
 
@@ -565,7 +587,7 @@ def _cast(
         add_dummy_spell(game, registry)
     game._advance()
 
-    action = find_play(game, card.id, kicked=kicked)
+    action = find_play(game, card.id, kicked=kicked, multikicked=multikicked)
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
         raise AutoMtgError(f"{card.id} is not playable in the sandbox; offered: {offered}")

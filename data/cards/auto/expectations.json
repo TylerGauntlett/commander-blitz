@@ -3919,6 +3919,13 @@
   "marsh_threader": {
     "zone": "battlefield"
   },
+  "marshal_s_anthem": {
+    "battlefield_count": 35,
+    "graveyard_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "mask_of_avacyn": {
     "zone": "battlefield"
   },

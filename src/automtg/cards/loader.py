@@ -389,7 +389,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
-    targets = _compile_targets(model.targets, where)
+    targets = _compile_targets(model.targets, where, on_spell=True)
     target_ids = {t.id for t in targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_ids)
@@ -998,22 +998,43 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
             return any(walk(v) for v in node)
         return False
 
-    if walk(model.spell_effects):
+    # Targets are searched as well as effects, because a *count* is one of the
+    # places a card reads the game: "return up to X target creature cards, where
+    # X is the number of times this was kicked" spends `additional_paid` in its
+    # target spec and nowhere else, and the multikicker guard below -- "a cost no
+    # effect reads" -- would otherwise refuse the one card the mechanic is for.
+    def targets_of(models: Any) -> list[Any]:
+        return [t.model_dump() for t in models]
+
+    if walk(model.spell_effects) or walk(targets_of(model.targets)):
         return True
     return any(
-        walk(a.effects) or walk(a.trigger.condition if a.trigger else None)
+        walk(a.effects)
+        or walk(targets_of(a.targets))
+        or walk(a.trigger.condition if a.trigger else None)
         for a in model.abilities
     )
 
 
-def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
+def _compile_targets(models, where: str, *, on_spell: bool = False) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
-    At most one spec may be ``count: "any"``, and it must come last.
-    `targeting.filter_legal` splits the stored refs spec by spec, and a
-    variable-size spec in the middle leaves no way to say where its refs end and
-    the next spec's begin -- so the spell would fizzle or keep the wrong targets
-    depending on how many the caster chose, which is a bug no board would show.
+    At most one spec may be variable-size -- ``count: "any"``, "up to X", or a
+    computed count -- and it must come last.  `targeting.filter_legal` splits
+    the stored refs spec by spec, and a variable-size spec in the middle leaves
+    no way to say where its refs end and the next spec's begin -- so the spell
+    would fizzle or keep the wrong targets depending on how many the caster
+    chose, which is a bug no board would show.
+
+    ``on_spell`` marks the card's own `targets`, where a **value expression** is
+    refused: a spell's targets are chosen as it is cast (601.2c), which legality
+    does while enumerating actions -- before the player has chosen X and before
+    any additional cost has been paid.  The evaluator would read a zero (or, on
+    a card cast twice in a game, the *previous* cast's number), and both are a
+    plausible-looking wrong card rather than a crash.  An ability's targets are
+    declared when it goes on the stack, by which time its source permanent is
+    there to be read, which is why this is a restriction on one of the two
+    callers rather than on the form.
     """
     specs = tuple(_compile_target(t, where) for t in models)
     for spec in specs:
@@ -1025,27 +1046,68 @@ def _compile_targets(models, where: str) -> tuple[TargetSpec, ...]:
                 f"{where}: 'one_per_player' needs 'count': 'any' -- "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
-    variable = [i for i, spec in enumerate(specs) if spec.count == "any"]
+        if on_spell and not isinstance(spec.count, (int, str)):
+            raise DslError(
+                f"{where}.target[{spec.id}]: a computed 'count' only works on an "
+                f"ability's targets -- a spell's are declared while it is being "
+                f"cast (601.2c), before X is chosen and before any additional "
+                f"cost is paid, so the expression would read 0"
+            )
+    variable = [i for i, spec in enumerate(specs) if spec.variable_size]
     if len(variable) > 1:
         raise DslError(
-            f"{where}: only one target may be 'any number of' -- "
+            f"{where}: only one target may be variable-size ('any number of', "
+            f"'up to', or a computed count) -- "
             f"two variable-size specs cannot be told apart once chosen"
         )
     if variable and variable[0] != len(specs) - 1:
         raise DslError(
-            f"{where}: an 'any number of' target must come last, "
+            f"{where}: a variable-size target must come last, "
             f"or the targets after it cannot be identified"
         )
     return specs
 
 
 def _compile_target(model: TargetModel, where: str) -> TargetSpec:
+    """One target spec, and the three ways of saying "or fewer" kept apart.
+
+    ``optional`` is "exactly N, or none"; ``count: "any"`` is "any number of",
+    zero to the whole board; ``up_to`` is "up to N", zero to N.  Each of the
+    refusals below is a card that would otherwise load with two of them
+    overlapping, and read as a printing that does not exist.
+    """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
+    label = f"{where}.target[{model.id}]"
+    if isinstance(model.count, dict):
+        validate_value(model.count, f"{label}.count")
+    if model.up_to:
+        if model.count == "any":
+            raise DslError(
+                f"{label}: 'any number of' has no ceiling to be 'up to' -- drop one"
+            )
+        if model.optional:
+            raise DslError(
+                f"{label}: 'up_to' already includes choosing none, and 'optional' "
+                f"means 'exactly N, or none' -- together they are two answers to "
+                f"the same question"
+            )
+        if isinstance(model.count, int):
+            if model.count < 1:
+                raise DslError(f"{label}: 'up to {model.count}' is no target at all")
+            if model.count == 1:
+                # "Up to one target" is min 0 / max 1, which is precisely what
+                # `optional` already means -- and it is how every shipped card
+                # spells it. Two spellings of one reading is how they drift.
+                raise DslError(
+                    f"{label}: 'up to one target' is 'optional': true -- "
+                    f"'up_to' is for a ceiling above one"
+                )
     return TargetSpec(
         id=model.id,
         kind=model.kind,
         selector=dict(model.selector),
-        count=model.count,
+        count=dict(model.count) if isinstance(model.count, dict) else model.count,
+        up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,
     )

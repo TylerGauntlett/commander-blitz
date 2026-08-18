@@ -3010,6 +3010,74 @@ not the spec is `optional`.
 slices the stored refs spec by spec, so one of unknown size in the middle leaves
 no way to say where its refs end. Refused at load time.
 
+## "Return up to X target creature cards" — a count the game computes
+
+```jsonc
+// Marshal's Anthem. X is the number of times the enchantment was kicked.
+{"kind": "triggered",
+ "trigger": {"event": "self_enters", "source": "self"},
+ "targets": [{"id": "t1", "kind": "card_in_graveyard",
+              "selector": {"zone": "graveyard", "controller": "you",
+                           "types": ["Creature"]},
+              "count": {"additional_paid": true},
+              "up_to": true}],
+ "effects": [{"op": "put_onto_battlefield", "objects": {"target": "t1"},
+              "controller": "you"}]}
+```
+
+Two independent things, and this card needs both.
+
+**`count` takes a value expression**, evaluated where 601.2c says the number is
+fixed — when the targets are declared. Any `value_keys` leaf works; here it is
+`additional_paid`, which reads `cast_additional` off the source.
+
+**`up_to` makes the count a ceiling.** Every size from zero through it is a legal
+choice, largest first, with the empty tuple always last — the same ordering and
+the same reason as `"any"`.
+
+### Which "or fewer" is which
+
+| spelling | means | printed as |
+|---|---|---|
+| `count: N` | exactly N | "two target creatures" |
+| `count: N, optional: true` | exactly N, or none | "up to one target creature" |
+| `count: "any"` | zero to the whole board | "any number of target creatures" |
+| `count: N or a value, up_to: true` | zero to N | "up to two / up to X target creatures" |
+
+They are kept apart at load time, because each overlapping pair is a card that
+would otherwise read as a printing that does not exist:
+
+- `up_to` with `count: 1` is refused — that *is* `optional`, and it is how every
+  shipped card spells "up to one".
+- `up_to` with `count: "any"` is refused — there is no ceiling to cap.
+- `up_to` with `optional` is refused — "up to X" already includes none, and
+  `optional` says "exactly N or none", so together they are two answers to one
+  question.
+
+The same word `optional` means the same thing one layer down, on an untargeted
+pool (`selectors.pick_from_pool`: `min_count = 0`, `max_count` still N) — "you
+may reveal **a** Human card from among them". That reading is deliberately *not*
+"up to": these two spellings agree, and `up_to` is the third thing neither says.
+
+### Where the number can be read
+
+On an **ability's** targets. A triggered ability declares its targets when it is
+put on the stack (603.3d), by which time the source permanent exists: Marshal's
+Anthem is already on the battlefield, wearing the `cast_additional` that
+`game._cast` wrote and the zone change carried across on the same oid.
+
+**Not on a card's own `targets`**, and the loader refuses it. A spell's targets
+are declared at 601.2c, while `legality` is still enumerating cast lines — before
+X has been chosen and before any additional cost has been paid. The expression
+would read 0, or on a card cast twice in a game the *previous* cast's number.
+Comet Storm ("for each time this spell was kicked, it deals X damage to another
+target") is the card that wants it and cannot have it yet; it would need
+legality to enumerate its target tuples once per payment count.
+
+A variable-size spec is any of `"any"`, `up_to`, or a computed count, and the
+"at most one, and it comes last" rule above covers all three for the same
+`filter_legal` reason.
+
 ## "Target creature phases out"
 
 ```jsonc
