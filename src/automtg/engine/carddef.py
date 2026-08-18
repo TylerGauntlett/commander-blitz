@@ -561,6 +561,12 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: **Multikicker {1}{W}** (702.32b). Nothing in the engine reads this: the
+    #: loader has already desugared it into the three fields above, which is the
+    #: whole mechanic. What it records is the *name* the card declared the cost
+    #: under, so the residual gate can say which printed line the cost claims and
+    #: check that the symbols on that line are the ones actually charged.
+    multikicker: ManaCost | None = None
     #: "Evoke {2}{U}" -- an alternative cost that *replaces* the printed one.
     #: Subtractive where ``kicker`` is additive, and like it kept out of
     #: ``mana_cost`` so mana value stays what is printed: an evoked
