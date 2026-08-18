@@ -476,6 +476,19 @@ export function describeEvent(
       return amount === null ? null : `${who} ${v("lose", "loses")} ${amount} life`;
     case "attackers_declared":
       return `${who} ${v("attack", "attacks")}`;
+    /*
+     * Deliberately silent, and listed rather than left to the fallthrough so
+     * the decision is visible where the next person looks for it.
+     *
+     * `creatures_attacked_player` is fired *beside* `attackers_declared` for the
+     * same declaration -- one per defending seat, so that "whenever one or more
+     * creatures attack one of your opponents" can be told which seat. The line
+     * above already narrates the declaration, and narrating both would read
+     * "You attack" followed by "You attack Bob", once per opponent swung at.
+     * The arrows on the board say who is being attacked, and say it better.
+     */
+    case "creatures_attacked_player":
+      return null;
     case "blockers_declared":
       return "Blockers declared";
     // Payment used to be entirely silent, then was narrated by a second switch

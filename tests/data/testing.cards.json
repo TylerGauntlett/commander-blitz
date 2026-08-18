@@ -10637,6 +10637,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_warmonger",
+      "name": "Test Warmonger",
+      "oracle_text": "Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "objects": {
+                "binding": "attackers"
+              },
+              "keywords": [
+                "menace"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_attacked_watcher",
+      "name": "Test Attacked Watcher",
+      "oracle_text": "Whenever one or more creatures attack you, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures attack you, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
