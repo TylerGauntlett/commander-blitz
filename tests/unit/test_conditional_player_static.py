@@ -4,10 +4,10 @@ Rule 604.3: a static ability with a condition is a continuous effect that exists
 whenever the condition is met and stops existing the instant it is not. That is
 already pinned for the statics the characteristics pipeline reads --
 `test_static_condition.py` is where Nimble Mongoose lives. This file pins it for
-the other eight, the ones that take `affects_player` and describe the player:
+the other nine, the ones that take `affects_player` and describe the player:
 `no_hand_limit`, `extra_land_drops`, `play_lands_from_graveyard`,
-`play_lands_from_library_top`, `reveal_library_top`, `double_land_triggers`,
-`double_land_mana` and `freeze_opponent_lands`.
+`play_lands_from_library_top`, `reveal_library_top`, `look_at_library_top`,
+`double_land_triggers`, `double_land_mana` and `freeze_opponent_lands`.
 
 **This was a silent over-grant, not a missing feature.** The loader validated a
 `condition` on any static and stored it on the ability. But `_static_active` had
@@ -23,16 +23,21 @@ this file exists for, and why every claim here is asserted in both directions.
 **Verge Rangers is the witness** -- "As long as an opponent controls more lands
 than you, you may play lands from the top of your library." Written before the
 gate existed it would have been Oracle of Mul Daya's unconditional permission
-stapled to a 3/2 first striker, switched on while you are the one ahead. No
+stapled to a 3/3 first striker, switched on while you are the one ahead. No
 shipped card carried a condition on a player-wide static when the gate landed,
 so nothing was playing wrong; `TestTheUngatedStaticsAreUntouched` is the guard
 that keeps the fourteen that carry none reading exactly as they did.
 
+It is now the witness in the other sense too: `look_at_library_top` closed its
+last blocker, so Verge Rangers **ships**, and it is the first card in the pool to
+carry a gated player-wide static. The pool-wide "nobody gates one" assertion has
+been retired in its favour, as its own docstring said to do.
+
 `t_verge_scout` and `t_conditional_ramp` carry the Verge Rangers clause, which
-reaches through the board. `t_all_player_statics` carries all eight gated on
+reaches through the board. `t_all_player_statics` carries all nine gated on
 `is_your_turn`, so :class:`TestEveryPlayerWideStatic` can walk every reader --
 one per effect -- rather than trusting that a fix to two of them reached the
-other six.
+other seven.
 """
 
 from __future__ import annotations
@@ -43,6 +48,7 @@ from automtg.engine.characteristics import (
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,
+    player_looks_at_library_top,
     player_plays_lands_from_graveyard,
     player_plays_lands_from_library_top,
     player_reveals_library_top,
@@ -239,6 +245,7 @@ READERS = [
         lambda state: player_plays_lands_from_library_top(state, 0),
     ),
     ("reveal_library_top", lambda state: player_reveals_library_top(state, 0)),
+    ("look_at_library_top", lambda state: player_looks_at_library_top(state, 0)),
     ("double_land_triggers", lambda state: 0 in players_doubling_land_triggers(state)),
     ("double_land_mana", lambda state: player_doubles_land_mana(state, 0)),
     ("freeze_opponent_lands", lambda state: 0 in players_freezing_opponent_lands(state)),
@@ -246,7 +253,7 @@ READERS = [
 
 
 class TestEveryPlayerWideStatic:
-    """All eight, gated on `is_your_turn`, read through their own readers.
+    """All nine, gated on `is_your_turn`, read through their own readers.
 
     Two of them (`freeze_opponent_lands`, `double_land_triggers`) are asked as a
     *set of players* rather than per player, and they were separate walks -- so
@@ -283,7 +290,12 @@ class TestEveryPlayerWideStatic:
 
 
 class TestSerializationFollowsTheGate:
-    """`reveal_library_top` changes no rule -- it decides what the seats see."""
+    """`reveal_library_top` changes no rule -- it decides what the seats see.
+
+    Its private twin `look_at_library_top` is gated through the same walk and
+    tested for its own sake in `test_look_at_library_top.py`; what is asserted
+    here is the *public* one, from the seat that must stop seeing it.
+    """
 
     def library_top_visible(self, game) -> bool:
         from automtg.engine.serialize import player_view
@@ -321,6 +333,12 @@ class TestTheUngatedStaticsAreUntouched:
     say so: a static with no `condition` is unconditionally on, exactly as
     before, and `_static_active` returns True for it without evaluating
     anything.
+
+    That was true when the gate landed and is no longer -- Verge Rangers ships
+    with one now, which is the door being used rather than painted on. The
+    fourteen that carry none still have to read exactly as they did, which is
+    what the first three assertions are for; the pool-wide claim has been
+    replaced by its successor below.
     """
 
     def test_oracle_of_mul_daya_still_plays_off_the_top(self, builder):
@@ -340,14 +358,23 @@ class TestTheUngatedStaticsAreUntouched:
         )
         assert player_has_no_hand_limit(game.state, 0)
 
-    def test_no_shipped_card_gates_a_player_wide_static(self, real_registry):
-        """The claim behind "nothing was playing wrong", asserted on the pool.
+    def test_the_gate_is_now_actually_used_by_a_shipped_card(self, real_registry):
+        """The successor to `test_no_shipped_card_gates_a_player_wide_static`.
 
-        If this ever fails, a card has been authored with a gated player-wide
-        static -- which is now correct behaviour rather than a silent
-        over-grant, and this test should be retired with a note naming the card.
+        That test asserted `gated == []` over the real pool, which was the claim
+        behind "nothing was playing wrong": the gate opened a door that had been
+        painted on, and no shipped card had walked through it. Its docstring
+        said to retire it naming the card that eventually did, and the card is
+        **Verge Rangers** -- authored once `look_at_library_top` closed its last
+        blocker, carrying "as long as an opponent controls more lands than you,
+        you may play lands from the top of your library".
+
+        Kept rather than deleted, because the useful half survives: a gated
+        player-wide static in the pool is only correct if something reads the
+        gate, and the way that stops being true is the door being painted on
+        again.
         """
-        gated = [
+        gated = {
             (card.id, ability.static["effect"])
             for card in real_registry
             for ability in card.abilities
@@ -355,8 +382,25 @@ class TestTheUngatedStaticsAreUntouched:
             and ability.static
             and ability.static.get("affects_player") is not None
             and ability.static.get("condition") is not None
-        ]
-        assert gated == []
+        }
+        assert ("verge_rangers", "play_lands_from_library_top") in gated
+
+    def test_the_shipped_gated_static_is_asked_rather_than_assumed(self, builder):
+        """Verge Rangers' own clause, through the real card and both ways.
+
+        `t_verge_scout` carries the same condition, but a test-pool card cannot
+        say the *shipped* one was authored with it intact -- and the failure this
+        guards against (a permission that is simply always on) looks exactly like
+        a working card from the granted side alone.
+        """
+        behind = table(builder, "verge_rangers", 2, 5, hand=[PLAINS])
+        assert player_plays_lands_from_library_top(behind.state, 0)
+        assert top_offered(behind)
+
+        ahead = table(builder, "verge_rangers", 5, 2, hand=[PLAINS])
+        assert not player_plays_lands_from_library_top(ahead.state, 0)
+        assert not top_offered(ahead)
+        assert hand_land_offered(ahead), "…while the ordinary land drop is untouched"
 
 
 class TestTheTwoHalvesCannotDrift:

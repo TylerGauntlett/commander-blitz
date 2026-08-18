@@ -7150,6 +7150,15 @@
     },
     "zone": "battlefield"
   },
+  "verge_rangers": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "vernadi_shieldmate": {
     "zone": "battlefield"
   },
