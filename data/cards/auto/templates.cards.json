@@ -25097,6 +25097,47 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "forth_eorlingas",
+      "mana_cost": "{X}{R}{W}",
+      "name": "Forth Eorlingas!",
+      "oracle_text": "Create X 2/2 red Human Knight creature tokens with trample and haste.\nWhenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "human_knight_2_2_r_trample_haste"
+        },
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players this turn, you become the monarch.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [

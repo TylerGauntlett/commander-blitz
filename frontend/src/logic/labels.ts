@@ -489,6 +489,18 @@ export function describeEvent(
      */
     case "creatures_attacked_player":
       return null;
+    /*
+     * Silent for the same reason, one phase later.
+     *
+     * `creatures_dealt_combat_damage` is fired *beside* the per-creature
+     * `combat_damage_to_player` for the very same hits -- once for the batch,
+     * so that "whenever one or more creatures you control deal combat damage to
+     * one or more players" can be told the whole of it. Every point of that
+     * damage is already narrated as a life loss, and a line here would add a
+     * summary of the three lines above it.
+     */
+    case "creatures_dealt_combat_damage":
+      return null;
     case "blockers_declared":
       return "Blockers declared";
     // Payment used to be entirely silent, then was narrated by a second switch

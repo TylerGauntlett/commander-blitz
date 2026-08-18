@@ -1,3 +1,175 @@
+## `delayed_triggered_ability` — 603.7's other half, and the batch it has to watch
+
+### Overview
+
+Forth Eorlingas!: *"Create X 2/2 red Human Knight creature tokens with trample and
+haste. Whenever one or more creatures you control deal combat damage to one or
+more players this turn, you become the monarch."*
+
+The first line was already a single `create_token` with `amount: {"x": true}`,
+once `token_pool` registered `human_knight_2_2_r_trample_haste`, and `monarch`
+had already shipped `become_monarch`. The second line was two capabilities
+neither of them touched: a delayed ability keyed on an **event** rather than a
+step, and a combat-damage event that fires **once for the batch**.
+
+The card is now playable and was the last blocker on it. Writing only the token
+half would have been a card that makes twenty Knights and never gives the
+monarchy to anybody, which the residual gate rejects and a player could not tell
+from the real thing until the crown failed to move.
+
+### Tier: A and D
+
+A new op (`delayed_trigger`) and a new `EventType`. No continuous effect, no
+decision kind, no API field — the delayed ability's payload is ordinary DSL and
+the state it lives in is serialized generically.
+
+Tier D is the half that forces frontend work, and both files got a deliberate
+entry rather than the `default` fallthrough. See "The frontend" below.
+
+### Why the sentence cannot be a triggered ability on the card
+
+Because the card is a **Sorcery**. It is in a graveyard before the first creature
+swings, so an ability printed on it would be watching from there: with the
+default `active_zones` it never fires at all, and with `["graveyard"]` it fires
+for the rest of the game. Neither is "this turn", and the difference between them
+is the whole card.
+
+`delay` is the op that exists for effects with no permanent to hang on, and it
+could not say this either. Its only timing knob is a step name checked against
+`turn.DELAY_STEPS` — five names, five moments — so it can say "at the beginning
+of the next end step" and cannot say "whenever a creature connects".
+
+`combat_damage_by` in `condition_keys` reads the turn ledger *backwards* (prowl:
+"was a player dealt combat damage this turn by a Faerie"). It can be asked at
+cast time and cannot make anything happen later, and this card's whole point is
+that the damage comes after the sorcery has resolved.
+
+### Where the three pieces went
+
+**Storage: `state.delayed_triggers`**, the list `delay` already writes to, as a
+`DelayedTrigger` carrying a `trigger` spec instead of a `step`. The same struct
+because everything else about the two halves of 603.7 is identical — bindings
+captured when it is created, controller captured with them, no source object when
+it fires. The controller matters more here than it ever did for `delay`: "you"
+cannot be read back off a card sitting in a graveyard, where
+`reset_permanent_state` has been through it. `turn._delay_due` refuses an
+event-watching entry explicitly rather than relying on `DELAY_STEPS.get("")`
+returning `None`.
+
+**Dispatch: `triggers.collect`**, the one funnel every fired event goes through,
+in a second walk beside the one over permanents. It **arms** rather than
+resolves, and that is the design decision worth the words: `collect` is reached
+from inside `damage_player`, several frames below anything that can suspend, so
+resolving there would forbid a delayed payload from ever asking a question —
+which the step-scoped half has always been allowed to do. So a copy of the
+subscription, with the event's payload folded into the captured bindings, goes on
+`state.armed_delays`, and `game._advance` resolves it at the next safe moment.
+That is exactly the arrangement `pending_triggers` has had since triggers
+existed, and it is why the new branch in `_advance` sits immediately above the
+drain: both halves of 603.7 resolve off the stack, so the delayed half of an
+event runs before the ordinary triggers of that same event are put on it.
+
+A **copy**, not the subscription itself. The subscription stays armed for the
+rest of the turn, because the printed line is "one or more creatures" and a
+second combat fires it again.
+
+**Clear-down: `turn._cleanup_step`**, beside `clear_attack_restrictions`,
+`clear_block_prohibitions`, `clear_unblockables`, `clear_damage_shields` and
+`clear_sacrifice_restrictions` — the five other "this turn" clauses owned by no
+permanent, for exactly the same reason this one is: the sorcery that said it has
+been in a graveyard since it resolved and `clear_until_eot`'s walk of the
+battlefield has nothing to find. Keyed on the *kind* of delay rather than
+emptying the list, because "at the beginning of the next upkeep" is scheduled
+**across** this boundary and a blanket clear would throw Arcane Denial's draw
+away.
+
+Not "after it fires once". A per-firing expiry and a `max_per_turn` cap are the
+same mistake: `extra_combat` gives a turn a second combat, and the printed
+ability triggers in it.
+
+### Once per damage batch, not once per creature
+
+`EventType.CREATURES_DEALT_COMBAT_DAMAGE`, fired by `combat.deal_combat_damage`
+once per damage step per **damaging player**, carrying `damagers` and `damaged`.
+
+`deals_combat_damage_to_player` is the near miss and is per *connection*. Twenty
+Knights getting through fire it twenty times, so a card built on it hands out the
+monarchy twenty times over — which is not merely noisy, since each firing is a
+fresh `become_monarch` and every one of them is an event other cards listen to.
+`max_per_turn: 1` on top of it survives that and fails one step out, in the extra
+combat.
+
+Read off the same `assignments` list `_monarch_transfer` reads, immediately after
+it, and for the same reason: rule 510.2 makes combat damage simultaneous and
+`deal_combat_damage` collects every assignment before applying any, so the batch
+is knowable there and nowhere else. `damage_player` sees the hits one at a time
+and cannot tell the first of a batch from the third.
+
+Per damaging **player** rather than per (player, defender) pair, which is where
+this stops being the shape `creatures_attack_player` has one phase earlier. That
+event is per defending seat because its printed clause is "one of your
+opponents"; this one says "to one or more **players**", so a seat whose creatures
+connect with two opponents in one step gets one event with both seats on
+`damaged`. Grouping by the damaging player is also what gives `controller: "you"`
+an actor to compare against — fired once for the whole step there would be none.
+
+Creatures by **derived** type, and damage to players only: an animated Equipment
+that got through is a creature, and damage to a blocker or a planeswalker is
+combat damage that is not this.
+
+Two batches per turn's combat, not one: first strike and regular damage are
+separate steps (510.4) and a double-striker that connects in both triggers twice,
+which is what the per-creature event has always done.
+
+### Where it is refused
+
+`trigger` takes `event`, `controller` and `condition` and nothing else.
+
+The omissions are not laziness in two different ways. `source: "self"`, `filter`
+and `max_per_turn` are all answered off the `GameObject` hosting the ability —
+`matches_card_filter` takes it as `ability_source`, and `_queue` counts the cap
+per `(permanent, ability index)` — and a delayed ability has no such object.
+Accepting any of them would load a card whose printed restriction silently does
+nothing, which is the precise failure `_validate_effect` exists to stop. The pure
+event filters (`counter`, `nth`, `not_cause`, `mana_ability`, `defending`) are
+left out because no card asks for them here; `_delayed_matches` gains a line each
+when one does.
+
+An unknown `trigger.event` is a load error, for the reason a misspelled `delay`
+step is: the subscription installs, nothing ever satisfies it, and the card reads
+as printed while doing nothing at all.
+
+`{"target": …}` inside the payload is a load error, sharing
+`_refuse_targets_inside_a_delay` with `delay` — 603.7 says the *resolving ability*
+creates the delayed one, so what it creates never chose a target, and
+`run_armed_delays` builds its context with `targets={}` exactly as
+`turn._run_delayed` does.
+
+### The frontend
+
+Deliberately silent in both `labels.ts` and `events.ts`, listed in both rather
+than left to their `default` fallthroughs so the decision is visible where the
+next person looks for it. The batch accompanies hits that are already narrated
+one by one as life losses and already animated by `damage_dealt`; a line and a
+beat for the summary would sound the combat a second time. It is the same
+arrangement `creatures_attacked_player` got one phase earlier, and
+`combat_damage_to_player` — the event this one batches — has been in `SILENT`
+since that set existed.
+
+### What it unblocks
+
+Forth Eorlingas!, which was waiting on this and on `monarch`, and is now
+authored: `{X}{R}{W}`, twenty Knights in the verifier's sandbox (X is capped at
+`mana.max_affordable_x`'s 20, not by the thirty lands), and the crown installed
+for the rest of the turn.
+
+The verifier **declines combat**, so the delayed half cannot be demonstrated
+there — the expectation is honest about that and asserts the token half plus the
+graveyard. What proves the second line is `tests/unit/test_delayed_triggered_ability.py`,
+which swings in a three-player position and checks the crown moves, that it moves
+once for three attackers, once for two defending seats, again in an extra combat,
+and not at all the next turn.
+
 ## `x_in_mana_cost` — a symbol, not a number, and the selector nobody was reading
 
 ### Overview

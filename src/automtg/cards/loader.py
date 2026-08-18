@@ -2313,6 +2313,62 @@ def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
     walk(list(effects), where)
 
 
+#: The clauses an *event-watching* delayed ability may carry (603.7).
+#:
+#: A subset of `TriggerSpec`, and the omissions are the point. Everything left
+#: out is answered off the :class:`GameObject` hosting the ability, and a
+#: delayed ability has none: `source: "self"` and `filter` are read off the
+#: permanent that prints the trigger (`triggers.matches_card_filter` takes it as
+#: `ability_source`), and `max_per_turn` is counted per `(permanent, ability
+#: index)` by `triggers._queue`, which a delayed ability never reaches. Accepting
+#: any of them would load a card whose printed restriction silently does nothing
+#: -- the exact failure `_validate_effect` exists to stop.
+#:
+#: The pure event filters -- `counter`, `nth`, `not_cause`, `mana_ability`,
+#: `defending` -- are left out because no card asks for them here, not because
+#: they could not work. `_delayed_matches` gains a line each when one does.
+DELAYED_TRIGGER_KEYS = frozenset({"event", "controller", "condition"})
+
+
+def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
+    """Check the ``trigger`` half of a ``delayed_trigger`` op.
+
+    A misnamed event here fails in exactly the way `delay`'s misspelled step
+    does -- the subscription is installed, nothing ever satisfies it, and the
+    card reads as printed while doing nothing at all.
+    """
+    trigger = effect.get("trigger")
+    if not isinstance(trigger, Mapping) or not trigger.get("event"):
+        raise DslError(
+            f"{where}: delayed_trigger needs a 'trigger' naming the event it "
+            f"watches (implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    event = str(trigger["event"])
+    if event not in TRIGGER_EVENTS:
+        raise DslError(
+            f"{where}: unknown trigger event {event!r} "
+            f"(implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
+    if unsupported:
+        raise DslError(
+            f"{where}.trigger: {unsupported[0]!r} is not supported on a delayed "
+            f"trigger -- it is read off the permanent hosting the ability, and a "
+            f"delayed one has none. Supported: {sorted(DELAYED_TRIGGER_KEYS)}"
+        )
+    controller = str(trigger.get("controller", "you"))
+    if controller not in ("you", "opponent", "any"):
+        raise DslError(f"{where}.trigger: unknown controller {controller!r}")
+    validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
+    if not effect.get("effects"):
+        raise DslError(f"{where}: delayed_trigger needs 'effects' to schedule")
+    # The same refusal `delay` carries, and for the same reason: 603.7 says the
+    # resolving ability *creates* the delayed one, so what it creates never
+    # chose a target -- `triggers.run_armed_delays` builds its context with
+    # `targets={}` exactly as `turn._run_delayed` does.
+    _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+
+
 def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -3027,6 +3083,8 @@ def _validate_effect(effect: Any, where: str, target_ids: set[str]) -> None:
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+    if op == "delayed_trigger":
+        _validate_delayed_trigger(effect, where)
 
     # A grant naming an ability the card does not have is a silent no-op: the
     # index defaults to 0 and every miss lands on the first grantable, or on

@@ -2230,6 +2230,14 @@
   "forsaken_sanctuary": {
     "zone": "battlefield"
   },
+  "forth_eorlingas": {
+    "battlefield_count": 52,
+    "tokens": {
+      "count": 20,
+      "id": "human_knight_2_2_r_trample_haste"
+    },
+    "zone": "graveyard"
+  },
   "fortified_rampart": {
     "zone": "battlefield"
   },
