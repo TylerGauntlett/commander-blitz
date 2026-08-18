@@ -103,6 +103,23 @@ SELECTOR_KEYS = frozenset(
         "power",
         "toughness",
         "mana_value",
+        #: "Counter target spell **with {X} in its mana cost**" -- Frontline
+        #: Medic, Ertai's Meddling, Sunder Shaman. A question about the mana
+        #: *symbols* printed on the face being cast, not about any number:
+        #: `ManaCost.x_count`, which the parser has always counted and nothing
+        #: had ever read back.
+        #:
+        #: `mana_value` is the only other cost reader here and it cannot say it
+        #: in either direction. `ManaCost.mana_value` scores X as 0 (202.3b
+        #: "X is considered to be 0" off the stack), so Fireball `{X}{R}` and
+        #: Shock `{R}` are both mana value 1 and one comparison catches both or
+        #: neither. Nor would a 202.3b-correct mana value on the stack fix it:
+        #: a Fireball announced for X=0 still *has* {X} in its mana cost, and is
+        #: still a legal target, while its mana value is Shock's exactly.
+        #: `mana_symbols` is a value rather than a selector key and its `of`
+        #: is restricted to W/U/B/R/G, so it cannot filter a pool and has no
+        #: spelling for X.
+        "x_in_mana_cost",
         "exclude_self",
         #: "each **other** attacking creature" -- exclude whichever object a
         #: trigger bound under this name.  `exclude_self` cannot do it: it
@@ -606,6 +623,17 @@ def matches(
         card.mana_value, spec, ctx
     ):
         return False
+    # "…with {X} in its mana cost". Read off the **printed** cost of the face
+    # being cast -- `card` is already `card_of`, so a split half or an adventure
+    # answers for the half on the stack -- and never off the announced value.
+    # Rule 107.3: the {X} in a mana cost is a mana symbol, and choosing 0 for it
+    # (601.2b) does not remove the symbol from the cost. A Fireball cast for X=0
+    # is still "a spell with {X} in its mana cost"; `StackItem.x` is the number,
+    # and the number is not the question.
+    if (want := selector.get("x_in_mana_cost")) is not None and (
+        card.mana_cost.x_count > 0
+    ) is not bool(want):
+        return False
 
     return True
 
@@ -814,6 +842,20 @@ def validate_selector(selector: Any, where: str) -> None:
                 f"{where}: 'player' scopes a zone somebody owns; the {zone_name} "
                 f"is shared -- use 'controller' to filter it"
             )
+    # A predicate, not a comparison -- and it sits next to `mana_value`, which
+    # *is* one, so the wrong spelling is the natural one to reach for. Every
+    # non-bool would be read through `bool()` and pass silently:
+    # `{"op": ">=", "value": 1}` is a truthy dict and would mean `true` by
+    # accident, and `0`/`""` would quietly become `false`. A card that asks for
+    # "two or more X symbols" is not a printing, so there is nothing to widen
+    # this into; there is only a spelling to refuse.
+    if "x_in_mana_cost" in selector and not isinstance(
+        selector["x_in_mana_cost"], bool
+    ):
+        raise DslError(
+            f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
+            f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
+        )
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):
         raise DslError(f"{where}: unknown count {count!r}; use 'all', 'any' or a value")

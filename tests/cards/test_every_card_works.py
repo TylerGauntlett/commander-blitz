@@ -84,11 +84,19 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     return builder.build(advance=False)
 
 
+#: One spell of each broad shape, because a `kind: "spell"` target spec filters
+#: with the full selector language: a lone creature spell makes "counter target
+#: **noncreature** spell" unplayable here and fails Negate at gate 4. Both target
+#: nothing of their own, since the sandbox may let whichever survives resolve.
+DUMMY_SPELLS = ("t_bear", "t_plain_instant")
+
+
 def add_dummy_spell(game: Game) -> None:
-    """Put a spell on the stack so counterspells have something to target."""
-    obj = new_object(game.state, "t_bear", owner=1, zone=Zone.HAND)
-    game.state.players[1].hand.append(obj.oid)
-    push_spell(game.state, obj.oid, 1)
+    """Put spells on the stack so counterspells have something to target."""
+    for card_id in DUMMY_SPELLS:
+        obj = new_object(game.state, card_id, owner=1, zone=Zone.HAND)
+        game.state.players[1].hand.append(obj.oid)
+        push_spell(game.state, obj.oid, 1)
 
 
 def drive(game: Game, limit: int = 60) -> None:

@@ -61,6 +61,11 @@ _ROLES: dict[str, Any] = {
     "flier": lambda c: c.is_creature and not c.is_token and "flying" in c.keywords,
     "artifact": lambda c: "Artifact" in c.types and not c.is_token and not c.is_land,
     "enchantment": lambda c: "Enchantment" in c.types and not c.is_token,
+    #: Something for "counter target **noncreature** spell" to point at. Targets
+    #: none of its own, because the sandbox may let it resolve: a dummy that
+    #: wants a target it was never given is an error inside the harness rather
+    #: than a verdict about the card.
+    "noncreature_spell": lambda c: (c.is_instant or c.is_sorcery) and not c.targets,
 }
 
 #: Which roles each zone gets.  The opponent's board carries one of each broad
@@ -129,18 +134,25 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
 
 
 def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
-    """Put a spell on the stack so a counterspell has something to target.
+    """Put spells on the stack so a counterspell has something to target.
 
     Picked from the pool by role, like the board props: naming a test-only card
     here tied the authoring pipeline to fixtures that are not shipped, and every
     counterspell then failed with "unknown card id".
+
+    **One of each broad shape**, for the same reason the opponent's board carries
+    one of each type: a `kind: "spell"` target spec filters with the full
+    selector language, so a lone creature spell makes "counter target
+    **noncreature** spell" unplayable in the sandbox and fails Negate at gate 4.
+    A card whose selector no dummy here satisfies -- "target spell with {X} in
+    its mana cost", once something is authored with it -- will fail the same way,
+    which is the harness reporting an unrepresented shape rather than the card
+    being wrong. Add the role; do not relax the gate.
     """
-    picks = _props(registry, ("creature",))
-    if not picks:
-        return
-    obj = new_object(game.state, picks[0], owner=1, zone=Zone.HAND)
-    game.state.players[1].hand.append(obj.oid)
-    push_spell(game.state, obj.oid, 1)
+    for pick in _props(registry, ("creature", "noncreature_spell")):
+        obj = new_object(game.state, pick, owner=1, zone=Zone.HAND)
+        game.state.players[1].hand.append(obj.oid)
+        push_spell(game.state, obj.oid, 1)
 
 
 def drive(game: Game, limit: int = 60) -> None:

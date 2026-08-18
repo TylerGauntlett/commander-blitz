@@ -18,7 +18,7 @@ from .characteristics import chars, protected_from
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool
 from .enums import Keyword, Zone
-from .structs import TargetRef
+from .structs import StackItem, TargetRef
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -50,7 +50,9 @@ def candidates(
         return [
             TargetRef.stack(item.sid)
             for item in state.stack
-            if item.is_spell and item.sid != exclude_sid
+            if item.is_spell
+            and item.sid != exclude_sid
+            and _spell_matches(ctx, item, spec)
         ]
 
     if spec.kind == "any":
@@ -68,6 +70,32 @@ def candidates(
         for oid in pool
         if can_be_targeted(state, controller, oid, source_oid=source_oid)
     ]
+
+
+def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> bool:
+    """Does one spell on the stack satisfy its target spec's `selector`?
+
+    A `kind: "spell"` spec used to ignore its selector outright, in both
+    `candidates` and `still_legal` -- so "Counter target **noncreature** spell"
+    was Counterspell, and Essence Scatter, Exclude and Negate were all one card.
+    Nothing announced it: the selector loaded, validated and was simply never
+    consulted, which is exactly the silently-inert clause `validate_selector`
+    exists to prevent one layer up.
+
+    The default zone has to be the **stack**, not `matches`'s battlefield: the
+    object being asked about is a spell, so a battlefield default would reject
+    every candidate and turn every counterspell in the pool into a dead card.
+
+    Characteristics come off the printed face rather than the derived layer,
+    because `matches` reads derived only for permanents (`obj.on_battlefield`)
+    -- which is what a spell on the stack should get anyway: no static is
+    applying to it.
+    """
+    if not spec.selector:
+        return True
+    if item.oid is None:
+        return False
+    return matches(ctx, item.oid, spec.selector, default_zone="stack")
 
 
 def _player_allowed(state: GameState, controller: int, pid: int, spec: TargetSpec) -> bool:
@@ -229,7 +257,14 @@ def still_legal(
         return state.is_alive(ref.id) and _player_allowed(state, controller, ref.id, spec)
     if ref.kind == "stack":
         item = state.stack_item(ref.id)
-        return item is not None and item.is_spell
+        if item is None or not item.is_spell:
+            return False
+        # 608.2b re-checks every target as the spell resolves, and the selector
+        # is half of what makes a target legal. Without this an Essence Scatter
+        # held against a creature spell would still counter it after the spell
+        # stopped being a creature spell.
+        ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+        return _spell_matches(ctx, item, spec)
     obj = state.objects.get(ref.id)
     if obj is None:
         return False
