@@ -3,8 +3,7 @@
   "name": "Verge Rangers",
   "oracle_text": "First strike\nYou may look at the top card of your library any time.\nAs long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)",
   "blocked_sentences": [
-    "You may look at the top card of your library any time.",
-    "As long as an opponent controls more lands than you, you may play lands from the top of your library. (You can play a land this way only if you have an available land play remaining.)"
+    "You may look at the top card of your library any time."
   ],
   "needs": [
     {
@@ -12,12 +11,6 @@
       "kind": "static_effect",
       "what": "a player-wide static that lets its controller alone see the top card of their library continuously -- the private half of 'play with the top card revealed', serialized to that player's seat only",
       "why_existing_wont_do": "`reveal_library_top` is the only static for top-card visibility and it is deliberately public: `serialize` writes `library_top` into every seat's view (\"an opponent who cannot see it is playing against information they are entitled to\"), so using it on Verge Rangers would hand the opponent a card Verge Rangers never shows them. The `look_at_top` op is one-shot at resolution, not a continuous permission, and there is no trigger event for 'any time'."
-    },
-    {
-      "capability": "conditional_player_static",
-      "kind": "engine",
-      "what": "make the player-wide statics honour their `condition`, i.e. route `_player_static` / `player_extra_land_drops` through `_static_active` the way `_battlefield_statics` already does, so an 'as long as ...' clause can switch `play_lands_from_library_top`, `play_lands_from_graveyard`, `no_hand_limit`, `extra_land_drops`, `double_land_mana`, `double_land_triggers` and `freeze_opponent_lands` on and off",
-      "why_existing_wont_do": "`play_lands_from_library_top` is exactly the permission this line grants, and the loader will happily validate a `condition` beside it, but the effect is read by `characteristics._player_static`, which matches on `effect` and `affects_player` and never calls `_static_active`. `_static_active` has exactly one call site, `_battlefield_statics`, which only feeds the object-characteristics pipeline. So a conditional `play_lands_from_library_top` would load and then grant the permission unconditionally -- the 'as long as an opponent controls more lands than you' clause would be silently dropped, which is worse than not implementing the card."
     }
   ],
   "closest_existing": [
@@ -28,6 +21,7 @@
   ],
   "confidence": "high",
   "resolved": [
-    "per_opponent_count"
+    "per_opponent_count",
+    "conditional_player_static"
   ]
 }
