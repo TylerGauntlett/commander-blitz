@@ -20,6 +20,7 @@ from .structs import (
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
+    SacrificeRestriction,
     StackItem,
     TriggerInstance,
     TurnLedger,
@@ -258,6 +259,25 @@ class GameState:
     #: moment a second duration exists. Normally empty, which is why
     #: `primitives.damage_player` short-circuits on it before doing any work.
     damage_shields: list[DamageShield] = field(default_factory=list)
+    #: "You can't sacrifice those creatures this turn" -- see
+    #: :class:`structs.SacrificeRestriction`.
+    #:
+    #: The fourth timed table, here for the reason the three above it are: Call
+    #: for Aid is a sorcery and leaves no permanent behind to own the effect,
+    #: and the prohibition ends at a fixed moment rather than when a source
+    #: leaves the battlefield. Nothing else in the engine expresses a sacrifice
+    #: prohibition at all -- `lock_abilities` gates a permanent's *own*
+    #: activated abilities (not an outlet somebody else controls, and not the
+    #: `sacrifice` op), and `replace_deaths` redirects a death that has already
+    #: happened.
+    #:
+    #: A list rather than a per-object flag because two effects may protect the
+    #: same permanent and the shorter one wearing off must not take the longer
+    #: one with it, and because the mark has to survive a permanent it names
+    #: changing controller. Normally empty, which is why
+    #: `primitives.sacrifice_forbidden` short-circuits on it before doing any
+    #: work -- it is asked once per candidate in every sacrifice pool.
+    sacrifice_restrictions: list[SacrificeRestriction] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
     #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).

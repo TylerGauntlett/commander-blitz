@@ -23,6 +23,7 @@ from .costs import (
 )
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
 from .mana import ManaCost, Requirement, max_affordable_x, solve_payment
+from .primitives import sacrifice_forbidden
 from .structs import TargetRef
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -799,6 +800,14 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
     every legal target tuple -- the same swamping `MAX_TARGET_OPTIONS` exists to
     stop. The biggest mana values come first, since those are the lines a player
     is actually looking for.
+
+    The second half of the **cost** road for "you can't sacrifice those
+    creatures this turn" (701.17b). Emerge and offering are the one sacrifice
+    cost that does not live in a `Cost` -- the fodder is chosen as part of the
+    cast action, because how much the spell costs depends on which creature it
+    is -- so `costs._sacrifice_pool`'s filter cannot see them and the same
+    question has to be asked again here. A protected creature is simply not a
+    line on offer; with no other fodder the emerge cast is not legal at all.
     """
     # "Sacrifice a **Goblin**" -- offering, which is emerge with the fodder
     # narrowed to one creature type. Read off *derived* subtypes, so a
@@ -813,6 +822,7 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
         and other != oid
         and "Creature" in (c := chars(state, other)).types
         and (subtype is None or subtype in c.subtypes)
+        and not sacrifice_forbidden(state, other)
     ]
     creatures.sort(key=lambda c: (-state.card(c).mana_cost.mana_value(), c))
     return creatures[:4]

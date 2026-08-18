@@ -16,6 +16,7 @@ from ..primitives import (
     change_control,
     create_token,
     forbid_block,
+    forbid_sacrifice,
     goad_creature,
     grant_ability,
     grant_keyword,
@@ -24,6 +25,7 @@ from ..primitives import (
     pump,
     remove_counters,
     restrict_attack,
+    sacrifice_forbidden,
     tap_permanent,
     transform,
     untap_permanent,
@@ -159,10 +161,31 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     died, and `creatures_died_this_turn` counts combat and removal too. So the
     list is written down as the op consumes it, and read back with
     ``{"count": {"binding": …}}``.
+
+    The **effect** road for "you can't sacrifice those creatures this turn"
+    (701.17b) is the pool filter below, and it narrows the *pool* rather than
+    skipping in the loop deliberately: 701.17b makes a protected permanent an
+    illegal choice, so an edict must take something else if there is anything
+    else -- "each player sacrifices a creature" against a board of one protected
+    creature and one ordinary one takes the ordinary one. Filtering after the
+    choice would let the edict be answered with the protected creature and then
+    do nothing, which is a better answer than the printed card allows. Only when
+    nothing legal is left does the effect do nothing to that player, which is
+    the same rule read from the other end.
+
+    Assembled out of `resolve_pool` + `pick_from_pool` -- the two halves
+    `choose_objects` calls in sequence -- rather than by narrowing the selector,
+    because "not under a sacrifice restriction" is a fact about the table and
+    not a selector key any card writes.
     """
     selector = dict(spec.get("objects") or {})
     selector.setdefault("controller", "you")
-    oids = yield from choose_objects(ctx, selector, "Sacrifice", "sacrifice")
+    pool = [
+        oid
+        for oid in resolve_pool(ctx, selector)
+        if not sacrifice_forbidden(ctx.state, oid)
+    ]
+    oids = yield from pick_from_pool(ctx, pool, selector, "Sacrifice", "sacrifice")
     if name := spec.get("as"):
         # Written before the sacrifice, so the binding is a record of the choice
         # rather than of what survived it.
@@ -462,14 +485,33 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     becoming it.  The two are different cards and not degrees of one, which is
     why neither is ever inferred from the rest of the effect.  See
     :func:`automtg.engine.primitives.change_control` for the handback.
+
+    ``as`` names the permanents taken, so a later clause of the same spell can
+    say **"those creatures"** -- Call for Aid's "gain control of all creatures
+    target opponent controls… untap *those creatures*… *they* gain haste… you
+    can't sacrifice *those creatures*".  No selector can name them once the op
+    has run: the set was "creatures target opponent controls" and by the next
+    line the opponent controls none of them, while "creatures you control"
+    catches everything that was already yours.  Written *after* the loop, like
+    `create_token`'s and unlike `sacrifice`'s: this records what control
+    actually moved, not what was asked for, so a permanent that left in response
+    -- or that was already yours, which `change_control` refuses as a no-op --
+    is not one of "those creatures".
     """
     players = _players(ctx, spec.get("player", "you"))
     if not players:
         return
     duration = str(spec.get("duration", "permanent"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
-    for oid in oids:
-        change_control(ctx.state, oid, players[0], source=ctx.source_oid, duration=duration)
+    taken = [
+        oid
+        for oid in oids
+        if change_control(
+            ctx.state, oid, players[0], source=ctx.source_oid, duration=duration
+        )
+    ]
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = taken
 
 
 @register("regenerate")
@@ -1476,5 +1518,74 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     ]
     make_unblockable(
         ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid
+    )
+    yield from ()
+
+
+@register("cant_sacrifice")
+def op_cant_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"You can't sacrifice those creatures this turn." (Call for Aid, 701.17b.)
+
+    The engine's first sacrifice prohibition of any kind, and the fourth op in
+    this family to put a one-shot restriction on the table rather than on a
+    permanent -- `cant_attack_player`, `cant_block` and `unblockable` are the
+    other three, and it is the same shape for the same reason: a resolving
+    sorcery leaves no source on the battlefield for a static to live on, and the
+    set it names is chosen when it resolves rather than matched by a filter over
+    printed characteristics.
+
+    Nothing existing came close, which is why this is an op and not a parameter
+    of one:
+
+    * `lock_abilities` is the near relative the gap record names, and it gates
+      the wrong thing. It stops *this permanent's own* activated abilities, so
+      it says nothing about an Altar three permanents away whose cost eats this
+      one, and nothing at all about the `sacrifice` op or an edict.
+    * `replace_deaths` redirects a permanent's death after the sacrifice has
+      already happened. The creature still leaves the battlefield and the outlet
+      still got paid, which is not what "can't" means.
+    * `grant_keyword` indestructible is explicitly not this (701.17a), and no
+      prevention or protection is either: a sacrifice is neither damage nor
+      destruction.
+
+    Two roads reach a sacrifice and this op closes both of them, because the
+    printed rule does not distinguish between them:
+
+    **cost**    an outlet's activation cost, or an additional cost to cast. The
+                pool the cost may be paid from drops the protected permanents
+                (`costs._sacrifice_pool`, plus `legality._emerge_fodder` for
+                emerge and offering, whose fodder is chosen as part of the cast
+                action), so a cost that needs one becomes *unpayable* and is
+                never offered.
+    **effect**  the `sacrifice` op -- "each player sacrifices a creature". The
+                pool it chooses from drops them too, so the edict takes
+                something else, and does nothing only when there is nothing
+                else.
+
+    ``objects`` is required and resolved **now**: "those creatures" is the set
+    the same spell just gained control of. There is deliberately no wildcard
+    form -- no printed one-shot protects the whole board, and a global sentinel
+    would read a one-sided sentence as a two-sided one. ``duration`` is required
+    and ``this_turn`` is the only word implemented; see
+    `structs.SACRIFICE_RESTRICTION_DURATIONS`.
+
+    Unlike `cant_block` and `unblockable` the pool is **not** filtered to the
+    battlefield here. Those two record creatures for a combat that has not
+    happened yet, where a dead oid would look like an entry that bit somebody;
+    this one is read by pools that already contain nothing but permanents on the
+    battlefield, and dropping a creature that flickered out in response would
+    mean it comes back sacrificeable -- a distinction the printed card does not
+    draw. See `primitives.forbid_sacrifice`.
+    """
+    from ..structs import SACRIFICE_RESTRICTION_DURATIONS
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in SACRIFICE_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_sacrifice duration {duration!r}")
+    forbid_sacrifice(
+        ctx.state,
+        resolve_pool(ctx, spec.get("objects") or {}),
+        duration,
+        source=ctx.source_oid,
     )
     yield from ()

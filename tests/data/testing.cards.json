@@ -2215,6 +2215,59 @@
       ]
     },
     {
+      "id": "t_edict",
+      "name": "Test Edict",
+      "oracle_text": "Each opponent sacrifices a creature.",
+      "mana_cost": "{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "sacrifice",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "count": 1,
+            "chooser": "owner"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_bodyguard",
+      "name": "Test Bodyguard",
+      "oracle_text": "You can't sacrifice target creature this turn.",
+      "mana_cost": "{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "cant_sacrifice",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "this_turn"
+        }
+      ]
+    },
+    {
       "id": "t_slip",
       "name": "Test Slip",
       "oracle_text": "Target creature can't be blocked this turn.",

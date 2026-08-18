@@ -372,6 +372,78 @@ class DamageShield:
         }
 
 
+#: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
+#: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
+#: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --
+#: so the loader can name the implemented set in its error the way the lists
+#: above do, and so a second word, if a card ever prints one, is added here
+#: rather than smuggled in as a default nobody clears.
+#:
+#: `BlockProhibition`'s ``until_your_next_turn`` is deliberately absent: no
+#: printed one-shot forbids a sacrifice past this turn, and a duration with a
+#: clock nothing ever winds would be a permanent prohibition wearing a
+#: temporary one's clothes.
+SACRIFICE_RESTRICTION_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class SacrificeRestriction:
+    """"You can't sacrifice those creatures this turn." (701.17b.)
+
+    The engine had **no** sacrifice prohibition at all, and the three things that
+    look like one are each a different game action:
+
+    * `lock_abilities` stops a permanent's own activated abilities being
+      activated.  A sacrifice outlet is somebody *else's* ability -- an Altar,
+      a Bloodthrone Vampire -- and the fodder's abilities have nothing to do
+      with it.  It also says nothing about the `sacrifice` op or an edict.
+    * `replace_deaths` redirects a permanent's death *after* it has been
+      sacrificed.  The creature still leaves the battlefield and the cost is
+      still paid, which is not what "can't" means.
+    * `indestructible` explicitly does not prevent sacrifice (701.17a), and
+      neither does any prevention or protection: a sacrifice is not damage and
+      not destruction.
+
+    So it lives on the table (:attr:`GameState.sacrifice_restrictions`) beside
+    `attack_restrictions`, `block_prohibitions`, `unblockables` and
+    `damage_shields`, for the reason given there: a resolving sorcery leaves no
+    permanent behind to own the effect, and the restriction outlives whatever
+    installed it.
+
+    **Keyed on the objects, not on a player**, even though the printed sentence
+    says "*you* can't sacrifice those creatures".  Only a permanent's controller
+    ever sacrifices it (701.17a), and Call for Aid has just handed that
+    controller-ship to the spell's own caster -- so "you" and "whoever could
+    sacrifice these" name the same seat, and a `player` field would be a second
+    way to say the first.  A prohibition that a later control change could slip
+    out of would be a strictly better card than the printed one.
+
+    ``objects`` is the set chosen **at resolution** and is never a wildcard.
+    "Those creatures" is the set the same spell just gained control of; a
+    creature that enters afterwards was not one of them.  There is no
+    ``objects=None`` counterpart of `BlockProhibition`'s "every creature": no
+    printed one-shot forbids sacrificing the whole board, and a global sentinel
+    would read the one-sided printed forms as two-sided ones.
+    """
+
+    #: The permanents that can't be sacrificed.  A tuple rather than a set so
+    #: the record stays hashable, which is what lets the primitive deduplicate
+    #: on the whole entry.
+    objects: tuple[int, ...] = ()
+    duration: str = "this_turn"
+    #: The permanent or spell that installed it, for the log.  Not part of the
+    #: lifetime: Call for Aid is a sorcery and is in a graveyard by the time the
+    #: opponent reaches for their sacrifice outlet.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "objects": list(self.objects),
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""

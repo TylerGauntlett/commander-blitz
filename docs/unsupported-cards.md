@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **11** capabilities.
+**7 cards** blocked by **10** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [batch-attack-trigger](#batch-attack-trigger) | 1 | 3131 | selector, trigger_event |
-| [cant-sacrifice](#cant-sacrifice) | 1 | 7420 | op |
 | [conditional-player-static](#conditional-player-static) | 1 | 5364 | engine |
 | [counter-unless-pays](#counter-unless-pays) | 1 | 3489 | selector |
 | [delayed-object-reference](#delayed-object-reference) | 1 | 4643 | op |
@@ -39,20 +38,6 @@ Blocks **1** card.
 
 - **Frontier Warmonger** (rank 3131) — `frontier_warmonger`
   - Whenever one or more creatures attack one of your opponents or a planeswalker they control, those creatures gain menace until end of turn.
-
-</details>
-
-## cant-sacrifice
-
-Blocks **1** card.
-
-- **(op)** A spell/ability effect op that marks a set of permanents as unsacrificeable for the turn, so that any cost or effect that would sacrifice them (a `sacrifice` cost, the `sacrifice` op) cannot choose them -- the restriction that stops a borrowed creature being eaten before control reverts
-  <br>Why the existing vocabulary won't do: Nothing in `ops` or `static_effects` expresses a sacrifice prohibition; there is no `cant_be_sacrificed` anywhere in the engine. `lock_abilities` is the nearest relative -- it is an until-end-of-turn TempEffect that stops a permanent's activated abilities being activated -- but it gates the wrong thing: it cannot stop the `sacrifice` cost of an ability whose source is a *different* permanent (an Altar-style outlet), and it cannot stop the `sacrifice` op or any edict-style effect. `replace_deaths` redirects a permanent's death after the fact rather than making the sacrifice illegal, which is a different game action and lets the creature leave the battlefield anyway. `indestructible` via `grant_keyword` explicitly does not prevent sacrifice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Call for Aid** (rank 7420) — `call_for_aid`
-  - You can't sacrifice those creatures this turn.
 
 </details>
 

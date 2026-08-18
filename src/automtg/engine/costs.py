@@ -32,7 +32,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
-from .primitives import lose_life, tap_permanent
+from .primitives import lose_life, sacrifice_forbidden, tap_permanent
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -680,6 +680,23 @@ def _discard_pool(state: GameState, pid: int, cost: Cost) -> list[int]:
 def _sacrifice_pool(
     state: GameState, pid: int, cost: Cost, source_oid: int | None
 ) -> list[int]:
+    """Which permanents this cost is allowed to sacrifice.
+
+    The **cost** half of "you can't sacrifice those creatures this turn"
+    (701.17b) is this one filter, and it is here rather than at `zones.sacrifice`
+    because `can_pay` and `pay` both build the pool through this function: a
+    protected permanent is not fodder, so an outlet with nothing else to eat is
+    *unpayable* and `legality` never offers the activation. That is what the
+    rule says -- the cost cannot be paid -- rather than a cost that is paid and
+    then does nothing.
+
+    It covers the activated-ability cost ("Sacrifice a creature: …", an Altar,
+    a Bloodthrone Vampire) and the additional cost to cast ("As an additional
+    cost to cast this spell, sacrifice a creature"), because `carddef`'s
+    `additional_cost` is a `Cost` and goes through `can_pay` like any other.
+    Emerge and offering choose their fodder as part of the cast action instead
+    of out of a `Cost`, so they are filtered in `legality._emerge_fodder`.
+    """
     from .effects.selectors import resolve_pool
 
     spec = dict(cost.sacrifice or {})
@@ -687,7 +704,7 @@ def _sacrifice_pool(
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
-    pool = resolve_pool(ctx, spec)
+    pool = [oid for oid in resolve_pool(ctx, spec) if not sacrifice_forbidden(state, oid)]
     return pool if len(pool) >= count else []
 
 

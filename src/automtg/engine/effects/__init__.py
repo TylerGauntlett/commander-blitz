@@ -33,6 +33,7 @@ RECORDING_OPS = frozenset(
         "copy_permanent",
         "create_token",
         "exile",
+        "gain_control",
         "join_forces",
         "reveal",
         "sacrifice",
