@@ -1,0 +1,78 @@
+{
+  "card": {
+    "id": "marshal_s_anthem",
+    "name": "Marshal's Anthem",
+    "oracle_text": "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times as you cast this spell.)\nCreatures you control get +1/+1.\nWhen this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.",
+    "mana_cost": "{2}{W}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "multikicker": "{1}{W}",
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        },
+        "power": {
+          "const": 1
+        },
+        "toughness": {
+          "const": 1
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, return up to X target creature cards from your graveyard to the battlefield, where X is the number of times this enchantment was kicked.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            },
+            "count": {
+              "additional_paid": true
+            },
+            "up_to": true
+          }
+        ],
+        "effects": [
+          {
+            "op": "put_onto_battlefield",
+            "objects": {
+              "target": "t1"
+            },
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "graveyard_size": {
+      "0": 0
+    },
+    "battlefield_count": 35,
+    "zone": "battlefield"
+  }
+}

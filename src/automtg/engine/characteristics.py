@@ -1279,6 +1279,29 @@ def player_reveals_library_top(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "reveal_library_top")
 
 
+def player_looks_at_library_top(state: GameState, pid: int) -> bool:
+    """"You may look at the top card of your library any time." Verge Rangers.
+
+    The *private* half of the pair. `reveal_library_top` above is "play with the
+    top card revealed": the card becomes public and `serialize` sends it to
+    every seat, because an opponent who cannot see a revealed card is playing
+    against information they are entitled to. This one grants no such
+    entitlement -- Verge Rangers never shows the card to anybody but its
+    controller -- so `serialize` sends it to that player's seat and no other.
+    Substituting the public static would have handed the opponent a card the
+    printed card does not show them, which is a *different* card.
+
+    It is not the `look_at_top` op either. That op looks once, at resolution,
+    and is spent; this is a continuous permission, true again the next time you
+    care and false the instant its source leaves. "Any time" is not a moment for
+    a trigger to fire at.
+
+    Like its public twin it changes no rule: it grants no permission to play or
+    move the card, and it is read by `serialize` and by nothing else.
+    """
+    return _player_static(state, pid, "look_at_library_top")
+
+
 def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     """Whether this player may play lands from their graveyard.
 

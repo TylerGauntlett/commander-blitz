@@ -377,7 +377,7 @@ def op_noop(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("delay")
 def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Arrange for effects to happen at a later step, or on a later event.
+    """Arrange for effects to happen at a later step.
 
     "At the beginning of the next end step, return it to the battlefield." The
     ordinary triggers all fire *from* an event that just happened; this is the
@@ -389,26 +389,11 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``end_of_combat`` captures one more thing, for the same reason and at the
     same moment: *which* combat. See :func:`_scheduled_combat`.
-
-    ``event`` is the other spelling of *when*, and the two are exclusive -- see
-    :class:`~automtg.engine.structs.DelayedEventSpec`. "Exile target creature an
-    opponent controls **until an opponent becomes the monarch**" (Palace Jailer):
-    the moment the duration ends is a thing that happens rather than a step the
-    turn walks through, and it may be this upkeep, six turns away, or never. An
-    event-keyed delay carries ``step=""``, which names nothing in
-    ``turn.DELAY_STEPS`` and so can never come due by step instead.
-
-    This is where the *lifetime* comes from, and it is why "exile until an event"
-    is written as `exile` plus a `delay` rather than as a duration on `exile`.
-    A delay is a one-shot effect's arrangement (603.7) and outlives its source
-    completely: Palace Jailer dying neither ends the exile nor stops it ending,
-    which is the whole difference between this card and an Oblivion Ring.
     """
-    from ..structs import DelayedEventSpec, DelayedTrigger
+    from ..structs import DelayedTrigger
 
     state = ctx.state
-    event = spec.get("event")
-    step = "" if event else str(spec.get("step", "end_step"))
+    step = str(spec.get("step", "end_step"))
     state.delayed_triggers.append(
         DelayedTrigger(
             step=step,
@@ -419,14 +404,61 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             description=str(spec.get("text") or ctx.source_name),
             turn=state.turn,
             combat=_scheduled_combat(state) if step == "end_of_combat" else None,
-            event=(
-                DelayedEventSpec(
-                    event=str(event["event"]),
-                    controller=str(event["controller"]),
-                )
-                if event
-                else None
+        )
+    )
+
+
+@register("delayed_trigger")
+def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Install a delayed triggered ability that watches an **event** (603.7).
+
+    "Whenever one or more creatures you control deal combat damage to one or
+    more players this turn, you become the monarch." -- Forth Eorlingas!, and
+    the other shape of the same rule `delay` implements. `delay` names a
+    *moment* and this names a *thing that happens*; both are created by a
+    resolving effect, both have no permanent to hang themselves on, and both
+    capture their bindings and their controller at the instant they are made.
+
+    So it writes the same :class:`DelayedTrigger` onto the same list, with a
+    ``trigger`` spec instead of a ``step``.
+
+    The controller matters more here than anywhere else this op is used. The
+    source is a **sorcery**, which is in a graveyard before the first creature
+    swings -- so "you" cannot be read off the card when the ability fires, and
+    `ctx.controller` captured now is the only answer that survives. A triggered
+    ability written on the card instead of installed by it would be watching
+    from the graveyard, where it would either never fire (no `active_zones`) or
+    fire for the rest of the game (with one), and neither is "this turn".
+
+    ``duration`` is how long the subscription is good for, and it defaults to
+    ``this_turn`` because that is what Forth Eorlingas! and every card of its
+    shape print. The other value is Palace Jailer's, whose delayed ability is the
+    end of a duration written on a *different* effect -- "exile it **until** an
+    opponent becomes the monarch" -- so it fires once and has to outlive the
+    turn, since the crown may not move for six of them. See
+    :data:`~automtg.engine.structs.DELAYED_DURATIONS`; the two values are read at
+    exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
+    """
+    from ..carddef import TriggerSpec
+    from ..structs import DelayedTrigger
+
+    trigger = spec.get("trigger") or {}
+    state = ctx.state
+    state.delayed_triggers.append(
+        DelayedTrigger(
+            step="",
+            controller=ctx.controller,
+            effects=tuple(spec.get("effects") or []),
+            bindings=dict(ctx.bindings),
+            source_oid=ctx.source_oid,
+            description=str(spec.get("text") or ctx.source_name),
+            turn=state.turn,
+            trigger=TriggerSpec(
+                event=str(trigger.get("event")),
+                controller=str(trigger.get("controller", "you")),
+                condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
+            duration=str(spec.get("duration", "this_turn")),
         )
     )
 

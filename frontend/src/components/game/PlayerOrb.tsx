@@ -86,10 +86,19 @@ interface PileProps {
   count: number;
   title?: string;
   /**
-   * "Play with the top card of your library revealed." The library alone can
-   * carry one, and only when something on the battlefield reveals it.
+   * The top card of the library, when something on the battlefield shows it.
+   * The library alone can carry one.
    */
   topCard?: CardView | null;
+  /**
+   * Whether that card is *revealed* to the table or only *looked at* by its
+   * controller. The server sends a private look to one seat and a reveal to
+   * every seat, so by the time it is here the difference is no longer about
+   * who has the data -- it is about what this pile is allowed to claim.
+   * Wording a private look as "revealed" would tell the one player who can see
+   * it that their opponents can too.
+   */
+  topCardPublic?: boolean;
 }
 
 /**
@@ -108,7 +117,17 @@ interface PileProps {
  * for itself: Vampire Nocturnus is unpilotable if you cannot tell whether your
  * team has flying before you declare attackers.
  */
-function ZonePile({ pid, zone, name, kind, label, count, title, topCard }: PileProps) {
+function ZonePile({
+  pid,
+  zone,
+  name,
+  kind,
+  label,
+  count,
+  title,
+  topCard,
+  topCardPublic,
+}: PileProps) {
   const setPeek = useUiStore((s) => s.setPeek);
   const hover = useUiStore((s) => s.hover);
   const leaves = pileLeaves(count);
@@ -144,8 +163,11 @@ function ZonePile({ pid, zone, name, kind, label, count, title, topCard }: PileP
     "data-testid": `pile-${pid}-${name}`,
     "data-count": count,
     "data-revealed": topCard?.name,
+    "data-top-private": topCard && !topCardPublic ? "" : undefined,
     title: topCard
-      ? `Top of library, revealed: ${topCard.name}`
+      ? topCardPublic
+        ? `Top of library, revealed: ${topCard.name}`
+        : `Top of library, only you can see it: ${topCard.name}`
       : (title ?? `${label}: ${count}`),
   };
 
@@ -522,6 +544,7 @@ export function PlayerOrb({
               count={player.library_count}
               title="Cards in library"
               topCard={player.library_top}
+              topCardPublic={player.library_top_public}
             />
             <ZonePile
               pid={player.pid}

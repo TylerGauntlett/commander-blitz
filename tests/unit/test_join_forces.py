@@ -132,15 +132,15 @@ class TestTheOrder:
 
 class TestTheLoaderGuard:
     def test_a_well_formed_effect_loads(self):
-        _validate_effect(SPEC, "test", set())
+        _validate_effect(SPEC, "test", {})
 
     def test_omitting_as_is_refused(self):
         """Collecting the mana and naming no binding taxes the table for nothing."""
         with pytest.raises(DslError, match="join_forces needs an 'as'"):
-            _validate_effect({"op": "join_forces", "pay": {"mana": "{1}"}}, "test", set())
+            _validate_effect({"op": "join_forces", "pay": {"mana": "{1}"}}, "test", {})
 
     def test_a_malformed_pay_is_refused(self):
         with pytest.raises(DslError, match="bad 'pay' cost"):
             _validate_effect(
-                {"op": "join_forces", "as": "joined", "pay": {"nonsense": 1}}, "test", set()
+                {"op": "join_forces", "as": "joined", "pay": {"nonsense": 1}}, "test", {}
             )

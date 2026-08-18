@@ -142,12 +142,12 @@ class TestTheGuards:
         """Ignored, the card would read "choose both" and choose one."""
         with pytest.raises(DslError, match="only means anything on choose_mode"):
             _validate_effect(
-                {"op": "draw", "player": "you", "all_if": {"kicked": True}}, "test", set()
+                {"op": "draw", "player": "you", "all_if": {"kicked": True}}, "test", {}
             )
 
     def test_a_malformed_condition_is_refused(self):
         with pytest.raises(DslError):
-            _validate_effect(self._modal(all_if={"nonsense": True}), "test", set())
+            _validate_effect(self._modal(all_if={"nonsense": True}), "test", {})
 
     def test_all_if_kicked_satisfies_the_half_a_kicker_guard(self):
         """The entwine cost is read by `all_if` and nowhere else on the card."""

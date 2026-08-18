@@ -10,7 +10,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
+
+if TYPE_CHECKING:  # pragma: no cover
+    # Type-only, so this module keeps the no-runtime-imports property its
+    # docstring is about: `carddef` is a leaf, but the point of `structs` is
+    # that it needs nothing.
+    from .carddef import TriggerSpec
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -542,41 +548,9 @@ class TriggerInstance:
     granted_by: int | None = None
 
 
-@dataclass(frozen=True)
-class DelayedEventSpec:
-    """The *event* a delayed trigger waits for, when a step cannot name it.
-
-    "Exile target creature an opponent controls **until an opponent becomes the
-    monarch**" -- Palace Jailer.  A duration, and the moment it ends is not a
-    step: it is a thing that may happen this upkeep, six turns later, or never.
-
-    Deliberately two fields and not a :class:`~automtg.engine.carddef.TriggerSpec`.
-    A printed trigger is an ability *of a permanent*, and most of that spec asks
-    questions about that permanent -- ``source: "self"``, ``filter``'s
-    ``exclude_self`` and ``attached``, a ``condition`` evaluated with the source's
-    oid.  A delayed trigger's source is routinely **gone** by the time its event
-    happens (the whole point of the lifetime: Palace Jailer dying must not end
-    the exile, and must not stop it ending either), so those keys would answer
-    differently depending on whether the permanent survived -- silently, and only
-    in the line of play the card exists for.  What is left is the two questions a
-    duration clause actually asks, and they are answered off the delay itself.
-
-    ``controller`` is ``you`` | ``opponent`` | ``any``, and the "you" is the
-    :attr:`DelayedTrigger.controller` -- the player who was in charge of the
-    effect that scheduled this.  It has no default here and the loader demands
-    the key: on a printed trigger "you" is the implicit subject of the sentence,
-    but a duration clause always states whose it is ("until **an opponent**
-    becomes the monarch"), and guessing "any" would end Palace Jailer's exile the
-    moment its own controller reclaimed the crown.
-    """
-
-    event: str
-    controller: str
-
-
 @dataclass
 class DelayedTrigger:
-    """An effect scheduled to happen at a later step, or on a later event.
+    """An effect scheduled to happen later -- at a named step, or on an event.
 
     "At the beginning of the next end step, return it to the battlefield." The
     engine's ordinary triggers all fire *from* an event that has just happened;
@@ -592,12 +566,20 @@ class DelayedTrigger:
     since `extra_combat` shipped, and "at end of combat" means the end of the
     combat the delay was created in rather than the next one to come round.
 
-    ``event`` is the other way of saying *when*, and exactly one of the two is
-    set: an event-keyed delay carries ``step == ""``, which names no entry in
-    ``turn.DELAY_STEPS`` and so can never come due by step.  It is armed by
-    `triggers.arm_delayed` as the event goes past on the bus and resolved by
-    `turn.run_armed_delayed`; ``armed`` is the gap between those two, because the
-    bus is a plain function and resolving effects is a generator.
+    ``trigger`` is the **other half of 603.7**, and the two are exclusive: a
+    delayed ability waits either for a moment ("at the beginning of the next end
+    step") or for an event ("whenever one or more creatures you control deal
+    combat damage to one or more players **this turn**").  When it is set,
+    ``step`` is ``""`` -- there is no step to be due at, `turn._delay_due` says
+    so out loud, and `triggers.collect` is what wakes this one instead.  It
+    lives on the same list and in the same struct as the step-scoped form
+    because everything else about the two is identical: the bindings are
+    captured when it is created, the controller is captured with them, and it
+    resolves with no permanent to hang itself on.
+
+    ``duration`` is how long an event-watching subscription is good for, and it
+    is the one thing the two printed shapes of it disagree about.  See
+    :data:`DELAYED_DURATIONS`.
     """
 
     step: str
@@ -608,9 +590,36 @@ class DelayedTrigger:
     description: str = ""
     turn: int = 0
     combat: int | None = None
-    event: DelayedEventSpec | None = None
-    #: Set when this delay's event has happened and its effects have not run yet.
-    armed: bool = False
+    trigger: TriggerSpec | None = None
+    #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
+    duration: str = "this_turn"
+
+
+#: How long an event-watching delayed ability stays subscribed, and what firing
+#: does to it.  Two printed shapes, and they differ on both counts at once:
+#:
+#: ``this_turn``
+#:     "**Whenever** one or more creatures you control deal combat damage to one
+#:     or more players **this turn**, you become the monarch" (Forth Eorlingas!).
+#:     A subscription with a stated lifetime, firing **every** time: an extra
+#:     combat this turn is a second batch and a second trigger, so a "fired" flag
+#:     would be the wrong shape.  `turn._cleanup_step` is what ends it.
+#:
+#: ``until_it_fires``
+#:     "Exile target creature an opponent controls **until** an opponent becomes
+#:     the monarch" (Palace Jailer).  The delayed ability *is* the end of a
+#:     duration somewhere else, so it fires **once** and the subscription is then
+#:     spent -- and it must outlive the turn, because the crown may not move for
+#:     six of them.  `triggers._arm_delayed` strikes it off as it arms, and
+#:     `turn._cleanup_step` leaves it alone.
+#:
+#: The two axes -- repeating-or-once, and turn-scoped-or-not -- happen to be
+#: correlated in both printed cards, which is why this is one field rather than
+#: two booleans.  They are **not** the same question, and a card that separated
+#: them ("the first time a creature dies this turn") would need a third entry
+#: here rather than a different reading of these two.  That card does not exist
+#: in the pool; when it does, this is where it goes.
+DELAYED_DURATIONS = ("this_turn", "until_it_fires")
 
 
 @dataclass(frozen=True)

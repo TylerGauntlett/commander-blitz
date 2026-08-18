@@ -311,11 +311,11 @@ class TestGreyHostReinforcementsOnACard:
 class TestTheLoaderGuard:
     def test_an_as_on_exile_loads(self):
         _validate_effect(
-            {"op": "exile", "as": "exiled", "objects": {"zone": "graveyard"}}, "test", set()
+            {"op": "exile", "as": "exiled", "objects": {"zone": "graveyard"}}, "test", {}
         )
 
     def test_an_as_on_create_token_loads(self):
-        _validate_effect({"op": "create_token", "token": WARRIOR, "as": "made"}, "test", set())
+        _validate_effect({"op": "create_token", "token": WARRIOR, "as": "made"}, "test", {})
 
     def test_an_as_on_copy_permanent_loads(self):
         _validate_effect(
@@ -330,9 +330,9 @@ class TestTheLoaderGuard:
             _validate_effect(
                 {"op": "destroy", "as": "killed", "objects": {"types": ["Creature"]}},
                 "test",
-                set(),
+                {},
             )
 
     def test_a_non_string_as_is_still_refused(self):
         with pytest.raises(DslError, match="'as' must be a non-empty binding name"):
-            _validate_effect({"op": "exile", "as": 3, "objects": {}}, "test", set())
+            _validate_effect({"op": "exile", "as": 3, "objects": {}}, "test", {})
