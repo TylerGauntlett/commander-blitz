@@ -518,6 +518,109 @@ permanent that has entered; and the residual gate held to both halves of its job
 — accepting the multikicker line, and still rejecting a line nothing implements.
 
 ---
+## A `condition` on a player-wide static was validated, stored, and never asked
+
+### Overview
+
+Verge Rangers: *"As long as an opponent controls more lands than you, you may
+play lands from the top of your library."* One gap record, one card — and not a
+missing feature. Every piece of that sentence already existed. `condition` is a
+static's "as long as…" clause, shipped with Arixmethes and widened with Nimble
+Mongoose. `play_lands_from_library_top` is Oracle of Mul Daya's permission.
+`max_count_of` is the "an opponent controls more lands than you" comparison, and
+`per_opponent_count` had already shipped its static-side twin in `_static_value`
+specifically so this clause could be written.
+
+Written, the card would have loaded clean, printed its clause, and passed all six
+authoring gates — while granting the permission **unconditionally**.
+
+### One call site is not "the" call site
+
+`_static_active` is the function that asks a static's condition. It had exactly
+one caller, `_battlefield_statics`, which feeds only the object-characteristics
+pipeline. The eight **player-wide** statics — the `affects_player` ones, which
+describe a player and have no object to attach to — were read by four
+hand-rolled walks of the battlefield instead, none of which asked:
+
+| reader | effects |
+|---|---|
+| `characteristics._player_static` | `no_hand_limit`, `play_lands_from_graveyard`, `play_lands_from_library_top`, `reveal_library_top`, `double_land_mana` |
+| `characteristics.player_extra_land_drops` | `extra_land_drops` |
+| `characteristics.players_freezing_opponent_lands` | `freeze_opponent_lands` |
+| `triggers._land_trigger_doublers` | `double_land_triggers` |
+
+The loader was never the problem: `_validate_static_condition` runs on every
+static and `condition` is copied onto the compiled ability regardless of effect.
+The clause was present in the data the whole time. Nothing read it.
+
+That is the specific failure this codebase refuses everywhere else — an anthem
+whose magnitude silently reads 0, a filter key that loads and matches nothing, a
+`reveal_library_top` that never reaches a seat. This one runs in the other
+direction, which is worse: the card is not weaker than printed, it is *stronger*,
+and a permission that is always on looks like a working card from every angle a
+gate can see it from.
+
+### The fix is one gate, in one place
+
+`_active_player_statics(state, effect)` — the player-wide twin of
+`_battlefield_statics`, yielding `(source, static)` for the active ones only. All
+four readers go through it, so the four walks collapse into one and the gate
+cannot be added to three of them and forgotten on the fourth.
+`_reaches_player` carries the `affects_player` scoping that two of the readers
+need; `players_doubling_land_triggers` is new and public purely so `triggers.py`
+stops walking the battlefield itself.
+
+The source is yielded beside the static because a condition is relative to the
+permanent carrying it: `is_your_turn` and `"you"` mean its controller, and the
+`counters` head reads its own counters.
+
+**Gating outside the pipeline is safer, not riskier.** The acyclicity constraint
+in `characteristics`'s module docstring — a static may read pipeline inputs,
+never pipeline outputs — is what limits the condition language, and it binds
+because object statics are gated *inside* `chars`. These readers sit at legality,
+payment, trigger collection, serialization and the cleanup step, outside the
+fixed order entirely. There is no layer output for a condition to depend on, so
+no new leaf and no new constraint were needed; the mirror language is reused
+exactly as it stands.
+
+### Nothing was playing wrong
+
+Checked before building: of the fifteen player-wide statics across every shipped
+card — Oracle of Mul Daya, Ancient Greenwarden, Vorinclex, Reliquary Tower,
+Thought Vessel, Nezahal, Ramunap Excavator, Dryad of the Ilysian Grove, Vampire
+Nocturnus, Azusa, Exploration, Aesi — **none carries a `condition`**. So this
+changed no card's behaviour; it opened a door that had been painted on.
+`TestTheUngatedStaticsAreUntouched::test_no_shipped_card_gates_a_player_wide_static`
+asserts that over the real registry, and says in its docstring what to do when
+it eventually fails: retire it, naming the card that gated one.
+
+### What it unblocked
+
+**No card.** Verge Rangers is the only card in the queue that needs this, and it
+has a third blocker that is a different capability: "You may look at the top card
+of your library any time" needs `look_at_library_top`, a *private* continuous
+top-card visibility, where the only existing static (`reveal_library_top`) is
+deliberately public — `serialize` writes `library_top` into every seat's view, on
+the argument that an opponent who cannot see a revealed card is playing against
+information they are entitled to. Authoring Verge Rangers without that line would
+be the fetchland-template refusal: a cheaper card than the printed one.
+
+So the `conditional_player_static` need is struck from
+`data/authoring/gaps/verge_rangers.json` and `look_at_library_top` is left
+standing. The engine change ships on its unit test alone.
+
+### Guarded by
+
+`tests/unit/test_conditional_player_static.py`, and the shape of it is the point:
+every claim is asserted in **both** directions, because before the fix the
+"granted" half passed for the wrong reason and the "withheld" half was the only
+thing that could have caught it. Three test-only cards carry the conditions —
+`t_verge_scout` and `t_conditional_ramp` with Verge Rangers' own board-reading
+clause, and `t_all_player_statics` with all eight effects gated on
+`is_your_turn`, so `TestEveryPlayerWideStatic` walks one reader per effect rather
+than trusting that fixing two of them reached the other six. With the gate
+removed, seventeen of the thirty-nine fail, including all eight of the
+per-effect withhold cases.
 
 ## `nth` — "your second card each turn", settled where the trigger queues
 
@@ -3084,6 +3187,10 @@ Verge Rangers stays blocked, on two capabilities that are not this one:
 deliberately public -- `serialize` writes `library_top` into every seat's view).
 Its `per_opponent_count` need is closed; the record now carries only the other
 two.
+
+> `conditional_player_static` has since shipped -- see "A `condition` on a
+> player-wide static was validated, stored, and never asked" at the top of this
+> file. Verge Rangers is down to one blocker, `look_at_library_top`.
 
 ### Guarded by
 
