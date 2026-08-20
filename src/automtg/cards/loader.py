@@ -2661,6 +2661,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.selector: drop 'zone' -- search_zones takes its zones "
                 f"from 'zones', and each half is matched in its own"
             )
+    if "share_subtype" in effect:
+        # "…for up to two basic land cards **that share a land type**" (Myriad
+        # Landscape). A constraint between the picks, staged inside the search
+        # rather than expressed as a selector clause -- so it only means anything
+        # on the two ops that do the staging, and only when more than one card is
+        # being taken. Written on anything else it would read as a promise the op
+        # never keeps, and the card would fetch a Forest and a Swamp.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'share_subtype' only applies to search_library and "
+                f"search_zones, not {op!r}"
+            )
+        if not isinstance(effect["share_subtype"], bool):
+            raise DslError(
+                f"{where}: 'share_subtype' is a boolean, got "
+                f"{effect['share_subtype']!r}"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 2:
+            # One card shares a type with itself vacuously, so the clause would
+            # be decoration on a card that reads as if it constrained something.
+            raise DslError(
+                f"{where}: 'share_subtype' needs a 'count' above 1; got {count}"
+            )
     if op == "look_at_top":
         # The depth is the card. Without an amount the op would look at one
         # card and Through the Forest Gate would silently become a cantrip,

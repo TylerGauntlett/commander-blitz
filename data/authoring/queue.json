@@ -180592,12 +180592,12 @@
     },
     "Myriad Landscape": {
       "edhrec_rank": 30,
-      "gate": "template",
+      "gate": null,
       "name": "Myriad Landscape",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Search your library for up to two basic land cards that sha",
+      "reason": "",
       "scryfall_id": "a0e2098f-1d94-491a-a7e9-a45a9f69e3a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myrkul's Edict": {

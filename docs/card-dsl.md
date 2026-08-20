@@ -122,6 +122,23 @@ searching only the graveyard; this op always offers both zones, so it has always
 searched the library and always shuffles. See
 [rules-coverage.md](rules-coverage.md).
 
+`share_subtype: true` is "up to two basic land cards **that share a land type**"
+(Myriad Landscape) — a constraint between the picks rather than on each of them.
+No selector clause can say it: every clause in `_matches_in_zone` is evaluated
+against one candidate in isolation, so `supertypes: ["Basic"]` says "each of
+these is a basic land" and can never say "these two match". `shares_a_type_with`
+is the near miss and compares against an object already bound, while nothing
+binds a card the same search is still choosing.
+
+So the *choice* is staged, not the filter widened: one card is picked from the
+whole pool, then only what shares a subtype with it is offered. Still one search
+and one shuffle — two `search_library` ops in sequence shuffle twice and carry
+two independent "up to" counts, leaving the second pick unconstrained, which is
+the one thing the printed sentence exists to say. Hardcoding `subtypes:
+["Forest"]` was the other shortcut and it takes a choice the card gives the
+player. Refused at load time on any other op, and on a `count` below 2, where
+it would be decoration on a card that reads as though it constrained something.
+
 `look_at_top` is `search_library` with the pool bounded to the top `amount`
 cards, and the bound is the card:
 

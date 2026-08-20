@@ -11293,6 +11293,49 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_share_a_type",
+      "name": "Test Share A Type",
+      "oracle_text": "When this enchantment enters, search your library for up to two basic land cards that share a land type, put them onto the battlefield tapped, then shuffle.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, search your library for up to two basic land cards that share a land type, put them onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 2,
+              "share_subtype": true,
+              "destination": "battlefield",
+              "tapped": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
