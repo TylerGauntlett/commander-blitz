@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **7** capabilities.
+**4 cards** blocked by **6** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [last-known-information](#last-known-information) | 1 | 1450 | value |
 | [modal-targets](#modal-targets) | 1 | 15563 | target |
 | [modal-up-to](#modal-up-to) | 1 | 15563 | op |
-| [search-shared-type](#search-shared-type) | 1 | 30 | selector |
 
 ## attack-tax
 
@@ -113,19 +112,5 @@ Blocks **1** card.
   - • Target creature card.
   - • Target enchantment card.
   - • Target land card.
-
-</details>
-
-## search-shared-type
-
-Blocks **1** card.
-
-- **(selector)** a way for a multi-card `search_library` to constrain the picked cards against *each other* -- e.g. a `share_subtype: true` (or `share: "subtypes"`) key on the search spec that, once the first card is chosen, restricts the remaining choices to cards sharing a subtype with it, so "up to two basic land cards that share a land type" fetches Forest+Forest or Island+Island but never Forest+Swamp
-  <br>Why the existing vocabulary won't do: Every selector clause is evaluated per candidate in isolation (`_matches_in_zone` runs the selector against one oid at a time), so `types`/`supertypes`/`subtypes` can only say "each card is a basic land", not "the two cards match one another". The nearest clause, `shares_a_type_with`, compares a candidate against an object already in `ctx.bindings` by name -- but nothing binds a card the same search is in the middle of choosing, and `search_library` has no bind/output key at all. Splitting it into two searches is a different card: it shuffles twice, is two separate search events, and each search carries its own independent "up to" count, so the second pick would still be unconstrained. `subtypes: ["Forest"]` and friends would hardcode one land type, which the printed card leaves to the player.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myriad Landscape** (rank 30) — `myriad_landscape`
-  - {2}, {T}, Sacrifice this land: Search your library for up to two basic land cards that share a land type, put them onto the battlefield tapped, then shuffle.
 
 </details>

@@ -4271,6 +4271,16 @@
   "mutavault": {
     "zone": "battlefield"
   },
+  "myriad_landscape": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "mystic_gate": {
     "zone": "battlefield"
   },

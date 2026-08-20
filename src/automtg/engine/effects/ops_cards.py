@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE
@@ -141,7 +142,12 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         if pool:
             take = min(count, len(pool))
             prompt = "Search your library" if zones == ("library",) else "Search"
-            picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
+            if spec.get("share_subtype") and take > 1:
+                picked = yield from _search_sharing(ctx, prompt, pool, take, pid)
+            else:
+                picked = yield from ask_objects(
+                    ctx, prompt, pool, 0, take, pid, "search"
+                )
             if spec.get("reveal") and picked:
                 # "…search your library for a Vampire card, **reveal it**, then
                 # shuffle and put that card on top." Revealed on the way out, so
@@ -182,6 +188,45 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     # `if` sees no objects rather than a stale name.
     if name := spec.get("as"):
         ctx.bindings[str(name)] = found
+
+
+def _search_sharing(
+    ctx: EffectContext, prompt: str, pool: list[int], take: int, pid: int
+):
+    """"…for up to two basic land cards **that share a land type**" (Myriad Landscape).
+
+    A constraint between the picks, which no selector can state: every clause in
+    `_matches_in_zone` is evaluated against one candidate in isolation, so
+    `subtypes` can say "each is a basic land" and never "these two match". The
+    nearest clause, `shares_a_type_with`, compares against an object already in
+    `ctx.bindings`, and nothing binds a card the same search is still choosing.
+
+    So the choice is staged rather than the filter widened: pick one from the
+    whole pool, then offer only the cards sharing a subtype with it. Still one
+    search of one zone and one shuffle -- two `search_library` ops in sequence
+    would be a different card, shuffling twice and carrying two independent "up
+    to" counts, which leaves the second pick unconstrained.
+
+    Declining the first pick takes nothing, because "up to two" includes zero.
+    Hardcoding `subtypes: ["Forest"]` was the other tempting shortcut and it
+    takes a choice the printed card gives the player.
+    """
+    first = yield from ask_objects(ctx, prompt, pool, 0, 1, pid, "search")
+    if not first:
+        return []
+    lead = first[0]
+    shared = chars(ctx.state, lead).subtypes
+    rest = [
+        oid
+        for oid in pool
+        if oid != lead and (chars(ctx.state, oid).subtypes & shared)
+    ]
+    if not rest:
+        return list(first)
+    more = yield from ask_objects(
+        ctx, f"{prompt} (sharing a type)", rest, 0, take - 1, pid, "search"
+    )
+    return list(first) + list(more)
 
 
 def _move_found(
