@@ -2048,6 +2048,12 @@
     "file": "claim_jumper.jpg",
     "scryfall_id": "11bda4c5-099f-489e-b64b-f4719241cf9d"
   },
+  "claim_the_kingdom": {
+    "artist": "Lius Lasahido",
+    "bytes": 40024,
+    "file": "claim_the_kingdom.jpg",
+    "scryfall_id": "cf13bfb1-5b44-4363-8de9-ece234233870"
+  },
   "clavileno_first_of_the_blessed": {
     "artist": "Chun Lo",
     "bytes": 81712,
@@ -4380,6 +4386,12 @@
     "bytes": 59736,
     "file": "ghitu_encampment.jpg",
     "scryfall_id": "896a02a6-5348-4f90-90b1-68aa61e84b73"
+  },
+  "ghost_quarter": {
+    "artist": "Heather Hudson",
+    "bytes": 53454,
+    "file": "ghost_quarter.jpg",
+    "scryfall_id": "b3699c15-d834-4dde-ae3b-b3eb8241b442"
   },
   "ghostly_sentinel": {
     "artist": "Daarken",
@@ -13822,6 +13834,12 @@
     "bytes": 90028,
     "file": "water_elemental.jpg",
     "scryfall_id": "954dc110-54f3-442e-9f4b-82733a2480bc"
+  },
+  "waterlogged_grove": {
+    "artist": "Alexander Gering",
+    "bytes": 86112,
+    "file": "waterlogged_grove.jpg",
+    "scryfall_id": "6631b9b3-57fb-45d0-94fc-7d07556c8f7f"
   },
   "watery_grave": {
     "artist": "Raymond Bonilla",

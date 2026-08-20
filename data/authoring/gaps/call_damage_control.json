@@ -1,0 +1,32 @@
+{
+  "card_id": "call_damage_control",
+  "name": "Call Damage Control",
+  "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target creature card.\n\u2022 Target enchantment card.\n\u2022 Target land card.",
+  "blocked_sentences": [
+    "Choose up to two. Return those cards from your graveyard to your hand.",
+    "\u2022 Target artifact card.",
+    "\u2022 Target creature card.",
+    "\u2022 Target enchantment card.",
+    "\u2022 Target land card."
+  ],
+  "needs": [
+    {
+      "capability": "modal_up_to",
+      "kind": "op",
+      "what": "an unconditional ceiling on how many modes are taken -- \"choose up to two\" meaning any number from zero through two, with no condition attached and no floor of one",
+      "why_existing_wont_do": "choose_mode's 'count' is an exact number, and both Game._ask_modes and op_choose_mode pass max(1, count) as the minimum to ask_mode, so the smallest choosable number of modes is always one. The two ceiling spellings beside it are both conditional: 'all_if' is entwine and forces every mode, 'up_to_if' raises the ceiling only while its 'condition' holds and the loader refuses it without one -- and even satisfied it leaves the same floor of one. A TargetSpec has an 'up_to' flag that means exactly this, but it caps targets, not modes, and there is no equivalent on choose_mode."
+    },
+    {
+      "capability": "modal-targets",
+      "kind": "target",
+      "what": "a target spec owned by a single mode: declared, chosen and legality-checked only when that mode is chosen, so a modal spell can carry one target per mode and bind several distinct ones when several modes are taken",
+      "why_existing_wont_do": "'targets' is a flat card-level list compiled by loader._compile_targets and chosen as the spell is cast, with no link to which mode was picked; a mode's effects can only point at an already-declared spec by id via objects.target. The existing idiom (simic_charm) is one 'optional' spec every mode shares, which works only because all its modes target the same thing. Here the four modes target four different card types in your graveyard and two are live at once, so one shared spec cannot supply two distinct targets, and four independent optional specs would leave every mode-to-target pairing unenforced -- the artifact mode could be taken having targeted only a creature card. Collapsing the whole card to one 'card_in_graveyard' spec with count 2, up_to true and any_types [Artifact, Creature, Enchantment, Land] gets the ceiling right but drops the at-most-one-per-type restriction the modes impose, letting it return two creature cards."
+    }
+  ],
+  "closest_existing": [
+    "choose_mode",
+    "up_to_if",
+    "return_from_graveyard"
+  ],
+  "confidence": "high"
+}

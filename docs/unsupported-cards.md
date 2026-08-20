@@ -10,5 +10,137 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**6 cards** blocked by **8** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [attack-tax](#attack-tax) | 1 | 115 | static_effect |
+| [copy-new-targets](#copy-new-targets) | 1 | 1714 | decision |
+| [enters-with-x-counters](#enters-with-x-counters) | 1 | 1450 | value |
+| [last-known-information](#last-known-information) | 1 | 1450 | value |
+| [modal-targets](#modal-targets) | 1 | 15563 | target |
+| [modal-up-to](#modal-up-to) | 1 | 15563 | op |
+| [search-binding](#search-binding) | 1 | 49 | op |
+| [search-shared-type](#search-shared-type) | 1 | 30 | selector |
+
+## attack-tax
+
+Blocks **1** card.
+
+- **(static_effect)** A static effect on a permanent that imposes an optional cost -- a mana cost scaled per attacking creature -- as an additional cost to declare an attacker against the static's controller, offered as a pay-or-don't-attack decision during the declare attackers step: each creature its controller declares against that player is legal only if that controller pays {2} for it, and unpaid creatures simply are not declared. Needs a static effect (e.g. 'attack_cost' with a 'cost' and an 'affects' filter), a payment decision raised inside declare-attackers, and combat legality that asks 'can this cost be paid' rather than 'is this attack forbidden'.
+  <br>Why the existing vocabulary won't do: The two nearest things in reference are the `cant_attack` static and the `cant_attack_player` op. Both are absolute prohibitions with no cost parameter: `cant_attack` (read by combat.can_attack) matches a creature by printed characteristics and forbids it attacking outright, and `cant_attack_player` writes an AttackRestriction naming a pair of players plus a required duration of 'this_turn' or 'this_combat', so it can neither be optional nor be bought off, and it cannot express a per-attacker price. `ward` is the only cost-parameterised static in the list, but it taxes targeting the permanent that carries it and pays out as a triggered ability that counters the spell -- it never reaches the declare attackers step and cannot price an attack against a player. `cost_keys` is the vocabulary of an *activated ability's* cost, and attacking is not an activated ability, so there is nowhere to hang the {2}.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Propaganda** (rank 115) — `propaganda`
+  - Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you.
+
+</details>
+
+## copy-new-targets
+
+Blocks **1** card.
+
+- **(decision)** an optional choice, offered once per copy as the copy is put on the stack, that re-picks legal targets for that copy independently of the original spell -- i.e. a `new_targets: true` flag on `copy_spell` that asks the copy's controller to retarget
+  <br>Why the existing vocabulary won't do: `copy_spell` is the only copying op and it deliberately hardcodes the original's targets (`put_copy_on_stack` passes `targets=original.targets`, and docs/rules-coverage.md records "'You may choose new targets' is not implemented" because a storm count of nine would ask nine times). No op, cost or selector anywhere can change a stack item's targets after it exists -- there is no retarget/change_targets capability at all -- and `may` only gates whether effects happen, it cannot pose the target question. Copying with the original's targets is not the printed card: the whole point of copying a removal spell or a counterspell here is pointing the copy somewhere else.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jin-Gitaxias, Progress Tyrant** (rank 1714) — `jin_gitaxias_progress_tyrant`
+  - You may choose new targets for the copy.
+
+</details>
+
+## enters-with-x-counters
+
+Blocks **1** card.
+
+- **(value)** the X paid for a permanent spell must be readable by that permanent's `self_enters_with_counters` replacement, so `amount` can be {"x": true} and a {X} creature arrives already the right size
+  <br>Why the existing vocabulary won't do: `x` is in `value_keys` and works in `spell_effects` and in a triggered ability (triggers.event_bindings binds x from obj.cast_x), but zones._enter_battlefield evaluates a replacement's `amount` with EffectContext(state, controller, source_oid) and no x, so ctx.x is 0 and the replacement silently puts on zero counters. The near miss is `{"count": {...}}`, which counts a board, not the cost paid. Writing it instead as a `self_enters` trigger running `add_counters` is a different card: 614.1c aside, a printed 0/0 Hydra would hit the battlefield at 0/0 and be binned by state-based actions before the trigger ever resolved.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Goldvein Hydra** (rank 1450) — `goldvein_hydra`
+  - This creature enters with X +1/+1 counters on it.
+  - When this creature dies, create a number of tapped Treasure tokens equal to its power.
+
+</details>
+
+## last-known-information
+
+Blocks **1** card.
+
+- **(value)** a `dies`/`leaves_battlefield` trigger must be able to read the dead permanent's last-known power and toughness — the values it had on the battlefield as it left, not its printed line
+  <br>Why the existing vocabulary won't do: `power_of` with {"self": true} goes through values._from_oid -> chars(), and by the time the dies trigger resolves the object is a graveyard card whose counters `reset_permanent_state` has already cleared, so it reads printed power (0 here). The DIES event carries only `had_counters`, so `counters_had` can recover the +1/+1 counters but not power — a different number the moment an anthem, a pump or a -1/-1 counter is involved. `snapshot` does not help either: it is an op, so it runs at resolution, after the creature has already left.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Goldvein Hydra** (rank 1450) — `goldvein_hydra`
+  - This creature enters with X +1/+1 counters on it.
+  - When this creature dies, create a number of tapped Treasure tokens equal to its power.
+
+</details>
+
+## modal-targets
+
+Blocks **1** card.
+
+- **(target)** a target spec owned by a single mode: declared, chosen and legality-checked only when that mode is chosen, so a modal spell can carry one target per mode and bind several distinct ones when several modes are taken
+  <br>Why the existing vocabulary won't do: 'targets' is a flat card-level list compiled by loader._compile_targets and chosen as the spell is cast, with no link to which mode was picked; a mode's effects can only point at an already-declared spec by id via objects.target. The existing idiom (simic_charm) is one 'optional' spec every mode shares, which works only because all its modes target the same thing. Here the four modes target four different card types in your graveyard and two are live at once, so one shared spec cannot supply two distinct targets, and four independent optional specs would leave every mode-to-target pairing unenforced -- the artifact mode could be taken having targeted only a creature card. Collapsing the whole card to one 'card_in_graveyard' spec with count 2, up_to true and any_types [Artifact, Creature, Enchantment, Land] gets the ceiling right but drops the at-most-one-per-type restriction the modes impose, letting it return two creature cards.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Call Damage Control** (rank 15563) — `call_damage_control`
+  - Choose up to two. Return those cards from your graveyard to your hand.
+  - • Target artifact card.
+  - • Target creature card.
+  - • Target enchantment card.
+  - • Target land card.
+
+</details>
+
+## modal-up-to
+
+Blocks **1** card.
+
+- **(op)** an unconditional ceiling on how many modes are taken -- "choose up to two" meaning any number from zero through two, with no condition attached and no floor of one
+  <br>Why the existing vocabulary won't do: choose_mode's 'count' is an exact number, and both Game._ask_modes and op_choose_mode pass max(1, count) as the minimum to ask_mode, so the smallest choosable number of modes is always one. The two ceiling spellings beside it are both conditional: 'all_if' is entwine and forces every mode, 'up_to_if' raises the ceiling only while its 'condition' holds and the loader refuses it without one -- and even satisfied it leaves the same floor of one. A TargetSpec has an 'up_to' flag that means exactly this, but it caps targets, not modes, and there is no equivalent on choose_mode.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Call Damage Control** (rank 15563) — `call_damage_control`
+  - Choose up to two. Return those cards from your graveyard to your hand.
+  - • Target artifact card.
+  - • Target creature card.
+  - • Target enchantment card.
+  - • Target land card.
+
+</details>
+
+## search-binding
+
+Blocks **1** card.
+
+- **(op)** an `as` output binding on `search_library` (and `search_zones`) naming the cards the search found, so a later effect in the same ability can act on exactly those objects -- here `{"op": "untap", "objects": {"binding": "fetched"}}` inside the `if` that checks `lands_you_control >= 4`. Concretely: add `search_library`/`search_zones` to `RECORDING_OPS` and have `_search`/`_move_found` write the picked oids into `ctx.bindings[as]` after the move, the way `reveal`, `exile` and `sacrifice` already do
+  <br>Why the existing vocabulary won't do: `{"binding": ...}` is a real selector key and `ctx.bindings` is a real mechanism, but only the eight ops in `RECORDING_OPS` (copy_permanent, create_token, exile, gain_control, join_forces, reveal, sacrifice, snapshot) ever write one; `_search` in engine/effects/ops_cards.py writes no binding, and the loader rejects an `as` on any other op outright. So after the search resolves nothing in the DSL can name the land that was just fetched. The only untap the vocabulary can express is a fresh selector such as `{"zone": "battlefield", "controller": "you", "types": ["Land"], "supertypes": ["Basic"], "tapped": true, "count": 1}`, which is a different card: Fabled Passage is routinely cracked after lands have been tapped for mana, and that filter would happily untap one of those instead of the land it just found. `snapshot` is no help either -- it captures characteristics of an object that already exists, and its own `objects` selector would face the same naming problem. A `permanent_enters` trigger on the Passage cannot substitute: the Passage has been sacrificed as a cost and is no longer on the battlefield when the land arrives, and such a trigger would also fire on every other basic land entering, not just this one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fabled Passage** (rank 49) — `fabled_passage`
+  - Then if you control four or more lands, untap that land.
+
+</details>
+
+## search-shared-type
+
+Blocks **1** card.
+
+- **(selector)** a way for a multi-card `search_library` to constrain the picked cards against *each other* -- e.g. a `share_subtype: true` (or `share: "subtypes"`) key on the search spec that, once the first card is chosen, restricts the remaining choices to cards sharing a subtype with it, so "up to two basic land cards that share a land type" fetches Forest+Forest or Island+Island but never Forest+Swamp
+  <br>Why the existing vocabulary won't do: Every selector clause is evaluated per candidate in isolation (`_matches_in_zone` runs the selector against one oid at a time), so `types`/`supertypes`/`subtypes` can only say "each card is a basic land", not "the two cards match one another". The nearest clause, `shares_a_type_with`, compares a candidate against an object already in `ctx.bindings` by name -- but nothing binds a card the same search is in the middle of choosing, and `search_library` has no bind/output key at all. Splitting it into two searches is a different card: it shuffles twice, is two separate search events, and each search carries its own independent "up to" count, so the second pick would still be unconstrained. `subtypes: ["Forest"]` and friends would hardcode one land type, which the printed card leaves to the player.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Myriad Landscape** (rank 30) — `myriad_landscape`
+  - {2}, {T}, Sacrifice this land: Search your library for up to two basic land cards that share a land type, put them onto the battlefield tapped, then shuffle.
+
+</details>

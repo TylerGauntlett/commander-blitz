@@ -1083,6 +1083,13 @@
   "claim_jumper": {
     "zone": "battlefield"
   },
+  "claim_the_kingdom": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "clavileno_first_of_the_blessed": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -2378,6 +2385,10 @@
     "zone": "battlefield"
   },
   "ghitu_encampment": {
+    "zone": "battlefield"
+  },
+  "ghost_quarter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ghostly_sentinel": {
@@ -7498,6 +7509,10 @@
     "zone": "battlefield"
   },
   "water_elemental": {
+    "zone": "battlefield"
+  },
+  "waterlogged_grove": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "watery_grave": {

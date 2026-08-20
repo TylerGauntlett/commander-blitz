@@ -47072,12 +47072,12 @@
     },
     "Claim the Kingdom": {
       "edhrec_rank": 14379,
-      "gate": "template",
+      "gate": null,
       "name": "Claim the Kingdom",
-      "reason": "no template for: Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you ",
+      "reason": "",
       "scryfall_id": "cf13bfb1-5b44-4363-8de9-ece234233870",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Claim the Precious": {
@@ -107012,12 +107012,12 @@
     },
     "Ghost Quarter": {
       "edhrec_rank": 812,
-      "gate": "template",
+      "gate": null,
       "name": "Ghost Quarter",
-      "reason": "no template for: {T}, Sacrifice this land: Destroy target land. Its controller may search their library for",
+      "reason": "",
       "scryfall_id": "b3699c15-d834-4dde-ae3b-b3eb8241b442",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghost Ship": {
@@ -309472,12 +309472,12 @@
     },
     "Waterlogged Grove": {
       "edhrec_rank": 1127,
-      "gate": "template",
+      "gate": null,
       "name": "Waterlogged Grove",
-      "reason": "no template for: {T}, Pay 1 life: Add {G} or {U}",
+      "reason": "",
       "scryfall_id": "6631b9b3-57fb-45d0-94fc-7d07556c8f7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waterlogged Hulk // Watertight Gondola": {
