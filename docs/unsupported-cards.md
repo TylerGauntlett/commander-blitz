@@ -10,28 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**3 cards** blocked by **4** capabilities.
+**2 cards** blocked by **3** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [attack-tax](#attack-tax) | 1 | 115 | static_effect |
 | [copy-new-targets](#copy-new-targets) | 1 | 1714 | decision |
 | [modal-targets](#modal-targets) | 1 | 15563 | target |
 | [modal-up-to](#modal-up-to) | 1 | 15563 | op |
-
-## attack-tax
-
-Blocks **1** card.
-
-- **(static_effect)** A static effect on a permanent that imposes an optional cost -- a mana cost scaled per attacking creature -- as an additional cost to declare an attacker against the static's controller, offered as a pay-or-don't-attack decision during the declare attackers step: each creature its controller declares against that player is legal only if that controller pays {2} for it, and unpaid creatures simply are not declared. Needs a static effect (e.g. 'attack_cost' with a 'cost' and an 'affects' filter), a payment decision raised inside declare-attackers, and combat legality that asks 'can this cost be paid' rather than 'is this attack forbidden'.
-  <br>Why the existing vocabulary won't do: The two nearest things in reference are the `cant_attack` static and the `cant_attack_player` op. Both are absolute prohibitions with no cost parameter: `cant_attack` (read by combat.can_attack) matches a creature by printed characteristics and forbids it attacking outright, and `cant_attack_player` writes an AttackRestriction naming a pair of players plus a required duration of 'this_turn' or 'this_combat', so it can neither be optional nor be bought off, and it cannot express a per-attacker price. `ward` is the only cost-parameterised static in the list, but it taxes targeting the permanent that carries it and pays out as a triggered ability that counters the spell -- it never reaches the declare attackers step and cannot price an attack against a player. `cost_keys` is the vocabulary of an *activated ability's* cost, and attacking is not an activated ability, so there is nowhere to hang the {2}.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Propaganda** (rank 115) — `propaganda`
-  - Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you.
-
-</details>
 
 ## copy-new-targets
 

@@ -641,6 +641,44 @@ printed line is 0/0. `counters_had` is the near miss and sees only the counters,
 so an anthem, a pump spell or a -1/-1 counter makes it the wrong number. A
 trigger that never fired binds nothing and both read 0.
 
+### Pricing an attack rather than forbidding it
+
+```jsonc
+// Propaganda
+{ "kind": "static",
+  "text": "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you.",
+  "effect": "attack_tax",
+  "cost": { "mana": "{2}" },
+  "affects": { "controller": "any", "types": ["Creature"] } }
+```
+
+The tax protects **the seat the permanent is under**, which is the shape of the
+whole pillowfort family (Ghostly Prison, Norn's Annex): `affects` says which
+creatures are priced, and the static's own controller is who they are priced for
+attacking. Like `cant_attack`, that filter routinely names creatures its
+controller does not control, so it is written with an explicit
+`controller: "any"`.
+
+Neither near miss can say it. `cant_attack` and the `cant_attack_player` op are
+absolute prohibitions with no price, so a Propaganda built on either is a *lock*
+— strictly stronger than what is printed, and it looks entirely normal on
+screen. `ward` is the only other cost-parameterised static and it prices
+targeting, paying out as a triggered counter that never reaches combat.
+
+Charged as each attacker is declared. 508.1g settles a declaration's costs at
+once, and per-attacker reaches the same total because the printed price is "{2}
+for each creature ... attacking you" — with the added property that a third
+attacker nobody can afford cannot strand a declaration the first two paid for.
+An unpayable tax is a prohibition, so `legality` withholds the ADD_ATTACKER
+rather than offering one that would be rewound, and the price goes in the action
+label because a player choosing between defenders is choosing between prices.
+
+Two Propagandas are `{4}`, summed rather than concatenated into an unpayable
+`{2}{2}`. **Mana only**, refused at load time otherwise: a sacrifice or a
+discard would have to ask a question inside the declare-attackers decision, and
+no printed pillowfort asks for one. A tax with no cost is refused for the reason
+ward {0} is — it is `cant_attack` wearing a costume.
+
 ### Which creatures attacked this turn, and how many
 
 Two spellings of one record, and they are not interchangeable with anything that

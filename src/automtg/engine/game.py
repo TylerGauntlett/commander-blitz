@@ -157,6 +157,18 @@ class Game:
         if action.kind is ActionKind.ADD_ATTACKER:
             ref = action.targets[0]
             if ref.kind == "player":
+                # Propaganda's {2}, charged as the attacker is declared. 508.1g
+                # settles the whole declaration's costs at once; per-attacker
+                # comes to the same total, because the printed price is "{2} for
+                # each creature ... attacking you" -- and it means an unaffordable
+                # third attacker cannot strand a declaration two were paid for.
+                #
+                # `_run` rather than a bare call: `pay` is a generator like every
+                # other payment. A pure-mana cost never actually yields, since
+                # `pay_mana` solves and taps on its own, so the declaration is
+                # not interrupted.
+                if not self._pay_attack_tax(action.source, ref.id):
+                    return
                 add_attacker(state, action.source, ref.id)
             else:
                 # A planeswalker. Its controller is the defending player
@@ -170,6 +182,39 @@ class Game:
             return  # the decision stays open for more attackers
         state.pending_decision = None
         self._run(finish_attackers(state))
+
+    def _pay_attack_tax(self, oid: int, defender: int) -> bool:
+        """Charge any attack tax for declaring ``oid`` against ``defender``.
+
+        Returns whether the attack may proceed. Legality only offers an
+        ADD_ATTACKER it has already found payable, so a False here means the
+        board moved underneath the action -- the same contract `op_may` has
+        after its own `can_pay`.
+        """
+        from .combat import attack_tax_cost
+        from .costs import pay
+
+        cost = attack_tax_cost(self.state, oid, defender)
+        if cost is None:
+            return True
+        obj = self.state.objects.get(oid)
+        if obj is None:
+            return False
+        # Driven here rather than through `_run`, which reports only whether a
+        # generator finished and throws away what it returned -- and for `pay`
+        # that value *is* the answer. An attack tax is mana-only (the loader
+        # refuses any other component), and `pay_mana` solves and taps without
+        # asking, so this never suspends mid-declaration.
+        gen = pay(self.state, obj.controller, cost, None)
+        try:
+            gen.send(None)
+        except StopIteration as done:
+            return bool(done.value)
+        # Unreachable while attack taxes stay mana-only. If one ever asked a
+        # question, suspending here would strand the declare-attackers decision,
+        # so refuse the attack rather than corrupt the declaration.
+        gen.close()
+        return False
 
     def _dispatch_blockers(self, action: Action, decision: PendingDecision) -> None:
         state = self.state

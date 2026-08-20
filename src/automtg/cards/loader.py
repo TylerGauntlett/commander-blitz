@@ -146,6 +146,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Propaganda, and the pillowfort family behind it. Parameterised on a
+        # `cost` like `ward`, and for the same reason it cannot be a keyword.
+        # Read by `characteristics.attack_tax` at declare-attackers, where it
+        # prices an attack against the permanent's own controller rather than
+        # forbidding one: `cant_attack` and the `cant_attack_player` op are both
+        # absolute, so a card built on either is a lock rather than a tax --
+        # strictly stronger than what is printed.
+        "attack_tax",
         # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
         # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
         # and there is nowhere in one to put the `{1}`. Read by
@@ -1541,10 +1549,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `op_may` charges it from a mapping and building it twice is two places
         # for the price to drift.
         _compile_cost(model.cost, where)
+    elif model.effect == "attack_tax":
+        # Propaganda. A tax with no price is `cant_attack` wearing a costume --
+        # an absolute lock that reads as if it could be bought off, which is
+        # strictly stronger than what is printed. The same refusal ward makes.
+        if model.cost is None:
+            raise DslError(
+                f"{where}: attack_tax needs a 'cost' -- a tax that prices "
+                f"nothing is a prohibition, not a tax"
+            )
+        # Mana and nothing else. A sacrifice or a discard would have to ask a
+        # question *inside* the declare-attackers decision, which would strand
+        # it -- and no printed pillowfort asks for one. Refused at load time so
+        # the restriction is a rule rather than an assumption `game.py` makes.
+        priced = prune_cost(model.cost.model_dump())
+        if not str(priced.get("mana") or "").strip():
+            raise DslError(
+                f"{where}: attack_tax is paid in mana; give its 'cost' a 'mana'"
+            )
+        if set(priced) - {"mana"}:
+            raise DslError(
+                f"{where}: attack_tax is paid in mana only, not "
+                f"{sorted(set(priced) - {'mana'})} -- anything else would have "
+                f"to ask a question inside the attack declaration"
+            )
+        _compile_cost(model.cost, where)
     elif model.cost is not None:
         raise DslError(
             f"{where}: a static ability has no cost to pay; 'cost' means "
-            f"something only on 'ward' (and on activated abilities)"
+            f"something only on 'ward' and 'attack_tax' (and on activated abilities)"
         )
 
     for field_name in ("power", "toughness", "amount"):
@@ -1609,6 +1642,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # mapping is also what `carddef.ward_ability` keys its intern table on:
         # two cards writing ward {1} must land on one ability, not two that only
         # differ by a `tap: false` nobody wrote.
+        static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)

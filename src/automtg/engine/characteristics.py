@@ -1127,6 +1127,58 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def attack_tax(state: GameState, oid: int, defender: int) -> str:
+    """The mana a creature's controller must pay to declare it against ``defender``.
+
+    "Creatures can't attack you unless their controller pays {2} for each
+    creature they control that's attacking you" -- Propaganda, and the whole
+    pillowfort family behind it (Ghostly Prison, Norn's Annex, Sphere of
+    Safety).
+
+    Neither near miss can say it. `cant_attack` and the `cant_attack_player` op
+    are absolute prohibitions with no cost to them, so a card built on either is
+    a *lock* rather than a tax -- strictly stronger than what is printed, and it
+    would look entirely normal on screen. `ward` is the only other
+    cost-parameterised static and it prices *targeting*, paying out as a
+    triggered counter that never reaches the declare-attackers step.
+
+    Returned as a mana string rather than a `Cost`, so this module stays free of
+    `costs`, which imports it. Taxes from several permanents add up, which is
+    what two Propagandas do.
+
+    The per-creature scaling in the printed text falls out of *where* this is
+    charged: the price is settled once per attacker as it is declared, so a
+    three-creature attack pays {2} three times, exactly as 508.1g totals it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ""
+    generic = 0
+    parts: list[str] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "attack_tax":
+            continue
+        # The tax protects the seat the permanent is under, which is the whole
+        # shape of the card: "creatures can't attack **you**".
+        if source_obj.controller != defender:
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        # The same `cost` mapping ward stores, so the two go through one
+        # validator and there is one place for a price to be written.
+        spec = static.get("cost")
+        inner = str((spec or {}).get("mana") or "").strip() if isinstance(spec, Mapping) else ""
+        # Summed rather than concatenated where they are plain generic, so two
+        # Propagandas read as {4} instead of an unpayable "{2}{2}".
+        if inner.startswith("{") and inner.endswith("}") and inner[1:-1].isdigit():
+            generic += int(inner[1:-1])
+        elif inner:
+            parts.append(inner)
+    if generic:
+        parts.insert(0, "{" + str(generic) + "}")
+    return "".join(parts)
+
+
 def block_forbidden(state: GameState, oid: int) -> bool:
     """Is this creature under a "can't block" static?
 

@@ -206762,12 +206762,12 @@
     },
     "Propaganda": {
       "edhrec_rank": 115,
-      "gate": "template",
+      "gate": null,
       "name": "Propaganda",
-      "reason": "no template for: Creatures can't attack you unless their controller pays {2} for each creature they control",
+      "reason": "",
       "scryfall_id": "ac943e31-26bc-4b54-b73f-460e6e402d86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Propaganda // Propaganda": {
