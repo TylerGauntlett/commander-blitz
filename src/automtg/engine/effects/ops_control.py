@@ -181,6 +181,13 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     up_to = None
     if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
         up_to = evaluate_value(ctx, more.get("count", len(modes)))
+    # "Choose up to two --": an unconditional ceiling with no floor. See
+    # `Game._ask_modes`, which answers this for a spell whose whole effect tree
+    # is one top-level `choose_mode`; this copy serves a triggered ability and a
+    # nested `choose_mode`, which have no cast to be asked at.
+    floor = 0 if spec.get("up_to") else max(1, count)
+    if spec.get("up_to"):
+        up_to = count if up_to is None else max(up_to, count)
 
     labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
 
@@ -213,13 +220,13 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             "Choose",
             [labels[i] for i in offered],
             ctx.controller,
-            max(1, count),
+            floor,
             up_to,
         )
         chosen = [offered[i] for i in picked]
     else:
         chosen = yield from ask_mode(
-            ctx, "Choose", labels, ctx.controller, max(1, count), up_to
+            ctx, "Choose", labels, ctx.controller, floor, up_to
         )
 
     for index in chosen:

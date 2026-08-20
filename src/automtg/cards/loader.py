@@ -3123,6 +3123,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if op != "choose_mode":
             raise DslError(f"{where}: 'all_if' only means anything on choose_mode, not {op!r}")
         validate_condition(effect["all_if"], f"{where}.all_if")
+    if "up_to" in effect:
+        # "Choose up to two --" (Call Damage Control). The unconditional ceiling
+        # with no floor, which `count` (exact), `all_if` (every mode) and
+        # `up_to_if` (conditional, floor of one) between them could not say. The
+        # name is `TargetSpec`'s, where it has meant the same thing since "up to
+        # X target creatures".
+        if op != "choose_mode":
+            raise DslError(
+                f"{where}: 'up_to' only means anything on choose_mode, not {op!r}"
+            )
+        if not isinstance(effect["up_to"], bool):
+            raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 1:
+            # "Up to zero modes" is a card that does nothing.
+            raise DslError(
+                f"{where}: 'up_to' needs a 'count' of at least 1; got {count}"
+            )
     if "up_to_if" in effect:
         # The same guard for entwine's mirror image, and it was missing -- which
         # is how a card carrying `up_to_if` compiled, played and cleared every

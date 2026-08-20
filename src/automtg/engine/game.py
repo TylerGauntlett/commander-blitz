@@ -757,8 +757,20 @@ class Game:
             ctx, more.get("condition")
         ):
             up_to = evaluate_value(ctx, more.get("count", len(modes)))
+        # "Choose up to two --" (Call Damage Control). An unconditional ceiling
+        # with **no floor**, which is the one modal shape nothing could say:
+        # `count` is exact, `all_if` forces every mode, and `up_to_if` needs a
+        # condition and still keeps a floor of one. The name is `TargetSpec`'s,
+        # where it has meant exactly this since "up to X target creatures".
+        #
+        # Taking none is a real line on these cards -- Call Damage Control with
+        # an empty graveyard is cast for its other half -- so a floor of one
+        # would force a mode that does nothing.
+        floor = 0 if spec.get("up_to") else max(1, count)
+        if spec.get("up_to"):
+            up_to = count if up_to is None else max(up_to, count)
         labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-        chosen = yield from ask_mode(ctx, "Choose", labels, pid, max(1, count), up_to)
+        chosen = yield from ask_mode(ctx, "Choose", labels, pid, floor, up_to)
         return tuple(chosen)
 
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
