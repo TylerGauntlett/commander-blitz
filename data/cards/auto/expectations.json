@@ -1935,6 +1935,10 @@
   "exultant_skymarcher": {
     "zone": "battlefield"
   },
+  "fabled_passage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fact_or_fiction": {
     "library_size": {
       "0": 35

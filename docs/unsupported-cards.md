@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**6 cards** blocked by **8** capabilities.
+**5 cards** blocked by **7** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [last-known-information](#last-known-information) | 1 | 1450 | value |
 | [modal-targets](#modal-targets) | 1 | 15563 | target |
 | [modal-up-to](#modal-up-to) | 1 | 15563 | op |
-| [search-binding](#search-binding) | 1 | 49 | op |
 | [search-shared-type](#search-shared-type) | 1 | 30 | selector |
 
 ## attack-tax
@@ -114,20 +113,6 @@ Blocks **1** card.
   - • Target creature card.
   - • Target enchantment card.
   - • Target land card.
-
-</details>
-
-## search-binding
-
-Blocks **1** card.
-
-- **(op)** an `as` output binding on `search_library` (and `search_zones`) naming the cards the search found, so a later effect in the same ability can act on exactly those objects -- here `{"op": "untap", "objects": {"binding": "fetched"}}` inside the `if` that checks `lands_you_control >= 4`. Concretely: add `search_library`/`search_zones` to `RECORDING_OPS` and have `_search`/`_move_found` write the picked oids into `ctx.bindings[as]` after the move, the way `reveal`, `exile` and `sacrifice` already do
-  <br>Why the existing vocabulary won't do: `{"binding": ...}` is a real selector key and `ctx.bindings` is a real mechanism, but only the eight ops in `RECORDING_OPS` (copy_permanent, create_token, exile, gain_control, join_forces, reveal, sacrifice, snapshot) ever write one; `_search` in engine/effects/ops_cards.py writes no binding, and the loader rejects an `as` on any other op outright. So after the search resolves nothing in the DSL can name the land that was just fetched. The only untap the vocabulary can express is a fresh selector such as `{"zone": "battlefield", "controller": "you", "types": ["Land"], "supertypes": ["Basic"], "tapped": true, "count": 1}`, which is a different card: Fabled Passage is routinely cracked after lands have been tapped for mana, and that filter would happily untap one of those instead of the land it just found. `snapshot` is no help either -- it captures characteristics of an object that already exists, and its own `objects` selector would face the same naming problem. A `permanent_enters` trigger on the Passage cannot substitute: the Passage has been sacrificed as a cost and is no longer on the battlefield when the land arrives, and such a trigger would also fire on every other basic land entering, not just this one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fabled Passage** (rank 49) — `fabled_passage`
-  - Then if you control four or more lands, untap that land.
 
 </details>
 

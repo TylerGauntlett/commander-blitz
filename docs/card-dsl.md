@@ -492,11 +492,20 @@ exactly one, so nothing else changed.
 hand without asking. `count` still defaults to `"all"`, so every reveal already
 in the pool is unchanged.
 
-Eight ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
-`copy_permanent`, `gain_control`, `snapshot` and `join_forces`. **No other op
-does**, and an `as` on one that does not is a load error — it would name a
-binding nothing writes, every read of it would be 0, and the card's second
-sentence would silently do nothing.
+Ten ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
+`copy_permanent`, `gain_control`, `snapshot`, `join_forces`, `search_library`
+and `search_zones`. **No other op does**, and an `as` on one that does not is a
+load error — it would name a binding nothing writes, every read of it would be
+0, and the card's second sentence would silently do nothing.
+
+The two searches record for the referent in "then … untap **that land**"
+(Fabled Passage). The closest expressible card without it was "untap a tapped
+basic land you control", which also frees a Forest tapped for mana earlier in
+the turn — a strictly better land than the printed one, and one that looks
+entirely ordinary on screen. Written *after* the moves, unlike `exile`'s and
+`sacrifice`'s: a search sends its cards somewhere usable, and the next sentence
+wants them where they landed. A search that finds nothing binds an empty list
+rather than leaving the name stale.
 
 `gain_control`'s is the one whose *absence* is unsayable rather than merely
 awkward. Call for Aid takes "all creatures target opponent controls" and then

@@ -37,6 +37,8 @@ RECORDING_OPS = frozenset(
         "join_forces",
         "reveal",
         "sacrifice",
+        "search_library",
+        "search_zones",
         "snapshot",
     }
 )

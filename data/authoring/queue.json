@@ -89062,12 +89062,12 @@
     },
     "Fabled Passage": {
       "edhrec_rank": 49,
-      "gate": "template",
+      "gate": null,
       "name": "Fabled Passage",
-      "reason": "no template for: {T}, Sacrifice this land: Search your library for a basic land card, put it onto the battl",
+      "reason": "",
       "scryfall_id": "62ef854d-ec9e-443d-a4ba-4b2875ed3fe7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fabricate": {

@@ -21935,6 +21935,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "fetched",
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "lands_you_control": true
+                },
+                "right": {
+                  "const": 4
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "fetched"
+                  },
+                  "op": "untap"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "fabled_passage",
+      "name": "Fabled Passage",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
