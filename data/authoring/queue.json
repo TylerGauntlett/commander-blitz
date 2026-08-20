@@ -113792,12 +113792,12 @@
     },
     "Goldvein Hydra": {
       "edhrec_rank": 1450,
-      "gate": "template",
+      "gate": null,
       "name": "Goldvein Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "3baebc29-bc89-4b56-a821-b5d3ca0cd3b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goldvein Pick": {

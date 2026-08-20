@@ -3610,6 +3610,18 @@ The other spelling of the same clause takes a value too, one per kind:
 the battlefield when its own amount is counted, and "for each **other** Human"
 without it makes every lone copy a 3/3.
 
+`{"x": true}` works here too — "This creature enters with X +1/+1 counters on
+it" (Goldvein Hydra). `stack.resolve` writes `cast_x` before the move and
+`reset_permanent_state` deliberately leaves it alone, so the announced X is
+still readable when the replacement runs.
+
+That this is a *replacement* and not a `self_enters` trigger running
+`add_counters` is the whole card, and 614.1c says so: Goldvein Hydra is a
+printed **0/0**. A trigger would put it on the battlefield at its printed size,
+where 704.5f bins it before the trigger resolves. A replacement means the
+permanent is never seen at 0/0, so it is never seen dead. X = 0 still dies, and
+correctly — there the printed size is the real size.
+
 Converge works from here unchanged — `{"colors_of_mana_spent": true}` reads
 `obj.colors_spent`, and an oid survives the zone change onto the battlefield, so
 "for each color of mana spent to cast it" is the same object it was on the stack.

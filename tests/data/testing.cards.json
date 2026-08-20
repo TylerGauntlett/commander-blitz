@@ -11410,6 +11410,35 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_x_hydra",
+      "name": "Test X Hydra",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hydra"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": {
+            "x": true
+          }
+        }
+      ]
     }
   ]
 }
