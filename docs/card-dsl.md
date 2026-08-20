@@ -2445,6 +2445,31 @@ whole card whenever taking one mode is the better line.
 `min_count == max_count` and short-circuited when `len(labels) <= count`, so
 "choose up to two of two" silently became "take both" without asking.
 
+## "Choose up to two --"
+
+```jsonc
+{"op": "choose_mode", "count": 2, "up_to": true, "modes": [...]}
+```
+
+An **unconditional ceiling with no floor**, and the one modal shape the other
+three spellings could not reach between them. `count` alone is exact, so writing
+"choose up to two" as `count: 2` deletes the words "up to". `all_if` is entwine
+and forces every mode. `up_to_if` is a ceiling but needs a `condition` and still
+keeps a floor of one.
+
+Taking **none** is the point, not a technicality: Call Damage Control returns
+cards from a graveyard, and cast with an empty one every mode is dead. A floor of
+one would force a mode that does nothing and read on screen as a fizzle.
+
+The name is `TargetSpec`'s, where `up_to` has meant exactly this since "up to X
+target creatures". Refused at load time on any other op, and on a `count` below
+1 — a card that may choose up to nothing is a card that does nothing.
+
+Both copies of the modal question honour it. A spell whose whole effect tree is
+one top-level `choose_mode` is answered at cast time by `Game._ask_modes`
+(601.2b) and never reaches `op_choose_mode` — the trap that once made `up_to_if`
+dead code for the card it was built for.
+
 ## Granting protection
 
 ```jsonc
