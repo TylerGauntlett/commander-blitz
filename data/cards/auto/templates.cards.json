@@ -37416,6 +37416,82 @@
         {
           "effects": [
             {
+              "new_targets": true,
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose new targets for the copy. This ability triggers only once each turn. (A copy of a permanent spell becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "counter",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts an artifact, instant, or sorcery spell, counter that spell. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jin_gitaxias_progress_tyrant",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Jin-Gitaxias, Progress Tyrant",
+      "oracle_text": "Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose new targets for the copy. This ability triggers only once each turn. (A copy of a permanent spell becomes a token.)\nWhenever an opponent casts an artifact, instant, or sorcery spell, counter that spell. This ability triggers only once each turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Praetor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

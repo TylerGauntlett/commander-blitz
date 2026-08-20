@@ -3277,6 +3277,10 @@
   "jibbirik_omnivore": {
     "zone": "battlefield"
   },
+  "jin_gitaxias_progress_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "joraga_visionary": {
     "hand_size": {
       "0": 1

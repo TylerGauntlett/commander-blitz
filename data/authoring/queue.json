@@ -142172,12 +142172,12 @@
     },
     "Jin-Gitaxias, Progress Tyrant": {
       "edhrec_rank": 1714,
-      "gate": "template",
+      "gate": null,
       "name": "Jin-Gitaxias, Progress Tyrant",
-      "reason": "no template for: Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose ",
+      "reason": "",
       "scryfall_id": "8c395a69-b60d-4510-b04b-86b59ed2b158",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jinnie Fay, Jetmir's Second": {

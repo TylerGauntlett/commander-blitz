@@ -11470,6 +11470,132 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_copycat",
+      "name": "Test Copycat",
+      "oracle_text": "Whenever you cast an instant spell, copy that spell. You may choose new targets for the copy.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant spell, copy that spell. You may choose new targets for the copy.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Instant"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              },
+              "new_targets": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_stormcat",
+      "name": "Test Storm Cat",
+      "oracle_text": "Whenever you cast an instant spell, copy that spell.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant spell, copy that spell.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Instant"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_zap",
+      "name": "Test Zap",
+      "oracle_text": "Test Zap deals 3 damage to target creature.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "amount": {
+            "const": 3
+          },
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }

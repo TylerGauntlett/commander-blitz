@@ -10,27 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **3** capabilities.
+**1 card** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [copy-new-targets](#copy-new-targets) | 1 | 1714 | decision |
 | [modal-targets](#modal-targets) | 1 | 15563 | target |
 | [modal-up-to](#modal-up-to) | 1 | 15563 | op |
-
-## copy-new-targets
-
-Blocks **1** card.
-
-- **(decision)** an optional choice, offered once per copy as the copy is put on the stack, that re-picks legal targets for that copy independently of the original spell -- i.e. a `new_targets: true` flag on `copy_spell` that asks the copy's controller to retarget
-  <br>Why the existing vocabulary won't do: `copy_spell` is the only copying op and it deliberately hardcodes the original's targets (`put_copy_on_stack` passes `targets=original.targets`, and docs/rules-coverage.md records "'You may choose new targets' is not implemented" because a storm count of nine would ask nine times). No op, cost or selector anywhere can change a stack item's targets after it exists -- there is no retarget/change_targets capability at all -- and `may` only gates whether effects happen, it cannot pose the target question. Copying with the original's targets is not the printed card: the whole point of copying a removal spell or a counterspell here is pointing the copy somewhere else.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jin-Gitaxias, Progress Tyrant** (rank 1714) — `jin_gitaxias_progress_tyrant`
-  - You may choose new targets for the copy.
-
-</details>
 
 ## modal-targets
 

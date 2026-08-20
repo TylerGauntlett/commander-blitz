@@ -6258,6 +6258,33 @@ trigger with `active_zones: ["stack"]`, so it goes on the stack *above* the
 spell and its copy resolves first — which is what 706.10 wants, and what a
 `copy_spell` written into `spell_effects` would get backwards.
 
+#### "You may choose new targets for the copy"
+
+```jsonc
+// Jin-Gitaxias, Progress Tyrant
+{ "op": "copy_spell", "sid": { "binding": "sid" }, "new_targets": true }
+```
+
+**Opt-in, and that is the whole design.** The choice is a decision *per copy*,
+so a storm count of nine would ask nine times — which is why every copy kept the
+original's targets until a card needed otherwise. Storm, replicate, conspire,
+casualty, gravestorm and epic all go through the same `put_copy_on_stack` and
+none of them gained a prompt.
+
+Offered as one pick from every legal target tuple, which is exactly the set the
+caster chose from — so 115.7b's "change any number of them, each new target
+legal" falls out rather than being enforced separately, and the original tuple
+is on the list as the "change nothing" answer. Not asked when there is nothing
+to decide: no target specs, or only one legal tuple.
+
+No new `DecisionKind` — `ask_mode` already asks "pick one of these labels" and
+hands back an index, the same argument `choose_type` makes. Refused at load time
+on any other op.
+
+Retargeting is not a detail of the card that wanted it. A copy that can only
+re-kill what the original killed is a strictly worse spell than the one printed,
+and it would look entirely normal on screen.
+
 #### Multikicker
 
 ```jsonc
