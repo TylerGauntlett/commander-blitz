@@ -112,6 +112,25 @@ def move_object(
     # way out. Read afterwards it is always zero, so both keywords would return
     # every creature for ever.
     had_counters = dict(obj.counters) if was_on_battlefield else {}
+    # "…create a number of Treasure tokens equal to **its power**" (Goldvein
+    # Hydra), asked about a creature that has just died. `power_of {"self":
+    # true}` reads `chars()`, and by the time the trigger resolves the object is
+    # a graveyard card: `reset_permanent_state` has cleared its counters and no
+    # anthem applies to it any more, so it answers with the printed line -- 0
+    # for a Hydra. `counters_had` recovers only the +1/+1 counters, which is a
+    # different number the moment a pump spell, an anthem or a -1/-1 counter is
+    # involved.
+    #
+    # Snapshotted here, beside `had_counters`, for exactly its reason and at
+    # exactly its moment: this is the engine's explicit-LKI pattern in the one
+    # place a card cannot reach with a `snapshot` op of its own, because that op
+    # runs at resolution and the creature is already gone. Deliberately *not* a
+    # global last-known-information system; see docs/rules-coverage.md.
+    if was_on_battlefield:
+        _seen = chars(state, oid)
+        had_power, had_toughness = _seen.power, _seen.toughness
+    else:
+        had_power = had_toughness = 0
     # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
     # control back to the owner on the way out, and "whenever **you** sacrifice"
     # is about the player who did it -- a different answer for a stolen
@@ -195,6 +214,8 @@ def move_object(
             # condition vocabulary has to exist for it.
             was_attacking=1 if was_attacking else 0,
             had_counters=had_counters,
+            had_power=had_power,
+            had_toughness=had_toughness,
         )
         # "Whenever you sacrifice a token…" -- fired beside DIES rather than
         # instead of it, because a sacrificed permanent really does die and
@@ -221,6 +242,8 @@ def move_object(
                 card=card.id,
                 was_creature=was_creature,
                 had_counters=had_counters,
+                had_power=had_power,
+                had_toughness=had_toughness,
             )
 
     if to_zone is Zone.BATTLEFIELD:

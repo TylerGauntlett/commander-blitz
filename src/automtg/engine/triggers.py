@@ -784,6 +784,13 @@ EVENT_BINDING_KEYS = (
     # Persist and undying: what was on the creature before it died, which
     # nothing can read off the object afterwards.
     "had_counters",
+    # "…equal to its power", asked about a creature that has just died
+    # (Goldvein Hydra). Read off the event for the same reason `had_counters`
+    # is: the object in the graveyard answers with its printed line, having lost
+    # its counters and every anthem that was applying to it. Read through the
+    # `power_had` / `toughness_had` value keys.
+    "had_power",
+    "had_toughness",
 )
 
 

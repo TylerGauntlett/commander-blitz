@@ -114,6 +114,15 @@ VALUE_KEYS = frozenset(
         # on the way to the graveyard. Answered from the dies trigger's
         # `had_counters` binding, snapshotted before the wipe.
         "counters_had",
+        # "…create a number of Treasure tokens equal to **its power**" on a
+        # `dies` trigger (Goldvein Hydra). `power_of {"self": true}` cannot
+        # answer it: the object is a graveyard card by then, so `chars()` gives
+        # the printed line and a 0/0 Hydra reads 0. The value comes off the
+        # death event, which snapshotted it on the way out -- the explicit-LKI
+        # pattern `snapshot` established, in the one place an op cannot reach,
+        # because an op runs at resolution and the creature has already left.
+        "power_had",
+        "toughness_had",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -317,6 +326,13 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         kind = str(expr["counters_had"])
         had = ctx.bindings.get("had_counters")
         return int(had.get(kind, 0)) if isinstance(had, Mapping) else 0
+    if "power_had" in expr:
+        # No argument: it is always "the creature this trigger is about", the
+        # only object the event snapshotted. A trigger that never fired binds
+        # nothing and reads 0, which is the same answer `counters_had` gives.
+        return int(ctx.bindings.get("had_power") or 0)
+    if "toughness_had" in expr:
+        return int(ctx.bindings.get("had_toughness") or 0)
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
