@@ -39,11 +39,15 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     706.10 again, and it is the whole reason a storm copy can be countered
     separately from the spell that made it.
 
-    Not implemented, and deliberately: "you may choose new targets for the
-    copy". Every copy here keeps the original's targets. Adding the choice
-    means a decision per copy, and a storm count of nine would ask nine times
-    -- worth doing when a card in the pool needs it, and misleading to
-    half-implement before then.
+    ``new_targets`` is "you may choose new targets for the copy" (Jin-Gitaxias,
+    Progress Tyrant), and it is **opt-in** for the reason this was left out
+    until a card needed it: the choice is a decision *per copy*, and a storm
+    count of nine would ask nine times. Storm, replicate, conspire, casualty,
+    gravestorm and epic do not set it, so none of them gained a prompt -- the
+    objection was to asking unconditionally, not to the capability.
+
+    The question is only put when there is something to decide: a spell with no
+    targets, or one whose targets cannot legally be moved, is not asked.
     """
     from .values import evaluate_value
 
@@ -57,10 +61,59 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
     for _ in range(max(0, times)):
-        put_copy_on_stack(state, ctx.controller, original)
+        chosen = None
+        if spec.get("new_targets"):
+            chosen = yield from _choose_new_targets(ctx, original)
+        put_copy_on_stack(state, ctx.controller, original, chosen)
 
 
-def put_copy_on_stack(state, controller: int, original):
+def _choose_new_targets(ctx: EffectContext, original):
+    """"You may choose new targets for the copy" (706.10, via 115.7b).
+
+    Offered as one pick from every legal target tuple, which is exactly the set
+    the caster chose from -- so "change any number of them" and "each new target
+    must be legal" both fall out rather than being enforced separately, and the
+    original tuple is on the list as the "change nothing" answer.
+
+    No new `DecisionKind`: `ask_mode` already asks "pick one of these labels"
+    and hands back an index, which is this question. The same argument
+    `choose_type` makes.
+
+    Returns ``None`` when there was nothing to ask -- no target specs, or only
+    one legal tuple -- and the copy then keeps what the original had.
+    """
+    from ..targeting import describe_ref, enumerate_target_tuples
+    from .context import ask_mode
+
+    card = ctx.state.registry.get(original.def_id)
+    specs = getattr(card, "targets", ()) or ()
+    if not specs:
+        return None
+    options = enumerate_target_tuples(
+        ctx.state,
+        ctx.controller,
+        specs,
+        original.oid,
+        exclude_sid=original.sid,
+    )
+    # One option means the only legal choice is what it already targets, so
+    # there is no question -- and asking anyway would be a prompt that cannot
+    # change anything, which is the cost this whole feature was held back over.
+    if len(options) <= 1:
+        return None
+    labels = [
+        ", ".join(describe_ref(ctx.state, ref) for ref in tup) or "no targets"
+        for tup in options
+    ]
+    picked = yield from ask_mode(
+        ctx, f"New targets for {card.name} (copy)?", labels, ctx.controller
+    )
+    if not picked:
+        return None
+    return options[picked[0]]
+
+
+def put_copy_on_stack(state, controller: int, original, targets=None):
     """Rule 706.10 -- one copy of a spell, on top of the stack.
 
     Split out of :func:`op_copy_spell` for **epic**, which makes a copy each
@@ -87,7 +140,11 @@ def put_copy_on_stack(state, controller: int, original):
         controller=controller,
         def_id=original.def_id,
         oid=obj.oid,
-        targets=original.targets,
+        # `targets` overrides only when "you may choose new targets" was taken
+        # and the player actually chose. `None` is not "no targets": it is "the
+        # copy keeps the original's", which is 706.10's default and what storm,
+        # replicate, conspire and epic all rely on.
+        targets=original.targets if targets is None else tuple(targets),
         x=original.x,
         modes=original.modes,
         kicked=original.kicked,

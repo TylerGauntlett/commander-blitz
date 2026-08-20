@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "jin_gitaxias_progress_tyrant",
+    "name": "Jin-Gitaxias, Progress Tyrant",
+    "oracle_text": "Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose new targets for the copy. This ability triggers only once each turn. (A copy of a permanent spell becomes a token.)\nWhenever an opponent casts an artifact, instant, or sorcery spell, counter that spell. This ability triggers only once each turn.",
+    "mana_cost": "{5}{U}{U}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Phyrexian",
+      "Praetor"
+    ],
+    "power": 5,
+    "toughness": 5,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose new targets for the copy. This ability triggers only once each turn. (A copy of a permanent spell becomes a token.)",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "any_types": [
+              "Artifact",
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "max_per_turn": 1
+        },
+        "effects": [
+          {
+            "op": "copy_spell",
+            "sid": {
+              "binding": "sid"
+            },
+            "new_targets": true
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts an artifact, instant, or sorcery spell, counter that spell. This ability triggers only once each turn.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "filter": {
+            "any_types": [
+              "Artifact",
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "max_per_turn": 1
+        },
+        "effects": [
+          {
+            "op": "counter",
+            "sid": {
+              "binding": "sid"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

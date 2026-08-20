@@ -2722,6 +2722,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'share_subtype' needs a 'count' above 1; got {count}"
             )
+    if "new_targets" in effect:
+        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
+        # `copy_spell` alone: the choice is a decision per copy, and storm,
+        # replicate, conspire and gravestorm all go through the same op without
+        # wanting nine prompts. Written anywhere else it would read as a promise
+        # nothing keeps.
+        if op != "copy_spell":
+            raise DslError(
+                f"{where}: 'new_targets' only applies to copy_spell, not {op!r}"
+            )
+        if not isinstance(effect["new_targets"], bool):
+            raise DslError(
+                f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}"
+            )
     if op == "look_at_top":
         # The depth is the card. Without an amount the op would look at one
         # card and Through the Forest Gate would silently become a cantrip,
