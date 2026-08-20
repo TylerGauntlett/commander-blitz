@@ -10,14 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **6** capabilities.
+**3 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [attack-tax](#attack-tax) | 1 | 115 | static_effect |
 | [copy-new-targets](#copy-new-targets) | 1 | 1714 | decision |
-| [enters-with-x-counters](#enters-with-x-counters) | 1 | 1450 | value |
-| [last-known-information](#last-known-information) | 1 | 1450 | value |
 | [modal-targets](#modal-targets) | 1 | 15563 | target |
 | [modal-up-to](#modal-up-to) | 1 | 15563 | op |
 
@@ -46,36 +44,6 @@ Blocks **1** card.
 
 - **Jin-Gitaxias, Progress Tyrant** (rank 1714) — `jin_gitaxias_progress_tyrant`
   - You may choose new targets for the copy.
-
-</details>
-
-## enters-with-x-counters
-
-Blocks **1** card.
-
-- **(value)** the X paid for a permanent spell must be readable by that permanent's `self_enters_with_counters` replacement, so `amount` can be {"x": true} and a {X} creature arrives already the right size
-  <br>Why the existing vocabulary won't do: `x` is in `value_keys` and works in `spell_effects` and in a triggered ability (triggers.event_bindings binds x from obj.cast_x), but zones._enter_battlefield evaluates a replacement's `amount` with EffectContext(state, controller, source_oid) and no x, so ctx.x is 0 and the replacement silently puts on zero counters. The near miss is `{"count": {...}}`, which counts a board, not the cost paid. Writing it instead as a `self_enters` trigger running `add_counters` is a different card: 614.1c aside, a printed 0/0 Hydra would hit the battlefield at 0/0 and be binned by state-based actions before the trigger ever resolved.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Goldvein Hydra** (rank 1450) — `goldvein_hydra`
-  - This creature enters with X +1/+1 counters on it.
-  - When this creature dies, create a number of tapped Treasure tokens equal to its power.
-
-</details>
-
-## last-known-information
-
-Blocks **1** card.
-
-- **(value)** a `dies`/`leaves_battlefield` trigger must be able to read the dead permanent's last-known power and toughness — the values it had on the battlefield as it left, not its printed line
-  <br>Why the existing vocabulary won't do: `power_of` with {"self": true} goes through values._from_oid -> chars(), and by the time the dies trigger resolves the object is a graveyard card whose counters `reset_permanent_state` has already cleared, so it reads printed power (0 here). The DIES event carries only `had_counters`, so `counters_had` can recover the +1/+1 counters but not power — a different number the moment an anthem, a pump or a -1/-1 counter is involved. `snapshot` does not help either: it is an op, so it runs at resolution, after the creature has already left.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Goldvein Hydra** (rank 1450) — `goldvein_hydra`
-  - This creature enters with X +1/+1 counters on it.
-  - When this creature dies, create a number of tapped Treasure tokens equal to its power.
 
 </details>
 

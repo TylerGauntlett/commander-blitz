@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "goldvein_hydra",
+    "name": "Goldvein Hydra",
+    "oracle_text": "Vigilance, trample, haste\nThis creature enters with X +1/+1 counters on it.\nWhen this creature dies, create a number of tapped Treasure tokens equal to its power.",
+    "mana_cost": "{X}{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Hydra"
+    ],
+    "power": 0,
+    "toughness": 0,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "keywords": [
+      "vigilance",
+      "trample",
+      "haste"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_with_counters",
+        "counter": "+1/+1",
+        "amount": {
+          "x": true
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, create a number of tapped Treasure tokens equal to its power.",
+        "trigger": {
+          "event": "dies",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "tapped": true,
+            "amount": {
+              "power_had": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

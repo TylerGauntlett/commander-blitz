@@ -2598,6 +2598,10 @@
   "goldmire_bridge": {
     "zone": "battlefield"
   },
+  "goldvein_hydra": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "golgari_guildgate": {
     "zone": "battlefield"
   },

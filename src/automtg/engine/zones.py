@@ -377,7 +377,23 @@ def _enter_battlefield(
             # would put the permanent on the battlefield at its printed size
             # first, and on Éomer, whose other enters trigger deals damage equal
             # to his power, the whole payload would turn on trigger ordering.
-            ctx = EffectContext(state=state, controller=obj.controller, source_oid=obj.oid)
+            # "This creature enters with **X** +1/+1 counters on it" (Goldvein
+            # Hydra). `cast_x` is written by `stack.resolve` before the move and
+            # is one of the few fields `reset_permanent_state` deliberately does
+            # not clear, so the X the player announced is still readable here --
+            # it simply was never passed in, and `{"x": true}` quietly evaluated
+            # to 0. A printed 0/0 Hydra then arrived as a 0/0 and was binned by
+            # state-based actions before anything could grow it.
+            #
+            # This is why 614.1c wants a replacement rather than a `self_enters`
+            # trigger running `add_counters`: the permanent is never seen at its
+            # printed size, so it is never seen dead.
+            ctx = EffectContext(
+                state=state,
+                controller=obj.controller,
+                source_oid=obj.oid,
+                x=obj.cast_x,
+            )
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
