@@ -1,0 +1,22 @@
+{
+  "card_id": "jin_gitaxias_progress_tyrant",
+  "name": "Jin-Gitaxias, Progress Tyrant",
+  "oracle_text": "Whenever you cast an artifact, instant, or sorcery spell, copy that spell. You may choose new targets for the copy. This ability triggers only once each turn. (A copy of a permanent spell becomes a token.)\nWhenever an opponent casts an artifact, instant, or sorcery spell, counter that spell. This ability triggers only once each turn.",
+  "blocked_sentences": [
+    "You may choose new targets for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "copy_new_targets",
+      "kind": "decision",
+      "what": "an optional choice, offered once per copy as the copy is put on the stack, that re-picks legal targets for that copy independently of the original spell -- i.e. a `new_targets: true` flag on `copy_spell` that asks the copy's controller to retarget",
+      "why_existing_wont_do": "`copy_spell` is the only copying op and it deliberately hardcodes the original's targets (`put_copy_on_stack` passes `targets=original.targets`, and docs/rules-coverage.md records \"'You may choose new targets' is not implemented\" because a storm count of nine would ask nine times). No op, cost or selector anywhere can change a stack item's targets after it exists -- there is no retarget/change_targets capability at all -- and `may` only gates whether effects happen, it cannot pose the target question. Copying with the original's targets is not the printed card: the whole point of copying a removal spell or a counterspell here is pointing the copy somewhere else."
+    }
+  ],
+  "closest_existing": [
+    "copy_spell",
+    "cast_copy",
+    "copy_permanent"
+  ],
+  "confidence": "high"
+}

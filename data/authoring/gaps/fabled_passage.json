@@ -1,0 +1,24 @@
+{
+  "card_id": "fabled_passage",
+  "name": "Fabled Passage",
+  "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land.",
+  "blocked_sentences": [
+    "Then if you control four or more lands, untap that land."
+  ],
+  "needs": [
+    {
+      "capability": "search_binding",
+      "kind": "op",
+      "what": "an `as` output binding on `search_library` (and `search_zones`) naming the cards the search found, so a later effect in the same ability can act on exactly those objects -- here `{\"op\": \"untap\", \"objects\": {\"binding\": \"fetched\"}}` inside the `if` that checks `lands_you_control >= 4`. Concretely: add `search_library`/`search_zones` to `RECORDING_OPS` and have `_search`/`_move_found` write the picked oids into `ctx.bindings[as]` after the move, the way `reveal`, `exile` and `sacrifice` already do",
+      "why_existing_wont_do": "`{\"binding\": ...}` is a real selector key and `ctx.bindings` is a real mechanism, but only the eight ops in `RECORDING_OPS` (copy_permanent, create_token, exile, gain_control, join_forces, reveal, sacrifice, snapshot) ever write one; `_search` in engine/effects/ops_cards.py writes no binding, and the loader rejects an `as` on any other op outright. So after the search resolves nothing in the DSL can name the land that was just fetched. The only untap the vocabulary can express is a fresh selector such as `{\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Land\"], \"supertypes\": [\"Basic\"], \"tapped\": true, \"count\": 1}`, which is a different card: Fabled Passage is routinely cracked after lands have been tapped for mana, and that filter would happily untap one of those instead of the land it just found. `snapshot` is no help either -- it captures characteristics of an object that already exists, and its own `objects` selector would face the same naming problem. A `permanent_enters` trigger on the Passage cannot substitute: the Passage has been sacrificed as a cost and is no longer on the battlefield when the land arrives, and such a trigger would also fire on every other basic land entering, not just this one."
+    }
+  ],
+  "closest_existing": [
+    "search_library",
+    "search_zones",
+    "reveal",
+    "snapshot",
+    "untap"
+  ],
+  "confidence": "high"
+}
