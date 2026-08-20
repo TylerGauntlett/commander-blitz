@@ -103,6 +103,48 @@ def can_attack(state: GameState, oid: int) -> bool:
     return combat is None or oid not in combat.attackers
 
 
+def attack_tax_cost(state: GameState, oid: int, defender: int):
+    """The `Cost` to declare ``oid`` against ``defender``, or ``None`` if free.
+
+    Propaganda. Built here rather than in `characteristics`, which cannot import
+    `costs` -- `costs` imports it. The mana string comes from the statics; this
+    turns it into the same `Cost` every other payment goes through, so the tax
+    is solved, restricted-mana-checked and charged by exactly one code path.
+    """
+    from .carddef import Cost
+    from .characteristics import attack_tax
+    from .mana import ManaCost
+
+    mana = attack_tax(state, oid, defender)
+    return Cost(mana=ManaCost.parse(mana)) if mana else None
+
+
+def attack_tax_payable(state: GameState, oid: int, defender: int, cost=None) -> bool:
+    """Can this attack be paid for? An unpayable tax is a prohibition (508.1g).
+
+    "Creatures can't attack you **unless** their controller pays" -- so a
+    declaration nobody can fund is simply not offered, rather than offered and
+    then rewound. That is the 601.2 spirit `op_may` already follows for an
+    optional cost, and it keeps the declare-attackers action list honest: every
+    ADD_ATTACKER on it is one the player can actually make.
+    """
+    from .costs import can_pay
+
+    # `cost` is passed in by `legality`, which is the hot path of the attack
+    # mask and has already built it once for the label.
+    if cost is None:
+        cost = attack_tax_cost(state, oid, defender)
+    if cost is None:
+        return True
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    # `source_oid=None`: the creature is not being tapped or sacrificed for
+    # this, it is only the thing being priced -- passing it would let a `tap`
+    # in the cost tap the attacker.
+    return can_pay(state, obj.controller, cost, None)
+
+
 def attack_required(state: GameState, oid: int) -> bool:
     """Must this creature attack right now, and can it?
 

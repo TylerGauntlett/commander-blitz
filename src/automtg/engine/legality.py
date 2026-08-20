@@ -97,12 +97,23 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
         defenders = combat_mod.legal_defenders(state, oid)
         walkers = combat_mod.legal_planeswalker_defenders(state, oid)
         for defender in defenders:
+            # Propaganda: "creatures can't attack you **unless** their
+            # controller pays {2}". An unpayable tax is a prohibition (508.1g),
+            # so the action is withheld rather than offered and rewound -- and
+            # the price goes in the label, because a player choosing between
+            # defenders is choosing between prices.
+            tax = combat_mod.attack_tax_cost(state, oid, defender)
+            if tax is not None and not combat_mod.attack_tax_payable(
+                state, oid, defender, tax
+            ):
+                continue
+            price = f" (pay {tax.mana})" if tax is not None else ""
             out.append(
                 Action(
                     kind=ActionKind.ADD_ATTACKER,
                     source=oid,
                     targets=(TargetRef.player(defender),),
-                    label=f"Attack p{defender} with {name}",
+                    label=f"Attack p{defender} with {name}{price}",
                 )
             )
         # 506.2: a planeswalker is a *third* thing a creature may attack, beside

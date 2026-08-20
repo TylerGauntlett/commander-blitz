@@ -4934,6 +4934,10 @@
   "promising_vein": {
     "zone": "battlefield"
   },
+  "propaganda": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prophet_of_the_peak": {
     "zone": "battlefield"
   },
