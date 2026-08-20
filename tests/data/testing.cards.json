@@ -11336,6 +11336,80 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_dying_payout",
+      "name": "Test Dying Payout",
+      "oracle_text": "When this creature dies, create a number of tapped Treasure tokens equal to its power.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hydra"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, create a number of tapped Treasure tokens equal to its power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "treasure_token",
+              "tapped": true,
+              "amount": {
+                "power_had": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_anthem_for_hydras",
+      "name": "Test Anthem For Hydras",
+      "oracle_text": "Creatures you control get +2/+2.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +2/+2.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        }
+      ]
     }
   ]
 }

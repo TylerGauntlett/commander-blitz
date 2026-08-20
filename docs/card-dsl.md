@@ -624,6 +624,7 @@ Anywhere a number is expected:
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
+{ "power_had": true } { "toughness_had": true }  // …and the P/T it died with
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
@@ -631,6 +632,14 @@ Anywhere a number is expected:
 { "colors_of_mana_spent": true }                // sunburst, converge
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
+
+`power_had` and `toughness_had` take no argument: they are always "the creature
+this trigger is about", the only object the death event snapshotted. `power_of
+{"self": true}` is the trap — by the time a `dies` trigger resolves the object is
+a graveyard card, so `chars()` gives the printed line and Goldvein Hydra's
+printed line is 0/0. `counters_had` is the near miss and sees only the counters,
+so an anthem, a pump spell or a -1/-1 counter makes it the wrong number. A
+trigger that never fired binds nothing and both read 0.
 
 ### Which creatures attacked this turn, and how many
 
