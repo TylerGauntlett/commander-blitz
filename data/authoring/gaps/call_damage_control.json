@@ -3,7 +3,6 @@
   "name": "Call Damage Control",
   "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target creature card.\n\u2022 Target enchantment card.\n\u2022 Target land card.",
   "blocked_sentences": [
-    "Choose up to two. Return those cards from your graveyard to your hand.",
     "\u2022 Target artifact card.",
     "\u2022 Target creature card.",
     "\u2022 Target enchantment card.",
@@ -11,22 +10,16 @@
   ],
   "needs": [
     {
-      "capability": "modal_up_to",
-      "kind": "op",
-      "what": "an unconditional ceiling on how many modes are taken -- \"choose up to two\" meaning any number from zero through two, with no condition attached and no floor of one",
-      "why_existing_wont_do": "choose_mode's 'count' is an exact number, and both Game._ask_modes and op_choose_mode pass max(1, count) as the minimum to ask_mode, so the smallest choosable number of modes is always one. The two ceiling spellings beside it are both conditional: 'all_if' is entwine and forces every mode, 'up_to_if' raises the ceiling only while its 'condition' holds and the loader refuses it without one -- and even satisfied it leaves the same floor of one. A TargetSpec has an 'up_to' flag that means exactly this, but it caps targets, not modes, and there is no equivalent on choose_mode."
-    },
-    {
       "capability": "modal-targets",
-      "kind": "target",
-      "what": "a target spec owned by a single mode: declared, chosen and legality-checked only when that mode is chosen, so a modal spell can carry one target per mode and bind several distinct ones when several modes are taken",
-      "why_existing_wont_do": "'targets' is a flat card-level list compiled by loader._compile_targets and chosen as the spell is cast, with no link to which mode was picked; a mode's effects can only point at an already-declared spec by id via objects.target. The existing idiom (simic_charm) is one 'optional' spec every mode shares, which works only because all its modes target the same thing. Here the four modes target four different card types in your graveyard and two are live at once, so one shared spec cannot supply two distinct targets, and four independent optional specs would leave every mode-to-target pairing unenforced -- the artifact mode could be taken having targeted only a creature card. Collapsing the whole card to one 'card_in_graveyard' spec with count 2, up_to true and any_types [Artifact, Creature, Enchantment, Land] gets the ceiling right but drops the at-most-one-per-type restriction the modes impose, letting it return two creature cards."
+      "kind": "engine",
+      "what": "A target spec owned by a single mode: declared, chosen and legality-checked only when that mode is chosen, so a modal spell can carry one target per mode and bind several distinct ones when several modes are taken. This needs modes to be chosen BEFORE targets (601.2b), which is the reverse of the order the engine casts in -- so it is a change to the casting pipeline, not a new key.",
+      "why_existing_wont_do": "`targets` is a flat card-level list compiled by `loader._compile_targets` and fixed as part of the *cast action*, before `Game._ask_modes` runs -- `_ask_modes`'s own docstring records this as a residual divergence from 601.2 and names it as the reason the shared `optional: true` idiom exists. The simic_charm idiom is one optional spec every mode shares, which works only because its modes target the same object; here four modes target four different card types and two are live at once, so one spec cannot supply two distinct targets. Four independent optional specs leave the mode-to-target pairing unenforced (the artifact mode could be taken having targeted only a creature card) AND blow the MAX_TARGET_OPTIONS cap of 12, which truncates silently in `enumerate_target_tuples` -- so most legal lines would simply never be offered. That cap is itself a recorded decision (rules-coverage.md, 'Target options capped at 12'). Collapsing to one card_in_graveyard spec with count 2 / up_to / any_types gets the ceiling right but drops the at-most-one-per-type restriction, letting it return two creature cards. Enumerating (mode-combination, targets) pairs as distinct cast actions is exact but produces an action list far past the cap and past what the UI can present. The real fix is to choose targets as a *decision* after modes rather than as part of action enumeration, which changes casting for every card, both AI seats and the action API."
     }
   ],
   "closest_existing": [
     "choose_mode",
-    "up_to_if",
-    "return_from_graveyard"
+    "up_to",
+    "optional target spec (simic_charm idiom)"
   ],
   "confidence": "high"
 }
