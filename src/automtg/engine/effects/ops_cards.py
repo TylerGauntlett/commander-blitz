@@ -122,6 +122,12 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     # A search of a hidden zone ends in a shuffle (701.19c), and the library is
     # the only zone here that is ordered enough for it to matter.
     shuffles = "library" in zones and spec.get("shuffle", True)
+    # "…then if you control four or more lands, untap **that land**" (Fabled
+    # Passage). The referent is the card this very search turned up, and nothing
+    # else can name it: a fresh filter for a tapped basic would also match a land
+    # tapped for mana three turns ago, which is a different card. Accumulated
+    # across `player`, because one binding names everything the op found.
+    found: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         pool: list[int] = []
         for zone_name in zones:
@@ -166,6 +172,16 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
             _move_found(ctx, picked, pid, destination, spec, tapped, "search")
         if shuffles and not to_top:
             shuffle_library(ctx.state, pid)
+        found.extend(picked)
+
+    # After the moves, unlike `exile` and `sacrifice`, which write before theirs.
+    # A search's cards are *going somewhere usable* -- onto the battlefield, into
+    # a hand -- and the next effect wants them where they landed. The oid is
+    # stable across the zone change, so this is a note about intent rather than a
+    # correctness difference. An empty search binds an empty list, so a following
+    # `if` sees no objects rather than a stale name.
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = found
 
 
 def _move_found(
