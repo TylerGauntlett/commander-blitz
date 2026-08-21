@@ -209,16 +209,38 @@ class TestWhatCanBeGranted:
             },
         ],
     )
-    def test_only_triggered_abilities_may_be_granted(self, ability):
-        """The others would be accepted and then never appear.
+    def test_a_static_or_a_non_mana_activated_ability_is_refused(self, ability):
+        """Both would be accepted and then go wrong, in different directions.
 
         A granted static has no place in the fixed-order characteristics
-        pipeline, and a granted activated ability would need `Action` to carry
-        where it came from before legality could offer it.
+        pipeline. A granted activated ability that used the stack would reach
+        `stack.ability_of` with an index into a list that no longer exists --
+        that helper resolves off the source's *printed* abilities, and must,
+        because an ability on the stack outlives its source (608.2).
         """
         model = CardModel.model_validate({**self.base, "grantable_abilities": [ability]})
-        with pytest.raises(DslError, match="only triggered abilities can be granted"):
+        with pytest.raises(DslError, match="only triggered and mana abilities"):
             compile_card(model)
+
+    def test_a_mana_ability_may_be_granted(self):
+        """Narrowed from "triggered only" when `characteristics.abilities_of`
+        arrived: legality, the payment solver and `game._activate` all read the
+        derived ability list now, so a granted ability is offered and indexed
+        like a printed one. 605.3a is what stops at mana abilities -- one never
+        uses the stack, so `stack.ability_of` is never asked about it.
+
+        Imprisoned in the Moon's "{T}: Add {C}" is the card.
+        """
+        compile_card(CardModel.model_validate({
+            **self.base,
+            "grantable_abilities": [{
+                "kind": "activated",
+                "text": "{T}: Add {C}.",
+                "is_mana_ability": True,
+                "cost": {"tap": True},
+                "effects": [{"op": "add_mana", "mana": "{C}"}],
+            }],
+        }))
 
 class TestASubtypeRestriction:
     """Master of Dark Rites — "…only to cast Vampire, Cleric, and/or Demon spells".

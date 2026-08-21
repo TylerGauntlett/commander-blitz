@@ -53,7 +53,7 @@ from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, ward_ability
-from .enums import KEYWORD_COUNTERS, Keyword, Zone
+from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import Characteristics
@@ -218,11 +218,41 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         # 0. type replacement -- "as long as it has a slumber counter, it's a
         #    land (it's not a creature)". Before the grants, so a card that both
         #    replaces and adds ends up with the addition.
+        #
+        #    205.1b and 613.1d: the subtypes of a card type it no longer has go
+        #    with it. Without that an Imprisoned in the Moon on a Goblin
+        #    Warchief reads "Land -- Goblin", is still pumped by a Goblin
+        #    anthem and still answers a Goblin fetch -- a permanent that is
+        #    visibly a land and secretly still a Goblin. Applied inside this
+        #    layer and before the `add_subtype` grants union on top, which
+        #    preserves what that ordering already promises: a card that both
+        #    replaces and adds ends up with the addition.
         for source_obj, static in statics:
             if static.get("effect") != "set_types":
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 types = set(static.get("types", ()))
+                subtypes = {
+                    sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types
+                }
+
+        # 0b. colour replacement -- "enchanted permanent is a **colorless**
+        #     land". Real layer 5, and it sits here for the reason `set_types`
+        #     does: it replaces rather than modifies, and nothing below reads
+        #     colour, so this is simply where the replacement belongs relative
+        #     to `animate` (which is above it, and whose `colors` it therefore
+        #     overwrites -- an animated permanent that is then imprisoned is
+        #     colourless, which is the later effect winning).
+        #
+        #     `colors` is not decoration once something can set it: the selector
+        #     language reads `colors`, `not_colors` and `shares_a_color_with`,
+        #     and `protection` reads `from_colors`. A moon-imprisoned Sheoldred
+        #     stops being a legal target for "destroy target black permanent".
+        for source_obj, static in statics:
+            if static.get("effect") != "set_colors":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                colors = set(static.get("colors", ()))
 
         # 1. subtype / type grants.  The object's own recorded subtypes come
         #    first -- "it becomes a Vampire in addition to its other types" is
@@ -237,6 +267,24 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             if _matches(state, obj, source_obj, static.get("affects")):
                 subtypes.update(static.get("subtypes", ()))
                 types.update(static.get("types", ()))
+
+        # 1b. "…and loses all other card types and abilities." A keyword *is*
+        #     an ability (113.1a), so losing them all takes the printed
+        #     keywords with it -- an imprisoned Sheoldred that kept deathtouch
+        #     would be the clearest possible half-implementation.
+        #
+        #     Placed before the grants below rather than after, which is
+        #     613.1b's own ordering: what is added *after* the removal survives
+        #     it. So an Imprisoned in the Moon plus a Levitation leaves the
+        #     permanent flying, and a vigilance counter (layer 2b) still gives
+        #     vigilance -- 613.1f puts keyword counters with the ability-adders,
+        #     which is on this side of the line.
+        #
+        #     What it does **not** do is empty `obj.granted_keywords` (layer 8)
+        #     or the until-end-of-turn grants (layer 6). Those are later
+        #     timestamps by construction, and the same rule keeps them.
+        if _loses_abilities(state, obj):
+            keywords = set()
 
         # 2. keyword grants
         for source_obj, static in statics:
@@ -338,15 +386,133 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     )
 
 
+#: The two static effects that change *which abilities* a permanent has.
+#:
+#: Collected apart from every other static, off the **printed** face, and that
+#: separation is what keeps the pipeline acyclic: `_battlefield_statics` reads
+#: `abilities_of`, and `abilities_of` reads these -- so if these were gathered
+#: the same way the two would call each other for ever.
+#:
+#: The cost is one recorded divergence from 613.8: an Imprisoned in the Moon
+#: enchanting *another* Imprisoned in the Moon does not switch the second one
+#: off. Real Magic resolves that with dependency analysis, which is the thing
+#: layers-lite exists not to have.
+ABILITY_STATICS = ("lose_all_abilities", "grant_ability")
+
+
+def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The `ABILITY_STATICS` on the battlefield, read off printed faces.
+
+    Cached against ``char_version`` like `chars` is, and that is not an
+    optimisation to be tidied away later. `_battlefield_statics` asks
+    `abilities_of` about every permanent and `abilities_of` asks this, so an
+    uncached scan makes one characteristics computation quadratic in the size of
+    the battlefield and the whole pipeline cubic -- which on a real Commander
+    board is the difference between a test suite that runs and one that does
+    not. Almost every game has no such static at all, and then this is one walk
+    per version that finds nothing.
+    """
+    if state.ability_static_version != state.char_version:
+        out: list[tuple[GameObject, Mapping[str, Any]]] = []
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                static = ability.static if ability.is_static else None
+                if not static or static.get("effect") not in ABILITY_STATICS:
+                    continue
+                if _static_active(state, obj, static):
+                    out.append((obj, static))
+        state.ability_static_cache = out
+        state.ability_static_version = state.char_version
+    return state.ability_static_cache
+
+
+def _loses_abilities(state: GameState, obj: GameObject) -> bool:
+    """Is something stripping every ability from this permanent right now?"""
+    if not obj.on_battlefield:
+        return False
+    return any(
+        static.get("effect") == "lose_all_abilities"
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _ability_statics(state)
+    )
+
+
+def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
+    """The abilities a permanent **actually has**, printed ones included.
+
+    The engine had no such notion: every reader -- `legality`, `costs`,
+    `triggers`, `_battlefield_statics`, `game._activate` -- walked
+    ``state.card_of(obj).abilities`` and got the printed list. That is fine
+    until a card says "loses all abilities", at which point each of those
+    readers is a separate place for the clause to be forgotten, and forgetting
+    it in any one of them is a permanent that visibly does nothing and quietly
+    still does something.
+
+    So this is the one function that answers the question, and every one of
+    those readers now asks it. Off the battlefield it is the printed list
+    unchanged, which is every card in hand, on the stack and in a graveyard.
+
+    **Indices are stable and meaningful.** `Action.ability_index`,
+    `StackItem.ability_index` and the RL action space all address an ability by
+    position, so a granted ability is *appended* -- printed indices never move
+    -- and the abilities are renumbered so `Ability.index` agrees with where it
+    now sits. Legality and resolution both read this list, so the two cannot
+    disagree about what index 0 means.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return ()
+    if obj.face_down and obj.on_battlefield:
+        # 707.2, and the same early return `_compute` makes: a face-down
+        # permanent is a 2/2 with no abilities, whatever is underneath it.
+        return ()
+    printed = state.card_of(obj).abilities
+    if not obj.on_battlefield:
+        return printed
+    statics = _ability_statics(state)
+    if not statics:
+        return printed
+    out: list[Ability] = []
+    if not any(
+        static.get("effect") == "lose_all_abilities"
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in statics
+    ):
+        out.extend(printed)
+    for source_obj, static in statics:
+        if static.get("effect") != "grant_ability":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        granted = state.card_of(source_obj).grantable_abilities
+        index = int(static.get("ability", 0))
+        if 0 <= index < len(granted):
+            out.append(granted[index])
+    if list(out) == list(printed):
+        return printed
+    import dataclasses
+
+    return tuple(
+        dataclasses.replace(ability, index=i) for i, ability in enumerate(out)
+    )
+
+
 def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
-    """Every *active* ``static`` ability on the battlefield, in arrival order."""
+    """Every *active* ``static`` ability on the battlefield, in arrival order.
+
+    Reads `abilities_of` rather than the printed face, so a permanent that has
+    lost its abilities stops applying its anthem -- which is the half of "loses
+    all abilities" that no amount of work at the offer sites would have caught.
+    """
     out: list[tuple[GameObject, Mapping[str, Any]]] = []
     for oid in state.battlefield:
         obj = state.objects.get(oid)
         if obj is None:
             continue
-        card = state.card_of(obj)
-        for ability in card.abilities:
+        for ability in abilities_of(state, oid):
             if ability.is_static and ability.static and _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
     return out

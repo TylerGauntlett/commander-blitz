@@ -521,8 +521,13 @@ def _candidate_abilities(state: GameState, event: GameEvent):
 
                 yield obj, CLOAK_WARD
             return
-        card = state.card_of(obj)
-        for ability in card.abilities:
+        # Derived rather than printed: a permanent that has lost its
+        # abilities has lost its triggered ones too, and this is the only place
+        # that would otherwise go on listening -- an imprisoned Bloodghast
+        # still seeing landfall.
+        from .characteristics import abilities_of
+
+        for ability in abilities_of(state, obj.oid):
             if not ability.is_triggered or ability.trigger is None:
                 continue
             if zone not in ability.active_zones:
@@ -585,16 +590,20 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     if subject is not None and subject not in seen:
         obj = state.objects.get(subject)
         if obj is not None:
-            card = state.card_of(obj)
             # Printed abilities and granted ones both. Every other branch of
-            # this generator pairs a `card.abilities` walk with
-            # `granted_abilities`; this one did not, so an ability granted to a
-            # creature could never fire on that creature's own death -- which is
-            # the whole of Malakir Rebirth.
+            # this generator pairs an abilities walk with `granted_abilities`;
+            # this one did not, so an ability granted to a creature could never
+            # fire on that creature's own death -- which is the whole of Malakir
+            # Rebirth.
+            #
+            # The walk is over *derived* abilities for `emit_from`'s reason, and
+            # here it reads the board as the permanent left it -- which is what
+            # a leave-the-battlefield trigger is asking about (603.6c).
+            from .characteristics import abilities_of
             from .primitives import granted_abilities
 
             granted = [a for _granter, a in granted_abilities(state, subject)]
-            for ability in (*card.abilities, *granted):
+            for ability in (*abilities_of(state, subject), *granted):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":

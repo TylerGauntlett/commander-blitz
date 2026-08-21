@@ -1,3 +1,130 @@
+## `abilities_of` — what a permanent actually has
+
+### Overview
+
+Imprisoned in the Moon: *"Enchant creature, land, or planeswalker. Enchanted
+permanent is a colorless land with "{T}: Add {C}" and loses all other card types
+and abilities."*
+
+One printed sentence, four continuous effects, four layers. `set_types` already
+said "is a land … and loses all other card types". The other three are new, and
+one of them needed a subsystem the engine had never had.
+
+### The subsystem: nothing could take an ability away
+
+Every effect on abilities up to now *added* one — `grant_keyword`, the
+`grant_ability` op, keyword counters. So nothing had ever needed to ask what
+abilities a permanent **has**: five readers each walked
+`state.card_of(obj).abilities` and got the printed list.
+
+| reader | what it would otherwise miss |
+|---|---|
+| `legality._activate_actions` | an imprisoned Sol Ring still offered its `{T}` |
+| `costs.mana_sources` | …and still tapped for two by the payment solver |
+| `triggers.collect` | an imprisoned Bloodghast still seeing landfall |
+| `characteristics._battlefield_statics` | an imprisoned anthem still pumping |
+| `game._activate` | indexing a different list from the one legality offered |
+
+With a printed list, each of those is a separate place for the clause to be
+forgotten, and forgetting it in any one is the worst failure this codebase has a
+name for: a permanent that visibly does nothing and quietly still does
+something. The last row is worse than the others — legality offering from one
+list while resolution indexes another is not a missing effect, it is the wrong
+ability resolving.
+
+`characteristics.abilities_of` is the one function that answers the question and
+all five ask it. Off the battlefield it returns the printed list unchanged, which
+is every card in hand, on the stack and in a graveyard, so nothing outside the
+battlefield changed at all.
+
+### Indices had to stay meaningful
+
+`Action.ability_index`, `StackItem.ability_index` and the RL action space all
+address an ability by **position**. So a granted ability is *appended* — printed
+indices never move — and the list is renumbered so `Ability.index` agrees with
+where it now sits. Legality and resolution both read this list, so the two cannot
+disagree about what index 0 means, and no trained checkpoint is invalidated.
+
+### The line `grant_ability` stops at
+
+`grantable_abilities` used to refuse anything but a triggered ability, and the
+comment said why: a granted activated one "would need `Action` to carry where it
+came from before legality could offer it — so it would be accepted here and then
+never appear". `abilities_of` answers exactly that objection, so the refusal is
+narrowed to precisely the width that is still true: **a granted activated ability
+must be a mana ability.**
+
+605.3a is what makes that safe. A mana ability never uses the stack, so
+`stack.ability_of` — which resolves an ability off its source's *printed* list,
+and must, because an ability on the stack outlives its source (608.2) — is never
+asked about one. A granted activated ability that *did* use the stack would reach
+it with an index into a list that no longer exists and resolve as some other
+ability of that permanent. A granted static is still refused outright.
+
+### Two orderings, neither visible on a board
+
+**A keyword is an ability** (113.1a), so losing them all takes the printed
+keywords with it — an imprisoned Sheoldred that kept deathtouch would be the
+clearest possible half-implementation. The removal runs **before** the grant
+layers, which is 613.1b: what is added afterwards survives it, so a Levitation
+played later still grants flying and a vigilance counter (613.1f) still gives
+vigilance.
+
+**The ability statics are collected off printed faces**, apart from every other
+static, in `_ability_statics`. They have to be: `_battlefield_statics` reads
+`abilities_of`, and `abilities_of` reads these, so gathering both the same way is
+an infinite regress. The cost is one recorded divergence from 613.8's dependency
+analysis — which is the thing layers-lite exists not to have — and it is narrow:
+an Imprisoned in the Moon enchanting *another* Imprisoned in the Moon does not
+switch the second one off.
+
+### `set_colors`
+
+Nothing in the engine could set a colour. `animate` overwrote them, as a side
+effect of an until-end-of-turn P/T replacement, and that was the whole of it.
+
+It is load-bearing the moment it exists rather than a cosmetic field: the
+selector language reads `colors`, `not_colors` and `shares_a_color_with`, and
+`protection` reads `from_colors`. A moon-imprisoned Sheoldred stops being a legal
+target for "destroy target black permanent" and stops answering a
+`shares_a_color_with` fetch.
+
+`[]` is colourless and is the *point* of the effect, so the loader checks for the
+field being absent rather than empty — a `set_colors` that said nothing would
+silently repaint everything it touched.
+
+### `set_types` learned 205.1b
+
+The subtypes of a card type a permanent no longer has go with it (613.1d).
+Without that, an imprisoned Goblin Warchief reads "Land — Goblin", is still
+pumped by a Goblin anthem and still answers a Goblin fetch — visibly a land and
+secretly still a Goblin. That was a pre-existing shortfall in `set_types` rather
+than something this card introduced; Arixmethes had it too.
+
+`SUBTYPE_CLASS` in `engine/enums.py` is the table, derived from
+`data/catalog/cards.sqlite` over every printed type line whose left half names
+exactly one card type — Kindred faces excluded, since "Tribal Instant — Goblin"
+would file Goblin under Instant. That derivation is reproduced as a test, so a
+catalog refresh that adds a land or artifact type says so rather than silently
+stripping it.
+
+**Creature types are deliberately absent.** There are 321 of them against 149 of
+everything else, the list grows with every set, and the default has to fail in
+the safe direction: an unknown subtype read as a creature type is dropped when
+Creature is, which is right for every new creature type and wrong only for a new
+artifact or enchantment type on a permanent that stopped being a creature it
+never was.
+
+### Test
+
+`tests/unit/test_lose_all_abilities.py` — one claim per reader, both orderings,
+the loader refusals, and the catalog derivation of `SUBTYPE_CLASS`.
+
+The card's own expectation is the weak `{"zone": "battlefield"}` fallback on
+purpose: the expectation vocabulary describes *your* board by counting, and every
+one of this card's effects is a characteristic of a permanent it does not count.
+Gate 5 cannot witness this card, and the unit test is what does.
+
 ## `no_regeneration` — a clause three shipped cards were dropping
 
 ### Overview

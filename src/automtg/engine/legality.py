@@ -13,7 +13,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
-from .characteristics import chars
+from .characteristics import abilities_of, chars
 from .costs import (
     can_pay,
     can_pay_mana,
@@ -221,10 +221,10 @@ def _mana_ability_actions(state: GameState, pid: int) -> list[Action]:
 def _is_mana_ability(state: GameState, action: Action) -> bool:
     if action.kind is not ActionKind.ACTIVATE or action.source is None:
         return False
-    card = state.card(action.source)
-    if action.ability_index is None or action.ability_index >= len(card.abilities):
+    abilities = abilities_of(state, action.source)
+    if action.ability_index is None or action.ability_index >= len(abilities):
         return False
-    return bool(card.abilities[action.ability_index].is_mana_ability)
+    return bool(abilities[action.ability_index].is_mana_ability)
 
 
 def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
@@ -1139,7 +1139,9 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         # has a suppressed tap-only mana ability to decide about -- so a board of
         # lands never pays for the second scan.
         show_tap_only: bool | None = None
-        for ability in card.abilities:
+        # Derived, not printed: a permanent that has lost its abilities must
+        # not be offered them, and one granted "{T}: Add {C}" must be.
+        for ability in abilities_of(state, oid):
             if ability.is_mana_ability and not offerable_mana_ability(ability):
                 if show_tap_only is None:
                     show_tap_only = manual_mana or (
@@ -1286,7 +1288,7 @@ def _ability_aims(
     # `once_each_turn` -- which counts one ability -- would let him plus twice
     # and then minus, three cards' worth of a card.
     if ability.cost is not None and ability.cost.loyalty is not None:
-        siblings = state.card(oid).abilities
+        siblings = abilities_of(state, oid)
         if any(
             state.turn_ledger.activations(oid, other.index)
             for other in siblings

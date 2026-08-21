@@ -133992,12 +133992,12 @@
     },
     "Imprisoned in the Moon": {
       "edhrec_rank": 757,
-      "gate": "template",
+      "gate": null,
       "name": "Imprisoned in the Moon",
-      "reason": "no template for: Enchant creature, land, or planeswalker",
+      "reason": "",
       "scryfall_id": "6e359c40-0175-48dd-9b4a-f416302210e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Improbable Alliance": {

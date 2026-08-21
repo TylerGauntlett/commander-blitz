@@ -91,6 +91,21 @@ STATIC_EFFECTS = frozenset(
         # Replaces the printed types rather than adding to them, which is the
         # whole point: the parenthetical says "it's not a creature".
         "set_types",
+        # "Enchanted permanent is a **colorless** land..." Replaces the printed
+        # colours, and it is `set_types`' other half: a card that changes what a
+        # permanent *is* almost always changes both.
+        "set_colors",
+        # "...and loses all other card types and abilities." The only effect in
+        # the engine that takes an ability away rather than adding one, which is
+        # why `characteristics.abilities_of` exists at all -- before it, every
+        # reader walked the printed list and there was nowhere for this to bite.
+        "lose_all_abilities",
+        # "...is a colorless land **with \"{T}: Add {C}\"**." The continuous
+        # counterpart of the `grant_ability` op: that one is a one-shot whose
+        # grants only `triggers` reads, and this one has to reach `legality` and
+        # the payment solver, because a granted mana ability nobody can tap is
+        # not a mana ability.
+        "grant_ability",
         "extra_land_drops",
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
@@ -468,25 +483,39 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     final_chapter = _final_chapter(model, abilities, where)
 
     for ability in grantable:
-        if ability.kind is not AbilityKind.TRIGGERED:
-            # Only triggered abilities can be granted so far. A granted *static*
-            # would have to join the characteristics pipeline from an object
-            # that is not its source, and a granted *activated* one would need
-            # `Action` to carry where it came from before legality could offer
-            # it -- so it would be accepted here and then never appear, which is
-            # the exact "looks implemented, does nothing" failure this pass
-            # exists to refuse. Granting a keyword is what `grant_keyword` is
-            # for; `docs/rules-coverage.md` records the rest as not implemented.
-            #
+        if ability.kind is AbilityKind.TRIGGERED:
             # Tested against `AbilityKind.TRIGGERED` rather than `is_triggered`,
             # which is True for a *chapter* as well (714.1b). A granted chapter
             # ability is not a thing any card prints and would be nonsense
             # anyway: its trigger is a comparison against the lore counters on
             # its own source, so granted to a creature it would wait for a number
             # nothing can ever reach.
-            raise DslError(
-                f"{where}: only triggered abilities can be granted, not {ability.kind.value}"
-            )
+            continue
+        if ability.is_mana_ability:
+            # A granted **mana** ability, which is the one activated kind that
+            # works. This used to be refused along with every other activated
+            # one, on the grounds that legality enumerates the printed list and
+            # so a granted activated ability "would be accepted here and then
+            # never appear". `characteristics.abilities_of` is what changed:
+            # legality, the payment solver and `game._activate` all read the
+            # derived list now, so a granted ability is offered, indexed and
+            # paid with exactly like a printed one.
+            #
+            # The line stops at mana abilities because 605.3a is what makes them
+            # safe: a mana ability never uses the stack, so `stack.ability_of`
+            # -- which resolves an ability off its source's *printed* list, and
+            # must, since an ability on the stack outlives its source (608.2) --
+            # is never asked about one. A granted activated ability that did use
+            # the stack would reach it with an index into a list that no longer
+            # exists, and resolve as some other ability of that permanent.
+            continue
+        # A granted *static* would have to join the characteristics pipeline
+        # from an object that is not its source. Granting a keyword is what
+        # `grant_keyword` is for; `docs/rules-coverage.md` records the rest.
+        raise DslError(
+            f"{where}: only triggered and mana abilities can be granted, "
+            f"not {ability.kind.value}"
+        )
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
@@ -1688,6 +1717,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
+
+    if model.effect == "set_colors":
+        # `[]` is colourless and is the point of the effect, so the check is for
+        # the field being *absent* -- a `set_colors` with nothing said would
+        # silently repaint everything it touches colourless.
+        if model.colors is None:
+            raise DslError(
+                f"{where}: set_colors needs 'colors' -- use [] for colourless, "
+                f"which is a statement rather than an omission"
+            )
+        for color in model.colors:
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown colour {color!r}")
+
+    if model.effect == "grant_ability" and model.ability is None:
+        raise DslError(
+                f"{where}: grant_ability needs 'ability' -- the index into this "
+            f"card's 'grantable_abilities'"
+        )
 
     qualities = [*model.from_types, *model.from_subtypes, *model.from_colors]
     if model.effect == "protection":

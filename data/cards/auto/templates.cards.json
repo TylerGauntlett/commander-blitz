@@ -35822,6 +35822,94 @@
           "affects": {
             "attached": true
           },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless land with \"{T}: Add {C}\" and loses all other card types and abilities.",
+          "types": [
+            "Land"
+          ]
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "colors": [],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless land with \"{T}: Add {C}\" and loses all other card types and abilities."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless land with \"{T}: Add {C}\" and loses all other card types and abilities."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless land with \"{T}: Add {C}\" and loses all other card types and abilities."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "id": "imprisoned_in_the_moon",
+      "mana_cost": "{2}{U}",
+      "name": "Imprisoned in the Moon",
+      "oracle_text": "Enchant creature, land, or planeswalker\nEnchanted permanent is a colorless land with \"{T}: Add {C}\" and loses all other card types and abilities.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Land",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
           "effect": "buff",
           "kind": "static",
           "power": {
