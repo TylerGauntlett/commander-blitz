@@ -3,7 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Auto MTG - Playtest</title>
+
+    <title>Commander Blitz</title>
+    <meta
+      name="description"
+      content="Four-seat Commander in the browser. Deal a pod against the engine or against friends, with the rules enforced for you."
+    />
+
+    <!-- The ground, declared three ways. `color-scheme` stops the browser
+         painting a white canvas and white form controls; the inline background
+         is what fills the frame between the first paint and theme.css landing;
+         `theme-color` is the chrome around an installed window. All three are
+         `--void-0`, which is where the page settles. -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0a16" />
+    <style>
+      html {
+        background: #0b0a16;
+      }
+    </style>
+
+    <!-- `.ico` first and unconditionally: it is the address a browser asks for
+         whether or not the document links one, and without a real file there
+         the SPA fallback hands back this page and the tab gets an HTML
+         document where an icon should be. The SVG is what modern browsers
+         actually use. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Commander Blitz" />
+    <meta property="og:title" content="Commander Blitz" />
+    <meta
+      property="og:description"
+      content="Four seats, four cards, all face-down. Deal a Commander pod against the engine or against friends."
+    />
+    <meta property="og:url" content="https://commanderblitz.com/" />
+    <!-- Absolute, and it has to be: a crawler unfurling a link has no document
+         base to resolve a root-relative path against. -->
+    <meta property="og:image" content="https://commanderblitz.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Commander Blitz" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

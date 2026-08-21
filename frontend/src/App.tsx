@@ -24,8 +24,9 @@
  */
 
 import { AnimatePresence, MotionConfig } from "motion/react";
+import { useEffect } from "react";
 import { Route, Routes, useLocation, useMatch } from "react-router";
-import { screenKey } from "./logic/routes";
+import { screenKey, titleFor } from "./logic/routes";
 import { DeckDossierRoute } from "./screens/DeckDossierRoute";
 import { DecksRoute } from "./screens/DecksRoute";
 import { GameRoute } from "./screens/GameRoute";
@@ -42,6 +43,14 @@ export function App() {
   // unscoped map grows with every imported deck and a board only ever draws its
   // own ~90 cards. The URL is now what says whether there is one.
   useImages(useMatch("/games/:gameId")?.params.gameId);
+
+  // The tab, and with it the back-button menu and anything somebody bookmarks.
+  // A single-page app keeps whatever title `index.html` shipped with unless it
+  // says otherwise, so four tabs on four pods would all read the same thing.
+  // Effect rather than render: `document.title` is outside React's tree.
+  useEffect(() => {
+    document.title = titleFor(location.pathname);
+  }, [location.pathname]);
 
   // `location` is passed explicitly so the *exiting* screen keeps matching
   // against the address it was rendered for. Without it the outgoing route

@@ -25,7 +25,7 @@ import urllib.request
 from dataclasses import dataclass, field
 
 MOXFIELD_API = "https://api2.moxfield.com/v3/decks/all/{public_id}"
-HEADERS = {"User-Agent": "AutoMTG/0.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)", "Accept": "application/json"}
 TIMEOUT = 20
 
 #: Accepts a full URL, with or without scheme and ``www``, and also a bare

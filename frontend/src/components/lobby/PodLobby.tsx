@@ -21,6 +21,7 @@ import { canStart, whyNot, yourSeat } from "../../logic/lobby";
 import { DeckCatalog } from "./DeckCatalog";
 import { DeckDossier } from "./DeckDossier";
 import { InviteDialog } from "./InviteDialog";
+import { Mark } from "./Mark";
 import { PodSeat } from "./PodSeat";
 import { ReadyTrack } from "./ReadyTrack";
 
@@ -89,7 +90,8 @@ export function PodLobby({
     <div className="pod" data-testid="new-game" data-pod-code={pod.code}>
       <header className="head">
         <span className="brand">
-          <span className="brand__mark">Auto MTG</span>
+          <Mark className="brand__badge" />
+          <span className="brand__mark">Commander Blitz</span>
           <span className="brand__sub">Pod lobby</span>
         </span>
         <span className="head__spacer" />

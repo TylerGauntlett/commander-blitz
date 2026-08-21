@@ -1,4 +1,4 @@
-"""Auto MTG - a Magic: The Gathering Commander board state engine.
+"""Commander Blitz - a Magic: The Gathering Commander board state engine.
 
 Layers:
     automtg.engine   pure deterministic rules engine (no I/O, no ML, no HTTP)

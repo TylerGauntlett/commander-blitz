@@ -55,3 +55,30 @@ export function screenKey(pathname: string): string {
   if (game) return `game:${game[1]}`;
   return "404";
 }
+
+/** The name, in one place, because it is now in a tab as well as on a screen. */
+export const BRAND = "Commander Blitz";
+
+/**
+ * What the tab says, which is not the same as which screen it is.
+ *
+ * `screenKey` answers "is this a different room" for `AnimatePresence`; this
+ * answers "what would somebody call this in their history". The difference is
+ * the dossier: it is the same *screen* as the catalogue and would be the same
+ * key, but a tab reading "Decks" while a specific deck is open is fine, so the
+ * two questions happen to agree here. They are still two questions.
+ *
+ * The pod's code is in the title on purpose. Four people with four tabs open on
+ * four pods is the case this exists for.
+ */
+export function titleFor(pathname: string): string {
+  const pod = /^\/pods\/([^/]+)/.exec(pathname);
+  // No `decodeURIComponent`: a normalised code is letters, digits and a hyphen,
+  // so `podPath`'s encode is a no-op on it and there is nothing to undo. It
+  // would also throw on a hand-typed `/pods/%`, and a title must not throw.
+  if (pod) return `Pod ${normaliseCode(pod[1])} · ${BRAND}`;
+  if (pathname === "/") return BRAND;
+  if (pathname === "/decks" || pathname.startsWith("/decks/")) return `Decks · ${BRAND}`;
+  if (/^\/games\/[^/]+/.test(pathname)) return `At the table · ${BRAND}`;
+  return `Not found · ${BRAND}`;
+}
