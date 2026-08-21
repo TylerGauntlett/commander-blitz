@@ -216,9 +216,7 @@ test.describe("importing a Moxfield deck", () => {
     // would fail visibly if it stopped being sent -- the decks would simply
     // become everybody's again, quietly, which is the bug this replaced.
     await stubImport(page, { status: 201, body: REPORT });
-    const sent = page.waitForRequest((request) =>
-      request.url().includes("/api/decks/import"),
-    );
+    const sent = page.waitForRequest((request) => request.url().includes("/api/decks/import"));
 
     await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
     await page.getByTestId("import-go").click();
