@@ -30,6 +30,7 @@ const meta = {
     onDossier: fn(),
     onClose: fn(),
     onImported: fn(),
+    onDelete: fn(),
   },
   parameters: { automtg: { mount: "screen", query: cards } },
 } satisfies Meta<typeof DeckCatalog>;
@@ -114,5 +115,61 @@ export const EscapeCloses: Story = {
     await canvas.findByTestId("deck-catalog");
     await userEvent.keyboard("{Escape}");
     expect(args.onClose).toHaveBeenCalled();
+  },
+};
+
+/**
+ * Only an import can be thrown away.
+ *
+ * A precon ships with the engine -- the server refuses to delete one -- so its
+ * tile carries no ✕ at all, rather than one that explains itself after the click.
+ */
+export const OnlyImportsCanBeRemoved: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-mine-remove");
+    expect(canvas.queryByTestId("deck-aesi-remove")).toBeNull();
+    expect(canvas.queryByTestId("deck-edgar-remove")).toBeNull();
+  },
+};
+
+/** The ✕ asks first. One click removes nothing. */
+export const RemoveAsksFirst: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByTestId("deck-mine-remove"));
+    await canvas.findByTestId("deck-mine-remove-confirm");
+    expect(args.onDelete, "the ✕ alone must not delete").not.toHaveBeenCalled();
+
+    await userEvent.click(canvas.getByTestId("deck-mine-remove-yes"));
+    expect(args.onDelete).toHaveBeenCalledWith("mine");
+    expect(args.onPick, "removing a deck must not also take it").not.toHaveBeenCalled();
+  },
+};
+
+/** Cancel puts the ✕ back and leaves the deck alone. */
+export const RemoveCanBeCancelled: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByTestId("deck-mine-remove"));
+    await userEvent.click(await canvas.findByTestId("deck-mine-remove-no"));
+    await canvas.findByTestId("deck-mine-remove");
+    expect(args.onDelete).not.toHaveBeenCalled();
+  },
+};
+
+/**
+ * A deck somebody at the table has taken keeps its tile and loses its ✕.
+ *
+ * Deleting it would leave that seat naming a deck the server no longer has --
+ * `PodRegistry.start` catches that and refuses to deal, which is a dead end
+ * rather than a crash, and a dead end is still worth not walking into.
+ */
+export const TakenDecksKeepTheirTile: Story = {
+  args: { inUse: ["mine"] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-mine");
+    expect(canvas.queryByTestId("deck-mine-remove")).toBeNull();
   },
 };

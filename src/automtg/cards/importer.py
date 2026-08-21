@@ -184,8 +184,20 @@ def _front_face(name: str) -> str:
     return name.split("//")[0].strip()
 
 
-def build_deck_model(deck: ParsedDeck, resolved: list[ResolvedCard], registry) -> DeckModel:
-    """A deck list in the same shape the precons are written in."""
+def build_deck_model(
+    deck: ParsedDeck, resolved: list[ResolvedCard], registry, *, owner: str = ""
+) -> DeckModel:
+    """A deck list in the same shape the precons are written in.
+
+    ``owner`` is the importing browser's library id, or ``""`` for an import with
+    no library behind it -- the CLI, a test, a browser with storage disabled.
+    See ``DeckModel.owner``: ``""`` means shared, not orphaned.
+
+    The last importer owns it.  Two people importing the same Moxfield URL get
+    the same ``deck_id`` -- it is derived from the public id -- so the second
+    import overwrites the first and takes it, and the first person re-imports to
+    get it back.  Anything else would hand somebody an import they cannot see.
+    """
     # `resolve_cards` walks commanders first and then the 99, in order, and
     # `import_deck` refuses to get here with anything unresolved -- so the split
     # is positional and every entry is present.
@@ -205,6 +217,7 @@ def build_deck_model(deck: ParsedDeck, resolved: list[ResolvedCard], registry) -
         cards=entries,
         notes=f"Imported from Moxfield ({deck.public_id}).",
         source="moxfield",
+        owner=owner,
     )
 
 
@@ -289,6 +302,7 @@ def import_deck(
     index: CardIndex | None,
     *,
     dry_run: bool = False,
+    owner: str = "",
 ) -> ImportReport:
     """Reconcile, validate, and -- unless this is a dry run -- write.
 
@@ -310,7 +324,7 @@ def import_deck(
     merged = CardRegistry({**{c.id: c for c in registry}, **{
         cid: compile_card(model) for cid, (model, _) in generated.items()
     }})
-    deck_model = build_deck_model(deck, resolved, merged)
+    deck_model = build_deck_model(deck, resolved, merged, owner=owner)
     problems = validate_deck(DeckList.from_model(deck_model), merged)
     if problems:
         raise ImportFailed("illegal", "; ".join(problems[:4]))
