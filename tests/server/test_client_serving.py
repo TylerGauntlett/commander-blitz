@@ -21,7 +21,7 @@ from fastapi.testclient import TestClient
 from automtg.cards.registry import default_registry
 from automtg.server.app import create_app
 
-INDEX = "<!doctype html><title>Auto MTG</title><div id=root></div>"
+INDEX = "<!doctype html><title>Commander Blitz</title><div id=root></div>"
 
 
 @pytest.fixture(scope="module")

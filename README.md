@@ -1,8 +1,14 @@
-# Auto MTG
+# Commander Blitz
 
-A Magic: The Gathering **Commander** rules engine, a self-play training layer, and a
-local playtest client — built so the rules live in exactly one place and everything
+[commanderblitz.com](https://commanderblitz.com)
+
+A Magic: The Gathering **Commander** rules engine, a self-play training layer, and the
+client that plays it — built so the rules live in exactly one place and everything
 else is a driver on top of them.
+
+The Python package is still `automtg`: the project was named that first, and the
+name is an import path rather than something anybody reads. The rename stopped at
+the surfaces a player sees.
 
 ```
 automtg.engine   pure, deterministic rules engine (no I/O, no ML, no HTTP)

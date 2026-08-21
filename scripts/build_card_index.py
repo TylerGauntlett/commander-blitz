@@ -61,7 +61,7 @@ from automtg.cards.registry import data_dir, default_registry
 
 BULK_DIR = data_dir() / "catalog" / "bulk"
 BULK_DATA_API = "https://api.scryfall.com/bulk-data"
-HEADERS = {"User-Agent": "AutoMTG/0.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)", "Accept": "application/json"}
 
 #: Which Scryfall bundle to pull.
 #:
