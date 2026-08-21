@@ -4891,6 +4891,20 @@
       "0": 1
     }
   },
+  "pongify": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "tokens": {
+      "count": 1,
+      "id": "ape_3_3_g"
+    },
+    "zone": "graveyard"
+  },
   "port_town": {
     "zone": "battlefield"
   },

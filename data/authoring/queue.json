@@ -203432,12 +203432,12 @@
     },
     "Pongify": {
       "edhrec_rank": 155,
-      "gate": "template",
+      "gate": null,
       "name": "Pongify",
-      "reason": "no template for: Destroy target creature. It can't be regenerated. Its controller creates a 3/3 green Ape c",
+      "reason": "",
       "scryfall_id": "5780936e-629d-4737-9005-651234f5426d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pontiff of Blight": {

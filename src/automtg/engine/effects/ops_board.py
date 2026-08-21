@@ -40,11 +40,20 @@ from .values import evaluate_value
 
 @register("destroy")
 def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Destroy target creature", and optionally "It can't be regenerated."
+
+    `no_regeneration` is the second sentence, and it had been *silently
+    dropped* by every card that printed it: nothing read it, so Terminate,
+    Wrath of God and Rapid Hybridization all shipped as spells a Drudge
+    Skeletons walks away from. It is a flag on the destruction rather than a
+    mark on the victim -- see `zones.destroy` for why the difference matters.
+    """
+    no_regeneration = bool(spec.get("no_regeneration"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Destroy", "destroy")
     for oid in oids:
         # `by` is what makes the log and the exit animation able to say
         # "Destroyed by Vandalblast" rather than just "Destroyed".
-        destroy(ctx.state, oid, by=ctx.source_oid)
+        destroy(ctx.state, oid, by=ctx.source_oid, no_regeneration=no_regeneration)
 
 
 @register("replace_deaths")

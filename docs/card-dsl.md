@@ -3346,6 +3346,38 @@ Neither workaround is this card:
 `objects` is required, for `regenerate`'s reason: with no selector
 `choose_objects` finds nothing and the spell resolves having phased nobody out.
 
+## "It can't be regenerated."
+
+```jsonc
+{"op": "destroy", "objects": {"target": "t1"}, "no_regeneration": true}
+```
+
+701.15c: the victim's regeneration shields are **not applied** to this
+destruction. Terminate, Wrath of God, Rapid Hybridization and Pongify all print
+it, and until this key existed all four dropped it silently — the clause is not
+an ability, so no printed line went unclaimed and the residual gate had nothing
+to attribute.
+
+Three things it deliberately leaves alone, each of which follows from "not
+applied" rather than "removed":
+
+- **the shield is not spent** — a creature that survives on indestructible still
+  has it afterwards;
+- **indestructible still saves the permanent** — a different replacement,
+  checked first, which Terminate has never beaten;
+- **totem armor still applies**, for the same reason.
+
+A parameter on the destruction rather than a mark on the permanent, and that is
+the reading of the sentence: "it" is *this* destruction. Marked for the turn, an
+indestructible creature Terminated would go on being unregeneratable afterwards,
+which the card does not print. The turn-long form ("a creature dealt damage this
+way can't be regenerated this turn") is a different sentence and is not
+implemented.
+
+Refused on any op but `destroy`: nothing else replaces a destruction, so
+anywhere else it would be read by nobody — which is how the clause came to be
+dropped in the first place.
+
 ## "When that mana is spent to cast…"
 
 ```jsonc

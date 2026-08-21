@@ -432,7 +432,14 @@ def _enter_battlefield(
 # ----------------------------------------------------------------------
 
 
-def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | None = None) -> bool:
+def destroy(
+    state: GameState,
+    oid: int,
+    *,
+    cause: str = "destroyed",
+    by: int | None = None,
+    no_regeneration: bool = False,
+) -> bool:
     """Destroy a permanent unless something replaces the destruction.
 
     Three things can stop it, and they are three different mechanisms rather
@@ -455,6 +462,23 @@ def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | N
     replace. Ordered the other way, a Rancor-style shield would be eaten by a
     creature that was going to survive anyway.
 
+    ``no_regeneration`` is the printed "It can't be regenerated." -- 701.15c:
+    regeneration shields are simply **not applied** to this destruction. Note
+    what it does *not* touch, because each is a card that would otherwise read
+    wrong: the shield is not spent (the effect stops it applying, it does not
+    consume it, so a creature that survives on indestructible keeps it);
+    indestructible still saves the permanent, because that is a different
+    replacement and Terminate has never beaten it; and totem armor still
+    applies, for the same reason.
+
+    A parameter rather than a mark on the object, and that is the whole reading
+    of the sentence: "it can't be regenerated" belongs to *this* destruction.
+    Marked on the permanent for the turn it would also cover the destruction
+    that never happened -- an indestructible creature Terminated would go on
+    being unregeneratable afterwards, which the printed card does not say. The
+    turn-long form ("a creature dealt damage this way can't be regenerated this
+    turn") is a different sentence and is not implemented.
+
     Returns True only if the permanent actually died.
     """
     obj = state.objects.get(oid)
@@ -462,7 +486,7 @@ def destroy(state: GameState, oid: int, *, cause: str = "destroyed", by: int | N
         return False
     if "indestructible" in chars(state, oid).keywords:
         return False
-    if obj.regeneration_shields > 0:
+    if obj.regeneration_shields > 0 and not no_regeneration:
         obj.regeneration_shields -= 1
         # 701.15a in order: tap it, remove it from combat, remove all damage.
         obj.tapped = True

@@ -54779,6 +54779,59 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "pongify",
+      "mana_cost": "{U}",
+      "name": "Pongify",
+      "oracle_text": "Destroy target creature. It can't be regenerated. Its controller creates a 3/3 green Ape creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "no_regeneration": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "ape_3_3_g"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

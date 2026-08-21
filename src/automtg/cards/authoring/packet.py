@@ -188,6 +188,11 @@ def reference() -> dict:
             " there is no general last-known-information system.",
             "A mana ability may contain only `add_mana`, or one `choose_mode`"
             " whose modes each contain only `add_mana`.",
+            "\"It can't be regenerated.\" is `no_regeneration: true` on the"
+            " `destroy` op -- 701.15c, the victim's regeneration shields are"
+            " not applied to that destruction (and not spent either)."
+            " Indestructible and totem armor are unaffected. Refused on any"
+            " other op, because nothing else replaces a destruction.",
             "A target spec may carry `mode`: the index of the mode that owns"
             " it, in a spell whose whole effect tree is one top-level"
             " `choose_mode`. That is how \"Choose up to two. * Target artifact"

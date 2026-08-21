@@ -1578,6 +1578,7 @@
         },
         {
           "op": "destroy",
+          "no_regeneration": true,
           "objects": {
             "target": "t1"
           }
