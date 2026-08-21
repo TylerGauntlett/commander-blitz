@@ -1,3 +1,87 @@
+## `no_regeneration` — a clause three shipped cards were dropping
+
+### Overview
+
+Pongify: *"Destroy target creature. **It can't be regenerated.** Its controller
+creates a 3/3 green Ape creature token."*
+
+`op_destroy` read one key — `objects` — and called `zones.destroy`, which spends
+a regeneration shield unconditionally. So the second sentence had nowhere to be
+written, and every card in the pool that printed it shipped without it:
+
+| card | printed | shipped as |
+|---|---|---|
+| Terminate | "Destroy target creature. It can't be regenerated." | Doom Blade with two colours |
+| Wrath of God | "Destroy all creatures. They can't be regenerated." | a wrath every regenerator survives |
+| Rapid Hybridization | "Destroy target creature. It can't be regenerated. …" | the same, plus a Frog Lizard |
+
+Nothing announced it. The clause is not an ability, so the residual gate has no
+`text` to attribute and no printed line went unclaimed — which is why the gap
+record filed against Pongify is what surfaced it rather than the gates. It is
+also the exact failure mode the pipeline's "do not approximate" rule exists to
+prevent, arriving through the one door that predates the pipeline.
+
+### The shape
+
+```jsonc
+{"op": "destroy", "objects": {"target": "t1"}, "no_regeneration": true}
+```
+
+`zones.destroy` grows a `no_regeneration` keyword argument and one word in one
+condition:
+
+```python
+if obj.regeneration_shields > 0 and not no_regeneration:
+```
+
+### The three things it deliberately does not do
+
+Each is a card that would read wrong otherwise, and all three come from 701.15c
+saying the shield is not **applied** rather than saying it is removed.
+
+- **The shield is not spent.** A creature that survives on indestructible still
+  has it afterwards.
+- **Indestructible still wins.** A different replacement, checked first, and
+  Terminate has never beaten it.
+- **Totem armor still applies**, for the same reason.
+
+### A parameter, not a mark
+
+The gap record proposed marking the victim unregeneratable for the turn, on the
+grounds that one mark covers both printed readings — "it can't be regenerated"
+and "a creature dealt damage this way can't be regenerated this turn".
+
+It covers them at the price of being wrong about the first. "It can't be
+regenerated" belongs to *this* destruction: an indestructible creature Terminated
+is not destroyed at all, and a turn-long mark would leave it unregeneratable for
+the rest of the turn — a rule the card does not print, and one a player would
+discover only by losing a creature to it.
+
+So the flag is a parameter on the destruction. The turn-long form is a different
+sentence, has no `destroy` to hang off, and is not implemented.
+
+### The loader guard
+
+`no_regeneration` on any op other than `destroy` is a load error. Nothing else in
+the engine replaces a destruction, so written on a `damage` that will kill, on a
+`sacrifice`, or on `replace_deaths`, it would be read by nobody — which is
+precisely how the clause came to be dropped in the first place.
+
+### The Ape
+
+`create_token` names a token by id and `loader.validate_token_references` refuses
+an unknown one, so Pongify also needed `ape_3_3_g` in
+`data/cards/tokens.cards.json`. The pool already held four 3/3 green bodies and
+no Ape; substituting one would change the token's printed subtype, which is a
+different card rather than a smaller one.
+
+### Test
+
+`tests/unit/test_cant_be_regenerated.py`, including the negative control (the
+same creature, the same shield, no flag, survives) and an assertion over the
+three shipped cards that print the clause — they are the witnesses, so they are
+what the test watches.
+
 ## `mode` — a target that belongs to one mode
 
 ### Overview

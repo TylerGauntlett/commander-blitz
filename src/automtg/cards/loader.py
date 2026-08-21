@@ -3296,6 +3296,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 _validate_cost_reduction(
                     effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
                 )
+    if effect.get("no_regeneration") is not None and op != "destroy":
+        # "It can't be regenerated." belongs to a destruction, and `op_destroy`
+        # is the only op that performs one. Written on anything else -- a
+        # `damage` that will kill, a `sacrifice`, a `replace_deaths` -- it is
+        # read by nobody, which is precisely how the clause came to be silently
+        # dropped by every card that printed it in the first place.
+        raise DslError(
+            f"{where}: 'no_regeneration' only works on 'destroy' -- "
+            f"nothing else replaces a destruction, so here it would be ignored"
+        )
     if op == "regenerate" and not effect.get("objects"):
         # A shield with nothing to put it on. The ability would cost mana, log
         # nothing and save nobody -- and "Regenerate this creature" is three

@@ -303,6 +303,10 @@
     "artist": "James Zapata",
     "scryfall_id": "aa6d7bbe-0418-4a58-a97b-13b50eb0b642"
   },
+  "ape_3_3_g": {
+    "artist": "Lars Grant-West",
+    "scryfall_id": "4b2ee605-3c7a-4769-978d-3199bdc7c504"
+  },
   "apprentice_wizard": {
     "artist": "Richard Kane Ferguson",
     "scryfall_id": "e13026a8-7e3c-45b2-9838-080f14ae4b29"
@@ -1127,6 +1131,10 @@
     "artist": "Allen Williams",
     "scryfall_id": "7f01fe22-e8ff-4106-8ac5-693ef920b2c9"
   },
+  "call_damage_control": {
+    "artist": "Slawomir Maniak",
+    "scryfall_id": "de1ed886-c33b-4cfd-8442-944cec654a8b"
+  },
   "call_for_aid": {
     "artist": "Nino Is",
     "scryfall_id": "7072b75a-64ab-4894-943e-fc0b779ca60e"
@@ -1627,6 +1635,10 @@
     "artist": "Steve White",
     "scryfall_id": "e4f53ff6-f053-4872-b293-78c46ec469a2"
   },
+  "craterhoof_behemoth": {
+    "artist": "Chris Rahn",
+    "scryfall_id": "777bb4ba-a821-4a83-a9e2-8827e7eff98f"
+  },
   "craw_wurm": {
     "artist": "Richard Sardinha",
     "scryfall_id": "3875f73d-6108-488b-bd34-4cf2c23ce6b3"
@@ -1710,6 +1722,10 @@
   "custodian_of_the_trove": {
     "artist": "Raoul Vitale",
     "scryfall_id": "eb14f061-9506-40fb-b10d-4bada38ca0f7"
+  },
+  "cyclonic_rift": {
+    "artist": "Matthew G. Lewis",
+    "scryfall_id": "7037f57a-ca89-41bd-bf7f-2f54593c0f48"
   },
   "cyclops_of_one_eyed_pass": {
     "artist": "Kev Walker",
@@ -5674,6 +5690,10 @@
     "artist": "Pavel Kolomeyets",
     "scryfall_id": "079e979f-b618-4625-989c-e0ea5b61ed8a"
   },
+  "overwhelming_stampede": {
+    "artist": "Daniel Landerman",
+    "scryfall_id": "6996b9c4-e78c-4970-91c7-9025a0a4f670"
+  },
   "painful_truths": {
     "artist": "Winona Nelson",
     "scryfall_id": "faa82f09-0693-4cc6-8770-8c6a35aa627b"
@@ -5893,6 +5913,10 @@
   "ponder": {
     "artist": "Joshua Alvarado",
     "scryfall_id": "1e180975-c62e-46a8-bb22-e4fcbfcb5e3e"
+  },
+  "pongify": {
+    "artist": "Dominik Mayer",
+    "scryfall_id": "5780936e-629d-4737-9005-651234f5426d"
   },
   "port_town": {
     "artist": "Arthur Yuan",

@@ -21,6 +21,26 @@
       "is_token": true
     },
     {
+      "id": "ape_3_3_g",
+      "name": "Ape Token",
+      "oracle_text": "3/3 green Ape creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ape"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "beast_3_3_g",
       "name": "Beast Token",
       "oracle_text": "3/3 green Beast creature token.",

@@ -10,39 +10,5 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **2** capabilities.
-
-| capability | cards | best EDHREC rank | kind |
-|---|---:|---:|---|
-| [ape-token](#ape-token) | 1 | 155 | engine |
-| [cant-be-regenerated](#cant-be-regenerated) | 1 | 155 | op |
-
-## ape-token
-
-Blocks **1** card.
-
-- **(engine)** A 3/3 green Ape creature token card in `data/cards/tokens.cards.json`, id `ape_3_3_g`, plus its art/registry entries -- the pool already holds four 3/3 green bodies (beast_3_3_g, badger_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) but no Ape.
-  <br>Why the existing vocabulary won't do: `create_token` names a token by id and `loader.validate_token_references` raises DslError for an id that is not a card marked `is_token`, so writing `"token": "ape_3_3_g"` fails to load until the token exists; there is no inline token-definition vocabulary in the DSL. Substituting an existing 3/3 green token would change the creature's printed subtype, which is load-bearing for the token's own typal interactions, so it is a different card rather than a smaller one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pongify** (rank 155) — `pongify`
-  - It can't be regenerated.
-  - Its controller creates a 3/3 green Ape creature token.
-
-</details>
-
-## cant-be-regenerated
-
-Blocks **1** card.
-
-- **(op)** A way for a destruction to say the victim's regeneration shields do not apply -- either a flag on the `destroy` op (e.g. `"cant_regenerate": true`) that suppresses the shield check for the objects it destroys, or a separate op that marks named creatures as unregeneratable for the turn so that later destruction (SBA lethal damage, deathtouch, another spell) also ignores their shields. Both readings are printed: "It can't be regenerated" attaches to this destruction, while "a creature dealt damage this way can't be regenerated this turn" (Char-family) is a turn-long mark, so the mark form covers both.
-  <br>Why the existing vocabulary won't do: `ops` has `regenerate`, which only ADDS shields (`op_regenerate` in engine/effects/ops_board.py increments `obj.regeneration_shields`); nothing removes or suppresses them. `op_destroy` reads only `spec['objects']` and calls `zones.destroy`, which spends a shield unconditionally before moving the object, so any spelling of the clause on the destroy op is currently ignored rather than rejected -- the card would load and silently let a Drudge Skeletons survive. `replace_deaths` is the wrong shape twice over: it redirects a death that already happened to another zone, and regeneration prevents the death from happening at all, so it never runs. Granting `indestructible` or `exile` instead of destroying are both different cards (they dodge dies-triggers or beat indestructible respectively).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pongify** (rank 155) — `pongify`
-  - It can't be regenerated.
-  - Its controller creates a 3/3 green Ape creature token.
-
-</details>
+No gap records. Either nothing has been triaged yet, or the DSL
+covers everything attempted so far.
