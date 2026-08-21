@@ -413,6 +413,15 @@
   color: var(--text);
 }
 
+.link--danger {
+  color: var(--danger);
+}
+
+.link--danger:hover {
+  color: var(--danger);
+  filter: brightness(1.25);
+}
+
 /* The pod ----------------------------------------------------------------- */
 
 .pod {
@@ -1224,6 +1233,21 @@
   flex-wrap: wrap;
 }
 
+/* "Remove? Yes Cancel", in the slot the ✕ just vacated. The meta row wraps, so
+   this pushes the pips and badges onto a second line rather than overflowing --
+   which is the right trade for a state that lasts one click. */
+.pick__confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pick__confirm-q {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--text-dim);
+}
+
 .pick__tags {
   display: flex;
   justify-content: center;
@@ -1649,6 +1673,19 @@
 .ibtn:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
+}
+
+/* Removing an imported deck. It sits at rest in the same faint grey as the
+   details button beside it and only turns red under the pointer: a row of deck
+   tiles each carrying a permanently red glyph reads as a rack of warnings, and
+   the thing this button destroys is one deck, not the evening. */
+.ibtn--danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.ibtn--danger:focus-visible {
+  outline-color: var(--danger);
 }
 
 .chip {
