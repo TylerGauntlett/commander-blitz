@@ -15,6 +15,7 @@
  */
 
 import { useState } from "react";
+import { api } from "../../api/client";
 import type { DeckImportResponse, DeckSummary, PodView } from "../../api/types";
 import { canStart, whyNot, yourSeat } from "../../logic/lobby";
 import { DeckCatalog } from "./DeckCatalog";
@@ -218,6 +219,11 @@ export function PodLobby({
               // find it in the rack afterwards is a step with no decision in it.
               take(result.deck.id, catalogFor);
             }}
+            onDelete={async (deckId) => {
+              await api.deleteDeck(deckId);
+              onDecksChanged();
+            }}
+            inUse={pod.seats.flatMap((seat) => (seat.deck ? [seat.deck.id] : []))}
           />
         </>
       )}

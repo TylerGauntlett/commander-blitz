@@ -141,6 +141,9 @@ class DeckList:
     substitutions: tuple[dict, ...] = ()
     notes: str = ""
     source: str = "precon"
+    #: The browser library that imported this.  ``""`` is shared -- a precon, or
+    #: an import from before libraries existed.  See ``DeckModel.owner``.
+    owner: str = ""
     #: Editorial metadata, authored per deck.  Empty for imported decks, which
     #: is a state the catalogue renders rather than papering over.
     tags: tuple[str, ...] = ()
@@ -172,6 +175,7 @@ class DeckList:
             substitutions=tuple(s.model_dump() for s in model.substitutions),
             notes=model.notes,
             source=model.source,
+            owner=model.owner,
             tags=tuple(model.tags),
             ratings=None if model.ratings is None else model.ratings.model_dump(),
             strategy=model.strategy,

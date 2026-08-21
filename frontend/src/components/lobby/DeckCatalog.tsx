@@ -61,6 +61,20 @@ interface Props {
   onDossier: (deckId: string) => void;
   onClose: () => void;
   onImported: (result: DeckImportResponse) => void;
+  /** Throw an imported deck away. Never called for a precon. */
+  onDelete: (deckId: string) => void;
+  /**
+   * Deck ids somebody at this table has already taken. They get no remove
+   * control.
+   *
+   * A guard rather than a repair, because there is nothing to repair with: the
+   * pod API can set a seat's deck but not un-set it. `PodRegistry.start` does
+   * catch this -- it re-checks every seat's deck under the lock and refuses with
+   * `unknown_deck` -- so what is being prevented is not a crash but a dead end:
+   * a seat still showing a deck, a Deal button that keeps saying no, and no way
+   * from there to a game. Browsing passes nothing, having no table.
+   */
+  inUse?: readonly string[];
 }
 
 export function DeckCatalog({
@@ -72,6 +86,8 @@ export function DeckCatalog({
   onDossier,
   onClose,
   onImported,
+  onDelete,
+  inUse = [],
 }: Props) {
   const [filters, setFilters] = useState<CatalogFilters>(EMPTY_FILTERS);
 
@@ -205,6 +221,7 @@ export function DeckCatalog({
                 selected={deck.id === chosen}
                 onPick={onPick}
                 onDossier={onDossier}
+                onDelete={inUse.includes(deck.id) ? null : onDelete}
               />
             ))}
           </div>
@@ -238,12 +255,27 @@ function DeckPick({
   selected,
   onPick,
   onDossier,
+  onDelete,
 }: {
   deck: DeckSummary;
   selected: boolean;
   onPick: (deckId: string) => void;
   onDossier: (deckId: string) => void;
+  /** Null when this deck may not be removed -- see `Props.inUse`. */
+  onDelete: ((deckId: string) => void) | null;
 }) {
+  /**
+   * Whether this tile is asking "Remove?" rather than offering the ✕.
+   *
+   * A step rather than nothing, because the glyph is 17px wide and sits in a row
+   * with the details button, one deck tile away from the card you click to play
+   * the thing -- and what it throws away is an import somebody waited on. A step
+   * rather than a `confirm()` dialog, because the catalogue is already a
+   * takeover and a second modal over it would be one too many. Local state: one
+   * tile mid-question is not a fact the catalogue needs to know.
+   */
+  const [confirming, setConfirming] = useState(false);
+
   const take = () => onPick(deck.id);
   return (
     <div
@@ -297,6 +329,42 @@ function DeckPick({
         >
           i
         </button>
+        {/* Only what somebody imported. A precon ships with the engine and has
+            no ✕ at all, rather than one that explains itself afterwards. */}
+        {deck.source === "moxfield" &&
+          onDelete !== null &&
+          (confirming ? (
+            <span className="pick__confirm" data-testid={`deck-${deck.id}-remove-confirm`}>
+              <span className="pick__confirm-q">Remove?</span>
+              <button
+                type="button"
+                className="link link--danger"
+                onClick={() => onDelete(deck.id)}
+                data-testid={`deck-${deck.id}-remove-yes`}
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                className="link"
+                onClick={() => setConfirming(false)}
+                data-testid={`deck-${deck.id}-remove-no`}
+              >
+                Cancel
+              </button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              className="ibtn ibtn--danger"
+              title="Remove this deck"
+              aria-label={`Remove ${deck.name}`}
+              onClick={() => setConfirming(true)}
+              data-testid={`deck-${deck.id}-remove`}
+            >
+              ✕
+            </button>
+          ))}
       </div>
       {deck.tags.length > 0 && (
         <div className="pick__tags">

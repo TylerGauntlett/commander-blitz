@@ -13,6 +13,7 @@
  */
 
 import { Outlet, useLocation, useNavigate } from "react-router";
+import { api } from "../api/client";
 import { DeckCatalog } from "../components/lobby/DeckCatalog";
 import { Screen } from "../components/screen/Screen";
 import { deckPath } from "../logic/routes";
@@ -33,6 +34,10 @@ export function DecksRoute() {
         onDossier={(deckId) => navigate(deckPath(deckId))}
         onClose={() => navigate("/")}
         onImported={() => decks.refetch()}
+        onDelete={async (deckId) => {
+          await api.deleteDeck(deckId);
+          decks.refetch();
+        }}
       />
       <Outlet />
     </Screen>
