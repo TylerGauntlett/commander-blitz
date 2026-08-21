@@ -3165,6 +3165,10 @@
   "impostor_of_the_sixth_pride": {
     "zone": "battlefield"
   },
+  "imprisoned_in_the_moon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "improvised_armor": {
     "zone": [
       "battlefield",

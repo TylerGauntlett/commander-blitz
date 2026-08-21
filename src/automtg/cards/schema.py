@@ -285,6 +285,14 @@ class AbilityModel(BaseModel):
     from_types: list[str] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
+    #: ``set_colors``: the colours that *replace* the printed ones. The empty
+    #: list is colourless and is the whole point of the effect -- "enchanted
+    #: permanent is a **colorless** land" -- so it is `None` that means "not
+    #: given", never `[]`.
+    colors: list[str] | None = None
+    #: ``grant_ability``: which of the granting card's `grantable_abilities` the
+    #: permanents this affects get, by index.
+    ability: int | None = None
     #: ``block_restriction``: which would-be blockers are refused. A static
     #: filter over the *blocker*, so "can't be blocked by Humans" is
     #: ``{"subtypes": ["Human"]}``.

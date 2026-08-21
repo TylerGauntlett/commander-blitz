@@ -3346,6 +3346,108 @@ Neither workaround is this card:
 `objects` is required, for `regenerate`'s reason: with no selector
 `choose_objects` finds nothing and the spell resolves having phased nobody out.
 
+## "Enchanted permanent is a colorless land … and loses all other card types and abilities"
+
+```jsonc
+"grantable_abilities": [
+  {"kind": "activated", "text": "{T}: Add {C}.", "is_mana_ability": true,
+   "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{C}"}]}
+],
+"abilities": [
+  {"kind": "static", "effect": "set_types",          "affects": {"attached": true}, "types": ["Land"]},
+  {"kind": "static", "effect": "set_colors",         "affects": {"attached": true}, "colors": []},
+  {"kind": "static", "effect": "lose_all_abilities", "affects": {"attached": true}},
+  {"kind": "static", "effect": "grant_ability",      "affects": {"attached": true}, "ability": 0}
+]
+```
+
+Imprisoned in the Moon, said as four statics because it is four continuous
+effects in four layers. `set_types` already existed; the other three are new,
+and `lose_all_abilities` is the one that needed a subsystem.
+
+### `lose_all_abilities`, and why `abilities_of` exists
+
+No effect could take an ability away before, so nothing had ever needed to ask
+what abilities a permanent *has* — five readers each walked
+`state.card_of(obj).abilities` and got the printed list:
+
+| reader | what it would otherwise miss |
+|---|---|
+| `legality._activate_actions` | an imprisoned Sol Ring still offered its `{T}` |
+| `costs.mana_sources` | …and still tapped for two by the payment solver |
+| `triggers.collect` | an imprisoned Bloodghast still seeing landfall |
+| `characteristics._battlefield_statics` | an imprisoned anthem still pumping |
+| `game._activate` | indexing a different list from the one legality offered |
+
+With a printed list, each of those is a separate place for the clause to be
+forgotten, and forgetting it in any one is a permanent that visibly does nothing
+and quietly still does something. `characteristics.abilities_of` is the single
+answer and all five ask it. Off the battlefield it is the printed list unchanged,
+which is every card in hand, on the stack and in a graveyard.
+
+**Indices stay meaningful.** `Action.ability_index`, `StackItem.ability_index`
+and the RL action space all address an ability by position, so a granted ability
+is *appended* — printed indices never move — and the list is renumbered so
+`Ability.index` agrees with where it sits. Legality and resolution read the same
+list, so the two cannot disagree about what index 0 means.
+
+**A keyword goes with the abilities** (113.1a), and the removal happens *before*
+the grant layers, which is 613.1b: a Levitation played afterwards still grants
+flying, and a vigilance counter (613.1f) still gives vigilance.
+
+### `grant_ability` as a static, and the line it stops at
+
+The `grant_ability` *op* grants for a duration and its grants are pointers only
+`triggers` reads. This is the continuous form, and it has to reach `legality` and
+the payment solver too — a granted mana ability nobody can tap is not a mana
+ability.
+
+`grantable_abilities` used to refuse anything but a triggered ability, on the
+grounds that a granted activated one "would be accepted here and then never
+appear". `abilities_of` is what changed that, and the refusal is now narrowed to
+exactly the safe width: **a granted activated ability must be a mana ability**.
+605.3a is what makes that safe — a mana ability never uses the stack, so
+`stack.ability_of`, which resolves an ability off its source's *printed* list and
+must (an ability on the stack outlives its source, 608.2), is never asked about
+one. A granted activated ability that did use the stack would reach it with an
+index into a list that no longer exists and resolve as some other ability of that
+permanent. A granted *static* is still refused outright.
+
+### `set_colors`
+
+Nothing in the engine could set a colour; `animate` overwrote them as a
+side-effect of an until-end-of-turn P/T replacement and that was all. It is
+load-bearing the moment it exists: the selector language reads `colors`,
+`not_colors` and `shares_a_color_with`, and `protection` reads `from_colors`, so
+a moon-imprisoned Sheoldred stops being a legal target for "destroy target black
+permanent". `[]` is colourless and is the point of the effect, so a `set_colors`
+with no `colors` field is a load error rather than a silent repaint.
+
+### `set_types` now strips orphaned subtypes
+
+205.1b and 613.1d: the subtypes of a card type a permanent no longer has go with
+it. Without it an imprisoned Goblin Warchief reads "Land — Goblin", is still
+pumped by a Goblin anthem and still answers a Goblin fetch. `SUBTYPE_CLASS` in
+`engine/enums.py` is the table, derived from `data/catalog/cards.sqlite` over
+every type line naming exactly one card type — and **creature types are
+deliberately absent from it**: there are 321 of them against 149 of everything
+else, the list grows every set, and the default has to fail safe. An unknown
+subtype read as a creature type is dropped when Creature is, which is right for
+every new creature type and wrong only for a new artifact or enchantment type on
+a permanent that stopped being a creature it never was. The derivation is
+reproduced in `tests/unit/test_lose_all_abilities.py`, so a catalog refresh that
+adds a type says so.
+
+### The one divergence
+
+`ABILITY_STATICS` — `lose_all_abilities` and `grant_ability` — are collected off
+**printed** faces, apart from every other static. They have to be:
+`_battlefield_statics` reads `abilities_of` and `abilities_of` reads these, so
+gathering both the same way is an infinite regress. The cost is 613.8's
+dependency analysis, which layers-lite exists not to have: an Imprisoned in the
+Moon enchanting *another* Imprisoned in the Moon does not switch the second one
+off.
+
 ## "It can't be regenerated."
 
 ```jsonc

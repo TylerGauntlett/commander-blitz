@@ -283,7 +283,7 @@ class TestTheChapterAbility:
         fire, the "looks implemented, does nothing" shape the loader's grantable
         check exists to refuse.
         """
-        with pytest.raises(DslError, match="only triggered abilities can be granted"):
+        with pytest.raises(DslError, match="only triggered and mana abilities"):
             card({
                 "abilities": [{"kind": "chapter", "chapter": 1, "effects": [DRAW]}],
                 "grantable_abilities": [

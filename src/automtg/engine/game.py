@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any
 from . import legality, sba, stack, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
 from .carddef import Cost
+from .characteristics import abilities_of
 from .combat import add_attacker, add_blocker, finish_attackers
 from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -145,7 +146,7 @@ class Game:
             # A mana ability does not use the stack (rule 605.3a), so it takes a
             # different path entirely: nothing to respond to, and the player
             # keeps priority afterwards.
-            ability = state.card(action.source).abilities[action.ability_index]
+            ability = abilities_of(state, action.source)[action.ability_index]
             if ability.is_mana_ability:
                 self._run(self._activate_mana(pid, action))
             else:
@@ -522,7 +523,9 @@ class Game:
         state = self.state
         oid = action.source
         card = state.card(oid)
-        ability = card.abilities[action.ability_index]
+        # Derived rather than printed, so the list legality offered from and the
+        # list this indexes into are the same list.
+        ability = abilities_of(state, oid)[action.ability_index]
         # Forecast's "only once each turn" counts *activations*, and this is the
         # moment one happens. Counted before the cost is paid, so an activation
         # that strands mid-payment still spends the turn's allowance -- the same
@@ -868,7 +871,7 @@ class Game:
         state = self.state
         oid = action.source
         card = state.card(oid)
-        ability = card.abilities[action.ability_index]
+        ability = abilities_of(state, oid)[action.ability_index]
 
         # Fired rather than emitted, and tagged, so `TriggerSpec.mana_ability`
         # is a live restriction rather than a guard that never runs: a card
@@ -1082,7 +1085,7 @@ def _only_pass_or_mana(state: GameState, options: list[Action], player) -> bool:
             # 0 because a face-down permanent has none. Auto-passing past it
             # would take the decision away, so this window is a real one.
             return False
-        ability = state.card(action.source).abilities[action.ability_index]
+        ability = abilities_of(state, action.source)[action.ability_index]
         if not ability.is_mana_ability:
             return False
     return seen_pass

@@ -12,7 +12,12 @@ from collections.abc import Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
-from .characteristics import chars, player_doubles_land_mana, spell_cost_reduction
+from .characteristics import (
+    abilities_of,
+    chars,
+    player_doubles_land_mana,
+    spell_cost_reduction,
+)
 from .effects.context import EffectContext, ask_objects
 from .effects.selectors import resolve_pool
 from .enums import COLORLESS, Keyword, Zone
@@ -234,7 +239,7 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     is_land = "Land" in c.types
     doubled = is_land and player_doubles_land_mana(state, obj.controller)
     out: list[ManaSource] = []
-    for ability in card.abilities:
+    for ability in abilities_of(state, oid):
         if not solver_taps(ability):
             continue
         out.append(
@@ -324,8 +329,7 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     ctx = EffectContext(state=state, controller=state.objects[oid].controller, source_oid=oid)
     colors: set[int] = set()
     for other in resolve_pool(ctx, ability.mana_reflects):
-        other_card = state.card_of(state.objects[other])
-        for other_ability in other_card.abilities:
+        for other_ability in abilities_of(state, other):
             # A *reflecting* ability is skipped outright: two Exotic Orchards
             # facing each other would otherwise ask each other what they produce,
             # for ever. That skip is what makes the recursion below terminate.
@@ -1013,8 +1017,7 @@ def activate_mana_ability(
     would let the offer and the payment see two different boards -- the exact
     disagreement `mana_produced` exists to prevent.
     """
-    card = state.card(oid)
-    ability = card.abilities[ability_index]
+    ability = abilities_of(state, oid)[ability_index]
 
     obj = state.objects.get(oid)
     is_land = obj is not None and "Land" in chars(state, oid).types

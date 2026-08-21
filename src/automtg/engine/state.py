@@ -128,6 +128,12 @@ class GameState:
     char_version: int = 0
     char_cache: dict[int, Any] = field(default_factory=dict, repr=False)
     char_cache_version: int = -1
+    #: `characteristics._ability_statics`, cached against `char_version`. Its
+    #: own field rather than a row in `char_cache`, because it is keyed by
+    #: nothing -- it is one list for the whole battlefield, and it is read while
+    #: `char_cache` is being filled.
+    ability_static_cache: list[Any] = field(default_factory=list, repr=False)
+    ability_static_version: int = -1
 
     triggers_this_step: int = 0
     #: "Whenever a creature dealt damage by this creature this turn dies…"
