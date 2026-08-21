@@ -464,6 +464,13 @@ class StackItem:
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()
+    #: Were :attr:`modes` *asked* as this was cast (601.2b), or is the empty
+    #: tuple merely "nobody has chosen yet"?  The two are different answers and
+    #: the tuple cannot tell them apart: "choose up to two" is allowed to choose
+    #: none, and without this flag `op_choose_mode` reads that as unanswered and
+    #: asks again on resolution -- a second question the player already answered,
+    #: and one whose modes could no longer declare the targets they own.
+    modes_answered: bool = False
     #: Whether the kicker cost was paid as this spell was cast.  Decided at cast
     #: time and read on resolution, because that is the only place it can be
     #: known: nothing about the object afterwards records what was paid for it.

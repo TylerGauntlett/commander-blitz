@@ -136,6 +136,7 @@
       "A static ability's filter may only read printed characteristics.",
       "`snapshot` is how a card reads a value after its target has left -- there is no general last-known-information system.",
       "A mana ability may contain only `add_mana`, or one `choose_mode` whose modes each contain only `add_mana`.",
+      "A target spec may carry `mode`: the index of the mode that owns it, in a spell whose whole effect tree is one top-level `choose_mode`. That is how \"Choose up to two. * Target artifact card. * Target creature card. ...\" carries one target per bullet and binds two distinct ones -- the spec is declared only if its mode is chosen. It must be a fixed count, never `optional`, and no card-level target on the same card may be variable-size.",
       "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
     ],
     "ops": [
@@ -298,6 +299,7 @@
     ],
     "static_effects": [
       "add_subtype",
+      "attack_tax",
       "attacks_if_able",
       "block_restriction",
       "buff",
@@ -436,11 +438,13 @@
       "min_life_of",
       "minus",
       "permanents_entered_this_turn",
+      "power_had",
       "power_of",
       "resolutions_this_turn",
       "spells_cast_this_turn",
       "sum",
       "times",
+      "toughness_had",
       "toughness_of",
       "x"
     ]

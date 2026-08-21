@@ -1,3 +1,151 @@
+## `mode` — a target that belongs to one mode
+
+### Overview
+
+Call Damage Control: *"Choose up to two. Return those cards from your graveyard
+to your hand. • Target artifact card. • Target creature card. • Target
+enchantment card. • Target land card."*
+
+Four modes, four **different** targets, and two of them live at once. Nothing in
+the engine could say that. `targets` is a flat card-level list compiled by
+`loader._compile_targets` and fixed as part of the cast **action**, which
+`legality` enumerates before `Game._ask_modes` runs — the reverse of the printed
+order, and a divergence `_ask_modes`'s own docstring recorded.
+
+Three near-misses, each of which loads and reads as a card that does not exist:
+
+- **One shared `optional` spec** (the Simic Charm idiom) works only because
+  Simic Charm's modes point at the same object. These four point at four
+  different card types, so one spec cannot supply two distinct targets.
+- **Four independent optional specs** leave the mode-to-target pairing
+  unenforced — the artifact mode could be taken having targeted a creature card
+  — and multiply out past `MAX_TARGET_OPTIONS`, which truncates silently, so
+  most legal lines would simply never be offered.
+- **One `card_in_graveyard` spec with `count: 2, up_to`** gets the ceiling right
+  and drops the at-most-one-per-type restriction, so it returns two creature
+  cards.
+
+### What the gap record asked for, and why it is not what shipped
+
+The record filed against this said the real fix was to choose targets as a
+*decision* after modes rather than as part of action enumeration — "which
+changes casting for every card, both AI seats and the action API" — and stopped
+rather than starting that inside a card-unblocking run. That reading is right
+about the order and wrong about the blast radius, and the difference is one
+sentence:
+
+> `card.targets` stays exactly what it was, and a spec carrying `mode` is simply
+> **not in it**.
+
+`legality` enumerates cast actions from the card-level list. It never sees a
+mode-owned spec, so no existing card changes, no action changes, and the RL
+action space is byte-identical. The new question is asked inside the cast, by
+`Game._ask_mode_targets`, between 601.2b and 601.2h — which is where 601.2c puts
+it in the first place.
+
+### The shape
+
+```jsonc
+"targets": [
+  {"id": "artifact", "kind": "card_in_graveyard", "mode": 0,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Artifact"]}},
+  {"id": "creature", "kind": "card_in_graveyard", "mode": 1,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+],
+"spell_effects": [
+  {"op": "choose_mode", "count": 2, "up_to": true, "modes": [
+    {"label": "Target artifact card.",
+     "effects": [{"op": "return_to_hand", "objects": {"target": "artifact"}}]},
+    {"label": "Target creature card.",
+     "effects": [{"op": "return_to_hand", "objects": {"target": "creature"}}]}
+  ]}
+]
+```
+
+`mode` is the index into the card's single top-level `choose_mode`. `compile_card`
+partitions the compiled specs: `CardDef.targets` keeps the card-level ones,
+`CardDef.mode_targets` keys the rest by mode.
+
+### The four rules that came with it
+
+**A mode with no legal target is not offered.** 601.2b — you cannot choose a
+mode that would be illegal. `targeting.selectable_modes` asks
+`enumerate_target_tuples` with `limit=1` per mode, and `_ask_modes` offers only
+those, mapping the answer back through the filtered list. Cast over a graveyard
+of creature cards, Call Damage Control shows one bullet, not four ways to spend a
+mode on nothing.
+
+**A spell that cannot meet its floor cannot be cast.** "Choose one" with no legal
+mode is not offered as a cast line at all. `stack.modal_cast_ok` is asked in
+`legality._cast_variant` rather than `_cast_options`, because flashback, foretell
+and the second face all reach a card without passing through the latter.
+
+**Refs are stored in printed mode order.** `_ask_mode_targets` walks
+`sorted(modes)` and `CardDef.specs_for_modes` rebuilds the same list on
+resolution, because `targeting.filter_legal` splits stored refs by *position* —
+two orders for one answer is exactly how a ref lands in another mode's bucket and
+the spell returns the wrong card while looking completely normal. `_ask_modes`
+now sorts what it records for the same reason, which is also 700.2e ("the modes
+are executed in the order written on the card") rather than the order they were
+clicked.
+
+**Two modes may target the same card.** 601.2c forbids repeating a target within
+one instance of the word "target", and two modes are two instances. Striking off
+what an earlier mode took would leave a mode offered with nothing to point at,
+which is the silently-inert half of a spell this whole capability exists to
+prevent.
+
+### No new decision kind
+
+`ask_targets` builds a `CHOOSE_OBJECTS` decision with `purpose: "target"`. The
+answer is an ordinal into `options` either way, so the RL encoder, the heuristic
+agent, the client's `PromptDialog` and `verify.py`'s auto-answer table all handle
+it with no change — the same argument `op_two_piles` made for reusing
+`ask_objects` when Fact or Fiction needed an *opponent* to split a pile.
+
+It takes `(label, ref)` pairs rather than refs, because naming a target is
+`targeting.describe_ref`'s job and `targeting` imports `effects.context`, not the
+other way round.
+
+### A live bug it closed
+
+`StackItem.modes` could not tell "chose none" from "nobody asked". That became
+reachable the moment `choose_mode` grew `up_to`: a "choose up to two" cast for
+zero modes recorded `()`, `op_choose_mode` read that as unanswered and asked the
+whole question again as the spell resolved — a second question the player had
+already answered, offering modes whose targets could no longer be declared.
+`StackItem.modes_answered` (and `EffectContext.modes_answered`, consumed with
+`modes` so a *nested* `choose_mode` still asks its own) says which it is.
+
+### Free casts
+
+Cascade, suspend and "cast it without paying its mana cost" push a spell with no
+decision loop to hang 601.2b on, and both already recorded the same
+simplification for targets: take the first legal tuple. `stack.free_cast_modes`
+extends it to modes — the first legal modes up to the **floor**, and the first
+legal targets for each — so a cascaded modal spell resolves having chosen
+something rather than nothing.
+
+### What the loader refuses
+
+Six refusals, each a card that would otherwise load and read wrong: `mode` on an
+ability's targets (an ability's modes are chosen as it resolves, after targets
+would have been declared); `mode` without a single top-level `choose_mode`;
+`mode` out of range; a caster-chosen or computed size on a mode-owned spec (the
+positional split); `optional` on one (declining the target is declining the mode);
+and a variable-size *card-level* spec on the same card (its refs sit in front of
+the mode's).
+
+A seventh landed beside them and is not about modes at all: two target specs
+sharing an `id`. `filter_legal` buckets by id and every effect names one, so a
+duplicate is one target silently swallowing another's refs — never visible on a
+board, and a real hazard the moment a card carries four sibling specs.
+
+### Test
+
+`tests/unit/test_modal_targets.py`, over two test-only cards: a four-bullet
+"choose up to two" and a two-bullet "choose one" for the floor cases.
+
 ## `exile_until_event` — the other duration a delayed ability can have
 
 ### Overview

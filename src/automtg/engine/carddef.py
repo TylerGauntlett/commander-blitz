@@ -12,7 +12,7 @@ loader has already validated every key and op name against the registries.
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -46,6 +46,17 @@ class TargetSpec:
     #: ``count == "any"``.
     one_per_player: bool = False
     optional: bool = False
+    #: The index of the **mode** that owns this target, or ``None`` for the
+    #: ordinary card-level kind.  "Choose up to two. Return those cards from
+    #: your graveyard to your hand. * Target artifact card. * Target creature
+    #: card. ..." -- four modes, four separate targets, and two of them live at
+    #: once.
+    #:
+    #: A mode-owned spec is *not* part of the cast action: it is declared after
+    #: the modes are chosen (601.2b then 601.2c), which is the printed order and
+    #: the reverse of the one legality enumerates in.  See
+    #: :attr:`CardDef.mode_targets` and `game.Game._ask_mode_targets`.
+    mode: int | None = None
 
     @property
     def variable_size(self) -> bool:
@@ -489,6 +500,13 @@ class CardDef:
     colors: frozenset[str] = frozenset()
     color_identity: frozenset[str] = frozenset()
     targets: tuple[TargetSpec, ...] = ()
+    #: Target specs owned by one **mode** each, keyed by mode index into this
+    #: card's single top-level ``choose_mode``.  Deliberately kept out of
+    #: :attr:`targets`: legality enumerates one cast action per legal target
+    #: tuple, and a mode-owned target is not known to be needed until the mode
+    #: has been chosen -- which happens inside the cast, after the action.  So
+    #: legality never sees these, and `Game._ask_mode_targets` declares them.
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     replacements: tuple[Mapping[str, Any], ...] = ()
     #: Starting loyalty. Kept as a characteristic as well as compiled into a
@@ -685,6 +703,25 @@ class CardDef:
         if count_mode_specs(self.spell_effects) != 1:
             return None
         return top_level_mode_spec(self.spell_effects)
+
+    def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
+        """The target specs a cast of this spell actually declared.
+
+        Card-level specs first, then one mode's specs after another in
+        **ascending mode index** -- the order `Game._ask_mode_targets` asked
+        them in, and the only order that matters: `targeting.filter_legal`
+        splits the stored refs by position, so resolution has to rebuild the
+        same list the cast built or every ref lands in the wrong bucket.
+
+        A card with no mode-owned targets returns :attr:`targets` unchanged,
+        which is every card in the pool but the modal ones.
+        """
+        if not self.mode_targets:
+            return self.targets
+        extra: list[TargetSpec] = []
+        for index in sorted(modes):
+            extra.extend(self.mode_targets.get(index, ()))
+        return tuple(self.targets) + tuple(extra)
 
     @property
     def retrace_cost(self) -> Cost:

@@ -883,6 +883,19 @@
   "caldera_lake": {
     "zone": "battlefield"
   },
+  "call_damage_control": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "call_for_aid": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -1308,6 +1321,16 @@
   "crash_of_rhinos": {
     "zone": "battlefield"
   },
+  "craterhoof_behemoth": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "craw_wurm": {
     "zone": "battlefield"
   },
@@ -1372,6 +1395,16 @@
   },
   "custodian_of_the_trove": {
     "zone": "battlefield"
+  },
+  "cyclonic_rift": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "cyclops_of_one_eyed_pass": {
     "zone": "battlefield"
@@ -4650,6 +4683,15 @@
     "target_pt_delta": {
       "power": 3,
       "toughness": 3
+    },
+    "zone": "graveyard"
+  },
+  "overwhelming_stampede": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "trample"
+      ]
     },
     "zone": "graveyard"
   },

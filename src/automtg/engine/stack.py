@@ -43,6 +43,7 @@ def push_spell(
     bestowed: bool = False,
     mutated: bool = False,
     modes: tuple[int, ...] = (),
+    modes_answered: bool = False,
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
     obj = state.objects[oid]
@@ -109,6 +110,7 @@ def push_spell(
         spliced=spliced,
         face_down=face_down,
         modes=modes,
+        modes_answered=modes_answered,
         description="a face-down creature" if face_down else card.name,
     )
     obj.stack_id = item.sid
@@ -174,6 +176,7 @@ def push_activated_ability(
     *,
     x: int = 0,
     modes: tuple[int, ...] = (),
+    modes_answered: bool = False,
 ) -> StackItem:
     card = state.card(source_oid)
     ability = card.abilities[ability_index]
@@ -187,6 +190,7 @@ def push_activated_ability(
         targets=tuple(targets),
         x=x,
         modes=modes,
+        modes_answered=modes_answered,
         description=f"{card.name}: {ability.text or 'activated ability'}",
     )
     state.stack.append(item)
@@ -329,6 +333,76 @@ def _choose_trigger_targets(
     return options[answer[0]] if answer else options[0]
 
 
+def modal_cast_ok(state: GameState, pid: int, card, oid: int) -> bool:
+    """Can this spell choose as many modes as it is required to? -- 601.2b.
+
+    "Choose one -- * Target artifact card; * Target creature card" with an
+    empty graveyard has no legal mode, and a spell that cannot choose its modes
+    cannot be cast at all.  Asked by `legality._cast_variant` so the line is
+    never offered, rather than left to fail inside the cast: an action a player
+    can take and that then does nothing is the shape this whole capability
+    exists to remove.
+
+    Always ``True`` for a card with no mode-owned targets -- every mode of an
+    ordinary modal spell is always choosable, which is why nothing asked this
+    before.
+    """
+    if not getattr(card, "mode_targets", None):
+        return True
+    from .effects.context import EffectContext
+    from .effects.ops_control import modal_bounds
+    from .targeting import selectable_modes
+
+    spec = card.cast_time_modes
+    if not spec:  # pragma: no cover - the loader refuses `mode` without one
+        return True
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+    floor, _ = modal_bounds(ctx, spec)
+    return len(selectable_modes(state, pid, card, oid) or []) >= floor
+
+
+def free_cast_modes(
+    state: GameState, pid: int, card, oid: int
+) -> tuple[tuple[int, ...], tuple[TargetRef, ...]]:
+    """Modes and their targets for a spell nobody is being asked about.
+
+    Cascade, suspend and "cast it without paying its mana cost" put a spell on
+    the stack from inside another effect, with no decision loop of their own to
+    hang 601.2b on -- and both callers already record the same simplification
+    for targets: take the first legal tuple.  Modes get that rule too, so a
+    cascaded modal spell resolves having chosen something rather than nothing.
+
+    "The first legal modes up to the floor" is deliberately the *floor* and not
+    the ceiling: an unasked seat should take what the card makes it take, and
+    "choose up to two" cast for free chooses none, exactly as declining is the
+    last option in :func:`targeting.enumerate_target_tuples`'s optional list.
+
+    Returns ``((), ())`` for the ordinary case -- a card with no mode-owned
+    targets, whose modes are answered by `op_choose_mode` on resolution as they
+    always were.
+    """
+    from .effects.context import EffectContext
+    from .effects.ops_control import modal_bounds
+    from .targeting import enumerate_target_tuples, selectable_modes
+
+    if not getattr(card, "mode_targets", None):
+        return (), ()
+    spec = card.cast_time_modes
+    if not spec:  # pragma: no cover - the loader refuses `mode` without one
+        return (), ()
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+    floor, _ = modal_bounds(ctx, spec)
+    offered = selectable_modes(state, pid, card, oid) or []
+    modes = tuple(offered[:floor])
+    refs: list[TargetRef] = []
+    for index in modes:
+        options = enumerate_target_tuples(
+            state, pid, card.mode_targets.get(index, ()), oid, limit=1
+        )
+        refs.extend(options[0] if options else ())
+    return modes, tuple(refs)
+
+
 def resolve_top(state: GameState) -> Generator[Any, list[int], None]:
     """Resolve the top object of the stack.  Yields decisions its effects need."""
     if not state.stack:
@@ -353,7 +427,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # is still legal -- a bestow spell whose creature died in response is
     # countered on resolution like any Aura spell, which is 608.2b and not a
     # special case at all.
-    specs = card.targets
+    # Mode-owned specs come back in the same order `Game._ask_mode_targets`
+    # declared them, which is what makes `filter_legal`'s positional split line
+    # up with the refs the cast stored. For every card without them this is
+    # `card.targets` unchanged.
+    specs = card.specs_for_modes(item.modes)
     if item.fused and card.second_face is not None:
         # Both halves' targets, in the order legality offered them.
         specs = tuple(card.targets) + tuple(state.registry.get(card.second_face).targets)
@@ -404,6 +482,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         x=item.x,
         kicked=item.kicked,
         modes=item.modes,
+        modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
     )
     yield from execute(ctx, card.spell_effects)
@@ -639,6 +718,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         bindings=dict(item.bindings),
         x=item.x,
         modes=item.modes,
+        modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
     )
 

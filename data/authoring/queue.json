@@ -37792,12 +37792,12 @@
     },
     "Call Damage Control": {
       "edhrec_rank": 15563,
-      "gate": "template",
+      "gate": null,
       "name": "Call Damage Control",
-      "reason": "no template for: Choose up to two. Return those cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "de1ed886-c33b-4cfd-8442-944cec654a8b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Call Forth the Tempest": {
@@ -55142,12 +55142,12 @@
     },
     "Craterhoof Behemoth": {
       "edhrec_rank": 317,
-      "gate": "template",
+      "gate": null,
       "name": "Craterhoof Behemoth",
-      "reason": "no template for: When this creature enters, creatures you control gain trample and get +X/+X until end of t",
+      "reason": "",
       "scryfall_id": "777bb4ba-a821-4a83-a9e2-8827e7eff98f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Craterize": {
@@ -59182,12 +59182,12 @@
     },
     "Cyclonic Rift": {
       "edhrec_rank": 53,
-      "gate": "template",
+      "gate": null,
       "name": "Cyclonic Rift",
-      "reason": "no template for: Return target nonland permanent you don't control to its owner's hand",
+      "reason": "",
       "scryfall_id": "7037f57a-ca89-41bd-bf7f-2f54593c0f48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cyclonus, the Saboteur // Cyclonus, Cybertronian Fighter": {
@@ -194782,12 +194782,12 @@
     },
     "Overwhelming Stampede": {
       "edhrec_rank": 542,
-      "gate": "template",
+      "gate": null,
       "name": "Overwhelming Stampede",
-      "reason": "no template for: Until end of turn, creatures you control gain trample and get +X/+X, where X is the greate",
+      "reason": "",
       "scryfall_id": "6996b9c4-e78c-4970-91c7-9025a0a4f670",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overwhelming Surge": {

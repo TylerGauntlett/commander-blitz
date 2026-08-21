@@ -9765,6 +9765,125 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "call_damage_control",
+      "mana_cost": "{1}{G}",
+      "name": "Call Damage Control",
+      "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n• Target artifact card.\n• Target creature card.\n• Target enchantment card.\n• Target land card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Target artifact card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "creature"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Target creature card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Target enchantment card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "land"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Target land card."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "artifact",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "id": "creature",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "card_in_graveyard",
+          "mode": 2,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "id": "land",
+          "kind": "card_in_graveyard",
+          "mode": 3,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -14847,6 +14966,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, creatures you control gain trample and get +X/+X until end of turn, where X is the number of creatures you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "craterhoof_behemoth",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{5}{G}{G}{G}",
+      "name": "Craterhoof Behemoth",
+      "oracle_text": "Haste\nWhen this creature enters, creatures you control gain trample and get +X/+X until end of turn, where X is the number of creatures you control.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -15785,6 +15984,67 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "cyclonic_rift",
+      "mana_cost": "{1}{U}",
+      "name": "Cyclonic Rift",
+      "oracle_text": "Return target nonland permanent you don't control to its owner's hand.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{6}{U}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -52568,6 +52828,74 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "overwhelming_stampede",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Overwhelming Stampede",
+      "oracle_text": "Until end of turn, creatures you control gain trample and get +X/+X, where X is the greatest power among creatures you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "biggest",
+          "objects": {
+            "controller": "you",
+            "extreme": {
+              "of": "power",
+              "pick": "greatest"
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "snapshot"
+        },
+        {
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "power_of": {
+              "var": "biggest"
+            }
+          },
+          "toughness": {
+            "power_of": {
+              "var": "biggest"
+            }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -11653,6 +11653,195 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_modal_recall",
+      "name": "Test Modal Recall",
+      "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target creature card.\n\u2022 Target enchantment card.\n\u2022 Target land card.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "artifact",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ]
+          }
+        },
+        {
+          "id": "creature",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "card_in_graveyard",
+          "mode": 2,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ]
+          }
+        },
+        {
+          "id": "land",
+          "kind": "card_in_graveyard",
+          "mode": 3,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 2,
+          "up_to": true,
+          "modes": [
+            {
+              "label": "Target artifact card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "artifact"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target creature card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "creature"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target enchantment card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "enchantment"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target land card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "land"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_modal_one_recall",
+      "name": "Test Modal One Recall",
+      "oracle_text": "Choose one. Return that card from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target enchantment card.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "artifact",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ]
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "modes": [
+            {
+              "label": "Target artifact card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "artifact"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target enchantment card.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "enchantment"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

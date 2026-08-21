@@ -188,6 +188,14 @@ def reference() -> dict:
             " there is no general last-known-information system.",
             "A mana ability may contain only `add_mana`, or one `choose_mode`"
             " whose modes each contain only `add_mana`.",
+            "A target spec may carry `mode`: the index of the mode that owns"
+            " it, in a spell whose whole effect tree is one top-level"
+            " `choose_mode`. That is how \"Choose up to two. * Target artifact"
+            " card. * Target creature card. ...\" carries one target per"
+            " bullet and binds two distinct ones -- the spec is declared only"
+            " if its mode is chosen. It must be a fixed count, never"
+            " `optional`, and no card-level target on the same card may be"
+            " variable-size.",
             "The expectation is checked in a sandbox: player 0 at 40 life with a"
             " deep mana base, two creatures, and an opponent holding a creature,"
             " a flier, an artifact and an enchantment. The card under test is the"

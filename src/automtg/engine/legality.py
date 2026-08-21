@@ -863,6 +863,15 @@ def _cast_variant(
     pay_generic: int = 0,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose, variant_reduction
+    from .stack import modal_cast_ok
+
+    # 601.2b: a spell that cannot choose the modes it is required to choose
+    # cannot be cast. Asked on every variant rather than in `_cast_options`
+    # because flashback, foretell and the second face all reach a card without
+    # passing through it -- and a mode-owned target is no more available to a
+    # flashed-back spell than to a fresh one.
+    if not modal_cast_ok(state, pid, card, oid):
+        return []
 
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same

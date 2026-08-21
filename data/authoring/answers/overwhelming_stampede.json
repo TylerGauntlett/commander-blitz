@@ -1,0 +1,78 @@
+{
+  "card": {
+    "id": "overwhelming_stampede",
+    "name": "Overwhelming Stampede",
+    "oracle_text": "Until end of turn, creatures you control gain trample and get +X/+X, where X is the greatest power among creatures you control.",
+    "mana_cost": "{3}{G}{G}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "spell_effects": [
+      {
+        "op": "snapshot",
+        "as": "biggest",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "extreme": {
+            "of": "power",
+            "pick": "greatest"
+          }
+        }
+      },
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "trample"
+        ],
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      },
+      {
+        "op": "pump",
+        "power": {
+          "power_of": {
+            "var": "biggest"
+          }
+        },
+        "toughness": {
+          "power_of": {
+            "var": "biggest"
+          }
+        },
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "granted": {
+      "keywords": [
+        "trample"
+      ],
+      "count": 2
+    }
+  }
+}

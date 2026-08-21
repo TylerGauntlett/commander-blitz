@@ -291,6 +291,33 @@ def enumerate_target_tuples(
     return out
 
 
+def selectable_modes(
+    state: GameState, controller: int, card, source_oid: int | None
+) -> list[int] | None:
+    """Which modes 601.2b lets this spell choose from, or ``None`` for "all".
+
+    "You can't choose a mode that would be illegal" -- and a mode whose target
+    has no legal choice is exactly that.  A Call Damage Control cast with only
+    creature cards in the graveyard offers one bullet, not four, and offering
+    the other three would be three ways to spend a mode on nothing.
+
+    ``None`` rather than ``range(...)`` for a card with no mode-owned targets,
+    so the caller can tell "every mode, as always" from "these three" without
+    the loader having to know how many modes a card prints.
+    """
+    if not getattr(card, "mode_targets", None):
+        return None
+    modal = card.cast_time_modes
+    total = len(modal.get("modes") or ()) if modal else 0
+    return [
+        index
+        for index in range(total)
+        if enumerate_target_tuples(
+            state, controller, card.mode_targets.get(index, ()), source_oid, limit=1
+        )
+    ]
+
+
 def still_legal(
     state: GameState,
     controller: int,

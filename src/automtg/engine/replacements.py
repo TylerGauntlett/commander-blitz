@@ -182,6 +182,10 @@ def _offer_cast(
     options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
     if not options:
         return False
+    # And its modes, for the one card shape whose targets belong to them --
+    # `stack.free_cast_modes` makes the same "first legal" choice this line
+    # already makes for targets.
+    modes, mode_refs = stack.free_cast_modes(state, pid, card, oid)
 
     ctx = EffectContext(state=state, controller=pid, source_name=card.name)
     if not (yield from ask_yes_no(ctx, f"Cast {card.name} for its {label} cost?", pid)):
@@ -190,7 +194,7 @@ def _offer_cast(
     if not paid:  # pragma: no cover - `can_pay` said yes a moment ago
         return False
 
-    item = stack.push_spell(state, oid, pid, options[0])
+    item = stack.push_spell(state, oid, pid, options[0] + mode_refs, modes=modes)
     triggers.fire(
         state,
         EventType.SPELL_CAST,
