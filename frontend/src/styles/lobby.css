@@ -211,6 +211,25 @@
   gap: 10px;
 }
 
+/* The logo, wherever it appears. `block` because an inline SVG sits on the text
+   baseline and reserves a descender's worth of space underneath it, which shows
+   up as a lockup that will not centre. */
+.mark {
+  display: block;
+}
+
+/* The mark is a square, not a glyph, so it has no baseline worth sitting on:
+   aligned with the row's it hangs below the wordmark's cap height. Sized off
+   the wordmark's own font-size so the pair scales as one object. */
+.brand__badge {
+  align-self: center;
+  width: 1.5em;
+  height: 1.5em;
+  flex: none;
+  color: var(--gold);
+  font-size: 15px;
+}
+
 .brand__mark {
   font-size: 15px;
   font-weight: 800;
@@ -234,10 +253,20 @@
 
 /* The fan is four card backs: the pod, before anybody has chosen anything. */
 .fan {
-  --card-w: clamp(104px, 15vh, 148px);
+  /* Height-driven, with a width ceiling -- the same two-axis shape as
+     `.hero__mark`, and here for the same reason. A tall phone has plenty of
+     `vh` and no `vw`, so the clamp alone hands a 390px screen 126px cards; four
+     of those, rotated, reach fourteen pixels past both edges and `.door`'s
+     `overflow: hidden` shears the outer two. The rotation is why the ceiling
+     is not simply the layout width over four: a card turned 11 degrees is
+     wider than its box by half again its own width across the fan. */
+  --card-w: min(clamp(104px, 15vh, 148px), 27vw);
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  /* Was 30px. The lockup below it grew by a mark and a line, and `.door`'s
+     middle row is `minmax(0, 1fr)` -- on a 720px screen the hero is what
+     overflows. */
+  margin-bottom: clamp(14px, 2.4vh, 26px);
   height: calc(var(--card-w) * 1.5);
 }
 
@@ -263,15 +292,68 @@
   z-index: 2;
 }
 
+/* The lockup: mark, then COMMANDER over BLITZ.
+ *
+ * Two lines because fifteen uppercase characters at 0.14em do not fit the
+ * hero's 660px, and stacking them is better than shrinking them -- nine over
+ * five is a pyramid, and the second line reads as a deliberate second line.
+ *
+ * `line-height: 0.92` rather than 1: at display size the default leading opens
+ * a gap the two words visibly float in, and the pair stops being one mark. */
 .hero__mark {
   margin: 0;
-  font-size: clamp(40px, 6.2vh, 66px);
+  display: grid;
+  justify-items: center;
+  /* Two axes, because the mark is now long enough to care about both. The
+     clamp is the height-driven size the hero has always used; the `vw` term is
+     a ceiling that only ever bites on a narrow screen, where nine tracked
+     uppercase characters are wider than the column. Without it "COMMANDER"
+     runs off both edges of a phone, and `.door`'s `overflow: hidden` crops it
+     rather than scrolling. */
+  font-size: min(clamp(38px, 6.2vh, 66px), 8.6vw);
   font-weight: 800;
-  line-height: 1;
+  line-height: 0.92;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold);
   text-shadow: 0 0 40px rgb(255 212 121 / 0.2);
+}
+
+/* Tracking is trailing space on the last letter of a line, so centred text sits
+   half a letter-space left of true. Pushing each line back by the tracking is
+   what makes the stack look centred rather than measured. */
+.hero__word {
+  text-indent: 0.14em;
+}
+
+.hero__badge {
+  width: clamp(34px, 5vh, 46px);
+  height: clamp(34px, 5vh, 46px);
+  margin-bottom: clamp(12px, 1.8vh, 20px);
+  /* Inherited by the bolt and the frame hairline through `currentColor`. */
+  color: var(--gold);
+  filter: drop-shadow(0 0 22px rgb(255 212 121 / 0.28));
+}
+
+/* The front door on a phone.
+ *
+ * Three things sized for a desk stop fitting at once, and all three are width
+ * problems on a layout whose every other measurement is driven by height:
+ * the header's tagline, the fan's four overlapping cards, and the wordmark
+ * (handled by the `vw` ceiling on `.hero__mark`, which needs no breakpoint).
+ *
+ * The fan overlaps harder rather than shrinking. `--card-w`'s 104px floor is
+ * what keeps the mark on a card back legible, and a fan of four unreadable
+ * cards is worse than a tighter fan of four readable ones. */
+@media (max-width: 560px) {
+  .brand__sub {
+    /* The hero repeats the pitch forty pixels below it. */
+    display: none;
+  }
+
+  .fan .back {
+    margin: 0 -26px;
+  }
 }
 
 .hero__line {

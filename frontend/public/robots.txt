@@ -1,0 +1,5 @@
+# Every address past the front door is a pod code or a game id: rooms that exist
+# for an evening and answer 404 afterwards. There is one page worth indexing and
+# no sitemap worth writing.
+User-agent: *
+Allow: /

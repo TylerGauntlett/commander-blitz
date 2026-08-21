@@ -319,7 +319,7 @@ def main() -> int:
         else:
             stages += frontend_stages(runner, args.quick)
 
-    print(f"Auto MTG verification - {len(stages)} stages\n")
+    print(f"Commander Blitz verification - {len(stages)} stages\n")
     total = 0.0
     for index, stage in enumerate(stages, start=1):
         label = f"[{index}/{len(stages)}] {stage.name}"

@@ -40,7 +40,7 @@ from automtg.cards.images import (
 )
 
 # Scryfall asks for a descriptive User-Agent and ~50-100ms between requests.
-HEADERS = {"User-Agent": "AutoMTG/0.1"}
+HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)"}
 DELAY = 0.1
 TIMEOUT = 30
 

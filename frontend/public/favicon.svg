@@ -1,0 +1,23 @@
+<!--
+  The mark: a bolt on a card back.
+
+  Every raster in `public/` is rendered from this file by `scripts/make-icons.mjs`,
+  so this is the one place the geometry lives, with one exception: its twin
+  `src/components/Mark.tsx` restates the same two paths as inline JSX, so a screen
+  can draw the mark in `currentColor`. The two must be edited together.
+
+  The frame is the `void-0` ground carrying the hairline that `.back::after` draws
+  at 9% inset (lobby.css), in gold at low alpha rather than white. White at 0.14
+  disappears entirely by 16px, and the frame is the half of the mark that says
+  "card".
+
+  Note for anyone editing this comment: XML forbids a double hyphen inside one,
+  which rules out the dash this codebase writes everywhere else. An SVG that is
+  not well-formed does not fail loudly; it renders as a broken image.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="10" fill="#0b0a16" />
+  <rect x="5.8" y="5.8" width="52.4" height="52.4" rx="5" fill="none"
+        stroke="#ffd479" stroke-opacity="0.22" stroke-width="1.4" />
+  <path d="M37.2 11.2 L20.4 34 H29.2 L26.8 52.8 L43.6 29.6 H34.8 Z" fill="#ffd479" />
+</svg>

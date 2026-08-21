@@ -1,4 +1,4 @@
-# Auto MTG: one image, one origin -- the API and the built client together.
+# Commander Blitz: one image, one origin -- the API and the built client together.
 #
 # The client talks to same-origin `/api` and `/art` (frontend/src/api/client.ts),
 # so splitting them across two hosts would mean inventing a base-URL setting and

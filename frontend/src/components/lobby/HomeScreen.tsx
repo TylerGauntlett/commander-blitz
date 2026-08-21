@@ -20,6 +20,7 @@ import { useState } from "react";
 import { looksLikeCode, normaliseCode } from "../../logic/lobby";
 import { bouncy, ease } from "../../motion/springs";
 import { CardBack } from "./CardBack";
+import { Mark } from "./Mark";
 
 /**
  * The longest code the server can issue: `BRAMBLE-123456` -- a seven-letter
@@ -65,8 +66,10 @@ export function HomeScreen({
     <div className="door" data-testid="home">
       <header className="door__top">
         <span className="brand">
-          <span className="brand__mark">Auto MTG</span>
-          <span className="brand__sub">Commander, against the engine or each other</span>
+          <span className="brand__mark">Commander Blitz</span>
+          {/* Not "Commander, against the engine or each other": beside a mark
+              that now starts with the word, the line said it twice. */}
+          <span className="brand__sub">Play a pod against the engine, or against friends</span>
         </span>
       </header>
 
@@ -79,11 +82,18 @@ export function HomeScreen({
             transition={ease}
           >
             {[0, 1, 2, 3].map((i) => (
-              <CardBack key={i} mark="Auto MTG" />
+              <CardBack key={i} mark="Commander Blitz" />
             ))}
           </motion.div>
 
-          <h1 className="hero__mark">Auto MTG</h1>
+          {/* Two lines rather than one: fifteen uppercase characters at the
+              hero's tracking overrun the 660px column, and a stack of nine over
+              five is a lockup where a shrunk single line is a compromise. */}
+          <h1 className="hero__mark">
+            <Mark className="hero__badge" />
+            <span className="hero__word">Commander</span>
+            <span className="hero__word">Blitz</span>
+          </h1>
           <p className="hero__line">
             Four seats, four cards, all face-down. Turn yours over, fill the rest with the
             engine or with friends, and deal when every card is up.
