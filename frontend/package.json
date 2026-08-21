@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Local playtest client for the Auto MTG Commander engine.",
+  "description": "The Commander Blitz client: a four-seat Commander table in the browser.",
   "scripts": {
     "dev": "vite",
+    "icons": "node scripts/make-icons.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run --project=unit",

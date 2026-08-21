@@ -9,7 +9,15 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { deckPath, gamePath, joinPath, podPath, screenKey } from "../src/logic/routes";
+import {
+  BRAND,
+  deckPath,
+  gamePath,
+  joinPath,
+  podPath,
+  screenKey,
+  titleFor,
+} from "../src/logic/routes";
 
 describe("path builders", () => {
   it("normalises a code on the way into a path", () => {
@@ -50,5 +58,40 @@ describe("screenKey", () => {
     expect(screenKey("/nonsense")).toBe("404");
     // The singular is a typo, not an alias -- it must not resolve to a pod.
     expect(screenKey("/pod/GYRE-8412")).toBe("404");
+  });
+});
+
+describe("titleFor", () => {
+  it("leaves the front door as the bare name", () => {
+    expect(titleFor("/")).toBe(BRAND);
+  });
+
+  it("puts the pod's code in the tab", () => {
+    // The case this exists for: four tabs on four pods, told apart at a glance.
+    expect(titleFor("/pods/GYRE-8412")).toBe(`Pod GYRE-8412 · ${BRAND}`);
+    expect(titleFor("/pods/gyre8412")).toBe(`Pod GYRE-8412 · ${BRAND}`);
+  });
+
+  it("names the other screens", () => {
+    expect(titleFor("/games/g1")).toBe(`At the table · ${BRAND}`);
+    expect(titleFor("/decks")).toBe(`Decks · ${BRAND}`);
+    expect(titleFor("/decks/aesi")).toBe(`Decks · ${BRAND}`);
+  });
+
+  it("says so when there is nothing there", () => {
+    expect(titleFor("/nonsense")).toBe(`Not found · ${BRAND}`);
+    expect(titleFor("/pod/GYRE-8412")).toBe(`Not found · ${BRAND}`);
+  });
+
+  it("survives a hand-typed address", () => {
+    // A stray percent is a malformed escape: decoding one throws, and a title
+    // that throws takes the whole render with it.
+    expect(() => titleFor("/pods/%")).not.toThrow();
+  });
+
+  it("ends every screen with the name", () => {
+    for (const path of ["/", "/decks", "/pods/GYRE-8412", "/games/g1", "/nonsense"]) {
+      expect(titleFor(path).endsWith(BRAND)).toBe(true);
+    }
   });
 });

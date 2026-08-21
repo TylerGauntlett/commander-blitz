@@ -93,9 +93,9 @@ def create_app(
     client_dir: Path | None = None,
 ) -> FastAPI:
     app = FastAPI(
-        title="Auto MTG",
+        title="Commander Blitz",
         version=__version__,
-        description="A Magic: The Gathering Commander engine, exposed for a local playtest client.",
+        description="A Magic: The Gathering Commander engine, and the client that plays it.",
     )
     app.add_middleware(
         CORSMiddleware,

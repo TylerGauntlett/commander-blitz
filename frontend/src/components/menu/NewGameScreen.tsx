@@ -80,8 +80,8 @@ export function NewGameScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={ease}
       >
-        <h1 className="menu__title">Auto MTG</h1>
-        <p className="menu__sub">Commander playtest against the engine's AI</p>
+        <h1 className="menu__title">Commander Blitz</h1>
+        <p className="menu__sub">A Commander table against the engine</p>
       </motion.header>
 
       {loading && <p className="menu__note">Loading decks&hellip;</p>}

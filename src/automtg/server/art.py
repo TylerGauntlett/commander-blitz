@@ -34,7 +34,7 @@ CARD_ID = re.compile(r"^[a-z0-9_]{1,80}$")
 #: already the index's primary handle.
 SCRYFALL_ID = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
 
-HEADERS = {"User-Agent": "AutoMTG/0.1"}
+HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)"}
 TIMEOUT = 15
 
 
