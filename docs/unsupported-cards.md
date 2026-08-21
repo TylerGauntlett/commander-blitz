@@ -10,25 +10,39 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **1** capability.
+**1 card** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [modal-targets](#modal-targets) | 1 | 15563 | engine |
+| [ape-token](#ape-token) | 1 | 155 | engine |
+| [cant-be-regenerated](#cant-be-regenerated) | 1 | 155 | op |
 
-## modal-targets
+## ape-token
 
 Blocks **1** card.
 
-- **(engine)** A target spec owned by a single mode: declared, chosen and legality-checked only when that mode is chosen, so a modal spell can carry one target per mode and bind several distinct ones when several modes are taken. This needs modes to be chosen BEFORE targets (601.2b), which is the reverse of the order the engine casts in -- so it is a change to the casting pipeline, not a new key.
-  <br>Why the existing vocabulary won't do: `targets` is a flat card-level list compiled by `loader._compile_targets` and fixed as part of the *cast action*, before `Game._ask_modes` runs -- `_ask_modes`'s own docstring records this as a residual divergence from 601.2 and names it as the reason the shared `optional: true` idiom exists. The simic_charm idiom is one optional spec every mode shares, which works only because its modes target the same object; here four modes target four different card types and two are live at once, so one spec cannot supply two distinct targets. Four independent optional specs leave the mode-to-target pairing unenforced (the artifact mode could be taken having targeted only a creature card) AND blow the MAX_TARGET_OPTIONS cap of 12, which truncates silently in `enumerate_target_tuples` -- so most legal lines would simply never be offered. That cap is itself a recorded decision (rules-coverage.md, 'Target options capped at 12'). Collapsing to one card_in_graveyard spec with count 2 / up_to / any_types gets the ceiling right but drops the at-most-one-per-type restriction, letting it return two creature cards. Enumerating (mode-combination, targets) pairs as distinct cast actions is exact but produces an action list far past the cap and past what the UI can present. The real fix is to choose targets as a *decision* after modes rather than as part of action enumeration, which changes casting for every card, both AI seats and the action API.
+- **(engine)** A 3/3 green Ape creature token card in `data/cards/tokens.cards.json`, id `ape_3_3_g`, plus its art/registry entries -- the pool already holds four 3/3 green bodies (beast_3_3_g, badger_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) but no Ape.
+  <br>Why the existing vocabulary won't do: `create_token` names a token by id and `loader.validate_token_references` raises DslError for an id that is not a card marked `is_token`, so writing `"token": "ape_3_3_g"` fails to load until the token exists; there is no inline token-definition vocabulary in the DSL. Substituting an existing 3/3 green token would change the creature's printed subtype, which is load-bearing for the token's own typal interactions, so it is a different card rather than a smaller one.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Call Damage Control** (rank 15563) — `call_damage_control`
-  - • Target artifact card.
-  - • Target creature card.
-  - • Target enchantment card.
-  - • Target land card.
+- **Pongify** (rank 155) — `pongify`
+  - It can't be regenerated.
+  - Its controller creates a 3/3 green Ape creature token.
+
+</details>
+
+## cant-be-regenerated
+
+Blocks **1** card.
+
+- **(op)** A way for a destruction to say the victim's regeneration shields do not apply -- either a flag on the `destroy` op (e.g. `"cant_regenerate": true`) that suppresses the shield check for the objects it destroys, or a separate op that marks named creatures as unregeneratable for the turn so that later destruction (SBA lethal damage, deathtouch, another spell) also ignores their shields. Both readings are printed: "It can't be regenerated" attaches to this destruction, while "a creature dealt damage this way can't be regenerated this turn" (Char-family) is a turn-long mark, so the mark form covers both.
+  <br>Why the existing vocabulary won't do: `ops` has `regenerate`, which only ADDS shields (`op_regenerate` in engine/effects/ops_board.py increments `obj.regeneration_shields`); nothing removes or suppresses them. `op_destroy` reads only `spec['objects']` and calls `zones.destroy`, which spends a shield unconditionally before moving the object, so any spelling of the clause on the destroy op is currently ignored rather than rejected -- the card would load and silently let a Drudge Skeletons survive. `replace_deaths` is the wrong shape twice over: it redirects a death that already happened to another zone, and regeneration prevents the death from happening at all, so it never runs. Granting `indestructible` or `exile` instead of destroying are both different cards (they dodge dies-triggers or beat indestructible respectively).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pongify** (rank 155) — `pongify`
+  - It can't be regenerated.
+  - Its controller creates a 3/3 green Ape creature token.
 
 </details>

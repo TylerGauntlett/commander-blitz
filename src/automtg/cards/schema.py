@@ -120,6 +120,16 @@ class TargetModel(BaseModel):
     #: than one spec per seat. Requires ``count: "any"``.
     one_per_player: bool = False
     optional: bool = False
+    #: "Choose up to two. Return those cards from your graveyard to your hand.
+    #: * Target artifact card. * Target creature card. ..." -- the index of the
+    #: **mode** that owns this target, into the card's single top-level
+    #: ``choose_mode``.  Such a spec is declared only when that mode is chosen,
+    #: which is what lets one spell carry four different targets and bind two of
+    #: them.  Only on a card's own `targets`, and only on a card whose whole
+    #: effect tree is one top-level ``choose_mode`` -- `loader._compile_targets`
+    #: refuses it anywhere else, because nowhere else is there a moment between
+    #: choosing the mode and declaring the target.
+    mode: int | None = None
 
 
 class TriggerModel(BaseModel):

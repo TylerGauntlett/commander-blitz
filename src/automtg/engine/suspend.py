@@ -195,6 +195,9 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
     if not options:
         return
+    # And its modes, on the one card shape whose targets belong to them. Same
+    # simplification, same reason: there is no seat to ask here.
+    modes, mode_refs = stack.free_cast_modes(state, pid, card, oid)
     obj.suspended_by = None
     # Haste belongs to **suspend** and to nothing else that casts for free.
     # Cascade and ripple both put a creature onto the battlefield the ordinary
@@ -202,7 +205,7 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     # card -- so the flag is opt-in rather than a property of casting free.
     obj.hasted_by_suspend = haste and card.is_creature
 
-    item = stack.push_spell(state, oid, pid, options[0])
+    item = stack.push_spell(state, oid, pid, options[0] + mode_refs, modes=modes)
     triggers.fire(
         state,
         EventType.SPELL_CAST,

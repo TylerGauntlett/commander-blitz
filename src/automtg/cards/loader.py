@@ -27,7 +27,9 @@ from automtg.engine.carddef import (
     TargetSpec,
     TriggerSpec,
     build_type_line,
+    count_mode_specs,
     prune_cost,
+    top_level_mode_spec,
 )
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
@@ -403,8 +405,27 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
 
-    targets = _compile_targets(model.targets, where, on_spell=True)
-    target_kinds = {t.id: t.kind for t in targets}
+    # How many modes a mode-owned target may point at, and `None` when there is
+    # no single cast-time modal question -- the same test `CardDef` makes for
+    # `cast_time_modes`, asked here because the loader has to refuse a `mode`
+    # the engine would never get to ask about.
+    cast_modes = (
+        top_level_mode_spec(model.spell_effects)
+        if count_mode_specs(model.spell_effects) == 1
+        else None
+    )
+    mode_count = len(cast_modes.get("modes") or ()) if cast_modes else None
+    all_targets = _compile_targets(
+        model.targets, where, on_spell=True, mode_count=mode_count
+    )
+    targets = tuple(spec for spec in all_targets if spec.mode is None)
+    mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
+    for spec in all_targets:
+        if spec.mode is not None:
+            mode_targets[spec.mode] = (*mode_targets.get(spec.mode, ()), spec)
+    # Effects still name every spec, mode-owned or not: which bucket a target
+    # lives in is about *when it is declared*, not about who may read it.
+    target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
@@ -899,6 +920,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         colors=colors,
         color_identity=identity,
         targets=targets,
+        mode_targets=mode_targets,
         spell_effects=tuple(model.spell_effects),
         replacements=_implied_replacements(model),
         abilities=abilities,
@@ -1030,7 +1052,9 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
     )
 
 
-def _compile_targets(models, where: str, *, on_spell: bool = False) -> tuple[TargetSpec, ...]:
+def _compile_targets(
+    models, where: str, *, on_spell: bool = False, mode_count: int | None = None
+) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
     At most one spec may be variable-size -- ``count: "any"``, "up to X", or a
@@ -1049,8 +1073,21 @@ def _compile_targets(models, where: str, *, on_spell: bool = False) -> tuple[Tar
     declared when it goes on the stack, by which time its source permanent is
     there to be read, which is why this is a restriction on one of the two
     callers rather than on the form.
+
+    ``mode_count`` is how many modes the card's single top-level ``choose_mode``
+    offers, or ``None`` when there is no such question to hang a target on.  A
+    spec carrying ``mode`` belongs to that mode alone and is declared only if it
+    is chosen -- see `carddef.TargetSpec.mode`.
     """
     specs = tuple(_compile_target(t, where) for t in models)
+    # Sibling specs are told apart by id -- `filter_legal` buckets by it and
+    # every effect names one -- so two specs sharing an id is one target
+    # silently swallowing another's refs. Never possible to notice on a board.
+    seen: set[str] = set()
+    for spec in specs:
+        if spec.id in seen:
+            raise DslError(f"{where}: two targets share the id {spec.id!r}")
+        seen.add(spec.id)
     for spec in specs:
         # A per-player cap is a constraint on how many of a *variable-size*
         # choice may share a controller. On a fixed-size spec it either changes
@@ -1067,19 +1104,78 @@ def _compile_targets(models, where: str, *, on_spell: bool = False) -> tuple[Tar
                 f"cast (601.2c), before X is chosen and before any additional "
                 f"cost is paid, so the expression would read 0"
             )
-    variable = [i for i, spec in enumerate(specs) if spec.variable_size]
+    _check_mode_targets(specs, where, on_spell=on_spell, mode_count=mode_count)
+    # The ordering rule is about the refs a *cast* stores, and a mode-owned spec
+    # stores its refs after every card-level one -- so it is the card-level list
+    # that has to end in the variable-size spec, not the printed list.
+    fixed = [spec for spec in specs if spec.mode is None]
+    variable = [i for i, spec in enumerate(fixed) if spec.variable_size]
     if len(variable) > 1:
         raise DslError(
             f"{where}: only one target may be variable-size ('any number of', "
             f"'up to', or a computed count) -- "
             f"two variable-size specs cannot be told apart once chosen"
         )
-    if variable and variable[0] != len(specs) - 1:
+    if variable and variable[0] != len(fixed) - 1:
         raise DslError(
             f"{where}: a variable-size target must come last, "
             f"or the targets after it cannot be identified"
         )
     return specs
+
+
+def _check_mode_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, mode_count: int | None
+) -> None:
+    """Every restriction on ``mode``, each one a card that would load wrong.
+
+    A mode-owned target is declared inside the cast, between choosing the modes
+    (601.2b) and paying (601.2h), which is a moment that exists **only** for a
+    spell whose whole effect tree is one top-level ``choose_mode``: anywhere
+    else the modal question is asked as the thing resolves, by which time
+    targets can no longer be declared at all.
+    """
+    owned = [spec for spec in specs if spec.mode is not None]
+    if not owned:
+        return
+    if not on_spell:
+        raise DslError(
+            f"{where}: 'mode' only works on a card's own 'targets' -- an "
+            f"ability's modes are chosen as it resolves, which is after the "
+            f"moment its targets were declared"
+        )
+    if mode_count is None:
+        raise DslError(
+            f"{where}: 'mode' needs the card's whole effect tree to be one "
+            f"top-level 'choose_mode' -- a nested or repeated one is answered "
+            f"on resolution, with no cast left to declare a target in"
+        )
+    for spec in owned:
+        label = f"{where}.target[{spec.id}]"
+        if not 0 <= spec.mode < mode_count:
+            raise DslError(
+                f"{label}: mode {spec.mode} does not exist -- "
+                f"the card offers {mode_count}"
+            )
+        if spec.variable_size:
+            raise DslError(
+                f"{label}: a mode-owned target must be a fixed number -- "
+                f"`filter_legal` splits the stored refs by position and a "
+                f"caster-chosen size inside a mode leaves no way to say where "
+                f"the next mode's refs begin"
+            )
+        if spec.optional:
+            raise DslError(
+                f"{label}: a mode-owned target cannot be 'optional' -- "
+                f"declining it is declining the mode, and 601.2b already says "
+                f"a mode with no legal target cannot be chosen"
+            )
+    if any(spec.variable_size for spec in specs if spec.mode is None):
+        raise DslError(
+            f"{where}: a card-level variable-size target cannot share a card "
+            f"with a mode-owned one -- the mode's refs are stored after it, and "
+            f"a caster-chosen size in front of them makes the split ambiguous"
+        )
 
 
 def _compile_target(model: TargetModel, where: str) -> TargetSpec:
@@ -1124,6 +1220,7 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,
+        mode=model.mode,
     )
 
 

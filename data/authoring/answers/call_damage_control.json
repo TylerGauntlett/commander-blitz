@@ -1,0 +1,69 @@
+{
+  "card": {
+    "id": "call_damage_control",
+    "name": "Call Damage Control",
+    "mana_cost": "{1}{G}",
+    "types": ["Sorcery"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n• Target artifact card.\n• Target creature card.\n• Target enchantment card.\n• Target land card.",
+    "targets": [
+      {
+        "id": "artifact",
+        "kind": "card_in_graveyard",
+        "mode": 0,
+        "selector": { "zone": "graveyard", "controller": "you", "types": ["Artifact"] }
+      },
+      {
+        "id": "creature",
+        "kind": "card_in_graveyard",
+        "mode": 1,
+        "selector": { "zone": "graveyard", "controller": "you", "types": ["Creature"] }
+      },
+      {
+        "id": "enchantment",
+        "kind": "card_in_graveyard",
+        "mode": 2,
+        "selector": { "zone": "graveyard", "controller": "you", "types": ["Enchantment"] }
+      },
+      {
+        "id": "land",
+        "kind": "card_in_graveyard",
+        "mode": 3,
+        "selector": { "zone": "graveyard", "controller": "you", "types": ["Land"] }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 2,
+        "up_to": true,
+        "modes": [
+          {
+            "label": "Target artifact card.",
+            "effects": [{ "op": "return_to_hand", "objects": { "target": "artifact" } }]
+          },
+          {
+            "label": "Target creature card.",
+            "effects": [{ "op": "return_to_hand", "objects": { "target": "creature" } }]
+          },
+          {
+            "label": "Target enchantment card.",
+            "effects": [{ "op": "return_to_hand", "objects": { "target": "enchantment" } }]
+          },
+          {
+            "label": "Target land card.",
+            "effects": [{ "op": "return_to_hand", "objects": { "target": "land" } }]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": { "0": 1 },
+    "graveyard_size": { "0": 2 },
+    "library_size": { "0": 40 },
+    "battlefield_count": 32
+  }
+}

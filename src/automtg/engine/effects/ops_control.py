@@ -146,6 +146,42 @@ def _creature_types(ctx: EffectContext) -> set[str]:
     return found
 
 
+def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int | None]:
+    """How many modes this ``choose_mode`` asks for: ``(floor, ceiling)``.
+
+    Four clauses, and each one is a different printed sentence:
+
+    * ``count`` -- "choose two", the plain number, and the floor when nothing
+      widens it.
+    * ``all_if`` -- **entwine**: "choose both if you pay the entwine cost". A
+      floor raised to every mode, because the price has already been paid.
+    * ``up_to_if`` -- "if you control a commander as you cast this spell, you
+      **may** choose both instead". A ceiling, not a floor: the difference is
+      the word "may", and it is the whole card whenever taking one mode is the
+      better line.
+    * ``up_to`` -- "choose up to two", an unconditional ceiling with **no
+      floor**. Taking none is a real line: Call Damage Control with an empty
+      graveyard is cast for its other half, and a floor of one would force a
+      mode that does nothing.
+
+    ``None`` for the ceiling means "exactly the floor".  Lives here, beside the
+    op, because three callers need the same answer -- this op for a triggered or
+    nested modal, `Game._ask_modes` for the ordinary cast (601.2b), and
+    `stack.free_cast_modes` for a spell cast with nobody to ask.
+    """
+    count = evaluate_value(ctx, spec.get("count", 1))
+    modes = list(spec.get("modes") or [])
+    if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
+        count = len(modes)
+    up_to = None
+    if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
+        up_to = evaluate_value(ctx, more.get("count", len(modes)))
+    if spec.get("up_to"):
+        up_to = count if up_to is None else max(up_to, count)
+        return 0, up_to
+    return max(1, count), up_to
+
+
 @register("choose_mode")
 def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     """A modal spell or ability: "choose one -- ...".
@@ -171,23 +207,10 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     modes = list(spec.get("modes") or [])
     if not modes:
         return
-    count = evaluate_value(ctx, spec.get("count", 1))
-    if (gate := spec.get("all_if")) is not None and evaluate(ctx, gate):
-        count = len(modes)
-    # "Choose one. If you control a commander as you cast this spell, you **may**
-    # choose both instead." A ceiling where `all_if` is a floor: entwine forces
-    # every mode and this only permits more. The difference is the word "may",
-    # and it is the whole card whenever taking one mode is the better line.
-    up_to = None
-    if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
-        up_to = evaluate_value(ctx, more.get("count", len(modes)))
-    # "Choose up to two --": an unconditional ceiling with no floor. See
-    # `Game._ask_modes`, which answers this for a spell whose whole effect tree
-    # is one top-level `choose_mode`; this copy serves a triggered ability and a
-    # nested `choose_mode`, which have no cast to be asked at.
-    floor = 0 if spec.get("up_to") else max(1, count)
-    if spec.get("up_to"):
-        up_to = count if up_to is None else max(up_to, count)
+    # `Game._ask_modes` answers this for a spell whose whole effect tree is one
+    # top-level `choose_mode`; this call serves a triggered ability and a nested
+    # `choose_mode`, which have no cast to be asked at.
+    floor, up_to = modal_bounds(ctx, spec)
 
     labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
 
@@ -212,8 +235,14 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             return
 
     chosen = list(ctx.modes)
-    if chosen:
+    # `modes_answered` and not `chosen`: "choose up to two" is allowed to choose
+    # none, and reading the empty tuple as "nobody asked yet" would ask the
+    # player a second time -- on resolution, where the modes' own targets can no
+    # longer be declared. Consumed alongside `modes` so a *nested* `choose_mode`
+    # still asks its own question rather than inheriting this answer.
+    if chosen or ctx.modes_answered:
         ctx.modes = ()
+        ctx.modes_answered = False
     elif once_each:
         picked = yield from ask_mode(
             ctx,
@@ -229,7 +258,10 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             ctx, "Choose", labels, ctx.controller, floor, up_to
         )
 
-    for index in chosen:
+    # 700.2e: "the modes are executed in the order written on the card", not the
+    # order they were clicked in -- which matters the moment one mode's effect
+    # depends on another's having happened.
+    for index in sorted(chosen):
         if once_each and source is not None:
             source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])

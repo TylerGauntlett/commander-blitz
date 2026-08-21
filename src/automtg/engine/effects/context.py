@@ -36,6 +36,11 @@ class EffectContext:
     #: Whether the spell being resolved paid its kicker cost.
     kicked: bool = False
     modes: tuple[int, ...] = ()
+    #: Whether :attr:`modes` is an *answer* rather than an empty default. See
+    #: `structs.StackItem.modes_answered`: "choose up to two" may choose none,
+    #: and `ops_control.op_choose_mode` must not mistake that for unasked.
+    #: Consumed with `modes`, so a nested `choose_mode` still asks its own.
+    modes_answered: bool = False
     #: Set by ``for_each`` so nested effects can read the current iteration value.
     loop_value: Any = None
     #: Card id of the source, for log messages.
@@ -113,6 +118,58 @@ def ask_objects(
     )
     answer = yield decision
     return [available[i] for i in answer]
+
+
+def ask_targets(
+    ctx: EffectContext,
+    prompt: str,
+    refs: Sequence[tuple[str, TargetRef]],
+    min_count: int,
+    max_count: int,
+    chooser: int,
+) -> Generator[PendingDecision, list[int], list[TargetRef]]:
+    """Declare targets as a **decision** rather than as part of an action.
+
+    Every other target in the engine is chosen by picking one of the cast
+    actions legality enumerated, which fixes the targets before the spell has
+    been started at all.  A mode-owned target cannot work that way: it is not
+    known to be needed until its mode has been chosen, and its mode is chosen
+    inside the cast (601.2b).  So this is the same question asked one step
+    later, in the printed order.
+
+    ``refs`` is ``(label, ref)`` pairs -- labelled by the caller because naming
+    a target is `targeting.describe_ref`'s job and `targeting` imports this
+    module, not the other way round.
+
+    Reuses :attr:`DecisionKind.CHOOSE_OBJECTS` on purpose: the answer is an
+    ordinal into ``options`` either way, so every seat that can already answer
+    "choose a creature to sacrifice" -- the RL encoder, the heuristic agent,
+    the client's prompt dialog and the authoring verifier -- answers this with
+    no change.  The ``purpose`` tag is what tells them apart.
+    """
+    available = list(refs)
+    if not available or max_count <= 0:
+        return []
+    if len(available) <= min_count:
+        return [ref for _, ref in available]
+    decision = PendingDecision(
+        kind=DecisionKind.CHOOSE_OBJECTS,
+        player=chooser,
+        prompt=prompt,
+        options=tuple(
+            DecisionOption(label=label, ref=ref, value=i)
+            for i, (label, ref) in enumerate(available)
+        ),
+        min_count=min(min_count, len(available)),
+        max_count=min(max_count, len(available)),
+        context={
+            "source": ctx.source_oid,
+            "source_name": ctx.source_name,
+            "purpose": "target",
+        },
+    )
+    answer = yield decision
+    return [available[i][1] for i in answer]
 
 
 def ask_yes_no(

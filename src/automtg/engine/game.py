@@ -29,6 +29,7 @@ from .primitives import draw_cards
 from .rng import Rng
 from .state import GameState, new_object
 from .structs import TargetRef
+from .targeting import selectable_modes
 from .turn import _next_blocker_decision
 from .zones import move_object
 from .zones import sacrifice as sacrifice_object
@@ -379,8 +380,16 @@ class Game:
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
         modes = yield from self._ask_modes(
-            pid, card.name, card.cast_time_modes, kicked=action.kicked
+            pid,
+            card.name,
+            card.cast_time_modes,
+            kicked=action.kicked,
+            selectable=selectable_modes(state, pid, card, oid),
         )
+        # 601.2c, and the printed order: a mode-owned target is declared only
+        # once its mode has been taken. Appended to the action's own refs, which
+        # `CardDef.specs_for_modes` re-derives the spec list for on resolution.
+        mode_refs = yield from self._ask_mode_targets(pid, card, oid, modes)
 
         ok = yield from pay(
             state,
@@ -477,7 +486,7 @@ class Game:
             state,
             oid,
             pid,
-            action.targets,
+            tuple(action.targets) + mode_refs,
             x=x,
             kicked=action.kicked,
             evoked=action.evoked,
@@ -490,6 +499,9 @@ class Game:
             bestowed=action.bestowed,
             mutated=action.mutated,
             modes=modes,
+            # Asked, even when the answer was "no modes" -- see
+            # `StackItem.modes_answered`.
+            modes_answered=card.cast_time_modes is not None,
         )
         triggers.fire(
             state,
@@ -577,7 +589,14 @@ class Game:
             return
 
         stack.push_activated_ability(
-            state, oid, action.ability_index, pid, action.targets, x=x, modes=modes
+            state,
+            oid,
+            action.ability_index,
+            pid,
+            action.targets,
+            x=x,
+            modes=modes,
+            modes_answered=ability.cast_time_modes is not None,
         )
         if ability.is_cycling:
             # Fired *after* the cycling ability is on the stack, and the order
@@ -707,7 +726,13 @@ class Game:
         return tuple(chosen)
 
     def _ask_modes(
-        self, pid: int, name: str, spec, *, kicked: bool = False
+        self,
+        pid: int,
+        name: str,
+        spec,
+        *,
+        kicked: bool = False,
+        selectable: Sequence[int] | None = None,
     ) -> Generator[Any, list[int], tuple[int, ...]]:
         """Which mode, asked as the spell or ability is put on the stack.
 
@@ -715,16 +740,27 @@ class Game:
         ``choose_mode`` -- see :attr:`CardDef.cast_time_modes` -- and those keep
         choosing as they resolve.
 
-        Returns the chosen indices for :attr:`StackItem.modes`. Note the
-        residual divergence from rule 601.2: targets are enumerated as part of
-        the *action*, so they are already fixed by the time this runs, which is
-        the reverse of the printed order. That is why the shared
-        ``optional: true`` target idiom in docs/card-dsl.md is still required.
+        Returns the chosen indices for :attr:`StackItem.modes`.
+
+        ``selectable`` narrows the offer to the modes that can legally be
+        chosen right now.  601.2b: a mode whose target has no legal choice
+        cannot be chosen at all -- so a Call Damage Control with only creature
+        cards in the graveyard offers one bullet, not four.  Only a card with
+        mode-owned targets passes it; for every other modal card every mode is
+        always available, which is why the default is ``None`` rather than
+        ``range(len(modes))``.
+
+        The residual divergence from 601.2 that used to be recorded here is
+        gone for the cards that need it: :meth:`_ask_mode_targets` runs straight
+        after this and declares the chosen modes' targets, in the printed order.
+        A **card-level** target is still enumerated as part of the action and so
+        is still fixed before this runs, which is what the shared ``optional:
+        true`` idiom in docs/card-dsl.md is still for.
         """
         if not spec:
             return ()
         from .effects.context import EffectContext, ask_mode
-        from .effects.values import evaluate_value
+        from .effects.ops_control import modal_bounds
 
         modes = list(spec.get("modes") or [])
         if not modes:
@@ -739,39 +775,81 @@ class Game:
             # modes have been answered and recorded on the stack item.
             kicked=kicked,
         )
-        count = evaluate_value(ctx, spec.get("count", 1))
-        from .effects.conditions import evaluate as evaluate_condition
-
-        if (gate := spec.get("all_if")) is not None and evaluate_condition(ctx, gate):
-            count = len(modes)
-        # "If you control a commander as you cast this spell, you may choose
-        # both instead." Applied here as well as in `op_choose_mode`, and this
-        # is the copy that matters: a spell whose whole effect tree is one
+        # `up_to_if` is applied here as well as in `op_choose_mode`, and this is
+        # the copy that matters: a spell whose whole effect tree is one
         # top-level `choose_mode` is answered *here* (601.2b) and never reaches
         # the op at all. Akroma's Will is exactly that shape, so the option
         # living only in the op was dead code for the card it was built for --
         # the spell compiled, played, cleared every gate, and silently chose
         # one mode.
-        up_to = None
-        if (more := spec.get("up_to_if")) is not None and evaluate_condition(
-            ctx, more.get("condition")
-        ):
-            up_to = evaluate_value(ctx, more.get("count", len(modes)))
-        # "Choose up to two --" (Call Damage Control). An unconditional ceiling
-        # with **no floor**, which is the one modal shape nothing could say:
-        # `count` is exact, `all_if` forces every mode, and `up_to_if` needs a
-        # condition and still keeps a floor of one. The name is `TargetSpec`'s,
-        # where it has meant exactly this since "up to X target creatures".
-        #
-        # Taking none is a real line on these cards -- Call Damage Control with
-        # an empty graveyard is cast for its other half -- so a floor of one
-        # would force a mode that does nothing.
-        floor = 0 if spec.get("up_to") else max(1, count)
-        if spec.get("up_to"):
-            up_to = count if up_to is None else max(up_to, count)
+        floor, up_to = modal_bounds(ctx, spec)
+        offered = list(range(len(modes))) if selectable is None else list(selectable)
+        # A floor that outruns what is on offer is not a spell that chooses
+        # fewer modes -- it is one that cannot be cast, and `legality` already
+        # declined to offer it. Clamped rather than asserted because a free cast
+        # reaches a modal spell without going through that check, and hanging
+        # the game would be the worse failure.
+        floor = min(floor, len(offered))
         labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
-        chosen = yield from ask_mode(ctx, "Choose", labels, pid, floor, up_to)
-        return tuple(chosen)
+        picked = yield from ask_mode(
+            ctx, "Choose", [labels[i] for i in offered], pid, floor, up_to
+        )
+        # Sorted, so the recorded answer is in **printed** order however the
+        # player clicked. 700.2e executes the modes in the order written, and
+        # `_ask_mode_targets` and `CardDef.specs_for_modes` both walk them that
+        # way -- a click order kept here would be a third order for the same
+        # answer, which is exactly how a ref lands in the wrong bucket.
+        return tuple(sorted(offered[i] for i in picked))
+
+    def _ask_mode_targets(
+        self, pid: int, card, oid: int, modes: Sequence[int]
+    ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+        """Declare the chosen modes' own targets -- 601.2c, in the printed order.
+
+        Runs immediately after :meth:`_ask_modes` and before the spell is paid
+        for, which is exactly where 601.2 puts it.  Returns the refs to append
+        to the cast action's own, in **ascending mode index**: resolution
+        rebuilds the same list with `CardDef.specs_for_modes`, and
+        `targeting.filter_legal` splits stored refs by position, so the two
+        orders have to be one order.
+
+        Every mode that reaches here had a legal target when :meth:`_ask_modes`
+        offered it, and nothing can have changed since -- no player has had
+        priority in between.
+        """
+        if not card.mode_targets:
+            return ()
+        from .effects.context import EffectContext, ask_targets
+        from .targeting import candidates, describe_ref, target_count
+
+        state = self.state
+        ctx = EffectContext(
+            state=state, controller=pid, source_oid=oid, source_name=card.name
+        )
+        out: list[TargetRef] = []
+        for index in sorted(modes):
+            for spec in card.mode_targets.get(index, ()):
+                # A ref already taken by an earlier mode is **not** struck off.
+                # `enumerate_target_tuples` drops a tuple that reuses an object
+                # because those are the targets of one instance of the word
+                # "target"; two modes are two instances, and 601.2c only
+                # forbids repeating within one. Striking it off would also let
+                # `_ask_modes` offer a mode that then had nothing to point at,
+                # which is the silently-inert half of a spell this whole
+                # capability exists to prevent.
+                options = [
+                    (describe_ref(state, ref), ref)
+                    for ref in candidates(state, pid, spec, oid)
+                ]
+                # An int by construction: `loader._check_mode_targets` refuses a
+                # caster-chosen or computed size on a mode-owned spec, because
+                # `filter_legal` splits the stored refs by position.
+                want = int(target_count(state, pid, spec, oid))
+                chosen = yield from ask_targets(
+                    ctx, f"Target for {card.name}", options, want, want, pid
+                )
+                out.extend(chosen)
+        return tuple(out)
 
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
         """Tap a permanent for mana by hand.

@@ -2470,6 +2470,14 @@ one top-level `choose_mode` is answered at cast time by `Game._ask_modes`
 (601.2b) and never reaches `op_choose_mode` — the trap that once made `up_to_if`
 dead code for the card it was built for.
 
+Choosing none is an *answer*, and `StackItem.modes_answered` is what says so.
+Without it the empty tuple reads as "nobody has been asked", and `op_choose_mode`
+asks a second time as the spell resolves — offering modes whose targets can no
+longer be declared.
+
+Call Damage Control needs one more thing than this: a target per mode. See
+[a target that belongs to one mode](#a-target-that-belongs-to-one-mode).
+
 ## Granting protection
 
 ```jsonc
@@ -3237,6 +3245,80 @@ legality to enumerate its target tuples once per payment count.
 A variable-size spec is any of `"any"`, `up_to`, or a computed count, and the
 "at most one, and it comes last" rule above covers all three for the same
 `filter_legal` reason.
+
+## A target that belongs to one mode
+
+```jsonc
+"targets": [
+  {"id": "artifact", "kind": "card_in_graveyard", "mode": 0,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Artifact"]}},
+  {"id": "creature", "kind": "card_in_graveyard", "mode": 1,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+],
+"spell_effects": [
+  {"op": "choose_mode", "count": 2, "up_to": true, "modes": [
+    {"label": "Target artifact card.",
+     "effects": [{"op": "return_to_hand", "objects": {"target": "artifact"}}]},
+    {"label": "Target creature card.",
+     "effects": [{"op": "return_to_hand", "objects": {"target": "creature"}}]}
+  ]}
+]
+```
+
+Call Damage Control: *"Choose up to two. Return those cards from your graveyard
+to your hand. • Target artifact card. • Target creature card. • Target
+enchantment card. • Target land card."* Four modes, four **different** targets,
+and two of them live at once.
+
+`mode` is the index into the card's single top-level `choose_mode`. A spec
+carrying it is declared **only if that mode is chosen** — it is not part of the
+cast action at all, and `legality` never sees it.
+
+### Why the shared-`optional` idiom cannot say it
+
+The Simic Charm idiom — one `optional` spec every mode shares — works because
+Simic Charm's modes point at the same object. These four point at four different
+card types, so one spec cannot supply two distinct targets. Four *independent*
+optional specs leave the pairing unenforced (the artifact mode could be taken
+having targeted a creature card) and multiply out past `MAX_TARGET_OPTIONS`,
+which truncates silently. One `card_in_graveyard` spec with `count: 2, up_to`
+gets the ceiling right and drops the one-per-type restriction, so it would
+return two creature cards.
+
+### The order it happens in
+
+601.2 goes modes (601.2b), then targets (601.2c), then costs (601.2h). Legality
+enumerates a cast action per legal target tuple, which fixes card-level targets
+*before* the cast starts — the reverse of the printed order, and the reason the
+shared-`optional` idiom exists at all. A mode-owned target is declared inside
+the cast instead, by `Game._ask_mode_targets`, between the two.
+
+- **A mode with no legal target is not offered.** 601.2b: you cannot choose an
+  illegal mode. Cast with only creature cards in the graveyard, Call Damage
+  Control shows one bullet.
+- **A spell that cannot meet its floor cannot be cast.** "Choose one" with no
+  legal mode is not offered as a cast line at all (`stack.modal_cast_ok`).
+- **Refs are stored in printed mode order**, and `CardDef.specs_for_modes`
+  rebuilds the same list on resolution. `filter_legal` splits stored refs by
+  position, so the two orders must be one order.
+- **The same card may be targeted by two modes.** 601.2c only forbids repeating
+  a target within one instance of the word "target", and two modes are two
+  instances — so striking off what an earlier mode took would leave a mode
+  offered with nothing to point at.
+- **A separate decision, not a new decision kind.** `ask_targets` reuses
+  `choose_objects` with `purpose: "target"`, so every seat that can already
+  answer "choose a creature to sacrifice" answers this one unchanged.
+
+### What the loader refuses
+
+| written | refused because |
+|---|---|
+| `mode` on an ability's targets | an ability's modes are chosen as it resolves, after targets would have been declared |
+| `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with no cast left to declare a target in |
+| `mode` out of range | the card does not print that bullet |
+| `up_to` / `"any"` / a computed count on a mode-owned spec | `filter_legal` splits stored refs by position, and a caster-chosen size inside a mode leaves no way to say where the next mode's refs begin |
+| `optional` on a mode-owned spec | declining the target is declining the mode, which 601.2b already says |
+| a variable-size *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size in front of them makes the split ambiguous |
 
 ## "Target creature phases out"
 
