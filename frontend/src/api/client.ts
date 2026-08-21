@@ -1,5 +1,6 @@
 /** Thin fetch wrapper around the engine's HTTP API. */
 
+import { libraryId } from "../state/library";
 import type {
   CardResponse,
   DeckDetail,
@@ -71,11 +72,15 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const library = libraryId();
   const response = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
       ...(playerToken ? { "X-Player-Token": playerToken } : {}),
+      // Which library is asking. The pod token above says which *seat* you are
+      // at one table; this says which decks are yours across every visit.
+      ...(library ? { "X-Library-Id": library } : {}),
       ...init?.headers,
     },
   });

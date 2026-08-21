@@ -211,6 +211,66 @@ test.describe("importing a Moxfield deck", () => {
     await taken;
   });
 
+  test("every request carries the library this browser is", async ({ page }) => {
+    // The whole of deck ownership rides on this header. Nothing else in the app
+    // would fail visibly if it stopped being sent -- the decks would simply
+    // become everybody's again, quietly, which is the bug this replaced.
+    await stubImport(page, { status: 201, body: REPORT });
+    const sent = page.waitForRequest((request) =>
+      request.url().includes("/api/decks/import"),
+    );
+
+    await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
+    await page.getByTestId("import-go").click();
+
+    const library = (await sent).headers()["x-library-id"];
+    expect(library, "an import with no library would be shared with everybody").toBeTruthy();
+  });
+
+  test("an imported deck can be removed, and asks before it goes", async ({ page }) => {
+    await stubImport(page, { status: 201, body: REPORT });
+
+    // The server does not have this deck -- the import was stubbed -- so the
+    // rack is stubbed too, and stops carrying it once the delete goes through.
+    let removed = false;
+    await page.route("**/api/decks", async (route) => {
+      const response = await route.fetch();
+      const decks = await response.json();
+      return route.fulfill({ json: removed ? decks : [...decks, DECK] });
+    });
+    await page.route(`**/api/decks/${DECK.id}`, (route) => {
+      expect(route.request().method()).toBe("DELETE");
+      removed = true;
+      return route.fulfill({ status: 204, body: "" });
+    });
+
+    await page.getByTestId("import-url").fill("https://moxfield.com/decks/abc123");
+    await page.getByTestId("import-go").click();
+    await expect(page.getByTestId(`deck-${DECK.id}`)).toBeVisible();
+
+    // One click arms it and removes nothing: the tile next to this one is the
+    // thing you click to play a deck.
+    await page.getByTestId(`deck-${DECK.id}-remove`).click();
+    await expect(page.getByTestId(`deck-${DECK.id}-remove-confirm`)).toBeVisible();
+    expect(removed).toBe(false);
+
+    await page.getByTestId(`deck-${DECK.id}-remove-no`).click();
+    await expect(page.getByTestId(`deck-${DECK.id}-remove`)).toBeVisible();
+    expect(removed).toBe(false);
+
+    await page.getByTestId(`deck-${DECK.id}-remove`).click();
+    await page.getByTestId(`deck-${DECK.id}-remove-yes`).click();
+
+    await expect(page.getByTestId(`deck-${DECK.id}`)).toHaveCount(0);
+  });
+
+  test("a precon cannot be removed", async ({ page }) => {
+    // The server refuses to delete one, so the tile does not offer it. A ✕ that
+    // fails on click would be the same lie the "Yours" badge is there to avoid.
+    await expect(page.getByTestId("deck-aesi")).toBeVisible();
+    await expect(page.getByTestId("deck-aesi-remove")).toHaveCount(0);
+  });
+
   test("a precon tile carries no simplified count", async ({ page }) => {
     // An always-present "0 simplified" would train people to stop reading the
     // line that matters.

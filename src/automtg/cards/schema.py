@@ -711,6 +711,17 @@ class DeckModel(BaseModel):
     #: valid untouched -- the model is ``extra="forbid"``, so a required field
     #: here would have broken every deck file in the repository.
     source: Literal["precon", "moxfield"] = "precon"
+    #: Which browser library imported this -- the id a client mints once into
+    #: its own ``localStorage`` and sends as ``X-Library-Id``.  There are no
+    #: accounts here, so this is the whole of "mine": the deck list filters on
+    #: it and delete checks it.
+    #:
+    #: ``""`` is a precon, or a deck imported before libraries existed.  Those
+    #: stay visible to everybody and deletable by anybody, which is the only way
+    #: an already-imported deck can be cleaned up from the screen rather than by
+    #: hand.  Defaulted for ``source``'s reason, and it matters more here: every
+    #: deck file already on disk lacks the field.
+    owner: str = ""
 
     # -- editorial metadata, for the lobby's deck catalogue ----------------
     # All optional and all defaulted, for the same ``extra="forbid"`` reason as

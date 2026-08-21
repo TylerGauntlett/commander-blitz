@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import time
 
-from fastapi import APIRouter, Body, HTTPException, Query, Request
+from fastapi import APIRouter, Body, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
 from automtg.cards import importer, moxfield
@@ -53,6 +53,20 @@ _IMPORT_STATUS = {
     "unreachable": 502,
     "no_catalog": 503,
 }
+
+#: Who is asking, for the purposes of "my decks".
+#:
+#: There are no accounts here -- the only other identity in the server is a pod
+#: token, which is scoped to one lobby and gone when it ends.  So a client mints
+#: a random id once into its own ``localStorage`` and sends it on every request,
+#: and that id is the whole of ownership: an import stamps it on the deck, the
+#: catalogue filters on it, and delete checks it.
+#:
+#: A header rather than a cookie, for the reason ``pod_routes._TOKEN`` gives:
+#: CORS here is ``allow_credentials=False`` by design.  ``None`` is an ordinary
+#: state, not an error -- the CLI, ``curl`` and a browser with storage disabled
+#: all get the shared view.
+_LIBRARY = Header(None, alias="X-Library-Id")
 
 #: Art is served from the app root rather than under ``/api`` so it reads as a
 #: static asset to the browser, the dev proxy and any future cache in front.
@@ -105,10 +119,26 @@ def _state_response(session: GameSession, seat: int, since: int = 0) -> StateRes
 
 
 
+def _visible_to(deck, library: str | None) -> bool:
+    """Precons are everyone's, ownerless imports are everyone's, yours are yours."""
+    return deck.source != "moxfield" or not deck.owner or deck.owner == library
+
+
 @router.get("/decks", response_model=list[DeckSummary])
-def list_decks(request: Request) -> list[DeckSummary]:
+def list_decks(request: Request, library: str | None = _LIBRARY) -> list[DeckSummary]:
+    """Every deck this caller is entitled to see.
+
+    Filtered here rather than in ``GameData``, which stays whole: a pod seat
+    holding a teammate's deck must still resolve its id when the table is dealt.
+    Hiding somebody else's import from the *rack* is the point; making it
+    unplayable is not.
+    """
     data = _registry(request).data
-    return [deck_summary(deck, data) for deck in data.decks.values()]
+    return [
+        deck_summary(deck, data)
+        for deck in data.decks.values()
+        if _visible_to(deck, library)
+    ]
 
 
 @router.get("/decks/{deck_id}", response_model=DeckDetail)
@@ -122,7 +152,9 @@ def get_deck(request: Request, deck_id: str) -> DeckDetail:
 
 
 @router.post("/decks/import", response_model=DeckImportResponse, status_code=201)
-def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse:
+def import_deck(
+    request: Request, body: ImportDeckRequest, library: str | None = _LIBRARY
+) -> DeckImportResponse:
     """Import a public Moxfield deck.
 
     Cards the engine already implements are reused whole; the rest are generated
@@ -140,6 +172,7 @@ def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse
             default_registry().registry,
             getattr(request.app.state, "card_index", None),
             dry_run=body.dry_run,
+            owner=library or "",
         )
     except moxfield.ImportFailed as exc:
         raise HTTPException(
@@ -190,14 +223,19 @@ def import_deck(request: Request, body: ImportDeckRequest) -> DeckImportResponse
 
 
 @router.delete("/decks/{deck_id}", status_code=204)
-def delete_deck(request: Request, deck_id: str) -> None:
-    """Remove an imported deck.  Precons are not deletable."""
+def delete_deck(request: Request, deck_id: str, library: str | None = _LIBRARY) -> None:
+    """Remove an imported deck.  Precons are not deletable, and neither is
+    somebody else's import."""
     data = _registry(request).data
     deck = data.decks.get(deck_id)
     if deck is None:
         raise HTTPException(status_code=404, detail=f"no deck {deck_id}")
+    # Before the ownership check, deliberately: a precon belongs to nobody, and
+    # "that is not yours" is the wrong answer to "why can I not delete Aesi".
     if deck.source != "moxfield":
         raise HTTPException(status_code=400, detail=f"{deck_id} ships with the engine")
+    if deck.owner and deck.owner != library:
+        raise HTTPException(status_code=403, detail=f"{deck_id} belongs to another library")
     importer.delete_deck(deck_id)
     request.app.state.reload()
 

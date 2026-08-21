@@ -79,7 +79,7 @@ def client(sandbox):
     return TestClient(create_app(allow_art_fetch=False))
 
 
-def do_import(client, payload, *, url=DECK_URL, dry_run=False, status=None):
+def do_import(client, payload, *, url=DECK_URL, dry_run=False, status=None, library=None):
     monkey = fake_opener(payload, status=status)
     original = moxfield.fetch_deck
 
@@ -88,9 +88,22 @@ def do_import(client, payload, *, url=DECK_URL, dry_run=False, status=None):
 
     moxfield.fetch_deck = patched
     try:
-        return client.post("/api/decks/import", json={"url": url, "dry_run": dry_run})
+        return client.post(
+            "/api/decks/import",
+            json={"url": url, "dry_run": dry_run},
+            headers=as_library(library),
+        )
     finally:
         moxfield.fetch_deck = original
+
+
+def as_library(library: str | None) -> dict[str, str]:
+    """The header a browser sends, or nothing at all -- both are real callers."""
+    return {} if library is None else {"X-Library-Id": library}
+
+
+def deck_ids(client, library=None) -> set[str]:
+    return {d["id"] for d in client.get("/api/decks", headers=as_library(library)).json()}
 
 
 # ----------------------------------------------------------------------
@@ -360,6 +373,92 @@ class TestDeleting:
 
     def test_deleting_something_that_is_not_there(self, client):
         assert client.delete("/api/decks/mox_nope").status_code == 404
+
+
+class TestLibraries:
+    """Whose deck is whose.
+
+    There are no accounts in this server, so ownership is a random id the browser
+    keeps in its own ``localStorage`` and sends as ``X-Library-Id``.  These tests
+    are the whole of what that buys: an import is yours, other people's imports
+    are not on your rack, and you cannot throw away somebody else's.
+
+    ``None`` for a library is not an edge case being tolerated -- it is the CLI,
+    it is ``curl``, and it is a browser with storage switched off.  It gets the
+    shared view, which is what every test above this line already assumes.
+    """
+
+    def test_an_import_is_stamped_with_the_library_that_asked(self, client, payload, sandbox):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        written = json.loads(
+            (sandbox / "generated" / "decks" / f"{deck_id}.deck.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert written["owner"] == "alice"
+
+    def test_your_deck_is_yours_alone(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        assert deck_id in deck_ids(client, "alice")
+        assert deck_id not in deck_ids(client, "bob")
+        # Not even to a caller with no library at all: an owned deck is owned,
+        # and "I sent no header" is not a skeleton key.
+        assert deck_id not in deck_ids(client)
+
+    def test_precons_belong_to_everybody(self, client, payload):
+        do_import(client, payload, library="alice")
+        for who in ("alice", "bob", None):
+            assert "aesi" in deck_ids(client, who)
+
+    def test_an_import_from_before_libraries_stays_shared(self, client, payload):
+        """The decks already on somebody's disk have no owner recorded.
+
+        Hiding those would make them invisible *and* undeletable -- the one state
+        this whole change exists to get rid of -- so an ownerless import is
+        everybody's, and anybody may clean it up.
+        """
+        deck_id = do_import(client, payload).json()["deck"]["id"]
+        for who in ("alice", "bob", None):
+            assert deck_id in deck_ids(client, who)
+
+    def test_you_cannot_throw_away_somebody_elses_deck(self, client, payload):
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+
+        refused = client.delete(f"/api/decks/{deck_id}", headers=as_library("bob"))
+        assert refused.status_code == 403
+        assert deck_id in deck_ids(client, "alice"), "a refused delete must not delete"
+
+        assert (
+            client.delete(f"/api/decks/{deck_id}", headers=as_library("alice")).status_code == 204
+        )
+        assert deck_id not in deck_ids(client, "alice")
+
+    def test_anybody_may_clean_up_an_ownerless_deck(self, client, payload):
+        deck_id = do_import(client, payload).json()["deck"]["id"]
+        assert client.delete(f"/api/decks/{deck_id}", headers=as_library("bob")).status_code == 204
+
+    def test_a_precon_is_still_a_precon_to_its_owner(self, client):
+        """Which of the two refusals a precon gets, and it is not the ownership one.
+
+        ``aesi`` has no owner, so the ownership check would wave it through; the
+        400 is what stops it, and getting that order wrong would answer "that is
+        not yours" to somebody asking why they cannot delete a shipped deck.
+        """
+        response = client.delete("/api/decks/aesi", headers=as_library("alice"))
+        assert response.status_code == 400
+        assert "ships with the engine" in response.json()["detail"]
+
+    def test_the_last_importer_owns_it(self, client, payload):
+        """Two people pasting one URL is a collision the deck id cannot avoid.
+
+        ``deck_id_for`` is derived from the Moxfield public id, so the second
+        import lands on the first one's file. It takes it: the alternative is
+        handing somebody an import they are not allowed to see.
+        """
+        deck_id = do_import(client, payload, library="alice").json()["deck"]["id"]
+        do_import(client, payload, library="bob")
+        assert deck_id in deck_ids(client, "bob")
+        assert deck_id not in deck_ids(client, "alice")
 
 
 class TestNoTestWritesIntoTheRepository:
