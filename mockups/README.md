@@ -14,6 +14,7 @@ fetch_art.py              pulls art/ (mockup 5 only)
 _state.js                 the shared board state, kept readable; inlined per file
 cards/                    a later, narrower exploration: the card face itself
 menu/                     a later exploration: the new-game screen
+handheld/                 the latest: a Steam Deck board, driven by a real pad
 ```
 
 These five are about the **board**. [`cards/`](cards/README.md) is a separate,
@@ -22,6 +23,15 @@ each of the four widths the client uses, with the real Scryfall mana symbols
 instead of the letter-on-a-disc pips. It picks up three problems these mockups
 did not look at: the name colliding with its own mana cost, the invented mana
 symbols, and lands all being one tan rectangle.
+
+[`handheld/`](handheld/README.md) is the most recent, and the only one that is
+about **input** rather than about looks: five ways a Steam Deck's sticks, d-pad
+and face buttons could drive a Commander board, each a live `Gamepad` API build
+with a keyboard fallback. It starts from a measurement taken on the board these
+five designed — at 1280x800, `shots/05-planar-art.png`'s layout puts **444 of
+635 rendered elements below 12px, the smallest at 2.11px** — and takes a 16px
+floor as a hard constraint, which turns out to decide the layout rather than
+decorate it. It also answers `docs/roadmap.md`'s first backlog line.
 
 [`menu/`](menu/README.md) is a third, about the **new-game screen** —
 `docs/roadmap.md`'s "Redesign main page". Five directions again, but unlike these
