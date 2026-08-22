@@ -19,7 +19,7 @@ inline.py               splices the masters into each file; --check for CI
 shots/                  1280x800 PNGs — 06 has home, pod, catalogue, mulligan,
                         board, stack, targeting, blockers, manual mana, coach,
                         between-turns, question, zones, tools, game over,
-                        and a 1920 wide shot
+                        the ring in flight, and a 1920 wide shot
 ```
 
 **Start with [`06-one-thumb.html`](06-one-thumb.html).** 01-05 are the arguments;
@@ -398,6 +398,150 @@ flying or reach, so its row is marked unblockable and carries **no slots at
 all** — a row you cannot fill is a row the ring should not accept. The rail
 answers the question you actually have: *"Blocks Vampire — 1/1 against your 2/2.
 Vampire dies. Elemental survives."*
+
+### Pass four — fluidity, which is the thing a pad is actually judged on
+
+Passes one to three settled *what is reachable*. Everything on the list is
+reachable, and the list is the earlier round's own complaint answered in full.
+That is necessary and it is not sufficient: **a control scheme is judged on how
+it feels under a thumb that is already moving**, and every measurement this
+round had taken was of a thumb at rest. Four things came out of driving it with
+a direction held down rather than tapped.
+
+**1. The stick was a d-pad wearing a stick.** `REPEAT_FIRST = 400`,
+`REPEAT_NEXT = 95`, and neither number knew how far the stick was pushed — so
+the other 45% of the stick's travel bought nothing at all. It is now a ramp,
+in [`_handheld.js`](_handheld.js):
+
+```
+push       0% (a nudge)              100% (a shove)
+first      360ms  ───────────────────  180ms
+repeat     155ms  ───────────────────   46ms      × 0.72 over a seven-step run
+```
+
+A nudge steps one card, deliberately. A shove crosses the creature lane. The
+thumb picks which, continuously, and it is the only genuinely analog thing on a
+pad that a menu ever throws away. A d-pad and the keyboard have no analog to
+read and stand at the middle of that ramp on purpose: a digital press means
+"one step" and should not inherit the sweep. **The rate is printed live on the
+bezel** — `sweep 46ms · 92% push` — because a control nobody has been shown a
+number for is a control nobody can review.
+
+**2. A transition is not a travel.** The ring was four CSS transitions at 150ms.
+That is right for one move and wrong for a held sweep, because each new move
+*restarts* the curve from wherever the last one reached: eight steps is eight
+eased starts colliding with eight unfinished eased stops. It is the exact
+motion signature of a menu that was never held down.
+
+It is now a **spring** — position, velocity, target, and a retarget that keeps
+the velocity it already had, so eight legs read as one arc. Written as the
+closed form of a damped oscillator rather than as `v += (k*dx - d*v) * dt`,
+for two measured reasons: the naive integrator overshoots **1.6px at 60fps and
+4.5px at 144fps**, so the ring is a different ring on a monitor than on the
+Deck's panel; and it goes unstable at large `dt`, which is exactly what a
+backgrounded or thermally-throttled tab hands you — the window this was
+measured in throttled `requestAnimationFrame` to **2fps**. The closed form is
+exact at any `dt`, and at a huge one it resolves to "the ring is where the
+cursor is", which is the correct picture rather than a launch across the room.
+
+Tuned in time rather than in stiffness, because time is what is being judged:
+`w 36, z 0.78` is a **142ms settling time, 2.0% of overshoot, and within 2px of
+target in 117ms** on a 200px hop — quicker than the transition it replaces. The
+2% is what makes it read as *landing* rather than as stopping. **The loop stops
+itself when it settles**; a rAF that never stops is play time spent on nothing,
+and this is a battery-powered handheld.
+
+Three things fall out of having a spring at all, which is why it is worth more
+than the 150ms it saves:
+
+- **The wall you can hit.** A direction with nowhere to go was a rumble and a
+  sound and *no picture*. It is now an impulse into the wall and a recovery —
+  the edge of the board is visible, on a device that is routinely played muted.
+- **The press.** `A` squeezes the ring onto what you pressed. It lives in the
+  spring rather than in a class on an element, so it survives the re-render
+  that `A` almost always causes.
+- **The trail.** One softer follower whose opacity *is* the ring's speed, so it
+  does not exist at rest. It is what makes a 46ms sweep legible rather than a
+  strobe. ![the ring in flight](shots/06-ring-travel.png)
+- **A long hop that is not a long flight.** `L1`/`R1` jump zones, and a zone
+  jump can be most of the screen — the stack in the right rail to a creature on
+  the far left is ~1000px. Teleporting loses the one thing the travel was for,
+  because a jump is exactly when your eye has no reason to already be looking
+  at the destination. Flying it loses it differently: a spring's settling time
+  does not depend on distance, so 1000px arrives in the same ~140ms at a peak
+  of ~13,000 px/s — **220px between one frame and the next at 60Hz**, which is
+  a teleport with extra steps and a worse one, because it strobes across
+  everything in between. So the distance is cut and the direction kept:
+  anything further than 420px starts its travel from exactly that far out
+  along the line it would have come in on. Every hop, at any distance, gets the
+  same arrival and the same readable entry from the correct side.
+
+And one thing that turned out to be a cursor move wearing a re-render: **the
+zone jump rebuilt the whole stage.** `L1`/`R1` called `render()` where `move()`
+calls `renderCursor()` — so a jump restarted every animation on the board,
+including the pulse and the sheen that pass four had just gone to the trouble of
+protecting. Nothing about the board changes when the ring changes zone.
+
+**3. The reader was rebuilding twenty-five times a second.** With the ramp in, a
+shove steps every ~46ms, and the rail rebuilt a 152px card face — art and all —
+on every one of them. Nobody can read that, and it is the loudest thing on
+screen at the moment you are trying to look somewhere else. Consoles settled
+this a decade ago and the rule is the same everywhere from Steam's own library
+outward: **the cursor is instant, the detail waits for you to stop.** A step
+taken after a pause is deliberate and answers at once; a step taken 40ms after
+the last one is part of a sweep, so the rail dims slightly and waits the sweep
+out. The dimming is what makes 110ms read as deferring rather than as lagging —
+an unannounced delay is a bug and an announced one is a decision.
+
+```
+a twelve-step sweep       12 reader rebuilds  →  2
+```
+
+**4. Three bugs that only a held direction finds.** All three were in `HEAD`
+before this pass, all three verified against it, and none of them is visible in
+a screenshot — which is the point, and the reason the round's gates gained one
+more number.
+
+- **The ring went out on the commit slab, and could not get off it.**
+  `renderCursor()` rebuilds two regions and *both contain stops*: the stack
+  items live in the rail, and the commit slab — the button the whole turn is
+  waiting on — lives in the foot. So it stamped `data-cursor` on an element and
+  then replaced the innerHTML of the region that element was inside. The ring
+  simply went out; and because `nav()` starts from `[data-cursor]`, every
+  direction then returned null. **Walk onto the attack button with the stick and
+  the pad stops working.** A pointer never finds this, because a pointer sets
+  the cursor from where it already is.
+
+  The fix is the round's own thesis followed one step further than it had been:
+  the cursor is state, so after anything rebuilds markup, re-derive it from
+  state. `assert.js` gained **`ringLost`** for it — `cursors: 0` cannot be
+  failed on its own, because 02 and 04 rest there deliberately, but *"the state
+  names a stop, the stop is on screen, and it is not wearing the cursor"* is
+  never intentional in any of the six.
+- **The commit slab never breathed.** `.btn--commit` carries a 2.6s `waiting`
+  pulse — the one control that should never be missed. It lives in the foot,
+  the foot was rebuilt on every cursor move, and rebuilding an element restarts
+  its animation from zero. Move the ring once every two seconds and the pulse
+  never gets past its first frame. The animation was correct and had never been
+  allowed to run. The foot is now two keyed halves across a `display: contents`
+  seam, and the slab survives a twelve-step sweep untouched.
+- **The wheel's selected spoke never grew.** `.spoke--on { transform:
+  scale(1.08) }` was being overridden by the inline `transform` that places the
+  spoke on its polar position — inline wins, so the highlight scale had never
+  once rendered. It is `scale: 1.08` now, using the independent transform
+  properties, which compose instead of fighting. That is also what let the wheel
+  gain the thing it was missing: **the 45 degrees either side of a spoke used to
+  be dead travel.** Quantising the *pick* to eight places is right; quantising
+  the *picture* was not, and now every spoke leans toward the thumb by how near
+  the thumb is to it. The wheel reaches for the answer before you commit to it.
+
+  Rotating the stick also used to call `render()` once per sector, which
+  replaces `#app` — so `.wheel` was a new element eight times round and its
+  scale-in replayed from zero on each, and **turning the stick made the wheel
+  flinch.** Nothing about the wheel changes when the aim moves except which
+  spoke is lit, so that is now all it touches. With the spring behind it the
+  ring *arcs* from spoke to spoke around the wheel rather than being rebuilt in
+  place at each one.
 
 ### Feedback, the way a card game does it
 
@@ -811,7 +955,19 @@ seat, game over, targeting, and all seven modal decision kinds.
 ```
 smallest text 16px   ·   smallest card the ring lands on 103px
 0 below the floor    ·   0 undersized hit targets   ·   0 spill   ·   0 tooltips
-never more than one cursor   ·   focus ring 3px solid
+never more than one cursor   ·   focus ring 3px solid   ·   ring never lost
+```
+
+Pass four added the last of those, and it is the only gate here that a
+screenshot could never have stood in for — see
+[the ring went out](#pass-four--fluidity-which-is-the-thing-a-pad-is-actually-judged-on).
+The motion numbers it is holding are:
+
+```
+ring settles 142ms, 2.0% overshoot, within 2px in 117ms — identical at 30, 60 and 144fps
+repeat rate  360→180ms to the first, 155→46ms after, by how hard the stick is pushed
+reader       2 rebuilds across a twelve-step sweep, was 12
+commit slab  0 rebuilds across the same sweep, was 12 — so its pulse actually runs
 ```
 
 ---
@@ -972,6 +1128,22 @@ What 06 proved, and what it costs, in porting order:
 7. **The spine summary.** `4 creatures · 2 untapped · 4 power · 1 flier` is worth
    doing on any screen size, and the combat view and `produces` already ship the
    data.
+8. **The four fluidity items, in cost order.** Cheapest first and all of them
+   independent of each other:
+   - **Re-derive the cursor from state after any partial re-render.** Three
+     lines, and it is what stops the ring going out on the commit slab. Ship it
+     with the `ringLost` gate or it will come back the first time somebody
+     splits a region out of the render.
+   - **Ramp the repeat rate off the stick's magnitude.** ~15 lines in the pad
+     loop, and it is the difference between a stick and a d-pad. There is no
+     React in it at all.
+   - **Give the detail panel a settle delay.** In `Table.tsx` this is one
+     debounced piece of derived state, and it is worth more there than here —
+     the client's rail fetches, where 06's only rebuilds.
+   - **A spring for the ring, not a transition.** The most code of the four
+     (~40 lines including the closed form) and the most visible. Its
+     preconditions are already met by item 1: a ring drawn from a `data-cursor`
+     attribute is a ring whose target is a rect you can measure.
 
 **Do not ship a controller mode without the 16px floor asserted in CI.** It is
 the one thing here that cannot be eyeballed — 2.11px text looked fine in every
@@ -984,6 +1156,14 @@ in this folder broke the floor in ways only the gate found.
   every file carries a live press counter — but **nobody has held a Deck**. A
   keyboard makes every scheme feel equally fine, which is exactly the failure
   this round exists to avoid.
+- **The ramp's four constants.** `360→180` and `155→46` are reasoned and they
+  are not measured: a keyboard stands at the middle of that ramp by design and
+  therefore cannot tell you whether either end is in the right place. They are
+  four numbers in one object in `_handheld.js` and the bezel prints the live
+  rate, so the first person with a Deck in their hands can settle them in
+  minutes — but until somebody does, this is the one part of pass four that is
+  an argument rather than a measurement. The spring's numbers are not in that
+  category; those are frame-rate-independent and verified as such.
 - **How a Vite app reaches a Deck at all** — desktop-mode browser, or a wrapper
   added to Steam as a non-Steam game, where Game Mode's Steam Input may not pass
   the pad to the page. Worth settling before any of this is built.
