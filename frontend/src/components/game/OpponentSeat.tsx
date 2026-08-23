@@ -60,6 +60,7 @@ import { commandersOf } from "../../logic/zoneGrouping";
 import type { PileKind } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
 /** Commander damage becomes lethal here. The gauge is a fraction of it. */
 const COMMANDER_LETHAL = 21;
@@ -111,7 +112,7 @@ function PermCell({
   open,
   label,
 }: {
-  kind: "land" | "creature" | "other";
+  kind: SeatIconName & ("land" | "creature" | "other");
   total: number;
   open: number | null;
   label: string;
@@ -127,6 +128,9 @@ function PermCell({
       aria-label={label}
       data-hint={label}
     >
+      {/* The mark first, because it says WHICH number this is -- "5/7" beside
+          "2/3" beside "1" is three numbers in a row and nothing else. */}
+      <SeatIcon name={kind} />
       <span className="perm__n tabular">{open === null ? total : `${open}/${total}`}</span>
     </span>
   );
@@ -170,6 +174,7 @@ function DetailCell({ muster }: { muster: Muster }) {
         {muster.creatures === 0 && <span className="pips__more">none</span>}
       </span>
       <span className="perm__pow tabular" data-power={muster.power}>
+        <SeatIcon name="power" />
         {muster.power}
       </span>
     </span>
@@ -358,7 +363,7 @@ export function OpponentSeat({
           }`}
           data-testid={`cmddmg-${player.pid}`}
         >
-          <span className="gauge__crown" aria-hidden="true" />
+          <SeatIcon name="crown" />
           <span className="tabular">{worst.amount}</span>
         </span>
       </span>
@@ -417,6 +422,7 @@ export function OpponentSeat({
             aria-label={`${zone.label}: ${zone.count}`}
             data-hint={`${zone.label}: ${zone.count}`}
           >
+            <SeatIcon name={zone.kind as SeatIconName} />
             <span className="zmark__n tabular">{zone.count}</span>
           </span>
         ))}

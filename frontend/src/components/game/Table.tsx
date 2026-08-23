@@ -23,6 +23,7 @@ import {
   getGroup,
   groupOf,
   groupRoot,
+  landableStopsIn,
   nextGroup,
   rememberStop,
   rememberedStop,
@@ -936,13 +937,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     setGroup(id);
     const root = groupRoot(id);
     if (!root) return;
+    /*
+     * LANDABLE, not merely present.
+     *
+     * This took the first `[data-stop]` in document order, which is a different
+     * question from the one `groupsPresent` asks to decide the region is worth
+     * entering at all: on a handheld an opponent's cards are clipped to zero
+     * height and still in the document, so the first stop in a region can be
+     * one nobody can see while the region genuinely has others. One helper now
+     * answers both.
+     */
+    const stops = landableStopsIn(root);
     const wanted = rememberedStop(id);
-    // The remembered stop only if it is still there -- a card can have left
-    // play since, and a stop id that names nothing puts the ring nowhere.
-    const stops = [...root.querySelectorAll<HTMLElement>("[data-stop]")];
-    const back = wanted && stops.some((el) => el.dataset.stop === wanted) ? wanted : undefined;
-    const first = stops[0]?.dataset.stop;
-    const target = back ?? first;
+    // The remembered stop only if it is still there and still visible -- a card
+    // can have left play since, and a stop id that names nothing puts the ring
+    // nowhere.
+    const remembered = stops.some((el) => el.dataset.stop === wanted) ? wanted : undefined;
+    const target = remembered ?? stops[0]?.dataset.stop;
     if (target) setCursor(target);
   }, []);
 
@@ -1013,9 +1024,32 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * you should be is worse than one that stays where you put it.
    */
   const modalOwns = modalOwnsDecision;
+
+  /*
+   * ONCE PER DECISION, and a ref rather than a dependency list is what makes it
+   * once.
+   *
+   * The first version keyed the effect on the pending kind, the step AND
+   * `narration.busy` -- and `busy` flips true then false after every action a
+   * player takes. Casting a spell in your main phase changes neither the step
+   * nor the pending kind, so the first two are stable and the third re-fired
+   * the effect on its own: go and read something on the board, cast, and the
+   * ring is yanked back to your hand. That is exactly the "returns to where the
+   * app thinks you should be" failure the note above is about, arriving through
+   * the dependency list rather than through the rule.
+   *
+   * So the KEY is the decision, the ref remembers which key was last acted on,
+   * and narration only decides *when* -- never *whether*.
+   */
+  const focusedFor = useRef<string | null>(null);
   // biome-ignore lint/correctness/useExhaustiveDependencies: the narrow key is the point; see above.
   useEffect(() => {
+    const key = `${state.pending?.kind ?? ""}|${state.step}`;
+    if (focusedFor.current === key) return;
+    // Wait for the board to stop moving, but do not treat waiting as done: the
+    // key is still unclaimed, so the next run after narration settles takes it.
     if (narration.busy) return;
+    focusedFor.current = key;
     const wanted = groupForDecision(state, actions, modalOwns);
     if (wanted && wanted !== getGroup()) enterGroup(wanted);
   }, [state.pending?.kind, state.step, narration.busy]);

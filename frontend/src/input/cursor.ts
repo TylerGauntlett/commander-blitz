@@ -29,7 +29,7 @@ import { useUiStore } from "../state/uiStore";
 import { getInputMode, subscribeInputMode } from "./inputMode";
 import { type Dir, unreachableStops } from "./nav";
 import { padDiagnostics } from "./pad";
-import { retargetRing, ringNudge } from "./ring";
+import { retargetRing, ringNudge, ringTargetFor } from "./ring";
 import { candidatesIn, navigate, stopElement, stopIdOf, stopRoot, stopsIn } from "./stops";
 
 /** The stop the ring is on. Not React state; see the header. */
@@ -157,7 +157,8 @@ export function resolveCursor(): void {
   const moved = next !== cursor;
   cursor = next;
   stamp(el);
-  retargetRing(el.getBoundingClientRect(), context);
+  const target = ringTargetFor(el);
+  retargetRing(target.rect, context, target.angle);
   if (moved) {
     announce();
     hoverFor(next);
@@ -202,7 +203,8 @@ export function setCursor(id: string | null): boolean {
   if (!el) return false;
   cursor = id;
   stamp(el);
-  retargetRing(el.getBoundingClientRect(), context);
+  const target = ringTargetFor(el);
+  retargetRing(target.rect, context, target.angle);
   announce();
   hoverFor(id);
   return true;

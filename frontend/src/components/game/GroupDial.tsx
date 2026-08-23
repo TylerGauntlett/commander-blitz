@@ -46,11 +46,19 @@ export function GroupDial({ current, onPick }: Props) {
    * the control is broken. `setCursor` rather than a `FocusRing` re-derive,
    * because this mounts and unmounts inside a hold and the resolve is one frame
    * too late to be felt as instant.
+   *
+   * ON MOUNT ONLY, and the empty dependency list is the whole point rather than
+   * an oversight. `present` is a fresh array every render and `Table`
+   * re-renders on every engine push, so a dependency on it re-ran this once a
+   * second while an AI played -- putting the ring back on the landing spoke
+   * under a player who had moved it. A picker that undoes your choice while you
+   * are making it is worse than no picker.
    */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: opening is a moment, not a state; see above.
   useEffect(() => {
     const landing = current && present.includes(current) ? current : present[0];
     if (landing) setCursor(stopId.tool(`group-${landing}`));
-  }, [current, present]);
+  }, []);
 
   return (
     <motion.div

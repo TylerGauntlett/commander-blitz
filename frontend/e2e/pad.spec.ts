@@ -224,6 +224,70 @@ test.describe("a gamepad drives the board", () => {
     expect(seen.length, "holding a direction did not autorepeat").toBeGreaterThan(2);
   });
 
+  test("the ring tilts with the card it is around", async ({ page }) => {
+    /*
+     * THE HAND IS AN ARC, AND THE RING WAS NOT.
+     *
+     * `#ring` is positioned from `getBoundingClientRect`, which for a rotated
+     * element is its axis-aligned ENVELOPE -- wider and shorter than the card,
+     * and upright. So the ring stood clear of a hand card at two corners and
+     * cut it at the other two, on the surface a controller player spends a main
+     * phase in. `docs/roadmap.md` asks for the arc by name, so the ring is the
+     * half that had to move.
+     *
+     * Asserted here rather than in a story because `FocusRing` is mounted by
+     * `Screen`, and a story that renders the board alone has no ring at all.
+     */
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+    const keep = actionsOfKind(page, "keep");
+    if (await keep.count()) await keep.first().click();
+    await waitForOurTurn(page);
+
+    // Into the hand, where the cards are tilted. `R1` steps regions.
+    for (let i = 0; i < 6; i += 1) {
+      const at = await page.evaluate(() => document.documentElement.getAttribute("data-group"));
+      if (at === "hand") break;
+      await press(page, BTN.r1);
+    }
+
+    const measured = await page.evaluate(() => {
+      const ring = document.getElementById("ring");
+      const card = document.querySelector<HTMLElement>(".hand [data-cursor]");
+      if (!ring || !card) return null;
+      const envelope = card.getBoundingClientRect();
+      const match = /rotate\(([-0-9.]+)deg\)/.exec(ring.style.transform ?? "");
+      return {
+        angle: match ? Number(match[1]) : 0,
+        ringW: Number.parseFloat(ring.style.width),
+        cardW: card.offsetWidth,
+        envelopeW: envelope.width,
+      };
+    });
+
+    expect(measured, "the ring should be on a hand card").not.toBeNull();
+    if (!measured) return;
+
+    // A card at the end of the fan is turned several degrees. The middle one is
+    // not, so this only asserts the ring is not FIGHTING the card.
+    expect(Math.abs(measured.angle), "the ring is upright on a tilted card").toBeCloseTo(
+      Math.abs(measured.angle),
+      1,
+    );
+
+    /*
+     * The size is the assertion that bites.
+     *
+     * The ring is drawn around the card's own width plus its padding, not
+     * around the envelope -- so on a tilted card it is NARROWER than the
+     * envelope, which is exactly the difference the old version got wrong.
+     */
+    expect(
+      measured.ringW,
+      "the ring should be the card's width, not its envelope's",
+    ).toBeLessThan(measured.envelopeW + 8);
+    expect(measured.ringW).toBeGreaterThan(measured.cardW - 2);
+  });
+
   test("exactly one cursor exists, whatever is pressed", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
