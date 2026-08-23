@@ -29,7 +29,7 @@
 import { useSyncExternalStore } from "react";
 import type { GameView, LegalAction } from "../../api/types";
 import { getCursor, subscribeCursor } from "../../input/cursor";
-import { type Verbs, verbsFor } from "../../logic/verbs";
+import { NAVIGATION_HINTS, type Verbs, verbsFor } from "../../logic/verbs";
 import { useUiStore } from "../../state/uiStore";
 import { Glyph } from "../ui/Glyph";
 
@@ -90,7 +90,7 @@ export function HintBar({ state, actions }: Props) {
 
   return (
     <div className="hints" data-testid="hint-bar">
-      <Hint btn="dpad" label="Move" />
+      <Hint btn="dpad" label={NAVIGATION_HINTS[0].label} />
       <Hint btn="a" label={verbs.a} />
       {verbs.x && <Hint btn="x" label={verbs.x} />}
       {verbs.y && <Hint btn="y" label={verbs.y} />}
@@ -108,9 +108,18 @@ export function HintBar({ state, actions }: Props) {
         verbs because the verbs are what you are about to do.
       */}
       {hint && <span className="hint hint--says">{hint}</span>}
+      {/*
+        Rendered FROM `NAVIGATION_HINTS`, not restated.
+        
+        These were two hard-coded `Hint`s, and the list they were supposed to be
+        showing sat unread in `logic/verbs.ts` -- so changing the list changed
+        nothing and the bar went on advertising a button that had been renamed.
+        One source, and `tests/verbs.test.ts` holds it.
+      */}
       <span className="hints__nav">
-        <Hint btn="l1" label="Zone" />
-        <Hint btn="l2" label="Menu" />
+        {NAVIGATION_HINTS.filter((nav) => nav.btn !== "dpad").map((nav) => (
+          <Hint key={nav.btn} btn={nav.btn} label={nav.label} />
+        ))}
       </span>
     </div>
   );

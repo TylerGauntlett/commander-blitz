@@ -10,6 +10,7 @@ import "./styles/board.css";
 // declares. Same reason `handheld.css` loads last.
 import "./styles/seat.css";
 import "./styles/reader.css";
+import "./styles/groups.css";
 import "./styles/ui.css";
 import "./styles/lobby.css";
 import "./styles/handheld.css";

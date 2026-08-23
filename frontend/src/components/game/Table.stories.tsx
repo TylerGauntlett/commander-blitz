@@ -10,6 +10,11 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import type { PadButton } from "../../input/buttons";
+import { groupOf } from "../../input/groups";
+import { boundButtons, startPad } from "../../input/pad";
+import { activeRoot } from "../../input/stops";
+import { NAVIGATION_HINTS } from "../../logic/verbs";
 import {
   expectCardsSized,
   expectHandheldFloors,
@@ -579,5 +584,221 @@ export const HandheldSeatPressTargetsFirst: Story = {
     await userEvent.click(await canvas.findByTestId("player-1"));
 
     expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
+  },
+};
+
+/**
+ * EVERY BUTTON THE HINT BAR ADVERTISES ACTUALLY DOES SOMETHING.
+ *
+ * The bar has advertised `L1 Zone` and `L2 Menu` since it was written, and
+ * `verbsFor` returns `Y Read` on every card stop -- and for several rounds
+ * **nothing in the app listened for any of the three**. An advertised button
+ * that does nothing is worse than an unadvertised one: it teaches the player
+ * that the bar is not to be trusted.
+ *
+ * Nothing in the suite could see it, either, because the bar renders spans and
+ * a span cannot fail to work. So this mounts the real board and compares what
+ * the bar can SAY against what `pad.ts` has a listener for.
+ */
+export const EveryAdvertisedButtonIsBound: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    const bound = new Set(boundButtons());
+
+    // The navigation half, which the bar draws unconditionally.
+    for (const hint of NAVIGATION_HINTS) {
+      if (hint.btn === "dpad") continue; // four bindings, and `useCursorNav` owns them.
+      expect(bound.has(hint.btn as PadButton), `${hint.btn} is advertised`).toBe(true);
+    }
+
+    /*
+     * ...and the verbs, which change with the stop.
+     *
+     * `A` and the four directions are deliberately not here: `useCursorNav`
+     * binds those, and it is mounted by `Screen` rather than by the board, so a
+     * story that renders `Table` alone would be asserting the absence of a
+     * component it never mounted. `e2e/pad.spec.ts` owns them -- "the d-pad
+     * walks the ring and A presses what it is on" -- against the real app.
+     *
+     * What is left is exactly the set this board is responsible for, which is
+     * also the set that was advertised and unbound.
+     */
+    for (const btn of ["b", "x", "y", "r1"] as PadButton[]) {
+      expect(bound.has(btn), `${btn} is a verb the bar can print`).toBe(true);
+    }
+  },
+};
+
+/**
+ * Stepping between the board's regions, and the trap that follows.
+ *
+ * Directional navigation crosses a 96px seat strip, three lanes, a fanned hand
+ * and a 243px rail one card at a time. `docs/handheld-playtest.md` Loop 1
+ * records walking the board as "a bad way to ask can you reach everything":
+ * reachable and reachable-in-under-a-second are different properties, and only
+ * the second is playable.
+ *
+ * `[` and `]` are what `input/buttons.ts` maps to `L1` and `R1` on a keyboard,
+ * which is the only route a test has into the pad -- neither Playwright nor
+ * Vitest can synthesise a real Gamepad.
+ *
+ * `startPad()` because the key latch lives in `input/pad.ts` and `useCursorNav`
+ * is what starts it in the app -- and that is mounted by `Screen`, not by the
+ * board. A story that rendered `Table` alone would be asserting the absence of
+ * a component it never mounted.
+ */
+export const HandheldRegionStepping: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    const region = () => document.documentElement.getAttribute("data-group");
+
+    /*
+     * It is already in the hand, and that is the OTHER half of this feature.
+     *
+     * `earlyBoard` is your main phase with something castable, and
+     * `groupForDecision` says a main phase is spent deciding what to play -- so
+     * the ring has been put where the decision is before a button was touched.
+     */
+    await waitFor(() => expect(region()).toBe("hand"));
+    const first = region();
+
+    await userEvent.keyboard("]");
+    await waitFor(() => expect(region()).not.toBe(first));
+
+    // ...and back again, which is what makes it a step rather than a cycle you
+    // have to go the long way round.
+    //
+    // `[[` and not `[`: a bare bracket opens a key descriptor in `userEvent`'s
+    // grammar, so the literal has to be doubled.
+    await userEvent.keyboard("[[");
+    await waitFor(() => expect(region()).toBe(first));
+
+    /*
+     * The ring is inside the region it names.
+     *
+     * This is the trap, and it is the reason a region is a container rather
+     * than a stop-id prefix: `card:<oid>` is a hand card AND a board card AND a
+     * stack item, so only the DOM can say which one the ring is on.
+     */
+    const cursor = document.querySelector("[data-cursor]");
+    expect(cursor, "the ring landed somewhere").not.toBeNull();
+    expect(groupOf(cursor as Element)).toBe(first);
+  },
+};
+
+/**
+ * `Y` reads the card the ring is on, full screen.
+ *
+ * The rail's reader carries name, cost, type, P/T and rules at 16px, which is
+ * what a player needs most of the time and is why it is worth 236px of the
+ * rail. This is the deeper read -- a card with six lines of rules, or one whose
+ * art is how you will recognise it next turn.
+ *
+ * `i` is `Y` on a keyboard (`input/buttons.ts`).
+ */
+export const HandheldCardHold: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    // Onto a card, wherever the decision rule left the ring.
+    await waitFor(() => {
+      expect(document.querySelector("[data-cursor]")).not.toBeNull();
+    });
+
+    await userEvent.keyboard("i");
+    const hold = await canvas.findByTestId("card-hold");
+
+    // The same `variant="big"` the desktop rail draws. The roadmap's rule for
+    // this round is that the card sizes are fine as they are; what changes is
+    // which one is used where.
+    expect(hold.querySelector(".card--big")).not.toBeNull();
+    // It traps the ring, so it cannot wander the board underneath a full-screen
+    // overlay while the player cannot see where it has gone.
+    expect(hold.hasAttribute("data-modal-root")).toBe(true);
+
+    // `B` puts it down.
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="card-hold"]')).toBeNull();
+    });
+  },
+};
+
+/**
+ * Holding `L2` jumps straight to a region instead of cycling to it.
+ *
+ * `L1`/`R1` step, which is right at two or three regions and wearing at five --
+ * getting from the hand to the board is three presses and a guess about which
+ * direction is shorter.
+ *
+ * ON THE TRIGGER AND NOT ON A SHOULDER, and that is not a preference. `pad.ts`
+ * reports PRESSES and has no release event for a shoulder, so a hold there is a
+ * timer with nothing to cancel it: a tap would open the dial 260ms later,
+ * having already stepped. A trigger is analog and `onFrame` reports its
+ * position every frame, which is the same channel the `R2` opponent reader is
+ * held on. `z` is `L2` on a keyboard (`input/buttons.ts`).
+ */
+export const HandheldRegionDial: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    /*
+     * Native events rather than `userEvent`, and it is worth saying why.
+     *
+     * `pad.ts` listens on `window`, and `userEvent`'s press-and-hold grammar
+     * (`{z>}` / `{/z}`) keeps its held-key state per SESSION -- two separate
+     * `userEvent.keyboard()` calls are two sessions, so the release refers to a
+     * key the second one never pressed and no `keyup` is dispatched at all. The
+     * hold then never ends and the story fails on a detail of the test library
+     * rather than on the app.
+     */
+    const key = (type: "keydown" | "keyup") =>
+      window.dispatchEvent(new KeyboardEvent(type, { key: "z", bubbles: true }));
+
+    key("keydown");
+    const dial = await canvas.findByTestId("group-dial");
+
+    /*
+     * `.wheelwrap` is the contract, not decoration. `input/stops.ts`'s trap has
+     * preferred that class over every other candidate since it was written and
+     * nothing in the repo has ever rendered one -- it was the prototype's name
+     * for exactly this control, carried into the trap and then not built. So
+     * the ring is inside the dial the moment it opens, with no change to the
+     * trap at all.
+     */
+    expect(dial.classList.contains("wheelwrap")).toBe(true);
+    expect(activeRoot()).toBe(dial);
+
+    // A spoke per region that is actually there, and none of them is an action.
+    expect(dial.querySelectorAll(".wheel__spoke").length).toBeGreaterThan(1);
+    expect(dial.querySelector("[data-action-id]")).toBeNull();
+
+    // Letting go puts it away -- which is the whole argument for a hold over a
+    // toggle: you cannot forget to release.
+    key("keyup");
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="group-dial"]')).toBeNull();
+    });
   },
 };
