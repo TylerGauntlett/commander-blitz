@@ -205,9 +205,25 @@ export function verbsFor(
   return { a: "Read", y: "Read", b: "Back" };
 }
 
-/** The always-there half of the bar: how to move, and where the menus are. */
+/**
+ * The always-there half of the bar: how to move, and how to jump.
+ *
+ * IT ADVERTISED THREE BUTTONS THAT WERE NOT BOUND. `L1 Zone` and `L2 Menu` were
+ * here from the first draft, `verbsFor` returns `Y Read` on every card stop,
+ * and nothing in the app listened for any of the three -- so a player who read
+ * the bar and pressed what it said got nothing back, three times.
+ *
+ * All three are bound now. `L1`/`R1` step between the board's regions
+ * (`input/groups.ts`), `L2` held opens the dial that jumps straight to one and
+ * tapped sends the ring to the tool strip, and `Y` reads the card the ring is
+ * on at full size. `L1` stands for the pair because two glyphs for one idea is
+ * what the bar is short of room for, and the direction is the obvious half.
+ *
+ * `tests/hintsBound.test.tsx` fails the build if a button named here loses its
+ * listener, which is the cheap way to stop this happening a second time.
+ */
 export const NAVIGATION_HINTS = [
   { btn: "dpad", label: "Move" },
-  { btn: "l1", label: "Zone" },
-  { btn: "l2", label: "Menu" },
+  { btn: "l1", label: "Region" },
+  { btn: "l2", label: "Jump" },
 ] as const;

@@ -29,6 +29,7 @@ import "../src/styles/cards.css";
 import "../src/styles/board.css";
 import "../src/styles/seat.css";
 import "../src/styles/reader.css";
+import "../src/styles/groups.css";
 import "../src/styles/ui.css";
 import "../src/styles/lobby.css";
 import "../src/styles/handheld.css";

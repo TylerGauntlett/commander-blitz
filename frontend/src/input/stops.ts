@@ -24,6 +24,7 @@
  * assert the two sets are in bijection.
  */
 
+import { type GroupId, getGroup, groupRoot } from "./groups";
 import { type Candidate, type Dir, nearestStop, pickStop } from "./nav";
 
 /**
@@ -87,6 +88,42 @@ export function stopRoot(doc: Document = document): HTMLElement {
 }
 
 /**
+ * The box the ring may move inside, right now.
+ *
+ * THE MODAL TRAP ALWAYS WINS. If `stopRoot` returned anything but the board,
+ * something is on top and owns the ring outright -- a group trap under it would
+ * let a direction press reach the board behind an open prompt.
+ *
+ * THE GROUP TRAP IS THE SECOND ONE, and it exists because directional
+ * navigation crosses a 96px seat strip, three lanes, a fanned hand and a 243px
+ * rail one card at a time. `docs/handheld-playtest.md` Loop 1 records walking
+ * the board as "a bad way to ask can you reach everything": reachable and
+ * reachable-in-under-a-second are different properties and only the second is
+ * playable. `L1`/`R1` step between regions; inside one, a thumb-flick cannot
+ * throw the ring across the screen. See `input/groups.ts`.
+ *
+ * NO GROUP MEANS NO TRAP. Before the player has jumped anywhere, the ring is
+ * free of the whole board, which is exactly how it behaved before this existed.
+ *
+ * SCOPED TO THE RING'S OWN INPUT MODES. A mouse player has no ring at all, and
+ * a desktop keyboard user expects Tab-like freedom; trapping either inside a
+ * region is a behaviour regression nobody asked for. `data-input` is already on
+ * `<html>`, and reading it here is how a module function with no props can ask.
+ *
+ * Lives in this file rather than in `groups.ts` so the dependency runs one way:
+ * the trap knows about regions, regions know nothing about the trap.
+ */
+export function activeRoot(doc: Document = document): HTMLElement {
+  const modal = stopRoot(doc);
+  const board = doc.querySelector<HTMLElement>(".table");
+  if (!board || modal !== board) return modal;
+  if (doc.documentElement.getAttribute("data-input") === "mouse") return modal;
+  const group: GroupId | null = getGroup();
+  if (group === null) return modal;
+  return groupRoot(group, doc) ?? modal;
+}
+
+/**
  * What counts as focusable when nothing has declared itself a stop.
  *
  * Excludes `[tabindex="-1"]` and disabled controls: a control the player cannot
@@ -115,7 +152,7 @@ const FOCUSABLE =
  * A surface that declares even one explicit stop is taken at its word and gets
  * no fallback, so the board never picks up its own tool buttons twice.
  */
-export function stopsIn(root: HTMLElement = stopRoot()): HTMLElement[] {
+export function stopsIn(root: HTMLElement = activeRoot()): HTMLElement[] {
   const declared = [...root.querySelectorAll<HTMLElement>("[data-stop]")];
   if (declared.length > 0) return declared;
   return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)];
@@ -214,7 +251,7 @@ function onScreen(el: Element, rect: DOMRect): boolean {
  * empty box, and navigating onto one puts the ring nowhere. So are stops an
  * ancestor has clipped away -- see `onScreen`, which is the one that matters.
  */
-export function candidatesIn(root: HTMLElement = stopRoot()): Candidate[] {
+export function candidatesIn(root: HTMLElement = activeRoot()): Candidate[] {
   const out: Candidate[] = [];
   const all = stopsIn(root);
   for (let i = 0; i < all.length; i += 1) {
@@ -237,7 +274,7 @@ export function candidatesIn(root: HTMLElement = stopRoot()): Candidate[] {
  * the number of stops on screen, which is the same set navigation already
  * walks on every press.
  */
-export function stopElement(id: string, root: HTMLElement = stopRoot()): HTMLElement | null {
+export function stopElement(id: string, root: HTMLElement = activeRoot()): HTMLElement | null {
   const all = stopsIn(root);
   for (let i = 0; i < all.length; i += 1) {
     if (stopIdOf(all[i], i) === id) return all[i];
@@ -251,7 +288,7 @@ export function navigate(
   dir: Dir,
   doc: Document = document,
 ): string | null {
-  const root = stopRoot(doc);
+  const root = activeRoot(doc);
   const candidates = candidatesIn(root);
   if (candidates.length === 0) return null;
   const current = from ? candidates.find((c) => c.id === from) : undefined;

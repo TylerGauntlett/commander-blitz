@@ -506,7 +506,22 @@ function onKeyDown(event: KeyboardEvent): void {
 
 function onKeyUp(event: KeyboardEvent): void {
   const name = KEYS[event.key];
-  if (name) keyDown.delete(name);
+  if (!name) return;
+  keyDown.delete(name);
+  /*
+   * A RELEASE IS AN EVENT THE LOOP HAS TO SEE.
+   *
+   * This did not wake, and the loop idles after 100ms of nothing changing --
+   * so a key held on its own put the loop to sleep and the release was never
+   * observed at all. Everything driven by a HOLD then stuck: the `R2` opponent
+   * reader stayed up after `v` was let go, and the region dial stayed up after
+   * `L2`.
+   *
+   * It only ever bit the keyboard fallback, for the same reason the key latch
+   * exists: a real pad IS the poll, so its buttons cannot change without the
+   * loop being the thing that notices.
+   */
+  wake();
 }
 
 /*
@@ -617,6 +632,23 @@ export function on(button: PadButton, handler: Handler): () => void {
   handlers.set(button, bound);
   wake();
   return () => bound.delete(handler);
+}
+
+/**
+ * Which buttons currently have a listener.
+ *
+ * For one assertion and it is worth its keep: the hint bar advertises what each
+ * button does, and for several rounds it advertised `L1 Zone`, `L2 Menu` and
+ * `Y Read` with **nothing bound to any of the three**. An advertised button
+ * that does nothing is worse than an unadvertised one -- it teaches the player
+ * that the bar is not to be trusted, and nothing in the suite could see it,
+ * because the bar renders spans and a span cannot fail to work.
+ *
+ * `tests/hintsBound.test.tsx` mounts the board and compares this against every
+ * button `NAVIGATION_HINTS` names and `verbsFor` can return.
+ */
+export function boundButtons(): PadButton[] {
+  return [...handlers.entries()].filter(([, set]) => set.size > 0).map(([button]) => button);
 }
 
 /** Every press, whatever it was. Used to mean "get on with it" to narration. */
