@@ -78,18 +78,6 @@ export const Viewer: Story = {
   },
 };
 
-/** An opponent's, in the 112px column a compact mat gives it. */
-export const Opponent: Story = {
-  args: { ...seat(), isViewer: false, isActive: false, hasPriority: false, compact: true },
-  parameters: { automtg: { mount: "matSideCompact" } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expectMountedLike(await canvas.findByTestId("player-0"), {
-      width: APP_VAR.matSideCompact,
-    });
-  },
-};
-
 export const LowLife: Story = { args: seat({ life: 3 }) };
 
 /**
@@ -200,38 +188,19 @@ export const TwoCommanders: Story = {
 export const Locked: Story = { args: { ...seat(), locked: true } };
 
 /**
- * An opponent, with the summary line that is most of what you read them by.
+ * This column is the viewer's, and nobody else's.
  *
- * `threatOf` answers the two questions actually being asked across a table --
- * can they kill me, can they stop me -- so the row is worth having at any size.
- * On a handheld it is the whole seat, because their lanes are clipped there.
+ * It used to draw for opponents too, at two-thirds the size, with a summary
+ * line where the viewer got nothing -- so a pod was three control panels for
+ * controls nobody could press. An opponent is an `OpponentSeat` now, which
+ * answers what have they got on the battlefield instead of offering a commander
+ * you cannot cast. The spine went with them.
  */
-export const OpponentWithSpine: Story = {
-  args: (() => {
-    const base = seat();
-    return {
-      ...base,
-      player: base.state.players[1],
-      isViewer: false,
-      compact: true,
-    };
-  })(),
-  parameters: { automtg: { mount: "matSideCompact" } },
-  play: async ({ canvasElement }) => {
-    const spine = canvasElement.querySelector(".orb__spine");
-    // Present, and saying something rather than rendering an empty row: an
-    // opponent with nothing on board is exactly when the line matters most.
-    if (!spine) throw new Error("the opponent spine is missing");
-    if (!spine.textContent?.trim()) throw new Error("the spine rendered empty");
-  },
-};
-
-/** Your own seat draws no spine: your board is right in front of you. */
-export const ViewerHasNoSpine: Story = {
+export const NoSpineAnywhere: Story = {
   args: seat(),
   play: async ({ canvasElement }) => {
     if (canvasElement.querySelector(".orb__spine")) {
-      throw new Error("the viewer should not be summarising their own board");
+      throw new Error("the summary line belongs to OpponentSeat now");
     }
   },
 };

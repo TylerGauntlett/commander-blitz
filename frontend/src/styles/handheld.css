@@ -222,10 +222,14 @@ html[data-input="keyboard"] .glyph--key {
  * no space. The `R2` overlay is where an opponent's board is actually read.
  */
 [data-handheld] .mat--compact {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 0;
+  /* The columns and the seat row come from `seat.css` and are the same at both
+     sizes. What a handheld changes is the SECOND row: an opponent's lanes give
+     up their height entirely. */
+  grid-template-rows: var(--seat-h) 0;
   min-width: 0;
-  padding: 5px 7px;
+  padding: 0;
+  border: 0;
+  background: none;
 }
 
 [data-handheld] .mat--compact .mat__lanes {
@@ -273,9 +277,12 @@ html[data-input="keyboard"] .glyph--key {
   max-height: var(--pod-seat-h);
 }
 
-[data-handheld] .mat--compact .orb {
-  flex-direction: row;
-}
+/*
+ * An opponent has no orb any more -- it is an `OpponentSeat`, at every size --
+ * so the rules that reshaped one are gone rather than left pointing at nothing.
+ * The seat is its own fixed 96px grid and needs no compaction: it was designed
+ * at this size. See `styles/seat.css`.
+ */
 
 [data-handheld] .play {
   grid-template-rows: fit-content(var(--pod-seat-h)) minmax(0, 1fr);

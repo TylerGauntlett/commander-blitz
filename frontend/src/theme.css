@@ -137,6 +137,26 @@
 }
 
 /*
+ * How tall an opponent's seat is, at every size.
+ *
+ * NOT `--pod-seat-h`, which is a CAP on a whole compact mat and is `0px` on a
+ * desktop because `.play`'s own `fit-content(58%)` is the bound there. This is
+ * the seat's own stated height, and it is the same number on both layouts
+ * because the seat is the same component on both -- `mockups/seat/` measured
+ * every one of its directions inside 332x96, and a seat drawn at some other
+ * height is a different design wearing the same name.
+ *
+ * Registered because `useZoomFit` subtracts it from a compact mat's lane budget:
+ * the seat sits ABOVE the lanes now rather than beside them, so it comes out of
+ * their height rather than out of their width.
+ */
+@property --seat-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 96px;
+}
+
+/*
  * `--type-ring` and `--type-ring-w` were registered here for the same reason,
  * back when card type was an eight-step luminance ladder read off the rendered
  * board. The ladder went with the art-bleed redesign -- card type is no longer
@@ -292,6 +312,10 @@
   --mat-side-compact: 112px;
   /* No cap on a desktop: `.play`'s own `fit-content(58%)` is the bound there. */
   --pod-seat-h: 0px;
+
+  /* One height for an opponent's seat, on every layout. See the registration
+     above for why this is not `--pod-seat-h`. */
+  --seat-h: 96px;
 
   /*
    * How far a hovered hand card rises.

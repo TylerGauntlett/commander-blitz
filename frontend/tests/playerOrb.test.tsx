@@ -304,12 +304,23 @@ describe("the life dial", () => {
     expect(container.querySelector(".dial .dial__n")).not.toBeNull();
   });
 
-  it("marks an opponent's dial differently from the viewer's", () => {
-    // Desaturated copper: legible, but plainly reference material rather than
-    // the number you are managing.
-    const { container } = renderOrb({}, { isViewer: false });
-    expect(container.querySelector(".dial--foe")).not.toBeNull();
-    expect(container.querySelector(".dial--mine")).toBeNull();
+  it("names the dial after whose it is", () => {
+    /*
+     * `--foe` is reachable only through the prop now. Nothing in the game
+     * renders this column for anybody but the viewer -- an opponent is an
+     * `OpponentSeat`, whose life lives in a gauge rather than a dial -- but the
+     * distinction is kept because a spectator view would need it, and because a
+     * dial that could not say whose it was would be the bug this test names.
+     */
+    const mine = renderOrb({}, { isViewer: true }).container;
+    expect(mine.querySelector(".dial--mine")).not.toBeNull();
+    expect(mine.querySelector(".dial--foe")).toBeNull();
+
+    cleanup();
+
+    const theirs = renderOrb({}, { isViewer: false }).container;
+    expect(theirs.querySelector(".dial--foe")).not.toBeNull();
+    expect(theirs.querySelector(".dial--mine")).toBeNull();
   });
 
   it("marks whose turn it is on the dial", () => {

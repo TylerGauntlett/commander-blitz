@@ -1,5 +1,12 @@
 /**
- * A player: their commander, life, mana, and the zones you can look into.
+ * THE VIEWER: their commander, life, mana, and the zones they can look into.
+ *
+ * Only ever the viewer's. An opponent used to render this same column at
+ * two-thirds the size, which meant a pod was three control panels for controls
+ * nobody could press -- they are `OpponentSeat` now, and the `compact` variant
+ * and the `!isViewer` summary line that existed for them are gone with them.
+ * `isViewer` survives because the dial still names itself, and because a
+ * spectator view would put this column on somebody else's seat.
  *
  * Three things here are physical rather than textual, and they read better than
  * what they replace:
@@ -46,7 +53,6 @@ import {
   manaRow,
   markSpent,
 } from "../../logic/mana";
-import { threatClause, threatOf, threatParts } from "../../logic/threat";
 import { commandersOf } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
@@ -217,7 +223,6 @@ interface Props {
   hasPriority: boolean;
   /** Names by pid, for the commander-damage tooltips. */
   names: string[];
-  compact?: boolean;
   /** A legal action could point at this player: attack target, spell target. */
   targetable?: boolean;
   onSelect?: (pid: number) => void;
@@ -242,7 +247,6 @@ export function PlayerOrb({
   isActive,
   hasPriority,
   names,
-  compact = false,
   targetable = false,
   onSelect,
   spending,
@@ -305,7 +309,6 @@ export function PlayerOrb({
 
   const classes = [
     "orb",
-    compact ? "orb--compact" : "",
     isViewer ? "orb--viewer" : "",
     isActive ? "orb--active" : "",
     player.has_lost ? "orb--out" : "",
@@ -402,7 +405,6 @@ export function PlayerOrb({
           state={state}
           pid={player.pid}
           playableOids={playableOids ?? EMPTY}
-          compact={compact}
           onActivate={onCastCommander}
           onHover={onHoverCard}
           disabled={locked}
@@ -412,31 +414,6 @@ export function PlayerOrb({
         {commanders.length === 0 && <div className="orb__life-row">{dial}</div>}
 
         {player.has_lost && <div className="orb__loss">{lossReason(player.loss_reason)}</div>}
-
-        {/*
-          What this seat is, in one line.
-
-          Drawn for opponents only: your own board is right in front of you and
-          the summary would be counting cards you can already see. For an
-          opponent it answers the two questions actually being asked across the
-          table -- can they kill me, can they stop me -- without the reader
-          counting anything.
-
-          On a handheld this line *is* the opponent, because their lanes are
-          clipped to nothing at that width and their board is one `R2` hold
-          away. But it earns its place on a desktop pod too, where their cards
-          render at ~51px and counting untapped creatures is a chore the client
-          can simply do for you. See `logic/threat.ts`.
-        */}
-        {!isViewer && (
-          <div className="orb__spine" data-testid={`spine-${player.pid}`}>
-            {threatParts(threatOf(state, player.pid)).map((part) => (
-              <span key={part.key}>
-                <b className="tabular">{part.value}</b> {threatClause(part).split(" ")[1]}
-              </span>
-            ))}
-          </div>
-        )}
 
         {/*
           The panel's foot: three plates that are always there.
@@ -484,7 +461,7 @@ export function PlayerOrb({
                 : `${pips.length} available: ${formatManaRow(pips)}`
             }
           >
-            {!compact && <span className="orb__lab">Mana</span>}
+            <span className="orb__lab">Mana</span>
             {groups.length === 0 ? (
               <span className="orb__none">—</span>
             ) : (
@@ -537,7 +514,7 @@ export function PlayerOrb({
             the meter under it is the fraction of 21 rather than decoration.
           */}
           <div className="orb__panel orb__cmd" data-testid={`cmddmg-${player.pid}`}>
-            {!compact && <span className="orb__lab">Cmd dmg</span>}
+            <span className="orb__lab">Cmd dmg</span>
             {opponents.map((pid) => {
               const amount = player.commander_damage_taken[String(pid)] ?? 0;
               return (

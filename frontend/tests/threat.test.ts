@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
-import { threatLine, threatOf, threatParts } from "../src/logic/threat";
+import { musterOf, threatLine, threatOf, threatParts } from "../src/logic/threat";
 import { card, gameView, player } from "../src/testing/fixtures";
 
 const creature = (overrides: Partial<CardView> = {}): CardView =>
@@ -46,6 +46,110 @@ function board(cards: CardView[], seat = 1, manaSources = 0) {
     ],
   });
 }
+
+const land = (overrides: Partial<CardView> = {}): CardView =>
+  card({
+    name: "Forest",
+    types: ["Land"],
+    type_line: "Basic Land — Forest",
+    zone: "battlefield",
+    power: null,
+    toughness: null,
+    ...overrides,
+  });
+
+describe("musterOf", () => {
+  it("counts lands and how many are still untapped", () => {
+    /*
+     * The number the summary never carried. `Threat` has no lands field at all,
+     * which is why "how many lands has that seat got" was unanswerable from the
+     * strip at any density -- and an unanswerable number is one nothing can
+     * contradict.
+     */
+    const state = board([
+      land(),
+      land({ tapped: true }),
+      land({ tapped: true }),
+      land({ name: "Island" }),
+    ]);
+    const muster = musterOf(state, 1);
+
+    expect(muster.lands).toBe(4);
+    expect(muster.landsUntapped).toBe(2);
+  });
+
+  it("counts each duplicate permanent, not each visible stack", () => {
+    /*
+     * The board COLLAPSES seven Forests into one card with a x7 on it, and a
+     * seat that reported "1 land" for them would be wrong about the one number
+     * it exists to carry. Counting is `.length` over `groupBattlefield`, never
+     * over `stackCards`.
+     */
+    const forests = Array.from({ length: 7 }, () => land());
+    expect(musterOf(board(forests), 1).lands).toBe(7);
+  });
+
+  it("keeps artifacts and enchantments as a bare count", () => {
+    // No untapped figure, deliberately: the lane mixes the two, an enchantment
+    // does not tap, and a meter over both would be measuring two things.
+    const state = board([
+      card({ types: ["Artifact"], type_line: "Artifact", zone: "battlefield", tapped: true }),
+      card({ types: ["Enchantment"], type_line: "Enchantment", zone: "battlefield" }),
+    ]);
+    const muster = musterOf(state, 1);
+
+    expect(muster.other).toBe(2);
+    expect(muster).not.toHaveProperty("otherUntapped");
+  });
+
+  it("is the one walk `threatOf` is derived from", () => {
+    /*
+     * The property that makes `seatsAgree` worth having. Two functions counting
+     * the same permanents independently is how the seat's strip comes to
+     * disagree with the board underneath it -- and at 1280x800 the strip IS the
+     * opponent, so that disagreement is not cosmetic.
+     */
+    const state = board(
+      [
+        creature(),
+        creature({ tapped: true, power: 5 }),
+        creature({ keywords: ["flying"], power: 1 }),
+        land(),
+        land({ tapped: true }),
+        card({ types: ["Artifact"], type_line: "Artifact", zone: "battlefield" }),
+      ],
+      1,
+      3,
+    );
+    const muster = musterOf(state, 1);
+
+    expect(threatOf(state, 1)).toEqual({
+      creatures: muster.creatures,
+      untapped: muster.creaturesUntapped,
+      power: muster.power,
+      fliers: muster.fliers,
+      openMana: muster.openMana,
+      hand: muster.hand,
+      other: muster.other,
+    });
+  });
+
+  it("reports an empty board as zeroes rather than as nothing", () => {
+    // "Nothing in play" is itself the most useful thing a seat can say, so
+    // every field has to be present and 0 rather than absent.
+    expect(musterOf(board([]), 1)).toEqual({
+      lands: 0,
+      landsUntapped: 0,
+      creatures: 0,
+      creaturesUntapped: 0,
+      power: 0,
+      fliers: 0,
+      other: 0,
+      hand: 3,
+      openMana: 0,
+    });
+  });
+});
 
 describe("threatOf", () => {
   it("counts an empty board as nothing, rather than refusing to answer", () => {
