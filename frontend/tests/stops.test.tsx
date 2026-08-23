@@ -24,7 +24,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { PromptDialog } from "../src/components/game/PromptDialog";
-import { actionAttrs, stopId } from "../src/input/stops";
+import { actionAttrs, candidatesIn, stopId } from "../src/input/stops";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
@@ -165,6 +165,102 @@ describe("rendered surfaces", () => {
     for (const tool of ["mute", "full-control", "manual-mana", "undo", "quit"]) {
       expect(stops).toContain(`tool:${tool}`);
     }
+  });
+});
+
+/*
+ * jsdom has no layout, so every box here is stated rather than measured. That
+ * is the point: the question is what `candidatesIn` does with a given set of
+ * boxes, and a real browser would only make the boxes harder to control.
+ */
+function boxed(el: Element, x: number, y: number, w: number, h: number): void {
+  const rect = {
+    x,
+    y,
+    width: w,
+    height: h,
+    top: y,
+    left: x,
+    right: x + w,
+    bottom: y + h,
+    toJSON() {
+      return this;
+    },
+  } as DOMRect;
+  el.getBoundingClientRect = () => rect;
+}
+
+describe("candidatesIn", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  function table(html: string): HTMLElement {
+    document.body.innerHTML = `<div class="table">${html}</div>`;
+    const root = document.querySelector(".table") as HTMLElement;
+    boxed(root, 0, 0, 1280, 800);
+    return root;
+  }
+
+  it("keeps a stop with a box inside its ancestors", () => {
+    const root = table(`<div class="lane"><button data-stop="card:1"></button></div>`);
+    boxed(root.querySelector(".lane") as Element, 0, 0, 600, 200);
+    boxed(root.querySelector("[data-stop]") as Element, 10, 10, 120, 168);
+
+    expect(candidatesIn(root).map((c) => c.id)).toEqual(["card:1"]);
+  });
+
+  it("drops a stop an ancestor has clipped to nothing", () => {
+    /*
+     * THE BUG THIS EXISTS FOR. An opponent's lanes are `height: 0;
+     * overflow: hidden` so their cards stay in the document for `FxLayer` to
+     * anchor to -- and a clipped card still reports its own full box, so a
+     * zero-size check alone let the ring walk onto a card nobody can see.
+     *
+     * Worse, `handheldAssert`'s `unreachable` calls this same function, so the
+     * gate agreed the board was fine.
+     */
+    const root = table(`<div class="mat__lanes"><button data-stop="card:1"></button></div>`);
+    const lanes = root.querySelector(".mat__lanes") as HTMLElement;
+    lanes.style.overflow = "hidden";
+    boxed(lanes, 0, 0, 600, 0);
+    boxed(root.querySelector("[data-stop]") as Element, 10, 10, 120, 168);
+
+    expect(candidatesIn(root)).toEqual([]);
+  });
+
+  it("drops a stop scrolled out of a clipping ancestor", () => {
+    // Same rule, the other way a box leaves its parent: the card is a real
+    // size in a real box, and simply not within it.
+    const root = table(`<div class="acts__list"><button data-stop="act:a9"></button></div>`);
+    const list = root.querySelector(".acts__list") as HTMLElement;
+    list.style.overflowY = "auto";
+    boxed(list, 0, 100, 240, 300);
+    boxed(root.querySelector("[data-stop]") as Element, 0, 460, 240, 44);
+
+    expect(candidatesIn(root)).toEqual([]);
+  });
+
+  it("does not treat a visible overflow as a clip", () => {
+    /*
+     * A zero-height parent that does NOT clip is how the hand's lift works --
+     * the raised card overhangs its slot on purpose. Filtering on the parent's
+     * size alone would have deleted the hand.
+     */
+    const root = table(`<div class="hand__rail"><button data-stop="card:4"></button></div>`);
+    boxed(root.querySelector(".hand__rail") as Element, 0, 0, 900, 0);
+    boxed(root.querySelector("[data-stop]") as Element, 10, -80, 120, 168);
+
+    expect(candidatesIn(root).map((c) => c.id)).toEqual(["card:4"]);
+  });
+
+  it("still drops a stop with no box of its own", () => {
+    // The original rule, unchanged: a card mid-exit reports an empty box and
+    // navigating onto one puts the ring nowhere.
+    const root = table(`<button data-stop="card:1"></button>`);
+    boxed(root.querySelector("[data-stop]") as Element, 0, 0, 0, 0);
+
+    expect(candidatesIn(root)).toEqual([]);
   });
 });
 

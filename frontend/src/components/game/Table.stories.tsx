@@ -10,7 +10,11 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import { expectCardsSized, expectUniqueActionIds } from "../../testing/asserts";
+import {
+  expectCardsSized,
+  expectHandheldFloors,
+  expectUniqueActionIds,
+} from "../../testing/asserts";
 import { fakeGame, idleMutation } from "../../testing/fakeGame";
 import type { Scenario } from "../../testing/scenarios";
 import * as scenarios from "../../testing/scenarios";
@@ -280,12 +284,37 @@ export const ZoomFifteenCardHand: Story = {
  * What to look at, in order: the left rail is gone and the stack has moved to
  * the top of the right one; an opponent is a strip rather than a board; the
  * viewer's own cards hold the 96px floor even when that means the mat scrolls.
+ *
+ * ## Every one of these is a CI gate, and that is new
+ *
+ * `tags: ["handheld"]` puts them in the `storybook-handheld` project as well as
+ * the ordinary one, so each runs twice: at 1600x950, where `data-handheld`
+ * gives the compact STRUCTURE with desktop tokens, and at a real 1280x800,
+ * where `handheld.css`'s media query also re-values `--rail-r`, `--mat-side`,
+ * `--pod-seat-h` and `--hand-lift`. Both have to hold.
+ *
+ * The floors -- 16px of type, 44px of target, 96px of card -- have been
+ * asserted by `e2e/handheldAssert.ts` since Loop 3, but **Playwright is not in
+ * CI**, so nothing has ever stopped a change putting a label back under the
+ * floor. `scripts/verify.py` does run these. That is what `expectHandheldFloors`
+ * is for, and it is the reason these stories stopped being review-only.
+ *
+ * `zoomLock: false` on every one of them, deliberately: a pinned zoom asserts
+ * the designed ratios rather than the solve, and the card floor is a claim
+ * about what the solver actually does with the room it has.
  */
 
 /** Your turn, a few lands down. The everyday case. */
 export const HandheldBoard: Story = {
   args: board(scenarios.earlyBoard()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+  },
 };
 
 /**
@@ -297,27 +326,65 @@ export const HandheldBoard: Story = {
 export const HandheldPod: Story = {
   args: board(scenarios.fourPlayerPod()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+  },
 };
 
 /** Combat, where the ring has the most to reach and the least room to do it. */
 export const HandheldDeclareAttackers: Story = {
   args: board(scenarios.combatDeclareAttackers()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+    expectUniqueActionIds(canvasElement);
+  },
 };
 
 export const HandheldDeclareBlockers: Story = {
   args: board(scenarios.combatDeclareBlockers()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+    expectUniqueActionIds(canvasElement);
+  },
 };
 
 /** A modal decision, which owns the ring while it is up. */
 export const HandheldModalDecision: Story = {
   args: board(scenarios.mulligan()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+    expectUniqueActionIds(canvasElement);
+  },
 };
 
 /** A board with more permanents than the screen can hold, so the mat scrolls. */
 export const HandheldCrowdedBoard: Story = {
   args: board(scenarios.crowdedBoard()),
   globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    expectHandheldFloors(canvasElement);
+  },
 };

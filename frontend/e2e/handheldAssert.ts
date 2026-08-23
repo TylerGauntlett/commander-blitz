@@ -64,6 +64,33 @@ export interface HandheldReport {
    */
   overflowing: { selector: string; by: number }[];
   /**
+   * Fans holding more cards than they have room for.
+   *
+   * A lane and the hand lay cards along one axis, and both are inside boxes
+   * that clip. `overflowing` asks the vertical question of named containers;
+   * this asks the horizontal one of every `[data-fan]`, which is the shape
+   * that goes wrong when a card grows or a seventh card is drawn.
+   *
+   * It is here because the mockup round hit it: six cards at 176px is 1056px
+   * in the 947 the foot had, so the hand ran 79px past the foot and sat on top
+   * of the commit panel's first control. The deck was `overflow: hidden`, so
+   * the page reported no overflow anywhere and the only symptom was **a button
+   * that had quietly stopped being clickable**.
+   */
+  fanOverflow: { selector: string; by: number }[];
+  /**
+   * Scrollers that have not reserved their scrollbar's width.
+   *
+   * A styled `::-webkit-scrollbar` is a classic bar, not an overlay, so it
+   * takes its 8px the instant it appears -- and re-wraps every line under it.
+   * On a rules box that means the text you are reading reflows as it grows,
+   * which is the one surface where that is least acceptable.
+   *
+   * `scrollbar-gutter: stable` reserves it up front. Anything that scrolls and
+   * has not is a line-shift waiting for its first long card.
+   */
+  unguttered: string[];
+  /**
    * Regions taller than the budget the layout gives them.
    *
    * An opponent's seat measured 220px of an 800px screen while holding an empty
@@ -317,6 +344,43 @@ export function handheldAssert(): HandheldReport {
   }
 
   /*
+   * The same question asked sideways, of every fan.
+   *
+   * `[data-fan]` is carried by `.lane__cards` and `.hand__rail` -- the two
+   * places cards are laid along an axis with no wrapping to save them. Marked
+   * on the CONTAINER rather than matched by class name so that a third fan
+   * (a rail row of staged attackers, say) is covered the day it is written
+   * rather than the day somebody remembers to add it here.
+   */
+  const fanOverflow: { selector: string; by: number }[] = [];
+  for (const el of document.querySelectorAll<HTMLElement>("[data-fan]")) {
+    if (!visible(el)) continue;
+    const by = el.scrollWidth - el.clientWidth;
+    if (by > SLACK) fanOverflow.push({ selector: path(el), by });
+  }
+
+  /*
+   * Scrollers without a reserved gutter.
+   *
+   * Only elements that actually scroll on the axis they declare -- an
+   * `overflow-y: auto` box whose content fits has no bar and needs no gutter
+   * today, but it is one long card away from having one, so the check is on the
+   * declaration and not on the current content.
+   */
+  const unguttered: string[] = [];
+  for (const el of root.querySelectorAll<HTMLElement>("*")) {
+    if (!visible(el)) continue;
+    const style = getComputedStyle(el);
+    const scrolls = style.overflowY === "auto" || style.overflowY === "scroll";
+    if (!scrolls) continue;
+    if (style.scrollbarGutter && style.scrollbarGutter !== "auto") continue;
+    // `scrollbar-width: none` hides the bar outright, which reserves nothing
+    // but also takes nothing -- a different, and equally stable, answer.
+    if (style.scrollbarWidth === "none") continue;
+    unguttered.push(path(el));
+  }
+
+  /*
    * Region budgets, in fractions of the viewport rather than in pixels.
    *
    * The numbers are what the compact layout is designed around and they are
@@ -438,6 +502,14 @@ export function handheldAssert(): HandheldReport {
       `over budget: ${overBudget.map((o) => `${o.selector} ${o.h}px > ${o.cap}px`).join(", ")}`,
     );
   }
+  if (fanOverflow.length > 0) {
+    failures.push(
+      `fans overflowing: ${fanOverflow.map((f) => `${f.selector} by ${f.by}px`).join(", ")}`,
+    );
+  }
+  if (unguttered.length > 0) {
+    failures.push(`scrollers with no reserved gutter: ${unguttered.join(", ")}`);
+  }
   if (titleAttrs > 0) failures.push(`${titleAttrs} native title tooltip(s)`);
   if (brokenImages > 0) failures.push(`${brokenImages} broken image(s)`);
 
@@ -456,6 +528,8 @@ export function handheldAssert(): HandheldReport {
     spilled,
     collapsed,
     overflowing,
+    fanOverflow,
+    unguttered,
     overBudget,
     titleAttrs,
     duplicateTestIds,

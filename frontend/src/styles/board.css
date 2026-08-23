@@ -9,6 +9,7 @@
   place-items: center;
   padding: 24px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .table {
@@ -1374,6 +1375,7 @@
   gap: 8px;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 /* The right rail holds the card preview and the action bar. The rail itself
@@ -1513,6 +1515,7 @@
 
 .ticker__lines {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   max-height: 34vh;
   margin-top: 6px;
 }

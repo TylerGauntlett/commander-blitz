@@ -144,3 +144,148 @@ export async function settled(el: HTMLElement, quietFrames = 3): Promise<void> {
     last = now;
   }
 }
+
+/* ==========================================================================
+   The handheld floors, in CI
+   ==========================================================================
+
+   16px of type, 44px of target, 96px of card. `e2e/handheldAssert.ts` has
+   asserted these against a real engine since Loop 3 -- but **Playwright is not
+   in CI**, so until now nothing stopped a change landing that put a label back
+   under the floor. `scripts/verify.py` does run the Storybook project, in a
+   real Chromium with the real stylesheets, which is everything this walk needs.
+
+   So this is not a second implementation of the gate; it is the same three
+   numbers, asked of a component rather than of a game, on the one surface CI
+   actually runs. The e2e gate keeps its wider job -- reachability, budgets,
+   broken images, the ring -- which needs a live board to be worth asking.
+   ========================================================================== */
+
+/** The floors. Every one of them comes from a 7-inch panel at 40-50cm. */
+export const FLOORS = { font: 16, hit: 44, card: 96 } as const;
+
+/**
+ * Sub-pixel slack.
+ *
+ * A `clamp()` inside a `calc()` lands on fractions, and a box measured at
+ * 43.98px is the same design as one measured at 44. Reporting it is how a gate
+ * teaches people to ignore it.
+ */
+const SLACK = 0.5;
+
+function describeEl(el: Element): string {
+  const cls = (el.className || "").toString().trim().split(/\s+/).slice(0, 2).join(".");
+  const id = el.getAttribute("data-testid") ?? el.getAttribute("data-stop");
+  return `${el.tagName.toLowerCase()}${cls ? `.${cls}` : ""}${id ? `[${id}]` : ""}`;
+}
+
+/**
+ * On screen, not merely laid out.
+ *
+ * The same walk `input/stops.ts` and `e2e/handheldAssert.ts` use, and for the
+ * same reason: a clipped opponent's lane still reports its cards' full boxes,
+ * so measuring without it reports failures at things nobody can see -- and the
+ * "fix" would be to stop clipping the lanes, which would break the effects
+ * anchoring instead.
+ */
+function onScreen(el: Element): boolean {
+  const style = getComputedStyle(el);
+  if (style.display === "none" || style.visibility === "hidden") return false;
+  if (Number.parseFloat(style.opacity) === 0) return false;
+  const box = el.getBoundingClientRect();
+  if (box.width <= 0 || box.height <= 0) return false;
+  for (let a = el.parentElement; a; a = a.parentElement) {
+    const s = getComputedStyle(a);
+    if (s.overflow === "visible" && s.overflowX === "visible" && s.overflowY === "visible") {
+      continue;
+    }
+    const clip = a.getBoundingClientRect();
+    if (clip.width <= 0 || clip.height <= 0) return false;
+    if (
+      box.right <= clip.left ||
+      box.left >= clip.right ||
+      box.bottom <= clip.top ||
+      box.top >= clip.bottom
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Nothing carrying information is smaller than the floor.
+ *
+ * Only elements that OWN a text node are measured, and `aria-hidden` subtrees
+ * are skipped. That is the honest line between a font-size floor and a
+ * font-size ban: a wrapper inherits a size it never renders, and counting it
+ * reports failures at elements with nothing in them.
+ */
+export function expectFontFloor(root: HTMLElement): void {
+  const under: string[] = [];
+  for (const el of root.querySelectorAll<HTMLElement>("*")) {
+    if (el.closest("[aria-hidden='true']")) continue;
+    const ownsText = [...el.childNodes].some(
+      (n) => n.nodeType === 3 && (n.textContent ?? "").trim().length > 0,
+    );
+    if (!ownsText || !onScreen(el)) continue;
+    const px = Number.parseFloat(getComputedStyle(el).fontSize);
+    if (px + SLACK < FLOORS.font) {
+      under.push(`${describeEl(el)} at ${Math.round(px * 100) / 100}px`);
+    }
+  }
+  expect(under, `type under the ${FLOORS.font}px floor`).toEqual([]);
+}
+
+/**
+ * Every control is big enough to hit with a thumb.
+ *
+ * Measured on the element's own border box. A control padded out by a
+ * transparent parent -- the trick the zone chips use, a 21px chip inside a 44px
+ * hit area -- passes because the *stop* is the outer box, which is the thing a
+ * press actually lands on.
+ */
+export function expectHitFloor(root: HTMLElement): void {
+  const small: string[] = [];
+  const controls = root.querySelectorAll<HTMLElement>(
+    "button, [role='button'], a[href], input, select, [data-stop]",
+  );
+  for (const el of controls) {
+    if (el.hasAttribute("disabled") || !onScreen(el)) continue;
+    const box = el.getBoundingClientRect();
+    if (box.width + SLACK < FLOORS.hit || box.height + SLACK < FLOORS.hit) {
+      small.push(`${describeEl(el)} at ${Math.round(box.width)}x${Math.round(box.height)}`);
+    }
+  }
+  expect(small, `controls under the ${FLOORS.hit}px hit floor`).toEqual([]);
+}
+
+/**
+ * Every card the ring can land on is big enough to read.
+ *
+ * Scoped to cards carrying a stop, because that is what "the ring can land on
+ * it" means. A decorative thumbnail beside its own printed name -- the deck
+ * catalogue's, the pod seat's -- is not a card you read, and is not a stop.
+ */
+export function expectCardFloor(root: HTMLElement): void {
+  const small: string[] = [];
+  for (const el of root.querySelectorAll<HTMLElement>(".card[data-stop], .face[data-stop]")) {
+    if (!onScreen(el)) continue;
+    const box = el.getBoundingClientRect();
+    // A tapped card is rotated, so its border box measures as its own height.
+    // `--card-w` is the number the design is stated in; read that instead.
+    const declared = Number.parseFloat(getComputedStyle(el).getPropertyValue("--card-w"));
+    const w = Number.isFinite(declared) && declared > 0 ? declared : box.width;
+    if (w + SLACK < FLOORS.card) {
+      small.push(`${describeEl(el)} at ${Math.round(w * 100) / 100}px`);
+    }
+  }
+  expect(small, `cards under the ${FLOORS.card}px floor`).toEqual([]);
+}
+
+/** All three floors, which is how they are always wanted. */
+export function expectHandheldFloors(root: HTMLElement): void {
+  expectFontFloor(root);
+  expectHitFloor(root);
+  expectCardFloor(root);
+}

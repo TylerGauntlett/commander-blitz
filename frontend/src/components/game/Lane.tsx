@@ -106,7 +106,15 @@ export function Lane({
         <span className="lane__name">{LANE_LABELS[lane]}</span>
         <span className="lane__count tabular">{cards.length}</span>
       </div>
-      <div className="lane__cards">
+      {/*
+        `data-fan` marks a row that lays cards out along one axis and is allowed
+        to run out of room. The gate in `e2e/handheldAssert.ts` measures every
+        one of them for overflow, because a row that spills is invisible under
+        `overflow: hidden` -- the mockup round found its hand 79px past the foot
+        and sitting on a button that had quietly stopped being clickable, with
+        the page reporting no overflow at all.
+      */}
+      <div className="lane__cards" data-fan>
         {groups.map((group) => (
           <CardStack
             key={group.key}

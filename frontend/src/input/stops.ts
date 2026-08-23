@@ -143,6 +143,65 @@ export function stopIdOf(el: HTMLElement, index: number): string {
 }
 
 /**
+ * ON SCREEN, NOT MERELY LAID OUT.
+ *
+ * `getBoundingClientRect` reports an element's own box even when an ancestor
+ * has clipped it out of existence -- and this layout does exactly that. An
+ * opponent's lanes are `height: 0; overflow: hidden` on a handheld, because
+ * their cards have to stay in the document for `FxLayer` to anchor damage
+ * numerals and exit ghosts to (`styles/handheld.css`), and the seat swap adds
+ * a second surface with the same property.
+ *
+ * A zero-size check alone does not see any of that: a card inside a zero-height
+ * clipping parent still reports its own full box, so **the ring could walk onto
+ * a card nobody can see**, and every gate agreed it was fine because
+ * `handheldAssert`'s `unreachable` calls this very function.
+ *
+ * `e2e/handheldAssert.ts` has had the correct walk since Loop 3 -- it was
+ * written there after the gate reported 22 cards below the card floor, all of
+ * them inside a box with no height. This is the same walk, on the side that
+ * decides where the ring may go rather than the side that grades it. The two
+ * being different is what let the bug hide.
+ *
+ * Cheap enough: it runs per press, not per frame, and only walks ancestors
+ * that actually clip.
+ */
+const CLIPS = new Set(["hidden", "clip", "auto", "scroll", "overlay"]);
+
+/**
+ * Whether an ancestor's overflow actually clips.
+ *
+ * Asked as "is it one of the clipping keywords" rather than "is it not
+ * `visible`", and that distinction is not pedantry: jsdom returns `""` for an
+ * overflow nobody set, so the negative form treats every ancestor as a clipper
+ * -- and since jsdom also reports a zero box for `<body>`, every stop in every
+ * component test would have been filtered out. The positive form is also the
+ * more honest question, because `visible` is not the only non-clipping value a
+ * browser can return.
+ */
+function clips(style: CSSStyleDeclaration): boolean {
+  // The shorthand is read too, because jsdom does not always expand it into
+  // the longhands. A browser resolves all three, so this costs nothing there.
+  return CLIPS.has(style.overflowX) || CLIPS.has(style.overflowY) || CLIPS.has(style.overflow);
+}
+
+function onScreen(el: Element, rect: DOMRect): boolean {
+  if (rect.width <= 0 || rect.height <= 0) return false;
+  for (let a = el.parentElement; a; a = a.parentElement) {
+    if (!clips(getComputedStyle(a))) continue;
+    const clip = a.getBoundingClientRect();
+    if (clip.width <= 0 || clip.height <= 0) return false;
+    const intersects =
+      rect.right > clip.left &&
+      rect.left < clip.right &&
+      rect.bottom > clip.top &&
+      rect.top < clip.bottom;
+    if (!intersects) return false;
+  }
+  return true;
+}
+
+/**
  * Stops as scoreable candidates.
  *
  * Rects are measured fresh on every press. That sounds expensive and is not:
@@ -152,7 +211,8 @@ export function stopIdOf(el: HTMLElement, index: number): string {
  * every layout change the engine causes, which is all of them.
  *
  * Zero-sized stops are dropped: a card mid-`AnimatePresence`-exit reports an
- * empty box, and navigating onto one puts the ring nowhere.
+ * empty box, and navigating onto one puts the ring nowhere. So are stops an
+ * ancestor has clipped away -- see `onScreen`, which is the one that matters.
  */
 export function candidatesIn(root: HTMLElement = stopRoot()): Candidate[] {
   const out: Candidate[] = [];
@@ -160,7 +220,7 @@ export function candidatesIn(root: HTMLElement = stopRoot()): Candidate[] {
   for (let i = 0; i < all.length; i += 1) {
     const el = all[i];
     const rect = el.getBoundingClientRect();
-    if (rect.width <= 0 || rect.height <= 0) continue;
+    if (!onScreen(el, rect)) continue;
     out.push({ id: stopIdOf(el, i), rect });
   }
   return out;
