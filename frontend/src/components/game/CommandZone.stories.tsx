@@ -117,12 +117,6 @@ export const NoArt: Story = {
   },
 };
 
-/** An opponent's plinth: reference only, sized to a 112px column. */
-export const Compact: Story = {
-  args: { state: withCommanders(), compact: true },
-  parameters: { automtg: { mount: "orbBodyCompact" } },
-};
-
 /** Already on the battlefield, so the command zone is empty. */
 export const Empty: Story = {
   args: { state: withCommanders([]) },

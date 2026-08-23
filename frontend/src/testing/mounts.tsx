@@ -133,11 +133,7 @@ const playOpponents = [...play, { className: "play__opponents" }];
 const matSide = [...playMine, MAT, { className: "mat__side" }];
 const matSideCompact = [...playOpponents, MAT_COMPACT, { className: "mat__side" }];
 const matLanes = [...playMine, MAT, { className: "mat__lanes", style: { gridColumn: 2 } }];
-const matLanesCompact = [
-  ...playOpponents,
-  MAT_COMPACT,
-  { className: "mat__lanes", style: { gridColumn: 2 } },
-];
+const matLanesCompact = [...playOpponents, MAT_COMPACT, { className: "mat__lanes" }];
 const pod = [SCREEN, POD];
 const podHand = [...pod, TABLEWRAP, { className: "podhand", style: { gridRow: 2 } }];
 const catalog = [SCREEN, CAT];
@@ -198,14 +194,13 @@ export const MOUNTS = {
 
   /* ---- one player's mat ---- */
   matSide: { where: "your mat's info column (190px)", layers: matSide },
-  matSideCompact: { where: "an opponent's info column (112px)", layers: matSideCompact },
+  matSideCompact: {
+    where: "an opponent's seat, the full width of their mat",
+    layers: matSideCompact,
+  },
   orbBody: {
     where: "inside your player orb",
     layers: [...matSide, { className: "orb" }, { className: "orb__body" }],
-  },
-  orbBodyCompact: {
-    where: "inside an opponent's player orb",
-    layers: [...matSideCompact, { className: "orb orb--compact" }, { className: "orb__body" }],
   },
   matLanes: { where: "your mat's battlefield column", layers: matLanes },
   bandFront: {

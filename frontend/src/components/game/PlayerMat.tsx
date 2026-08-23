@@ -19,6 +19,7 @@ import {
   groupBattlefield,
 } from "../../logic/zoneGrouping";
 import { Lane } from "./Lane";
+import { OpponentSeat } from "./OpponentSeat";
 import { PlayerOrb } from "./PlayerOrb";
 
 /** Toward the opponent: what fights, and what sits behind it. */
@@ -62,6 +63,8 @@ interface Props {
   spending?: ReadonlySet<number>;
   /** Input is gated (narration playing, request in flight). */
   locked?: boolean;
+  /** This opponent's board is the one currently drawn in the viewer's area. */
+  viewing?: boolean;
 }
 
 export function PlayerMat({
@@ -89,6 +92,7 @@ export function PlayerMat({
   onHoverCard,
   spending,
   locked = false,
+  viewing = false,
 }: Props) {
   const lanes = groupBattlefield(state, player.pid);
   const attachments = attachmentsFor(state, player.pid);
@@ -119,26 +123,54 @@ export function PlayerMat({
 
   return (
     <section className={compact ? "mat mat--compact" : "mat"} data-testid={`mat-${player.pid}`}>
-      {/* The mat's first column is everything that is a fact about this player
-          rather than a permanent on their board -- commander, life, mana,
-          zones. All of it lives inside the orb; see PlayerOrb. */}
+      {/*
+        Everything that is a fact about this player rather than a permanent on
+        their board -- and it is a different component depending on whose seat
+        it is, which is the whole of `mockups/seat/`'s argument.
+
+        THE VIEWER GETS A PANEL THEY OPERATE. Commander, life, mana, zones: all
+        of it is theirs to press, and all of it lives inside the orb.
+
+        AN OPPONENT GETS A SUMMARY THEY READ. None of an orb's controls is
+        yours on somebody else's seat, so a pod was three control panels for
+        controls nobody could press -- while the question actually being asked
+        across the table, how developed is that board, was answered by counting
+        cards at 51px. See `OpponentSeat`.
+
+        Drawn at every size. A desktop that summarised opponents differently
+        from a handheld would be two designs for one fact; what changes with the
+        size is whether their lanes are drawn underneath, not what the seat is.
+      */}
       <div className="mat__side">
-        <PlayerOrb
-          state={state}
-          player={player}
-          isViewer={player.pid === state.seat}
-          isActive={player.pid === state.active_player}
-          hasPriority={state.priority_player === player.pid}
-          names={names}
-          compact={compact}
-          targetable={playerTargetable}
-          onSelect={onSelectPlayer}
-          spending={spending}
-          playableOids={playableOids}
-          onCastCommander={onCastCommander}
-          onHoverCard={onHoverCard}
-          locked={locked}
-        />
+        {compact ? (
+          <OpponentSeat
+            state={state}
+            player={player}
+            names={names}
+            isActive={player.pid === state.active_player}
+            hasPriority={state.priority_player === player.pid}
+            targetable={playerTargetable}
+            viewing={viewing}
+            onSelect={onSelectPlayer}
+            locked={locked}
+          />
+        ) : (
+          <PlayerOrb
+            state={state}
+            player={player}
+            isViewer={player.pid === state.seat}
+            isActive={player.pid === state.active_player}
+            hasPriority={state.priority_player === player.pid}
+            names={names}
+            targetable={playerTargetable}
+            onSelect={onSelectPlayer}
+            spending={spending}
+            playableOids={playableOids}
+            onCastCommander={onCastCommander}
+            onHoverCard={onHoverCard}
+            locked={locked}
+          />
+        )}
       </div>
       <div className="mat__lanes">
         {bands.map(({ band, shown }) => (

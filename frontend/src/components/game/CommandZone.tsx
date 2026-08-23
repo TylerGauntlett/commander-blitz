@@ -20,6 +20,10 @@
  * commander and for your own whenever you could not cast it. See `aria-disabled`
  * below.
  *
+ * Only ever the viewer's, now that an opponent is an `OpponentSeat` -- so the
+ * `compact` variant this used to draw at two-thirds the size for a seat nobody
+ * could cast from is gone with it.
+ *
  * The portrait also carries the **life seal**: `PlayerOrb` hands the dial down
  * as `seal` and the plinth stamps it over the art's lower right. Life is not a
  * fact about the command zone, but the art's bottom edge is the only anchor that
@@ -88,7 +92,6 @@ interface PlinthProps {
   castable: boolean;
   /** Extra generic owed to cast from the command zone; already doubled. */
   tax: number;
-  compact: boolean;
   disabled: boolean;
   onActivate?: (card: CardView) => void;
   onHover?: (oid: number | null) => void;
@@ -99,16 +102,7 @@ interface PlinthProps {
   seal?: ReactNode;
 }
 
-function Plinth({
-  card,
-  castable,
-  tax,
-  compact,
-  disabled,
-  onActivate,
-  onHover,
-  seal,
-}: PlinthProps) {
+function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: PlinthProps) {
   const images = useUiStore((s) => s.images);
   const [broken, setBroken] = useState(false);
   // Three states, and the last two differ: `undefined` means the image map has
@@ -121,7 +115,7 @@ function Plinth({
   // A cost means something only where you could pay it. The surcharge goes with
   // it rather than outliving it: a bare "+2" beside a commander already on the
   // stack is a number with nothing to modify.
-  const showCost = card.zone === "command" && !compact;
+  const showCost = card.zone === "command";
   const pips = showCost ? manaPips(card.mana_cost) : [];
 
   // Castable *and* not gated. `disabled` is the narration/in-flight lock.
@@ -215,11 +209,9 @@ function Plinth({
           to fit an orb, a mana row and five piles into the height of one mat --
           and at 1600x950 that was 22px the piles did not have.
         */}
-        {!compact && (
-          <span className="cmdplinth__tag" data-hint="Commander">
-            CMD
-          </span>
-        )}
+        <span className="cmdplinth__tag" data-hint="Commander">
+          CMD
+        </span>
 
         {/*
           Life, stamped half on the art and half off it. It costs the overlap
@@ -280,7 +272,6 @@ interface Props {
   /** Oids a legal `cast`/`play_land` action names right now. */
   playableOids: ReadonlySet<number>;
   /** An opponent's plinth: reference only, and sized to a 112px column. */
-  compact?: boolean;
   onActivate?: (card: CardView) => void;
   onHover?: (oid: number | null) => void;
   disabled?: boolean;
@@ -299,7 +290,6 @@ export function CommandZone({
   state,
   pid,
   playableOids,
-  compact = false,
   onActivate,
   onHover,
   disabled = false,
@@ -322,7 +312,6 @@ export function CommandZone({
               // from the legal-action list, never from a guess about mana.
               castable={card.zone === "command" && playableOids.has(card.oid)}
               tax={player.commander_cost?.[String(card.oid)] ?? 0}
-              compact={compact}
               disabled={disabled}
               onActivate={onActivate}
               onHover={onHover}

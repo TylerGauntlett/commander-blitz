@@ -1,0 +1,428 @@
+/**
+ * An opponent, as five numbers you can check against their board.
+ *
+ * ## What this replaces, and why
+ *
+ * An opponent used to be a `PlayerOrb` -- the same column the viewer gets, at
+ * two-thirds the size. That column is built to be *operated*: a commander you
+ * cast, piles you open, a mana row that forecasts your own spend. None of it is
+ * yours on somebody else's seat, so a pod was three control panels for controls
+ * nobody could press, and the one question actually being asked across the
+ * table -- **how developed is that board** -- was answered by counting cards at
+ * 51px.
+ *
+ * So a seat answers that question directly: lands, creatures and other
+ * permanents as `untapped/total`, a pip per creature, total power, and a gauge
+ * that is life eaten from the left and commander damage closing from the right.
+ *
+ * ## The gate is the point
+ *
+ * `mockups/seat/` records the failure mode this whole family of components has:
+ * **a summary that cannot be checked against the thing it summarises**. Five of
+ * its six directions could not be wrong about the board, because the numbers
+ * were never in the payload. Every number here comes from `musterOf`, which is
+ * the one walk `threatOf` is also derived from.
+ *
+ * ## Drawn at every size, and that is a decision
+ *
+ * Not scoped to the handheld layout. A desktop pod draws an opponent's cards at
+ * ~51px, where counting untapped creatures is a chore the client can simply do
+ * -- and a desktop that summarised opponents differently from a handheld would
+ * be two designs for one fact. What differs by size is what sits *below* the
+ * seat: their actual lanes on a desktop, nothing on a handheld, where 1280px
+ * cannot hold three boards and a hand at a legible card size.
+ *
+ * ## The identity attributes are not ours to rename
+ *
+ * `data-player` anchors `FxLayer`'s damage numerals and `CombatArrows`' ends.
+ * `data-stop="orb:<pid>"` is what `parseStop`, `verbsFor` and the R2 hold all
+ * branch on -- a `seat:<pid>` namespace would break three things silently.
+ * `player-<pid>` and `life-<pid>` are what the e2e helpers query. All of them
+ * are carried through unchanged from `PlayerOrb`.
+ *
+ * ## No `data-action-id`, ever
+ *
+ * The seat is a target and a viewer, never a second copy of the action space.
+ * Its press routes through `onSelect`, which is the same gesture an orb has
+ * always had: point an attacker at them, finish a player-targeted spell, or --
+ * when neither is legal -- read their board. `ActionPanel` owns every id alone,
+ * which `e2e/cycle3.spec.ts` asserts.
+ */
+
+import { motion } from "motion/react";
+import type { CSSProperties } from "react";
+import type { GameView, PlayerView } from "../../api/types";
+import { stopId } from "../../input/stops";
+import { artUrl } from "../../logic/cardArt";
+import { lossReason } from "../../logic/labels";
+import { type Muster, musterOf } from "../../logic/threat";
+import { commandersOf } from "../../logic/zoneGrouping";
+import type { PileKind } from "../../logic/zones";
+import { bouncy } from "../../motion/springs";
+import { useUiStore } from "../../state/uiStore";
+
+/** Commander damage becomes lethal here. The gauge is a fraction of it. */
+const COMMANDER_LETHAL = 21;
+
+/** Warn well before it is lethal: at 15 the next hit can end you. */
+const COMMANDER_WARN = 15;
+
+/** Starting life, and so what the life half of the gauge is a fraction of. */
+const STARTING_LIFE = 40;
+
+/**
+ * Eight pips, then a count.
+ *
+ * Past eight the extra pips say nothing a reader can use, and the cap costs
+ * resolution and never information -- the exact number is on the creature cell
+ * beside them.
+ */
+const MAX_PIPS = 8;
+
+interface Props {
+  state: GameView;
+  player: PlayerView;
+  /** Seat names, for saying whose commander damage a tick is. */
+  names: string[];
+  /** It is this player's turn. */
+  isActive: boolean;
+  /** This player holds priority, which is a different fact from the above. */
+  hasPriority: boolean;
+  /** This player can be pointed at right now. */
+  targetable: boolean;
+  /** Their board is the one currently drawn in the viewer's lane area. */
+  viewing?: boolean;
+  onSelect?: (pid: number) => void;
+  /** Input is gated (narration playing, request in flight). */
+  locked?: boolean;
+}
+
+/**
+ * One kind of permanent, drawn as a count over a meter.
+ *
+ * `open` is `null` for the cell that has no tapped state to draw. The lane
+ * mixes artifacts with enchantments and an enchantment does not tap, so an
+ * `untapped/total` there would be measuring two things and calling them one --
+ * see `Muster.other`.
+ */
+function PermCell({
+  kind,
+  total,
+  open,
+  label,
+}: {
+  kind: "land" | "creature" | "other";
+  total: number;
+  open: number | null;
+  label: string;
+}) {
+  const fill = open === null || total === 0 ? 0 : (open / total) * 100;
+  return (
+    <span
+      className={`perm perm--${kind}${total === 0 ? " perm--zero" : ""}`}
+      style={{ "--fill": `${fill}%` } as CSSProperties}
+      data-perm={kind}
+      data-total={total}
+      data-open={open ?? ""}
+      aria-label={label}
+      data-hint={label}
+    >
+      <span className="perm__n tabular">{open === null ? total : `${open}/${total}`}</span>
+    </span>
+  );
+}
+
+/**
+ * A pip per creature, untapped first and fliers first.
+ *
+ * The ordering is what makes the cap safe: the pips a player cares about are
+ * the ones that survive it. Sorting them the other way round would mean a board
+ * of nine creatures could hide its only flier behind the `+1`.
+ */
+function DetailCell({ muster }: { muster: Muster }) {
+  const shown = Math.min(muster.creatures, MAX_PIPS);
+  const pips: { up: boolean; fly: boolean }[] = [];
+  let up = muster.creaturesUntapped;
+  let fly = muster.fliers;
+  for (let i = 0; i < shown; i += 1) {
+    pips.push({ up: up-- > 0, fly: fly-- > 0 });
+  }
+  const more = muster.creatures - shown;
+
+  const label = `${muster.power} power on board${
+    muster.fliers > 0 ? `, ${muster.fliers} ${muster.fliers === 1 ? "flier" : "fliers"}` : ""
+  }`;
+
+  return (
+    <span className="perm perm--detail" aria-label={label} data-hint={label}>
+      <span className="pips">
+        {pips.map((pip, i) => (
+          <span
+            // The pips have no identity of their own -- this is a bar chart
+            // with one bar per creature, not a list of creatures -- so the
+            // index is the honest key.
+            // biome-ignore lint/suspicious/noArrayIndexKey: see above
+            key={i}
+            className={`tpip${pip.up ? " tpip--up" : ""}${pip.fly ? " tpip--fly" : ""}`}
+          />
+        ))}
+        {more > 0 && <span className="pips__more tabular">+{more}</span>}
+        {muster.creatures === 0 && <span className="pips__more">none</span>}
+      </span>
+      <span className="perm__pow tabular" data-power={muster.power}>
+        {muster.power}
+      </span>
+    </span>
+  );
+}
+
+interface SeatZone {
+  zone: string;
+  kind: PileKind;
+  label: string;
+  count: number;
+}
+
+/** The zones a seat reports, in the order the orb has always listed them. */
+function zonesOf(player: PlayerView): SeatZone[] {
+  const zones: SeatZone[] = [
+    { zone: "library", kind: "lib", label: "Library", count: player.library_count },
+    { zone: "hand", kind: "hand", label: "Hand", count: player.hand_count },
+    { zone: "graveyard", kind: "gy", label: "Graveyard", count: player.graveyard.length },
+  ];
+  // Exile appears the moment anything is exiled and is NOT a fixed slot, so a
+  // seat shows four marks or five. The row has to survive that reflow, which is
+  // why the marks share the width rather than being placed.
+  if (player.exile.length > 0) {
+    zones.push({ zone: "exile", kind: "ex", label: "Exile", count: player.exile.length });
+  }
+  zones.push({
+    zone: "command",
+    kind: "cmd",
+    label: "Command zone",
+    count: player.command.length,
+  });
+  return zones;
+}
+
+export function OpponentSeat({
+  state,
+  player,
+  names,
+  isActive,
+  hasPriority,
+  targetable,
+  viewing = false,
+  onSelect,
+  locked = false,
+}: Props) {
+  const images = useUiStore((s) => s.images);
+  const muster = musterOf(state, player.pid);
+
+  /*
+   * The seat's ground and its window are one image at two treatments.
+   *
+   * The same `commandersOf` and `artUrl` the orb and the plinth already call,
+   * so this is a second reference to a URL the browser has cached rather than a
+   * second request. `undefined` (map not fetched) and `null` (no printing) both
+   * mean draw no art: the seat falls back to its flat well, which is a
+   * perfectly good seat and is what it looked like before this direction.
+   */
+  const commanders = commandersOf(state, player.pid);
+  const commander = commanders[0];
+  const art = commander ? artUrl(images, commander.card_id) : undefined;
+
+  /*
+   * Commander damage, as ticks that close the gauge from the right.
+   *
+   * Each is offset by the width of the ticks outside it, so the track reads as
+   * one bar eaten from both ends rather than as three overlapping bars. Only
+   * seats that have actually dealt damage draw a tick -- unlike the orb's
+   * plate, which reserves a chip per seat at zero, because there the reflow
+   * would move a whole column and here it moves nothing.
+   */
+  const sources = state.players
+    .filter((seat) => seat.pid !== player.pid)
+    .map((seat) => ({
+      pid: seat.pid,
+      amount: player.commander_damage_taken[String(seat.pid)] ?? 0,
+      who: names[seat.pid] ?? seat.name ?? `Player ${seat.pid}`,
+    }));
+
+  let offset = 0;
+  const ticks = sources
+    .filter((source) => source.amount > 0)
+    .map((source) => {
+      const width = (Math.min(source.amount, COMMANDER_LETHAL) / COMMANDER_LETHAL) * 100;
+      const tick = { ...source, width, right: offset };
+      offset += width;
+      return tick;
+    });
+
+  const worst = [...sources].sort((a, b) => b.amount - a.amount)[0] ?? {
+    amount: 0,
+    who: "nobody",
+  };
+
+  const gaugeLabel = `${player.life} life of ${STARTING_LIFE} — ${
+    worst.amount === 0
+      ? "no commander damage yet"
+      : `worst commander damage ${worst.amount} of ${COMMANDER_LETHAL} from ${worst.who}`
+  }`;
+
+  const classes = [
+    "seat",
+    isActive ? "seat--active" : "",
+    targetable ? "seat--targetable" : "",
+    viewing ? "seat--viewing" : "",
+    player.has_lost ? "seat--out" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <motion.button
+      type="button"
+      className={classes}
+      data-player={player.pid}
+      data-stop={stopId.orb(player.pid)}
+      data-testid={`player-${player.pid}`}
+      data-seat={player.pid}
+      disabled={locked}
+      onClick={onSelect ? () => onSelect(player.pid) : undefined}
+      layout
+      transition={bouncy}
+      whileHover={targetable ? { scale: 1.02 } : undefined}
+    >
+      {/*
+        Two layers rather than one blended one, which is `PlayerOrb`'s argument
+        arriving here: tinting the scrim itself lifts the whole seat toward the
+        art's dominant colour and takes the name with it, so the veil is
+        unconditionally dark and no type here depends on what the painting
+        happens to look like.
+      */}
+      {typeof art === "string" && (
+        <>
+          {/* Quoted, because an unquoted `url()` gives parentheses and
+              whitespace meaning, and the deck importer mints ids from names it
+              did not choose. */}
+          <span
+            className="seat__ground"
+            style={{ backgroundImage: `url("${art}")` }}
+            aria-hidden="true"
+          />
+          <span className="seat__veil" aria-hidden="true" />
+        </>
+      )}
+
+      {/* Whose turn it is and who holds priority are two different facts, and
+          the shipped ribbon ran them together into one highlighted name. The
+          ring is the turn; this tick is priority. */}
+      {hasPriority && <span className="seat__pri" aria-hidden="true" />}
+
+      {/* The crisp window. The ground is the same painting veiled to nothing;
+          this is the half somebody can recognise. */}
+      <span className="seat__win" aria-hidden="true">
+        {typeof art === "string" && <img src={art} alt="" />}
+      </span>
+
+      <span className="seat__head">
+        <span className="seat__name">{player.name}</span>
+        <span className="seat__cmdr">{commander?.name ?? ""}</span>
+      </span>
+
+      <span
+        className="gauge"
+        style={
+          { "--fill": `${Math.min(player.life / STARTING_LIFE, 1) * 100}%` } as CSSProperties
+        }
+        aria-label={gaugeLabel}
+        data-hint={gaugeLabel}
+      >
+        {ticks.map((tick) => (
+          <span
+            key={tick.pid}
+            className={`tick${tick.amount >= COMMANDER_WARN ? " tick--warn" : ""}`}
+            style={{ "--w": `${tick.width}%`, right: `${tick.right}%` } as CSSProperties}
+            data-from={tick.pid}
+            data-amount={tick.amount}
+            aria-hidden="true"
+          />
+        ))}
+        <span className="seat__life tabular" data-testid={`life-${player.pid}`}>
+          {player.has_lost ? "OUT" : player.life}
+        </span>
+        <span
+          className={`gauge__dmg${worst.amount >= COMMANDER_WARN ? " gauge__dmg--warn" : ""}${
+            worst.amount === 0 ? " gauge__dmg--zero" : ""
+          }`}
+          data-testid={`cmddmg-${player.pid}`}
+        >
+          <span className="gauge__crown" aria-hidden="true" />
+          <span className="tabular">{worst.amount}</span>
+        </span>
+      </span>
+
+      <span className="seat__perms">
+        <PermCell
+          kind="land"
+          total={muster.lands}
+          open={muster.landsUntapped}
+          label={`${muster.lands} ${muster.lands === 1 ? "land" : "lands"} — ${
+            muster.landsUntapped
+          } untapped, ${muster.lands - muster.landsUntapped} tapped`}
+        />
+        <PermCell
+          kind="creature"
+          total={muster.creatures}
+          open={muster.creaturesUntapped}
+          label={`${muster.creatures} ${muster.creatures === 1 ? "creature" : "creatures"} — ${
+            muster.creaturesUntapped
+          } untapped, ${muster.creatures - muster.creaturesUntapped} tapped`}
+        />
+        <PermCell
+          kind="other"
+          total={muster.other}
+          open={null}
+          label={
+            muster.other === 0
+              ? "No artifacts or enchantments"
+              : muster.other === 1
+                ? "1 artifact or enchantment"
+                : `${muster.other} artifacts or enchantments`
+          }
+        />
+        <DetailCell muster={muster} />
+      </span>
+
+      {/*
+        The zones, as marks rather than as controls.
+
+        `PlayerOrb` makes each pile a button, because on your own column they
+        are the only route into `ZonePeek`. A seat is 96px tall and the row it
+        can spare is 20 -- a 44px hit target does not fit, and faking one with a
+        transparent overlay would steal presses from the gauge and the counts
+        above it. So the marks report, and the way into an opponent's zones is
+        to read their board: press the seat.
+
+        They keep `pile-<pid>-<zone>` so the counts stay queryable, and they are
+        text inside the seat's own button, which a reader announces with it.
+      */}
+      <span className="seat__zones">
+        {zonesOf(player).map((zone) => (
+          <span
+            key={zone.zone}
+            className={`zmark zmark--${zone.kind}${zone.count === 0 ? " zmark--empty" : ""}`}
+            data-testid={`pile-${player.pid}-${zone.zone}`}
+            aria-label={`${zone.label}: ${zone.count}`}
+            data-hint={`${zone.label}: ${zone.count}`}
+          >
+            <span className="zmark__n tabular">{zone.count}</span>
+          </span>
+        ))}
+      </span>
+
+      {player.has_lost && <span className="seat__out">{lossReason(player.loss_reason)}</span>}
+    </motion.button>
+  );
+}
