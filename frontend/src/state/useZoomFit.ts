@@ -61,6 +61,16 @@ import { useCardBase } from "./useCardBase";
 const HAND_FRACTION = 0.26;
 
 /**
+ * ...and what it may take on a handheld, which is more.
+ *
+ * `mockups/handheld-board/` gives the foot 270px of an 800px screen -- 0.34 --
+ * and spends it on a hand at 152px, on the argument that the hand is the
+ * surface a main phase is actually spent reading. The board can afford it
+ * because an opponent is a 96px seat there rather than a board.
+ */
+const HANDHELD_HAND_FRACTION = 0.34;
+
+/**
  * The foot's height past the hand's cards: `.hand`'s 44px droop allowance plus
  * `.table__foot`'s 16px of padding. The droop is for the arc's rotation, which is
  * a transform and contributes nothing to layout, so it has to be reserved.
@@ -95,6 +105,23 @@ export interface ZoomFit {
 interface Measurements {
   tableW: number;
   tableH: number;
+  /**
+   * The foot's own width, which is no longer the table's.
+   *
+   * The foot moved inside `.table__body`'s first column when the right rail was
+   * given the full height, so it is now the board's width rather than the
+   * screen's -- about 1024 of 1600 on a desktop and 1017 of 1280 on a handheld.
+   * Laying a 1180px fan inside it is exactly the failure
+   * `mockups/handheld-board/` records: six cards at 176px is 1056px in the 947
+   * the foot had, the hand ran 79px past it onto the commit panel's first
+   * control, and `overflow: hidden` meant nothing reported it at all.
+   *
+   * Its WIDTH is safe to read and its HEIGHT is not, for the reason `mineW`
+   * gives: the width is a grid track between the board and a fixed rail token
+   * and no part of the solve moves it, while the height is an output of the
+   * card size this function is solving for.
+   */
+  footW: number;
   mineW: number;
   mineH: number;
   podW: number;
@@ -170,6 +197,8 @@ export function useZoomFit(args: {
   tableRef: RefObject<HTMLElement>;
   mineRef: RefObject<HTMLElement>;
   podRef: RefObject<HTMLElement>;
+  /** The foot, whose WIDTH the fan is solved against. See `Measurements`. */
+  footRef: RefObject<HTMLElement>;
 }): ZoomFit {
   const {
     state,
@@ -180,6 +209,7 @@ export function useZoomFit(args: {
     tableRef,
     mineRef,
     podRef,
+    footRef,
   } = args;
   const base = useCardBase();
   const pinned = zoomLocked();
@@ -190,10 +220,15 @@ export function useZoomFit(args: {
     const table = tableRef.current;
     const mine = mineRef.current;
     const pod = podRef.current;
+    const foot = footRef.current;
     if (!table || !mine) return;
     const next: Measurements = {
       tableW: table.clientWidth,
       tableH: table.clientHeight,
+      // Falls back to the table until the foot has mounted, which is the first
+      // paint only -- and erring wide there is the safe direction: the fan
+      // solves again the moment the observer fires.
+      footW: foot?.clientWidth ?? table.clientWidth,
       // Width and height only. Never the mat inside it, whose height is an output.
       mineW: mine.clientWidth,
       mineH: mine.clientHeight,
@@ -211,7 +246,7 @@ export function useZoomFit(args: {
       );
       return same ? current : next;
     });
-  }, [tableRef, mineRef, podRef]);
+  }, [tableRef, mineRef, podRef, footRef]);
 
   useEffect(() => {
     if (pinned) return;
@@ -221,11 +256,11 @@ export function useZoomFit(args: {
 
     measure();
     const observer = new ResizeObserver(measure);
-    for (const ref of [tableRef, mineRef, podRef]) {
+    for (const ref of [tableRef, mineRef, podRef, footRef]) {
       if (ref.current) observer.observe(ref.current);
     }
     return () => observer.disconnect();
-  }, [pinned, measure, tableRef, mineRef, podRef]);
+  }, [pinned, measure, tableRef, mineRef, podRef, footRef]);
 
   return useMemo(() => {
     if (pinned || !measured) return locked(opponents.length);
@@ -253,10 +288,12 @@ export function useZoomFit(args: {
     const handCeiling = Math.min(MAX_CARD_W, base * CARD_SCALE.hand);
     const handW = solveHandCardWidth(
       handCount,
-      Math.min(HAND_FAN_W, measured.tableW - FAN_INSET),
+      Math.min(HAND_FAN_W, measured.footW - FAN_INSET),
       {
         heightPx:
-          measured.tableH * HAND_FRACTION - FOOT_CHROME - (handheld ? HANDHELD_FOOT_EXTRA : 0),
+          measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
+          FOOT_CHROME -
+          (handheld ? HANDHELD_FOOT_EXTRA : 0),
         minCardW: floor,
         maxCardW: handCeiling,
       },

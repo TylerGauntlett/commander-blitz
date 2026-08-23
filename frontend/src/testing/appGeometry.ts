@@ -38,9 +38,8 @@ export const APP_BOX = {
  * docs page, and in a handheld story alike.
  */
 export const APP_VAR = {
-  /** The stack and the log. `board.css`, `.table__body` grid-template-columns. */
-  railLeft: "var(--rail-l)",
-  /** The preview, the action panel and the commit dock. Same rule. */
+  /** The preview, the action panel and the commit dock. `board.css`,
+      `.table__body` grid-template-columns. */
   railRight: "var(--rail-r)",
   /** Your mat's info column, which is what sizes `PlayerOrb`. `.mat`. */
   matSide: "var(--mat-side)",

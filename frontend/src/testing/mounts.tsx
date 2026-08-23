@@ -110,23 +110,28 @@ const CAT: Layer = { className: "cat" };
 const DOS: Layer = { className: "dos" };
 
 /*
- * The board with the handheld foot standing in beneath it.
+ * The board with the foot standing in beside it.
+ *
+ * The `after` hangs off `.table__body` and not off `.table`: the foot moved
+ * inside the body when the right rail was given the full height, so a sibling
+ * of the table is a sibling of the wrong thing. It states no grid track for the
+ * reason the header gives -- `board.css` places it by class, and a number here
+ * would be a size in disguise.
  *
  * Only mounts whose component portals into the foot need this; everything else
  * would be paying for an empty row it never looks at.
  */
-const TABLE_WITH_FOOT: Layer = {
-  ...TABLE,
+const TABLE_BODY_WITH_FOOT: Layer = {
+  ...TABLE_BODY,
   after: {
     className: "table__foot",
-    style: { gridRow: 3 },
     children: ["foot__slab", "foot__tools"],
   },
 };
 
 const board = [SCREEN, TABLE];
 const tableBody = [...board, TABLE_BODY];
-const tableBodyWithFoot = [SCREEN, TABLE_WITH_FOOT, TABLE_BODY];
+const tableBodyWithFoot = [...board, TABLE_BODY_WITH_FOOT];
 const play = [...tableBody, PLAY];
 const playMine = [...play, { className: "play__mine", style: { gridRow: 2 } }];
 const playOpponents = [...play, { className: "play__opponents" }];
@@ -151,18 +156,32 @@ export const MOUNTS = {
 
   /* ---- the board ---- */
   trackRow: { where: "the phase ribbon's row of .table", layers: board },
-  tableBody: { where: "the board's three-column body", layers: tableBody },
+  tableBody: { where: "the board's body: the board, the foot and the rail", layers: tableBody },
+  /*
+   * The foot is a child of the BODY now, not of the table, and it states no
+   * track at all.
+   *
+   * `board.css` and `handheld.css` place it by class, and a number written here
+   * is a size in disguise -- which is the trap this file's own header is about,
+   * and the one that once drew fifty card stories at the right rail's width.
+   */
   tableFoot: {
-    where: "the foot, under the board",
-    layers: [...board, { className: "table__foot", style: { gridRow: 3 } }],
+    where: "the foot, under the board and beside the rail",
+    layers: [...tableBody, { className: "table__foot" }],
   },
-  railLeft: {
-    where: "the left rail (232px)",
-    layers: [...tableBody, { className: "rail rail--left" }],
-  },
+  /*
+   * There is no `railLeft`. The left rail is retired at every size: the log is
+   * an overlay on `View` and the stack floats over the board. A story that
+   * wants either mounts `tableBody` and lets it place itself.
+   */
   railRight: {
-    where: "the right rail (304px)",
+    where: "the right rail, running the full height beside the board",
     layers: [...tableBody, { className: "rail rail--right" }],
+  },
+  /* The log, where it now lives at every size: a panel over the board. */
+  logOverlay: {
+    where: "the log overlay, over the board",
+    layers: [...board, { className: "logover" }],
   },
   /*
    * The right rail with the card preview above it, as a stand-in.

@@ -128,13 +128,14 @@ html[data-input="keyboard"] .glyph--key {
 @media (max-width: 1366px), (max-height: 820px) {
   :root {
     /*
-     * The four tracks, re-valued. `board.css` restates no grid -- it reads
-     * these -- so this block is the whole of the "fluid rails" change.
+     * The tracks, re-valued. `board.css` restates no grid -- it reads these --
+     * so this block is the whole of the "fluid rails" change.
      *
-     * `--rail-l: 0px` retires the left rail: the stack moves to the top of the
-     * right rail and the log becomes an overlay on View. At 1280px the two
-     * rails were 536px of 1280 -- 42% of the screen -- against a board that
-     * has to hold three lanes and a hand.
+     * There is no `--rail-l` any more: the left rail is retired at EVERY size,
+     * not only here. The log is an overlay on View and the stack floats over
+     * the board, and neither of those needed a permanent column on a desktop
+     * either. What used to be a handheld-only compaction is now just the
+     * layout.
      *
      * `--mat-side-compact` is deliberately NOT zeroed. An opponent's info
      * column is the half of their mat that survives here -- their *lanes* are
@@ -145,7 +146,6 @@ html[data-input="keyboard"] .glyph--key {
      * a zero-width column does not remove an element, it only makes its
      * contents unreadable while they still claim the height.
      */
-    --rail-l: 0px;
     --rail-r: clamp(224px, 19vw, 280px);
     --mat-side: clamp(132px, 12vw, 190px);
     /*
@@ -185,29 +185,14 @@ html[data-input="keyboard"] .glyph--key {
   padding: 6px;
 }
 
-/* The left rail is gone from the grid, so its children must not claim a track. */
-[data-handheld] .rail--left {
-  display: none;
-}
-
 /*
- * Two columns, so the board is 1 and the rail is 2.
+ * The columns no longer move with the layout.
  *
- * `board.css` assigns all three by name; this re-states the two that move. It
- * has to be said rather than left to auto-placement: the left rail is
- * `display: none` here, so in the app the board fell into column 1 by luck --
- * and nowhere else did. Storybook's mount layers render these wrappers with no
- * siblings, so the board auto-placed into column 2 and fifty-odd card stories
- * drew their mat at the right rail's width with the cards hanging off the
- * screen.
+ * `board.css` puts the board in 1, the foot under it, and the rail in 2 across
+ * both rows -- at every size. All a handheld changes now is `--rail-r`'s value
+ * and the two rules below, which are about what the ROWS hold rather than about
+ * where anything sits.
  */
-[data-handheld] .table__body > .play {
-  grid-column: 1;
-}
-
-[data-handheld] .table__body > .rail--right {
-  grid-column: 2;
-}
 
 /*
  * An opponent is a summary, not a board.
@@ -584,62 +569,6 @@ html[data-input="keyboard"] .glyph--key {
 }
 
 /* ==========================================================================
-   The opponent spine
-   ==========================================================================
-
-   Drawn at every size -- see `logic/threat.ts` -- but on a handheld it *is* the
-   opponent, so it is what the row is built around.
-   ========================================================================== */
-
-/*
- * ONE LINE, ALWAYS, WHATEVER IT SAYS.
- *
- * This wrapped, and `e2e/layout.spec.ts` caught it immediately: an opponent
- * playing their third creature grew the line from "0 creatures" to
- * "3 creatures - 2 untapped - 6 power", which wrapped to a second row, grew the
- * compact mat, grew the `align-items: stretch` opponent row, and **moved the
- * viewer's whole board down by 35px** -- taking every drop target on it along.
- *
- * That is the exact failure `--pod-lanes-h` was introduced to end, arriving
- * again through a new door. So the spine is a fixed single line: `nowrap` with
- * an ellipsis, and a reserved height so an empty one occupies the same row as a
- * full one.
- *
- * Clipping the tail is safe because `threatParts` emits in order of what
- * matters -- creatures, untapped, power, fliers, open mana -- so what falls off
- * the end is always the least decision-changing clause.
- */
-.orb__spine {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 3px 8px;
-  min-height: 1.3em;
-  padding: 3px 6px;
-  border-radius: 6px;
-  background: var(--pane-well);
-  color: var(--text-dim);
-  font-size: 11px;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.orb__spine > span {
-  flex: 0 0 auto;
-}
-
-.orb__spine b {
-  color: var(--text);
-  font-weight: 700;
-}
-
-[data-handheld] .orb__spine {
-  font-size: 16px;
-}
-
-/* ==========================================================================
    The hint bar
    ==========================================================================
 
@@ -706,90 +635,6 @@ html[data-input="keyboard"] .hints {
 }
 
 /*
- * An opponent, as a strip rather than a column.
- *
- * The compact orb is a vertical stack built for a 112px column: portrait,
- * name, life, mana, piles, one under another. Given the full width of a mat it
- * does not compact -- it *stretches*, and the commander plinth is the reason.
- * It is a 2:1 banner crop, so at 454px wide it is 264px tall, and two of those
- * took 484px of an 800px screen to say almost nothing.
- *
- * So the same information is laid out along the row instead: the portrait as a
- * fixed thumbnail, and the name, the summary and the mana beside it. Nothing is
- * dropped -- this is a re-flow, not a cut.
- */
-[data-handheld] .mat--compact .orb__body {
-  display: grid;
-  /*
-   * THREE COLUMNS, NOT THREE ROWS. The foot moves beside the name instead of
-   * under it, and that one change is most of the 220px.
-   *
-   * Stacked, the right-hand column came to head 21 + spine 27 + foot 144, and
-   * the foot was two thirds of the seat: a mana plate, a commander-damage plate
-   * and a row of piles, each on its own line, each with a plate's padding, in a
-   * column 776px wide holding a handful of glyphs. It was not dense -- it was a
-   * column layout given a row's worth of width and stretching to fill it, which
-   * is the same mistake the block above this one already fixed once for the
-   * portrait.
-   *
-   * Side by side they cost the height of the tallest, which is the piles at
-   * 44px, and the width is free: even four seats have more of it than a column
-   * layout can spend.
-   */
-  /*
-   * `minmax` on the portrait, so the commander's name gets the width it needs
-   * when there is width and gives it back when there is not.
-   *
-   * WHICH COMMANDER is the most decision-changing fact about a seat whose board
-   * is not drawn, and at a fixed 104px the label read "Aesi, Tyra..." beside
-   * 700px of empty column -- the information was being withheld next to the
-   * room to show it. A `fr` track claims leftover space only after the fixed
-   * ones reach their max, so the portrait fills to 216px at one or two seats
-   * and shrinks toward 96px at four, which is the order the space should go in.
-   */
-  grid-template-columns: minmax(96px, 216px) minmax(0, 1fr) auto;
-  grid-template-areas:
-    "art head foot"
-    "art spine foot";
-  align-content: start;
-  align-items: center;
-  gap: 2px 10px;
-  padding: 2px;
-}
-
-/*
- * The portrait, capped for real this time.
- *
- * `.cmdplinth__frame { height: 46px }` below caps the banner of a commander
- * that is ON the battlefield. A commander still in the command zone renders
- * `.cmdslot--waiting` instead, which that rule does not touch -- so the art
- * column measured **107px** in the state every game opens in, and it was the
- * tallest thing in the seat once the foot was dealt with. Capping the column
- * itself catches both, and `overflow: hidden` is what keeps a slot that does
- * not want to shrink from pushing the cap open.
- */
-[data-handheld] .mat--compact .cmdzone {
-  /*
-   * Wide enough to read the name, which is the only reason the portrait is
-   * here at all.
-   *
-   * A first pass took this to 56px to buy height and got the trade backwards:
-   * the art shrank, the name under it truncated to "Aesi, Tyra...", and the
-   * column was still 107px because the height was never the art's -- see below.
-   * WHICH COMMANDER an opponent has is the most decision-changing fact about a
-   * seat whose board is not drawn, so it gets the width it needs and the height
-   * comes from the two things under it that were not carrying anything.
-   */
-  width: 100%;
-  max-height: calc(var(--pod-seat-h) - 12px);
-  overflow: hidden;
-}
-
-[data-handheld] .mat--compact .cmdslot {
-  padding: 3px;
-}
-
-/*
  * "In command", dropped -- the plinth's position already says it.
  *
  * Exactly the same judgement as `.cmdplinth__tag` in the drop list further
@@ -812,317 +657,6 @@ html[data-input="keyboard"] .hints {
 }
 
 /*
- * The foot, along the row.
- *
- * `align-items: center` rather than `stretch`: the three plates are different
- * heights by nature and a stretched mana plate holding one glyph reads as an
- * empty box.
- */
-[data-handheld] .mat--compact .orb__foot {
-  flex-direction: row;
-  align-items: center;
-}
-
-/* ==========================================================================
-   An opponent's zone counts, as marks rather than as labelled piles
-   ==========================================================================
-
-   Four or five zones, each drawn as a leaf stack with its count on the top leaf
-   and its name spelled out underneath, is a column layout. On the viewer's own
-   190px side column that is right and it stays. On an opponent's strip it was
-   the densest thing on the board and the first to overflow: five stacks at 44px
-   plus five 16px words is 300px of a 291px mat, so it wrapped, and the wrap is
-   what pushed the seat past its cap with a count hidden under the crop.
-
-   The resolution is the one the round already reached for the 142 native
-   tooltips: DROP THE WORD, KEEP THE MARK, AND PUT THE NAME ONE INPUT AWAY.
-   Every pile already carries an `aria-label` reading "GY: 3" -- added when the
-   handheld layout first hid these labels -- so the name is not being invented
-   here, only surfaced. It comes back on hover for a pointer and on the ring for
-   a pad, which between them is every way anyone touches this app.
-
-   What makes a mark readable without its word is that the marks differ, and
-   they now do: `logic/zones.ts` gives the hand its own kind, so library and
-   hand are no longer the same purple stack. Colour, stack height and count.
-   ========================================================================== */
-
-[data-handheld] .mat--compact .pile {
-  position: relative;
-  flex-direction: row;
-  gap: 0;
-}
-
-[data-handheld] .mat--compact .pile__label {
-  display: none;
-}
-
-/*
- * The count gets a chip to sit in, and this is the actual formatting bug.
- *
- * `.pile__stack` is 28px wide and the compact orb narrows it to 16 -- which was
- * fine when the number on the top leaf was 10px, and stopped being fine the
- * moment the 16px floor raised it. A two-digit library count is about 20px of
- * glyph in a 16px box, so "90" rendered clipped and off-centre and a
- * three-digit one had nowhere to go at all. Nothing measured it, because the
- * font size was correct and the box it overflowed was decorative.
- *
- * With the word gone the leaf stack has no job left either: it was a second,
- * lower-resolution encoding of the same number, and it is what made these
- * 44x44 targets look like tiny floating marks. So the top leaf becomes the
- * whole chip -- zone colour, one number, room for three digits -- and the
- * decorative leaves under it go.
- *
- * The viewer's own 190px column keeps its stacks: it has the room, and the
- * comparative height of a drawn-down library next to a grown graveyard is a
- * real thing to notice there.
- */
-[data-handheld] .mat--compact .pile__stack {
-  display: grid;
-  place-items: center;
-  width: auto;
-}
-
-[data-handheld] .mat--compact .pile__leaf:not(.pile__leaf--top) {
-  display: none;
-}
-
-[data-handheld] .mat--compact .pile__leaf--top {
-  display: grid;
-  place-items: center;
-  min-width: 36px;
-  height: 28px;
-  margin: 0;
-  padding: 0 6px;
-  border-radius: 7px;
-  font-size: 16px;
-}
-
-/*
- * An empty plate says nothing, so it is not drawn.
- *
- * `.orb__none` is an em dash standing in for "no mana open" -- which the spine
- * beside it already says by omitting its "N open" clause, and which the plate's
- * own heading would have said if the 16px pass had not dropped it. On a strip
- * this narrow it was 24px of punctuation between two things that are numbers.
- */
-[data-handheld] .mat--compact .orb__none {
-  display: none;
-}
-
-[data-handheld] .mat--compact .orb__panel:not(:has(> :not(.orb__none))) {
-  display: none;
-}
-
-/*
- * The name, on hover and on the ring.
- *
- * `attr(aria-label)` and not a second hand-written string: the accessible name
- * and the visible name cannot then disagree, which is the failure mode a
- * duplicated label always eventually reaches.
- *
- * `[data-cursor]` covers the pad and the keyboard; `:hover` covers the pointer,
- * which on a Deck is the trackpads and the touchscreen. A `title` would have
- * covered only the last of those, which is why there are none left in this app.
- */
-[data-handheld] .mat--compact .pile::after {
-  content: attr(aria-label);
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  z-index: var(--z-ring);
-  padding: 3px 8px;
-  border: 1px solid var(--edge-hi);
-  border-radius: 6px;
-  background: var(--void-2);
-  color: var(--text);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(-50%) translateY(3px);
-  transition: opacity var(--t-fast) ease, transform var(--t-fast) ease;
-  pointer-events: none;
-}
-
-[data-handheld] .mat--compact .pile:hover::after,
-[data-handheld] .mat--compact .pile[data-cursor]::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* No transition where the OS has asked for none -- it appears, or it does not. */
-@media (prefers-reduced-motion: reduce) {
-  [data-handheld] .mat--compact .pile::after {
-    transition: none;
-  }
-}
-
-/* ==========================================================================
-   Two seats and up, where the strip runs out of row
-   ==========================================================================
-
-   The one-line strip above is right for ONE opponent and cannot be made to fit
-   more. Measured at 1200x800 with a four-seat pod: each mat gets 309px, and
-   `art 96 + name + spine + mana + commander damage + four 44px pile targets`
-   needs about 420. What the seat actually drew was the portrait, a clipped
-   "LIB", half of "HAND", and **115px of everything else hidden under the cap**
-   -- no seat name, no threat line, no graveyard. A cap that hides content
-   instead of re-arranging it is not a cap, it is a crop.
-
-   TWO, NOT THREE, and finding that out is worth recording. This block was
-   keyed on the third seat, because a four-seat pod is the case that obviously
-   breaks and it was the case being tested -- `deckfit.spec.ts` covers one
-   opponent and three. Two opponents fell straight through the gap between
-   them: each mat gets ~470px, which is not enough for the one-line strip
-   either, so the foot wrapped and every two-player-plus-one seat sat 16px over
-   its cap. It was a Storybook sweep that caught it, on an `FxLayer` story that
-   happens to deal two opponents.
-
-   So the arrangement changes with the density, which is the only honest lever
-   left once the 16px floor and the 44px targets are fixed. Counting seats with
-   `:has()` rather than a React attribute keeps this a property of the layout,
-   where the rest of this file's decisions live. The extra narrowing below --
-   a 44px portrait, no commander name, a shorter cap -- still waits for the
-   third seat, because at two there is room for all of it.
-   ========================================================================== */
-
-/*
- * A shorter cap at this density, because nothing here needs the extra.
- *
- * The 96px the one- and two-seat strip uses is sized for a portrait with the
- * commander's name under it. That name is dropped below, so the art column only
- * has to hold a 46px banner -- and the twelve pixels go to the viewer's own
- * mat, which is what overflows first in a four-seat pod.
- */
-
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__body {
-  /*
-   * The name and the threat line share a row, and the piles get the one below.
-   *
-   * 27px + 44px + a gap is 73 of the 74 the cap allows, against the 92 the
-   * three-row version needs -- and the row they share is the pair a player
-   * reads together anyway: who this is, and what they have.
-   *
-   * The art column is 44px and not 52, and those eight pixels are load-bearing:
-   * a seat can show FIVE piles, not four. Exile appears the moment anything is
-   * exiled, and five 44px targets plus their gaps need 236px of the 291 a mat
-   * has at four seats. At 52 the row came to 233 and the fifth pile wrapped to
-   * a second line, which put the seat 47px over its cap with the count hidden
-   * under it -- found by `deckfit.spec.ts` on a pod that had reached turn six,
-   * which is exactly the state a fixed four-pile assumption survives to.
-   */
-  /*
-   * The portrait keeps real width here and gives it up at four seats.
-   *
-   * A two-seat mat is ~470px, which is room for the commander's name under the
-   * art -- and that name is the most decision-changing fact about a seat whose
-   * board is not drawn, so it is the last thing to go. 44px was the four-seat
-   * number and applying it here truncated "Aesi, Tyrant of Gyre Strait" to
-   * "Ae..." beside 300px of empty row, which is the withholding-next-to-the-room
-   * mistake the one-seat block already had to fix once.
-   */
-  grid-template-columns: minmax(96px, 160px) auto minmax(0, 1fr);
-  grid-template-areas:
-    "art head spine"
-    "art foot foot";
-}
-
-/* Five piles on one line, so the gap gives way before the targets do. */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .piles {
-  flex-wrap: nowrap;
-  gap: 3px;
-  padding: 1px;
-}
-
-/*
- * The last eight pixels, taken from the seat's own gutters.
- *
- * A four-seat strip wants 92px: 27 for the name-and-threat row, 44 for the pile
- * targets, and 21 of padding, border and gaps around them. The cap is 84, and
- * lowering it further only moved the overflow rather than removing it -- which
- * is the tell that the content, not the cap, was the thing to change. The 44px
- * targets and the 16px text are untouchable by definition, so what is left is
- * the space between them, and at this density there is more of it than the
- * layout can afford.
- */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) {
-  --pod-seat-h: 84px;
-}
-
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) > .mat--compact {
-  padding: 2px 6px;
-}
-
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
-  gap: 1px 6px;
-  padding: 1px;
-}
-
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__spine {
-  padding: 1px 6px;
-}
-
-/*
- * The portrait becomes a thumbnail, and the commander's NAME is dropped.
- *
- * This is the one real cut in the compact layout and it should be argued for
- * rather than slipped in. At one or two seats the art track flexes out to 216px
- * so the name reads in full, because it is the most decision-changing fact
- * about a seat whose board is not drawn. At four seats there are 291px for
- * everything and the name alone wants 183 of them -- the first attempt at this
- * block left it `auto` and the track took exactly that, which crushed the
- * threat line to 32px and wrapped the piles to three rows under a 96px cap.
- *
- * So at this density the name goes and the art stays: the illustration is still
- * recognisably that commander, the seat is still named by `.orb__name`, and R2
- * draws the whole mat with the name on it. Losing a label is recoverable in a
- * press; losing the threat line and the graveyard count is not.
- */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .cmdplinth__name {
-  display: none;
-}
-
-/* With the name gone the portrait is a thumbnail, and the row needs the width
-   for a fifth pile. */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
-  grid-template-columns: 44px auto minmax(0, 1fr);
-}
-
-/*
- * Mana and commander damage move to the R2 reader at this density.
- *
- * The mana plate is the easy one: `logic/threat.ts` already puts open mana in
- * the spine as "N open", so inline it is the same fact twice and the spine's is
- * the one that survives a narrow column.
- *
- * Commander damage is a real drop and worth naming as one. It is a progress
- * number rather than a threat number -- it does not change what an opponent can
- * do to you this turn, which is what the rest of this strip is for -- and the
- * viewer's OWN orb still shows every seat's damage against them, which is the
- * direction that decides a game. R2 has the full mat.
- */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__mana,
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__cmd {
-  display: none;
-}
-
-/* The portrait gives up the width it was allowed with one or two seats. */
-[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
-  gap: 2px 6px;
-}
-
-[data-handheld] .mat--compact .orb__head {
-  grid-area: head;
-}
-[data-handheld] .mat--compact .orb__spine {
-  grid-area: spine;
-}
-[data-handheld] .mat--compact .orb__foot {
-  grid-area: foot;
-  gap: 4px;
-}
-
-/*
  * The leaf stack, trimmed to the three leaves that say "stack".
  *
  * A library of 91 draws 91/10 leaves at 4px each and came out **75px** -- the
@@ -1137,36 +671,6 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .pile__leaf:nth-last-child(n + 4) {
   display: none;
-}
-
-/*
- * The plinth, capped in HEIGHT rather than in width.
- *
- * Capping the width would leave the banner crop to decide the height from
- * whatever the art is; capping the height and letting the crop fill it keeps
- * every seat the same size, which is what makes the row scannable.
- */
-[data-handheld] .mat--compact .cmdzone {
-  grid-area: art;
-  align-self: start;
-}
-
-/*
- * The BANNER is capped, not the plinth.
- *
- * The plinth is a banner with a name and a state strip under it, in normal
- * flow. Capping the outer box does not shorten those -- it leaves them spilling
- * out of the bottom and overlapping whatever the next row is, which here was
- * the mana panel. Capping the art gives the height back and keeps the plinth
- * a plinth.
- */
-[data-handheld] .mat--compact .cmdplinth__frame {
-  height: 46px;
-}
-
-/* The piles keep their counts but stop reserving a labelled column each. */
-[data-handheld] .mat--compact .piles {
-  gap: 4px;
 }
 
 /*
@@ -1251,37 +755,20 @@ html[data-input="keyboard"] .hints {
  * introduced to end. Left at 8px deliberately; the room came from the shell.
  */
 
-/*
- * The opponent strip gives up the gaps a column needed.
- *
- * `.orb__foot`'s plates were stacked with a column's spacing between them and
- * are now three short rows on one line's worth of gap. This is the last ~40px
- * per seat, and at two seats it is the difference between the viewer's lands
- * fitting and not.
- */
-[data-handheld] .mat--compact .orb__panel {
-  padding: 1px 4px;
-}
-
-/*
- * The compact piles are NOT scaled down.
- *
- * They were, to buy back ~40px per seat -- and it silently defeated the 44px
- * hit floor two blocks below, because `.mat--compact .piles` is two classes and
- * outranks `[data-handheld] .piles`. The targets measured 38x38: exactly 44
- * times 0.86. A transform is invisible to a min-height, which is what made it
- * hard to see.
- */
-
 /* ==========================================================================
    The log, as an overlay
    ==========================================================================
 
-   The left rail leaves the grid on a handheld, and the log goes with it. It
-   comes back on `View` (or the wheel's Log spoke) as a panel over the board,
-   because it is reference you consult rather than something you watch --
-   unlike the stack, which moves to the top of the right rail because it is a
-   thing you need mid-decision.
+   THE LOG IS AN OVERLAY AT EVERY SIZE NOW. It used to be a permanent panel in
+   a 232px left rail on a desktop and an overlay only on a handheld -- but it is
+   reference you consult rather than something you watch, and no board was ever
+   improved by giving a fifth of its width to reference material. It comes up on
+   `View` and goes away again.
+
+   These rules live in this file for the reason the focus ring's do: they were
+   written here, they are unscoped, and moving them would be a diff about
+   nothing. See `styles/board.css` for `.stackpanel`, which took the other half
+   of that rail and floats over the board instead.
 
    `data-modal-root` so the ring is trapped inside it while it is up: a log you
    can open but cannot close without a mouse is worse than no log.
@@ -2045,18 +1532,10 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .lock--on,
 [data-handheld] .mana-grp__n,
 [data-handheld] .mana-grp__spend,
-[data-handheld] .mat--compact .cmdplinth__name,
-[data-handheld] .mat--compact .cmdplinth__word,
 [data-handheld] .note,
 [data-handheld] .opt,
 [data-handheld] .opt__caption,
 [data-handheld] .or,
-[data-handheld] .orb--compact .cmd-pip__n,
-[data-handheld] .orb--compact .cmd-pip__who,
-[data-handheld] .orb--compact .mana-grp__n,
-[data-handheld] .orb--compact .mana-grp__spend,
-[data-handheld] .orb--compact .pile__label,
-[data-handheld] .orb--compact .pile__leaf--top,
 [data-handheld] .orb__loss,
 [data-handheld] .orb__none,
 [data-handheld] .over__player,

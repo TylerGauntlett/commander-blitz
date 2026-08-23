@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import {
   expectCardsSized,
   expectHandheldFloors,
@@ -272,6 +272,89 @@ export const ZoomFifteenCardHand: Story = {
     expect(canvasElement.querySelectorAll(".hand .card")).toHaveLength(15);
     const zoom = Number.parseFloat(table.getAttribute("data-zoom-hand") ?? "0");
     expect(zoom, "the hand solver never reported a scale").toBeGreaterThan(0);
+  },
+};
+
+/**
+ * THE RAIL RUNS THE FULL HEIGHT, and the foot sits beside it.
+ *
+ * This is the structural claim of the whole round, so it is asserted rather
+ * than looked at. The rail used to stop where the hand started, because the
+ * foot spanned the full width beneath both rails -- 514px at 1280x800, of
+ * which the action list, the rows a turn is actually spent in, got 172.
+ * `mockups/handheld-board/measure.mjs` measures the same rail at 748 when it
+ * runs to the bottom edge instead.
+ *
+ * `zoomLock: false` deliberately, and it is the point of this story rather than
+ * a detail: a pinned zoom asserts the ratios the layout was DESIGNED at, and
+ * what has to be true here is that the solver, given a pod and a foot that has
+ * moved inside the board's column, still packs everything inside the screen.
+ * A pinned story cannot fail that, which is why the pinned pod story above is
+ * not the one carrying this assertion.
+ */
+export const FullHeightRail: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  parameters: { automtg: { zoomLock: false } },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const table = await canvas.findByTestId("table");
+
+    /*
+     * WAIT FOR THE SOLVE, or this gate passes against a board that has not
+     * finished laying out.
+     *
+     * `useZoomFit` runs off a `ResizeObserver`, so at `findByTestId` time the
+     * cards are at their initial size and nothing has overflowed yet. The first
+     * version of this story asserted there and passed while the settled board
+     * was 90px over -- which is worse than no assertion, because it is one that
+     * reports the layout is fine.
+     */
+    await waitFor(() => {
+      expect(table.getAttribute("data-zoom-board")).toBeTruthy();
+    });
+    let last = "";
+    for (let i = 0; i < 60; i += 1) {
+      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+      const now = `${table.dataset.zoomBoard}|${table.dataset.zoomPod}|${table.dataset.zoomHand}`;
+      if (now === last && i > 4) break;
+      last = now;
+    }
+
+    const box = (sel: string) => {
+      const el = canvasElement.querySelector(sel);
+      if (!el) throw new Error(`no ${sel}`);
+      return el.getBoundingClientRect();
+    };
+
+    const rail = box(".rail--right");
+    const play = box(".play");
+    const foot = box(".table__foot");
+
+    // It starts where the board starts and ends where the foot ends. Both, or
+    // it is a rail that stops somewhere and the 234px is not real.
+    expect(Math.abs(rail.top - play.top), "the rail should start with the board").toBeLessThan(
+      2,
+    );
+    expect(Math.abs(rail.bottom - foot.bottom), "the rail should reach the foot").toBeLessThan(
+      2,
+    );
+
+    // The foot is the board's width, not the screen's -- which is what the fan
+    // has to be solved against. See `useZoomFit`'s `footW`.
+    expect(foot.right).toBeLessThanOrEqual(rail.left + 1);
+
+    /*
+     * And nothing has been pushed off the bottom to pay for it.
+     *
+     * `scrollHeight > clientHeight` asks the question directly. It is the check
+     * `e2e/deckfit.spec.ts` runs against a real engine; this is the same
+     * question asked of a component, in CI, where the e2e suite does not run.
+     */
+    for (const sel of [".play__mine", ".play__opponents", ".table__foot", ".acts"]) {
+      const el = canvasElement.querySelector(sel) as HTMLElement;
+      expect(el.scrollHeight - el.clientHeight, `${sel} overflows`).toBeLessThanOrEqual(2);
+    }
   },
 };
 

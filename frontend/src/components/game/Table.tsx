@@ -83,6 +83,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const tableRef = useRef<HTMLDivElement>(null);
   const mineRef = useRef<HTMLDivElement>(null);
   const podRef = useRef<HTMLDivElement>(null);
+  const footRef = useRef<HTMLDivElement>(null);
 
   const speed = useUiStore((s) => s.speed);
   const selectedOid = useUiStore((s) => s.selectedOid);
@@ -666,7 +667,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       // the ring while it is. A panel you can open with one button and cannot
       // close with the button that means "back" is worse than no panel: the
       // ring is inside it and every direction is a wall.
-      if (handheld && logOverlay) {
+      //
+      // Not gated on the layout any more: the log is an overlay at every size
+      // now that the left rail is retired, so `B` has to close it everywhere.
+      if (logOverlay) {
         toggleLogOverlay();
         return true;
       }
@@ -686,7 +690,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     };
     if (unwind()) cue("back");
   }, [
-    handheld,
     logOverlay,
     toggleLogOverlay,
     peek,
@@ -928,6 +931,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     handheld,
     tableRef,
     mineRef,
+    footRef,
     podRef,
   });
 
@@ -960,26 +964,26 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         style={{ x: shakeX, y: shakeY }}
       >
         {/*
-          The left rail, and where its two panels go when there is no room for
-          it.
+          THE STACK FLOATS OVER THE BOARD, and the left rail is gone.
 
-          At 1280px the two rails were 536px of the screen -- 42% -- against a
-          board that has to hold three lanes and a hand, so the left one leaves
-          the grid. Its contents do not: the stack moves to the top of the right
-          rail, because what is resolving is a thing you need *during* a
-          decision, and the log becomes an overlay on `View`, because it is
-          reference you consult rather than watch.
+          It held two things. The log is reference you consult rather than
+          watch, so it is an overlay on `View` -- which is what a handheld
+          already did, and there was never an argument for a desktop keeping a
+          232px column permanently open for it. The stack is the other, and it
+          is urgent exactly when it is non-empty and absent the rest of the
+          time, which is the shape of a thing that should not own a column at
+          all.
 
-          One instance either way. Rendering both and hiding one would put two
-          `data-testid="stack-panel"`s in the document, which Playwright's
-          strict mode fails on in a confusingly distant place.
+          So it is a pile of real card faces over the top-left of the play area,
+          growing down over the viewer's own panel as it deepens. `StackPanel`
+          already drew exactly this -- plies at a 26px offset, each peeking out
+          by its own name strip -- it simply drew it inside a rail.
+
+          What the retired column buys is 232px of board at every size, which is
+          most of what the foot costs by moving inside this column so the right
+          rail can run to the bottom edge.
         */}
-        {!handheld && (
-          <aside className="rail rail--left">
-            <StackPanel state={state} />
-            <EventTicker state={state} events={events} cardName={game.cardName} />
-          </aside>
-        )}
+        {state.stack.length > 0 && <StackPanel state={state} />}
 
         <main className="play">
           <div className="play__opponents" ref={podRef}>
@@ -1057,7 +1061,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           the hand alone.
         */}
         <aside className="rail rail--right">
-          {handheld && <StackPanel state={state} />}
           <CardPreview state={state} />
           <ActionPanel
             state={state}
@@ -1077,13 +1080,22 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           />
         </aside>
 
-        <CombatArrows state={state} boardRef={boardRef} />
-        <ParticleLayer boardRef={boardRef} />
-        <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} state={state} />
-      </motion.div>
-
-      <div className="table__foot">
         {/*
+          THE FOOT IS INSIDE THE BODY NOW, and that is the round's biggest
+          single change.
+
+          It used to be a sibling, spanning the full width under both rails, so
+          the right rail stopped where the hand started -- 514px at 1280x800,
+          of which the rows the turn is actually spent in got 172.
+          `mockups/handheld-board/` measures the same rail at 748px when it runs
+          to the foot instead, and the action list at 363-398.
+
+          It also fixes something quietly: `data-fx-origin` is on this element,
+          and with the foot outside it every card flying from the hand to the
+          board crossed the origin's boundary. Every such flight is interior now.
+        */}
+        <div className="table__foot" ref={footRef}>
+          {/*
           Where the commit slab and the tool strip go on a handheld. Hosts, not
           the controls themselves.
 
@@ -1098,10 +1110,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           Rendered only on a handheld. On a desktop both stay in the rail, where
           304px of width and a 950px-tall screen make them the right shape.
         */}
-        {handheld && <div className="foot__slab" />}
-        {handheld && <div className="foot__tools" />}
+          {handheld && <div className="foot__slab" />}
+          {handheld && <div className="foot__tools" />}
 
-        {/*
+          {/*
           What the buttons do, for whoever is holding one.
 
           `display: none` unless `html[data-input]` says a pad or a keyboard is
@@ -1109,9 +1121,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           been -- no extra height, no reserved space, nothing to read. See
           `components/ui/Glyph.tsx`.
         */}
-        <HintBar state={state} actions={actions} />
+          <HintBar state={state} actions={actions} />
 
-        {/*
+          {/*
           One hint, never a second copy of the actions.
 
           This used to be two blocks, and the first rendered every remaining
@@ -1122,21 +1134,21 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           mana (Stage 2) reaches it immediately. The panel owns the choice; the
           foot only ever says what the click is for.
         */}
-        {targeting.length > 0 && (
-          <div
-            className="choices"
-            data-testid={targetChosen ? "variant-hint" : "targeting-hint"}
-          >
-            <span className="choices__label">
-              {targetChosen ? "Pick how, in the panel" : "Pick a target"}
-            </span>
-            <button type="button" className="btn btn--ghost" onClick={endTargeting}>
-              Cancel (Esc)
-            </button>
-          </div>
-        )}
+          {targeting.length > 0 && (
+            <div
+              className="choices"
+              data-testid={targetChosen ? "variant-hint" : "targeting-hint"}
+            >
+              <span className="choices__label">
+                {targetChosen ? "Pick how, in the panel" : "Pick a target"}
+              </span>
+              <button type="button" className="btn btn--ghost" onClick={endTargeting}>
+                Cancel (Esc)
+              </button>
+            </div>
+          )}
 
-        {/*
+          {/*
           The hand owns the foot outright.
 
           The commander used to sit to its left, on the theory that a zone you
@@ -1146,18 +1158,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           player's info panel now -- see `CommandZone` and `PlayerOrb` -- and it
           still casts by the same click on the same `playFromHand` path.
         */}
-        <HandFan
-          cards={viewer.hand ?? []}
-          playableOids={playableOids}
-          reasons={viewer.hand_reasons ?? {}}
-          mana={viewer.mana}
-          selectedOid={selectedOid}
-          cardScale={zoom.hand}
-          onActivate={playFromHand}
-          onDropOn={onDropOnZone}
-          disabled={locked}
-        />
-      </div>
+          <HandFan
+            cards={viewer.hand ?? []}
+            playableOids={playableOids}
+            reasons={viewer.hand_reasons ?? {}}
+            mana={viewer.mana}
+            selectedOid={selectedOid}
+            cardScale={zoom.hand}
+            onActivate={playFromHand}
+            onDropOn={onDropOnZone}
+            disabled={locked}
+          />
+        </div>
+
+        <CombatArrows state={state} boardRef={boardRef} />
+        <ParticleLayer boardRef={boardRef} />
+        <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} state={state} />
+      </motion.div>
 
       {error && (
         <motion.div
@@ -1181,7 +1198,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
       {handheld && <OpponentBoard state={state} pid={reading} names={names} />}
 
-      {handheld && logOverlay && (
+      {logOverlay && (
         <div className="logover" data-modal-root data-testid="log-overlay">
           <div className="logover__head">
             <span>Log</span>

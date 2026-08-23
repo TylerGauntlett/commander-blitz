@@ -12,25 +12,43 @@
   scrollbar-gutter: stable;
 }
 
+/*
+ * TWO ROWS, not three. The foot is inside the body now.
+ *
+ * It used to be the third row here, spanning the full width beneath both rails
+ * -- which is why the right rail stopped where the hand started. At 1280x800
+ * that rail was 514px, and the action list, the rows a turn is actually spent
+ * in, got 172 of them. Running the rail to the bottom edge instead makes it
+ * 748 and the list 363-398; `mockups/handheld-board/measure.mjs` prints both.
+ *
+ * The cost is that the hand no longer has the whole width. Retiring the left
+ * rail is what pays for it -- see `.table__body`.
+ */
 .table {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
   background: radial-gradient(120% 80% at 50% 0%, var(--felt-1) 0%, var(--felt-0) 70%),
     var(--felt-0);
 }
 
+/*
+ * The board and the rail, and the foot underneath the board alone.
+ *
+ * ONE COLUMN LESS THAN IT HAD. The left rail held the stack and the log; the
+ * log is an overlay on `View` (which a handheld already did, and no desktop
+ * ever needed a permanent 232px column for reference material) and the stack
+ * floats over the board when there is one. That returns 232px of board at every
+ * size, which is most of what the foot costs by moving into this grid.
+ *
+ * `--rail-r` is a token rather than a literal because the handheld layout
+ * narrows it; on a desktop it resolves to the 304px that was written here.
+ */
 .table__body {
   position: relative;
   display: grid;
-  /* The right rail widened from 268px to hold the action bar as well as the
-     card preview; the bar's buttons need the room the hand has taken back.
-
-     Both rails are tokens (`theme.css`) rather than literals, because the
-     handheld layout has to narrow them and this grid must not have to know
-     that. On a desktop they resolve to 232px and 304px -- the numbers that
-     were written here -- so nothing about this rule has changed. */
-  grid-template-columns: var(--rail-l) minmax(0, 1fr) var(--rail-r);
+  grid-template-columns: minmax(0, 1fr) var(--rail-r);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   min-height: 0;
   padding: 10px;
@@ -474,38 +492,6 @@
   color: var(--text-dim);
 }
 
-/* Opponents ---------------------------------------------------------------
- *
- * Reference only -- you never cast from one -- so the plinth gives up
- * everything that is not identity and state. The eyebrow goes (a gold-framed
- * portrait under a life total is not ambiguous), the cost goes (you are not
- * paying it), and the portrait shrinks well below the column width.
- *
- * This is load-bearing, not tidiness: `.play` caps the opponent row with
- * `fit-content(58%)`, which never shrinks below the row's min-content, so every
- * pixel of height in this column is a pixel taken off the viewer's own board.
- * `cycle3.spec.ts`'s `rowClipped` guard is what catches it going wrong. */
-.mat--compact .cmdslot {
-  gap: 1px;
-  padding: 3px;
-}
-
-.mat--compact .cmdplinth__name {
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  font-size: 8.5px;
-  text-align: center;
-}
-
-.mat--compact .cmdplinth__strip {
-  justify-content: center;
-}
-
-.mat--compact .cmdplinth__word {
-  font-size: 7.5px;
-  letter-spacing: 0.02em;
-}
-
 /* A narrow pod mat can still outgrow the row it sits in once a board gets big.
    Scroll inside the mat rather than letting `.play__opponents` clip a card in
    half at the boundary.
@@ -576,10 +562,6 @@
   border: 1px solid var(--rail-line);
   border-radius: 10px;
   background: var(--pane-well);
-}
-
-.orb--compact {
-  --seal-w: clamp(30px, 3.8vh, 42px);
 }
 
 /*
@@ -1131,94 +1113,6 @@
   color: #fff;
 }
 
-/* An opponent's column is 112px wide and has five piles to fit across it, on
-   ONE row -- the same shape the viewer's column has, because two rows here read
-   as a different component rather than a narrower one.
- *
- * The binding constraint is not the stack, it is the *label*: `.pile` is a
- * centred flex column, so each pile is as wide as its widest child, and "HAND"
- * at 8px is wider than a 20px stack. So the budget is spent on the labels.
- *
- * Measured in the browser rather than reasoned about, because the numbers land
- * close together: at 112px, 2px of border plus 10px of `.orb__body` padding plus
- * 4px of plate padding leave 96px inside. A pile is as wide as
- * `max(stack, label)`, so at a 16px stack the five come to
- * 16 + 18.5 + 16 + 16 + 16 = 82.5, and four 2px gaps to 8. About five spare --
- * checked with the *exile* pile present, since that is the conditional fifth and
- * therefore the case that has to fit. */
-.orb--compact .orb__body {
-  padding: 8px 5px;
-}
-
-/* The foot's two upper panels at pod width.
- *
- * The label goes first: it is the widest thing on either plate and the least
- * load-bearing, and `.orb__cmd` already dropped it here before this. What is left
- * has to fit 94px inside -- 112px less 10px of body padding and 8px of plate
- * padding -- which for commander damage is three chips of about 26px plus two
- * gaps, and for mana is four groups of a 10px symbol and a numeral.
- *
- * Both plates may wrap here, unlike the piles below them: a wrapped pile row
- * stops reading as a row of comparable stacks, while a second line of mana chips
- * is just a second line of mana chips. */
-.orb--compact .orb__lab {
-  display: none;
-}
-
-.orb--compact .orb__panel {
-  gap: 3px;
-  padding: 2px 3px;
-}
-
-.orb--compact .orb__mana {
-  --pip: 10px;
-  gap: 2px 4px;
-}
-
-.orb--compact .mana-grp__n {
-  font-size: 8.5px;
-}
-
-.orb--compact .mana-grp__spend {
-  font-size: 8px;
-}
-
-.orb--compact .cmd-pip {
-  padding: 0 2px 1px;
-}
-
-.orb--compact .cmd-pip__who {
-  font-size: 6.5px;
-  letter-spacing: 0;
-}
-
-.orb--compact .cmd-pip__n {
-  font-size: 9px;
-}
-
-.orb--compact .piles {
-  /* Never two rows. A wrapped pile row reads as a different component rather
-     than a narrower one, and the comparative read the piles exist for is
-     between stacks standing side by side on one baseline. */
-  flex-wrap: nowrap;
-  gap: 2px;
-  padding: 4px 2px 3px;
-}
-
-.orb--compact .pile__stack {
-  width: 16px;
-}
-
-.orb--compact .pile__leaf--top {
-  height: 16px;
-  font-size: 8.5px;
-}
-
-.orb--compact .pile__label {
-  font-size: 6.5px;
-  letter-spacing: 0;
-}
-
 /* Lanes ---------------------------------------------------------------- */
 
 /*
@@ -1357,16 +1251,20 @@
  * Stated here, `styles/handheld.css` re-states only what its two-column body
  * changes, and a lone wrapper in a story lands where the app puts it.
  */
-.table__body > .rail--left {
-  grid-column: 1;
-}
-
 .table__body > .play {
-  grid-column: 2;
+  grid-column: 1;
+  grid-row: 1;
 }
 
+.table__body > .table__foot {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/* The rail spans both rows, which is the whole point of the restructure. */
 .table__body > .rail--right {
-  grid-column: 3;
+  grid-column: 2;
+  grid-row: 1 / -1;
 }
 
 .rail {
@@ -1433,6 +1331,40 @@
   color: var(--text-faint);
   font-size: 12px;
   font-style: italic;
+}
+
+/*
+ * THE STACK FLOATS OVER THE BOARD.
+ *
+ * It used to be the top panel of a left rail, which meant a 232px column stood
+ * open all game for a thing that is empty for most of a turn -- and urgent the
+ * moment it is not. So it is absolutely positioned over the top-left of the
+ * play area, drawn only when there is something on it, and it grows DOWN over
+ * the viewer's own panel as it deepens. That overlap is deliberate: a stack
+ * three deep is a thing you should be unable to ignore.
+ *
+ * The visual is unchanged -- `StackPanel` already drew plies at a 26px offset,
+ * each peeking out by its own name strip. Only where it hangs is different.
+ *
+ * `pointer-events` on the plies and not on the panel: it sits over the board,
+ * and a transparent 260px box that swallowed clicks on the lanes underneath is
+ * the "button that had quietly stopped being clickable" failure this codebase
+ * has already hit twice.
+ */
+.stackpanel {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 6;
+  width: max-content;
+  max-width: 40%;
+  max-height: calc(100% - 28px);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stackpanel > * {
+  pointer-events: auto;
 }
 
 .stackpanel,
@@ -1825,13 +1757,24 @@
 
 /* Hand ----------------------------------------------------------------- */
 
+/*
+ * The foot is a panel now, not a band.
+ *
+ * It used to span the full width under both rails, so a rule across the top and
+ * a near-black wash read as the edge of the screen. Inside the board's column
+ * it is a box beside the rail, and the old treatment read as a green block
+ * against an indigo table -- a leftover from the felt palette that nothing else
+ * on the board still uses.
+ */
 .table__foot {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 6px 10px 10px;
-  border-top: 1px solid var(--rail-line);
-  background: rgb(6 14 11 / 0.9);
+  border: 1px solid var(--rail-line);
+  border-radius: 10px;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
 }
 
 /* The hand owns the whole foot now that the action bar has moved to the right
