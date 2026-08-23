@@ -66,6 +66,14 @@
  * reads as muddy at 84px.
  */
 .reader__img {
+  /*
+   * `block`, because an inline image sits on a baseline and reserves the
+   * descender under it -- four pixels of nothing inside an 84px window, which
+   * `npm run audit:stories` reported as `.reader__art` clipping on five
+   * stories. The window is `overflow: hidden`, so the only symptom was the
+   * bottom of the painting quietly missing.
+   */
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
