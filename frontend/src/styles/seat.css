@@ -259,7 +259,7 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   margin-left: auto;
   color: var(--gold);
   font-size: 16px;
@@ -278,13 +278,27 @@
   color: var(--text-faint);
 }
 
-/* A crown, as a shape rather than as a glyph: a text crown is a font-dependent
-   size and this one has to fit a 20px line beside a numeral. */
-.gauge__crown {
-  width: 11px;
-  height: 9px;
-  background: currentcolor;
-  clip-path: polygon(0 100%, 0 25%, 25% 55%, 50% 0, 75% 55%, 100% 25%, 100% 100%);
+/* --- The marks ----------------------------------------------------------- */
+
+/*
+ * 14px, and it is a size rather than a decoration.
+ *
+ * A seat's rows are 18-22px, so a mark has to sit on a 16px line without
+ * raising it. `currentcolor` throughout, so every mark takes the tone of the
+ * cell it is in -- the land's green, the creature's red, the crown's gold or
+ * danger -- and none of them needs a second rule when a state changes.
+ *
+ * `flex: none` because the cells are flex rows that ellipsise: a mark that
+ * shrank would be the first thing to go, and it is the half of the cell that
+ * says which number this is.
+ */
+.ico {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  /* The marks are drawn on a 16px box and read as slightly high beside a
+     numeral's baseline; the nudge is what puts them on the same line. */
+  vertical-align: -2px;
 }
 
 /* --- Row 3: what is on the battlefield ----------------------------------- */
@@ -310,6 +324,7 @@
   flex: 1 1 0;
   align-items: center;
   justify-content: center;
+  gap: 3px;
   min-width: 0;
   border-radius: 5px;
   background-image: linear-gradient(
@@ -333,14 +348,24 @@
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
 }
 
+/* The mark takes the cell's own hue; the numeral stays `--text`, because a
+   coloured number is a number you read as a state rather than as a count. */
 .perm--land {
   --perm-tint: rgb(155 211 171 / 0.17);
   --perm-edge: var(--mana-G);
 }
 
+.perm--land .ico {
+  color: var(--mana-G);
+}
+
 .perm--creature {
   --perm-tint: rgb(249 170 143 / 0.17);
   --perm-edge: var(--mana-R);
+}
+
+.perm--creature .ico {
+  color: var(--mana-R);
 }
 
 /*
@@ -354,6 +379,10 @@
   --perm-tint: rgb(170 224 250 / 0.16);
   --perm-edge: transparent;
   --bar: 0;
+}
+
+.perm--other .ico {
+  color: var(--mana-U);
 }
 
 /* Nothing of that kind. Dimmed rather than hidden, because a cell that vanishes
@@ -418,7 +447,10 @@
 }
 
 .perm__pow {
+  display: flex;
   flex: none;
+  align-items: center;
+  gap: 2px;
   margin-left: auto;
   color: var(--attacking);
   font-size: 16px;
@@ -453,6 +485,7 @@
   flex: 1 1 0;
   align-items: center;
   justify-content: center;
+  gap: 3px;
   min-width: 0;
   height: 20px;
   border-radius: 5px;

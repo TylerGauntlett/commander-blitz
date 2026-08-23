@@ -156,6 +156,8 @@ const RING = {
   placed: false,
   /** Screen + overlay; a change means teleport rather than spring. */
   ctx: "",
+  /** The tilt of the thing the ring is around, in degrees. See `paint`. */
+  angle: 0,
   raf: 0,
   last: 0,
   speed: 0,
@@ -268,13 +270,105 @@ function paint(): void {
   ring.style.top = `${RING.y.toFixed(1)}px`;
   ring.style.width = `${Math.max(0, RING.w).toFixed(1)}px`;
   ring.style.height = `${Math.max(0, RING.h).toFixed(1)}px`;
+  /*
+   * THE RING TILTS WITH WHAT IT IS AROUND.
+   *
+   * A hand card is rotated by the arc, and `getBoundingClientRect` is
+   * axis-aligned -- so the ring was a big upright box around a tilted card,
+   * touching it at two corners and standing well clear of it at the other two.
+   * On the one surface a controller player spends a main phase in.
+   *
+   * Set rather than sprung: the ANGLE changes only when the ring moves between
+   * two cards, and the position is already springing between them. A second
+   * spring on the rotation reads as a wobble rather than as travel.
+   */
+  ring.style.transform = RING.angle ? `rotate(${RING.angle.toFixed(2)}deg)` : "";
   const trail = document.getElementById("ringtrail");
   if (!trail) return;
   trail.style.left = `${RING.gx.toFixed(1)}px`;
   trail.style.top = `${RING.gy.toFixed(1)}px`;
   trail.style.width = `${Math.max(0, RING.gw).toFixed(1)}px`;
   trail.style.height = `${Math.max(0, RING.gh).toFixed(1)}px`;
+  trail.style.transform = RING.angle ? `rotate(${RING.angle.toFixed(2)}deg)` : "";
   trail.style.opacity = Math.min(0.5, RING.speed / 2600).toFixed(3);
+}
+
+/** The four numbers `retargetRing` needs. A `DOMRect` satisfies it. */
+export interface RingRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * WHAT SHAPE IS THE THING THE RING IS AROUND.
+ *
+ * `getBoundingClientRect` answers "what box does this occupy on screen", which
+ * for a rotated element is its axis-aligned envelope -- wider and shorter than
+ * the element, and upright. A hand card is tilted by the arc, so the ring stood
+ * clear of it at two corners and cut it at the other two, on the surface a
+ * controller player spends a main phase in.
+ *
+ * So the rect is rebuilt from the element's own untransformed size, scaled and
+ * centred on the envelope's centre, and the rotation is handed to `paint` to
+ * apply. The centre is the one thing the envelope reports exactly, whatever the
+ * transform.
+ *
+ * THE TRANSFORM IS ACCUMULATED UP THE TREE, because the rotation is rarely on
+ * the stop itself: the hand rotates `.hand__lift`, which is the card's parent.
+ * The walk stops at the board for the same reason the clip walk in
+ * `input/stops.ts` walks at all -- it is bounded, it is cheap, and it runs once
+ * per press rather than per frame.
+ *
+ * Rotations and scales compose additively and multiplicatively only while there
+ * is no skew, which is true of every transform this app writes: `rotate`,
+ * `scale`, and translations, which do not affect either.
+ */
+export function ringTargetFor(el: HTMLElement): { rect: RingRect; angle: number } {
+  const box = el.getBoundingClientRect();
+  const upright = { rect: box, angle: 0 };
+  if (typeof DOMMatrixReadOnly === "undefined") return upright;
+
+  let radians = 0;
+  let sx = 1;
+  let sy = 1;
+  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+    const transform = getComputedStyle(node).transform;
+    if (!transform || transform === "none") {
+      if (node.classList.contains("table")) break;
+      continue;
+    }
+    let m: DOMMatrixReadOnly;
+    try {
+      m = new DOMMatrixReadOnly(transform);
+    } catch {
+      return upright;
+    }
+    radians += Math.atan2(m.b, m.a);
+    sx *= Math.hypot(m.a, m.b) || 1;
+    sy *= Math.hypot(m.c, m.d) || 1;
+    if (node.classList.contains("table")) break;
+  }
+
+  const degrees = (radians * 180) / Math.PI;
+  // Nothing to correct: skip the rebuild so an untransformed stop keeps
+  // measuring exactly as it always did.
+  if (Math.abs(degrees) < 0.01) return upright;
+
+  const w = el.offsetWidth * sx;
+  const h = el.offsetHeight * sy;
+  if (w <= 0 || h <= 0) return upright;
+
+  return {
+    rect: {
+      left: box.left + box.width / 2 - w / 2,
+      top: box.top + box.height / 2 - h / 2,
+      width: w,
+      height: h,
+    },
+    angle: degrees,
+  };
 }
 
 /** Padding between the measured box and the ring drawn around it. */
@@ -289,7 +383,7 @@ const PAD = 3;
  * were never on screen together, and it reads as a glitch rather than as
  * movement. Same context, spring; new context, teleport.
  */
-export function retargetRing(rect: DOMRect | null, context: string): void {
+export function retargetRing(rect: RingRect | null, context: string, angle = 0): void {
   const ring = document.getElementById("ring");
   if (!ring) return;
   if (!rect) {
@@ -297,6 +391,7 @@ export function retargetRing(rect: DOMRect | null, context: string): void {
     RING.placed = false;
     return;
   }
+  RING.angle = angle;
   RING.tx = rect.left - PAD;
   RING.ty = rect.top - PAD;
   RING.tw = rect.width + PAD * 2;

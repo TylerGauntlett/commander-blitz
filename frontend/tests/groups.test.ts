@@ -18,6 +18,7 @@ import {
   groupOf,
   groupRoot,
   groupsPresent,
+  landableStopsIn,
   nextGroup,
   rememberStop,
   rememberedStop,
@@ -116,6 +117,42 @@ describe("groupsPresent", () => {
     boxed(document.querySelector("[data-stop]") as Element, 120, 168);
 
     expect(groupsPresent()).toEqual([]);
+  });
+});
+
+describe("landableStopsIn", () => {
+  /*
+   * The rule that had two definitions.
+   *
+   * `groupsPresent` filtered by visibility -- an empty hand must not be a
+   * destination -- while ENTERING a region took the first `[data-stop]` in
+   * document order. On a handheld an opponent's cards are clipped to zero
+   * height and still in the document, so "this region has something visible"
+   * and "the first thing in it is visible" are different questions, and only
+   * the first was being asked. The ring could therefore be sent to a card
+   * nobody could see, in a region that was correctly offered.
+   */
+  it("skips the stops an ancestor has clipped away", () => {
+    document.body.innerHTML = `<div class="table"><div class="hand">
+      <div class="clipped"><button data-stop="card:1"></button></div>
+      <button data-stop="card:2"></button>
+    </div></div>`;
+    boxed(document.querySelector(".table") as Element, 1280, 800);
+    const clipped = document.querySelector(".clipped") as HTMLElement;
+    clipped.style.overflow = "hidden";
+    boxed(clipped, 200, 0);
+    for (const el of document.querySelectorAll("[data-stop]")) boxed(el);
+
+    const hand = document.querySelector(".hand") as HTMLElement;
+    expect(landableStopsIn(hand).map((el) => el.dataset.stop)).toEqual(["card:2"]);
+  });
+
+  it("keeps document order among the ones that are visible", () => {
+    // Entering a region lands on the first landable stop, so the order is part
+    // of the contract rather than an accident of the filter.
+    board(["hand"]);
+    const hand = document.querySelector(".hand") as HTMLElement;
+    expect(landableStopsIn(hand).map((el) => el.dataset.stop)).toEqual(["card:1"]);
   });
 });
 

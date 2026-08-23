@@ -407,6 +407,43 @@ html[data-input="keyboard"] .glyph--key {
   font-size: 18px;
 }
 
+/*
+ * THE BOX HOLDS THE LINE, NOT THE GLYPH.
+ *
+ * `ui.css` draws the action list's numeral chip at 19x19 around 10.5px type and
+ * the hint bar's keycap at 18px around 11px, and both are right at those sizes.
+ * The 16px floor raises the TYPE and leaves the BOX -- and a 16px Segoe line
+ * box is about 21px, so the digit cannot centre inside 19 and sits hard against
+ * the edges. `mockups/handheld-board/_board.css` records the same fix on its
+ * own `.key` and calls 26 the number.
+ *
+ * `line-height: 1` is half the fix and the half that is easy to miss: `grid`
+ * with `place-items: center` centres the LINE BOX, so a taller-than-necessary
+ * line box is centred while the glyph inside it is not.
+ */
+[data-handheld] .act__key {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+[data-handheld] .glyph {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+[data-handheld] .commit__key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  line-height: 1;
+}
+
 /* ==========================================================================
    The card face at 1280x800
    ==========================================================================
@@ -1271,17 +1308,90 @@ html[data-input="keyboard"] .hints {
  * Dropping is for labels whose subject is still on screen; a count is not its
  * own name.
  */
-[data-handheld] .pile__label,
 [data-handheld] .track__step-label,
 [data-handheld] .cmd-pip__who {
   display: revert;
   font-size: 16px;
 }
 
+/*
+ * ...AND ONE OF THE TWO TAKEN BACK AGAIN, now that there is a mark to take it.
+ *
+ * `.pile__label` was raised above because dropping it left "82 4 5 1" and no
+ * way to tell a library count from a graveyard count -- the order only helps
+ * somebody who already knows it. That argument is about the WORD standing in
+ * for an identity, and a shape carries an identity without being taught:
+ * `SeatIcon` draws a headstone, a fan of three, a face-down card.
+ *
+ * `mockups/handheld-board/` reaches the same conclusion from the other side and
+ * calls it a legibility argument rather than a colour one. So the word goes and
+ * the mark stays, which is what the first drop was trying to buy and could not.
+ */
+[data-handheld] .pile__label {
+  display: none;
+}
+
+/*
+ * Your own name, which the strip six pixels above already gives you twice.
+ *
+ * The mockup's single stated deviation from the plinth direction, and its
+ * argument holds here: unlike the three seats beside it, there is never any
+ * doubt whose panel this is. The row stays -- the priority tick lives in it --
+ * and only the name goes.
+ */
+[data-handheld] .play__mine .orb__name {
+  display: none;
+}
+
+/*
+ * The mark takes the zone's own hue, so the row is five different shapes in
+ * five different colours rather than five counts.
+ */
+[data-handheld] .pile .ico {
+  width: 15px;
+  height: 15px;
+  color: var(--text-dim);
+}
+
+[data-handheld] .pile--lib .ico,
+[data-handheld] .pile:has(.pile__leaf--lib) .ico {
+  color: #9a86e8;
+}
+
+[data-handheld] .pile:has(.pile__leaf--hand) .ico {
+  color: #5ac8be;
+}
+
+[data-handheld] .pile:has(.pile__leaf--gy) .ico {
+  color: #b08a63;
+}
+
+[data-handheld] .pile:has(.pile__leaf--ex) .ico {
+  color: #8b8ba0;
+}
+
+[data-handheld] .pile:has(.pile__leaf--cmd) .ico {
+  color: var(--gold);
+}
+
 /* The piles wrap to two rows so five 44px targets and their names both fit. */
+/*
+ * The mark beside the count, not under it.
+ *
+ * It was a column because the WORD went under the stack, and a word is a line
+ * of its own. A mark is not: `[headstone] 5` reads as one chip and stacked it
+ * reads as two things, in a column that is already the tightest on the screen.
+ *
+ * `row-reverse` rather than reordering the markup, because the stack has to
+ * stay first for the same reason `.pile__leaf--top` is last inside it -- the
+ * count is the last leaf, and moving either would be moving a number to suit a
+ * layout.
+ */
 [data-handheld] .pile {
-  flex-direction: column;
-  gap: 1px;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
 }
 
 /* ==========================================================================

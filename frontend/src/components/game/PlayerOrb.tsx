@@ -59,6 +59,7 @@ import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import { CommandZone } from "./CommandZone";
 import { ManaSymbol } from "./ManaSymbol";
+import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
 /** Commander damage becomes lethal here; warn well before it does. */
 const COMMANDER_LETHAL = 21;
@@ -153,6 +154,22 @@ function ZonePile({
           {count}
         </span>
       </span>
+      {/*
+        THE MARK IS WHAT THE WORD WAS FOR.
+        
+        Loop 3 dropped `.pile__label` at the 16px floor and took it back the
+        same day: the column became the bare row "82 4 5 1" and there was no way
+        to tell a library count from a graveyard count. The note it left is the
+        right one -- **the order only helps somebody who already knows it** --
+        and so is the conclusion, that a count is not its own name.
+        
+        A shape is, though, and does not have to be taught: a headstone is a
+        graveyard, a fan of three is a hand, a face-down card is a library.
+        `mockups/handheld-board/` reaches for exactly this, and `SeatIcon` is
+        the set. So the word can go where the room is tight without the row
+        becoming anonymous again -- see `styles/handheld.css`.
+      */}
+      <SeatIcon name={kind as SeatIconName} />
       <span className="pile__label">{label}</span>
       {topCard && <span className="pile__revealed">{topCard.name}</span>}
     </>
@@ -389,6 +406,18 @@ export function PlayerOrb({
       )}
 
       <div className="orb__body">
+        {/*
+          Your own name, and on a handheld it is the one thing here that says
+          nothing.
+
+          `mockups/handheld-board/` calls this its single deviation from the
+          plinth direction and argues it: the information strip six pixels above
+          names you, and unlike the three seats beside it there is never any
+          doubt whose panel this is. It is worth 21px of a 250px column and not
+          of a 128px one. The row stays in the DOM so the priority tick has
+          somewhere to live and `orb.spec.ts` keeps its anchor; `handheld.css`
+          drops the NAME.
+        */}
         <div className="orb__head">
           <span className="orb__name">{player.name}</span>
           {hasPriority && <span className="orb__priority" data-hint="Has priority" />}

@@ -93,6 +93,21 @@ function visible(el: Element): boolean {
 }
 
 /**
+ * The stops inside a region that the ring can actually land on.
+ *
+ * ONE DEFINITION, because the two callers were allowed to disagree and did:
+ * `groupsPresent` filtered by visibility -- an empty hand must not be a
+ * destination -- while entering a region took the first `[data-stop]` in
+ * document ORDER. On a handheld an opponent's cards are clipped to zero height
+ * and still in the document, so "the region has something visible" and "the
+ * first thing in it is visible" are different questions, and only the first was
+ * being asked.
+ */
+export function landableStopsIn(root: HTMLElement): HTMLElement[] {
+  return [...root.querySelectorAll<HTMLElement>("[data-stop]")].filter(visible);
+}
+
+/**
  * The groups that are on screen and hold something to land on.
  *
  * A group whose container is missing or empty is NOT a destination. An empty
@@ -107,8 +122,7 @@ export function groupsPresent(doc: Document = document): GroupId[] {
   for (const group of GROUPS) {
     const root = doc.querySelector<HTMLElement>(group.sel);
     if (!root) continue;
-    const stops = [...root.querySelectorAll<HTMLElement>("[data-stop]")];
-    if (stops.some(visible)) out.push(group.id);
+    if (landableStopsIn(root).length > 0) out.push(group.id);
   }
   return out;
 }
