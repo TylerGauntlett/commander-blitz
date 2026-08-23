@@ -179,24 +179,41 @@ test.describe("the compact layout is the one being drawn", () => {
      * commander. Two grid items may occupy one cell, which is all it needed.
      */
     const floats = await page.evaluate(() => {
+      const play = document.querySelector(".play");
+      if (!play) return null;
       const panel = document.createElement("div");
       panel.className = "stackpanel";
-      document.querySelector(".play")?.append(panel);
-      // Read BEFORE removing: `getComputedStyle` hands back a live declaration,
-      // so a detached element reports empty strings for everything.
+      play.append(panel);
+
+      /*
+       * EVERY READ BEFORE THE REMOVE, and the whole answer built in one go.
+       *
+       * A detached element reports empty strings for every computed property
+       * and matches no selector, so anything evaluated after `remove()` is
+       * measuring nothing. Two versions of this probe got that wrong in two
+       * different places -- a live `CSSStyleDeclaration` read late, and then a
+       * `querySelector` inside the returned object literal -- which is the tell
+       * that the shape was wrong rather than the lines. So the result is
+       * finished before the cleanup begins.
+       */
       const style = getComputedStyle(panel);
-      const mine = document.querySelector(".play__mine");
-      const row = mine ? getComputedStyle(mine).gridRowStart : "";
-      const cell = { row: style.gridRowStart, column: style.gridColumnStart };
+      const answer = {
+        row: style.gridRowStart,
+        column: style.gridColumnStart,
+        inPlay: !!document.querySelector(".play > .stackpanel"),
+      };
       panel.remove();
-      return { cell, mineRow: row, inPlay: !!document.querySelector(".play > .stackpanel") };
+      return answer;
     });
+
+    expect(floats, "there should be a play area to hang the stack off").not.toBeNull();
+    if (!floats) return;
 
     expect(floats.inPlay, "the stack hangs off the play area").toBe(true);
     // The viewer's own cell, which is what puts it over their panel and never
     // over an opponent's vitals.
-    expect(floats.cell.row, "the stack shares the viewer's row").toBe("2");
-    expect(floats.cell.column).toBe("1");
+    expect(floats.row, "the stack shares the viewer's row").toBe("2");
+    expect(floats.column).toBe("1");
 
     // The log is reachable, and closable, without a mouse.
     await expect(page.getByTestId("log-overlay")).toBeHidden();
