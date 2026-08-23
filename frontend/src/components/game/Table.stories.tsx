@@ -365,6 +365,65 @@ export const FullHeightRail: Story = {
   },
 };
 
+/**
+ * Standing at an opponent's seat, on a DESKTOP.
+ *
+ * The swap is not a handheld feature. Pressing a seat is how you read a board
+ * at any size, and on a desktop it answers a question the compact layout does
+ * not have: at four seats an opponent's cards are drawn at the 52px floor with
+ * their lanes scrolling behind a fade, so "let me actually look at that" is
+ * still a real thing to want.
+ *
+ * The rule it exists to prove is the same one: **the node moves, it is never
+ * copied**. That is the half a handheld cannot check on its own, because there
+ * an opponent's lanes are clipped to zero anyway -- here they are drawn, so a
+ * seat that failed to give them up would put two boxes on screen rather than
+ * one visible and one invisible.
+ */
+export const ViewingAnOpponent: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    const boxes = (attr: string) =>
+      [...canvasElement.querySelectorAll(`[${attr}]`)].map((el) => el.getAttribute(attr));
+    const dupes = (list: string[]) => list.filter((id, i) => list.indexOf(id) !== i);
+
+    expect(dupes(boxes("data-oid")), "before").toEqual([]);
+
+    await userEvent.click(await canvas.findByTestId("player-1"));
+
+    const strip = await canvas.findByTestId("viewing-strip");
+    expect(strip.textContent).toContain("Viewing");
+    expect(canvasElement.querySelector('.play__mine[data-viewing="1"]')).not.toBeNull();
+
+    /*
+     * Their own mat kept its seat and gave up its lanes.
+     *
+     * This is the assertion a handheld cannot make: there the lanes are clipped
+     * whether or not the swap took them, so only a desktop can tell "moved"
+     * from "hidden twice".
+     */
+    const theirMat = canvasElement.querySelector('[data-testid="mat-1"]');
+    expect(theirMat?.querySelector(".seat"), "their seat stays").not.toBeNull();
+    expect(theirMat?.querySelector(".mat__lanes"), "their lanes moved").toBeNull();
+
+    expect(dupes(boxes("data-oid")), "while viewing").toEqual([]);
+    expect(dupes(boxes("data-player")), "while viewing").toEqual([]);
+
+    // Your own panel is still there -- life and open mana are most of what you
+    // assess a threat against.
+    expect(canvasElement.querySelector(".play__mine .mat__side")).not.toBeNull();
+
+    await userEvent.click(within(strip).getByRole("button"));
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
+    });
+  },
+};
+
 /* ------------------------------------------------------------------ handheld
  *
  * The same board, at the layout a Steam Deck gets. Flip the **Layout** toolbar

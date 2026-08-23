@@ -437,13 +437,21 @@ Ranked by severity. None of these block anything; they are the queue.
   content-sized and cramped. It is now a fixed six-column grid roughly 960px wide at
   1600×950, so the full labels would fit and read better.
 
-### 8. The action panel's empty state leaves a large dead area — low
+### 8. The action panel's empty state leaves a large dead area — low, and larger
 
 - **App**: `.acts__list` is `flex: 1 1 auto` with a 74px floor, so it fills the panel
   even when it holds one italic line ("Nothing can block.").
 - **Why it matters**: cosmetic. The floor is load-bearing — `e2e/layout.spec.ts`
   measures it, because on a short viewport this list is the first thing a flex
   parent flattens to zero — so this is a trade, not simply a bug.
+- **The handheld round made it bigger, deliberately.** The rail runs the full
+  height of the screen now, so the list is 392px at 1280×800 rather than 172 —
+  which is the point of the change and also means an empty list is 392px of
+  nothing. `mockups/handheld-board/README.md` names the honest answer and does
+  not build it: **one region that is the stack when the stack is not empty and
+  the reader when it is**, because they are never both urgent and neither earns
+  a permanent column. The stack now floats over the board instead, which is a
+  different answer to the same observation and leaves this one open.
 
 ### 9. The viewer's mat side column has more whitespace than the mockup's — low
 
@@ -453,26 +461,21 @@ Ranked by severity. None of these block anything; they are the queue.
 - **Why it matters**: purely density. It costs the lanes horizontal room they could
   use.
 
-### 10. Eliminating an opponent moves the viewer's whole board down — low
+### 10. Eliminating an opponent moves the viewer's whole board down — **resolved**
 
-- **What happens**: a dead player's orb grows a `.orb__loss` line. The opponent row
-  is `align-items: stretch`, so *every* mat grows to match and the viewer's board —
-  and every drop target on it — shifts down.
-- **Measured**: 19px at 1600×950 in a four-player pod. `.mat__side` goes 256 → 275;
-  `.mat__lanes` stays pinned at `--pod-lanes-h`, so the fixed-lane work is holding
-  and this is the *other* half of the mat.
-- **Why it is not defect #10's sibling**: `--pod-lanes-h` was the fix for "their
-  board filled up". This is a different trigger — a player was knocked out — and it
-  is at least arguable that the board *should* acknowledge that. What is not
-  arguable is that it should move the hand.
-- **Found by**: `e2e/layout.spec.ts`, "an opponent's board filling up does not move
-  the viewer's board", once the pod lobby changed which decks sit in which seats and
-  the 20-action window started reaching an elimination. That test now stops sampling
-  at the first `.orb__loss`, because its claim is about boards filling and not about
-  players dying — the narrowing is deliberate and this entry is the other half of it.
-- **Likely fix**: reserve the loss line's height whether or not a player has lost, as
-  `.face--big .face__footer` already does for the P/T slot, so the row's height stops
-  being a function of who is still alive.
+- **What happened**: a dead player's orb grew a `.orb__loss` line. The opponent row
+  is `align-items: stretch`, so *every* mat grew to match and the viewer's board —
+  and every drop target on it — shifted down. Measured at 19px at 1600×950.
+- **What resolved it**: an opponent is an `OpponentSeat` now, and a seat is a
+  stated `--seat-h` grid whose four rows are pixels that add up to 96. It has no
+  row that can appear, so there is nothing for a stretched sibling to match. The
+  loss state is a filter and an absolutely positioned mark (`.seat--out`,
+  `.seat__out`), neither of which takes layout.
+- **Not the fix that was proposed.** The entry suggested reserving the loss
+  line's height whether or not a player has lost. Making the whole panel a fixed
+  grid is the same idea one level up, and it also closes the general case: any
+  future conditional row on a seat has the same problem, and now there is
+  nowhere to put one without saying so.
 
 ---
 
