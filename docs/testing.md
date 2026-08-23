@@ -24,6 +24,60 @@ the Storybook build, and the story interaction tests.
 
 Playwright's own suite is still invoked separately (`cd frontend && npx playwright test`).
 
+It runs as **two projects at two viewports**, and the split is the safety
+argument for the handheld work rather than a convenience:
+
+```bash
+npx playwright test --project=chromium   # 1600x950 -- the desktop board
+npx playwright test --project=handheld   # 1280x800 -- a Steam Deck's panel
+```
+
+`chromium` ignores the handheld specs and `handheld` matches only them. Running
+the compact specs at 1600x950 would test the wide layout while claiming to test
+the other one, and — more importantly — the desktop project's numbers are what
+prove the wide board is unchanged. They may never move.
+
+The handheld project runs `e2e/handheld.spec.ts`, which asserts
+`e2e/handheldAssert.ts` at every reachable state: **16px** on anything carrying
+information, **96px** on any card the ring can land on, **44px** on any control,
+a ring at least 3px *and not `outline-style: none`*, at most one cursor, zero
+unreachable stops and zero `title` tooltips. Duplicate `data-testid`s are
+counted and reported but deliberately not failed -- scoping a query to its
+container, as `e2e/pod.spec.ts` does, makes a shared id on a repeated component
+correct.
+
+Three things about that gate are worth knowing before changing it, because each
+one cost a confusing loop to find:
+
+- **It walks clipping ancestors.** `getBoundingClientRect` reports an element's
+  own box even when an ancestor has clipped it to nothing, and the handheld
+  layout clips an opponent's lanes to `height: 0` deliberately — their cards
+  must stay in the document for `FxLayer` to anchor to. Without the walk it
+  reported 22 cards under the floor that nobody can see.
+- **It waits for animations, but only finite ones.** Dialogs animate in from
+  `scale: 0.96` and the scaled box fails the hit floor; the ring's sheen loops
+  forever and waiting on it never returns.
+- **It only demands a ring where a ring exists.** A mouse player has none by
+  design.
+
+`e2e/pad.spec.ts` drives a synthetic gamepad — Playwright cannot produce a real
+one, so `navigator.getGamepads` is overridden through `addInitScript` and a
+`gamepadconnected` event is dispatched.
+
+Two of its cases exist because a synthetic pad is *too well behaved*, and both
+were failures a real controller met on a desktop while the whole suite passed:
+"a controller plugged in later" (a real pad is invisible until its first
+gesture, so it is never there on the first frame) and "a second gamepad in front
+of the real one" (`getGamepads()` is indexed by slot, and on Windows slot zero is
+routinely a device nobody is touching).
+
+`tests/pad.test.ts` covers the polling loop itself in jsdom — multiple pads, a
+non-standard HID layout with its d-pad on a hat axis, analog triggers whose
+driver never sets `pressed`, and a loop recovering after rAF stopped running.
+It exists because the controller work was play-tested entirely through the
+keyboard fallback, which shares everything *below* the button map and therefore
+exercises none of the code that reads an actual gamepad.
+
 ## Where the four frontend suites divide
 
 They split by what they can *see*, which is the only line worth drawing:

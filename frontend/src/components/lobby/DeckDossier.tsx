@@ -73,7 +73,7 @@ export function ManaCurve({ values }: { values: number[] }) {
             key={label(i)}
             className="curve__bar"
             style={{ height: `${Math.round((value / max) * 100)}%` }}
-            title={`${value} cards at ${label(i)} mana`}
+            data-hint={`${value} cards at ${label(i)} mana`}
           />
         ))}
       </div>
@@ -126,6 +126,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
         className="dos"
         role="dialog"
         aria-modal="true"
+        data-modal-root
         aria-label={deck?.name ?? "Deck details"}
         data-testid="deck-dossier"
       >

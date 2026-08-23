@@ -1,0 +1,146 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Gamepad check</title>
+<meta name="robots" content="noindex" />
+<style>
+  :root { color-scheme: dark; }
+  body { font: 15px/1.5 ui-monospace, Consolas, monospace; background: #0f1115; color: #e6e9ef;
+         margin: 0; padding: 24px; }
+  h1 { font: 600 20px/1.3 system-ui, sans-serif; margin: 0 0 4px; }
+  p.lede { font: 14px/1.5 system-ui, sans-serif; color: #9aa4b2; margin: 0 0 20px; max-width: 62ch; }
+  .row { display: flex; gap: 10px; align-items: baseline; padding: 5px 0;
+         border-bottom: 1px solid #1e2230; }
+  .k { width: 21ch; color: #9aa4b2; flex: none; }
+  .v { font-weight: 600; }
+  .ok { color: #7ee787; } .bad { color: #ff7b72; } .warn { color: #e3b341; }
+  pre { background: #161a22; border: 1px solid #232838; border-radius: 8px;
+        padding: 14px; overflow-x: auto; margin: 16px 0 0; }
+  .verdict { margin: 22px 0 0; padding: 14px 16px; border-radius: 8px;
+             border: 1px solid #232838; background: #161a22;
+             font: 14px/1.6 system-ui, sans-serif; }
+  .verdict b { color: #e3b341; }
+  kbd { background: #232838; border-radius: 4px; padding: 1px 6px; font-size: 13px; }
+</style>
+
+<h1>Gamepad check</h1>
+<p class="lede">
+  This page uses no framework and none of the game's code — it asks the browser
+  directly. Click anywhere on this page first, then press buttons and move both
+  sticks on the controller.
+</p>
+
+<div id="facts"></div>
+<div class="verdict" id="verdict">Waiting…</div>
+<pre id="dump">no gamepads reported</pre>
+
+<script>
+  const facts = document.getElementById("facts");
+  const dump = document.getElementById("dump");
+  const verdict = document.getElementById("verdict");
+
+  // Anything the browser ever admitted to, kept so a pad that vanishes on blur
+  // still shows what it was.
+  let everSeen = null;
+  let everPressed = new Set();
+  let gestureAt = null;
+
+  addEventListener("gamepadconnected", (e) => {
+    if (!gestureAt) gestureAt = new Date().toLocaleTimeString();
+  });
+
+  function row(k, v, cls) {
+    return `<div class="row"><span class="k">${k}</span><span class="v ${cls || ""}">${v}</span></div>`;
+  }
+
+  function tick() {
+    const supported = !!navigator.getGamepads;
+    const secure = window.isSecureContext;
+    const focused = document.hasFocus();
+
+    let pads = [];
+    if (supported) {
+      try {
+        pads = [...navigator.getGamepads()].filter(Boolean);
+      } catch (err) {
+        pads = [];
+      }
+    }
+
+    if (pads.length) {
+      everSeen = pads.map((p) => ({
+        index: p.index, id: p.id, mapping: p.mapping,
+        buttons: p.buttons.length, axes: p.axes.length,
+      }));
+      for (const p of pads) {
+        p.buttons.forEach((b, i) => { if (b.pressed || b.value > 0.5) everPressed.add(i); });
+      }
+    }
+
+    facts.innerHTML =
+      row("Gamepad API present", supported, supported ? "ok" : "bad") +
+      row("Secure context", secure, secure ? "ok" : "bad") +
+      row("This page focused", focused, focused ? "ok" : "warn") +
+      row("Pads visible now", pads.length, pads.length ? "ok" : "bad") +
+      row("Pads ever visible", everSeen ? everSeen.length : 0, everSeen ? "ok" : "bad") +
+      row("Button indices seen", everPressed.size ? [...everPressed].sort((a,b)=>a-b).join(", ") : "none", everPressed.size ? "ok" : "bad") +
+      row("gamepadconnected", gestureAt || "never fired", gestureAt ? "ok" : "bad");
+
+    if (pads.length) {
+      dump.textContent = JSON.stringify(
+        pads.map((p) => ({
+          index: p.index, id: p.id, mapping: p.mapping,
+          buttons: p.buttons.length, axes: p.axes.length,
+          pressed: p.buttons.map((b, i) => (b.pressed || b.value > 0.5 ? i : null)).filter((v) => v !== null),
+          axes_now: p.axes.map((v) => v.toFixed(2)),
+        })),
+        null, 1,
+      );
+    }
+
+    if (!supported) {
+      verdict.innerHTML =
+        "<b>The browser has no Gamepad API here.</b> It is secure-context only — " +
+        "serve the app over https or via localhost / 127.0.0.1, not a LAN IP.";
+    } else if (!focused) {
+      verdict.innerHTML =
+        "<b>This page is not focused.</b> No browser reports gamepads to an " +
+        "unfocused document. Click this page, keep it in front, then press a button.";
+    } else if (!everSeen) {
+      verdict.innerHTML =
+        "<b>The browser has never seen the controller.</b> It only appears after a " +
+        "button is pressed while this page is focused — so if you have pressed one " +
+        "and this still says zero, something is taking the controller before the " +
+        "browser does. On Windows that is almost always <b>Steam</b>: with Steam " +
+        "running, a controller bound to a desktop layout is captured by Steam Input " +
+        "and re-emitted as mouse/keyboard, and no browser ever sees a gamepad. " +
+        "Test it by quitting Steam entirely and pressing a button again.";
+    } else if (!everPressed.size) {
+      verdict.innerHTML =
+        "<b>The controller is visible but no button press has registered.</b> " +
+        "Press the face buttons and the d-pad.";
+    } else if (![...everPressed].some((i) => i <= 15)) {
+      // Index 16 is the Guide/Xbox button. Seeing that one and nothing else is
+      // not a partial failure -- it is the shape capture leaves behind. Steam
+      // Input binds the playable buttons into its desktop layout and re-emits
+      // them as mouse and keyboard; Guide is unbound there, so it alone falls
+      // through to the browser.
+      verdict.innerHTML =
+        "<b>Only the Guide/Xbox button is getting through.</b> The browser can see " +
+        "the controller, but every playable button — face buttons 0–3, d-pad 12–15, " +
+        "sticks and triggers — is being consumed before it arrives. That is what " +
+        "<b>Steam Input</b> looks like from here: it binds those into a desktop " +
+        "layout and re-emits them as mouse and keyboard, while Guide stays unbound " +
+        "and falls through. Fix it in Steam → Settings → Controller: turn off " +
+        "Generic Gamepad Support, or open the entry for this controller and set " +
+        "Steam Input to Off. Quitting Steam entirely is the quick way to confirm it.";
+    } else {
+      verdict.innerHTML =
+        "<b>The browser sees the controller and its buttons.</b> If the game still " +
+        "does not respond in this same window, the problem is in the app — note the " +
+        "button indices above and the <code>mapping</code> in the dump.";
+    }
+  }
+
+  setInterval(tick, 100);
+  tick();
+</script>

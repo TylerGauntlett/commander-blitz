@@ -69,6 +69,74 @@
 }
 
 /*
+ * The four fixed tracks the board is built out of, as tokens.
+ *
+ * These were px literals written into `board.css`'s grids -- and *also* into
+ * `logic/zoomFit.ts` (`VIEWER_MAT.sideW: 190`, `COMPACT_MAT.sideW: 112`) and
+ * *also* into `testing/appGeometry.ts`. Three files holding the same number,
+ * with nothing connecting them: changing the rail width in the stylesheet left
+ * the fit solver packing cards into a lane width that no longer existed, and
+ * the storybook geometry assertions passing against a layout that had moved.
+ *
+ * They are tokens now because the handheld layout has to change them and the
+ * desktop layout must not notice. `styles/handheld.css` overrides these four
+ * values inside its media query and restates no grid at all.
+ *
+ * REGISTRATION IS MANDATORY, for exactly the reason `--pod-lanes-h` above
+ * gives: `useZoomFit` reads `--mat-side` through `getComputedStyle`, and an
+ * unregistered custom property hands back its literal text -- so the solver
+ * would silently fall back to its default and pack against the wrong width.
+ * The initial values are the numbers `board.css` has always used, so on a
+ * desktop every one of these resolves to what it did before.
+ */
+@property --rail-l {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 232px;
+}
+
+@property --rail-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 304px;
+}
+
+@property --mat-side {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 190px;
+}
+
+@property --mat-side-compact {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 112px;
+}
+
+/*
+ * How tall one opponent's seat may be. Zero means "no cap", which is desktop.
+ *
+ * `--pod-lanes-h` above caps an opponent's *lanes*; this caps the whole seat,
+ * and it exists because the handheld layout clips those lanes to nothing and
+ * then discovered the hard way that the lanes were never what grew. An empty
+ * opponent measured **220px** at 1280x800 -- the orb column alone -- and
+ * `board.css`'s `fit-content(58%)` was the only thing that had ever bounded it.
+ * The compact layout replaced that with a bare `auto` on the reasoning that
+ * with no lanes there was nothing left to cap, which is exactly backwards: with
+ * the lanes gone the orb IS the seat, and it was taking 220 of the 800px the
+ * viewer's own board needed.
+ *
+ * Registered for the same reason every token above it is: `useZoomFit` reads it
+ * through `getComputedStyle`, and an unregistered custom property hands back
+ * its literal text.
+ */
+@property --pod-seat-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+/*
  * `--type-ring` and `--type-ring-w` were registered here for the same reason,
  * back when card type was an eight-step luminance ladder read off the rendered
  * board. The ladder went with the art-bleed redesign -- card type is no longer
@@ -211,6 +279,31 @@
    * 700px tall.
    */
   --pod-lanes-h: clamp(150px, 24vh, 300px);
+
+  /*
+   * The board's fixed tracks. Registered above, and stated here so the cascade
+   * has a value to inherit rather than relying on the registration's initial --
+   * `handheld.css` overrides these, and an override has to have something to
+   * override. Every number is what `board.css` wrote inline before.
+   */
+  --rail-l: 232px;
+  --rail-r: 304px;
+  --mat-side: 190px;
+  --mat-side-compact: 112px;
+  /* No cap on a desktop: `.play`'s own `fit-content(58%)` is the bound there. */
+  --pod-seat-h: 0px;
+
+  /*
+   * How far a hovered hand card rises.
+   *
+   * A token because three places have to agree on it: `.hand__slot`'s upward
+   * padding (which is what stops the raise from moving the hit box out from
+   * under the pointer), `.hand`'s top padding (which is what keeps the raised
+   * card inside the foot), and `HandFan`'s motion value, which reads it through
+   * `state/useHandLift.ts`. It was a `-46` literal in the component and a pair
+   * of `46px` literals in the stylesheet.
+   */
+  --hand-lift: 46px;
 
   /* Motion */
   --t-fast: 120ms;

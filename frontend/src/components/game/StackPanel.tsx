@@ -76,7 +76,7 @@ export function StackPanel({ state }: Props) {
                   exit={{ opacity: 0, x: 24, scale: 0.92 }}
                   transition={bouncy}
                   layout
-                  title={targets ? `${item.name} → ${targets}` : item.name}
+                  data-hint={targets ? `${item.name} → ${targets}` : item.name}
                 >
                   {item.card ? (
                     <StaticCard card={item.card} variant="detail" />

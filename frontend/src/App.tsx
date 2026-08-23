@@ -26,6 +26,7 @@
 import { AnimatePresence, MotionConfig } from "motion/react";
 import { useEffect } from "react";
 import { Route, Routes, useLocation, useMatch } from "react-router";
+import { startInputMode } from "./input/inputMode";
 import { screenKey, titleFor } from "./logic/routes";
 import { DeckDossierRoute } from "./screens/DeckDossierRoute";
 import { DecksRoute } from "./screens/DecksRoute";
@@ -33,6 +34,7 @@ import { GameRoute } from "./screens/GameRoute";
 import { HomeRoute } from "./screens/HomeRoute";
 import { NotFound } from "./screens/NotFound";
 import { PodRoute } from "./screens/PodRoute";
+import { useHandheld } from "./state/useHandheld";
 import { useImages } from "./state/useImages";
 
 export function App() {
@@ -51,6 +53,36 @@ export function App() {
   useEffect(() => {
     document.title = titleFor(location.pathname);
   }, [location.pathname]);
+
+  /*
+   * Which controls the game draws, watched for the whole session.
+   *
+   * App-wide rather than per-screen, and app-wide from the first paint: the
+   * home screen and the lobby have buttons too, and a player arriving with a
+   * controller should see its glyphs on the front door rather than only once
+   * they reach a table.
+   *
+   * It writes `data-input` and `data-pad` onto `<html>` and nothing else --
+   * every glyph in the app is shown or hidden by CSS reading those, so moving
+   * a mouse costs no React work at all. See `input/inputMode.ts`.
+   */
+  useEffect(() => {
+    startInputMode();
+  }, []);
+
+  /*
+   * ...and which layout the viewport wants, on the same element.
+   *
+   * It started on `.table`, which meant the front door, the pod lobby and the
+   * deck catalogue never saw it -- so the 16px floor applied to the board and
+   * nowhere else, and the lobby was still drawing 9px text. The layout is a
+   * property of the environment, not of one component, and it belongs beside
+   * `data-input` on the root where every stylesheet can see it.
+   */
+  const handheld = useHandheld();
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-handheld", handheld);
+  }, [handheld]);
 
   // `location` is passed explicitly so the *exiting* screen keeps matching
   // against the address it was rendered for. Without it the outgoing route

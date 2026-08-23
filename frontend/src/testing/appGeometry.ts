@@ -18,16 +18,34 @@
 
 /** Fixed pixel tracks. */
 export const APP_BOX = {
-  /** The stack and the log. `board.css`, `.table__body` grid-template-columns. */
-  railLeft: 232,
-  /** The preview, the action panel and the commit dock. Same rule. */
-  railRight: 304,
-  /** Your mat's info column, which is what sizes `PlayerOrb`. `.mat`. */
-  matSide: 190,
-  /** An opponent's, same job. `.mat--compact`. */
-  matSideCompact: 112,
   /** The floor a compact mat may not shrink past. `.mat--compact`. */
   matCompactMinWidth: 288,
+} as const;
+
+/**
+ * Tracks the app states as a token rather than as a literal.
+ *
+ * These four were plain numbers here, and the same numbers again in `board.css`
+ * and again in `logic/zoomFit.ts`. They are `theme.css` custom properties now,
+ * because the handheld layout narrows them -- so a literal in this file would
+ * be asserting the desktop value against a story rendered at 1280x800 and
+ * failing for the one reason that is not a bug.
+ *
+ * They belong with `APP_CLAMP` rather than `APP_BOX` for exactly the reason
+ * that group already gives: a value the *document* resolves cannot be compared
+ * to a number written here. `expectMountedLike` resolves these in the same
+ * document it is measuring, which is correct in the tall canvas, on the short
+ * docs page, and in a handheld story alike.
+ */
+export const APP_VAR = {
+  /** The stack and the log. `board.css`, `.table__body` grid-template-columns. */
+  railLeft: "var(--rail-l)",
+  /** The preview, the action panel and the commit dock. Same rule. */
+  railRight: "var(--rail-r)",
+  /** Your mat's info column, which is what sizes `PlayerOrb`. `.mat`. */
+  matSide: "var(--mat-side)",
+  /** An opponent's, same job. `.mat--compact`. */
+  matSideCompact: "var(--mat-side-compact)",
 } as const;
 
 /** Sizes the app expresses as a clamp, so they are resolved rather than read. */

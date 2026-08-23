@@ -39,8 +39,10 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction } from "../../api/types";
+import { actionAttrs, stopId } from "../../input/stops";
 import {
   availableAttackers,
   availableBlockers,
@@ -54,6 +56,7 @@ import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { useHandheldLayout } from "../../state/useHandheld";
 import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
 
@@ -128,6 +131,52 @@ export function ActionPanel({
   aiThinking,
   standDown,
 }: Props) {
+  /*
+   * Where the commit slab and the tool strip actually go.
+   *
+   * On a handheld both leave this panel: the slab was 65px of a 531px rail and
+   * the full width of it, and the five utility controls wrapped to three rows in
+   * a 200px column -- 101px of a 252px panel -- while the action list underneath
+   * sat at its 74px floor clipping the choices the turn was waiting on. `Table`
+   * renders `.foot__slab` and `.foot__tools` in the foot and they are portalled
+   * there.
+   *
+   * PORTALLED, NOT DUPLICATED. The node is the same node, so every
+   * `data-action-id`, `data-testid` and ring stop travels with it and this
+   * panel's one-control-per-action invariant holds. A second copy of the tree
+   * would break it on the first render.
+   *
+   * FOUND, NOT PASSED IN, and that is a deliberate second version. It was two
+   * props threaded from `Table` through a ref-into-state dance, which worked in
+   * the app and made every `ActionPanel` story wrong: a story renders the panel
+   * without a `Table`, so it got no hosts and drew the slab inline -- showing an
+   * arrangement the handheld app does not have. Looking the hosts up means any
+   * surface that renders a foot gets the real thing, and `mounts.tsx` can supply
+   * one without inventing a way to pass refs through a class-name chain.
+   *
+   * Scoped with `closest(".table")` rather than the document, so two boards on
+   * one page (the docs view renders several stories at once) cannot portal into
+   * each other's foot.
+   */
+  const anchorRef = useRef<HTMLElement>(null);
+  const handheld = useHandheldLayout();
+  const [hosts, setHosts] = useState<{ slab: HTMLElement | null; tools: HTMLElement | null }>({
+    slab: null,
+    tools: null,
+  });
+  useEffect(() => {
+    if (!handheld) {
+      setHosts((c) => (c.slab || c.tools ? { slab: null, tools: null } : c));
+      return;
+    }
+    // The foot is rendered by the same commit that renders this panel, so by the
+    // time an effect runs the nodes exist. Scoped to this board.
+    const scope = anchorRef.current?.closest(".table") ?? document;
+    const slab = scope.querySelector<HTMLElement>(".foot__slab");
+    const tools = scope.querySelector<HTMLElement>(".foot__tools");
+    setHosts((c) => (c.slab === slab && c.tools === tools ? c : { slab, tools }));
+  }, [handheld]);
+
   const muted = useUiStore((s) => s.muted);
   const toggleMuted = useUiStore((s) => s.toggleMuted);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
@@ -353,9 +402,22 @@ export function ActionPanel({
         ? "Click the attacker you want each creature to block."
         : null;
 
+  /*
+   * The dock, in whichever parent it belongs to this session.
+   *
+   * A function rather than a conditional around two copies of the tree: two
+   * copies is how the same `data-action-id` ends up rendered twice, which is
+   * the one thing this panel is not allowed to do.
+   */
+  const dock = (tree: ReactNode): ReactNode =>
+    hosts.slab ? createPortal(tree, hosts.slab) : tree;
+  const tool = (tree: ReactNode): ReactNode =>
+    hosts.tools ? createPortal(tree, hosts.tools) : tree;
+
   return (
     <>
       <section
+        ref={anchorRef as React.RefObject<HTMLElement>}
         className="acts pane"
         data-testid={isCombat ? "combat-panel" : "action-panel"}
         data-combat-kind={
@@ -368,7 +430,7 @@ export function ActionPanel({
             {decisionPrompt(state)}
           </span>
           {mode === "block" && incomingPower > 0 && (
-            <span className="acts__stakes tabular" title="Total power attacking you">
+            <span className="acts__stakes tabular" data-hint="Total power attacking you">
               {incomingPower} power incoming
             </span>
           )}
@@ -420,7 +482,7 @@ export function ActionPanel({
                     type="button"
                     key={attacker}
                     className={rowClass}
-                    data-action-id={action.id}
+                    {...actionAttrs(action.id)}
                     data-action-kind={action.kind}
                     data-attacker={attacker}
                     data-defender={defenders[0]}
@@ -456,14 +518,14 @@ export function ActionPanel({
                           type="button"
                           key={pid}
                           className={aimed ? "aim aim--on" : "aim"}
-                          data-action-id={pairAction.id}
+                          {...actionAttrs(pairAction.id)}
                           data-action-kind={pairAction.kind}
                           data-attacker={attacker}
                           data-defender={pid}
                           aria-pressed={aimed}
                           disabled={disabled}
                           onClick={() => onStage(pairAction.id)}
-                          title={
+                          data-hint={
                             aimed
                               ? `Attacking ${state.players[pid]?.name} — click to call it back`
                               : `Send at ${state.players[pid]?.name}`
@@ -514,7 +576,7 @@ export function ActionPanel({
                           type="button"
                           key={action.id}
                           className={`act act--nested act--staged${on ? " act--on" : ""}`}
-                          data-action-id={action.id}
+                          {...actionAttrs(action.id)}
                           data-action-kind={action.kind}
                           data-blocker={blocker}
                           data-attacker={attacker}
@@ -523,7 +585,7 @@ export function ActionPanel({
                           aria-pressed={on}
                           disabled={disabled}
                           onClick={() => onStage(action.id)}
-                          title={
+                          data-hint={
                             on
                               ? `Blocking ${nameOf(attacker)} — click to release`
                               : `Block ${nameOf(attacker)}`
@@ -597,7 +659,7 @@ export function ActionPanel({
                     type="button"
                     key={groupKey}
                     className={`act${tone}`}
-                    data-action-id={head.id}
+                    {...actionAttrs(head.id)}
                     data-action-kind={head.kind}
                     data-source={head.source_oid ?? undefined}
                     disabled={disabled}
@@ -626,12 +688,12 @@ export function ActionPanel({
                         type="button"
                         key={aim.id}
                         className="aim"
-                        data-action-id={aim.id}
+                        {...actionAttrs(aim.id)}
                         data-action-kind={aim.kind}
                         data-source={aim.source_oid ?? undefined}
                         disabled={disabled}
                         onClick={() => onAct(aim.id)}
-                        title={aim.label}
+                        data-hint={aim.label}
                         // Not `previewing`: this is a hovering child of a
                         // hovering container, the case that comment warns
                         // about. Falling back to the row's own card rather
@@ -697,78 +759,104 @@ export function ActionPanel({
           the combat panel, which made the rail read as three competing surfaces.
           A hairline rule is enough separation for controls that are always
           available and almost never the thing you came here to press.
+
+          `toolHost` moves them out of the panel entirely on a handheld, for the
+          reason the slab moved: measured mid-combat at 1200x800 they were 101px
+          of a 252px panel, which left the action list pinned at its 74px floor
+          holding 94px of "Declare attackers" choices. Five 44px targets do not
+          fit across a 200px column, so the hit floor wraps them to three rows --
+          and that is the floor working correctly in a column that is the wrong
+          shape for it. The foot is 1180px wide and they fit on one line there.
         */}
-        <div className="tools">
-          {narrating && (
-            <button type="button" className="tool" onClick={onSkipNarration} title="Skip ahead">
-              ⏩
+        {tool(
+          <div className="tools">
+            {narrating && (
+              <button
+                type="button"
+                className="tool"
+                data-stop={stopId.tool("skip")}
+                onClick={onSkipNarration}
+                data-hint="Skip ahead"
+              >
+                ⏩
+              </button>
+            )}
+            <button
+              type="button"
+              className={muted ? "tool" : "tool tool--on"}
+              onClick={toggleMuted}
+              aria-pressed={!muted}
+              data-stop={stopId.tool("mute")}
+              data-testid="mute"
+              data-hint={muted ? "Sound off" : "Sound on"}
+            >
+              {muted ? "🔇" : "🔊"}
             </button>
-          )}
-          <button
-            type="button"
-            className={muted ? "tool" : "tool tool--on"}
-            onClick={toggleMuted}
-            aria-pressed={!muted}
-            data-testid="mute"
-            title={muted ? "Sound off" : "Sound on"}
-          >
-            {muted ? "🔇" : "🔊"}
-          </button>
-          {/*
+            {/*
             The one control here that keeps a word rather than a glyph. It is a
             mode with real consequences for how the game plays -- whether it
             stops at every priority window -- and an unlabelled icon for that
             would be a regression in clarity, not a saving in space.
           */}
-          <button
-            type="button"
-            className={state.full_control ? "tool tool--on tool--wide" : "tool tool--wide"}
-            onClick={() => onToggleFullControl(!state.full_control)}
-            disabled={busy}
-            aria-pressed={state.full_control}
-            data-testid="full-control"
-            title={
-              state.full_control
-                ? "Full control: stopping at every priority window"
-                : "Stopping only where you have something to respond to. Turn on for every window."
-            }
-          >
-            {state.full_control ? "Full control" : "Auto-pass"}
-          </button>
-          {/*
+            <button
+              type="button"
+              className={state.full_control ? "tool tool--on tool--wide" : "tool tool--wide"}
+              onClick={() => onToggleFullControl(!state.full_control)}
+              disabled={busy}
+              aria-pressed={state.full_control}
+              data-stop={stopId.tool("full-control")}
+              data-testid="full-control"
+              data-hint={
+                state.full_control
+                  ? "Full control: stopping at every priority window"
+                  : "Stopping only where you have something to respond to. Turn on for every window."
+              }
+            >
+              {state.full_control ? "Full control" : "Auto-pass"}
+            </button>
+            {/*
             The second mode with real consequences, and it keeps its words for
             the same reason. Off, the solver taps for you and mana abilities are
             not actions at all; on, every untapped source becomes a row and a
             dual becomes one chip per colour.
           */}
-          <button
-            type="button"
-            className={state.manual_mana ? "tool tool--on tool--wide" : "tool tool--wide"}
-            onClick={() => onToggleManualMana(!state.manual_mana)}
-            disabled={busy}
-            aria-pressed={state.manual_mana}
-            data-testid="manual-mana"
-            title={
-              state.manual_mana
-                ? "Manual mana: you choose which permanent to tap, and which colour it makes"
-                : "The solver taps for you. Turn on to tap lands yourself."
-            }
-          >
-            {state.manual_mana ? "Manual mana" : "Auto mana"}
-          </button>
-          <button
-            type="button"
-            className="tool"
-            onClick={onUndo}
-            disabled={busy}
-            title="Undo your last action (U)"
-          >
-            ↺
-          </button>
-          <button type="button" className="tool" onClick={onQuit} title="Quit this game">
-            ✕
-          </button>
-        </div>
+            <button
+              type="button"
+              className={state.manual_mana ? "tool tool--on tool--wide" : "tool tool--wide"}
+              onClick={() => onToggleManualMana(!state.manual_mana)}
+              disabled={busy}
+              aria-pressed={state.manual_mana}
+              data-stop={stopId.tool("manual-mana")}
+              data-testid="manual-mana"
+              data-hint={
+                state.manual_mana
+                  ? "Manual mana: you choose which permanent to tap, and which colour it makes"
+                  : "The solver taps for you. Turn on to tap lands yourself."
+              }
+            >
+              {state.manual_mana ? "Manual mana" : "Auto mana"}
+            </button>
+            <button
+              type="button"
+              className="tool"
+              onClick={onUndo}
+              disabled={busy}
+              data-stop={stopId.tool("undo")}
+              data-hint="Undo your last action (U)"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              className="tool"
+              data-stop={stopId.tool("quit")}
+              onClick={onQuit}
+              data-hint="Quit this game"
+            >
+              ✕
+            </button>
+          </div>,
+        )}
       </section>
 
       {/*
@@ -777,135 +865,142 @@ export function ActionPanel({
         waiting on, and the alternatives demoted to a row beneath it -- rather
         than three same-sized buttons where the most-pressed and the least-pressed
         look identical.
+
+        `slabHost` moves the whole dock into the foot on a handheld -- see the
+        prop. `renderDock` is the same tree either way; only its parent changes.
       */}
-      <div className="commit-dock">
-        {mode === "chooseX" ? (
-          // The only control in the document carrying an id for this decision.
-          // The other twenty values are reachable through the stepper, which
-          // changes which id this slab points at rather than adding more.
-          xAction && (
-            <motion.button
-              type="button"
-              className="btn btn--primary commit"
-              data-action-id={xAction.id}
-              data-action-kind={xAction.kind}
-              disabled={disabled}
-              onClick={() => onAct(xAction.id)}
-              whileHover={disabled ? undefined : { y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={bouncy}
-              data-testid="commit"
-            >
-              <span className="commit__main">Pay X = {clampedX}</span>
-              <span className="commit__key">↵</span>
-            </motion.button>
-          )
-        ) : isCombat ? (
-          <>
-            {/*
+      {dock(
+        <div className="commit-dock">
+          {mode === "chooseX" ? (
+            // The only control in the document carrying an id for this decision.
+            // The other twenty values are reachable through the stepper, which
+            // changes which id this slab points at rather than adding more.
+            xAction && (
+              <motion.button
+                type="button"
+                className="btn btn--primary commit"
+                {...actionAttrs(xAction.id)}
+                data-action-kind={xAction.kind}
+                disabled={disabled}
+                onClick={() => onAct(xAction.id)}
+                whileHover={disabled ? undefined : { y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={bouncy}
+                data-testid="commit"
+              >
+                <span className="commit__main">Pay X = {clampedX}</span>
+                <span className="commit__key">↵</span>
+              </motion.button>
+            )
+          ) : isCombat ? (
+            <>
+              {/*
               With nothing declarable there is nothing to confirm, so declining
               *is* the decision and it takes the slab. Leaving the dead
               "Confirm 0 blocks" here filled the dock with the one control that
               could not be pressed while the only live one was a pill below it.
             */}
-            {nothingToDeclare && finish ? (
-              <motion.button
-                type="button"
-                className="btn btn--primary commit"
-                data-action-id={finish.id}
-                data-action-kind={finish.kind}
-                disabled={disabled}
-                onClick={() => onAct(finish.id)}
-                whileHover={disabled ? undefined : { y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={bouncy}
-                data-testid="combat-skip"
-              >
-                <span className="commit__main">
-                  {mode === "attack" ? "No attacks" : "No blocks"}
-                </span>
-                <span className="commit__key">↵</span>
-              </motion.button>
-            ) : (
-              <motion.button
-                type="button"
-                className="btn btn--primary commit"
-                disabled={disabled || staged.length === 0}
-                onClick={() => onDeclare(mode === "attack" ? "attackers" : "blockers", staged)}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={bouncy}
-                data-testid="combat-confirm"
-              >
-                <span className="commit__main">
-                  {mode === "attack"
-                    ? `Attack with ${attackPairs.length}`
-                    : `Confirm ${blockPairs.length} block${blockPairs.length === 1 ? "" : "s"}`}
-                </span>
-                {/* Enter already does this; nothing used to say so. */}
-                <span className="commit__key">↵</span>
-              </motion.button>
-            )}
-            <div className="commit-alt">
-              {nothingToDeclare ? null : mode === "attack" ? (
-                <button
+              {nothingToDeclare && finish ? (
+                <motion.button
                   type="button"
-                  data-testid="combat-all"
-                  disabled={disabled || unstagedAttackers.length === 0}
-                  onClick={attackWithAll}
-                  title="Send every creature that can attack"
-                >
-                  All attack{unstagedAttackers.length > 0 && ` (${unstagedAttackers.length})`}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  data-testid="combat-all"
-                  disabled={disabled || newBlocks.length === 0}
-                  onClick={blockWithAll}
-                  title={
-                    newBlocks.length === 0
-                      ? "No block here is worth making on its own"
-                      : "Block where it is worth it: survive and kill first, then walls, then trades"
-                  }
-                >
-                  All defend{newBlocks.length > 0 && ` (${newBlocks.length})`}
-                </button>
-              )}
-              {finish && !nothingToDeclare && (
-                <button
-                  type="button"
-                  data-action-id={finish.id}
+                  className="btn btn--primary commit"
+                  {...actionAttrs(finish.id)}
                   data-action-kind={finish.kind}
                   disabled={disabled}
                   onClick={() => onAct(finish.id)}
+                  whileHover={disabled ? undefined : { y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={bouncy}
                   data-testid="combat-skip"
                 >
-                  {mode === "attack" ? "No attacks" : "No blocks"}
-                </button>
+                  <span className="commit__main">
+                    {mode === "attack" ? "No attacks" : "No blocks"}
+                  </span>
+                  <span className="commit__key">↵</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  type="button"
+                  className="btn btn--primary commit"
+                  disabled={disabled || staged.length === 0}
+                  onClick={() =>
+                    onDeclare(mode === "attack" ? "attackers" : "blockers", staged)
+                  }
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={bouncy}
+                  data-testid="combat-confirm"
+                >
+                  <span className="commit__main">
+                    {mode === "attack"
+                      ? `Attack with ${attackPairs.length}`
+                      : `Confirm ${blockPairs.length} block${blockPairs.length === 1 ? "" : "s"}`}
+                  </span>
+                  {/* Enter already does this; nothing used to say so. */}
+                  <span className="commit__key">↵</span>
+                </motion.button>
               )}
-            </div>
-          </>
-        ) : (
-          commit && (
-            <motion.button
-              type="button"
-              className="btn btn--primary commit"
-              data-action-id={commit.id}
-              data-action-kind={commit.kind}
-              disabled={disabled}
-              onClick={() => onAct(commit.id)}
-              whileHover={disabled ? undefined : { y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={bouncy}
-              data-testid="commit"
-            >
-              <span className="commit__main">{commit.label}</span>
-              <span className="commit__key">{commit.kind === "pass" ? "␣" : "↵"}</span>
-            </motion.button>
-          )
-        )}
-      </div>
+              <div className="commit-alt">
+                {nothingToDeclare ? null : mode === "attack" ? (
+                  <button
+                    type="button"
+                    data-testid="combat-all"
+                    disabled={disabled || unstagedAttackers.length === 0}
+                    onClick={attackWithAll}
+                    data-hint="Send every creature that can attack"
+                  >
+                    All attack{unstagedAttackers.length > 0 && ` (${unstagedAttackers.length})`}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    data-testid="combat-all"
+                    disabled={disabled || newBlocks.length === 0}
+                    onClick={blockWithAll}
+                    data-hint={
+                      newBlocks.length === 0
+                        ? "No block here is worth making on its own"
+                        : "Block where it is worth it: survive and kill first, then walls, then trades"
+                    }
+                  >
+                    All defend{newBlocks.length > 0 && ` (${newBlocks.length})`}
+                  </button>
+                )}
+                {finish && !nothingToDeclare && (
+                  <button
+                    type="button"
+                    {...actionAttrs(finish.id)}
+                    data-action-kind={finish.kind}
+                    disabled={disabled}
+                    onClick={() => onAct(finish.id)}
+                    data-testid="combat-skip"
+                  >
+                    {mode === "attack" ? "No attacks" : "No blocks"}
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            commit && (
+              <motion.button
+                type="button"
+                className="btn btn--primary commit"
+                {...actionAttrs(commit.id)}
+                data-action-kind={commit.kind}
+                disabled={disabled}
+                onClick={() => onAct(commit.id)}
+                whileHover={disabled ? undefined : { y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={bouncy}
+                data-testid="commit"
+              >
+                <span className="commit__main">{commit.label}</span>
+                <span className="commit__key">{commit.kind === "pass" ? "␣" : "↵"}</span>
+              </motion.button>
+            )
+          )}
+        </div>,
+      )}
     </>
   );
 }

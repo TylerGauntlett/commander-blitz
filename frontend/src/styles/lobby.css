@@ -435,7 +435,20 @@
   letter-spacing: 0.1em;
 }
 
-.join__in:focus {
+/*
+ * `:not([data-cursor])` on every focus suppression in this file.
+ *
+ * The focus ring is `outline: 3px solid` on `[data-cursor]`, which is one
+ * attribute selector -- so a *class*-qualified `:focus { outline: none }`
+ * outranks it and wins. The result is the nastiest kind of broken: the ring's
+ * `outline-width` still computes to 3px and only `outline-style` goes to
+ * `none`, so it looks applied in devtools and draws nothing at all.
+ *
+ * Found by driving the front door with a controller, where the ring simply did
+ * not appear on the pod-code field. `tests/focusOutline.test.ts` now fails on
+ * any selector ending in `:focus` that does not carry this.
+ */
+.join__in:focus:not([data-cursor]) {
   outline: none;
 }
 
@@ -772,7 +785,7 @@
   border-color: var(--edge);
 }
 
-.plate__name:focus {
+.plate__name:focus:not([data-cursor]) {
   outline: none;
   border-color: var(--gold);
   background: rgb(8 7 18 / 0.72);
@@ -1088,7 +1101,7 @@
   font-size: 12.5px;
 }
 
-.search__i:focus {
+.search__i:focus:not([data-cursor]) {
   outline: none;
 }
 
@@ -1199,7 +1212,7 @@
   color: var(--text-dim);
 }
 
-.sel:focus {
+.sel:focus:not([data-cursor]) {
   outline: none;
   border-color: var(--gold);
 }

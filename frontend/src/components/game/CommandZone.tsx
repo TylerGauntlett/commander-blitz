@@ -166,7 +166,7 @@ function Plinth({
         already does.
       */
       aria-disabled={!clickable}
-      title={
+      data-hint={
         castable
           ? `Cast ${card.name}${tax > 0 ? ` — +${tax} commander tax` : ""}`
           : `${card.name} — ${state.word}`
@@ -216,7 +216,7 @@ function Plinth({
           and at 1600x950 that was 22px the piles did not have.
         */}
         {!compact && (
-          <span className="cmdplinth__tag" title="Commander">
+          <span className="cmdplinth__tag" data-hint="Commander">
             CMD
           </span>
         )}
@@ -262,7 +262,7 @@ function Plinth({
             {tax > 0 && (
               <span
                 className="cmdslot__tax"
-                title={`+${tax} generic to cast from the command zone`}
+                data-hint={`+${tax} generic to cast from the command zone`}
               >
                 +{tax}
               </span>

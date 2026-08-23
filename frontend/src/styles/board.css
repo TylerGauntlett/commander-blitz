@@ -23,8 +23,13 @@
   position: relative;
   display: grid;
   /* The right rail widened from 268px to hold the action bar as well as the
-     card preview; the bar's buttons need the room the hand has taken back. */
-  grid-template-columns: 232px minmax(0, 1fr) 304px;
+     card preview; the bar's buttons need the room the hand has taken back.
+
+     Both rails are tokens (`theme.css`) rather than literals, because the
+     handheld layout has to narrow them and this grid must not have to know
+     that. On a desktop they resolve to 232px and 304px -- the numbers that
+     were written here -- so nothing about this rule has changed. */
+  grid-template-columns: var(--rail-l) minmax(0, 1fr) var(--rail-r);
   gap: 10px;
   min-height: 0;
   padding: 10px;
@@ -103,7 +108,10 @@
 
 .mat {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
+  /* A token, for the reason `.table__body` gives. `logic/zoomFit.ts` reads this
+     same value to know how much lane width it is packing cards into, so a
+     literal here is a literal that has to be copied there too -- and was. */
+  grid-template-columns: var(--mat-side) minmax(0, 1fr);
   gap: 10px;
   padding: 8px;
   border: 1px solid var(--rail-line);
@@ -131,7 +139,7 @@
   min-width: 288px;
   /* 96px was sized for a column of text chips. The piles are graphics with
      labels under them and wrap to two rows below about 112px. */
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: var(--mat-side-compact) minmax(0, 1fr);
   gap: 6px;
   padding: 6px;
 }
@@ -1056,6 +1064,16 @@
   font-weight: 800;
 }
 
+/* Teal, and deliberately the furthest thing here from the library's purple:
+   these two sit next to each other and are the two counts most often compared. */
+.pile__leaf--hand {
+  background: linear-gradient(150deg, #1d4a46, #0f2523);
+}
+
+.pile__leaf--top.pile__leaf--hand {
+  border-color: rgb(90 200 190 / 0.45);
+}
+
 .pile__leaf--gy {
   background: linear-gradient(150deg, #4a3323, #241a12);
 }
@@ -1322,6 +1340,33 @@
 }
 
 /* Rails ---------------------------------------------------------------- */
+
+/*
+ * The body's three tracks, assigned by name rather than by source order.
+ *
+ * Auto-placement got this right for as long as there was exactly one layout and
+ * every sibling was always rendered. Neither is true now: the handheld body has
+ * TWO columns, and `testing/mounts.tsx` renders these wrappers one at a time
+ * with no siblings at all. Both of those turn "the second child" into a
+ * different column, silently, and the result looks entirely plausible -- which
+ * is the exact trap `mounts.tsx`'s own header warns about, arriving through the
+ * door it was not watching. Fifty-odd card stories drew their mat at the right
+ * rail's width with the cards hanging off the screen.
+ *
+ * Stated here, `styles/handheld.css` re-states only what its two-column body
+ * changes, and a lone wrapper in a story lands where the app puts it.
+ */
+.table__body > .rail--left {
+  grid-column: 1;
+}
+
+.table__body > .play {
+  grid-column: 2;
+}
+
+.table__body > .rail--right {
+  grid-column: 3;
+}
 
 .rail {
   display: flex;
@@ -1844,8 +1889,8 @@
  */
 .hand__slot {
   position: absolute;
-  top: -46px;
-  padding-top: 46px;
+  top: calc(-1 * var(--hand-lift));
+  padding-top: var(--hand-lift);
   transition: left var(--t-zoom) ease;
 }
 

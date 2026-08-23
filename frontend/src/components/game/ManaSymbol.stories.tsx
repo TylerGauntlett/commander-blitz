@@ -87,7 +87,10 @@ export const AllSymbols: Story = {
    */
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByTitle("{G}");
+    // `data-hint`, not `title`: native tooltips are unreachable on a controller
+    // and are banned by `tests/noTooltips.test.ts`. The symbol still announces
+    // itself through its `alt`.
+    await canvas.findByAltText("{G}");
 
     // Every code must have produced an <img>, not the text fallback. A code
     // spelled the file's way (`W-U` rather than `{W/U}`) fails exactly here.

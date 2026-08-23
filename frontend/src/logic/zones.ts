@@ -26,14 +26,21 @@ export const MAX_LEAVES = 9;
  * Which pile art a zone gets.
  *
  * The library keeps the plain card-back purple; the graveyard is brown and the
- * exile pile slate, so the three read apart at a glance even before their
- * labels do.
+ * exile pile slate, so they read apart at a glance even before their labels do.
+ *
+ * HAND HAS ITS OWN KIND, and it did not, which was a real defect rather than a
+ * tidy-up. It shared `lib`, so the two most-read counts on an opponent's seat
+ * rendered as the same purple stack -- and on a handheld, where the compact
+ * strip drops the words, the only thing telling "89 cards left in their deck"
+ * from "7 cards in their hand" was which came first. That is exactly the
+ * argument `docs/handheld-playtest.md` records for taking `.pile__label` back:
+ * a fixed order only helps somebody who already knows it.
  */
-export type PileKind = "lib" | "gy" | "ex" | "cmd";
+export type PileKind = "lib" | "hand" | "gy" | "ex" | "cmd";
 
 export const PILE_KIND: Record<string, PileKind> = {
   library: "lib",
-  hand: "lib",
+  hand: "hand",
   graveyard: "gy",
   exile: "ex",
   command: "cmd",

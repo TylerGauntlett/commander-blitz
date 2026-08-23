@@ -270,3 +270,54 @@ export const ZoomFifteenCardHand: Story = {
     expect(zoom, "the hand solver never reported a scale").toBeGreaterThan(0);
   },
 };
+
+/* ------------------------------------------------------------------ handheld
+ *
+ * The same board, at the layout a Steam Deck gets. Flip the **Layout** toolbar
+ * on any story above to compare; these are pinned so the compact arrangement is
+ * reviewed deliberately rather than only when somebody remembers to switch.
+ *
+ * What to look at, in order: the left rail is gone and the stack has moved to
+ * the top of the right one; an opponent is a strip rather than a board; the
+ * viewer's own cards hold the 96px floor even when that means the mat scrolls.
+ */
+
+/** Your turn, a few lands down. The everyday case. */
+export const HandheldBoard: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+};
+
+/**
+ * The state that decides whether any of this works.
+ *
+ * Four seats and full boards at 1280x800 is where the 96px card floor and the
+ * opponent strip either earn their place or do not.
+ */
+export const HandheldPod: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  globals: { handheld: "on", input: "pad" },
+};
+
+/** Combat, where the ring has the most to reach and the least room to do it. */
+export const HandheldDeclareAttackers: Story = {
+  args: board(scenarios.combatDeclareAttackers()),
+  globals: { handheld: "on", input: "pad" },
+};
+
+export const HandheldDeclareBlockers: Story = {
+  args: board(scenarios.combatDeclareBlockers()),
+  globals: { handheld: "on", input: "pad" },
+};
+
+/** A modal decision, which owns the ring while it is up. */
+export const HandheldModalDecision: Story = {
+  args: board(scenarios.mulligan()),
+  globals: { handheld: "on", input: "pad" },
+};
+
+/** A board with more permanents than the screen can hold, so the mat scrolls. */
+export const HandheldCrowdedBoard: Story = {
+  args: board(scenarios.crowdedBoard()),
+  globals: { handheld: "on", input: "pad" },
+};

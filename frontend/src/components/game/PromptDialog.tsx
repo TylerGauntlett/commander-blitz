@@ -20,6 +20,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView, LegalAction } from "../../api/types";
+import { actionAttrs } from "../../input/stops";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
 import { StaticCard } from "./Card";
@@ -78,6 +79,7 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
             className="prompt"
             role="dialog"
             aria-modal="true"
+            data-modal-root
             aria-label={pending.prompt || pending.kind}
             data-testid="prompt-dialog"
             data-decision-kind={pending.kind}
@@ -121,7 +123,7 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
                     type="button"
                     key={action.id}
                     className={card ? "opt opt--card" : "opt"}
-                    data-action-id={action.id}
+                    {...actionAttrs(action.id)}
                     data-action-kind={action.kind}
                     disabled={disabled}
                     onClick={() => onAct(action.id)}

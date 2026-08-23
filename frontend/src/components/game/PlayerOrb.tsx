@@ -36,6 +36,7 @@
 import { motion, useAnimationControls } from "motion/react";
 import { type CSSProperties, useEffect, useRef } from "react";
 import type { CardView, GameView, PlayerView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { artUrl } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import {
@@ -45,6 +46,7 @@ import {
   manaRow,
   markSpent,
 } from "../../logic/mana";
+import { threatClause, threatOf, threatParts } from "../../logic/threat";
 import { commandersOf } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
@@ -164,11 +166,26 @@ function ZonePile({
     "data-count": count,
     "data-revealed": topCard?.name,
     "data-top-private": topCard && !topCardPublic ? "" : undefined,
-    title: topCard
+    /*
+     * `data-hint` rather than `title`.
+     *
+     * A native tooltip opens on hover and on nothing else, so on a controller
+     * it is information that cannot be reached at all -- and this pile's hint
+     * is the only place the revealed top card is named. The hint bar and the
+     * read rail surface it from the focused element, which also means a mouse
+     * player gets it immediately instead of after a 500ms delay.
+     */
+    "data-hint": topCard
       ? topCardPublic
         ? `Top of library, revealed: ${topCard.name}`
         : `Top of library, only you can see it: ${topCard.name}`
       : (title ?? `${label}: ${count}`),
+    /*
+     * ...and an accessible name, which `title` had been supplying as a last
+     * resort. The handheld layout hides `.pile__label`, so without this the
+     * button would have no name at all there -- the one place it is most needed.
+     */
+    "aria-label": `${label}: ${count}`,
   };
 
   if (zone === null) {
@@ -180,7 +197,12 @@ function ZonePile({
     );
   }
   return (
-    <button type="button" {...shared} onClick={() => setPeek({ pid, zone })}>
+    <button
+      type="button"
+      {...shared}
+      data-stop={stopId.pile(pid, zone)}
+      onClick={() => setPeek({ pid, zone })}
+    >
       {body}
     </button>
   );
@@ -334,6 +356,7 @@ export function PlayerOrb({
     <motion.div
       className={classes}
       data-player={player.pid}
+      data-stop={stopId.orb(player.pid)}
       data-testid={`player-${player.pid}`}
       layout
       transition={bouncy}
@@ -365,7 +388,7 @@ export function PlayerOrb({
       <div className="orb__body">
         <div className="orb__head">
           <span className="orb__name">{player.name}</span>
-          {hasPriority && <span className="orb__priority" title="Has priority" />}
+          {hasPriority && <span className="orb__priority" data-hint="Has priority" />}
         </div>
 
         {/*
@@ -389,6 +412,31 @@ export function PlayerOrb({
         {commanders.length === 0 && <div className="orb__life-row">{dial}</div>}
 
         {player.has_lost && <div className="orb__loss">{lossReason(player.loss_reason)}</div>}
+
+        {/*
+          What this seat is, in one line.
+
+          Drawn for opponents only: your own board is right in front of you and
+          the summary would be counting cards you can already see. For an
+          opponent it answers the two questions actually being asked across the
+          table -- can they kill me, can they stop me -- without the reader
+          counting anything.
+
+          On a handheld this line *is* the opponent, because their lanes are
+          clipped to nothing at that width and their board is one `R2` hold
+          away. But it earns its place on a desktop pod too, where their cards
+          render at ~51px and counting untapped creatures is a chore the client
+          can simply do for you. See `logic/threat.ts`.
+        */}
+        {!isViewer && (
+          <div className="orb__spine" data-testid={`spine-${player.pid}`}>
+            {threatParts(threatOf(state, player.pid)).map((part) => (
+              <span key={part.key}>
+                <b className="tabular">{part.value}</b> {threatClause(part).split(" ")[1]}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/*
           The panel's foot: three plates that are always there.
@@ -430,7 +478,7 @@ export function PlayerOrb({
             data-testid={`mana-${player.pid}`}
             data-mana={formatManaRow(pips)}
             data-spending={spentCount}
-            title={
+            data-hint={
               spentCount > 0
                 ? `${pips.length} available; this spell taps ${spentCount}`
                 : `${pips.length} available: ${formatManaRow(pips)}`
@@ -454,7 +502,7 @@ export function PlayerOrb({
                   data-tone={group.tone}
                   data-count={group.count}
                   data-spent={group.spent}
-                  title={groupTitle(group)}
+                  data-hint={groupTitle(group)}
                 >
                   {/* No `pip--text` fallback here: a three-colour source has no
                       published mark, and cycle3.spec.ts asserts that fallback
@@ -504,7 +552,7 @@ export function PlayerOrb({
                     .join(" ")}
                   data-from={pid}
                   data-amount={amount}
-                  title={`${amount} of ${COMMANDER_LETHAL} commander damage from ${
+                  data-hint={`${amount} of ${COMMANDER_LETHAL} commander damage from ${
                     names[pid] ?? `Player ${pid}`
                   }`}
                 >
@@ -542,7 +590,7 @@ export function PlayerOrb({
               kind="lib"
               label="Lib"
               count={player.library_count}
-              title="Cards in library"
+              data-hint="Cards in library"
               topCard={player.library_top}
               topCardPublic={player.library_top_public}
             />
@@ -550,10 +598,10 @@ export function PlayerOrb({
               pid={player.pid}
               zone="hand"
               name="hand"
-              kind="lib"
+              kind="hand"
               label="Hand"
               count={player.hand_count}
-              title={isViewer ? "Your hand" : "Hidden"}
+              data-hint={isViewer ? "Your hand" : "Hidden"}
             />
             <ZonePile
               pid={player.pid}
@@ -580,7 +628,7 @@ export function PlayerOrb({
               kind="cmd"
               label="CMD"
               count={player.command.length}
-              title="Command zone"
+              data-hint="Command zone"
             />
           </div>
         </div>

@@ -43,7 +43,7 @@ export function PhaseTrack({ state }: Props) {
         data-testid="turn-counter"
         data-round={state.round}
         data-turn={state.turn}
-        title={`Round ${state.round} — player-turn ${state.turn}`}
+        data-hint={`Round ${state.round} — player-turn ${state.turn}`}
       >
         <span className="track__turn-n tabular">T{state.round}</span>
         <span className="track__turn-round">round {state.round}</span>

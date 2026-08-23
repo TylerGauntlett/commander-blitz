@@ -213,7 +213,7 @@ export function PodSeat({
           <button
             type="button"
             className="slot__x"
-            title="Empty this seat"
+            data-hint="Empty this seat"
             aria-label={`Empty seat ${index + 1}`}
             disabled={disabled}
             onClick={() => onClear(index)}
@@ -279,7 +279,7 @@ export function PodSeat({
               <button
                 type="button"
                 className="ibtn"
-                title="Deck details"
+                data-hint="Deck details"
                 aria-label={`Deck details for ${label.title}`}
                 onClick={() => onDossier(deck.id, you || seat.kind === "cpu" ? index : null)}
               >
@@ -310,7 +310,7 @@ export function PodSeat({
               className="btn btn--wide"
               data-testid="change-deck"
               disabled={disabled || seat.locked}
-              title={seat.locked ? "Unlock your card to change decks" : undefined}
+              data-hint={seat.locked ? "Unlock your card to change decks" : undefined}
               onClick={() => onChooseDeck(index)}
             >
               {deck ? "Change deck" : "Choose a deck"}

@@ -23,7 +23,7 @@ export const Inline: Story = {
   args: { text: "{T}: Add {G}." },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByTitle("{T}");
+    await canvas.findByAltText("{T}");
     expect(canvasElement.querySelectorAll(".pip")).toHaveLength(2);
   },
 };
@@ -44,7 +44,7 @@ export const HybridCost: Story = {
   args: { text: "{W/U}{W/U}: Draw a card. {2/G}: Regenerate. {G/P}: Fight." },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByTitle("{G/P}");
+    await canvas.findByAltText("{G/P}");
     expect(canvasElement.querySelectorAll("img.pip")).toHaveLength(4);
   },
 };
