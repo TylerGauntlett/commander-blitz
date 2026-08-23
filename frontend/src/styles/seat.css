@@ -582,3 +582,101 @@
    */
   max-width: 420px;
 }
+
+/* ==========================================================================
+   Standing at somebody else's seat
+   ==========================================================================
+
+   At 1280x800 an opponent's cards are not drawn at all, so "let me actually
+   look at that board" needs an answer -- and the one a pod wants is not a peek
+   but a PLACE: you go and stand at their seat, read it, and come back. Pressing
+   a seat latches it; `B`, the strip's own button, or pressing the same seat
+   again brings you home.
+
+   The `R2` hold stays as the glance. The two are not redundant: a hold is for
+   "is it safe to attack into that", which is a second and an answer, and this
+   is for "what has actually happened over there", which is a look around.
+   ========================================================================== */
+
+/*
+ * A mat with no side column at all.
+ *
+ * The facts about the seat you are standing at are on that seat, six pixels
+ * above -- and drawing them again here would put a second `data-player` in the
+ * document, which `FxLayer` resolves with `querySelector` and would then anchor
+ * damage numerals to whichever came first.
+ */
+.mat--lanes {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/*
+ * A panel with no permanents under it.
+ *
+ * On an opponent's mat that is a seat whose board is being read somewhere else:
+ * one row rather than two, and the lanes are not RENDERED rather than clipped,
+ * because a clipped card still owns its `data-oid` and the whole point is that
+ * there is exactly one box per permanent.
+ *
+ * On the viewer's own it is their orb standing beside somebody else's board --
+ * a column, which is what `.mat`'s first track already is, so it needs nothing
+ * said about its rows.
+ */
+.mat--compact.mat--side {
+  grid-template-rows: var(--seat-h);
+}
+
+/*
+ * Reading somebody else's board: your panel, their permanents.
+ *
+ * Two mats in one row rather than one mat holding both, because a `PlayerMat`
+ * is one player's -- and the alternative is a component that takes two players
+ * and decides which half belongs to which, which is a worse thing to have than
+ * a grid line.
+ */
+.play__mine[data-viewing] {
+  display: grid;
+  grid-template-columns: var(--mat-side) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+  align-content: start;
+}
+
+.play__mine[data-viewing] .viewing {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.viewing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--playable);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--playable) 12%, transparent);
+}
+
+.viewing__who {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.viewing__who b {
+  color: var(--playable);
+}
+
+/*
+ * The way back is a control, not a hint.
+ *
+ * `margin-left: auto` puts it at the end of the strip rather than beside the
+ * sentence: it is the one thing here you press, and a button that sits inside a
+ * sentence reads as part of it. The 44px floor is `ui.css`'s, unchanged --
+ * this strip is on the viewer's own mat, which has the room a 96px seat does
+ * not.
+ */
+.viewing .btn {
+  margin-left: auto;
+}

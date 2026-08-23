@@ -22,7 +22,7 @@ const NO_OIDS: ReadonlySet<number> = new Set();
 
 function renderMat(
   battlefield: CardView[],
-  props: { mirrored?: boolean; compact?: boolean } = {},
+  props: { mirrored?: boolean; compact?: boolean; variant?: "full" | "lanes" } = {},
 ) {
   const state = gameView({ battlefield });
   return render(
@@ -152,5 +152,51 @@ describe("PlayerMat attachments", () => {
         .querySelector('[data-testid="lane-0-Creatures"]')
         ?.querySelector('[data-card-name="Rancor"]'),
     ).not.toBeNull();
+  });
+});
+
+describe("the lanes variant", () => {
+  /*
+   * Two surfaces show somebody's BOARD somewhere other than their own seat --
+   * the seat swap and the `R2` hold -- and in both the facts about that player
+   * are already on screen. What matters is not that the column is tidy but that
+   * the document does not end up with two of anything: `FxLayer` resolves a
+   * damage numeral with `document.querySelector`, so a second `data-player`
+   * silently anchors it to whichever comes first.
+   */
+  it("draws the permanents and no side column", () => {
+    const { container } = renderMat([card({ oid: 1, types: ["Creature"] })], {
+      variant: "lanes",
+    });
+
+    expect(container.querySelector(".mat__lanes")).not.toBeNull();
+    expect(container.querySelector(".mat__side")).toBeNull();
+  });
+
+  it("puts no second data-player in the document", () => {
+    const { container } = renderMat([card({ oid: 1, types: ["Creature"] })], {
+      variant: "lanes",
+    });
+
+    expect(container.querySelectorAll("[data-player]")).toHaveLength(0);
+    expect(container.querySelectorAll('[data-testid^="life-"]')).toHaveLength(0);
+  });
+
+  it("still draws every permanent, so the effects anchors survive", () => {
+    // The point of the variant is that the CARDS move rather than being
+    // duplicated -- so whichever mat is on screen has to be the whole board.
+    const cards = [
+      card({ oid: 1, types: ["Creature"] }),
+      card({ oid: 2, types: ["Creature"] }),
+      card({ oid: 3, types: ["Land"] }),
+    ];
+    const { container } = renderMat(cards, { variant: "lanes" });
+
+    expect(container.querySelectorAll("[data-oid]")).toHaveLength(cards.length);
+  });
+
+  it("keeps the side column in the default variant", () => {
+    const { container } = renderMat([card({ oid: 1, types: ["Creature"] })]);
+    expect(container.querySelector(".mat__side")).not.toBeNull();
   });
 });
