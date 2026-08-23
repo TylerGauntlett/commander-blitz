@@ -7,10 +7,14 @@
  *
  * It used to be the top panel of a left rail. That rail is retired -- a 232px
  * column stood open all game for a thing that is empty for most of a turn and
- * urgent the moment it is not -- so it hangs off `.table__body` and grows down
- * over the viewer's own panel. Mounted at `tableBody` for that reason: the
- * position is `absolute` against it, and a story that mounted it anywhere else
- * would be looking at a pile in a place the game never puts one.
+ * urgent the moment it is not -- so it is a grid item sharing `.play`'s second
+ * cell with the viewer's own mat, and grows down over their panel.
+ *
+ * Mounted at `play` for that reason, and the mount is load-bearing rather than
+ * decorative: the pile is placed by `grid-row: 2`, so in any other grid it
+ * lands in whatever that grid's second row happens to be. Mounted one level up
+ * at `tableBody` it drew itself in the FOOT, which `npm run audit:stories`
+ * caught as four stories bleeding 130px below the fold.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -23,7 +27,7 @@ import { StackPanel } from "./StackPanel";
 const meta = {
   title: "Game/StackPanel",
   component: StackPanel,
-  parameters: { automtg: { mount: "tableBody" } },
+  parameters: { automtg: { mount: "play" } },
 } satisfies Meta<typeof StackPanel>;
 
 export default meta;

@@ -388,7 +388,7 @@ export const ViewingAnOpponent: Story = {
     await canvas.findByTestId("table");
 
     const boxes = (attr: string) =>
-      [...canvasElement.querySelectorAll(`[${attr}]`)].map((el) => el.getAttribute(attr));
+      [...canvasElement.querySelectorAll(`[${attr}]`)].map((el) => el.getAttribute(attr) ?? "");
     const dupes = (list: string[]) => list.filter((id, i) => list.indexOf(id) !== i);
 
     expect(dupes(boxes("data-oid")), "before").toEqual([]);
