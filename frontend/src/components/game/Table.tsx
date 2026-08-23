@@ -1096,21 +1096,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         */}
         <div className="table__foot" ref={footRef}>
           {/*
-          Where the commit slab and the tool strip go on a handheld. Hosts, not
-          the controls themselves.
+          Where the tool strip goes on a handheld. A host, not the controls
+          themselves.
 
-          What goes in them depends on `ActionPanel`'s own decision state --
-          which mode it is in, whether combat is declarable, what X is -- so
-          rebuilding either here would be a second implementation of the one
-          control the turn is waiting on. `ActionPanel` finds these by class and
-          portals its real dock and tool row into them, so there is exactly one
-          of each in the document and every `data-action-id`, `data-testid` and
-          ring stop travels with it.
+          What goes in it depends on `ActionPanel`'s own decision state, so
+          rebuilding it here would be a second implementation of controls the
+          turn is waiting on. `ActionPanel` finds this by class and portals its
+          real tool row into it, so there is exactly one in the document and
+          every `data-action-id`, `data-testid` and ring stop travels with it.
 
-          Rendered only on a handheld. On a desktop both stay in the rail, where
-          304px of width and a 950px-tall screen make them the right shape.
+          THE COMMIT SLAB USED TO HAVE A HOST HERE TOO. It does not need one any
+          more: the rail runs the full height of the screen, so the 65px the
+          slab costs is affordable there -- and under the list it commits is
+          where it belongs, rather than in the corner beside the hand.
+
+          Rendered only on a handheld. On a desktop the tools stay in the rail,
+          where 304px of width and a 950px-tall screen make them the right
+          shape; here the foot's row is 1017px and they are one line rather than
+          the three a 200px column wrapped them to.
         */}
-          {handheld && <div className="foot__slab" />}
           {handheld && <div className="foot__tools" />}
 
           {/*

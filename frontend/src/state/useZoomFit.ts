@@ -78,11 +78,20 @@ const HANDHELD_HAND_FRACTION = 0.34;
 const FOOT_CHROME = 60;
 
 /**
- * What the handheld foot adds: the hint bar, and the commit slab portalled
- * beside it. Both are new rows under the hand, and the cascade in this file's
- * header depends on the foot's height being definite before the board solves.
+ * What the handheld foot adds: the hint bar, and the tool row beside it.
+ *
+ * It was 56 and included "the commit slab portalled beside it". The slab is
+ * back in the rail -- which runs the full height of the screen now, so the 65px
+ * it costs is affordable there and under the list it commits is where it
+ * belongs -- so what is left is one 44px row holding the tools and the hints
+ * side by side, plus the foot's own 6px of vertical padding.
+ *
+ * The cascade in this file's header depends on the foot's height being definite
+ * before the board solves, which is why this is a stated number and not a
+ * measurement: the foot's height is an OUTPUT of the card size being solved
+ * for, and reading it here would be the loop.
  */
-const HANDHELD_FOOT_EXTRA = 56;
+const HANDHELD_FOOT_EXTRA = 50;
 
 /** `.play__opponents` gap between mats. */
 const POD_GAP = 10;

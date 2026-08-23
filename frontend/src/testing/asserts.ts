@@ -289,3 +289,39 @@ export function expectHandheldFloors(root: HTMLElement): void {
   expectHitFloor(root);
   expectCardFloor(root);
 }
+
+/**
+ * Nothing has been pushed off the bottom of anything.
+ *
+ * `scrollHeight > clientHeight` asks the question directly and does not care
+ * what kind of element it is -- which matters, because the things that actually
+ * went missing at 1200x800 during the playtest loops were band labels, the orb,
+ * the pile counts and whole rows of the action list, none of which a
+ * card-measuring check could see.
+ *
+ * Regions where scrolling IS the design are excluded by name, for the reason
+ * `e2e/handheldAssert.ts` gives: a long action list and an opponent's clipped
+ * lanes are meant to scroll, and a gate that forbade it would be demanding a
+ * different feature.
+ */
+export function expectNothingOverflows(root: HTMLElement, allow: string[] = []): void {
+  const over: string[] = [];
+  for (const selector of [
+    ".play__mine",
+    ".play__mine .mat__side",
+    ".play__opponents",
+    ".table__foot",
+    ".acts",
+    ".track",
+  ]) {
+    // A story that POSES a scroll passes its own selector in. Named per story
+    // rather than dropped from the list, so the exemption is visible at the
+    // place that claims it rather than hidden in this file.
+    if (allow.includes(selector)) continue;
+    for (const el of root.querySelectorAll<HTMLElement>(selector)) {
+      const by = el.scrollHeight - el.clientHeight;
+      if (by > 2) over.push(`${selector} by ${by}px`);
+    }
+  }
+  expect(over, "these regions hold more than they can show").toEqual([]);
+}

@@ -321,7 +321,15 @@ export function handheldAssert(): HandheldReport {
    * forbade it would be demanding a different feature.
    */
   const SLACK = 2;
-  const SCROLLERS = new Set([".acts__list", ".stackpanel", ".peek__grid", ".logover"]);
+  const SCROLLERS = new Set([
+    ".acts__list",
+    ".stackpanel",
+    ".peek__grid",
+    ".logover",
+    // The reader's rules box: a card with more text than 78px is the ordinary
+    // case, not the failure. It reserves its gutter, which `unguttered` checks.
+    ".reader__rules",
+  ]);
   const overflowing: { selector: string; by: number }[] = [];
   for (const selector of [
     ".play__mine",
