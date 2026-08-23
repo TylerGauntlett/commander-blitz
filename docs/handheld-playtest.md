@@ -950,3 +950,164 @@ needed a surface the gate never opens.
 components through a different set of ancestors, and every difference between
 those two is somewhere a layout assumption can hide — which makes it a test
 surface, not just a review one.
+
+---
+
+## Loop 8 — Meshing the mockup, and what the new gates found
+
+**Angle.** Loops 1–7 asked whether the *shipped* board could be played on a
+Deck. This one asks a different question: `mockups/handheld-board/` measured a
+board with more than twice the action list and 1.6× the card, so **what is
+actually in the way of having that one?**
+
+The answer turned out to be structural rather than stylistic, and most of the
+findings below are things the earlier loops could not have seen because they
+were measuring a layout that had not changed shape yet.
+
+_Run against the live engine at 1280×800 and 1200×800, and against the story
+suite at both layouts._
+
+### The measurement, before and after
+
+| | before | mockup | after |
+|---|---|---|---|
+| right rail | 514px | 748 | **740** |
+| action list | 172px | 363–398 | **392** |
+| card reader | 152px | 236 | **236** |
+| board column | 1280 (foot spanned the screen) | 1017 | **1017** |
+| opponent, empty board | 84–96px of orb | 96 seat | **96 seat** |
+| left rail | 232px, permanent | — | **retired** |
+| regions scrolling at Deck size | none | none | **none** |
+
+### Findings
+
+#### 8.1 The ring could land on a card nobody can see — **the big one**
+
+`candidatesIn` dropped only *zero-sized* stops. An opponent's lanes are
+`height: 0; overflow: hidden` so their cards stay in the document for `FxLayer`
+to anchor to — and **a clipped card still reports its own full box**. So the
+ring could walk onto one, and no gate disagreed, because `handheldAssert`'s
+`unreachable` calls that very function.
+
+The correct ancestor-clip walk had existed in the gate since Loop 3. It had
+never existed in the navigation. **The two being different is what let this
+hide for five loops**, and it is the finding worth carrying: if a gate and the
+thing it grades cannot share a helper, expect them to drift, and expect the
+drift to be invisible in exactly the direction where the gate calls the code.
+
+#### 8.2 The floors were never actually gated
+
+16px of type, 44px of target, 96px of card have been asserted by
+`e2e/handheld.spec.ts` since Loop 3 — and **Playwright is not in CI**. Nothing
+has ever stopped a change putting a label back under the floor.
+
+They are in the Storybook project now, which `scripts/verify.py` does run. It
+found `.hand__empty` at 14px on its first execution: one selector missing from
+an alphabetical list of eighty, in a state the e2e suite never reaches because
+it never has an empty hand.
+
+#### 8.3 Storybook was never showing the desktop board
+
+The Vitest tester canvas is **1200×900** whatever `vite.config.ts` declares.
+`browser.viewport`, `instances[].viewport`, a `--window-size` launch arg and a
+`page.viewport()` call from `beforeEach` were each measured and each reset by
+Storybook's addon before the play function ran.
+
+Harmless until something branched on the viewport. `HANDHELD_QUERY` is
+`(max-width: 1366px)`, so at 1200 **every story matched it** — and the first
+component to render a different NODE on that query rendered its compact body in
+the project whose entire job is proving the wide board still works.
+
+It surfaced as two failing stories rather than as a silent wrong review only
+because `CardPreview` is the first component whose two layouts differ in
+markup. Loop 7's conclusion — that Storybook is a test surface and not only a
+review one — needed this corollary: **a review surface has to be honest about
+what it is showing**. The toolbar is authoritative now; the canvas is not.
+
+#### 8.4 Three advertised buttons did nothing
+
+`HintBar` printed `L1 Zone` and `L2 Menu` from its first draft, and `verbsFor`
+returns `Y Read` on every card stop. **Nothing in the app listened for any of
+the three.**
+
+An advertised button that does nothing is worse than an unadvertised one: it
+teaches the player that the bar is not to be trusted. Nothing in the suite could
+see it either, because the bar renders spans and a span cannot fail to work.
+
+The bar renders *from* `NAVIGATION_HINTS` now rather than restating it — which
+is how "Zone" survived being renamed to "Region" in the list without changing on
+screen — and a story compares what the bar can say against `pad.boundButtons()`.
+
+#### 8.5 A held key put the poll to sleep and the release was never seen
+
+`pad.ts`'s `onKeyUp` did not call `wake()`, and the loop idles after 100ms of
+nothing changing. A key held on its own therefore idled the loop, and the
+release was never observed: the `R2` opponent reader stayed up after `v` was let
+go, and the region dial stayed up after `L2`.
+
+It only ever bit the keyboard fallback, for the same reason the key latch exists
+— a real pad **is** the poll, so its buttons cannot change without the loop
+being the thing that notices.
+
+#### 8.6 The fan gate was measuring paint, and it was hiding a real bug
+
+`scrollWidth` counts a child's **transformed** box. The hand is an arc, so the
+outermost cards are rotated about eight degrees and a 103px card reports a 122px
+rect — every hand of six or more read as 26–30px over. The arc is the feature.
+
+Underneath the false positive there was a real one. `HandFan` laid the fan out
+against the `HAND_FAN_W` constant while the solver solved against the foot's
+real width. The two agreed **by luck** for as long as the foot spanned the
+screen, because 1180 was simply under it; the moment the foot moved inside the
+board's column they stopped agreeing. The solver was also reading the foot's
+`clientWidth`, which includes padding — the room a *scroller* has, not the room
+a *fan* has.
+
+`offsetLeft`/`offsetWidth` are untransformed layout values, which is the same
+distinction `mockups/handheld-board/_board.js` records about its own
+`BOARD.lay()` and the same trap `mockups/seat/assert.js` fell into.
+
+#### 8.7 Two grid children in a three-column grid
+
+The priority pill auto-placed into a **second row**, landing at the far left
+under the ribbon, 40px from anything it related to. `.track` is a three-column
+grid and the pill was a fourth child.
+
+The floating stack had the mirror of it: every ply is absolutely positioned, so
+the container has no intrinsic size on **either** axis — `StackPanel` was
+telling it the height and not the width, and the panel clipped the cards to
+about a third.
+
+Neither is subtle once seen and neither was visible in any assertion. They were
+found by looking at a screenshot, which after seven loops of gates is worth
+recording as its own point.
+
+#### 8.8 What the seat could not be squeezed out of
+
+The old compact orb gave up 12px of its cap at four seats
+(`--pod-seat-h: 84px`). `OpponentSeat` is a stated 96px design whose four rows
+are pixels that add up, so there is nothing in it to take — and
+`e2e/deckfit.spec.ts` promptly measured the viewer's mat 11px over on a
+four-seat pod played several turns in.
+
+Two levers, both honest. The handheld hand's ceiling comes down 0.34 → 0.28: the
+mockup can afford 270px of foot because its board is a *fixture* and nothing on
+it ever grows a fourth land row. And the shell's padding comes down 6 → 4 with
+the play gap 4 → 2, because shell is the only thing on screen carrying no
+information at all.
+
+**A component that states its own size moves the search for pixels somewhere
+else.** That is not a cost of this design, it is the point of it — but it means
+the budget has to be found before the component ships, not after.
+
+### What this loop says about the seven before it
+
+Loops 1–7 were right about the board they were measuring, and five of the eight
+findings above are about the **instruments** rather than the board: a gate that
+did not share its helper, a gate that was not in CI, a review surface showing
+the wrong layout, a hint bar nothing verified, and a fan gate measuring the
+wrong property.
+
+That is the shape of a suite maturing past the thing it was written for. The
+board was checked repeatedly and carefully; what nobody had checked was whether
+the checks were looking at the board.
