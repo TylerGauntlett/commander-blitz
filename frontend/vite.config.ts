@@ -77,6 +77,41 @@ export default defineConfig({
           },
         },
       },
+      /*
+       * The same stories, at a Steam Deck's panel.
+       *
+       * A THIRD PROJECT RATHER THAN A SECOND VIEWPORT ON THE SECOND, which is
+       * the split `playwright.config.ts` already argues for: the desktop
+       * numbers every existing story asserts must never move, and they would
+       * move the instant this canvas did. Running the whole suite at 1280x800
+       * would also fail dozens of stories that are *correctly* designed for a
+       * wider board.
+       *
+       * So it is opt-in by tag. A story tagged `handheld` runs in both, and has
+       * to hold at both -- which is the honest statement of what the compact
+       * layout promises.
+       *
+       * The size matters and is not decorative: `handheld.css` re-values
+       * `--rail-r`, `--mat-side`, `--pod-seat-h` and `--hand-lift` inside a
+       * MEDIA QUERY, so a canvas at 1600 gets the handheld structure (the
+       * attribute) with the desktop tokens -- a board that exists nowhere. Only
+       * a real 1280x800 canvas exercises both halves at once.
+       */
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: ".storybook", tags: { include: ["handheld"] } })],
+        test: {
+          name: "storybook-handheld",
+          setupFiles: [".storybook/vitest.setup.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: "playwright",
+            instances: [{ browser: "chromium" }],
+            viewport: { width: 1280, height: 800 },
+          },
+        },
+      },
     ],
   },
 });

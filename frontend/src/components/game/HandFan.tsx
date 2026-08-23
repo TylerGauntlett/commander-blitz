@@ -182,7 +182,8 @@ export function HandFan({
         hover(null);
       }}
     >
-      <div className="hand__rail" style={{ width }}>
+      {/* See `Lane`: a fan is a row that can silently run past its box. */}
+      <div className="hand__rail" style={{ width }} data-fan>
         <AnimatePresence initial={false}>
           {cards.map((card, index) => {
             const distance = index - mid;

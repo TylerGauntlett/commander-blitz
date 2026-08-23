@@ -1217,6 +1217,7 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .mat__side {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   /*
    * `min-height: 0` is what makes the `overflow` above do anything at all.
@@ -1309,6 +1310,7 @@ html[data-input="keyboard"] .hints {
 .logover .ticker {
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 /* ==========================================================================
@@ -1332,6 +1334,7 @@ html[data-input="keyboard"] .hints {
   background: rgb(11 10 22 / 0.97);
   box-shadow: 0 24px 80px rgb(0 0 0 / 0.7);
   overflow: auto;
+  scrollbar-gutter: stable;
   /* A hold is not a control: it must never eat the press that ends it. */
   pointer-events: none;
 }
@@ -1575,6 +1578,7 @@ html[data-input="keyboard"] .hints {
      `board.css` spends four paragraphs eliminating everywhere else. */
   max-height: 84px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   flex: 0 0 auto;
 }
 
@@ -1587,6 +1591,7 @@ html[data-input="keyboard"] .hints {
 
 [data-handheld] .acts__list {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   /*
    * The floor stays. `board.css` gives this list a 74px minimum and
    * `e2e/layout.spec.ts` measures it, because on a short viewport this is the
@@ -2010,6 +2015,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .fx-ghost__cause,
 [data-handheld] .fx-spotlight__kind,
 [data-handheld] .ghost,
+[data-handheld] .hand__empty,
 [data-handheld] .hand__hint,
 [data-handheld] .hero__line,
 [data-handheld] .ibtn,

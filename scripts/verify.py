@@ -283,6 +283,23 @@ def frontend_stages(runner: str, quick: bool) -> list[Stage]:
                 slow=True,
             )
         )
+        # The same stories again at a Steam Deck's 1280x800, which is a separate
+        # vitest project for the reason `playwright.config.ts` keeps a separate
+        # project: the desktop numbers must never move, and they would move the
+        # instant that canvas did.
+        #
+        # THIS IS THE ONLY PLACE THE HANDHELD FLOORS ARE GATED BY CI. Playwright
+        # is not run here, so `e2e/handheldAssert.ts` -- which has asserted the
+        # 16/44/96 floors since Loop 3 -- has never actually stopped anything
+        # landing. It found `.hand__empty` at 14px the first time it ran.
+        stages.append(
+            Stage(
+                "storybook stories (handheld)",
+                [runner, "run", "test:stories:handheld"],
+                cwd=FRONTEND,
+                slow=True,
+            )
+        )
     else:
         print("SKIP storybook stories: run `npx playwright install chromium` in frontend/\n")
 
