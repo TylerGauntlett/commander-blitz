@@ -2226,3 +2226,26 @@
 .fx-banner--loss .fx-banner__text {
   color: var(--danger);
 }
+
+/*
+ * Priority, when it is not the same fact as the turn.
+ *
+ * `.track__who` says whose turn it is. On somebody else's turn, holding your
+ * own priority is the whole of a Commander player's job -- and the ribbon used
+ * to run the two together into one highlighted name, so the moment that matters
+ * most looked exactly like the moment that does not.
+ *
+ * The astral hue rather than the gold: gold is `--active`, which is the turn,
+ * and this is deliberately a different kind of thing.
+ */
+.track__pri {
+  flex: none;
+  padding: 3px 10px;
+  border: 1px solid var(--astral);
+  border-radius: 999px;
+  background: rgb(143 127 232 / 0.16);
+  color: var(--astral-hi);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
