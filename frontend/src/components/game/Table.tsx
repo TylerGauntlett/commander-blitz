@@ -100,6 +100,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const unstageBlock = useUiStore((s) => s.unstageBlock);
   const setPeek = useUiStore((s) => s.setPeek);
   const logOverlay = useUiStore((s) => s.logOverlay);
+  const viewingPid = useUiStore((s) => s.viewingPid);
+  const setViewing = useUiStore((s) => s.setViewing);
   const toggleLogOverlay = useUiStore((s) => s.toggleLogOverlay);
   const peek = useUiStore((s) => s.peek);
   const hover = useUiStore((s) => s.hover);
@@ -403,8 +405,21 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const onDropOnZone = useCallback(
     (card: CardView, zone: string) => {
       if (gateInput()) return;
-      const [kind, , lane] = zone.split(":");
-      if (kind !== "lane" || !canDropOnLane(state, actions, card.oid, lane as LaneName)) {
+      /*
+       * WHOSE lane, and it was being thrown away.
+       *
+       * `lane:<pid>:<lane>` names a seat and this read the lane and skipped the
+       * pid, so a drop onto an opponent's creature row was treated as a drop
+       * onto your own. It could not be reached while their lanes were the only
+       * other drop zones and nothing dragged there; standing at their seat puts
+       * their lanes under the viewer's own hand.
+       */
+      const [kind, pid, lane] = zone.split(":");
+      if (
+        kind !== "lane" ||
+        Number(pid) !== state.seat ||
+        !canDropOnLane(state, actions, card.oid, lane as LaneName)
+      ) {
         cue("deny");
         return;
       }
@@ -550,6 +565,19 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       );
       if (matches.length === 1) act(matches[0].id);
       else if (matches.length > 1) narrowTargeting(matches.map((a) => a.id));
+      /*
+       * Otherwise: go and look at their board.
+       *
+       * Last, and that ordering is the whole rule. Aiming at a seat is a move
+       * in the game and looking at one is not, so a press that could be either
+       * has to be the game move -- an attacker that silently opened a board
+       * viewer mid-combat would be the worst kind of surprise.
+       *
+       * Toggles, so the seat you are already reading takes you home. Never your
+       * own seat: `.play__mine` is already your board.
+       */ else if (matches.length === 0 && pid !== state.seat) {
+        setViewing(viewingPid === pid ? null : pid);
+      }
     },
     [
       gateInput,
@@ -560,8 +588,31 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       targeting,
       act,
       narrowTargeting,
+      state.seat,
+      viewingPid,
+      setViewing,
     ],
   );
+
+  /*
+   * Whose board is actually on screen, guarded.
+   *
+   * A seat can leave the game while you are standing at it, and a latched pid
+   * that no longer names a live player would draw an empty mat with no way back
+   * -- so the guard is here rather than at the press, where it would only have
+   * been true at the moment of pressing.
+   */
+  const viewing =
+    viewingPid !== null &&
+    viewingPid !== state.seat &&
+    state.players[viewingPid] &&
+    !state.players[viewingPid].has_lost
+      ? viewingPid
+      : null;
+
+  // A new game, or leaving the table, must not arrive with somebody else's
+  // board up. The store outlives the component.
+  useEffect(() => () => setViewing(null), [setViewing]);
 
   const onDeclare = useCallback(
     (kind: "attackers" | "blockers", pairs: [number, number][]) => {
@@ -678,6 +729,13 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         setPeek(null);
         return true;
       }
+      // Below the overlays and above targeting: standing at somebody else's
+      // seat is a place you are, not a thing that is open over you, so `B`
+      // brings you home only once nothing is covering the board.
+      if (viewing !== null) {
+        setViewing(null);
+        return true;
+      }
       if (targetingActionIds.length > 0) {
         endTargeting();
         return true;
@@ -694,6 +752,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     toggleLogOverlay,
     peek,
     setPeek,
+    viewing,
+    setViewing,
     targetingActionIds,
     endTargeting,
     selectedOid,
@@ -1014,14 +1074,88 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 playableOids={playableOids}
                 onHoverCard={hover}
                 locked={locked}
+                viewing={viewing === pid}
+                // Their board has moved into the viewer's area, so this mat
+                // stops drawing it. Clipped is not absent: a card in a
+                // zero-height lane still owns its `data-oid`.
+                variant={viewing === pid ? "side" : "full"}
               />
             ))}
           </div>
 
-          <div className="play__mine" ref={mineRef}>
+          <div className="play__mine" ref={mineRef} data-viewing={viewing ?? undefined}>
+            {/*
+              WHOSE BOARD IS THIS, when it is not yours.
+
+              A strip and not a toast: it has to be true for as long as you are
+              standing there, and it has to say the way back. It carries a
+              `data-stop` so the ring can reach it, and NO `data-action-id` --
+              coming home is not a move in the game, and `ActionPanel` owns
+              every id alone.
+            */}
+            {viewing !== null && (
+              <div className="viewing" data-testid="viewing-strip">
+                <span className="viewing__who">
+                  Viewing <b>{state.players[viewing]?.name ?? `Player ${viewing}`}</b>
+                </span>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  data-stop={stopId.tool("stop-viewing")}
+                  onClick={() => setViewing(null)}
+                >
+                  Back to your board
+                </button>
+              </div>
+            )}
+
+            {/*
+              THE NODE MOVES; IT IS NEVER COPIED.
+
+              Whichever mat is drawn here is the only place that player's cards
+              are laid out, because the seat swap renders `variant="lanes"` and
+              the mats in the row above draw no lanes on a handheld anyway. Two
+              boxes for one `data-oid` would give `FxLayer` and the ring a
+              choice they have no way to make correctly.
+
+              `variant="lanes"` also means no second `PlayerOrb`: the facts
+              about the seat you are standing at are on that seat, six pixels
+              above, and drawing them twice would put two `data-player`s in the
+              document.
+            */}
+            {/*
+              Your own panel stays, whosever board is beside it.
+
+              Life, open mana and commander damage are most of what you are
+              assessing a threat AGAINST, so leaving to look at somebody's board
+              must not take them off the screen. Rendered as its own mat rather
+              than as a half of theirs: a `PlayerMat` is one player's, and a
+              component that took two and decided which half belonged to which
+              would be a worse thing to have than a grid line.
+            */}
+            {viewing !== null && (
+              <PlayerMat
+                key={`mine-${state.seat}`}
+                variant="side"
+                state={state}
+                player={viewer}
+                names={names}
+                cardScale={zoom.board}
+                actionableOids={actionableOids}
+                playerTargetable={targetablePids.has(state.seat)}
+                onSelectPlayer={onSelectPlayer}
+                playableOids={playableOids}
+                onHoverCard={hover}
+                spending={spending}
+                locked={locked}
+              />
+            )}
+
             <PlayerMat
+              key={viewing ?? state.seat}
+              variant={viewing !== null ? "lanes" : "full"}
               state={state}
-              player={viewer}
+              player={viewing !== null ? state.players[viewing] : viewer}
               names={names}
               cardScale={zoom.board}
               actionableOids={actionableOids}
@@ -1044,7 +1178,11 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               onCastCommander={playFromHand}
               onHoverCard={hover}
               spending={spending}
-              locked={locked}
+              // Standing at somebody else's seat is a reader, not a second way
+              // to act: every legal action against those permanents is already
+              // a row in the panel, and offering them here would put the same
+              // `data-action-id` in the document twice.
+              locked={locked || viewing !== null}
             />
           </div>
         </main>
@@ -1171,7 +1309,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             cardScale={zoom.hand}
             onActivate={playFromHand}
             onDropOn={onDropOnZone}
-            disabled={locked}
+            // Your lanes are not on screen while you are reading somebody
+            // else's, so there is nowhere legal to drop.
+            disabled={locked || viewing !== null}
           />
         </div>
 

@@ -71,8 +71,15 @@ export function OpponentBoard({ state, pid, names }: Props) {
         legal action against these permanents is already a row in the panel and
         a stop on the board underneath, and giving them a second control here
         would put the same `data-action-id` in the document twice.
+
+        `variant="lanes"` for the same reason one level up. This drew a whole
+        second `PlayerOrb` while held -- a duplicate `data-player` and a
+        duplicate `life-<pid>` in the document, which `FxLayer` resolves with
+        `document.querySelector` and would therefore have anchored to whichever
+        came first. The head above already says whose board this is.
       */}
       <PlayerMat
+        variant="lanes"
         state={state}
         player={player}
         names={names}

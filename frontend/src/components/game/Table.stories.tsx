@@ -488,3 +488,96 @@ export const HandheldCrowdedBoard: Story = {
     expectNothingOverflows(canvasElement, [".play__mine"]);
   },
 };
+
+/**
+ * Standing at an opponent's seat.
+ *
+ * At 1280x800 an opponent's cards are not drawn at all, so "let me actually
+ * look at that board" needs an answer -- and the one a pod wants is not a peek
+ * but a place: you go and stand at their seat and come back.
+ *
+ * What this asserts is the rule that makes it safe: **the node moves, it is
+ * never copied.** Exactly one box per `data-oid` and one per `data-player`,
+ * before and after. Two of either is not a cosmetic problem -- `FxLayer`
+ * resolves a damage numeral with `document.querySelector` and would anchor it
+ * to whichever came first, and the ring would have two places to be.
+ */
+export const HandheldViewingAnOpponent: Story = {
+  args: board(scenarios.fourPlayerPod()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    const counts = () => {
+      const oids = [...canvasElement.querySelectorAll("[data-oid]")].map((el) =>
+        el.getAttribute("data-oid"),
+      );
+      const players = [...canvasElement.querySelectorAll("[data-player]")].map((el) =>
+        el.getAttribute("data-player"),
+      );
+      return {
+        duplicateOids: oids.filter((id, i) => oids.indexOf(id) !== i),
+        duplicatePlayers: players.filter((id, i) => players.indexOf(id) !== i),
+      };
+    };
+
+    expect(counts().duplicateOids, "before").toEqual([]);
+    expect(counts().duplicatePlayers, "before").toEqual([]);
+
+    await userEvent.click(await canvas.findByTestId("player-1"));
+
+    const strip = await canvas.findByTestId("viewing-strip");
+    expect(strip.textContent).toContain("Viewing");
+    // Their lanes are here, and their seat says it is the one you are at.
+    expect(canvasElement.querySelector('.play__mine[data-viewing="1"]')).not.toBeNull();
+    expect(canvasElement.querySelector(".seat--viewing")).not.toBeNull();
+
+    expect(counts().duplicateOids, "while viewing").toEqual([]);
+    expect(counts().duplicatePlayers, "while viewing").toEqual([]);
+
+    // The strip carries the way back, and it is not an action id: coming home
+    // is not a move in the game.
+    expect(strip.querySelector("[data-action-id]")).toBeNull();
+    await userEvent.click(within(strip).getByRole("button"));
+    await waitFor(() => {
+      expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
+    });
+  },
+};
+
+/**
+ * Pressing a seat you are aiming at targets it, and does not wander off.
+ *
+ * The ordering is the whole rule: a press that could be either has to be the
+ * game move. An attacker that silently opened a board viewer mid-combat would
+ * be the worst kind of surprise.
+ */
+export const HandheldSeatPressTargetsFirst: Story = {
+  args: board(scenarios.combatDeclareAttackers()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { zoomLock: false } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+
+    /*
+     * Pick one of YOUR creatures, then point it at a seat. That press must
+     * stage the attack rather than take you to their board.
+     *
+     * Scoped to `.play__mine`: the first `[data-oid]` in the document is an
+     * opponent's, and on a handheld theirs are clipped to zero height with
+     * `pointer-events: none` -- which is the layout working, and would have
+     * made this story fail for a reason that has nothing to do with what it
+     * asserts.
+     */
+    const attacker = canvasElement.querySelector(".play__mine [data-oid]") as HTMLElement;
+    await userEvent.click(attacker);
+    await userEvent.click(await canvas.findByTestId("player-1"));
+
+    expect(canvasElement.querySelector('[data-testid="viewing-strip"]')).toBeNull();
+  },
+};
