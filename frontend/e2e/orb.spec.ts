@@ -225,15 +225,24 @@ test.describe("hovering a commander fills the preview rail", () => {
   });
 
   test("works for an opponent's commander, which you can never cast", async ({ page }) => {
-    // Reading an opponent's commander is most of why you look at their panel.
+    /*
+     * Reading an opponent's commander is most of why you look at their panel --
+     * "what is that deck about" is one card's text.
+     *
+     * It used to be a `.cmdslot` plinth, because an opponent rendered the same
+     * column the viewer does. An opponent is an `OpponentSeat` now and its
+     * commander is the 72x43 window, so the affordance moved rather than went:
+     * hover the window and the reader fills, exactly as before. `Y` does the
+     * same for a controller, at full size.
+     */
     test.setTimeout(180_000);
     await openPod(page, 3);
 
-    const slot = page.getByTestId("command-zone-1").locator(".cmdslot").first();
-    const name = (await slot.locator(".cmdplinth__name").textContent())?.trim() ?? "";
-    expect(name).not.toBe("");
+    const seat = page.getByTestId("player-1");
+    const name = (await seat.locator(".seat__cmdr").textContent())?.trim() ?? "";
+    expect(name, "the seat should name its commander").not.toBe("");
 
-    await slot.hover();
+    await seat.locator(".seat__win").hover();
     await expect(page.getByTestId("card-preview")).toContainText(name);
   });
 
@@ -257,12 +266,23 @@ test.describe("the commander is the panel's ground", () => {
     test.setTimeout(240_000);
     await openPod(page, 3);
 
-    const washes = await page
-      .locator(".orb__wash")
+    /*
+     * Four seats, four paintings -- drawn by two components now.
+     *
+     * The viewer keeps `.orb__wash`; an opponent is an `OpponentSeat` and its
+     * ground is `.seat__ground`. The claim is unchanged and is the one that
+     * matters: every seat is told apart by its own commander's art rather than
+     * by a name in 12px type, and DISTINCT URLS is the machine-checkable form
+     * of "they look different".
+     */
+    const grounds = await page
+      .locator(".orb__wash, .seat__ground")
       .evaluateAll((nodes) => nodes.map((n) => (n as HTMLElement).style.backgroundImage));
-    expect(washes.length).toBe(4);
-    expect(washes.every((w) => w.includes("/art/"))).toBe(true);
-    expect(new Set(washes).size, `washes: ${washes.join(" | ")}`).toBe(4);
+    expect(await page.locator(".orb__wash").count(), "one orb, and it is yours").toBe(1);
+    expect(await page.locator(".seat__ground").count(), "one ground per opponent").toBe(3);
+    expect(grounds.length).toBe(4);
+    expect(grounds.every((w) => w.includes("/art/"))).toBe(true);
+    expect(new Set(grounds).size, `grounds: ${grounds.join(" | ")}`).toBe(4);
   });
 
   test("the wash reuses the plinth's art rather than asking for a second crop", async ({

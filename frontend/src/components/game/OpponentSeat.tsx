@@ -94,6 +94,8 @@ interface Props {
   /** Their board is the one currently drawn in the viewer's lane area. */
   viewing?: boolean;
   onSelect?: (pid: number) => void;
+  /** Fills the reader with a card. The seat offers its commander. */
+  onHoverCard?: (oid: number | null) => void;
   /** Input is gated (narration playing, request in flight). */
   locked?: boolean;
 }
@@ -219,6 +221,7 @@ export function OpponentSeat({
   targetable,
   viewing = false,
   onSelect,
+  onHoverCard,
   locked = false,
 }: Props) {
   const images = useUiStore((s) => s.images);
@@ -325,10 +328,26 @@ export function OpponentSeat({
           ring is the turn; this tick is priority. */}
       {hasPriority && <span className="seat__pri" aria-hidden="true" />}
 
-      {/* The crisp window. The ground is the same painting veiled to nothing;
-          this is the half somebody can recognise. */}
-      <span className="seat__win" aria-hidden="true">
-        {typeof art === "string" && <img src={art} alt="" />}
+      {/*
+        The crisp window. The ground is the same painting veiled to nothing;
+        this is the half somebody can recognise.
+
+        Hovering it fills the reader with their commander, which is most of why
+        anybody looks at an opponent's panel -- "what is that deck about" is one
+        card's text. `Y` does the same thing for a controller, at full size, and
+        both are reads rather than actions: no `data-action-id`, and nothing
+        here changes the game.
+
+        `aria-hidden` on the picture and not on the handlers: the seat's own
+        button carries the accessible name, and a decorative image inside it
+        should not announce itself twice.
+      */}
+      <span
+        className="seat__win"
+        onMouseEnter={commander ? () => onHoverCard?.(commander.oid) : undefined}
+        onMouseLeave={commander ? () => onHoverCard?.(null) : undefined}
+      >
+        {typeof art === "string" && <img src={art} alt="" aria-hidden="true" />}
       </span>
 
       <span className="seat__head">
