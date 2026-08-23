@@ -84,7 +84,35 @@ async function scrollers(page: Page): Promise<{ selector: string; by: number }[]
       for (const el of document.querySelectorAll<HTMLElement>(selector)) {
         const by = el.scrollHeight - el.clientHeight;
         // 2px of sub-pixel slack, for the reason handheldAssert's SLACK exists.
-        if (by > 2) out.push({ selector, by });
+        if (by <= 2) continue;
+        /*
+         * WHICH CHILD, because the container is never the answer.
+         *
+         * "`.play__mine .mat` is 39px over" is true and unactionable: a mat is
+         * a panel and a lane column, and the fix is different depending on
+         * which one grew. The child that reaches furthest past the box is the
+         * one to look at, and naming it here saved a second full run every time
+         * this fired.
+         */
+        const box = el.getBoundingClientRect();
+        let worst = "";
+        let reach = 0;
+        // Every descendant, not just the children: a lane whose own box fits
+        // while its CARDS spill is the ordinary shape of this, and a
+        // child-only walk reports nothing at all for it.
+        for (const kid of el.querySelectorAll<HTMLElement>("*")) {
+          const past = Math.round(kid.getBoundingClientRect().bottom - box.bottom);
+          if (past <= reach) continue;
+          reach = past;
+          const cls = (kid.className || "")
+            .toString()
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .join(".");
+          worst = `${cls || kid.tagName.toLowerCase()} by ${past}`;
+        }
+        out.push({ selector: worst ? `${selector} (${worst})` : selector, by });
       }
     }
     return out;

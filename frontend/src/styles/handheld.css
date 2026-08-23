@@ -706,7 +706,20 @@ html[data-input="keyboard"] .hints {
  * child -- clipping the box would have hidden the one leaf carrying the count
  * and left the decoration behind, which is the wrong half of the trade.
  */
-[data-handheld] .pile__leaf:nth-last-child(n + 4) {
+/*
+ * ...AND ON A HANDHELD, ALL OF THEM. The pile becomes a chip.
+ *
+ * The cap above already accepts that the leaves are decoration and the top one
+ * is the number. `mockups/handheld-board/` finishes the thought: at this size a
+ * zone is a MARK AND A COUNT, and the stack under it is height the column does
+ * not have. Measured at three seats, keeping the leaves put the viewer's mat
+ * 43px past its row -- and `e2e/deckfit.spec.ts` is the gate that says the
+ * whole board is on screen.
+ *
+ * `:not(.pile__leaf--top)` and not the whole stack, because the top leaf is
+ * where the count is printed. Nothing here drops a number.
+ */
+[data-handheld] .pile__leaf:not(.pile__leaf--top) {
   display: none;
 }
 
@@ -781,6 +794,29 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .play__mine,
 [data-handheld] .play__mine .mat {
   min-height: 0;
+}
+
+/*
+ * THE MAT FILLS THE BOX THE SOLVER MEASURED.
+ *
+ * `useZoomFit` packs the viewer's lanes into `.play__mine`'s height. The mat
+ * inside it is `height: auto`, so it takes its content's MIN-CONTENT -- and the
+ * min-content of a wrapping flex row is one row of cards, whatever the width
+ * makes it wrap to. Measured at three players, 1200x800: `.play__mine` 406, the
+ * mat 343, the lanes 325 holding 370. The 63px the mat declined to take is
+ * exactly the room the solver had already promised the lanes.
+ *
+ * It only bites where there is slack, which is why it appeared at three players
+ * and not four: with more room the solve reaches its CEILING, and at the
+ * ceiling the lanes wrap into a height min-content does not describe. At four
+ * seats the budget binds before the ceiling does and the two agree by accident.
+ *
+ * `min-height` rather than `height`, so a mat with more content than the column
+ * still grows and `.play__mine` still scrolls -- which is the affordance
+ * `board.css` chose and this does not take away.
+ */
+[data-handheld] .play__mine .mat {
+  min-height: 100%;
 }
 
 /*

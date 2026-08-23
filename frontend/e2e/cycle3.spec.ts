@@ -693,24 +693,53 @@ test.describe("the log says why a permanent left the battlefield", () => {
     if (await keep.count()) await keep.first().click();
     await waitForOurTurn(page);
 
-    const log = page.getByTestId("event-log");
-    // Combat starts once there are creatures, so play on until something has
-    // actually died rather than assuming a fixed turn.
-    const died = await playUntil(
-      page,
-      async () =>
-        /Lethal damage|Destroyed|Sacrificed|Killed by|Exiled/.test(
-          (await log.textContent()) ?? "",
-        ),
-      { prefer: ["keep", "play_land", "cast", "add_attacker", "finish_declaration", "pass"] },
-    );
+    /*
+     * PLAY WITH THE LOG SHUT, AND OPEN IT ONCE TO READ.
+     *
+     * The log is an overlay at every size now -- the 232px left rail that held
+     * it is retired, because it is reference you consult rather than something
+     * you watch. So it cannot be polled while playing: it covers the bottom
+     * half of the screen, including the rows `takeAction` clicks.
+     *
+     * A graveyard is the board's own answer to "has anything left the
+     * battlefield", and it is a better signal than the log's text besides --
+     * the log is the thing under test, and a predicate that reads it is a test
+     * waiting for its own subject.
+     */
+    const buried = async () => {
+      const counts = await page
+        .locator('[data-testid$="-graveyard"]')
+        .evaluateAll((nodes) =>
+          nodes.map((n) => Number(n.getAttribute("data-count") ?? n.textContent ?? 0)),
+        );
+      return counts.some((n) => n > 0);
+    };
+
+    const died = await playUntil(page, buried, {
+      prefer: ["keep", "play_land", "cast", "add_attacker", "finish_declaration", "pass"],
+    });
 
     if (!died) {
       test.skip(true, "no permanent left the battlefield in this seeded game");
       return;
     }
 
+    // `Tab` is `View`, which is what opens the log.
+    await page.keyboard.press("Tab");
+    const log = page.getByTestId("event-log");
+    await expect(log).toBeVisible();
+
     const text = (await log.textContent()) ?? "";
+    /*
+     * Something actually left the battlefield, and the log said which way.
+     *
+     * The graveyard tells us a card arrived there; only the log says why, which
+     * is the claim. Asserted as a pair so a log that had gone silent could not
+     * pass by saying nothing.
+     */
+    expect(text, "the log should attribute the departure").toMatch(
+      /Lethal damage|Destroyed|Sacrificed|Killed by|Exiled|Discarded|Countered/,
+    );
     // Every departure is one line owned by `zone_change`. `dies` used to
     // produce a second, less informative one for the same creature.
     expect(text).not.toContain("dies");

@@ -189,6 +189,7 @@ export function PlayerMat({
               targetable={playerTargetable}
               viewing={viewing}
               onSelect={onSelectPlayer}
+              onHoverCard={onHoverCard}
               locked={locked}
             />
           ) : (

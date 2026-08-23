@@ -170,20 +170,33 @@ test.describe("the compact layout is the one being drawn", () => {
      * mode fails on, confusingly and far from the cause.
      */
     await expect(page.getByTestId("stack-panel")).toHaveCount(0);
+    /*
+     * The stack shares the viewer's grid cell rather than being placed over it.
+     *
+     * It was absolutely positioned in the body at first, and that put it over
+     * the OPPONENTS on a desktop, where their row is 250px tall -- covering
+     * somebody's name and life, which is a worse trade than covering your own
+     * commander. Two grid items may occupy one cell, which is all it needed.
+     */
     const floats = await page.evaluate(() => {
       const panel = document.createElement("div");
       panel.className = "stackpanel";
-      document.querySelector(".table__body")?.append(panel);
-      // Read BEFORE removing. `getComputedStyle` hands back a live declaration,
-      // so a detached element reports empty strings for everything -- which is
-      // how the first version of this asserted `""` against `"absolute"`.
-      const position = getComputedStyle(panel).position;
-      const inBody = !!document.querySelector(".table__body > .stackpanel");
+      document.querySelector(".play")?.append(panel);
+      // Read BEFORE removing: `getComputedStyle` hands back a live declaration,
+      // so a detached element reports empty strings for everything.
+      const style = getComputedStyle(panel);
+      const mine = document.querySelector(".play__mine");
+      const row = mine ? getComputedStyle(mine).gridRowStart : "";
+      const cell = { row: style.gridRowStart, column: style.gridColumnStart };
       panel.remove();
-      return { position, inBody };
+      return { cell, mineRow: row, inPlay: !!document.querySelector(".play > .stackpanel") };
     });
-    expect(floats.position, "the stack should be positioned over the board").toBe("absolute");
-    expect(floats.inBody, "...and hang off the board's own box").toBe(true);
+
+    expect(floats.inPlay, "the stack hangs off the play area").toBe(true);
+    // The viewer's own cell, which is what puts it over their panel and never
+    // over an opponent's vitals.
+    expect(floats.cell.row, "the stack shares the viewer's row").toBe("2");
+    expect(floats.cell.column).toBe("1");
 
     // The log is reachable, and closable, without a mouse.
     await expect(page.getByTestId("log-overlay")).toBeHidden();
