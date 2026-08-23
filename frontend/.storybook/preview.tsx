@@ -28,6 +28,7 @@ import "../src/theme.css";
 import "../src/styles/cards.css";
 import "../src/styles/board.css";
 import "../src/styles/seat.css";
+import "../src/styles/reader.css";
 import "../src/styles/ui.css";
 import "../src/styles/lobby.css";
 import "../src/styles/handheld.css";
@@ -256,11 +257,27 @@ const withMount: Decorator = (Story, context) => {
  *
  * Stamped on the iframe's own `documentElement`, because that is where the app
  * puts them and where the stylesheet looks for them.
+ *
+ * ## `data-desktop` is stamped too, and it is not symmetry for its own sake
+ *
+ * The tester canvas is 1200x900, whatever `vite.config.ts` declares -- see the
+ * note there for the four ways that were measured and reset. 1200 is inside
+ * `HANDHELD_QUERY`'s `(max-width: 1366px)`, so **every story matched the
+ * handheld query**, including every story in the project whose entire job is
+ * proving the desktop board still works.
+ *
+ * So the toolbar is made authoritative rather than advisory: `data-desktop`
+ * says "this story is being reviewed as the wide board, whatever the canvas
+ * happens to be", and `styles/handheld.css` and `state/useHandheld.ts` both
+ * treat an explicit choice as beating the query. Nothing in the app ever stamps
+ * it, so the running client is untouched.
  */
 const withInputMode: Decorator = (Story, context) => {
   const root = document.documentElement;
+  const handheld = context.globals.handheld === "on";
   root.setAttribute("data-input", String(context.globals.input ?? "mouse"));
-  root.toggleAttribute("data-handheld", context.globals.handheld === "on");
+  root.toggleAttribute("data-handheld", handheld);
+  root.toggleAttribute("data-desktop", !handheld);
   return <Story />;
 };
 

@@ -62,13 +62,32 @@ export function useHandheld(): boolean {
  */
 export function useHandheldLayout(): boolean {
   const byQuery = useHandheld();
-  const byAttr = useSyncExternalStore(subscribeAttr, readAttr, () => false);
-  return byQuery || byAttr;
+  const stamped = useSyncExternalStore(subscribeAttr, readAttr, () => null);
+  // An explicit choice beats the viewport. See `readAttr`.
+  return stamped ?? byQuery;
 }
 
-function readAttr(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.hasAttribute("data-handheld");
+/**
+ * The layout the document has been TOLD it is, or `null` for "ask the query".
+ *
+ * `data-handheld` is stamped by `App.tsx` from the query itself, so in the
+ * running client this and `byQuery` are the same fact and this branch never
+ * decides anything.
+ *
+ * `data-desktop` exists for Storybook alone, and it is not symmetry for its own
+ * sake. The Vitest tester canvas is 1200x900 whatever the project declares, and
+ * 1200 is inside `(max-width: 1366px)` -- so without it every story in the
+ * DESKTOP project matched the handheld query and rendered the compact body.
+ * The toolbar has to be able to say "review this as the wide board" and be
+ * believed, or a review surface that exists to compare the two layouts can only
+ * ever show one of them.
+ */
+function readAttr(): boolean | null {
+  if (typeof document === "undefined") return null;
+  const root = document.documentElement;
+  if (root.hasAttribute("data-handheld")) return true;
+  if (root.hasAttribute("data-desktop")) return false;
+  return null;
 }
 
 function subscribeAttr(onChange: () => void): () => void {
@@ -78,7 +97,7 @@ function subscribeAttr(onChange: () => void): () => void {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["data-handheld"],
+    attributeFilter: ["data-handheld", "data-desktop"],
   });
   return () => observer.disconnect();
 }

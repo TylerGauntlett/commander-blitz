@@ -125,8 +125,18 @@ html[data-input="keyboard"] .glyph--key {
    has always used, which is what makes this whole change additive.
    ========================================================================== */
 
+/*
+ * `:root:not([data-desktop])`, and the query text is untouched.
+ *
+ * `tests/breakpoints.test.ts` reads this file off disk and asserts it contains
+ * `HANDHELD_QUERY` verbatim, which is why the guard is on the SELECTOR and not
+ * inside the query. The app never stamps `data-desktop`; Storybook does, and
+ * without it the review surface could not show the wide board at all -- its
+ * tester canvas is 1200px, inside `(max-width: 1366px)`, so every story got
+ * handheld tokens no matter what the Layout toolbar said. See `preview.tsx`.
+ */
 @media (max-width: 1366px), (max-height: 820px) {
-  :root {
+  :root:not([data-desktop]) {
     /*
      * The tracks, re-valued. `board.css` restates no grid -- it reads these --
      * so this block is the whole of the "fluid rails" change.
@@ -275,58 +285,41 @@ html[data-input="keyboard"] .glyph--key {
 }
 
 /*
- * The foot carries the hand, the hints and the commit slab together.
+ * The foot carries the hand and the hint bar, and nothing else.
  *
- * IT SAID THIS BEFORE IT WAS TRUE. `.foot__slab` was styled here and rendered
- * nowhere -- `grep` found this rule and nothing else -- while `useZoomFit`'s
- * `HANDHELD_FOOT_EXTRA` already reserved 56px for "the commit slab portalled
- * beside it". So the hand paid for a slab that was not there and the slab went
- * on occupying 65px of the right rail, full width, while the action list under
- * it clipped its own rows. `ActionPanel` portals into the host now.
+ * IT ONCE CARRIED THE COMMIT SLAB TOO, and the reason it did has gone away. The
+ * slab was 65px of a 514px rail and the full width of it, so it was portalled
+ * out here into the gutter the centred fan was not using. The rail runs the
+ * FULL HEIGHT of the screen now -- 748px -- so 65px is affordable there, and
+ * under the list it commits is where the thing that ends a decision belongs.
+ * See `components/game/ActionPanel.tsx`.
  *
- * Areas rather than source order, because the host is the foot's first child
- * (the ring walks it before the hand, which is the order a thumb wants) and the
- * eye wants it last on the row.
+ * THE HAND IS ABOVE THE STRIP, and that order is what makes the lift free.
+ *
+ * A hovered card rises out of `.hand` -- the slot is a fixed rectangle extended
+ * upward, which is the whole fix for a jitter where raising a card moved its
+ * hit box off the pointer -- so whatever sits directly above the hand gets
+ * drawn on. With the hint bar there, a raised card covered "Read" and "Back",
+ * and worse, the slot's catchment covered the bar so moving the pointer up off
+ * the hand never fired `mouseleave` and the card stayed up.
+ *
+ * Padding `.hand` to contain the lift was the first fix and it was wrong: the
+ * box is `border-box`, so 24px of top padding came straight out of the
+ * `calc(var(--card-w) * 1.4 + 44px)` that reserves room for the arc's droop and
+ * the outermost cards' rotation -- and the foot began overflowing by 7px with
+ * the bottom of the fan clipped.
+ *
+ * Below the hand there is nothing to collide with: the overhang goes up into
+ * the board's bottom padding, which is exactly what it does on a desktop and
+ * has never been a problem there. The strip also reads better at the bottom
+ * edge -- it is chrome, and the hand is the thing being played.
  */
 [data-handheld] .table__foot {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  /*
-   * The slab spans both rows, in the gutter the fan was never using.
-   *
-   * Its own row cost 44px of foot -- and the foot's height comes straight off
-   * the board, so the seat cap had just bought the viewer's mat 128px and this
-   * handed 44 of them back. The hand is a centred fan 922px wide in a 1180px
-   * row: there is a ~130px gutter down each side holding nothing. The slab goes
-   * in the right one and the foot does not grow at all.
-   */
-  /*
-   * THE HAND IS ABOVE THE STRIP, and that order is what makes the lift free.
-   *
-   * A hovered card rises out of `.hand` -- the slot is a fixed rectangle
-   * extended upward, which is the whole fix for a jitter where raising a card
-   * moved its hit box off the pointer -- so whatever sits directly above the
-   * hand gets drawn on. With the hint bar there, a raised card covered "Read"
-   * and "Back", and worse, the slot's catchment covered the bar so moving the
-   * pointer up off the hand never fired `mouseleave` and the card stayed up.
-   *
-   * Padding `.hand` to contain the lift was the first fix and it was wrong: the
-   * box is `border-box`, so 24px of top padding came straight out of the
-   * `calc(var(--card-w) * 1.4 + 44px)` that reserves room for the arc's droop
-   * and the outermost cards' rotation -- and the foot began overflowing by 7px
-   * with the bottom of the fan clipped. Growing the min-height instead would
-   * have taken those pixels off the board, which is the thing this whole pass
-   * is buying back.
-   *
-   * Below the hand there is nothing to collide with: the overhang goes up into
-   * the board's bottom padding, which is exactly what it does on a desktop and
-   * has never been a problem there. The strip also reads better at the bottom
-   * edge -- it is chrome, and the hand is the thing being played.
-   */
   grid-template-areas:
-    "hand hand slab"
-    "tools hints slab";
-  grid-template-columns: auto minmax(0, 1fr) auto;
+    "hand hand"
+    "tools hints";
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 2px 10px;
 }
@@ -373,38 +366,32 @@ html[data-input="keyboard"] .glyph--key {
   padding: 2px 8px 4px;
 }
 
-[data-handheld] .foot__slab {
-  grid-area: slab;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 6px;
-}
-
 /*
- * The slab, as a pill rather than as a rail-wide plaque.
+ * The commit dock, in the rail and under the list it commits.
  *
- * `ui.css` gives it `padding: 17px 22px` around a 21px label, and the 16px
- * floor takes its keycap from 11px to 16px on top -- 65px tall and as wide as
- * whatever contains it. That is the right shape for a 304px column on a
- * 950px-tall desktop and the wrong one for a row it now shares. `width: auto`
- * is the load-bearing half: `.commit` is `width: 100%` precisely so it cannot
- * scale past its column, and in a flex row that reads as "take everything".
+ * `ui.css` gives the slab `padding: 17px 22px` around a 21px label, and the
+ * 16px floor takes its keycap from 11px to 16px on top -- 65px tall and as wide
+ * as its column. That is the right shape for a 304px rail on a 950px desktop
+ * and it is very nearly the right shape for a 243px one, so what follows is a
+ * trim rather than a redesign.
+ *
+ * `flex: 0 0 auto` is the load-bearing line: the dock must never take slack
+ * from `.acts__list` above it, because the list is the decision and the slab is
+ * one button. It is the same ordering `docs/handheld-playtest.md` sets for
+ * everything else in this rail.
  */
-[data-handheld] .foot__slab .commit {
-  width: auto;
-  min-height: 44px;
-  padding: 6px 18px;
-}
-
-[data-handheld] .foot__slab .commit__main {
-  font-size: 18px;
-}
-
-/* The alternatives travel with it, still on their own row beneath. */
-[data-handheld] .foot__slab .commit-dock {
-  align-items: flex-end;
+[data-handheld] .rail--right .commit-dock {
+  flex: 0 0 auto;
   gap: 4px;
+}
+
+[data-handheld] .rail--right .commit {
+  min-height: 48px;
+  padding: 8px 14px;
+}
+
+[data-handheld] .rail--right .commit__main {
+  font-size: 18px;
 }
 
 /* ==========================================================================
@@ -1050,20 +1037,20 @@ html[data-input="keyboard"] .hints {
    list you cannot see is the game not being playable.
    ========================================================================== */
 
-[data-handheld] .rail--right .preview {
-  /*
-   * 272px -> 152px. Still a whole card at a readable size, and it is the one
-   * panel here whose content is a picture rather than a decision.
-   *
-   * The second cut is the tools' fault and is worth saying so. The 44px hit
-   * floor wraps five utility controls to three rows in a 200px column -- 101px,
-   * pinned, in a 255px panel -- so the list came out at 93px holding 144px of
-   * choices. The ordering `docs/handheld-playtest.md` sets is that the list is
-   * the turn and everything else gives way, and at rest this panel is holding
-   * the words "Hover a card to read it."
-   */
-  height: clamp(140px, 19vh, 200px);
-}
+/*
+ * The reader owns its own height -- see `styles/reader.css`.
+ *
+ * There was a `clamp(140px, 19vh, 200px)` here, and it won on order rather than
+ * on argument: two single-class selectors under the same ancestors, and this
+ * file loads last. The reader came out at 152px instead of the 236 it is
+ * designed at, which took 84px straight off the rules box that is the whole
+ * point of the panel.
+ *
+ * Removed rather than out-specified. The two rules keyed on the same fact --
+ * `[data-handheld]` here, `useHandheldLayout()` there -- so they could never
+ * disagree about WHETHER the reader is drawn, only about how tall it is, which
+ * makes one of them redundant by construction.
+ */
 
 [data-handheld] .rail--right .stackpanel {
   /* Two items and a scroll, rather than growing without limit. Capped rather

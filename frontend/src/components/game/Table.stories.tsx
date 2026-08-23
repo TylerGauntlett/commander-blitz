@@ -13,6 +13,7 @@ import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import {
   expectCardsSized,
   expectHandheldFloors,
+  expectNothingOverflows,
   expectUniqueActionIds,
 } from "../../testing/asserts";
 import { fakeGame, idleMutation } from "../../testing/fakeGame";
@@ -345,16 +346,17 @@ export const FullHeightRail: Story = {
     expect(foot.right).toBeLessThanOrEqual(rail.left + 1);
 
     /*
-     * And nothing has been pushed off the bottom to pay for it.
+     * The FIT is asserted by the handheld stories below, not here.
      *
-     * `scrollHeight > clientHeight` asks the question directly. It is the check
-     * `e2e/deckfit.spec.ts` runs against a real engine; this is the same
-     * question asked of a component, in CI, where the e2e suite does not run.
+     * This one runs with desktop tokens on a 1200x900 tester canvas, which is a
+     * configuration the app cannot produce: 1200 is inside
+     * `(max-width: 1366px)`, so a real client at that size is a handheld. The
+     * relationships above hold at any size and are the claim this story exists
+     * for; "and everything still fits" needs a viewport that is really the one
+     * being claimed, which is what `expectNothingOverflows` on the handheld
+     * stories has. See `vite.config.ts` for why the canvas is not 1600x950.
      */
-    for (const sel of [".play__mine", ".play__opponents", ".table__foot", ".acts"]) {
-      const el = canvasElement.querySelector(sel) as HTMLElement;
-      expect(el.scrollHeight - el.clientHeight, `${sel} overflows`).toBeLessThanOrEqual(2);
-    }
+    expect(canvasElement.querySelector(".rail--left"), "the left rail is retired").toBeNull();
   },
 };
 
@@ -397,6 +399,7 @@ export const HandheldBoard: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
   },
 };
 
@@ -415,6 +418,7 @@ export const HandheldPod: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
   },
 };
 
@@ -428,6 +432,7 @@ export const HandheldDeclareAttackers: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -441,6 +446,7 @@ export const HandheldDeclareBlockers: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -455,11 +461,21 @@ export const HandheldModalDecision: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement);
     expectUniqueActionIds(canvasElement);
   },
 };
 
-/** A board with more permanents than the screen can hold, so the mat scrolls. */
+/**
+ * A board with more permanents than the screen can hold, so the mat scrolls.
+ *
+ * `.play__mine` is exempted from the fit check here, and it is the one place
+ * that exemption is correct: this story exists to pose the overflow, and
+ * `board.css` gives the viewer's mat `overflow-y: auto` precisely so a board
+ * you have to scroll beats a board you cannot read. Everything ELSE still has
+ * to fit -- the foot, the opponents' row, the action panel and the ribbon --
+ * which is what a blanket skip would have stopped saying.
+ */
 export const HandheldCrowdedBoard: Story = {
   args: board(scenarios.crowdedBoard()),
   globals: { handheld: "on", input: "pad" },
@@ -469,5 +485,6 @@ export const HandheldCrowdedBoard: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
     expectHandheldFloors(canvasElement);
+    expectNothingOverflows(canvasElement, [".play__mine"]);
   },
 };

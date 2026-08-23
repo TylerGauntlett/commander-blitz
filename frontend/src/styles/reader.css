@@ -1,0 +1,192 @@
+/* ==========================================================================
+   The reader: the card you are pointing at, compressed
+   ==========================================================================
+
+   `mockups/handheld-board/`'s `.reader`, and it is the compact half of
+   `components/game/CardPreview.tsx` rather than a component of its own.
+
+   THE PICTURE IS A LANDSCAPE WINDOW AND NOT A SMALL CARD, which is the whole
+   argument. `art_crop` is 626x457 -- landscape, 1.37:1 -- and a card frame is
+   1:1.4. A card-shaped reader at this width is 116px across, which is SMALLER
+   than the board card it is supposed to be helping you read, and `cover` throws
+   away most of the painting to get there. A 227x84 window keeps the full width
+   and trims only the top and bottom margins, where an `art_crop` keeps its
+   background: more of the picture in a third of the height, and the 78px it
+   hands back is what the rules text is made of.
+   ========================================================================== */
+
+/*
+ * A FIXED HEIGHT, AND THE RULES ARE WHAT GIVE.
+ *
+ * Content-sized this is 179px on "Trample." and 260px on Aesi's three clauses,
+ * so the action list below it would grow and shrink and every row would slide
+ * under the cursor mid-turn. That is the same failure `.preview`'s own height
+ * note records on a desktop, arriving at a third of the size.
+ *
+ * 236px is `mockups/handheld-board/measure.mjs`'s number, and it is affordable
+ * for the first time because the rail runs the full height of the screen --
+ * 748px rather than 514 -- and still leaves the list 363-398.
+ */
+[data-handheld] .rail--right .preview--reader {
+  height: 236px;
+  padding: 6px;
+}
+
+[data-handheld] .preview--reader .preview__body {
+  gap: 4px;
+  align-items: stretch;
+}
+
+/* --- The window ---------------------------------------------------------- */
+
+.reader__art {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  height: 84px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--pane-well);
+}
+
+.reader__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+}
+
+/*
+ * `object-position: 50% 38%` and a lift, not a look.
+ *
+ * An `art_crop` puts its subject a little above centre and keeps background at
+ * the bottom, so trimming evenly loses the face. The filter is the same one the
+ * seat's window uses: the panel behind it is dark enough that an untouched crop
+ * reads as muddy at 84px.
+ */
+.reader__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+  filter: saturate(1.12) contrast(1.03) brightness(1.08);
+}
+
+.reader__art--empty {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(155deg, #2c2740, #14111f);
+}
+
+/*
+ * The P/T lives on the picture.
+ *
+ * The first draft put "Legendary Creature — Serpent · 5/5" on one 227px line.
+ * It ellipsised, and the half it dropped was the number -- which is backwards:
+ * a type line is a thing you skim and a P/T is a thing you are looking up.
+ */
+.reader__pt {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  z-index: 2;
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: rgb(9 8 20 / 0.86);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: #f7f4ea;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* --- The text ------------------------------------------------------------ */
+
+.reader__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+}
+
+.reader__nm {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.reader__nm-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* An inline-flex wrapper, so a cost can never break across two lines. */
+.reader__cost {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.reader__tl {
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * The part that gives, and it reserves its scrollbar.
+ *
+ * A styled `::-webkit-scrollbar` is a classic bar rather than an overlay, so it
+ * takes its width the instant it appears -- and re-wraps every line under it.
+ * On the one surface whose job is reading, text that reflows as it grows is the
+ * worst possible place for that. `e2e/handheldAssert.ts`'s `unguttered` gate
+ * fails any scroller that has not reserved it.
+ */
+.reader__rules {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 3px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-hi) transparent;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/*
+ * Why you cannot cast it.
+ *
+ * `--staged` amber rather than `--danger`: it is a fact about the board, not an
+ * error. The hand draws the same sentence under itself as `.hand__hint`, and on
+ * a handheld that copy is suppressed -- see below.
+ */
+.reader__why {
+  flex: none;
+  margin-top: 3px;
+  color: var(--staged);
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/*
+ * One sentence, one place.
+ *
+ * `.hand__hint` is pinned above the fan, which on a handheld is directly under
+ * a raised card and directly above the hint bar -- and it says exactly what the
+ * reader says, at the moment the reader is showing that card. On a desktop both
+ * stay: the hand has the room, and the hint sits where the pointer already is.
+ */
+[data-handheld] .hand__hint {
+  display: none;
+}

@@ -1,15 +1,21 @@
 /**
- * The right rail's large card.
+ * The right rail's large card, and the reader it becomes at 1280x800.
  *
  * The panel is a *fixed* height whether it holds a card or not. It used to size
  * to its content, which meant the whole action panel below it jumped every time
  * the pointer crossed a card -- and jumped again between a creature and a land,
  * because a land has no P/T row and shorter rules. That is a measurement, so it
  * is checked here and nowhere else.
+ *
+ * The compressed stories at the bottom are the same component with the Layout
+ * toolbar on. What they are worth looking at for is that a 243px rail cannot
+ * hold a card FRAME -- one would be 116px across, smaller than the board card
+ * it is meant to be helping you read -- so the picture becomes a landscape
+ * window onto the same `art_crop` and the height that buys goes to the rules.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
 import * as scenarios from "../../testing/scenarios";
 import { CardPreview } from "./CardPreview";
@@ -112,5 +118,103 @@ export const HeightDoesNotChange: Story = {
       new Set([empty, creature, land]).size,
       `the rail jumps: empty ${empty}, creature ${creature}, land ${land}`,
     ).toBe(1);
+  },
+};
+
+/* --------------------------------------------------------------- compressed */
+
+/** A creature: the P/T is stamped on the picture, not on the type line. */
+export const ReaderCreature: Story = {
+  args: { state: board },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Llanowar Elves");
+    /*
+     * The first draft put "Creature — Elf Druid · 1/1" on one 227px line. It
+     * ellipsised, and the half it dropped was the number -- so the P/T moved on
+     * to the art window, where a card keeps it.
+     */
+    expect(canvasElement.querySelector(".reader__pt")?.textContent).toBe("1/1");
+    expect(canvasElement.querySelector(".reader__tl")?.textContent).toContain("Creature");
+    // The desktop fact list is not carried: keywords are in the rules, status
+    // is the tap state, the controller is whose mat it is on.
+    expect(canvasElement.querySelector(".preview__facts")).toBeNull();
+  },
+};
+
+/** A land: no P/T, and the rules box is most of the panel. */
+export const ReaderLand: Story = {
+  args: { state: board },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 204 } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("card-preview");
+    expect(canvasElement.querySelector(".reader__pt")).toBeNull();
+  },
+};
+
+/**
+ * The panel holds its height whatever the card is.
+ *
+ * This is the whole reason it is fixed: content-sized it is 179px on "Trample."
+ * and 260 on three clauses, so the action list below would grow and shrink and
+ * every row would slide under the cursor mid-decision.
+ */
+export const ReaderHoldsItsHeight: Story = {
+  args: { state: board },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const panel = await canvas.findByTestId("card-preview");
+    const withCard = panel.getBoundingClientRect().height;
+
+    useUiStore.getState().hover(null);
+    await waitFor(() => {
+      expect(canvasElement.querySelector(".reader__body")).toBeNull();
+    });
+
+    expect(panel.getBoundingClientRect().height).toBeCloseTo(withCard, 0);
+  },
+};
+
+/**
+ * Nothing pointed at, in the compact rail.
+ *
+ * The idle line is worded for the input that is actually driving: a controller
+ * player does not hover anything.
+ */
+export const ReaderIdle: Story = {
+  args: { state: board },
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(/Point at a card/i);
+  },
+};
+
+/**
+ * A card in hand you cannot cast, and why.
+ *
+ * `hand_reasons` is the viewer's own and hand-only, so the reader derives it
+ * from `state` rather than taking a prop. On a handheld the hand's own copy of
+ * this sentence is suppressed, so it is not on screen twice.
+ */
+export const ReaderUnplayable: Story = {
+  args: { state: scenarios.openingHand().state },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: {
+    automtg: {
+      mount: "railRight",
+      ui: { hoveredOid: scenarios.openingHand().state.players[0].hand?.[0]?.oid ?? null },
+    },
   },
 };

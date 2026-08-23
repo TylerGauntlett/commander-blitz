@@ -9,6 +9,7 @@ import "./styles/board.css";
 // After `board.css`: the seat re-shapes `.mat--compact`, which board.css
 // declares. Same reason `handheld.css` loads last.
 import "./styles/seat.css";
+import "./styles/reader.css";
 import "./styles/ui.css";
 import "./styles/lobby.css";
 import "./styles/handheld.css";

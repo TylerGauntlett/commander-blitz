@@ -132,14 +132,22 @@ export function ActionPanel({
   standDown,
 }: Props) {
   /*
-   * Where the commit slab and the tool strip actually go.
+   * Where the tool strip actually goes.
    *
-   * On a handheld both leave this panel: the slab was 65px of a 531px rail and
-   * the full width of it, and the five utility controls wrapped to three rows in
-   * a 200px column -- 101px of a 252px panel -- while the action list underneath
-   * sat at its 74px floor clipping the choices the turn was waiting on. `Table`
-   * renders `.foot__slab` and `.foot__tools` in the foot and they are portalled
-   * there.
+   * On a handheld the five utility controls leave this panel: at the 44px hit
+   * floor they wrap to three rows in a 200px column -- 101px, pinned, of a 252px
+   * panel -- while the action list underneath sat at its 74px floor clipping
+   * the choices the turn was waiting on. `Table` renders `.foot__tools` in the
+   * foot and they are portalled there, where the row is 1017px wide and they
+   * are one line.
+   *
+   * THE COMMIT SLAB CAME BACK. It left for the same reason and the reason no
+   * longer holds: the rail runs the full height of the screen now, 748px rather
+   * than 514, so the 65px the slab costs is affordable and the list still comes
+   * out at 363-398. Putting it back is also the arrangement
+   * `mockups/handheld-board/` draws and the one that reads better -- the thing
+   * you press to end a decision belongs under the list of that decision, not in
+   * the corner of the hand.
    *
    * PORTALLED, NOT DUPLICATED. The node is the same node, so every
    * `data-action-id`, `data-testid` and ring stop travels with it and this
@@ -172,9 +180,11 @@ export function ActionPanel({
     // The foot is rendered by the same commit that renders this panel, so by the
     // time an effect runs the nodes exist. Scoped to this board.
     const scope = anchorRef.current?.closest(".table") ?? document;
-    const slab = scope.querySelector<HTMLElement>(".foot__slab");
     const tools = scope.querySelector<HTMLElement>(".foot__tools");
-    setHosts((c) => (c.slab === slab && c.tools === tools ? c : { slab, tools }));
+    // `slab` stays null at every size: the dock renders in place, in the rail,
+    // under the list it commits. `dock()` below is the one that reads it, and a
+    // null host means "leave it where it is".
+    setHosts((c) => (c.slab === null && c.tools === tools ? c : { slab: null, tools }));
   }, [handheld]);
 
   const muted = useUiStore((s) => s.muted);
