@@ -56,27 +56,44 @@ view. That is what the unit tests cover; components stay presentational.
 
 ## Where things sit on screen
 
-A ribbon across the top, three columns, and the hand along the foot.
+A ribbon across the top, **two** columns, and the hand under the left one.
 
 - **Top** — the phase ribbon: five phases as pills, and only the live one expands
   into its steps. All thirteen step labels stay in the DOM regardless, which is
-  both what `e2e/smoke.spec.ts` counts and what keeps the marker's `layoutId`
-  animation continuous across a phase boundary.
-- **Left rail** — the stack, and the event log.
-- **Middle** — opponents on a row that sizes to its content, then your own mat. Each
-  mat's first column is that player's info panel (`PlayerOrb`): their commander,
-  their life dial, their mana, their zone piles. The board itself is two *bands*
-  — see below. Card size is **solved against the space each area actually has**
+  both what `e2e/acceptance.spec.ts` counts and what keeps the marker's
+  `layoutId` animation continuous across a phase boundary. Whose turn it is and
+  who holds *priority* are two chips, because they are two facts — and the case
+  that matters most, somebody else's turn and your decision, is exactly the one
+  a single chip cannot say.
+- **Middle** — opponents on a row that sizes to its content, then your own mat.
+  Your mat's first column is your info panel (`PlayerOrb`): commander, life dial,
+  mana, zone piles. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
+  what they have on the battlefield, because none of an orb's controls is yours
+  on somebody else's seat and a pod was three control panels for controls nobody
+  could press. Card size is **solved against the space each area actually has**
   rather than fixed: see "How big a card is" below.
-- **Right rail** — the card preview, then **combat**, then the tool strip. Combat
-  moved here from a full-width banner under the board: the decision now sits
-  directly under the card you are reading rather than as far from it as the
-  layout allows, and the foot belongs to the hand alone. Whichever surface owns a
-  decision renders its action ids and the bar stands down (`standDown`), so a
+- **Right rail** — the card you are reading, the panel of things you can do, and
+  the commit dock. **It runs the full height of the screen**, which is the single
+  biggest thing about this layout: it used to stop where the hand started, 514px
+  at 1280x800, of which the action list got 172.
+  `mockups/handheld-board/measure.mjs` measures the same rail at 748 when it runs
+  to the bottom edge instead, and the list at 363-398. Whichever surface owns a
+  decision renders its action ids and the other stands down (`standDown`), so a
   prompt is never printed twice.
-- **Foot** — the hand, and nothing else. Your commander used to sit to its left; it
-  is the hero of your info panel now, drawn as a plinth rather than a card. See
-  `CommandZone` and `docs/mockup-fidelity.md` defect #5.
+- **Foot** — the hand, and nothing else, **inside the board's column** rather
+  than spanning the screen. That is what lets the rail reach the bottom. Your
+  commander used to sit to the hand's left; it is the hero of your info panel
+  now, drawn as a plinth rather than a card. See `CommandZone` and
+  `docs/mockup-fidelity.md` defect #5.
+
+**There is no left rail, at any size.** It held two things and neither earned a
+permanent 232px column. The log is reference you consult rather than something
+you watch, so it comes up on **View** as an overlay. The stack is urgent exactly
+when it is non-empty and absent the rest of the time, so it floats over the
+top-left of the board and grows down over your own panel as it deepens —
+`StackPanel` already drew that pile, it simply drew it inside a rail. What the
+retired column buys is 232px of board, which is most of what the foot costs by
+moving inside it.
 
 ## The board is laid out the way it is played
 
@@ -978,16 +995,29 @@ element — and which mouse players get immediately rather than after 500ms.
 
 ### What the compact layout gives up
 
-At 1280px the two rails were 536px — 42% of the screen. So the left rail leaves
-the grid: the stack moves to the top of the right rail (it is needed *during* a
-decision) and the log becomes an overlay on **View** (it is reference). An
-opponent becomes their orb and a summary line from `logic/threat.ts`, with their
-board one **R2** hold away at a readable size.
+Most of what this section used to describe is now simply the layout: the left
+rail is retired at every size, and an opponent is an `OpponentSeat` on a desktop
+too. What is still handheld-only is **their lanes**.
 
-Their lanes are clipped to `height: 0` rather than removed, and that is
-load-bearing: `FxLayer` anchors damage numerals and exit ghosts by looking up
-`[data-oid]` in the live DOM, so a card that is not laid out has no box to fly
-from.
+An opponent's cards are clipped to `height: 0` at 1280x800, because three boards
+and the viewer's will not fit at the 52px card floor — which is the observation
+this whole round is built on. Clipped and not removed, and that is load-bearing:
+`FxLayer` anchors damage numerals and exit ghosts by looking up `[data-oid]` in
+the live DOM, so a card that is not laid out has no box to fly from. It is also
+why `input/stops.ts` and `input/groups.ts` filter stops with an ancestor-clip
+walk rather than by size: **a clipped card still reports its own full box**, and
+without the walk the ring could land on one nobody can see. It could, for
+several rounds, and `handheldAssert`'s `unreachable` agreed the board was fine
+because it called the same unfiltered function.
+
+Their board is two presses away and the difference is worth knowing. **`R2`
+held** is the glance — "is it safe to attack into that", which is a second and
+an answer. **Pressing their seat** is a place: you go and stand at it, their
+lanes are drawn where yours were, your own panel stays beside them (life and
+open mana are most of what you assess a threat against), and `B` or the strip's
+own button brings you home. The node MOVES rather than being copied, so there is
+exactly one box per `data-oid` at all times — two would give `FxLayer`'s
+`querySelector` a choice it has no way to make correctly.
 
 **The lane headings go.** "CREATURES", "GLOBAL ARTIFACTS & ENCHANTMENTS",
 "LANDS" name three things drawn directly beneath them. Dropping them buys the
@@ -995,18 +1025,71 @@ front band a line of height and the lands band a 74px column —
 `state/useZoomFit.ts` passes `labels: false` to match, and it has to: hiding
 them in CSS alone would leave the solver reserving room for them.
 
-**An opponent's zone counts are marks, not labelled piles.** Each is a
-colour-coded chip carrying one number inside a 44px target, with the zone's name
-returning as a popover on `:hover` and on `[data-cursor]` — the same "drop the
-word, put the name one input away" trade the 142 tooltips took. `logic/zones.ts`
-gives the hand its own `PileKind` so it is not the same purple as the library.
+**The tool strip lives in the foot**, portalled out of the right rail by
+`ActionPanel` into a host `Table` renders. Portalled and not duplicated: it is
+the same node, so every `data-action-id`, `data-testid` and ring stop travels
+with it, and the panel's one-control-per-action invariant holds. At the 44px hit
+floor the five controls wrap to three rows in a 200px column; the foot's row is
+1017px and they are one line.
 
-**The commit slab and the tools strip live in the foot**, portalled out of the
-right rail by `ActionPanel` into hosts `Table` renders. Portalled and not
-duplicated: it is the same node, so every `data-action-id`, `data-testid` and
-ring stop travels with it, and the panel's one-control-per-action invariant
-holds. The slab spans both foot rows, in the gutter the centred hand fan does
-not use, so the foot does not grow to hold it.
+**The commit slab stayed in the rail.** It was portalled into the foot for the
+same reason, and the reason stopped holding when the rail gained 234px — under
+the list it commits is where the thing that ends a decision belongs.
+
+**The card reader is a landscape window, not a small card.** A 243px rail holds
+a card frame 116px across, which is smaller than the board card it is meant to
+be helping you read, with `cover` throwing away most of the painting to get
+there. `art_crop` is 626x457, so a 227x84 window keeps the full width for a
+third of the height, and the 78px it hands back is what the rules text is made
+of. The P/T is stamped on the picture, because the first draft put it on the
+type line and the line ellipsised away the number.
+
+### Jumping around the board
+
+Directional navigation crosses a 96px seat strip, three lanes, a fanned hand and
+a 243px rail one card at a time. `docs/handheld-playtest.md` Loop 1 records
+walking the board as "a bad way to ask can you reach everything": reachable and
+reachable-in-under-a-second are different properties, and only the second is
+playable.
+
+`L1`/`R1` step between five regions — hand, actions, opponents, you, board — and
+trap the ring inside the one it is in. **A region is a container, not a stop-id
+prefix**, because `card:<oid>` is a hand card AND a board card AND a stack item
+AND a prompt option: the namespace says what a stop *is* rather than where it
+lives, which is the whole reason the ring survives a permanent changing zone.
+Only the DOM can answer this. See `input/groups.ts`.
+
+The trap is subordinate to the modal one: `stopRoot` returning anything but the
+board means something is on top and owns the ring outright. It is also scoped to
+`html[data-input="pad"|"keyboard"]` — a mouse player has no ring, and trapping a
+desktop keyboard user inside a region is a regression nobody asked for.
+
+**Holding `L2`** opens a dial that jumps straight to a region. On the trigger and
+not on a shoulder, and that is not a preference: `pad.ts` reports presses and has
+no release event for a shoulder, so a hold there is a timer with nothing to
+cancel it. A trigger is analog and `onFrame` reports its position every frame,
+which is the channel the `R2` reader already uses. The dial carries
+`className="wheelwrap"` — the trap has preferred that class over every other
+candidate since it was written, with nothing in the repo ever rendering one.
+
+**The ring moves itself when the decision changes** (`logic/focusGroup.ts`):
+combat to the board, your main phase to the hand, otherwise the panel. Keyed on
+the pending kind and the step ONLY — run on every render it would drag the ring
+back each time the engine pushed a state, several times a second while an AI
+plays. It says nothing at all when the decision is not yours, when a dialog owns
+it, or when passing is the only thing to say.
+
+**`Y` reads the card the ring is on** at 330px, and on a seat it reads that
+seat's commander — in Commander the deck is the commander.
+
+> **Do not advertise a button without binding it.** `HintBar` printed `L1 Zone`
+> and `L2 Menu` from its first draft and `verbsFor` returns `Y Read` on every
+> card stop, and for several rounds **nothing in the app listened for any of the
+> three**. An advertised button that does nothing teaches the player that the bar
+> is not to be trusted, and nothing in the suite could see it, because the bar
+> renders spans and a span cannot fail to work. `HintBar` renders *from*
+> `NAVIGATION_HINTS` now rather than restating it, and a story compares what the
+> bar can say against `pad.boundButtons()`.
 
 ### Everything on screen at once
 

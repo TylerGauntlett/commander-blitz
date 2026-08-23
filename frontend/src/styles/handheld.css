@@ -1154,6 +1154,7 @@ html[data-input="keyboard"] .hints {
 /* --- raised: names, numbers, verbs ------------------------------------- */
 
 [data-handheld] .track__turn-round,
+[data-handheld] .track__pri,
 [data-handheld] .track__who,
 [data-handheld] .ph__name,
 [data-handheld] .orb__name,
@@ -1569,6 +1570,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .tool--wide,
 [data-handheld] .track__step,
 [data-handheld] .track__turn-round,
+[data-handheld] .track__pri,
 [data-handheld] .track__who,
 [data-handheld] .turned__l,
 [data-handheld] .verdict,

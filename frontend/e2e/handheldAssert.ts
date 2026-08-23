@@ -79,6 +79,26 @@ export interface HandheldReport {
    */
   fanOverflow: { selector: string; by: number }[];
   /**
+   * Seats whose counts disagree with the board they summarise.
+   *
+   * THE FAILURE MODE THIS WHOLE FAMILY OF COMPONENTS HAS.
+   * `mockups/seat/README.md` records five of its six directions as unable to be
+   * WRONG about the board -- lands were never in the payload, so nothing could
+   * contradict them, and "how many lands has that seat got" was unanswerable
+   * from the strip at any density.
+   *
+   * So the numbers are re-derived here from a DIFFERENT source: the rendered
+   * `.perm` cells against a walk over that seat's own lanes. `musterOf` is not
+   * imported and could not be -- `page.evaluate` sends this function alone --
+   * which is exactly what makes the two independent. Two derivations that
+   * agreed by construction would be a gate agreeing with itself.
+   *
+   * On a handheld an opponent's lanes are clipped to zero height and their
+   * cards are still in the document, so the walk works there too; that is the
+   * same property `FxLayer` depends on.
+   */
+  seatsDisagree: { pid: string; field: string; said: number; counted: number }[];
+  /**
    * Scrollers that have not reserved their scrollbar's width.
    *
    * A styled `::-webkit-scrollbar` is a classic bar, not an overlay, so it
@@ -368,6 +388,68 @@ export function handheldAssert(): HandheldReport {
   }
 
   /*
+   * THE SEAT AND THE BOARD IT SUMMARISES, CHECKED AGAINST EACH OTHER.
+   *
+   * A summary that cannot be checked against the thing it summarises is the
+   * failure `mockups/seat/` names. Here it can be: every seat carries
+   * `data-perm` cells with `data-total`/`data-open`, and that seat's own
+   * permanents are in the document under `lane-<pid>-<Lane>` whether or not
+   * they are drawn at a size anybody can see.
+   *
+   * `data-stack-count` and not a node count, because the board COLLAPSES
+   * duplicates -- seven Forests are one card with a x7 on it -- and a gate that
+   * counted boxes would report six missing lands on every developed board.
+   */
+  const seatsDisagree: { pid: string; field: string; said: number; counted: number }[] = [];
+  for (const seat of document.querySelectorAll<HTMLElement>(".seat[data-player]")) {
+    const pid = seat.dataset.player ?? "?";
+    const lanes = document.querySelectorAll<HTMLElement>(`[data-testid^="lane-${pid}-"]`);
+    if (lanes.length === 0) continue;
+
+    const walk = (laneName: string) => {
+      let total = 0;
+      let open = 0;
+      for (const lane of lanes) {
+        if (
+          !(lane.dataset.testid ?? lane.getAttribute("data-testid") ?? "").endsWith(laneName)
+        ) {
+          continue;
+        }
+        for (const stack of lane.querySelectorAll<HTMLElement>("[data-stack-count]")) {
+          const count = Number(stack.dataset.stackCount ?? "1") || 1;
+          total += count;
+          // A group is either all tapped or all untapped -- `stackKey` includes
+          // it -- so one card's class covers the whole stack.
+          if (!stack.querySelector(".card--tapped")) open += count;
+        }
+      }
+      return { total, open };
+    };
+
+    const said = (kind: string, attr: string) => {
+      const cell = seat.querySelector<HTMLElement>(`[data-perm="${kind}"]`);
+      const raw = cell?.getAttribute(attr) ?? "";
+      return raw === "" ? null : Number(raw);
+    };
+
+    const lands = walk("Lands");
+    const creatures = walk("Creatures");
+    const other = walk("Artifacts-Enchantments");
+
+    const checks: [string, number | null, number][] = [
+      ["lands", said("land", "data-total"), lands.total],
+      ["landsUntapped", said("land", "data-open"), lands.open],
+      ["creatures", said("creature", "data-total"), creatures.total],
+      ["creaturesUntapped", said("creature", "data-open"), creatures.open],
+      ["other", said("other", "data-total"), other.total],
+    ];
+    for (const [field, saidValue, counted] of checks) {
+      if (saidValue === null || saidValue === counted) continue;
+      seatsDisagree.push({ pid, field, said: saidValue, counted });
+    }
+  }
+
+  /*
    * Scrollers without a reserved gutter.
    *
    * Only elements that actually scroll on the axis they declare -- an
@@ -403,8 +485,12 @@ export function handheldAssert(): HandheldReport {
    */
   const vh = window.innerHeight;
   const BUDGET: [string, number][] = [
-    // One opponent's whole seat, orb and all.
+    // One opponent's whole seat, and its lanes if it has any.
     [".mat--compact", 0.14],
+    // The seat itself, which is a stated 96px design: `mockups/seat/` measured
+    // every one of its directions inside 332x96, and a seat drawn at some other
+    // height is a different design wearing the same name.
+    [".seat", 0.13],
     // Every opponent together. They share a row, so this is the row.
     [".play__opponents", 0.14],
     // The phase ribbon is a strip, not a panel.
@@ -515,6 +601,13 @@ export function handheldAssert(): HandheldReport {
       `fans overflowing: ${fanOverflow.map((f) => `${f.selector} by ${f.by}px`).join(", ")}`,
     );
   }
+  if (seatsDisagree.length > 0) {
+    failures.push(
+      `seats disagree with the board: ${seatsDisagree
+        .map((d) => `P${d.pid} ${d.field} says ${d.said}, board has ${d.counted}`)
+        .join("; ")}`,
+    );
+  }
   if (unguttered.length > 0) {
     failures.push(`scrollers with no reserved gutter: ${unguttered.join(", ")}`);
   }
@@ -537,6 +630,7 @@ export function handheldAssert(): HandheldReport {
     collapsed,
     overflowing,
     fanOverflow,
+    seatsDisagree,
     unguttered,
     overBudget,
     titleAttrs,

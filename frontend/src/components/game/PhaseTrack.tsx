@@ -99,6 +99,25 @@ export function PhaseTrack({ state }: Props) {
       <span className={yourTurn ? "track__who track__who--you" : "track__who"}>
         {yourTurn ? "Your turn" : `${active.name}'s turn`}
       </span>
+
+      {/*
+        WHOSE TURN IT IS AND WHO HOLDS PRIORITY ARE TWO DIFFERENT FACTS.
+        
+        The ribbon ran them together into one chip, which is wrong in the case
+        that matters most: on somebody else's turn, holding your own priority is
+        the whole of a Commander player's job. `mockups/handheld-board/`'s
+        `02-blockers` is the file that proves it -- Edgar's turn, your decision,
+        so the seat wears the priority tick and not the active ring.
+
+        Drawn only when the two DISAGREE. On your own turn with your own
+        priority it would be a second chip saying the same thing, and the strip
+        is 34px on a handheld.
+      */}
+      {!yourTurn && state.priority_player === state.seat && (
+        <span className="track__pri" data-testid="priority-pill">
+          You have priority
+        </span>
+      )}
     </div>
   );
 }
