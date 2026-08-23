@@ -1,0 +1,1915 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Opponent seat — Muster (seat 06)</title>
+<style>
+/* <<< BEGIN _seat.css >>> */
+/*
+ * The frame every seat mockup is judged inside.
+ *
+ * NOT LINKED. `inline.py` splices this between each file's BEGIN and END
+ * `_seat.css` markers, so every file opens standalone from file://.
+ *
+ * WHAT IS IN HERE: the Deck bezel, the ghosted board the seat is taking room
+ * from, the palette (the shipped client's, token for token, out of
+ * frontend/src/theme.css), the type floor and the icon base.
+ *
+ * WHAT IS NOT: one single rule about how a seat is laid out. `.mat` gets its
+ * width and its height budget here and nothing else -- no padding, no radius,
+ * no background -- because THE PADDING IS ONE OF THE THREE THINGS THIS ROUND IS
+ * ABOUT and a shared plate style would quietly answer it for all five. Each
+ * file styles its own seat, declares its own `--seat-h` if its thesis needs a
+ * different one, and pays for it in the ghost board below.
+ */
+
+/* Tokens ------------------------------------------------------------------ */
+
+:root {
+  --void-0: #0b0a16;
+  --void-1: #141328;
+  --void-2: #1d1b38;
+  --edge: rgba(150, 140, 255, 0.16);
+  --edge-hi: rgba(170, 160, 255, 0.34);
+  --astral: #8f7fe8;
+  --astral-hi: #c3b6ff;
+
+  --pane-bg: rgba(20, 19, 40, 0.66);
+  --pane-well: rgba(13, 12, 28, 0.8);
+
+  --mana-W: #fffbd5;
+  --mana-U: #aae0fa;
+  --mana-B: #cbc2bf;
+  --mana-R: #f9aa8f;
+  --mana-G: #9bd3ab;
+  --mana-C: #d0cbc4;
+
+  --playable: #5ce08a;
+  --targetable: #58b6ff;
+  --staged: #ffc14d;
+  --danger: #ff6b5e;
+  --gain: #6ee7a0;
+  --gold: #d8a63c;
+  --frame-commander: #d8a63c;
+  --dial-ink: #2a1c04;
+
+  --text: #e6e3f5;
+  --text-dim: #a09bc4;
+  --text-faint: #837da8;
+
+  /* The zone hues the client ships. Kept as-is; see the icon note in `_seat.js`
+     for why every mark also has a shape, which is a legibility argument and not
+     an accessibility one -- ADR 0006. */
+  --zone-lib: #7d6bd8;
+  --zone-hand: #3f9e93;
+  --zone-gy: #6f6a86;
+  --zone-ex: #58637a;
+  --zone-cmd: #c69a3a;
+  --chip-ink: #0d0c1a;
+
+  /* THE TYPE FLOOR. `../handheld/` measured 444 of 635 elements below 12px on
+     the shipped board at 1280x800, smallest 2.11px, and took 16px as a hard
+     constraint. This round inherits it unchanged: a seat is not exempt from a
+     floor because it is small. */
+  --fs-min: 16px;
+  --fs-body: 17px;
+  --fs-lead: 20px;
+  --fs-big: 28px;
+
+  /* THE TARGET FLOOR. Four of the five zone marks are the only route into
+     `ZonePeek`, so they are real buttons and are held to 44px. */
+  --hit: 44px;
+
+  --t-fast: 110ms;
+}
+
+/* Pseudo-elements too. `*` does not match them, and 05 draws the returned board
+   as an `::after` with a 1px dashed border -- which put the opponents' row 2px
+   over its own budget and failed the round's own gate. */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* `<small>` is a SIZE instruction and this round cannot afford one: 0.83em of
+   16px body copy is 13.3px, under the floor, in markup that reads as
+   reasonable. Same removal as `../handheld/_handheld.css`. */
+small { font-size: inherit; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--void-0);
+}
+
+body {
+  font: var(--fs-body)/1.35 "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: radial-gradient(80% 60% at 50% 34%, #14122a 0%, #05040c 72%);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+/* The Deck frame ---------------------------------------------------------- */
+
+.bezel { position: fixed; inset: 0; display: grid; place-items: center; }
+
+.deck {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  flex: none;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 6px;
+  overflow: hidden;
+  transform-origin: center center;
+  border-radius: 14px;
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143, 127, 232, 0.13) 0%, transparent 62%),
+    var(--void-0);
+  box-shadow: 0 0 0 8px #0d0c18, 0 0 0 10px #262338, 0 30px 90px rgba(0, 0, 0, 0.8);
+}
+
+/* THE HEIGHT BUDGET, AS THE SHIPPED LAYOUT SETS IT.
+   `--pod-seat-h` is 96px at one and two opponents (handheld.css:160) and 84 at
+   three, taken by `:has(> .mat--compact:nth-child(3))` (handheld.css:1041).
+   Those twelve pixels go to the viewer's own mat, which is what overflows first
+   in a four-seat pod, and the file's own note records that lowering the cap
+   further "only moved the overflow rather than removing it".
+
+   A direction may take a different budget; it says so in its own file, the gate
+   holds it to whatever it declared, and the ghost board shrinks by what it
+   took. */
+.deck[data-density="1"], .deck[data-density="2"] { --seat-h: 96px; }
+.deck[data-density="3"] { --seat-h: 84px; }
+
+.bezel__tag {
+  position: fixed;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  max-width: 96vw;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(150, 140, 255, 0.2);
+  background: rgba(12, 11, 26, 0.88);
+  font-size: 13px;
+  color: #837da8;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 99;
+}
+.bezel__tag b { color: #c3b6ff; font-weight: 600; }
+
+/* The board, at the real proportions -------------------------------------- */
+
+.shell {
+  display: grid;
+  /* `--rail-r: clamp(224px, 19vw, 280px)` resolves to 243px at 1280 wide.
+     `--rail-l` is 0 on a handheld: the left rail is retired and the log becomes
+     an overlay. handheld.css:150-163. */
+  grid-template-columns: minmax(0, 1fr) 243px;
+  gap: 8px;
+  min-height: 0;
+}
+
+.play {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 4px;
+  min-height: 0;
+}
+
+/* The row the whole round is about. `.play__opponents` in board.css: a flex row
+   with a 10px gap, so three seats of 1017px come to 332 each. */
+.opps { display: flex; gap: 10px; align-items: start; min-height: 0; }
+
+.mat {
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--seat-h);
+}
+
+/* The ghosts. Everything that is not the seat, drawn as what it is: the room
+   the seat is spending. */
+.gh {
+  border: 1px dashed rgba(150, 140, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(20, 19, 40, 0.3);
+  color: rgba(160, 155, 196, 0.55);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gh__tag {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(160, 155, 196, 0.5);
+  white-space: nowrap;
+}
+
+.gh--mine { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 6px; padding: 6px; }
+.gh__side { display: grid; place-items: center; border-right: 1px dashed rgba(150, 140, 255, 0.18); }
+.gh__lanes { display: grid; grid-template-rows: 1fr 1fr 1fr; gap: 6px; min-height: 0; }
+.gh__lane { display: flex; align-items: center; gap: 5px; min-height: 0; overflow: hidden; }
+.gh__lane .gh__tag { width: 74px; flex: none; }
+
+.gh__card {
+  flex: none;
+  width: 66px;
+  height: 92px;
+  border: 1px dashed rgba(150, 140, 255, 0.28);
+  border-radius: 5px;
+  background: rgba(30, 28, 56, 0.4);
+}
+.gh__card--hand { width: 92px; height: 128px; border-radius: 7px; }
+
+.gh--rail { display: grid; place-items: center; padding: 8px; text-align: center; }
+
+.gh--foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 148px;
+  padding: 8px 12px;
+}
+.gh--foot .gh__tag { width: 46px; }
+.gh__slab {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 210px;
+  height: 60px;
+  border: 1px dashed rgba(150, 140, 255, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The marks ---------------------------------------------------------------- */
+
+/* Sized off the type they sit beside, so a mark inside a 17px row and one
+   inside a 28px numeral both look like they belong. */
+.ico { width: 1em; height: 1em; flex: none; display: block; }
+
+.sym { width: 1.02em; height: 1.02em; flex: none; vertical-align: -0.13em; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* `m` -- the gate, drawn where it failed ----------------------------------- */
+.deck[data-measure="yes"] [data-cell] { outline: 1px solid rgba(88, 182, 255, 0.5); }
+[data-bad] { outline: 2px dashed var(--danger) !important; outline-offset: 1px; position: relative; }
+[data-bad]::after {
+  content: attr(data-bad);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 2px);
+  z-index: 90;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--danger);
+  color: #1a0705;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* The name of a mark, one input away --------------------------------------
+   `attr(aria-label)` and never a second hand-written string: the accessible
+   name and the visible name cannot then disagree. `:hover` covers the Deck's
+   trackpads and touchscreen, `[data-cursor]` covers the pad and the keyboard,
+   and between them that is every way anyone touches this app. A `title` would
+   have covered only the mouse, which is why there are none left in the client
+   and none in this round -- the gate fails a file that grows one. */
+[data-name]::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: 80;
+  padding: 3px 9px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: var(--fs-min);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(3px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) ease;
+  pointer-events: none;
+}
+[data-name]:hover::after, [data-name][data-cursor]::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-name]::after { transition: none; }
+}
+/* <<< END _seat.css >>> */
+
+/* ============================================================================
+   06 MUSTER -- the five combined, around the row none of them has
+   ----------------------------------------------------------------------------
+   THIS IS NOT A SIXTH DIRECTION. It is 01-05 read back with the question the
+   round was actually opened on -- WHAT HAS THAT SEAT GOT ON THE BATTLEFIELD --
+   and that question is not answered by any of the five.
+
+   THE FIVE FACTS THIS FILE IS ORGANISED AROUND, in the order they were asked
+   for, because they are the ones a player takes at a glance and everything else
+   on a seat is looked up:
+
+       how many lands            how many of them are tapped
+       how many creatures        how many of them are tapped
+       how many other permanents
+
+   Read against 01-05 that list is almost entirely missing. `seat.threat.other`
+   -- the artifacts and enchantments -- has been in the fixture the whole time
+   and is rendered by none of the five: Marco's Favorable Winds and the
+   Duelist's Impact Tremors are both on those boards and both invisible. Lands
+   are not in the model at all, and `manaOpen` has been standing in for them,
+   which counts UNTAPPED SOURCES and is silent about how many exist -- so a seat
+   at five lands with none open and a seat at one land read identically. Only
+   the creature half is drawn today, and only 03 draws its tapped half.
+
+   ----------------------------------------------------------------------------
+   THE ANSWER IS A ROW, AND THE ROW IS THREE CELLS OF ONE KIND.
+
+       [land] 2/3      [creature] 2/4      [gem] 1
+        untapped / total, with a 3px meter along the cell's bottom edge
+
+   Three counts, one grammar, one geometry, in fixed positions, so:
+
+     * the DENOMINATOR is the count -- exact, at any board size, no counting
+     * the NUMERATOR is what is still untapped -- the number that decides
+       whether they can block you or hold up a counterspell
+     * the METER is the same fact as a length, so "are they tapped out" is
+       answered without reading, and the dim trough IS the tapped count
+     * the three cells sit at the same x on every seat, so three opponents
+       compare by position and by fill rather than by parsing three strips
+
+   A meter rather than a pip run because a pip run cannot do lands: eight pips
+   is the honest cap (`pileLeaves`'s reason) and a Commander board passes eight
+   lands by turn eight, at which point the run stops being able to show the
+   ratio at all. A meter is exact at twenty lands and costs no width -- and
+   because all three sit at the same x on every seat, three opponents' mana
+   compare by bar length down a column.
+
+   The fourth cell is the DETAIL, and is visibly not one of the three: 03's pips
+   -- one per creature, filled is untapped, a clipped corner flies -- plus the
+   total power. It is the only place fliers are drawn and the only place the
+   creatures are individuals rather than a count.
+
+   ----------------------------------------------------------------------------
+   WHAT IT TOOK FROM WHERE
+
+     from 05   ONE CARD AT A FIXED WIDTH, the same at one opponent and at three.
+               Not 300 but 332 -- the width `handheld.css:1041` ALREADY gives a
+               seat at three opponents. Designed for the worst case, never
+               grows: the row is exactly full at three seats and hands back
+               685px at one, and the three `:has()` branches go.
+     from 04   THE LETHAL GAUGE. Life fills from the left, commander damage
+               closes from the right, and where they touch the seat is dead.
+     from 02   ONE TICK PER SOURCE on that gauge, so a pod keeps per-source
+               damage at three opponents -- the channel the shipped layout
+               deletes there -- and life and damage are one object.
+     from 03   THE CREATURE PIPS, and the art as the card's ground.
+     from 01   ONE CELL, ONE GUTTER, ONE RADIUS: 3px of padding, 3px of gutter,
+               three cell geometries differing only in height. `padKinds` and
+               `gapKinds` report 2 and 1, which ties the tightest in the round.
+
+   ----------------------------------------------------------------------------
+   WHAT THE PERMANENTS ROW COST, BECAUSE IT COST SOMETHING.
+
+   96px will not hold four rows one of which is 44 tall: 18 + 22 + 44 is already
+   84 of the 81 that four rows and three gutters leave. So THE ZONE COUNTS ARE
+   MARKS HERE AND NOT TARGETS -- five numbers to read, on a 20px row, and the
+   route into any one of them is the seat sheet rather than the strip.
+
+   That is a real loss and it is the honest price of the row above it. Three
+   things make it the right way round:
+
+     * finding 1 already said most of them are not controls. The library is not
+       (hidden information), an unrevealed hand is not (`ZonePeek` renders
+       "Hidden — 4 cards", which is the number on the chip you just pressed).
+       Two of the five were never buttons; a third is one only when
+       `hand_revealed` is non-empty.
+     * READING a zone count is constant and OPENING one is rare -- 02's
+       argument, and the counts are all still here at 16px.
+     * the seat is itself a stop, 332x96 of it, so the sheet is one input away
+       and every zone in it is at a size worth reading.
+
+   IF ZONE TARGETS ARE NON-NEGOTIABLE the trade goes the other way: keep the
+   44px foot row of the previous draft and the three counts have to share it
+   with five 44px marks, which leaves about 100px for them -- enough for the
+   three cells only if the pips go. That version is a worse answer to the
+   question this file was asked, so it is not the one built.
+
+   ----------------------------------------------------------------------------
+   THE PICTURE, WHICH IS THE OTHER THING THE ROW BOUGHT.
+
+   `art_crop` is 626x457 -- landscape, 1.37:1, and `mockups/README.md` records
+   that there is nothing sharper to fetch. 05 renders it into a 52x88 portrait
+   column, 0.59:1, so `object-fit: cover` throws away most of the painting to
+   show a vertical slice. A 72x43 WINDOW keeps the full width and trims only the
+   top and bottom margins, where an `art_crop` keeps its background -- more of
+   the picture in two thirds of the area, and the 55px it hands back is what the
+   two full-width rows are made of. The portrait is UNCOVERED, because life
+   moved into the gauge.
+
+   THE ART APPEARS TWICE ON PURPOSE: once in that window as a picture somebody
+   can recognise, once as the card's ground under a heavy veil as colour
+   identity across 332px. One file, one fetch, no extra column.
+
+   AND THE HEAD ROW IS NOW ONLY A NAME. Moving the counts out of it gave the
+   commander's name about 190px instead of 110, which was the previous draft's
+   own weak point: at 332px it was ellipsising to eleven characters. `noart` is
+   therefore not the risk it is on 03 -- a commander in a hidden zone costs a
+   picture and not an identity. Press `s`.
+
+   No build, no server, no network. Local ../art/ only.
+   ========================================================================== */
+
+/* ONE HEIGHT AT EVERY DENSITY, which is the second `:has()` branch gone:
+   18 + 22 + 21 + 20 is 81, three 3px gutters and 3px of padding is 96 exactly. */
+.deck[data-density] { --seat-h: 96px; }
+
+/* THE WIDTH IS THE SHIPPED THREE-SEAT WIDTH, ALWAYS. `handheld.css:1041` already
+   hands a seat 332px when there are three of them; 06 takes that as the size of
+   the object rather than as the floor of a range, so there is one card and not
+   three layouts. `flex: none` is the whole of the difference. */
+.mat { flex: 0 0 332px; }
+
+/* The room handed back, drawn rather than claimed -- 05's ghost, with this
+   card's numbers. 1017 - 332 = 685 at one opponent; 1017 - 674 = 343 at two.
+   At three the row is exactly full, which is the honest thing for it to say. */
+.deck[data-density="1"] .opps::after { content: "685px back — seven of their cards at 96px"; }
+.deck[data-density="2"] .opps::after { content: "343px back — three cards"; }
+.deck[data-density="3"] .opps::after { display: none; }
+
+.opps::after {
+  content: "returned to the board";
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--seat-h);
+  border: 1px dashed rgba(92, 224, 138, 0.4);
+  border-radius: 12px;
+  background: rgba(92, 224, 138, 0.05);
+  color: rgba(140, 220, 170, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* --- The card -------------------------------------------------------------
+   Two columns and four rows. The window holds the first column across the
+   first two; the battlefield and the zones span both, because they are the two
+   rows that are read left to right and the picture is already paid for.
+-------------------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-rows: 18px 22px 21px 20px;
+  gap: 3px;
+  height: 100%;
+  padding: 3px;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* The ground. Heavily veiled and never depended on: every piece of type on this
+   card either carries its own opaque cell or a shadow, which is the desktop
+   orb's rule and the reason the veil is not tinted to colour identity.
+
+   IT IS HEAVIER THAN 03'S BECAUSE IT IS DOING LESS. 03's veil has to keep a
+   face legible through it, because there the ground IS the identity; here the
+   window does that job and the ground only carries the seat's colour across
+   332px. A first pass reused 03's numbers and Isperia -- a white sphinx on a
+   pale sky -- came through the battlefield row as a bright smear under the
+   counts, which is the ground competing with the thing it is under. */
+.card__ground {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+.card__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(6, 5, 14, 0.93) 0%, rgba(6, 5, 14, 0.87) 45%, rgba(6, 5, 14, 0.8) 100%),
+    linear-gradient(180deg, rgba(6, 5, 14, 0.34), rgba(6, 5, 14, 0.5));
+}
+/* With no picture the veil becomes the plate the other directions have. Unlike
+   03 nothing else is lost: the name and the commander's name are both in the
+   head row and every number is in a cell of its own. */
+.card__veil--flat { background: var(--pane-bg); box-shadow: inset 0 0 0 1px var(--edge); }
+
+/* --- The window ----------------------------------------------------------
+   72x43 against a 626x457 source: `cover` keeps the full width of the painting
+   and trims its top and bottom margins, which is the half of an `art_crop`
+   that holds background rather than subject.
+-------------------------------------------------------------------------- */
+
+.card__win {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--pane-well);
+}
+/* The ring is `::before` and not an inset shadow, because an inset shadow paints
+   under the image and `::after` is spoken for -- `[data-name]` uses it for the
+   hover label every mark on this card carries. */
+.card__win::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+  pointer-events: none;
+}
+/* A LIFT, NOT A LOOK. At 43px tall a dark painting on a dark card is a dark
+   patch, and the identity claim is that a player tells four seats apart by the
+   picture. Saturation and a little brightness are what make a thumbnail this
+   size read as a commander rather than as a texture. */
+.card__win img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  display: block;
+  filter: saturate(1.18) contrast(1.04) brightness(1.14);
+}
+.card__win--empty { display: grid; place-items: center; color: var(--text-faint); }
+.card__win--empty .ico { font-size: 22px; }
+
+/* --- Row A: who ----------------------------------------------------------
+   A name and nothing else. The counts used to live here and pushed the
+   commander's name down to eleven characters; they are a row of their own now
+   and the name has the width back.
+-------------------------------------------------------------------------- */
+
+.card__head {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  /* The row height as the line box, so a descender in "Isperia, Supreme Judge"
+     sits inside the 18px rather than being cut by the cell's own overflow. */
+  line-height: 18px;
+}
+.card__name { font-size: var(--fs-body); font-weight: 700; white-space: nowrap; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
+.card__cmdr {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--fs-min);
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.card__cmdr--out { color: var(--danger); }
+
+/* --- Row B: the lethal gauge ----------------------------------------------
+   04's, unchanged in idea. One well, one fill, and the numbers written on the
+   fill -- so three seats compare by LENGTH, which a row of chips cannot.
+-------------------------------------------------------------------------- */
+
+.gauge {
+  position: relative;
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px;
+  border-radius: 5px;
+  background: var(--pane-well);
+  overflow: hidden;
+  font-size: var(--fs-min);
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+/* A pseudo-element and not a child, so the numerals sit ON the fill and the
+   row's width is never a function of how full it is. */
+.gauge::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill, 0%);
+  background: var(--gold);
+  opacity: 0.5;
+}
+.gauge > * { position: relative; }
+.card__life { font-size: var(--fs-lead); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+
+/* Commander damage closes from the right, one tick per SOURCE at its own
+   fraction of 21 and offset by the ones outside it -- so two sources at 8 and 5
+   eat thirteen twenty-firsts between them, which is not lethal and must not
+   look like it. 02's per-source channel, kept at three opponents. */
+.tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--w);
+  background: repeating-linear-gradient(135deg, rgba(216, 166, 60, 0.85) 0 3px, rgba(216, 166, 60, 0.4) 3px 6px);
+  box-shadow: inset 1px 0 0 var(--gold);
+}
+.tick--warn {
+  background: repeating-linear-gradient(135deg, var(--danger) 0 3px, rgba(255, 107, 94, 0.55) 3px 6px);
+  box-shadow: inset 1px 0 0 #fff;
+}
+/* The worst source's number, on its own ground because a numeral on a 3px hatch
+   is unreadable without one. Same padding and gutter as every other box here. */
+.gauge__dmg {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding: 0 4px;
+  border-radius: 5px;
+  background: rgba(9, 8, 20, 0.78);
+}
+.gauge__dmg .ico { font-size: 14px; color: var(--gold); }
+.gauge__dmg--warn { color: #fff; }
+.gauge__dmg--warn .ico { color: var(--danger); }
+.gauge__dmg--zero { opacity: 0.55; }
+
+/* --- Row C: THE BATTLEFIELD ----------------------------------------------
+   The row this file exists for. Three cells of one kind, and then the detail.
+-------------------------------------------------------------------------- */
+
+.card__perms {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 0;
+}
+
+.perm {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 4px;
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: var(--fs-min);
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  /* TWO ENCODINGS, DELIBERATELY SEPARATED. The flat tint says WHICH KIND of
+     permanent this cell counts and nothing else; the 3px bar along the bottom
+     edge says how much of it is still untapped. Keeping them apart is the whole
+     of the legibility here.
+
+     A first pass filled the cell's whole height to the fraction and put a 2px
+     rule at the boundary. The rule was crisp and it was also, at 2/3 of a 62px
+     cell, exactly where the slash in `2/3` sits -- so the boundary read as a
+     second divider inside the numeral. A meter that has to dodge its own label
+     is in the wrong place: the bottom edge is free, it is never crossed by
+     type, and a bar on a baseline is already what a reader takes a fraction
+     from.
+
+     Bright is untapped -- what they can still do with it -- and the dim trough
+     is what has already been spent. `--bar` is 0 on the cell that has no
+     tapped state to draw, so that cell shows a count and visibly no fraction
+     rather than a full bar it cannot vouch for. */
+  background-color: var(--pane-well);
+  background-image:
+    linear-gradient(90deg, var(--edge-line) 0 var(--fill, 0%), rgba(255, 255, 255, 0.11) var(--fill, 0%)),
+    linear-gradient(0deg, var(--tint), var(--tint));
+  background-size: 100% var(--bar, 3px), 100% 100%;
+  background-position: bottom left, top left;
+  background-repeat: no-repeat, no-repeat;
+  color: var(--text);
+}
+.perm .ico { font-size: 14px; }
+
+/* A hue each, so the three read apart at a glance as well as by position --
+   and the icon and its fill are the same colour, so a cell is one object. */
+.perm--land { --tint: rgba(155, 211, 171, 0.17); --edge-line: var(--mana-G); }
+.perm--land .ico { color: var(--mana-G); }
+.perm--creature { --tint: rgba(249, 170, 143, 0.17); --edge-line: var(--mana-R); }
+.perm--creature .ico { color: var(--mana-R); }
+/* Enchantments do not tap and this fixture carries no tapped flag for
+   artifacts, so this cell has no fraction to draw and does not pretend to one:
+   `--bar: 0` and one number. A cell with a count and no meter is a cell saying
+   "this one has no untapped half", which is true and is better than a full bar
+   it cannot vouch for. When the payload grows the flag, `--bar` comes back and
+   nothing else changes. */
+.perm--other { --tint: rgba(170, 224, 250, 0.16); --edge-line: var(--mana-U); --bar: 0; }
+.perm--other .ico { color: var(--mana-U); }
+/* Nothing of that kind on the battlefield. Dimmed rather than dropped, because
+   a cell that appears on the first land is a reflow while somebody is reading. */
+.perm--zero { opacity: 0.45; }
+
+/* The detail, and visibly not one of the three: twice the width, a neutral tint
+   rather than a kind's colour, and no meter -- it has no fraction of its own,
+   because the fraction is the cell to its left. It is the only place a creature
+   is an individual rather than a count.
+
+   IT KEEPS THE SAME BACKGROUND MACHINERY rather than overriding `background`,
+   which is how the first version lost its ground entirely: the shorthand reset
+   `background-image` and the cell went transparent against a dark card, so the
+   pips read as floating on the seat instead of sitting in a cell. */
+.perm--detail {
+  flex: 2 1 0;
+  justify-content: flex-start;
+  --tint: rgba(205, 200, 240, 0.14);
+  --bar: 0;
+}
+/* The pips run gets the room and the power number is pushed to the far end, so
+   the detail cell has the same two-ended shape as the gauge above it rather
+   than a huddle of marks at one edge. */
+.perm--detail .perm__pow { margin-left: auto; display: flex; align-items: center; gap: 3px; }
+.perm--detail .ico { color: var(--text-dim); }
+
+.pips { display: flex; align-items: center; gap: 3px; flex: 0 1 auto; overflow: hidden; }
+/* Smaller than 03's, on purpose. The pips are the brightest thing in this row
+   and they are also the ONLY thing in it that repeats a number printed beside
+   them, so at 03's 11x15 they out-weighed the three counts they are a detail
+   of. 9x13 keeps them readable and puts them behind the cells. */
+.pip {
+  width: 9px;
+  height: 13px;
+  flex: none;
+  border-radius: 2px;
+  border: 1.5px solid var(--text-dim);
+}
+.pip--up { background: var(--text); border-color: var(--text); }
+.pip--fly { border-radius: 2px 5px 2px 2px; }
+.pips__more { font-size: var(--fs-min); font-weight: 700; color: var(--text-dim); }
+
+/* --- Row D: where the rest of their cards are ----------------------------
+   Counts, not controls. See the header: 96px will not hold this row at 44 and
+   the battlefield row as well, and finding 1 already said two of these were
+   never buttons. The route into any of them is the seat sheet.
+-------------------------------------------------------------------------- */
+
+.card__zones {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 0;
+}
+
+.zmark {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 4px;
+  border-radius: 5px;
+  font-size: var(--fs-min);
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--chip-ink);
+}
+.zmark .ico { font-size: 14px; color: var(--chip-ink); }
+.zmark--lib { background: var(--zone-lib); }
+.zmark--hand { background: var(--zone-hand); }
+.zmark--gy { background: var(--zone-gy); }
+.zmark--ex { background: var(--zone-ex); }
+.zmark--cmd { background: var(--zone-cmd); }
+.zmark--empty { opacity: 0.55; }
+
+/* --- States --------------------------------------------------------------- */
+
+.card--active { box-shadow: inset 0 0 0 2px var(--astral-hi); }
+/* Positioned against the CARD and not the deck -- the round's first gate bug
+   was this tick resolving against an ancestor and drawing 6px outside the seat,
+   invisibly, under `overflow: hidden`. */
+.card__pri {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  width: 36px;
+  height: 4px;
+  border-radius: 0 0 3px 3px;
+  background: var(--astral-hi);
+  z-index: 3;
+}
+.card--targetable { box-shadow: inset 0 0 0 2px var(--targetable), 0 0 0 3px rgba(88, 182, 255, 0.32); }
+
+/* Eliminated: the picture goes flat as well as dim and the gauge empties. The
+   loss reason takes the commander's name's slot and the card does not change
+   size at the moment somebody is looking at it. */
+.card--out { opacity: 0.64; }
+.card--out .card__ground, .card--out .card__win img { filter: grayscale(1) brightness(0.5); }
+.card--out .gauge::before { width: 0; }
+.card--out .card__life { font-size: var(--fs-min); color: var(--danger); }
+
+/* --- The board the seat is taking room from, redrawn ----------------------
+   `_seat.css` and `_seat.js` build the ghost as the SHIPPED handheld board: a
+   two-row deck with the rail beside the play area only, the hand running the
+   full width underneath both, and the battlefield as three stacked lanes
+   (lands, creatures, other). These rules replace it with the sketched layout,
+   and four things move:
+
+     1. THE RAIL RUNS THE FULL HEIGHT. It is a column from the top of the screen
+        to the bottom rather than a panel that stops where the hand starts.
+     2. THE HAND STOPS AT THE RAIL instead of running under it.
+     3. THE BATTLEFIELD IS TWO ROWS, NOT THREE. Creatures and the noncreature
+        permanents share the top; lands take the bottom across the full width.
+     4. THE COMMIT SLAB BECOMES `BUTTONS` AT THE FOOT OF THE RAIL, which is
+        where the sketch puts it, rather than at the right end of the hand.
+     5. A 26px GAME INFORMATION STRIP across the very top, above both columns --
+        turn, phase, active player, the things that belong to the match rather
+        than to a seat.
+
+   NONE OF IT CHANGES THE ARITHMETIC THE ROUND IS ABOUT. The play column is
+   still `1280 - 12 - 8 - 243 = 1017px` and the foot is still 148px, so a seat
+   is still 332px at three opponents and `--seat-h` is what it always was. The
+   game-information strip is 26px and 6 of gutter and it comes off the GHOST
+   BOARD, not off the seats -- which is the honest place for it to come from,
+   and is visible as the board being 32px shorter than it is in 01-05.
+
+   SCOPED TO 06 BECAUSE 06 IS WHAT WAS ASKED FOR. It is the only file that
+   overrides the shell, so if this board is the one, these rules and the three
+   builders below belong in the masters -- a footprint comparison across six
+   files only means something while all six are measured against one board.
+
+   `display: contents` on `.shell` is what makes it possible without touching
+   `render()`: it drops the wrapper out of the box tree so `.play` and the rail
+   become direct children of `.deck`'s grid and can be placed independently.
+-------------------------------------------------------------------------- */
+
+.deck {
+  grid-template-columns: minmax(0, 1fr) 243px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  column-gap: 8px;
+}
+.shell { display: contents; }
+.play { grid-column: 1; grid-row: 2; }
+.gh--foot { grid-column: 1; grid-row: 3; }
+
+/* THE MATCH'S OWN STRIP, and a pseudo-element because `render()` lives in the
+   shared master and this is the one file that wants an extra region. `.deck` is
+   already a grid, so its `::before` is a grid item like any other and can be
+   placed with the rest -- no new element, no override of the shell builder.
+   Turn, phase, priority, whose turn it is: the things that belong to the match
+   rather than to any seat, which is why it spans the rail as well. */
+.deck::before {
+  content: "Game information";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+  height: 26px;
+  border: 1px dashed rgba(150, 140, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(20, 19, 40, 0.3);
+  color: rgba(160, 155, 196, 0.5);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gh--rail {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  grid-template-rows: minmax(0, 1fr) auto;
+  place-items: center stretch;
+  gap: 8px;
+}
+.gh--rail .gh__tag { align-self: center; justify-self: center; }
+.gh--rail .gh__slab { margin: 0; width: 100%; }
+
+/* Creatures and the other permanents share the top; lands run the full width
+   underneath, which is both the sketch and the way a Commander board is
+   actually read -- the mana is one row you scan, the threats are not. */
+.gh__lanes {
+  /* 0.30 AND NOT A ROUNDER NUMBER, because the split is arithmetic. The lanes
+     area is `1017 - 12 - 132 - 6 = 867px`; a lane spends 74 on its label and 5
+     on the gutter after it, and eight 66px creature cards with 5px between them
+     are 563. `1fr / 0.30fr` over 861 leaves the creature lane 583 for cards,
+     which fits all eight. At 0.42 it left 527 and the eighth card was cut in
+     half exactly on the column boundary, which reads as a broken layout rather
+     than as a full board. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.30fr);
+  grid-template-rows: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+.gh__lanes > :nth-child(3) { grid-column: 1 / -1; }
+/* Two words will not go in the 74px the other lanes' labels take, and
+   `.gh__tag` is `nowrap`, so the first pass painted "ENCHANTMENTS · ARTIFACTS"
+   straight across the creature cards to its left -- a label that overflows its
+   own box silently, which is the same class of fault the round's gate exists
+   for. Wider slot, and it wraps. */
+.gh__lanes > :nth-child(2) .gh__tag { width: 88px; white-space: normal; line-height: 1.25; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+// <<< BEGIN _seat.js >>>
+/* ===========================================================================
+   The opponent seat -- the shared fixture, the icon set and the review shell.
+
+   NOT LOADED. `inline.py` splices this between each file's BEGIN and END
+   `_seat.js` markers, because a <script src> does not load from file:// and
+   every mockup in this repo opens standalone. (The markers are not spelled out
+   in this comment: a master that names its own marker gets a second copy of it
+   spliced into every file, and the splicer refuses the file next time.)
+
+   WHAT IS SHARED AND WHY. These five are five STRUCTURES for one component, so
+   the content, the icons, the review chrome and the ghosted board they sit on
+   are identical in all five and only `seatHTML()` differs. Each file defines
+   that one function and its own CSS; everything else on screen is this file.
+   A difference between two of these mockups is therefore a difference in how
+   the seat is laid out, which is the only thing the round is trying to compare.
+
+   ---------------------------------------------------------------------------
+   THE TWO WIDTHS, MEASURED RATHER THAN GUESSED
+
+   `handheld.css` re-values the rails inside `@media (max-width: 1366px)`, so at
+   1280x800 the board column is:
+
+       1280 - 12 (deck padding) - 8 (gap) - 243 (--rail-r at 19vw) = 1017px
+
+   and `.play__opponents` is a flex row with a 10px gap. So a seat gets:
+
+       one opponent      1017 x 96      (--pod-seat-h, handheld.css:160)
+       two opponents       503 x 96
+       three opponents     332 x 84      (the shorter cap, handheld.css:1041)
+
+   332 x 84 is the design problem. 1017 x 96 is the one the shipped strip was
+   drawn for, which is why it stretches rather than compacts -- the same mistake
+   the desktop round found in `.orb--compact`, arriving one layout later.
+
+   AND THE SHIPPED SEAT DOES NOT ACTUALLY FIT 332 x 84 EITHER. From the SECOND
+   opponent onwards, `handheld.css:1097-1100` sets `.orb__mana` and `.orb__cmd`
+   to `display: none` -- so commander damage and the open-mana plate are not
+   drawn on an opponent's seat at all in a three- or four-player game, and are
+   reachable only by holding R2 for the full mat. The file argues the case and
+   the argument is a fair one, but it means the screenshot this round was opened
+   on -- the one with `P0 0` and `P2 0` on it -- is the ONE-opponent seat, and
+   the pod seat is the one with the channel missing.
+
+   Every direction here draws commander damage at every density. That is the
+   thing they are all buying with their layout, and it is why the arithmetic
+   below is harder than the shipped layout's.
+   =========================================================================== */
+
+/* --- The pod ---------------------------------------------------------------
+   Three opponents from `../handheld/_table.js`, so this round and the pad round
+   are looking at the same game. Two numbers are deliberately not that file's:
+   seat 3 has taken 16 commander damage rather than 12, which is the only way to
+   put a seat past the warn threshold (15) and see what a direction does about
+   it, and seat 2 has taken 3 rather than 0 so the plate has a middling value as
+   well as a zero and a near-lethal one.
+-------------------------------------------------------------------------- */
+
+const VIEWER = { pid: 0, name: "You", life: 34, cmdr: "Aesi, Tyrant of Gyre Strait" };
+
+const SEATS = [
+  {
+    pid: 1,
+    name: "AI 1",
+    who: "Apprentice",
+    human: false,
+    cmdr: "Edgar Markov",
+    art: "edgar-markov.jpg",
+    cost: ["3", "W", "B", "R"],
+    /* One entry per SOURCE, never per symbol -- Scoured Barrens makes W or B
+       and counting it twice claims mana that does not exist. logic/mana.ts. */
+    mana: ["R", "R", "W/B"],
+    manaOpen: 2,
+    /* THE CHANNEL NO DIRECTION IN THIS ROUND DRAWS. Two Mountains and a Scoured
+       Barrens, one of them tapped -- `_handheld.js`'s OPP.lands, counted. It is
+       a seat-level fact and not a `threatOf()` one, which is exactly why it has
+       been invisible: `threat.ts` never had it and `types.ts` never sent it. */
+    lands: 3,
+    life: 25,
+    lib: 84, hand: 4, gy: 6, exile: 0, cmd: 1, tax: 0,
+    /* threatOf(): four creatures (two tapped Vampire tokens), one flier. */
+    threat: { creatures: 4, untapped: 2, power: 4, fliers: 1, other: 0 },
+  },
+  {
+    pid: 2,
+    name: "Marco",
+    who: "Human",
+    human: true,
+    cmdr: "Isperia, Supreme Judge",
+    art: "isperia-supreme-judge.jpg",
+    cost: ["4", "W", "U"],
+    mana: ["W", "W", "U", "U", "W/U"],
+    manaOpen: 5,
+    /* Three Plains and two Islands, all untapped -- `_table.js`'s OPP2.lands. */
+    lands: 5,
+    life: 31,
+    lib: 79, hand: 5, gy: 2, exile: 0, cmd: 1, tax: 0,
+    /* You cast a "look at target player's hand" at Marco two turns ago, so two
+       of his five cards are in `hand_revealed` and his hand mark IS a control.
+       The other two seats' hands are not, and the round draws both. */
+    revealed: 2,
+    threat: { creatures: 2, untapped: 2, power: 4, fliers: 2, other: 1 },
+  },
+  {
+    pid: 3,
+    name: "Duelist",
+    who: "Duelist",
+    human: false,
+    cmdr: "Krenko, Mob Boss",
+    art: "krenko-mob-boss.jpg",
+    cost: ["2", "R", "R"],
+    mana: ["R", "R", "R", "R"],
+    manaOpen: 4,
+    /* Four Mountains -- `_table.js`'s OPP3.lands. */
+    lands: 4,
+    life: 18,
+    lib: 88, hand: 3, gy: 9, exile: 2, cmd: 1, tax: 2,
+    threat: { creatures: 1, untapped: 1, power: 1, fliers: 0, other: 1 },
+  },
+];
+
+/* Commander damage TAKEN, per seat, per source. A matrix and not a list,
+   because the sources a seat has depend on how many seats are at the table --
+   which is the whole reason this plate is the hardest thing on the strip. */
+const DMG = {
+  1: { 0: 5, 2: 0, 3: 0 },
+  2: { 0: 0, 1: 3, 3: 0 },
+  3: { 0: 0, 1: 16, 2: 0 },
+};
+
+const LETHAL = 21;
+const WARN = LETHAL - 6;
+
+const NAMES = { 0: "You", 1: "AI 1", 2: "Marco", 3: "Duelist" };
+const CMDRS = {
+  0: "Aesi, Tyrant of Gyre Strait",
+  1: "Edgar Markov",
+  2: "Isperia, Supreme Judge",
+  3: "Krenko, Mob Boss",
+};
+
+/* --- Helpers -------------------------------------------------------------- */
+
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const artUrl = (file) => "../art/" + file;
+const symUrl = (tok) => "../cards/symbols/" + String(tok).replace("/", "-").toUpperCase() + ".svg";
+const symHTML = (tok) => '<img class="sym" src="' + symUrl(tok) + '" alt="" aria-hidden="true">';
+
+/** The seats at the table right now, viewer first -- `logic/zoneGrouping.ts`. */
+const pod = () => SEATS.slice(0, S.density);
+
+/** Who could have hit this seat with a commander, in seating order from you. */
+function sources(seat) {
+  return [0].concat(pod().map((s) => s.pid))
+    .filter((pid) => pid !== seat.pid)
+    .map((pid) => ({
+      pid,
+      n: (DMG[seat.pid] || {})[pid] || 0,
+      who: NAMES[pid],
+      cmdr: CMDRS[pid],
+    }));
+}
+
+/**
+ * The summary line as clauses, in `logic/threat.ts`'s order and with its rule:
+ * EMPTY CLAUSES ARE DROPPED. A seat with no fliers must not spend a fifth of a
+ * 332px strip saying "0 fliers"; a seat with one absolutely must say so.
+ * `creatures` is the exception and is always drawn -- "nothing on board" is the
+ * most useful thing the line can say.
+ */
+/* `t.other` IS NOT IN THIS LIST AND NEITHER IS `seat.lands`. That is not an
+ * oversight of this fixture -- it is the shipped strip's own content, copied
+ * faithfully. "How many lands, artifacts and enchantments has that seat got"
+ * is not answerable from an opponent's seat today at any density, and 01-05
+ * all inherit the hole because they all render `threatParts()`. 06 does not
+ * call this function; see its own file. */
+function threatParts(seat) {
+  const t = seat.threat;
+  const out = [{ key: "creatures", icon: "creature", value: t.creatures, label: "creature" }];
+  if (t.untapped > 0) out.push({ key: "untapped", icon: "untapped", value: t.untapped, label: "untapped" });
+  if (t.power > 0) out.push({ key: "power", icon: "power", value: t.power, label: "power" });
+  if (t.fliers > 0) out.push({ key: "fliers", icon: "flier", value: t.fliers, label: "flier" });
+  if (seat.manaOpen > 0) out.push({ key: "mana", icon: "mana", value: seat.manaOpen, label: "open" });
+  return out;
+}
+
+const UNCOUNTABLE = { untapped: 1, power: 1, open: 1 };
+const clause = (p) =>
+  p.value + " " + (p.value === 1 || UNCOUNTABLE[p.label] ? p.label : p.label + "s");
+
+/**
+ * The zones, in the shipped order.
+ *
+ * TWO OF THE FIVE ARE NOT CONTROLS ON AN OPPONENT'S SEAT, AND ONLY ONE OF THEM
+ * KNOWS IT. This is the round's second finding and it is worth more than any
+ * layout in it, because it is 88px of a 332px strip.
+ *
+ * `PlayerOrb.tsx` already argues the case for the library: "hidden information,
+ * and a control that does nothing when clicked is worse than no control", so
+ * the library is a plain element and not a button. An opponent's HAND is the
+ * same fact -- `types.ts` sends `hand: null` for every seat but the viewer and
+ * `ZonePeek.tsx` renders "Hidden — 4 cards" -- and it is a button anyway, at
+ * 44x44, on the strip where 44x44 is the scarcest thing there is.
+ *
+ * The exception is the one the library already has: `hand_revealed` carries the
+ * cards this seat has been SHOWN, by "look at target player's hand" and nothing
+ * else, and when it is non-empty the peek has something to open. So the rule is
+ * the library's own rule, applied to the zone next to it -- a button when there
+ * is something behind it, a mark when there is not.
+ *
+ * Five 44px targets is 220px of a 332px seat. Three is 132. That difference is
+ * why the seats in this round fit at all.
+ */
+function zones(seat) {
+  const z = [
+    { name: "library", label: "Library", icon: "lib", kind: "lib", count: seat.lib, peek: false },
+    { name: "hand", label: "Hand", icon: "hand", kind: "hand", count: seat.hand, peek: !!seat.revealed },
+    { name: "graveyard", label: "Graveyard", icon: "gy", kind: "gy", count: seat.gy, peek: true },
+  ];
+  /* Exile appears the moment anything is exiled and is NOT a fixed slot -- a
+     seat can therefore show four marks or five, which is the reflow every
+     direction here has to survive. Seat 3 has two cards in exile. */
+  if (seat.exile > 0) {
+    z.push({ name: "exile", label: "Exile", icon: "ex", kind: "ex", count: seat.exile, peek: true });
+  }
+  z.push({ name: "command", label: "Command zone", icon: "cmd", kind: "cmd", count: seat.cmd, peek: true });
+  return z;
+}
+
+/* --- The marks -------------------------------------------------------------
+   WHY THESE EXIST. It is a legibility argument, not a colour one -- ADR 0006.
+
+   The shipped strip drops `.pile__label` at 16px: "Lib", "Hand", "GY" and "CMD"
+   all go (`handheld.css:1758`), and what is left of a zone is a coloured chip
+   with a number in it. `docs/handheld-playtest.md` already records what that
+   costs -- a fixed order only helps somebody who has already learned the order,
+   and the colour code has to be learned too. Nothing on the chip says which
+   zone it is.
+
+   A shape can say it without being taught. A headstone is a graveyard, a fan of
+   three cards is a hand, a face-down card is a library, a dashed outline is a
+   card that is not here. That is `.pile__label`'s job, done in the space the
+   label could not have.
+
+   They are SVG and not text characters on purpose: a glyph in a font is a
+   different picture on every machine, and three of these had no reliable
+   character at all.
+
+   They are pictures, not words -- `aria-hidden`, with the real name carried by
+   the cell's `aria-label` and surfaced by hover and by the cursor. That is the
+   line `../handheld/assert.js` draws between "a decoration" and "text somebody
+   reads", and it is why the font floor does not apply to them.
+-------------------------------------------------------------------------- */
+
+const ICON = {
+  /* A creature: a bust. Head and shoulders, filled, unmistakable at 14px. */
+  creature:
+    '<circle cx="8" cy="4.4" r="2.7"/><path d="M2.6 14.6c0-4.3 2.3-6.2 5.4-6.2s5.4 1.9 5.4 6.2z"/>',
+  /* Untapped: a card standing upright. The game's own idiom -- a tapped one is
+     the same rectangle turned, which is what the player already reads on board. */
+  untapped: '<rect x="4.6" y="1.8" width="6.8" height="12.4" rx="1.3"/>',
+  /* Power: a sword, point up. Blade and guard only -- a first draft had a hilt
+     under the guard and at 14px the three stacked parts read as an arrow
+     pointing down, which is the opposite of what this mark means. */
+  power:
+    '<path d="M8 .6l2.9 4.8v5.4H5.1V5.4z"/><rect x="2.2" y="10.6" width="11.6" height="2.3" rx="1.15"/>',
+  /* A flier: wings. Stroked, because a filled wing at 14px is a blob. */
+  flier:
+    '<path d="M1.4 10.8C4 4.6 6.2 4.9 8 9.4c1.8-4.5 4-4.8 6.6 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  /* Open mana: the untapped source, as a ring with a drop in it. */
+  mana:
+    '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8" cy="8" r="2.6"/>',
+  /* A land: a plot of ground, in perspective. THIS MARK HAS NO CHANNEL IN 01-05
+     -- `threatOf()` never counted lands and `types.ts` never sent them, so on
+     every seat in this round "how developed is that board" is answered only by
+     `manaOpen`, which counts untapped SOURCES and says nothing about how many
+     there are. A trapezoid because every other rectangle on the seat is a card
+     and orientation is the one difference this round has already ruled out. */
+  land: '<path d="M1.4 13.8L4.4 5.4h7.2l3 8.4z"/>',
+  /* Everything on the battlefield that is not a creature and not a land -- the
+     artifacts and enchantments. `seat.threat.other` HAS CARRIED THIS NUMBER ALL
+     ALONG and not one of the five directions draws it: Marco's Favorable Winds
+     and the Duelist's Impact Tremors are both on screen and both invisible. A
+     cut gem, which is neither the star nor the crown at 14px. */
+  other: '<path d="M8 1.1l6.2 5.1-6.2 8.7-6.2-8.7z"/>',
+  /* Commander damage: a crown. Twenty-one of these kills you and nothing else
+     in the game does, so it gets a mark of its own. */
+  crown: '<path d="M1.6 13.2L2.9 4.4 6 8.2 8 2.8l2 5.4 3.1-3.8 1.3 8.8z"/>',
+  /* Library: a face-down card. */
+  lib:
+    '<rect x="3.2" y="1.6" width="9.6" height="12.8" rx="1.5"/><path d="M8 4.4l1.7 3.6L8 11.6 6.3 8z" fill="var(--chip-ink)"/>',
+  /* Hand: three cards, fanned. */
+  hand:
+    '<g transform="rotate(-22 8 13)"><rect x="1.9" y="4.2" width="4.8" height="9.2" rx="1.1"/></g><g transform="rotate(22 8 13)"><rect x="9.3" y="4.2" width="4.8" height="9.2" rx="1.1"/></g><rect x="5.6" y="2.6" width="4.8" height="10.8" rx="1.1"/>',
+  /* Graveyard: a headstone. The one mark nobody has to be taught. */
+  gy: '<path d="M3.4 15V7.2a4.6 4.6 0 019.2 0V15z"/>',
+  /* Exile: a card leaving, drawn as an outline that is not all there. */
+  ex:
+    '<rect x="3.2" y="1.8" width="9.6" height="12.4" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3.4 2.6"/>',
+  /* The command zone: a star. */
+  cmd: '<path d="M8 1l2.1 4.5L15 6.2l-3.6 3.4.9 4.9L8 12.2 3.7 14.5l.9-4.9L1 6.2l4.9-.7z"/>',
+};
+
+function ico(name) {
+  return (
+    '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="currentColor">' +
+    ICON[name] +
+    "</svg>"
+  );
+}
+
+/* --- Review state ---------------------------------------------------------
+   Three knobs, all keyboard, all printed on the bezel. They exist because the
+   things that break a seat are the things a single screenshot cannot show:
+   another seat arriving, the seat becoming a target, the seat dying, and the
+   art not being there.
+-------------------------------------------------------------------------- */
+
+const S = {
+  density: 3,
+  /* rest | active | targetable | out | noart. Drawn on the FIRST seat only, so
+     the other two stay the control.
+
+     `noart` is a real state and not a stress test: `logic/cardArt.ts` returns
+     `undefined` when the image map has not been fetched and `null` when the
+     printing has no art, and `CommandZone` renders nothing at all when the
+     commander sits in a hidden zone -- shuffled back into the library, say. A
+     direction that only works with a picture in it has to say so, and 03 is
+     entirely about the picture. */
+  mark: "rest",
+  measure: false,
+};
+
+const LOSS = "Lost — 21 commander damage";
+
+/**
+ * The line beside the seat's name: which commander, or why they are out.
+ *
+ * ONE SLOT, NOT TWO. An eliminated seat is the state that breaks strips --
+ * every direction here first grew an extra row for the loss reason and every
+ * one of them overflowed its own budget doing it, which the round's gate caught
+ * as an escape rather than as a wrap. It does not need a row: the commander's
+ * name is the least useful thing on a seat that has already lost, so the loss
+ * reason takes its place and the seat does not change size at the exact moment
+ * a player is looking at it.
+ */
+const subline = (seat, f) => (f.out ? f.loss : seat.cmdr);
+
+/** The state flags the shell hands `seatHTML`, so no file invents its own. */
+function flagsFor(seat, index) {
+  const marked = index === 0;
+  return {
+    active: marked && S.mark === "active",
+    targetable: marked && S.mark === "targetable",
+    out: marked && S.mark === "out",
+    noart: marked && S.mark === "noart",
+    loss: LOSS,
+  };
+}
+
+/* --- The board the seat is taking room from --------------------------------
+   Ghosted, at the real proportions, for the same reason the desktop round drew
+   a ghost mat beside every panel: a direction's claim about FOOTPRINT should be
+   visible rather than asserted. Every pixel a seat takes here is a pixel off
+   the viewer's own board, and at 800px of height that trade is the argument.
+-------------------------------------------------------------------------- */
+
+const ghostRow = (tag, n) =>
+  '<div class="gh__lane"><span class="gh__tag">' +
+  tag +
+  "</span>" +
+  Array.from({ length: n }, () => '<span class="gh__card"></span>').join("") +
+  "</div>";
+
+function ghostBoard() {
+  return (
+    '<div class="gh gh--mine" aria-hidden="true">' +
+    '<div class="gh__side"><span class="gh__tag">Your orb</span></div>' +
+    '<div class="gh__lanes">' +
+    ghostRow("Lands", 12) +
+    ghostRow("Creatures", 8) +
+    ghostRow("Other", 1) +
+    "</div>" +
+    "</div>"
+  );
+}
+
+function ghostRail() {
+  return (
+    '<div class="gh gh--rail" aria-hidden="true">' +
+    '<span class="gh__tag">Stack · actions · preview</span>' +
+    "</div>"
+  );
+}
+
+function ghostFoot() {
+  return (
+    '<div class="gh gh--foot" aria-hidden="true">' +
+    '<span class="gh__tag">Hand</span>' +
+    Array.from({ length: 6 }, () => '<span class="gh__card gh__card--hand"></span>').join("") +
+    '<span class="gh__slab">Commit</span>' +
+    "</div>"
+  );
+}
+
+/* --- The shell ------------------------------------------------------------- */
+
+const root = document.getElementById("root");
+
+function render() {
+  const seats = pod()
+    .map((seat, i) => '<div class="mat" data-seat="' + seat.pid + '">' + seatHTML(seat, flagsFor(seat, i)) + "</div>")
+    .join("");
+
+  root.innerHTML =
+    '<div class="bezel">' +
+      '<div class="deck" data-density="' + S.density + '"' +
+        (S.measure ? ' data-measure="yes"' : "") + ">" +
+        '<div class="shell">' +
+          '<div class="play">' +
+            '<div class="opps" data-testid="opponents">' + seats + "</div>" +
+            ghostBoard() +
+          "</div>" +
+          ghostRail() +
+        "</div>" +
+        ghostFoot() +
+      "</div>" +
+      '<div class="bezel__tag" id="tag"></div>' +
+    "</div>";
+
+  fitDeck();
+  if (S.measure) paintMeasurements();
+}
+
+/* Exactly one Steam Deck screen, whatever the window is.
+   A 1280x800 design opened in a 2560px window is being judged at half the
+   angular size a Deck shows it at, and every legibility call made that way is
+   wrong in the direction that flatters the design. `../handheld/_handheld.css`
+   makes the same argument at more length. */
+let SCALE = 1;
+function fitDeck() {
+  const el = document.querySelector(".deck");
+  if (!el) return;
+  SCALE = Math.max(0.3, Math.min(2, Math.min((innerWidth - 26) / 1280, (innerHeight - 84) / 800)));
+  el.style.transform = "scale(" + SCALE + ")";
+
+  const seat = document.querySelector(".mat");
+  const box = seat ? seat.getBoundingClientRect() : null;
+  const w = box ? Math.round(box.width / SCALE) : 0;
+  const h = box ? Math.round(box.height / SCALE) : 0;
+
+  const tag = document.getElementById("tag");
+  if (!tag) return;
+  tag.innerHTML =
+    "<b>" + esc(FILE_ID) + "</b> · " + esc(FILE_LINE) +
+    " · seat <b>" + w + "×" + h + "</b>" +
+    " · Deck 1280×800 at <b>" + Math.round(SCALE * 100) + "%</b>" +
+    " · <b>1 2 3</b> seats · <b>s</b> " + S.mark + " · <b>m</b> measure";
+}
+
+addEventListener("resize", fitDeck);
+
+addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+  if (k === "1" || k === "2" || k === "3") { S.density = +k; render(); }
+  else if (k === "s") {
+    const order = ["rest", "active", "targetable", "out", "noart"];
+    S.mark = order[(order.indexOf(S.mark) + 1) % order.length];
+    render();
+  } else if (k === "m") { S.measure = !S.measure; render(); }
+  else return;
+  e.preventDefault();
+});
+
+/* `m` -- the numbers, on the page.
+   Every cell is measured and any that misses a floor is outlined and labelled
+   where it is. A gate whose only output is a console object gets read once; a
+   gate that draws on the failing element gets read every time. */
+function paintMeasurements() {
+  const out = SEAT_ASSERT();
+  for (const bad of out.faults) bad.el.setAttribute("data-bad", bad.why);
+  const tag = document.getElementById("tag");
+  if (!tag) return;
+  tag.innerHTML +=
+    ' · <b style="color:' + (out.PASS ? "#5ce08a" : "#ff6b5e") + '">' +
+    (out.PASS ? "PASS" : "FAIL") + "</b> · " +
+    out.cells + " cells · " + out.boxKinds + " box kinds · min " + out.minFontPx + "px" +
+    " · min hit " + out.minHitPx + "px";
+}
+// <<< END _seat.js >>>
+
+// <<< BEGIN assert.js >>>
+/*
+ * The gates, as numbers.
+ *
+ * Inlined into every file by `inline.py`, so opening any mockup and typing
+ * `SEAT_ASSERT()` in the console works with no server and no paste -- `fetch()`
+ * is blocked on file://, so a page cannot load its own checker off disk. `m`
+ * runs it and draws the failures on the elements that failed.
+ *
+ *     copy(JSON.stringify(SEAT_ASSERT(), null, 2))
+ *
+ * Four of these are `../handheld/assert.js`'s, unchanged, because this round is
+ * a component inside that round's screen and a floor that only applies to the
+ * rest of the screen is not a floor: 16px of type, 44px of target, zero native
+ * tooltips, nothing escaping its box.
+ *
+ * TWO ARE NEW, AND THEY ARE THE ONES THIS ROUND EXISTS FOR.
+ *
+ * `boxKinds` counts the distinct GEOMETRIES among the seat's cells -- height,
+ * padding and radius, rounded. "All items should fit cleanly and uniformly" is
+ * the complaint this round was opened on, and it reduces to a number: a strip
+ * whose marks are 28px tall with 0 6px of padding, whose damage chips are 30px
+ * tall with 2px 5px, and whose threat line is a 22px text run with 3px 6px is
+ * three unrelated objects standing in a row, and it counts three.
+ *
+ * `padKinds` does the same for every padded box in the seat, including the
+ * containers. The shipped strip measures FIVE at one opponent: the mat's
+ * `5px 7px`, the body grid's `2px`, the spine's `3px 6px`, the plate's own
+ * padding and the pile chip's `0 6px`. Nothing about that is visible in the
+ * CSS, where each of the five is locally reasonable, and all of it is visible
+ * on screen as the ragged left edge the round was opened about.
+ *
+ * A number is not a verdict -- one is not automatically better than two, and a
+ * direction may spend a second geometry on purpose to separate two families of
+ * fact. What the gate forbids is spending one by accident.
+ */
+
+function SEAT_ASSERT() {
+  const DECK = document.querySelector(".deck") || document.body;
+  const FS_FLOOR = 16;
+  const HIT_FLOOR = 44;
+
+  const round = (n) => Math.round(n * 100) / 100;
+
+  const vis = (el) => {
+    const s = getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden" || +s.opacity === 0) return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+
+  /* SCOPE: THE SEATS, NOT THE REVIEW CHROME AROUND THEM.
+     The bezel tag is a note to whoever is reviewing -- it is not on the Deck's
+     screen, and holding it to the Deck's floor measures the wrong thing. The
+     ghosted board is not the design either: it is the room the design is
+     spending, drawn so the spend is visible. Everything inside `.mat` is the
+     design and nothing else is. */
+  const mats = [...DECK.querySelectorAll(".mat")].filter(vis);
+  const scale = DECK.getBoundingClientRect().width / (DECK.offsetWidth || 1) || 1;
+  const px = (n) => Math.round(n / scale);
+
+  const all = mats.flatMap((m) => [...m.querySelectorAll("*")]).filter(vis);
+  const faults = [];
+
+  /* --- The type floor ---------------------------------------------------
+     Only elements that OWN text: walking every element counts a wrapper at its
+     inherited size and reports failures that are not on screen. `aria-hidden`
+     is skipped, which is the honest line between a font-size floor and a
+     font-size ban -- this gate is about TEXT SOMEBODY READS. Every icon in this
+     round is an `aria-hidden` SVG and is named in real type by its cell's
+     `aria-label`, so none of them is in this set. If hiding it from a screen
+     reader would lose information, it is text. */
+  const textOwners = all.filter(
+    (el) =>
+      !el.closest('[aria-hidden="true"]') &&
+      [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+  );
+
+  const sizes = textOwners.map((el) => ({
+    el,
+    /* A font size is a CSS pixel and the bezel's `transform: scale()` does not
+       change it -- only the boxes below are read through the scale. Dividing
+       here reported a 16px floor as 17.9 and would have passed type that fails
+       on the device. */
+    px: round(parseFloat(getComputedStyle(el).fontSize)),
+    text: el.textContent.trim().slice(0, 32),
+  }));
+  const belowFloor = sizes.filter((s) => s.px < FS_FLOOR).sort((a, b) => a.px - b.px);
+  for (const s of belowFloor.slice(0, 8)) faults.push({ el: s.el, why: s.px + "px" });
+
+  /* --- The target floor -------------------------------------------------
+     Four of the five zone marks are the only route into `ZonePeek`. A
+     decorative pile makes the graveyard unreachable, so they are real buttons,
+     and a real button on a 7-inch touchscreen is 44px or it is not a button. */
+  const stops = mats.flatMap((m) => [...m.querySelectorAll("button, [data-stop]")]).filter(vis);
+  const hits = stops.map((el) => {
+    const r = el.getBoundingClientRect();
+    return { el, w: px(r.width), h: px(r.height) };
+  });
+  const smallHits = hits.filter((h) => h.w < HIT_FLOOR || h.h < HIT_FLOOR);
+  for (const h of smallHits.slice(0, 8)) faults.push({ el: h.el, why: h.w + "×" + h.h });
+
+  /* --- Uniformity, which is the round's own gate ------------------------- */
+  const cells = mats.flatMap((m) => [...m.querySelectorAll("[data-cell]")]).filter(vis);
+  const cellSig = (el) => {
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    return [
+      px(r.height),
+      s.paddingTop + " " + s.paddingRight + " " + s.paddingBottom + " " + s.paddingLeft,
+      s.borderTopLeftRadius,
+    ].join(" | ");
+  };
+  const cellKinds = [...new Set(cells.map(cellSig))];
+
+  /* Every padded box in the seat, containers included -- the ragged-edge
+     metric. A container that pads by 2 inside a plate that pads by 7 inside a
+     mat that pads by 5 is where an inconsistent-looking strip actually comes
+     from, and none of the three is visible on its own. */
+  const padded = all.filter((el) => {
+    const s = getComputedStyle(el);
+    return (
+      parseFloat(s.paddingTop) + parseFloat(s.paddingRight) +
+      parseFloat(s.paddingBottom) + parseFloat(s.paddingLeft) > 0
+    );
+  });
+  /* CSS pixels, not scaled ones. A padding is authored in the stylesheet and
+     the bezel's `transform` does not change it -- dividing by the scale turned
+     a shared `6px` into a `7` and reported one gutter as two. */
+  const padSig = (el) => {
+    const s = getComputedStyle(el);
+    return [s.paddingTop, s.paddingRight, s.paddingBottom, s.paddingLeft]
+      .map((v) => Math.round(parseFloat(v)))
+      .join(" ");
+  };
+  const padKinds = [...new Set(padded.map(padSig))].sort();
+
+  /* And the gutters. Three gaps in one strip reads as three components. */
+  const gapKinds = [
+    ...new Set(
+      all
+        .map((el) => getComputedStyle(el))
+        .filter((s) => s.display.includes("flex") || s.display.includes("grid"))
+        .map((s) => Math.round(parseFloat(s.rowGap) || 0) + " " + Math.round(parseFloat(s.columnGap) || 0))
+        .filter((g) => g !== "0 0")
+    ),
+  ].sort();
+
+  /* --- Escape and clip ---------------------------------------------------
+     `overflow: hidden` hides layout failure completely -- the page reports
+     `scrollHeight === clientHeight` while content visibly runs under the next
+     region -- which is the lesson the board round drew and the reason this is
+     measured against the mat's own box rather than asked of the scroller. */
+  let escaped = 0;
+  for (const m of mats) {
+    const box = m.getBoundingClientRect();
+    for (const el of [...m.querySelectorAll("*")].filter(vis)) {
+      const r = el.getBoundingClientRect();
+      if (r.left < box.left - 1 || r.right > box.right + 1 ||
+          r.top < box.top - 1 || r.bottom > box.bottom + 1) {
+        escaped += 1;
+        if (escaped <= 4) faults.push({ el, why: "escapes" });
+      }
+    }
+  }
+
+  /* Text that is being ellipsised. Not a failure on its own -- `threatParts`
+     emits in order of what matters, so what falls off the end is always the
+     least decision-changing clause -- but a direction that clips a COUNT has
+     lost the datum, and this is how you see which. */
+  /* Asked only of boxes that actually cut. A box with `overflow: visible` shows
+     all of its text however wide it is, and `scrollWidth` on one of those also
+     counts absolutely-positioned descendants -- which in this round is the
+     hover label every mark carries, so the first version of this check reported
+     four "clipped" zone counts on a seat 1017px wide with nothing wrong. */
+  const clipped = textOwners
+    .filter((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.overflowX === "visible") return false;
+      return el.scrollWidth > el.clientWidth + 1;
+    })
+    .map((el) => el.textContent.trim().slice(0, 24));
+
+  /* A region that flattened to nothing. `overflow: hidden` hides this too. */
+  const collapsed = all.filter((el) => {
+    const s = getComputedStyle(el);
+    if (s.display === "none") return false;
+    const r = el.getBoundingClientRect();
+    return r.height < 1 || r.width < 1;
+  }).length;
+
+  const matBoxes = mats.map((m) => {
+    const r = m.getBoundingClientRect();
+    return px(r.width) + "×" + px(r.height);
+  });
+
+  /* The row must not be taller than the budget it declared. Every pixel over is
+     a pixel off the viewer's own board -- `board.css:55-66` calls that
+     load-bearing, and the handheld layout's single largest defect was this row
+     going uncapped. */
+  const opps = DECK.querySelector(".opps");
+  const budget = mats.length ? Math.round(parseFloat(getComputedStyle(mats[0]).height)) : 0;
+  const rowH = opps ? px(opps.getBoundingClientRect().height) : 0;
+
+  const out = {
+    screen: innerWidth + "x" + innerHeight,
+    density: DECK.dataset.density,
+    seats: matBoxes,
+    rowHeightPx: rowH,
+    budgetPx: budget,
+
+    minFontPx: sizes.length ? Math.min(...sizes.map((s) => s.px)) : null,
+    textNodes: sizes.length,
+    belowFloor: belowFloor.length,
+    belowFloorWorst: belowFloor.slice(0, 6).map((s) => ({ px: s.px, text: s.text })),
+
+    stops: stops.length,
+    minHitPx: hits.length ? Math.min(...hits.map((h) => Math.min(h.w, h.h))) : null,
+    smallHits: smallHits.length,
+    smallHitsWorst: smallHits.slice(0, 6).map((h) => ({ w: h.w, h: h.h })),
+
+    cells: cells.length,
+    boxKinds: cellKinds.length,
+    boxKindList: cellKinds,
+    padKinds: padKinds.length,
+    padKindList: padKinds,
+    gapKinds: gapKinds.length,
+    gapKindList: gapKinds,
+
+    escaped,
+    clipped: clipped.length,
+    clippedWorst: clipped.slice(0, 6),
+    collapsedRegions: collapsed,
+
+    /* A native tooltip opens on hover and on nothing else, so on a controller it
+       is information that cannot be reached at all. The shipped client had 45
+       and has none left; a mockup that grows one has moved a channel out of
+       reach without saying so. */
+    titleAttrs: mats.reduce((n, m) => n + m.querySelectorAll("[title]").length, 0),
+
+    brokenImages: mats
+      .flatMap((m) => [...m.querySelectorAll("img")])
+      .filter((i) => i.complete && i.naturalWidth === 0).length,
+
+    faults,
+  };
+
+  out.PASS =
+    out.belowFloor === 0 &&
+    out.smallHits === 0 &&
+    out.escaped === 0 &&
+    out.collapsedRegions === 0 &&
+    out.titleAttrs === 0 &&
+    out.brokenImages === 0 &&
+    out.rowHeightPx <= out.budgetPx + 1;
+
+  return out;
+}
+
+if (typeof window !== "undefined") window.SEAT_ASSERT = SEAT_ASSERT;
+// <<< END assert.js >>>
+
+const FILE_ID = "Seat 06 · Muster";
+const FILE_LINE = "lands, creatures, other — counted, and split tapped from untapped";
+
+/** Commander starts at 40. The gauge is against the start, not against a max. */
+const START_LIFE = 40;
+
+/* Eight pips and then a count, for `pileLeaves`'s reason: past eight the extra
+   pips say nothing a reader can use. The cap costs resolution and never
+   information, because the COUNT is on the creature cell beside them. */
+const MAX_PIPS = 8;
+
+const plural = (n, word) => n + " " + word + (n === 1 ? "" : "s");
+const pct = (n, d) => (d > 0 ? (n / d) * 100 : 0) + "%";
+
+/* --- The battlefield row --------------------------------------------------
+ * One function for all three counts, because they are one object drawn three
+ * times: an icon, `untapped/total`, and a ground filled to that fraction.
+ *
+ * `open` is null for the cell that has no tapped state to draw. It prints one
+ * number and takes a flat ground, which is the honest thing to do with a
+ * channel the payload does not carry -- see `.perm--other`.
+ */
+function permCell(kind, icon, total, open, label) {
+  const frac = open === null ? "" : ' style="--fill:' + pct(open, total) + '"';
+  const text = open === null ? total : open + "/" + total;
+  return (
+    '<span class="perm perm--' + kind + (total === 0 ? " perm--zero" : "") + '"' + frac +
+      ' data-cell data-name aria-label="' + esc(label) + '">' +
+      ico(icon) + "<span>" + text + "</span>" +
+    "</span>"
+  );
+}
+
+/* THE THREE COUNTS. `lands` and `manaOpen` come off `../handheld/`'s actual
+   battlefields; `threat.other` has been in the fixture since the round opened
+   and is drawn by nothing else in it. `manaOpen` is UNTAPPED SOURCES rather
+   than untapped lands and the two coincide for this pod -- the real port wants
+   the land's own tapped flag, which is the same field the board already reads
+   to draw a card rotated. */
+function perms(seat) {
+  const t = seat.threat;
+  const landsTapped = seat.lands - seat.manaOpen;
+  const creaturesTapped = t.creatures - t.untapped;
+  return (
+    permCell("land", "land", seat.lands, seat.manaOpen,
+      plural(seat.lands, "land") + " — " + seat.manaOpen + " untapped, " + landsTapped + " tapped") +
+    permCell("creature", "creature", t.creatures, t.untapped,
+      plural(t.creatures, "creature") + " — " + t.untapped + " untapped, " + creaturesTapped + " tapped") +
+    permCell("other", "other", t.other, null,
+      t.other === 0 ? "No artifacts or enchantments"
+      : t.other === 1 ? "1 artifact or enchantment"
+      : t.other + " artifacts or enchantments")
+  );
+}
+
+/* THE DETAIL. 03's pips, and the only place fliers are drawn: one pip per
+   creature, filled is untapped, a clipped corner flies. It no longer carries
+   the count -- the cell to its left does -- so capping it is free. */
+function detailCell(seat) {
+  const t = seat.threat;
+  const n = Math.min(t.creatures, MAX_PIPS);
+  let up = t.untapped;
+  let fly = t.fliers;
+  const out = [];
+  for (let i = 0; i < n; i += 1) {
+    /* Untapped first and fliers first, so the pips a player cares about are the
+       ones that survive the cap. */
+    const isUp = up-- > 0;
+    const isFly = fly-- > 0;
+    out.push('<span class="pip' + (isUp ? " pip--up" : "") + (isFly ? " pip--fly" : "") + '"></span>');
+  }
+  const more = t.creatures > MAX_PIPS ? '<span class="pips__more">+' + (t.creatures - MAX_PIPS) + "</span>" : "";
+  const label = (t.fliers ? plural(t.fliers, "flier") + ", " : "") + t.power + " power on board";
+  return (
+    '<span class="perm perm--detail" data-cell data-name aria-label="' + esc(label) + '">' +
+      '<span class="pips">' + (out.join("") || '<span class="pips__more">none</span>') + more + "</span>" +
+      '<span class="perm__pow">' + ico("power") + "<span>" + t.power + "</span></span>" +
+    "</span>"
+  );
+}
+
+function seatHTML(seat, f) {
+  const cls = [
+    "card",
+    f.active ? "card--active" : "",
+    f.targetable ? "card--targetable" : "",
+    f.out ? "card--out" : "",
+  ].filter(Boolean).join(" ");
+
+  /* The ticks close from the right, stacked and each offset by the ones outside
+     it, so the track reads as one bar eaten from both ends. */
+  let offset = 0;
+  const ticks = sources(seat)
+    .filter((src) => src.n > 0)
+    .map((src) => {
+      const w = (Math.min(src.n, LETHAL) / LETHAL) * 100;
+      const html =
+        '<span class="tick' + (src.n >= WARN ? " tick--warn" : "") + '" data-name ' +
+        'style="--w:' + w + "%; right:" + offset + '%" ' +
+        'aria-label="' + esc(src.n + " of " + LETHAL + " from " + src.who + " — " + src.cmdr) + '"></span>';
+      offset += w;
+      return html;
+    })
+    .join("");
+
+  const all = sources(seat);
+  const worst = all.slice().sort((a, b) => b.n - a.n)[0] || { n: 0, who: "nobody", cmdr: "" };
+  const gaugeLabel =
+    seat.life + " life of " + START_LIFE + " — " +
+    (worst.n === 0
+      ? "no commander damage yet"
+      : "worst commander damage " + worst.n + " of " + LETHAL + " from " + worst.who);
+
+  /* The counts stay, and so does finding 1 -- it just governs the SHEET now
+     rather than the strip. `z.peek` is still what decides whether a zone has
+     anything behind it; here it decides what the sheet will open, not what this
+     row does, because this row does not open anything. */
+  const zone = zones(seat).map((z) =>
+    '<span class="zmark zmark--' + z.kind + (z.count > 0 ? "" : " zmark--empty") + '"' +
+    ' data-cell data-name data-testid="pile-' + seat.pid + "-" + z.name + '"' +
+    ' aria-label="' + esc(z.label + ": " + z.count + (z.peek ? " — opens in the seat sheet" : "")) + '">' +
+    ico(z.icon) + z.count + "</span>"
+  ).join("");
+
+  /* 02's move, and it carries more weight now that the zone marks are not
+     stops: THE SEAT IS THE TARGET. It takes the player-target action when one
+     is legal and otherwise opens the seat sheet -- through `onSelect` and never
+     a `data-action-id`, which `e2e/cycle3.spec.ts` asserts the action panel
+     owns alone. 332x96 of target, which clears every floor in the round. */
+  return (
+    '<article class="' + cls + '" data-stop="seat-' + seat.pid + '" data-testid="player-' + seat.pid + '">' +
+      (f.noart
+        ? ""
+        : '<img class="card__ground" src="' + artUrl(seat.art) + '" alt="" aria-hidden="true">') +
+      '<span class="card__veil' + (f.noart ? " card__veil--flat" : "") + '" aria-hidden="true"></span>' +
+      (f.active ? '<span class="card__pri"></span>' : "") +
+
+      '<span class="card__win' + (f.noart ? " card__win--empty" : "") + '" data-name ' +
+        'aria-label="' + esc(seat.cmdr) + '">' +
+        (f.noart ? ico("cmd") : '<img src="' + artUrl(seat.art) + '" alt="" aria-hidden="true">') +
+      "</span>" +
+
+      '<div class="card__head">' +
+        '<span class="card__name">' + esc(seat.name) + "</span>" +
+        '<span class="card__cmdr' + (f.out ? " card__cmdr--out" : "") + '">' + esc(subline(seat, f)) + "</span>" +
+      "</div>" +
+
+      '<div class="gauge" data-cell data-name style="--fill:' +
+        (Math.min(seat.life / START_LIFE, 1) * 100) + '%" aria-label="' + esc(gaugeLabel) + '">' +
+        ticks +
+        '<span class="card__life tabular" data-testid="life-' + seat.pid + '">' +
+          (f.out ? "OUT" : seat.life) +
+        "</span>" +
+        '<span class="gauge__dmg' + (worst.n >= WARN ? " gauge__dmg--warn" : "") +
+          (worst.n === 0 ? " gauge__dmg--zero" : "") + '">' +
+          ico("crown") + worst.n +
+        "</span>" +
+      "</div>" +
+
+      '<div class="card__perms">' + perms(seat) + detailCell(seat) + "</div>" +
+      '<div class="card__zones">' + zone + "</div>" +
+    "</article>"
+  );
+}
+
+/* The three ghost builders, reassigned rather than edited in `_seat.js` -- see
+   the note above the shell rules for why this is scoped to 06. They are
+   function DECLARATIONS in the master and the master is inlined into this same
+   script, so a plain assignment rebinds them; `render()` is called at the
+   bottom of this file and by the `1 2 3 / s / m` handler, and both see these.
+
+   The card counts are the viewer's real board out of `../handheld/_handheld.js`
+   and are not adjusted to the sketch: twelve lands, eight creatures and one
+   enchantment (Zendikar's Roil). The ghost keeps drawing cards rather than
+   empty labelled boxes because that is the whole reason it exists -- a claim
+   about how much room a seat costs should be visible as cards it is not. */
+
+ghostBoard = function () {
+  return (
+    '<div class="gh gh--mine" aria-hidden="true">' +
+    '<div class="gh__side"><span class="gh__tag">Player orb</span></div>' +
+    '<div class="gh__lanes">' +
+    ghostRow("Creatures", 8) +
+    ghostRow("Enchantments · artifacts", 1) +
+    ghostRow("Lands", 12) +
+    "</div>" +
+    "</div>"
+  );
+};
+
+ghostRail = function () {
+  return (
+    '<div class="gh gh--rail" aria-hidden="true">' +
+    '<span class="gh__tag">Stack · actions · preview</span>' +
+    '<span class="gh__slab">Buttons</span>' +
+    "</div>"
+  );
+};
+
+/* The hand loses the commit slab, which is now the foot of the rail. */
+ghostFoot = function () {
+  return (
+    '<div class="gh gh--foot" aria-hidden="true">' +
+    '<span class="gh__tag">Hand</span>' +
+    Array.from({ length: 6 }, () => '<span class="gh__card gh__card--hand"></span>').join("") +
+    "</div>"
+  );
+};
+
+render();
+</script>
+</body>
+</html>

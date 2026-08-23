@@ -38,7 +38,10 @@ decoration: a 1280x800 design opened in a 2560px window is being judged at half
 the angular size a Deck would show it at, and every legibility call made that way
 is wrong in the direction that flatters the design.
 
-These are about the **pad**. [`../`](../README.md) is the board exploration,
+These are about the **pad**. [`../seat/`](../seat/README.md) is the follow-up
+that takes one component of this screen -- an opponent's seat -- and re-draws it
+at all three pod densities; it inherits this round's 16px and 44px floors
+unchanged. [`../`](../README.md) is the board exploration,
 [`../cards/`](../cards/README.md) the card face, [`../orb/`](../orb/README.md)
 the player panel, [`../menu/`](../menu/README.md) the main menu and
 [`../flow/`](../flow/README.md) the lobby flow. All six share `../art/`.

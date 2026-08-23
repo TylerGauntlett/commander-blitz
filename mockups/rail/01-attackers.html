@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Action rail — Attackers (rail 01)</title>
+<style>
+/* <<< BEGIN _rail.css >>> */
+/*
+ * The frame every rail mockup is judged inside, and the grammar all three share.
+ *
+ * NOT LINKED. `inline.py` splices this between each file's BEGIN and END
+ * `_rail.css` markers, so every file opens standalone from file://.
+ *
+ * WHAT IS IN HERE: the Deck bezel, the ghosted board and foot the rail is taking
+ * room from, the palette (the shipped client's, token for token, out of
+ * frontend/src/theme.css), and -- unlike `../seat/_seat.css` -- the whole shared
+ * grammar of the rail: the row, the numeral chip, the commit panel, the marks,
+ * the holds.
+ *
+ * THAT DIFFERENCE IS THE POINT OF THE ROUND. The seat round withheld a shared
+ * plate style because uniformity was the thing being argued about. Here
+ * uniformity IS the thesis: 02 and 03 are 01's grammar carried into the block
+ * step and the play step, and if each file were free to restyle the row then
+ * "the same panel answers every decision" would be a claim the files themselves
+ * disprove. So a file may only add the shape of ITS OWN LIST. Everything around
+ * the list is here, once.
+ */
+
+/* Tokens ------------------------------------------------------------------
+   frontend/src/theme.css, unchanged. Any drift here is a mockup lying about
+   what it would look like. */
+
+:root {
+  --void-0: #0b0a16;
+  --void-1: #141328;
+  --void-2: #1d1b38;
+  --edge: rgba(150, 140, 255, 0.16);
+  --edge-hi: rgba(170, 160, 255, 0.3);
+  --astral: #8f7fe8;
+  --astral-hi: #c3b6ff;
+
+  --pane-bg: rgba(20, 19, 40, 0.6);
+  --pane-well: rgba(13, 12, 28, 0.78);
+  --pane-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 26px rgba(0, 0, 0, 0.45);
+
+  --mana-W: #fffbd5;
+  --mana-U: #aae0fa;
+  --mana-B: #cbc2bf;
+  --mana-R: #f9aa8f;
+  --mana-G: #9bd3ab;
+  --mana-C: #d5d5d5;
+  --mana-generic: #cfc9bd;
+  --mana-ink: #1a1a1a;
+
+  --playable: #5ce08a;
+  --targetable: #58b6ff;
+  --staged: #ffc14d;
+  --attacking: #ff6b5e;
+  --danger: #ff5c5c;
+  --gain: #6ee7a0;
+  --gold: #ffd479;
+  --ability: #c39bff;
+
+  --text: #e6e3f5;
+  --text-dim: #a09bc4;
+  --text-faint: #6b6690;
+
+  --focus: #ffe08a;
+
+  /*
+   * THE TWO FLOORS, and they decide the layout rather than decorate it.
+   *
+   * `../handheld/` measured 444 of 635 elements below 12px on the shipped board
+   * at 1280x800, the smallest at 2.11px, and took 16px as a hard constraint.
+   * 44px is the same argument for a thumb. `assert.js` fails on one element
+   * under either.
+   */
+  --fs-floor: 16px;
+  --hit-floor: 44px;
+
+  /*
+   * The right rail's real width at 1280x800.
+   *
+   * `handheld.css:150` is `--rail-r: clamp(224px, 19vw, 280px)`, and 19vw of
+   * 1280 is 243.2. Not rounded to 240: the round is about what fits in this
+   * column, and three of those pixels are a P/T.
+   */
+  --rail-r: 243px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  display: grid;
+  place-items: center;
+  background: #06050c;
+  color: var(--text);
+  font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The bezel ---------------------------------------------------------------
+   A 1280x800 screen, scaled to whatever window is open, so a mockup reviewed on
+   a 2560px monitor is still being reviewed at Deck density. `_rail.js` writes
+   the transform; nothing here may change the deck's own pixel size, or every
+   number the gate prints is wrong in the direction that flatters the design. */
+
+.bezel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 10px 10px 34px;
+}
+
+.deck {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 14px;
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143, 127, 232, 0.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90, 190, 220, 0.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+  transform-origin: center center;
+}
+
+.bezel__tag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  color: var(--text-faint);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.bezel__tag b { color: var(--astral-hi); font-weight: 600; }
+.bezel__tag i { color: var(--danger); font-style: normal; }
+
+/* The shell ---------------------------------------------------------------
+   `.table` as `board.css` builds it on a handheld: a phase ribbon, a body of
+   board-plus-rail, a foot of hand-plus-strip. Everything but the rail is a
+   GHOST -- drawn dim, drawn to scale, and not part of the design. It is here so
+   the height the rail is spending is visible rather than asserted. */
+
+.shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+}
+
+/*
+ * THE RIBBON IS TWO ROWS, AND THAT IS WHY THE RAIL IS 514px.
+ *
+ * `handheld.css:1774-1779` raises `.track__step-label` back to 16px rather than
+ * dropping it -- "which combat step you are in is the difference between
+ * declaring attackers and taking damage" -- and thirteen labels at 16px do not
+ * fit 1264px on one line, so the ribbon wraps. Drawn here as a flat 40px strip
+ * it came out 35px short and handed the rail 549px it does not have, which is
+ * the exact way a mockup ends up proving something the device will not do.
+ *
+ * With it wrapping, this shell's rail measures 514px -- the number
+ * `handheld.css:1540` states for the same column -- so every figure the gate
+ * prints is directly comparable with the shipped breakdown.
+ */
+.track {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  height: 75px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--edge);
+  color: var(--text-faint);
+  font-size: 16px;
+}
+.track__turn { flex: 0 0 100%; color: var(--text-dim); }
+.track__turn b { color: var(--text); font-weight: 700; }
+.step { padding: 1px 7px; border-radius: 6px; opacity: 0.45; white-space: nowrap; }
+.step--now { background: rgba(255, 193, 77, 0.16); color: var(--staged); font-weight: 700; opacity: 1; }
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rail-r);
+  gap: 8px;
+  min-height: 0;
+  padding: 6px;
+}
+
+/* The ghost ---------------------------------------------------------------
+   Deliberately low contrast and deliberately real: an opponent strip at
+   `--pod-seat-h`, three lanes of the viewer's own board, a five-card fan. If a
+   direction wants more rail it takes it from here, and here is where you see it
+   go. */
+
+.ghost { min-width: 0; display: grid; grid-template-rows: 96px minmax(0, 1fr); gap: 4px; opacity: 0.34; }
+
+.gseat, .gmat {
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: var(--pane-bg);
+}
+
+.gseat { display: flex; align-items: center; gap: 10px; padding: 6px 8px; }
+.gseat__art { width: 150px; height: 46px; border-radius: 6px; background: linear-gradient(120deg, #3a2f52, #191430); }
+.gseat__col { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.gbar { height: 12px; border-radius: 4px; background: rgba(255, 255, 255, 0.09); }
+
+.gmat { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 6px; }
+.glane { display: flex; align-items: center; gap: 5px; }
+.gcard { width: 74px; height: 104px; flex: none; border-radius: 5px; background: linear-gradient(160deg, #4a4160, #221c38); }
+
+/*
+ * TWO ROWS, because the real foot is two rows.
+ *
+ * `handheld.css:334-340` lays it out as `"hand hand slab" / "tools hints slab"`,
+ * and drawing it as one row here would quietly hand the rail 44px it does not
+ * have -- which is the exact way a mockup ends up proving something the device
+ * will not do. The `slab` column is deliberately absent: the whole argument of
+ * this round is that the commit belongs in the rail, and leaving its cell here
+ * would be drawing both answers at once.
+ */
+.gfoot {
+  display: grid;
+  grid-template-areas: "hand hand" "tools hints";
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 2px 10px;
+  padding: 2px 8px 4px;
+}
+.gfoot .tools { grid-area: tools; }
+.gfoot .hints { grid-area: hints; }
+.gfan { grid-area: hand; display: flex; align-items: flex-end; gap: 4px; height: 147px; justify-content: center; opacity: 0.34; }
+.gfan i { width: 74px; height: 104px; border-radius: 5px; background: linear-gradient(160deg, #f3ece0, #ddd2be); }
+.gfan i:nth-child(1) { transform: rotate(-8deg) translateY(6px); }
+.gfan i:nth-child(2) { transform: rotate(-4deg) translateY(2px); }
+.gfan i:nth-child(4) { transform: rotate(4deg) translateY(2px); }
+.gfan i:nth-child(5) { transform: rotate(8deg) translateY(6px); }
+
+/* ==========================================================================
+   THE RAIL -- the only live thing on the screen
+   ==========================================================================
+
+   One job. `handheld.css:1540-1554` records what it was doing before: "514px on
+   a 1280x800 screen, and four things want it: the stack, the card you are
+   reading, the list of things you can do, and the commit slab", with the action
+   list measured at 41px holding 197px of content. The stack and the card leave
+   for holds; the slab comes back off the foot; what is left is the decision and
+   the button that sends it.
+   ========================================================================== */
+
+.rail { display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
+
+/*
+ * NO PANE AROUND THE LIST, and that is a decision rather than an omission.
+ *
+ * The rows are already bordered rectangles. A well around the only content in
+ * the column is a frame around a frame, and `.acts` in `ui.css:117-130` spends
+ * 22px of height and 20px of width on it. What keeps a surface is the commit
+ * panel, which is then the one recessed thing in the rail and reads as the
+ * floor the decision lands on.
+ */
+.acts { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /*
+   * THE GUTTER IS RESERVED. A styled `::-webkit-scrollbar` is a classic bar, not
+   * an overlay, so it takes 8px out of the content box the instant it appears
+   * and every row re-wraps under the pointer. That is one of the five defects
+   * this round was opened on and it is one declaration.
+   */
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-hi) transparent;
+}
+.list::-webkit-scrollbar { width: 8px; }
+.list::-webkit-scrollbar-thumb { background: var(--edge-hi); border-radius: 4px; }
+.list::-webkit-scrollbar-track { background: transparent; }
+
+/* The row -----------------------------------------------------------------
+   `--tone` is the row's colour and the same token the card's own rim uses on the
+   board, so a staged attacker is amber in both places. Declared per row kind and
+   consumed in one place. */
+
+.act {
+  --tone: var(--staged);
+  /* So `.says`' hover label has something to position against. Every row in 02
+     and 03 carries one; 01's rows have nothing to say that is not already on
+     them. */
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: var(--hit-floor);
+  padding: 4px 9px;
+  border: 1px solid var(--edge);
+  border-left: 3px solid transparent;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-floor);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms, background 120ms, color 120ms;
+}
+.act:hover { border-color: var(--edge-hi); background: rgba(255, 255, 255, 0.07); }
+
+/* Chosen fills. The one place the tone fills, which is what the flat chrome
+   around it exists to leave room for. */
+.act.on {
+  border-color: var(--tone);
+  border-left-color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 14%, transparent);
+  color: var(--tone);
+}
+
+.act--playable { --tone: var(--playable); border-left-color: var(--tone); }
+.act--ability { --tone: var(--ability); border-left-color: var(--tone); }
+
+/*
+ * THE NUMERAL CHIP, SIZED FOR THE LINE IT HOLDS.
+ *
+ * `ui.css:291-303` draws this at 19x19 for 10.5px type and the handheld floor
+ * takes the type to 16 without touching the box. A 16px Segoe line box is about
+ * 21px: it cannot centre inside 19, which is why the numbers in the shipped
+ * panel sit low. Same shape of bug as `.pile__stack`, already documented one
+ * file over, and the same fix -- the box holds the LINE, not the glyph.
+ */
+.key {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-faint);
+  font-size: var(--fs-floor);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.act.on .key { border-color: var(--tone); color: var(--tone); }
+
+.nm { flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pt { flex: 0 0 auto; font-weight: 800; font-variant-numeric: tabular-nums; opacity: 0.85; }
+
+/*
+ * Mana, as the letter-on-a-disc stand-in.
+ *
+ * The shipped client draws the published Scryfall SVGs
+ * (`../cards/fetch_symbols.py` vendored them to `frontend/public/symbols/`), so
+ * these discs are a stand-in and the letters inside them are `aria-hidden` --
+ * the cost is carried in real text by `.cost`'s own `aria-label`, which is what
+ * `ManaSymbol` + `SymbolText` do in the client. That is the honest line the type
+ * gate draws: a mark may be under the floor when the fact it carries is text
+ * somewhere a screen reader and the ring can both reach.
+ *
+ * A DISC IS 20px AND THAT IS A FINDING, not a taste call. `.act__cost` in the
+ * shipped panel sizes off `--pip`, which resolves against the `:root` card
+ * width; here the whole point is whether a cost fits a 243px row next to a name
+ * and a numeral chip, and the answer is that three pips take 64px of about 223,
+ * leaving 115 for a name that wants 145. See the README's third finding.
+ */
+.cost { display: flex; flex: 0 0 auto; gap: 2px; }
+.pip {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--mana-generic);
+  color: var(--mana-ink);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.pip--W { background: var(--mana-W); }
+.pip--U { background: var(--mana-U); }
+.pip--B { background: var(--mana-B); }
+.pip--R { background: var(--mana-R); }
+.pip--G { background: var(--mana-G); }
+.pip--C { background: var(--mana-C); }
+
+/* ==========================================================================
+   The commit panel
+   ==========================================================================
+
+   In the rail, under the list, and the only recessed surface in the column.
+
+   It was in the foot: `handheld.css:384-416` right-aligns `.foot__slab` and
+   `.commit-dock` is `align-items: flex-end`, so the slab shrink-wraps its label
+   while the alternatives row shrink-wraps its own -- two stacked controls, two
+   different widths, neither anchored to the other. One row of three on one
+   baseline cannot reproduce that.
+   ========================================================================== */
+
+.commit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 8px;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: var(--pane-well);
+  box-shadow: var(--pane-shadow);
+}
+
+.bar { display: flex; align-items: stretch; gap: 6px; width: 100%; }
+
+.bar__go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 48px;
+  padding: 0 8px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffd479, #e8ac3c);
+  color: #2a1c04;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: filter 120ms;
+}
+.bar__go:hover { filter: brightness(1.06); }
+
+/*
+ * THE LABEL NEVER CHANGES WIDTH, and that is the whole of it.
+ *
+ * `Attack with 0` -> `Attack with 1` -> `Attack with 10` re-centres itself every
+ * time a creature is staged: the button moves while you are aiming at it. The
+ * count is already on screen as the number of filled rows, and this is the only
+ * thing left carrying "you have picked nothing" -- which is what the empty state
+ * is for.
+ */
+.bar__go[data-empty="true"] {
+  border-color: var(--edge);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+/*
+ * All and None, as marks.
+ *
+ * The house rule for a control that will not fit its word: DROP THE WORD, KEEP
+ * THE MARK, PUT THE NAME ONE INPUT AWAY -- written for the compact piles at
+ * `handheld.css:819-944`, and the same situation. `.commit-alt button` takes
+ * both floors on top of the desktop pill's padding and comes out larger than the
+ * slab it serves; a 44px square on the bar's own radius cannot.
+ *
+ * Filled and empty of ONE shape, because that is the relationship: every legal
+ * choice, or none of them.
+ */
+.mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--hit-floor);
+  min-height: 48px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms, background 120ms;
+}
+.mark:hover { border-color: var(--astral); color: var(--text); background: rgba(255, 255, 255, 0.06); }
+.mark:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* The name, from `aria-label` and never from a second hand-written string: the
+   accessible name and the visible one cannot then disagree, which is the failure
+   mode a duplicated label always eventually reaches. */
+.mark::after, .says::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 6;
+  padding: 3px 8px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(3px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  pointer-events: none;
+}
+.mark:hover::after, .mark:focus-visible::after,
+.says:hover::after, .says:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark::after, .says::after { transition: none; }
+}
+
+/* ==========================================================================
+   The holds
+   ==========================================================================
+
+   Reading a card and checking the stack are OCCASIONAL. Neither earns a
+   permanent column, and this app already decided what an occasional full-screen
+   answer looks like: `.oppboard` (handheld.css:1314-1338) is fixed at
+   `inset: 8px`, held on R2, and "owns the screen while it is up, which is why it
+   can afford a generous card size and why it is outside the zoom solver
+   entirely". `.logover` is the same family. These are two more of them.
+   ========================================================================== */
+
+.over {
+  position: absolute;
+  inset: 8px;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 14px;
+  background: rgba(11, 10, 22, 0.97);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+}
+.over[hidden] { display: none; }
+
+.over__head {
+  align-self: start;
+  justify-self: center;
+  color: var(--text-faint);
+  font-size: var(--fs-floor);
+}
+
+/*
+ * The card hold is the card, and nothing else.
+ *
+ * `CardPreview`'s `preview__facts` list does not travel: the keywords are in the
+ * rules text, the status is the tap state and the lane it is in, the controller
+ * is whose mat it is on, and the artist is not why anyone opens this. A column
+ * of restated facts beside a card is the drop rule again -- a label whose
+ * subject is on screen -- except here the subject is 440px tall.
+ */
+.over--card .big { width: 340px; height: 476px; }
+
+.big { display: flex; }
+
+.face {
+  --card-w: 150px;
+  --fs-nm: 22px;
+  --fs-tp: 17px;
+  --fs-tx: 18px;
+  --fs-pt: 22px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 2px solid #4c4550;
+  border-radius: 14px;
+  background: linear-gradient(155deg, var(--f-hi, #b6aeac), var(--f-lo, #2e282b));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+.face--B { --f-hi: #b6aeac; --f-lo: #2e282b; }
+
+/* Stood in with gradients rather than a bitmap. The round is about the rail; the
+   crop only has to be a picture. Files that want the real thing use `../art/`,
+   which is what `fetch_art.py` fills. */
+.face__art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(58px 58px at 74% 22%, rgba(255, 246, 214, 0.85), rgba(255, 246, 214, 0.12) 60%, transparent 72%),
+    radial-gradient(120% 70% at 20% 100%, rgba(28, 16, 40, 0.95), transparent 62%),
+    radial-gradient(90% 60% at 80% 10%, rgba(86, 60, 116, 0.7), transparent 70%),
+    linear-gradient(180deg, #241a33 0%, #150f22 55%, #0c0912 100%);
+}
+.face__art::after {
+  content: "";
+  position: absolute;
+  inset: 34% 8% 22% 12%;
+  background:
+    radial-gradient(60% 100% at 50% 100%, rgba(8, 6, 14, 0.92), transparent 70%),
+    conic-gradient(from 200deg at 50% 90%, transparent 0deg, rgba(10, 8, 18, 0.8) 30deg, transparent 74deg);
+}
+
+.face__head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 26%;
+  padding: 12px 14px 26px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.565) 55%, rgba(0, 0, 0, 0));
+}
+.face__title { display: flex; align-items: flex-start; gap: 8px; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85); }
+.face__glyph { flex: 0 0 auto; color: #e9e4d2; font-size: var(--fs-nm); line-height: 1.15; }
+.face__name { flex: 1; min-width: 0; color: #f6f2e6; font-size: var(--fs-nm); line-height: 1.14; }
+
+.face__foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+  min-height: 0;
+  padding: 34px 14px 12px;
+  background: linear-gradient(0deg, rgba(11, 11, 15, 0.96) 62%, rgba(11, 11, 15, 0.86) 78%, rgba(0, 0, 0, 0));
+}
+.face__type { color: #e2ddcd; font-size: var(--fs-tp); font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85); }
+/*
+ * The rules box reserves its gutter too, and the gate is why.
+ *
+ * `cards.css:493-500` gives `.face--big .face__rules` `overflow-y: auto` -- the
+ * part of the enlarged card that gives when a card has more text than the frame
+ * shows. It is the same classic scrollbar as the action list's, so a card whose
+ * rules are one line past the fold re-wraps every line of its own text the
+ * moment the bar appears. Found by pointing this round's gutter gate at the card
+ * hold, on a surface the round was not looking at.
+ */
+.face__rules {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  min-height: 0;
+  padding: 6px 0 8px;
+  color: #eae7dc;
+  font-size: var(--fs-tx);
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.69);
+}
+.face__footer { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; min-height: 30px; }
+.face__stats {
+  margin-left: auto;
+  padding: 2px 10px;
+  border-radius: 6px;
+  background: rgba(12, 12, 16, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  color: #f7f4ea;
+  font-size: var(--fs-pt);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The stack hold. Opens ITSELF when you take priority with anything on it --
+   unlike the log, the stack is a thing you need mid-decision, which is why it
+   was moved into this rail in the first place. A hold you have to remember to
+   press is not a replacement for a panel that was always visible. */
+.over--stack { align-content: center; }
+.stacklist { display: flex; flex-direction: column; gap: 8px; width: 420px; }
+.sitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--hit-floor);
+  padding: 8px 12px;
+  border: 1px solid var(--edge);
+  border-left: 3px solid var(--ability);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: var(--fs-floor);
+}
+.sitem--top { border-left-color: var(--targetable); background: rgba(88, 182, 255, 0.09); }
+.sitem b { font-weight: 700; }
+.sitem span { margin-left: auto; color: var(--text-faint); }
+
+/* The hint bar ------------------------------------------------------------
+   Where this app names its keys, and therefore where the holds are named. It
+   costs the rail nothing. */
+
+.hints { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; padding: 4px 12px 2px; font-size: var(--fs-floor); color: var(--text-dim); }
+.hint { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.hint__verb { color: var(--text); }
+
+/*
+ * The glyph gets `.key`'s treatment, for `.key`'s reason.
+ *
+ * `board.css:1680-1693` draws it as an 18px box at 11px type; the floor takes
+ * the type to 16 and leaves the box at 18. It is the same defect one surface
+ * over, found while building this round.
+ */
+.glyph {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  line-height: 1;
+}
+.glyph--live { border-color: var(--staged); color: var(--staged); background: rgba(255, 193, 77, 0.14); }
+
+.tools { display: flex; gap: 4px; flex: 0 0 auto; }
+.tool {
+  display: grid;
+  place-items: center;
+  min-width: var(--hit-floor);
+  min-height: var(--hit-floor);
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-faint);
+  font: inherit;
+  font-size: var(--fs-floor);
+  cursor: pointer;
+}
+.tool:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
+
+/* The ring ----------------------------------------------------------------
+   `handheld.css`'s own, because a control that cannot be reached by the pad is
+   not a control on this device. Files do not restyle it. */
+
+[data-cursor] {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(255, 224, 138, 0.5), 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+:focus:not([data-cursor]), :focus-visible:not([data-cursor]) { outline: none; }
+
+/* The review skin ---------------------------------------------------------
+   `m` runs the gate and draws its failures where they are. A gate whose only
+   output is a console object gets read once. */
+
+[data-bad] { outline: 2px dashed var(--danger) !important; outline-offset: 1px; }
+[data-bad]::before {
+  content: attr(data-bad);
+  position: absolute;
+  z-index: 60;
+  margin: -14px 0 0 -2px;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: var(--danger);
+  color: #1a0505;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* <<< END _rail.css >>> */
+
+/*
+ * 01 ADDS NO CSS, and that is the file's first argument.
+ *
+ * Declaring attackers is a list of your creatures and a button that sends them.
+ * Everything it needs -- the row, the numeral chip, the P/T, the commit panel,
+ * the two marks -- is the shared grammar in `_rail.css`, because the shared
+ * grammar was designed here first. 02 and 03 are the test of whether it
+ * generalises; this file is what it generalises FROM.
+ *
+ * If a rule ever appears below this comment, the round has lost its claim.
+ */
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// <<< BEGIN _rail.js >>>
+/*
+ * The shell every rail mockup is mounted into, and the two holds all three share.
+ *
+ * NOT LINKED. `inline.py` splices this between each file's BEGIN and END
+ * `_rail.js` markers. Same contract as `../seat/_seat.js` and for the same
+ * reason: a mockup has to open standalone from file://, file:// blocks the fetch
+ * a module import would need, and three hand-inlined copies of one file quietly
+ * stop being the same file.
+ *
+ * WHAT IS IN HERE: the ghosted board, the ghosted foot, the phase ribbon, the
+ * card and stack holds, the review keys, the deck fit, and `RAIL.mount()`.
+ *
+ * WHAT IS NOT: any list. A file supplies its own `list` markup and its own
+ * `wire`, and that is the only thing the three differ by -- which is the round's
+ * claim, so it had better be the only thing.
+ *
+ * NOTHING HERE RUNS ON LOAD. `render()` needs the file's list, so the file calls
+ * `RAIL.mount({...})` at the end of its own script.
+ */
+
+/* The board under the rail ------------------------------------------------
+   Turn 8 of the reference screenshot at 1280x800, same as every other round in
+   this folder: one opponent, three lanes, five in hand. Ghosted, because none of
+   it is the design -- it is the room the design is spending. */
+
+const GHOST_LANES = [4, 2, 6];
+
+/*
+ * All thirteen, because all thirteen are in the document.
+ *
+ * `e2e/smoke.spec.ts` counts them and the marker's `layoutId` animation runs
+ * across them, so a ribbon that draws five is not the ribbon this rail sits
+ * under -- and the height of the real one is what leaves the rail its 514px.
+ */
+const STEPS = [
+  "Untap", "Upkeep", "Draw", "Main 1", "Begin combat", "Attackers", "Blockers",
+  "First strike", "Damage", "End combat", "Main 2", "End step", "Cleanup",
+];
+
+const ribbon = (now) =>
+  '<span class="track__turn">Turn <b>8</b> · <b>You</b></span>' +
+  STEPS.map(
+    (s) => '<span class="step' + (s === now ? " step--now" : "") + '">' + esc(s) + "</span>"
+  ).join("");
+
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const ghostBoard = () =>
+  '<div class="ghost" aria-hidden="true">' +
+    '<div class="gseat">' +
+      '<div class="gseat__art"></div>' +
+      '<div class="gseat__col">' +
+        '<div class="gbar" style="width:40%"></div>' +
+        '<div class="gbar" style="width:72%"></div>' +
+      "</div>" +
+    "</div>" +
+    '<div class="gmat">' +
+      GHOST_LANES.map(
+        (n) => '<div class="glane">' + '<div class="gcard"></div>'.repeat(n) + "</div>"
+      ).join("") +
+    "</div>" +
+  "</div>";
+
+/* Areas, not source order: the hand is drawn above the strip (a raised card
+   rises out of `.hand` and would otherwise draw over the hints), but the ring
+   walks the strip first, which is the order a thumb wants. Same reasoning as
+   `handheld.css:299-340`. */
+const ghostFoot = (hints) =>
+  '<div class="gfoot">' +
+    '<div class="tools">' +
+      '<button class="tool" type="button" aria-label="Sound">&#128266;</button>' +
+      '<button class="tool" type="button" aria-label="Undo">&#8634;</button>' +
+      '<button class="tool" type="button" aria-label="Quit">&#10005;</button>' +
+    "</div>" +
+    '<div class="gfan" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>' +
+    '<div class="hints">' + hints + "</div>" +
+  "</div>";
+
+const hint = (glyph, verb, live) =>
+  '<span class="hint"><b class="glyph' + (live ? " glyph--live" : "") + '">' + glyph +
+  '</b> <span class="hint__verb">' + esc(verb) + "</span></span>";
+
+/* The two holds -----------------------------------------------------------
+   Both are `.oppboard`'s family: fixed over the whole screen, owning it while
+   they are up, outside the zoom solver. `o` and `k` stand in for Y and X. */
+
+const CARD = {
+  name: "Vampire Nighthawk",
+  type: "Creature — Vampire Shaman",
+  rules: "Flying, deathtouch, lifelink",
+  pt: "2/3",
+  cost: [["1", "generic"], ["B", "B"], ["B", "B"]],
+};
+
+/* The letter is decoration; the cost is `costHTML`'s `aria-label`. See the note
+   on `.pip` in `_rail.css` for why that is the honest line and not a way round
+   the type gate. */
+const pipHTML = ([label, tone]) =>
+  '<span class="pip pip--' + tone + '" aria-hidden="true">' + esc(label) + "</span>";
+
+const costHTML = (cost) =>
+  '<span class="cost" aria-label="' + cost.map(([l]) => "{" + l + "}").join("") + '">' +
+  cost.map(pipHTML).join("") + "</span>";
+
+const cardHold = () =>
+  '<div class="over over--card" id="hold-card" hidden>' +
+    '<p class="over__head">B to close</p>' +
+    '<div class="big">' +
+      '<div class="face face--B">' +
+        '<div class="face__art" aria-hidden="true"></div>' +
+        '<div class="face__head">' +
+          '<div class="face__title">' +
+            '<span class="face__glyph" aria-hidden="true">◆</span>' +
+            '<span class="face__name">' + esc(CARD.name) + "</span>" +
+          "</div>" +
+          costHTML(CARD.cost) +
+        "</div>" +
+        '<div class="face__foot">' +
+          '<div class="face__type">' + esc(CARD.type) + "</div>" +
+          '<div class="face__rules">' + esc(CARD.rules) + "</div>" +
+          '<div class="face__footer"><span class="face__stats">' + CARD.pt + "</span></div>" +
+        "</div>" +
+      "</div>" +
+    "</div>" +
+  "</div>";
+
+const STACK = [
+  { name: "Lightning Bolt", note: "→ you", top: true },
+  { name: "Sol Ring", note: "ability", top: false },
+];
+
+const stackHold = () =>
+  '<div class="over over--stack" id="hold-stack" hidden>' +
+    '<p class="over__head">B to close</p>' +
+    '<div class="stacklist">' +
+      STACK.map(
+        (s) =>
+          '<div class="sitem' + (s.top ? " sitem--top" : "") + '"><b>' +
+          esc(s.name) + "</b> <span>" + esc(s.note) + "</span></div>"
+      ).join("") +
+    "</div>" +
+  "</div>";
+
+/* The mount ---------------------------------------------------------------
+   A file hands over four things: the phase the ribbon is lit on, its list, its
+   commit bar, and the wiring for both. */
+
+const RAIL = {
+  spec: null,
+
+  mount(spec) {
+    RAIL.spec = spec;
+    RAIL.render();
+    addEventListener("resize", RAIL.fit);
+    addEventListener("keydown", RAIL.key);
+  },
+
+  render() {
+    const spec = RAIL.spec;
+    document.getElementById("root").innerHTML =
+      '<div class="bezel">' +
+        '<div class="deck">' +
+          '<div class="shell">' +
+            '<div class="track">' + ribbon(spec.phase) + "</div>" +
+            '<div class="body">' +
+              ghostBoard() +
+              '<div class="rail" data-testid="rail">' +
+                '<div class="acts"><div class="list" data-testid="action-list">' + spec.list + "</div></div>" +
+                '<div class="commit">' + spec.commit + "</div>" +
+              "</div>" +
+            "</div>" +
+            ghostFoot(spec.hints) +
+          "</div>" +
+          cardHold() +
+          stackHold() +
+        "</div>" +
+        '<div class="bezel__tag" id="tag"></div>' +
+      "</div>";
+
+    if (spec.wire) spec.wire(document.querySelector(".rail"));
+    RAIL.tag();
+    RAIL.fit();
+  },
+
+  /*
+   * The deck is 1280x800 whatever window is open.
+   *
+   * Scaled rather than resized, so every number `assert.js` reads is a real
+   * device pixel. A mockup that reflows to the reviewer's monitor is being
+   * reviewed at the wrong density, and it is always wrong in the direction that
+   * flatters the design.
+   */
+  scale: 1,
+  fit() {
+    const el = document.querySelector(".deck");
+    if (!el) return;
+    RAIL.scale = Math.max(0.3, Math.min(2, Math.min((innerWidth - 26) / 1280, (innerHeight - 84) / 800)));
+    el.style.transform = "scale(" + RAIL.scale + ")";
+    const bezel = document.querySelector(".bezel");
+    if (bezel) {
+      bezel.style.width = 1280 * RAIL.scale + 20 + "px";
+      bezel.style.height = 800 * RAIL.scale + 44 + "px";
+    }
+  },
+
+  tag(extra) {
+    const tag = document.getElementById("tag");
+    if (!tag) return;
+    tag.innerHTML =
+      "<b>" + esc(RAIL.spec.title) + "</b> · 1280×800 @ " +
+      Math.round(RAIL.scale * 100) + "% · keys: <b>o</b> card hold · " +
+      "<b>k</b> stack hold · <b>r</b> reset · <b>m</b> measure" +
+      (extra || "");
+  },
+
+  hold(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const other = document.getElementById(id === "hold-card" ? "hold-stack" : "hold-card");
+    if (other) other.hidden = true;
+    el.hidden = !el.hidden;
+  },
+
+  key(e) {
+    const k = e.key.toLowerCase();
+    if (k === "o") RAIL.hold("hold-card");
+    else if (k === "k") RAIL.hold("hold-stack");
+    else if (k === "escape" || k === "b") {
+      document.getElementById("hold-card").hidden = true;
+      document.getElementById("hold-stack").hidden = true;
+    } else if (k === "r") RAIL.render();
+    else if (k === "m") RAIL.measure();
+  },
+
+  /* The gate, drawn on the elements that failed. */
+  measure() {
+    for (const el of document.querySelectorAll("[data-bad]")) el.removeAttribute("data-bad");
+    const out = RAIL_ASSERT();
+    for (const bad of out.faults) bad.el.setAttribute("data-bad", bad.why);
+    RAIL.tag(
+      " — " + (out.PASS ? "<b>PASS</b>" : "<i>FAIL</i>") +
+      " · rail " + out.railPx + "px, list " + out.listPx + "px (" + out.listShare + ")" +
+      " · surfaces " + out.surfaces +
+      " · scrollers " + out.scrollers + (out.overflowing ? " (" + out.overflowing + " overflowing)" : "") +
+      " · min type " + out.minFontPx + "px · min hit " + out.minHitPx + "px"
+    );
+    console.log(out);
+    return out;
+  },
+};
+// <<< END _rail.js >>>
+
+// <<< BEGIN assert.js >>>
+/*
+ * The gates, as numbers.
+ *
+ * Inlined into every file by `inline.py`, so opening any mockup and typing
+ * `RAIL_ASSERT()` in the console works with no server and no paste -- `fetch()`
+ * is blocked on file://, so a page cannot load its own checker off disk. `m`
+ * runs it and draws the failures on the elements that failed.
+ *
+ *     copy(JSON.stringify(RAIL_ASSERT(), null, 2))
+ *
+ * Four of these are `../handheld/assert.js`'s, unchanged, because this round is
+ * one column of that round's screen and a floor that only applies to the rest of
+ * the screen is not a floor: 16px of type, 44px of target, zero native tooltips,
+ * nothing escaping its box.
+ *
+ * THREE ARE NEW, AND THEY ARE THE ONES THIS ROUND EXISTS FOR.
+ *
+ * `listShare` -- how much of the rail is actually the decision. This is the
+ * complaint the round was opened on, reduced to a fraction.
+ * `handheld.css:1540-1554` records the shipped column: 514px, of which the
+ * preview takes 152, the stack 84, the gaps 16, and the action panel 262 -- and
+ * inside that panel the pane's own chrome takes ~22 and the prompt and its help
+ * line ~68, so the rows get 172. **A third of the column is the thing the turn
+ * is spent in.** A direction that does not move that number has not answered the
+ * complaint however good it looks.
+ *
+ * `surfaces` -- how many boxed containers the rail draws. The shipped rail is
+ * four: stack pane, preview pane, action pane, commit dock. Four bordered wells
+ * stacked in a 243px column is why it reads as a control panel from a different
+ * application than the board beside it. A number is not a verdict -- a direction
+ * may spend a second surface on purpose to separate the choices from the
+ * commit -- but it forbids spending one by accident.
+ *
+ * `scrollers` and `overflowing` -- the reflow-on-hover defect, as a count.
+ * `.stackpanel` and `.acts__list` both scroll (handheld.css:1571-1599) and the
+ * styled `::-webkit-scrollbar` (theme.css:403) is a classic bar, so it takes 8px
+ * out of the content box the instant it appears and every row re-wraps under the
+ * pointer. Two numbers, because they fail differently: a scroller with a
+ * reserved gutter is fine, and a scroller that is ALREADY overflowing at rest is
+ * a list too short for its own content.
+ */
+
+function RAIL_ASSERT() {
+  const DECK = document.querySelector(".deck") || document.body;
+  const FS_FLOOR = 16;
+  const HIT_FLOOR = 44;
+
+  const round = (n) => Math.round(n * 100) / 100;
+
+  const vis = (el) => {
+    const s = getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden" || +s.opacity === 0) return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+
+  /* SCOPE: THE RAIL, NOT THE GHOST AROUND IT.
+     The ghosted board and fan are not the design -- they are the room the design
+     is spending, drawn so the spend is visible. The bezel tag is a note to
+     whoever is reviewing and is not on the Deck's screen. Everything inside
+     `.rail` is the design; the holds are too, and are measured when open. */
+  const rail = DECK.querySelector(".rail");
+  if (!rail) return { PASS: false, why: "no .rail" };
+
+  const holds = [...DECK.querySelectorAll(".over")].filter((el) => !el.hidden);
+  const roots = [rail, ...holds];
+
+  const scale = DECK.getBoundingClientRect().width / (DECK.offsetWidth || 1) || 1;
+  const px = (n) => Math.round(n / scale);
+
+  const all = roots.flatMap((r) => [...r.querySelectorAll("*")]).filter(vis);
+  const faults = [];
+
+  /* --- The type floor ---------------------------------------------------
+     Only elements that OWN text: walking every element counts a wrapper at its
+     inherited size and reports failures that are not on screen. `aria-hidden` is
+     skipped, which is the honest line between a font-size floor and a font-size
+     ban -- this gate is about TEXT SOMEBODY READS. If hiding it from a screen
+     reader would lose information, it is text. */
+  const textOwners = all.filter(
+    (el) =>
+      !el.closest('[aria-hidden="true"]') &&
+      [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+  );
+
+  const sizes = textOwners.map((el) => ({
+    el,
+    /* A font size is a CSS pixel and the bezel's `transform: scale()` does not
+       change it -- only the boxes below are read through the scale. Dividing
+       here reports a 16px floor as 17.9 and passes type that fails on the
+       device. `../seat/assert.js` learned this the hard way. */
+    px: round(parseFloat(getComputedStyle(el).fontSize)),
+    text: el.textContent.trim().slice(0, 32),
+  }));
+  const belowFloor = sizes.filter((s) => s.px < FS_FLOOR).sort((a, b) => a.px - b.px);
+  for (const s of belowFloor.slice(0, 8)) faults.push({ el: s.el, why: s.px + "px" });
+
+  /* --- The target floor -------------------------------------------------
+     Every row in this rail is the only route to the action it names. A row a
+     thumb cannot land on is not a control on this device. */
+  const stops = roots.flatMap((r) => [...r.querySelectorAll("button, [data-stop]")]).filter(vis);
+  const hits = stops.map((el) => {
+    const r = el.getBoundingClientRect();
+    return { el, w: px(r.width), h: px(r.height) };
+  });
+  const smallHits = hits.filter((h) => h.w < HIT_FLOOR || h.h < HIT_FLOOR);
+  for (const h of smallHits.slice(0, 8)) faults.push({ el: h.el, why: h.w + "×" + h.h });
+
+  /* --- The round's own gate: how much of the column is the decision ------ */
+  const railBox = rail.getBoundingClientRect();
+  const list = rail.querySelector(".list");
+  const listBox = list ? list.getBoundingClientRect() : { height: 0 };
+  const railPx = px(railBox.height);
+  const listPx = px(listBox.height);
+
+  /* Rows, not pixels, is what a player experiences. 44 + the 6px gutter. */
+  const rowsVisible = Math.floor((listPx + 6) / (HIT_FLOOR + 6));
+
+  /* --- Surfaces: boxed containers inside the rail ------------------------
+     A "surface" is something that draws itself as a plate -- it has a visible
+     border AND a background of its own. Rows are not surfaces; they are the
+     content. The shipped rail draws four. */
+  const surfaceEls = [rail, ...rail.querySelectorAll("*")].filter((el) => {
+    if (!vis(el)) return false;
+    /* A SURFACE IS A CONTAINER, not anything that happens to draw a plate.
+       Requiring element children is what separates the two, and it matters:
+       without it a filled outcome dot -- a 12px circle with a border and a
+       background -- counted as a surface, and 02's gate reported three where
+       there is one. `button` is out for the same reason: a control that draws
+       itself is a control, and every row and mark in this round is one. */
+    if (el.children.length === 0) return false;
+    if (el.tagName === "BUTTON") return false;
+    if (el.matches(".sitem, .cost, .key")) return false;
+    const s = getComputedStyle(el);
+    const bg = s.backgroundColor;
+    const transparent = bg === "transparent" || /rgba\(.*,\s*0\)$/.test(bg);
+    const bordered = parseFloat(s.borderTopWidth) > 0 || parseFloat(s.borderLeftWidth) > 0;
+    return !transparent && bordered;
+  });
+
+  /* --- Scroll containers ------------------------------------------------- */
+  const scrollEls = all.filter((el) => {
+    const s = getComputedStyle(el);
+    return s.overflowY === "auto" || s.overflowY === "scroll";
+  });
+  const overflowing = scrollEls.filter((el) => el.scrollHeight > el.clientHeight + 1);
+  /* A scroller with no reserved gutter is the reflow bug waiting to happen, and
+     it is invisible until content crosses the line. Asked of every one. */
+  const ungutteredEls = scrollEls.filter(
+    (el) => getComputedStyle(el).scrollbarGutter.indexOf("stable") < 0
+  );
+  for (const el of ungutteredEls.slice(0, 4)) faults.push({ el, why: "no gutter" });
+
+  /* --- Escape ------------------------------------------------------------
+     `overflow: hidden` hides layout failure completely -- the page reports
+     `scrollHeight === clientHeight` while content visibly runs under the next
+     region -- which is the lesson the board round drew, so this is measured
+     against the rail's own box rather than asked of the scroller.
+
+     THE AXIS DEPENDS ON WHETHER THE ELEMENT IS IN A SCROLLER, and getting that
+     wrong is how the first version of this gate reported 18 escapes on a file
+     with nothing wrong. A row scrolled below the fold of `.list` is not
+     escaping -- being outside the visible box on the scroll axis is the entire
+     point of a scroll container. What is still a failure there is escaping
+     SIDEWAYS: `.list` scrolls vertically only, so a row wider than its box is
+     content the player cannot reach by any gesture.
+
+     Outside a scroller both axes count, which is where the real defect lives --
+     the rail running under the foot.
+
+     Hover labels are absolutely positioned outside their control on purpose --
+     that is the whole "put the name one input away" mechanism -- and they are
+     invisible at rest, so `vis()` has already excluded them. */
+  let escaped = 0;
+  for (const r of roots) {
+    const rootBox = r.getBoundingClientRect();
+    for (const el of [...r.querySelectorAll("*")].filter(vis)) {
+      const scroller = el.parentElement && el.parentElement.closest(".list");
+      const box = scroller ? scroller.getBoundingClientRect() : rootBox;
+      const b = el.getBoundingClientRect();
+      const out =
+        b.left < box.left - 1 || b.right > box.right + 1 ||
+        (!scroller && (b.top < box.top - 1 || b.bottom > box.bottom + 1));
+      if (out) {
+        escaped += 1;
+        if (escaped <= 4) faults.push({ el, why: "escapes" });
+      }
+    }
+  }
+
+  /* Text being ellipsised. Not a failure on its own -- a card name truncating in
+     a 243px column is the trade `.act__type`'s drop already accepted -- but a
+     direction that clips a NUMBER has lost the datum, and this is how you see
+     which. Asked only of boxes that actually cut: `scrollWidth` on an
+     `overflow: visible` box counts absolutely-positioned descendants, which here
+     is every hover label. */
+  const clipped = textOwners
+    .filter((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.overflowX === "visible") return false;
+      return el.scrollWidth > el.clientWidth + 1;
+    })
+    .map((el) => el.textContent.trim().slice(0, 24));
+
+  /* A region that flattened to nothing. `e2e/layout.spec.ts` measures this on
+     the shipped panel because at 950px the action list silently went to 2px
+     while every assertion about the buttons still passed. */
+  const collapsed = all.filter((el) => {
+    const s = getComputedStyle(el);
+    if (s.display === "none") return false;
+    const r = el.getBoundingClientRect();
+    return r.height < 1 || r.width < 1;
+  }).length;
+
+  const out = {
+    screen: innerWidth + "x" + innerHeight,
+    railPx,
+    railWidthPx: px(railBox.width),
+    listPx,
+    listShare: railPx ? Math.round((listPx / railPx) * 100) + "%" : "0%",
+    rowsVisible,
+
+    surfaces: surfaceEls.length,
+
+    scrollers: scrollEls.length,
+    overflowing: overflowing.length,
+    unguttered: ungutteredEls.length,
+
+    minFontPx: sizes.length ? Math.min(...sizes.map((s) => s.px)) : null,
+    textNodes: sizes.length,
+    belowFloor: belowFloor.length,
+    belowFloorWorst: belowFloor.slice(0, 6).map((s) => ({ px: s.px, text: s.text })),
+
+    stops: stops.length,
+    minHitPx: hits.length ? Math.min(...hits.map((h) => Math.min(h.w, h.h))) : null,
+    smallHits: smallHits.length,
+    smallHitsWorst: smallHits.slice(0, 6).map((h) => ({ w: h.w, h: h.h })),
+
+    escaped,
+    clipped: clipped.length,
+    clippedWorst: clipped.slice(0, 6),
+    collapsedRegions: collapsed,
+
+    /* A native tooltip opens on hover and on nothing else, so on a controller it
+       is information that cannot be reached at all. The shipped client had 45
+       and has none left; a mockup that grows one has moved a channel out of
+       reach without saying so. Every hover label in this round is
+       `aria-label` + `::after`, which the ring reaches too. */
+    titleAttrs: roots.reduce((n, r) => n + r.querySelectorAll("[title]").length, 0),
+
+    faults,
+  };
+
+  out.PASS =
+    out.belowFloor === 0 &&
+    out.smallHits === 0 &&
+    out.escaped === 0 &&
+    out.collapsedRegions === 0 &&
+    out.titleAttrs === 0 &&
+    out.unguttered === 0 &&
+    /* The round's own bar. The shipped rail is 33%; anything that does not clear
+       half has not moved the thing the complaint was about. */
+    listPx / railPx >= 0.5;
+
+  return out;
+}
+
+if (typeof window !== "undefined") window.RAIL_ASSERT = RAIL_ASSERT;
+// <<< END assert.js >>>
+
+/* ==========================================================================
+   01 — Attackers. The rail is the decision.
+   ==========================================================================
+
+   THE COMPLAINT THIS FILE ANSWERS, verbatim:
+
+     > attack with button is randomly placed (not centered and touching the
+     > items below it). all attack and no attack buttons are massive and do not
+     > match the styling of anywhere else in page. when testing on computer, the
+     > mouse automatically produces scroll bars in the stack and actions panels
+     > causing a bleeding effect. numbers are not vertically/horizontally
+     > centered in the middle of the squares within the action panel and the
+     > select player buttons are entirely too big for the space.
+
+   Five defects, and four of the five are one cause: the 16px type floor and the
+   44px hit floor landing on controls that were sized for a 304px desktop rail.
+   See README.md for the line of CSS behind each.
+
+   WHAT THIS FILE DOES ABOUT THEM:
+
+   The stack and the card reader leave the rail for holds (`o` and `k`), so the
+   column has one job. That is 236px of a 514px rail back, and the list goes
+   from 172px to the whole of what is left.
+
+   The prompt goes. "Declare attackers" and "Click a creature to send it" are
+   two lines saying what the phase ribbon is already lit for and what a list of
+   your untapped creatures already implies -- the drop rule this codebase
+   already runs on, the one that took the lane headings and the pile words.
+
+   The commit comes back off the foot as one row of three on one baseline, so
+   there is no second row for the slab to be misaligned against, and the
+   alternatives are sized by the row rather than by their own padding.
+   ========================================================================== */
+
+const ATTACKERS = [
+  { key: 1, name: "Guul Draz Vampire", pt: "1/1", on: true },
+  { key: 2, name: "Vampire", pt: "1/1", on: false },
+  { key: 3, name: "Bloodghast", pt: "2/1", on: true },
+  { key: 4, name: "Vampire Nighthawk", pt: "2/3", on: true },
+  { key: 5, name: "Gatekeeper of Malakir", pt: "2/2", on: false },
+  { key: 6, name: "Blood Artist", pt: "0/1", on: false },
+  { key: 7, name: "Viscera Seer", pt: "1/1", on: false },
+  { key: 8, name: "Indulgent Aristocrat", pt: "1/1", on: false },
+];
+
+const listHTML = ATTACKERS.map(
+  (a) =>
+    '<button class="act' + (a.on ? " on" : "") + '" type="button" data-atk>' +
+      '<span class="key">' + a.key + "</span>" +
+      '<span class="nm">' + esc(a.name) + "</span>" +
+      '<span class="pt">' + a.pt + "</span>" +
+    "</button>"
+).join("");
+
+/*
+ * The bar. Three controls, one baseline, one radius.
+ *
+ * `▣` and `▢` are filled and empty of one shape because that is the
+ * relationship they have: every legal attacker, or none of them. Their names
+ * live in `aria-label` and come back on hover and on the ring -- the compact
+ * piles' rule, and the reason `.mark` has no text in it.
+ *
+ * The primary says "Attack" and never anything else. `Attack with 0` ->
+ * `Attack with 1` -> `Attack with 10` changes width and re-centres itself every
+ * time a creature is staged, which moves the button while you are aiming at it.
+ * The count is on screen already as the number of filled rows.
+ */
+const commitHTML =
+  '<div class="bar">' +
+    '<button class="mark" type="button" data-all aria-label="Attack with all">▣</button>' +
+    '<button class="bar__go" type="button" data-go>Attack</button>' +
+    '<button class="mark" type="button" data-none aria-label="No attacks">▢</button>' +
+  "</div>";
+
+function wire(rail) {
+  const rows = [...rail.querySelectorAll("[data-atk]")];
+  const go = rail.querySelector("[data-go]");
+  const all = rail.querySelector("[data-all]");
+
+  function paint() {
+    const n = rows.filter((r) => r.classList.contains("on")).length;
+    go.dataset.empty = n === 0 ? "true" : "false";
+    all.disabled = n === rows.length;
+  }
+
+  rail.addEventListener("click", (ev) => {
+    const row = ev.target.closest("[data-atk]");
+    if (row && rail.contains(row)) { row.classList.toggle("on"); paint(); }
+  });
+  all.addEventListener("click", () => { rows.forEach((r) => r.classList.add("on")); paint(); });
+  rail.querySelector("[data-none]").addEventListener("click", () => {
+    rows.forEach((r) => r.classList.remove("on"));
+    paint();
+  });
+
+  paint();
+}
+
+RAIL.mount({
+  title: "01 attackers",
+  phase: "Attackers",
+  list: listHTML,
+  commit: commitHTML,
+  hints:
+    hint("A", "Send") + hint("↵", "Attack") + hint("Y", "Read card") +
+    hint("X", "Stack 2", true) + hint("R2", "Their board"),
+  wire,
+});
+</script>
+</body>
+</html>

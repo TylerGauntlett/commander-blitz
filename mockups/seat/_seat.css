@@ -1,0 +1,311 @@
+/*
+ * The frame every seat mockup is judged inside.
+ *
+ * NOT LINKED. `inline.py` splices this between each file's BEGIN and END
+ * `_seat.css` markers, so every file opens standalone from file://.
+ *
+ * WHAT IS IN HERE: the Deck bezel, the ghosted board the seat is taking room
+ * from, the palette (the shipped client's, token for token, out of
+ * frontend/src/theme.css), the type floor and the icon base.
+ *
+ * WHAT IS NOT: one single rule about how a seat is laid out. `.mat` gets its
+ * width and its height budget here and nothing else -- no padding, no radius,
+ * no background -- because THE PADDING IS ONE OF THE THREE THINGS THIS ROUND IS
+ * ABOUT and a shared plate style would quietly answer it for all five. Each
+ * file styles its own seat, declares its own `--seat-h` if its thesis needs a
+ * different one, and pays for it in the ghost board below.
+ */
+
+/* Tokens ------------------------------------------------------------------ */
+
+:root {
+  --void-0: #0b0a16;
+  --void-1: #141328;
+  --void-2: #1d1b38;
+  --edge: rgba(150, 140, 255, 0.16);
+  --edge-hi: rgba(170, 160, 255, 0.34);
+  --astral: #8f7fe8;
+  --astral-hi: #c3b6ff;
+
+  --pane-bg: rgba(20, 19, 40, 0.66);
+  --pane-well: rgba(13, 12, 28, 0.8);
+
+  --mana-W: #fffbd5;
+  --mana-U: #aae0fa;
+  --mana-B: #cbc2bf;
+  --mana-R: #f9aa8f;
+  --mana-G: #9bd3ab;
+  --mana-C: #d0cbc4;
+
+  --playable: #5ce08a;
+  --targetable: #58b6ff;
+  --staged: #ffc14d;
+  --danger: #ff6b5e;
+  --gain: #6ee7a0;
+  --gold: #d8a63c;
+  --frame-commander: #d8a63c;
+  --dial-ink: #2a1c04;
+
+  --text: #e6e3f5;
+  --text-dim: #a09bc4;
+  --text-faint: #837da8;
+
+  /* The zone hues the client ships. Kept as-is; see the icon note in `_seat.js`
+     for why every mark also has a shape, which is a legibility argument and not
+     an accessibility one -- ADR 0006. */
+  --zone-lib: #7d6bd8;
+  --zone-hand: #3f9e93;
+  --zone-gy: #6f6a86;
+  --zone-ex: #58637a;
+  --zone-cmd: #c69a3a;
+  --chip-ink: #0d0c1a;
+
+  /* THE TYPE FLOOR. `../handheld/` measured 444 of 635 elements below 12px on
+     the shipped board at 1280x800, smallest 2.11px, and took 16px as a hard
+     constraint. This round inherits it unchanged: a seat is not exempt from a
+     floor because it is small. */
+  --fs-min: 16px;
+  --fs-body: 17px;
+  --fs-lead: 20px;
+  --fs-big: 28px;
+
+  /* THE TARGET FLOOR. Four of the five zone marks are the only route into
+     `ZonePeek`, so they are real buttons and are held to 44px. */
+  --hit: 44px;
+
+  --t-fast: 110ms;
+}
+
+/* Pseudo-elements too. `*` does not match them, and 05 draws the returned board
+   as an `::after` with a 1px dashed border -- which put the opponents' row 2px
+   over its own budget and failed the round's own gate. */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* `<small>` is a SIZE instruction and this round cannot afford one: 0.83em of
+   16px body copy is 13.3px, under the floor, in markup that reads as
+   reasonable. Same removal as `../handheld/_handheld.css`. */
+small { font-size: inherit; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--void-0);
+}
+
+body {
+  font: var(--fs-body)/1.35 "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: radial-gradient(80% 60% at 50% 34%, #14122a 0%, #05040c 72%);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+/* The Deck frame ---------------------------------------------------------- */
+
+.bezel { position: fixed; inset: 0; display: grid; place-items: center; }
+
+.deck {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  flex: none;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 6px;
+  overflow: hidden;
+  transform-origin: center center;
+  border-radius: 14px;
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143, 127, 232, 0.13) 0%, transparent 62%),
+    var(--void-0);
+  box-shadow: 0 0 0 8px #0d0c18, 0 0 0 10px #262338, 0 30px 90px rgba(0, 0, 0, 0.8);
+}
+
+/* THE HEIGHT BUDGET, AS THE SHIPPED LAYOUT SETS IT.
+   `--pod-seat-h` is 96px at one and two opponents (handheld.css:160) and 84 at
+   three, taken by `:has(> .mat--compact:nth-child(3))` (handheld.css:1041).
+   Those twelve pixels go to the viewer's own mat, which is what overflows first
+   in a four-seat pod, and the file's own note records that lowering the cap
+   further "only moved the overflow rather than removing it".
+
+   A direction may take a different budget; it says so in its own file, the gate
+   holds it to whatever it declared, and the ghost board shrinks by what it
+   took. */
+.deck[data-density="1"], .deck[data-density="2"] { --seat-h: 96px; }
+.deck[data-density="3"] { --seat-h: 84px; }
+
+.bezel__tag {
+  position: fixed;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  max-width: 96vw;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(150, 140, 255, 0.2);
+  background: rgba(12, 11, 26, 0.88);
+  font-size: 13px;
+  color: #837da8;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 99;
+}
+.bezel__tag b { color: #c3b6ff; font-weight: 600; }
+
+/* The board, at the real proportions -------------------------------------- */
+
+.shell {
+  display: grid;
+  /* `--rail-r: clamp(224px, 19vw, 280px)` resolves to 243px at 1280 wide.
+     `--rail-l` is 0 on a handheld: the left rail is retired and the log becomes
+     an overlay. handheld.css:150-163. */
+  grid-template-columns: minmax(0, 1fr) 243px;
+  gap: 8px;
+  min-height: 0;
+}
+
+.play {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 4px;
+  min-height: 0;
+}
+
+/* The row the whole round is about. `.play__opponents` in board.css: a flex row
+   with a 10px gap, so three seats of 1017px come to 332 each. */
+.opps { display: flex; gap: 10px; align-items: start; min-height: 0; }
+
+.mat {
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--seat-h);
+}
+
+/* The ghosts. Everything that is not the seat, drawn as what it is: the room
+   the seat is spending. */
+.gh {
+  border: 1px dashed rgba(150, 140, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(20, 19, 40, 0.3);
+  color: rgba(160, 155, 196, 0.55);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gh__tag {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(160, 155, 196, 0.5);
+  white-space: nowrap;
+}
+
+.gh--mine { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 6px; padding: 6px; }
+.gh__side { display: grid; place-items: center; border-right: 1px dashed rgba(150, 140, 255, 0.18); }
+.gh__lanes { display: grid; grid-template-rows: 1fr 1fr 1fr; gap: 6px; min-height: 0; }
+.gh__lane { display: flex; align-items: center; gap: 5px; min-height: 0; overflow: hidden; }
+.gh__lane .gh__tag { width: 74px; flex: none; }
+
+.gh__card {
+  flex: none;
+  width: 66px;
+  height: 92px;
+  border: 1px dashed rgba(150, 140, 255, 0.28);
+  border-radius: 5px;
+  background: rgba(30, 28, 56, 0.4);
+}
+.gh__card--hand { width: 92px; height: 128px; border-radius: 7px; }
+
+.gh--rail { display: grid; place-items: center; padding: 8px; text-align: center; }
+
+.gh--foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 148px;
+  padding: 8px 12px;
+}
+.gh--foot .gh__tag { width: 46px; }
+.gh__slab {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 210px;
+  height: 60px;
+  border: 1px dashed rgba(150, 140, 255, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The marks ---------------------------------------------------------------- */
+
+/* Sized off the type they sit beside, so a mark inside a 17px row and one
+   inside a 28px numeral both look like they belong. */
+.ico { width: 1em; height: 1em; flex: none; display: block; }
+
+.sym { width: 1.02em; height: 1.02em; flex: none; vertical-align: -0.13em; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* `m` -- the gate, drawn where it failed ----------------------------------- */
+.deck[data-measure="yes"] [data-cell] { outline: 1px solid rgba(88, 182, 255, 0.5); }
+[data-bad] { outline: 2px dashed var(--danger) !important; outline-offset: 1px; position: relative; }
+[data-bad]::after {
+  content: attr(data-bad);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 2px);
+  z-index: 90;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--danger);
+  color: #1a0705;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* The name of a mark, one input away --------------------------------------
+   `attr(aria-label)` and never a second hand-written string: the accessible
+   name and the visible name cannot then disagree. `:hover` covers the Deck's
+   trackpads and touchscreen, `[data-cursor]` covers the pad and the keyboard,
+   and between them that is every way anyone touches this app. A `title` would
+   have covered only the mouse, which is why there are none left in the client
+   and none in this round -- the gate fails a file that grows one. */
+[data-name]::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: 80;
+  padding: 3px 9px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: var(--fs-min);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(3px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) ease;
+  pointer-events: none;
+}
+[data-name]:hover::after, [data-name][data-cursor]::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-name]::after { transition: none; }
+}
