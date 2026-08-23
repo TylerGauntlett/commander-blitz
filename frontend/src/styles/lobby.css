@@ -1229,6 +1229,7 @@
 .cat__body {
   min-height: 0;
   overflow: auto;
+  scrollbar-gutter: stable;
   padding: 18px 28px 20px;
 }
 

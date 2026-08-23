@@ -1268,9 +1268,21 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           most of what the foot costs by moving inside this column so the right
           rail can run to the bottom edge.
         */}
-        {state.stack.length > 0 && <StackPanel state={state} />}
-
         <main className="play">
+          {/*
+            Inside `.play` and not the body, so it floats over the VIEWER'S own
+            area rather than over the opponents.
+
+            Anchored to the body's top-left it covered an opponent's name and
+            life on a desktop, where their row is 250px tall -- and covering
+            somebody's vitals is a worse trade than covering your own commander.
+            It is placed into the same grid cell as `.play__mine`, which two
+            grid items are allowed to share, so it overlaps without needing a
+            positioned ancestor and without `.play__mine`'s own scrolling
+            carrying it off the top.
+          */}
+          {state.stack.length > 0 && <StackPanel state={state} />}
+
           <div className="play__opponents" ref={podRef}>
             {opponents.map((pid) => (
               <PlayerMat
@@ -1532,6 +1544,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             mana={viewer.mana}
             selectedOid={selectedOid}
             cardScale={zoom.hand}
+            fanWidth={zoom.fanW}
             onActivate={playFromHand}
             onDropOn={onDropOnZone}
             // Your lanes are not on screen while you are reading somebody

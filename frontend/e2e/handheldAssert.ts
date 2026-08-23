@@ -383,8 +383,35 @@ export function handheldAssert(): HandheldReport {
   const fanOverflow: { selector: string; by: number }[] = [];
   for (const el of document.querySelectorAll<HTMLElement>("[data-fan]")) {
     if (!visible(el)) continue;
-    const by = el.scrollWidth - el.clientWidth;
-    if (by > SLACK) fanOverflow.push({ selector: path(el), by });
+    /*
+     * MEASURED IN LAYOUT, NOT IN PAINTED BOXES.
+     *
+     * `scrollWidth` was the obvious question and it is the wrong one: scroll
+     * overflow counts a child's TRANSFORMED box, and the hand is an arc -- the
+     * outermost cards are rotated about 8 degrees, so a 103px card reports a
+     * 122px rect and every hand of six or more looked 26-30px over. The arc is
+     * the feature; `docs/roadmap.md` asks for it by name.
+     *
+     * `offsetLeft` and `offsetWidth` are untransformed layout values, which is
+     * the same distinction `mockups/handheld-board/_board.js` records about its
+     * own `BOARD.lay()` -- and the same trap `mockups/seat/assert.js` fell into
+     * when it divided a font size by a scale.
+     */
+    const kids = [...el.children] as HTMLElement[];
+    if (kids.length === 0) continue;
+    let reach = 0;
+    for (const kid of kids) reach = Math.max(reach, kid.offsetLeft + kid.offsetWidth);
+    const by = Math.round(reach - el.clientWidth);
+    if (by <= SLACK) continue;
+    // The room it had comes with it: "26px over" is not actionable on its own,
+    // and the useful question is always whether the fan or its box is wrong.
+    const room = el.parentElement ? Math.round(el.parentElement.clientWidth) : 0;
+    fanOverflow.push({
+      selector: `${path(el)} (${Math.round(reach)} laid out in ${Math.round(
+        el.clientWidth,
+      )}, parent ${room}, n=${kids.length})`,
+      by,
+    });
   }
 
   /*
@@ -410,13 +437,9 @@ export function handheldAssert(): HandheldReport {
       let total = 0;
       let open = 0;
       for (const lane of lanes) {
-        if (
-          !(lane.dataset.testid ?? lane.getAttribute("data-testid") ?? "").endsWith(laneName)
-        ) {
-          continue;
-        }
+        if (!(lane.getAttribute("data-testid") ?? "").endsWith(laneName)) continue;
         for (const stack of lane.querySelectorAll<HTMLElement>("[data-stack-count]")) {
-          const count = Number(stack.dataset.stackCount ?? "1") || 1;
+          const count = Number(stack.getAttribute("data-stack-count") ?? "1") || 1;
           total += count;
           // A group is either all tapped or all untapped -- `stackKey` includes
           // it -- so one card's class covers the whole stack.

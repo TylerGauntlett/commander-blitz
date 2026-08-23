@@ -96,11 +96,21 @@ export function PhaseTrack({ state }: Props) {
       {/* Whose turn it is, at the far end of the ribbon. It is the one piece of
           state you re-check between every action, so it gets a chip of its own
           rather than sitting as a word beside the round counter. */}
-      <span className={yourTurn ? "track__who track__who--you" : "track__who"}>
-        {yourTurn ? "Your turn" : `${active.name}'s turn`}
-      </span>
-
       {/*
+        The two chips share the ribbon's third column.
+
+        `.track` is a three-column grid, so a fourth child auto-places into a
+        SECOND ROW -- which is what the priority pill did on its first draft,
+        landing at the far left under the ribbon, 40px from anything it relates
+        to. Grouping them is also right on the merits: they are two halves of
+        one question.
+      */}
+      <span className="track__end">
+        <span className={yourTurn ? "track__who track__who--you" : "track__who"}>
+          {yourTurn ? "Your turn" : `${active.name}'s turn`}
+        </span>
+
+        {/*
         WHOSE TURN IT IS AND WHO HOLDS PRIORITY ARE TWO DIFFERENT FACTS.
         
         The ribbon ran them together into one chip, which is wrong in the case
@@ -113,11 +123,12 @@ export function PhaseTrack({ state }: Props) {
         priority it would be a second chip saying the same thing, and the strip
         is 34px on a handheld.
       */}
-      {!yourTurn && state.priority_player === state.seat && (
-        <span className="track__pri" data-testid="priority-pill">
-          You have priority
-        </span>
-      )}
+        {!yourTurn && state.priority_player === state.seat && (
+          <span className="track__pri" data-testid="priority-pill">
+            You have priority
+          </span>
+        )}
+      </span>
     </div>
   );
 }

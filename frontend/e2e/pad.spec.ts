@@ -76,7 +76,7 @@ async function press(page: Page, index: number): Promise<void> {
 }
 
 /** W3C Standard Gamepad indices, the ones this suite uses. */
-const BTN = { a: 0, b: 1, down: 13, right: 15 } as const;
+const BTN = { a: 0, b: 1, l1: 4, r1: 5, down: 13, right: 15 } as const;
 
 const cursor = (page: Page) =>
   page.evaluate(
@@ -172,7 +172,27 @@ test.describe("a gamepad drives the board", () => {
     if (await keep.count()) await keep.first().click();
     await waitForOurTurn(page);
 
-    await press(page, BTN.down);
+    /*
+     * INTO THE HAND FIRST, and this is the half the test used to leave to luck.
+     *
+     * `L1`/`R1` step between the board's regions and trap the ring inside the
+     * one it is in (`input/groups.ts`), so a direction held in a one-wide
+     * column legitimately walks one stop and stops -- which is the trap working
+     * and looks exactly like autorepeat being broken. The hand is a row of
+     * cards laid left to right, so it is where holding RIGHT has somewhere to
+     * go, and naming it is what makes this test about the ramp again.
+     */
+    for (let i = 0; i < 6; i += 1) {
+      const at = await page.evaluate(() => document.documentElement.getAttribute("data-group"));
+      if (at === "hand") break;
+      await press(page, BTN.r1);
+    }
+    expect(
+      await page.evaluate(() => document.documentElement.getAttribute("data-group")),
+      "could not reach the hand to sweep it",
+    ).toBe("hand");
+
+    await press(page, BTN.right);
 
     /*
      * Hold, rather than tap. The first repeat is due after ~360ms at a digital
