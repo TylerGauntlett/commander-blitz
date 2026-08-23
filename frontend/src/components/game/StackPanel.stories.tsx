@@ -1,9 +1,16 @@
 /**
- * The stack, top first.
+ * The stack, top first, floating over the board.
  *
  * Drawn as real card faces at an offset rather than a list of names, so the pile
  * is the one place the client has to compute a container height in pixels: the
  * items are absolutely positioned, so nothing can size to them.
+ *
+ * It used to be the top panel of a left rail. That rail is retired -- a 232px
+ * column stood open all game for a thing that is empty for most of a turn and
+ * urgent the moment it is not -- so it hangs off `.table__body` and grows down
+ * over the viewer's own panel. Mounted at `tableBody` for that reason: the
+ * position is `absolute` against it, and a story that mounted it anywhere else
+ * would be looking at a pile in a place the game never puts one.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -16,7 +23,7 @@ import { StackPanel } from "./StackPanel";
 const meta = {
   title: "Game/StackPanel",
   component: StackPanel,
-  parameters: { automtg: { mount: "railLeft" } },
+  parameters: { automtg: { mount: "tableBody" } },
 } satisfies Meta<typeof StackPanel>;
 
 export default meta;

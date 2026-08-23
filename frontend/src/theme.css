@@ -89,12 +89,6 @@
  * The initial values are the numbers `board.css` has always used, so on a
  * desktop every one of these resolves to what it did before.
  */
-@property --rail-l {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 232px;
-}
-
 @property --rail-r {
   syntax: "<length>";
   inherits: true;
@@ -298,7 +292,38 @@
    * resolve against). The 150px floor is what keeps the row inside its 58% cap at
    * 700px tall.
    */
-  --pod-lanes-h: clamp(150px, 24vh, 300px);
+  /*
+   * RE-CUT WHEN THE SEAT ARRIVED ABOVE IT.
+   *
+   * This used to be `clamp(150px, 24vh, 300px)` -- 228px at 950 -- and it was
+   * the whole of a compact mat's height, because the orb sat BESIDE the lanes.
+   * `OpponentSeat` sits above them, so the mat is now `--seat-h` plus this, and
+   * leaving the old number put the pod row at 348 of a 639px board where it had
+   * been about 250. The 90px came straight off the viewer's own mat, which is
+   * the failure `board.css` calls the pod row's cap load-bearing for.
+   *
+   * So the lanes give up what the seat took. 142px at 950 puts the row back at
+   * ~258 -- what it was before -- and it is the right half to take it from: the
+   * seat now answers "how developed is that board" by number, which is what
+   * those pixels were being spent working out by eye.
+   *
+   * MEASURED, AND IT IS A TRADE. Swept at 1600x950 with a four-seat pod:
+   *
+   *     --pod-lanes-h   viewer over by   an opponent's lanes over by
+   *     140px                       2                           42
+   *     155px                      17                           27
+   *     170px                      32                           12
+   *     185px                      47                            0
+   *
+   * There is no value that clears both, because at four seats three opponents'
+   * boards and the viewer's will not fit at the 52px card floor -- which is the
+   * observation this whole round is built on. The viewer wins: their mat owns
+   * every drop target and `board.css` spends four paragraphs on why it must
+   * hold still, while an opponent's lanes already scroll behind a fade
+   * affordance that `.mat--compact .mat__lanes` draws, and their seat carries
+   * the summary that made reading those cards optional.
+   */
+  --pod-lanes-h: clamp(140px, 15vh, 220px);
 
   /*
    * The board's fixed tracks. Registered above, and stated here so the cascade
@@ -306,7 +331,6 @@
    * `handheld.css` overrides these, and an override has to have something to
    * override. Every number is what `board.css` wrote inline before.
    */
-  --rail-l: 232px;
   --rail-r: 304px;
   --mat-side: 190px;
   --mat-side-compact: 112px;

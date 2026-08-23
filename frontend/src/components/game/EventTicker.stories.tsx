@@ -4,6 +4,10 @@
  * Events carry the snake_case card id, not the printed name, so the ticker needs
  * the lookup `useGame` harvests from every zone it sees -- otherwise the log
  * reads "sol_ring". `NoNameLookup` poses the fallback deliberately.
+ *
+ * Mounted in the log overlay, which is where the log lives at every size now.
+ * It used to have a permanent 232px column on a desktop; it is reference you
+ * consult rather than something you watch, and it comes up on `View`.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -26,7 +30,7 @@ const names: Record<string, string> = {
 const meta = {
   title: "Game/EventTicker",
   component: EventTicker,
-  parameters: { automtg: { mount: "railLeft" } },
+  parameters: { automtg: { mount: "logOverlay" } },
 } satisfies Meta<typeof EventTicker>;
 
 export default meta;
