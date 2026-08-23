@@ -20,8 +20,9 @@ import { useHandLift } from "../../state/useHandLift";
 import { Card } from "./Card";
 
 /*
- * The fan's width and its pitch live in `logic/zoomFit.ts` (`HAND_FAN_W`,
- * `HAND_MAX_SPREAD`, `handStep`).
+ * The fan's pitch lives in `logic/zoomFit.ts` (`HAND_MAX_SPREAD`, `handStep`);
+ * its WIDTH comes from the solver, because the solver is what decided the card
+ * size against the room the foot actually has.
  *
  * They used to be `MAX_FAN_W` and `MAX_SPREAD` here, which was right while the fan
  * was the only thing that had an opinion about them. The zoom now has to work out
@@ -96,6 +97,14 @@ interface Props {
    * geometry it always did.
    */
   cardScale?: number;
+  /**
+   * The width the zoom solver laid this fan out against, in px.
+   *
+   * Passed rather than measured: the fan's own box is `width: <computed>`, so
+   * reading it back would be reading this component's own output. `useZoomFit`
+   * is the one that knows how much room the foot has.
+   */
+  fanWidth?: number;
   onActivate: (card: CardView) => void;
   onDropOn: (card: CardView, zone: string) => void;
   disabled?: boolean;
@@ -108,6 +117,7 @@ export function HandFan({
   mana,
   selectedOid,
   cardScale = CARD_SCALE.hand,
+  fanWidth = HAND_FAN_W,
   onActivate,
   onDropOn,
   disabled = false,
@@ -153,7 +163,18 @@ export function HandFan({
   const cardW = cardWidthPx(useCardBase(), cardScale);
 
   const count = cards.length;
-  const step = handStep(count, cardW, HAND_FAN_W);
+  /*
+   * The width the SOLVER used, not the designed constant.
+   *
+   * This said `HAND_FAN_W`, and the two agreed by luck for as long as the foot
+   * spanned the screen -- 1180 was simply under it. The foot is inside the
+   * board's column now, so on a handheld it is 1017 and on a 1600 desktop about
+   * 1266, and laying a 1180px fan into either ran the rail past its box with
+   * `overflow: hidden` hiding it. `e2e/handheldAssert.ts`'s `fanOverflow`
+   * measured it at 26-30px against a real engine, which is the same failure
+   * `mockups/handheld-board/` records and the reason that gate exists.
+   */
+  const step = handStep(count, cardW, fanWidth);
   const width = count > 0 ? cardW + step * (count - 1) : 0;
   const mid = (count - 1) / 2;
 

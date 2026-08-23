@@ -65,10 +65,20 @@ const HAND_FRACTION = 0.26;
  *
  * `mockups/handheld-board/` gives the foot 270px of an 800px screen -- 0.34 --
  * and spends it on a hand at 152px, on the argument that the hand is the
- * surface a main phase is actually spent reading. The board can afford it
- * because an opponent is a 96px seat there rather than a board.
+ * surface a main phase is actually spent reading. The board can afford most of
+ * that because an opponent is a 96px seat there rather than a board.
+ *
+ * MEASURED DOWN FROM 0.34, and the 0.06 is not rounding. A four-seat pod played
+ * several turns in put `.play__mine` over its row by 11px at 0.34 and 6px at
+ * 0.30, at 1280x800; `e2e/deckfit.spec.ts` is the gate, and its claim is the
+ * whole board on screen with no scroller, which `docs/roadmap.md` asks for by
+ * name. The mockup can afford the extra because its board is a fixture: nothing
+ * on it ever grows a fourth land row.
+ *
+ * It is a CEILING and not a target either way, so the hand only reaches it on a
+ * board that has room to give.
  */
-const HANDHELD_HAND_FRACTION = 0.34;
+const HANDHELD_HAND_FRACTION = 0.28;
 
 /**
  * The foot's height past the hand's cards: `.hand`'s 44px droop allowance plus
@@ -96,8 +106,29 @@ const HANDHELD_FOOT_EXTRA = 50;
 /** `.play__opponents` gap between mats. */
 const POD_GAP = 10;
 
-/** How much narrower than the table the fan is allowed to be: `.hand`'s padding. */
+/**
+ * How much narrower than its ROW the fan is allowed to be.
+ *
+ * `.hand`'s own padding, plus the slack the outermost cards' rotation needs at
+ * the ends of the arc -- a card at the edge of the fan is turned, so its box is
+ * wider than its width. The foot's padding is taken off separately, by
+ * `horizontalPadding`, because it differs by layout.
+ */
 const FAN_INSET = 20;
+
+/**
+ * An element's left plus right padding.
+ *
+ * `clientWidth` counts padding as part of the box, which is right for a
+ * scroller and wrong for "how much room is there inside this". One helper
+ * rather than a constant, because the foot's padding differs by layout and a
+ * literal here would be a third place that has to be kept in step with
+ * `board.css` and `handheld.css`.
+ */
+function horizontalPadding(el: HTMLElement): number {
+  const style = getComputedStyle(el);
+  return Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight) || 0;
+}
 
 /** Absolute card widths, in px, per zone. */
 export interface ZoomFit {
@@ -107,6 +138,17 @@ export interface ZoomFit {
   pod: number;
   /** The hand, likewise. */
   hand: number;
+  /**
+   * The width the fan was SOLVED against, in px.
+   *
+   * `HandFan` has to lay out against the same number, and it did not: it used
+   * the `HAND_FAN_W` constant while the solver used the foot's real width. On a
+   * desktop the two agreed by luck, because 1180 was under the full screen; the
+   * moment the foot moved inside the board's column they stopped agreeing, and
+   * the fan ran 26-30px past its box with `overflow: hidden` hiding it. Found by
+   * `fanOverflow` against a real engine.
+   */
+  fanW: number;
   /** True when the zoom is pinned to the sizes that shipped before it existed. */
   locked: boolean;
 }
@@ -165,6 +207,8 @@ function locked(opponents: number): ZoomFit {
     board: CARD_SCALE.own,
     pod: opponentCardScale(opponents),
     hand: CARD_SCALE.hand,
+    // The designed width, which is what a pinned board is pinned to.
+    fanW: HAND_FAN_W,
     locked: true,
   };
 }
@@ -234,10 +278,21 @@ export function useZoomFit(args: {
     const next: Measurements = {
       tableW: table.clientWidth,
       tableH: table.clientHeight,
-      // Falls back to the table until the foot has mounted, which is the first
-      // paint only -- and erring wide there is the safe direction: the fan
-      // solves again the moment the observer fires.
-      footW: foot?.clientWidth ?? table.clientWidth,
+      /*
+       * The foot's CONTENT width, padding taken off.
+       *
+       * `clientWidth` includes padding, and `.table__foot` has 16px of it on a
+       * handheld -- so solving against it laid a fan 16px wider than the row it
+       * had to sit in, plus whatever `.hand`'s own padding took. The gate
+       * measured `.hand__rail` 26-30px past its box against a real engine,
+       * which is exactly the failure `fanOverflow` was written for arriving in
+       * the code that was supposed to have prevented it.
+       *
+       * Falls back to the table until the foot has mounted, which is the first
+       * paint only -- and erring wide there is the safe direction, because the
+       * fan solves again the moment the observer fires.
+       */
+      footW: foot ? foot.clientWidth - horizontalPadding(foot) : table.clientWidth,
       // Width and height only. Never the mat inside it, whose height is an output.
       mineW: mine.clientWidth,
       mineH: mine.clientHeight,
@@ -295,18 +350,15 @@ export function useZoomFit(args: {
      * this solve adds is the shrink: a fifteen-card fan, or a short viewport.
      */
     const handCeiling = Math.min(MAX_CARD_W, base * CARD_SCALE.hand);
-    const handW = solveHandCardWidth(
-      handCount,
-      Math.min(HAND_FAN_W, measured.footW - FAN_INSET),
-      {
-        heightPx:
-          measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
-          FOOT_CHROME -
-          (handheld ? HANDHELD_FOOT_EXTRA : 0),
-        minCardW: floor,
-        maxCardW: handCeiling,
-      },
-    );
+    const fanW = Math.min(HAND_FAN_W, measured.footW - FAN_INSET);
+    const handW = solveHandCardWidth(handCount, fanW, {
+      heightPx:
+        measured.tableH * (handheld ? HANDHELD_HAND_FRACTION : HAND_FRACTION) -
+        FOOT_CHROME -
+        (handheld ? HANDHELD_FOOT_EXTRA : 0),
+      minCardW: floor,
+      maxCardW: handCeiling,
+    });
 
     /*
      * 2. The viewer's board, against whatever `.play__mine` has left.
@@ -409,6 +461,7 @@ export function useZoomFit(args: {
       board: boardW / base,
       pod: podW / base,
       hand: handW / base,
+      fanW,
       locked: false,
     };
   }, [pinned, measured, base, state, actionableOids, opponents, handCount]);

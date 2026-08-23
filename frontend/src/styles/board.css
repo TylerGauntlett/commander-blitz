@@ -1352,15 +1352,45 @@
  * has already hit twice.
  */
 .stackpanel {
-  position: absolute;
-  top: 14px;
-  left: 14px;
+  /*
+   * A GRID ITEM SHARING THE VIEWER'S CELL, not an absolutely positioned box.
+   *
+   * Two grid items are allowed to occupy one cell, which is all this needs --
+   * and it avoids the two problems the absolute version had: it wanted a
+   * positioned ancestor (the body, whose top-left is the OPPONENTS' row on a
+   * desktop, so the pile covered somebody's name and life), and inside
+   * `.play__mine` it would have scrolled off the top with the mat.
+   */
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+  align-self: start;
   z-index: 6;
-  width: max-content;
-  max-width: 40%;
-  max-height: calc(100% - 28px);
-  overflow: hidden;
+  margin: 10px 0 0 10px;
+  max-height: calc(100% - 20px);
   pointer-events: none;
+  /*
+   * OPAQUE, unlike the panels it shares a rule with below.
+   *
+   * `--pane-bg` is 60% and that is right for a panel with felt behind it. This
+   * one has the player's own commander behind it, so at 60% the stack's header
+   * and the orb's name read as one interleaved string. A thing that floats over
+   * content has to stop the content.
+   */
+  background: var(--void-1);
+}
+
+/*
+ * The pile has to be TOLD its width, for the same reason it is told its height.
+ *
+ * Every ply is absolutely positioned, so the container has no intrinsic size on
+ * either axis -- `StackPanel` already computes the height in JS and says so.
+ * The width came out near zero, and with the panel clipping to it the cards
+ * were sliced to about a third. `--card-w` is on this element, so the answer is
+ * one line rather than a second number crossing the language boundary.
+ */
+.stackpile {
+  width: var(--card-w);
 }
 
 .stackpanel > * {
@@ -2238,6 +2268,15 @@
  * The astral hue rather than the gold: gold is `--active`, which is the turn,
  * and this is deliberately a different kind of thing.
  */
+/* The ribbon's third cell: whose turn it is, and who holds priority. */
+.track__end {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .track__pri {
   flex: none;
   padding: 3px 10px;

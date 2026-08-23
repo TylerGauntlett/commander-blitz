@@ -148,7 +148,7 @@ test.describe("the handheld layout holds its floors", () => {
 });
 
 test.describe("the compact layout is the one being drawn", () => {
-  test("the left rail leaves the grid and its contents survive", async ({ page }) => {
+  test("there is no left rail, and its two panels each found a home", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -157,15 +157,33 @@ test.describe("the compact layout is the one being drawn", () => {
     await expect(page.getByTestId("table")).toHaveAttribute("data-handheld", "true");
 
     /*
-     * The stack moved rather than disappeared. Exactly one of it, because two
-     * would put two `data-testid="stack-panel"` in the document -- which
-     * Playwright's strict mode fails on, confusingly and far from the cause.
+     * The rail is retired at EVERY size now, so this is no longer a claim about
+     * the compact layout -- it is a claim about the board.
      */
-    await expect(page.getByTestId("stack-panel")).toHaveCount(1);
-    const inRightRail = await page.evaluate(
-      () => !!document.querySelector('.rail--right [data-testid="stack-panel"]'),
-    );
-    expect(inRightRail, "the stack should ride in the right rail here").toBe(true);
+    await expect(page.locator(".rail--left")).toHaveCount(0);
+
+    /*
+     * The stack floats over the board, and only when there is something on it.
+     *
+     * Exactly one of it whenever it is drawn, because two would put two
+     * `data-testid="stack-panel"` in the document -- which Playwright's strict
+     * mode fails on, confusingly and far from the cause.
+     */
+    await expect(page.getByTestId("stack-panel")).toHaveCount(0);
+    const floats = await page.evaluate(() => {
+      const panel = document.createElement("div");
+      panel.className = "stackpanel";
+      document.querySelector(".table__body")?.append(panel);
+      // Read BEFORE removing. `getComputedStyle` hands back a live declaration,
+      // so a detached element reports empty strings for everything -- which is
+      // how the first version of this asserted `""` against `"absolute"`.
+      const position = getComputedStyle(panel).position;
+      const inBody = !!document.querySelector(".table__body > .stackpanel");
+      panel.remove();
+      return { position, inBody };
+    });
+    expect(floats.position, "the stack should be positioned over the board").toBe("absolute");
+    expect(floats.inBody, "...and hang off the board's own box").toBe(true);
 
     // The log is reachable, and closable, without a mouse.
     await expect(page.getByTestId("log-overlay")).toBeHidden();

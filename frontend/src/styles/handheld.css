@@ -188,11 +188,21 @@ html[data-input="keyboard"] .glyph--key {
   grid-template-columns: minmax(0, 1fr) var(--rail-r);
   gap: 8px;
   /*
-   * Six, not eight. The board has to fit an 800px panel with no scrollbar --
-   * that is the posture this layout exists for, not a nice-to-have -- and every
-   * pixel of shell padding is a pixel the viewer's mat does not get.
+   * FOUR, and it was eight, and then six.
+   *
+   * The board has to fit an 800px panel with no scrollbar -- that is the
+   * posture this layout exists for, not a nice-to-have -- and every pixel of
+   * shell padding is a pixel the viewer's mat does not get.
+   *
+   * The last two came off when the seat stopped being squeezable. The old
+   * compact orb gave up 12px of its cap at four seats (`--pod-seat-h: 84px`);
+   * `OpponentSeat` is a stated 96px design whose rows are pixels that add up,
+   * so there is nothing in it to take. `e2e/deckfit.spec.ts` measured the
+   * viewer's mat 6px over at 1280x800 on a four-seat pod played several turns
+   * in, and shell is the right place to find it: it is the only thing on screen
+   * carrying no information at all.
    */
-  padding: 6px;
+  padding: 4px;
 }
 
 /*
@@ -281,7 +291,10 @@ html[data-input="keyboard"] .glyph--key {
 
 [data-handheld] .play {
   grid-template-rows: fit-content(var(--pod-seat-h)) minmax(0, 1fr);
-  gap: 4px;
+  /* Two, for the reason `.table__body`'s padding is four. The seats and the
+     board are different surfaces and still read as such at 2px, because each
+     draws its own edge. */
+  gap: 2px;
 }
 
 /*
